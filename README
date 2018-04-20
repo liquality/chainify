@@ -1,0 +1,12 @@
+Welcome to the the chain factory!
+
+
+## CSN - Chain Source Name
+
+<chain>://<user>:<pass>@<host>:<port>/?secure=[true|false]
+client.<rpcMethod> returns promise
+
+```javascript
+var client = chainfactory("bitcoin://bitcoin:local321@btc.leep.it:443/?secure=1")
+client.getBlockchainInfo().then(console.log)
+```
