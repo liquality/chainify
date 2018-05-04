@@ -6,7 +6,7 @@ Query different blockchains with a single and simple interface.
 ## CSN - Chain Source Name
 
 ```
-<chain>://<user>:<pass>@<host>:<port>/?secure=[true|false]
+<chain>s?://<user>:<pass>@<host>:<port>
 ```
 
 ## Client
@@ -14,8 +14,8 @@ Query different blockchains with a single and simple interface.
 ```javascript
 const ChainAbstractionLayer = require('chainabstractionlayer')
 
-const bitcoin = ChainAbstractionLayer('bitcoin://bitcoin:local321@btc.leep.it:443/?secure=1')
-const litecoin = ChainAbstractionLayer('litecoin://litecoin:local321@ltc.leep.it:443/?secure=1')
+const bitcoin = ChainAbstractionLayer('bitcoins://bitcoin:local321@btc.leep.it:443')
+const litecoin = ChainAbstractionLayer('litecoins://litecoin:local321@ltc.leep.it:443')
 
 bitcoin
   .getBlockchainInfo() // returns Promise

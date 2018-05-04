@@ -7,10 +7,16 @@ module.exports = (uri) => {
 
   const opts = dsn.getParts()
 
-  const Chain = chains[opts.driver]
+  let { driver } = opts
+
+  if (driver.endsWith('s')) {
+    driver = driver.substring(0, driver.length - 1)
+  }
+
+  const Chain = chains[driver]
 
   if (!Chain) {
-    throw new Error(`${opts.driver} not supported, yet`)
+    throw new Error(`${driver} is not supported, yet`)
   }
 
   return new Chain(opts)

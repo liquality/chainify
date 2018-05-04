@@ -8,7 +8,7 @@ class JsonRPC {
   }
 
   configure (opts) {
-    const protocol = opts.params.secure ? 'https' : 'http'
+    const protocol = opts.driver.endsWith('s') ? 'https' : 'http'
 
     this.uri = `${protocol}://${opts.host}:${opts.port}`
     this.username = opts.user || false
