@@ -9,8 +9,8 @@ module.exports = (uri) => {
 
   let { driver } = opts
 
-  if (driver.endsWith('s')) {
-    driver = driver.substring(0, driver.length - 1)
+  if (driver.endsWith('+s')) {
+    driver = driver.substring(0, driver.length - 2)
   }
 
   const Chain = chains[driver]

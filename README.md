@@ -14,8 +14,8 @@ Query different blockchains with a single and simple interface.
 ```javascript
 const ChainAbstractionLayer = require('chainabstractionlayer')
 
-const bitcoin = ChainAbstractionLayer('bitcoins://bitcoin:local321@btc.leep.it:443')
-const litecoin = ChainAbstractionLayer('litecoins://litecoin:local321@ltc.leep.it:443')
+const bitcoin = ChainAbstractionLayer('bitcoin+s://bitcoin:local321@btc.leep.it:443')
+const litecoin = ChainAbstractionLayer('litecoin+s://litecoin:local321@ltc.leep.it:443')
 
 bitcoin
   .getBlockchainInfo() // returns Promise
