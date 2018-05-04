@@ -8,10 +8,14 @@ module.exports = (uri) => {
   const opts = dsn.getParts()
 
   let { driver } = opts
+  let defaultPort = 80
 
   if (driver.endsWith('+s')) {
     driver = driver.substring(0, driver.length - 2)
+    defaultPort = 443
   }
+
+  opts.port = opts.port || defaultPort
 
   const Chain = chains[driver]
 
