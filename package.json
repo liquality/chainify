@@ -17,7 +17,7 @@
     "test": "NODE_ENV=test mocha $npm_package_options_mocha",
     "testdocker": "docker-compose run --rm sut",
     "transpile": "rm -rf dist/* && babel src --out-dir dist",
-    "build": "npm run transpile",
+    "build": "BABEL_ENV=production npm run transpile",
     "version": "npm run changelog --future-release=$npm_package_version && npm run transpile && git add -A CHANGELOG.md dist"
   },
   "dependencies": {
@@ -42,6 +42,7 @@
     "@babel/register": "^7.0.0-beta.32",
     "babel-eslint": "^8.0.0",
     "babel-plugin-istanbul": "^4.1.5",
+    "babel-preset-minify": "^0.4.1",
     "eslint": "4.11.0",
     "eslint-config-uphold": "0.0.1",
     "mocha": "^4.0.1",

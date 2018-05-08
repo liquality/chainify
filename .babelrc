@@ -1,4 +1,12 @@
 {
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": {
+        "node": "current"
+      }
+    }],
+    "minify"
+  ],
   "env": {
     "test": {
       "plugins": [
@@ -6,12 +14,5 @@
         "istanbul"
       ]
     }
-  },
-  "presets": [
-    ["@babel/preset-env", {
-      "targets": {
-        "node": "current"
-      }
-    }]
-  ]
+  }
 }
