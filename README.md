@@ -14,15 +14,16 @@ Query different blockchains with a single and simple interface.
 ```javascript
 const ChainAbstractionLayer = require('chainabstractionlayer')
 
-const bitcoin = ChainAbstractionLayer('bitcoin+s://bitcoin:local321@btc.leep.it:443')
-const litecoin = ChainAbstractionLayer('litecoin+s://litecoin:local321@ltc.leep.it:443')
+const bitcoin = new ChainAbstractionLayer('bitcoin://bitcoin:local321@localhost:18332/?timeout=200&version=0.12.0')
+const ethereum = new ChainAbstractionLayer('ethereum://a:b@127.0.0.1:7545/')
 
 bitcoin
-  .getBlockchainInfo() // returns Promise
-  .then(console.log)
+  .getBalance('0x0') // returns Promise
+  .then(console.log) // in sat
 
-const result = await litecoin.getBlockchainInfo()
-console.log(result)
+// or use await
+
+console.log(await ethereum.getBalance('0x0')) // in wei
 ```
 
 ## Currently Supported Chains
