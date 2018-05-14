@@ -1,1 +1,49 @@
-"use strict";var _bignumber=_interopRequireDefault(require("bignumber.js"));Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;function _interopRequireDefault(a){return a&&a.__esModule?a:{default:a}}const isBigNumber=function(a){return a instanceof _bignumber.default||a&&a.constructor&&"BigNumber"===a.constructor.name},isString=function(a){return"string"==typeof a||a&&a.constructor&&"String"===a.constructor.name};var _default={eth_getBalance:{formatter:{output(a){return a=a||0,isBigNumber(a)?a:isString(a)&&(0===a.indexOf("0x")||0===a.indexOf("-0x"))?new _bignumber.default(a.replace("0x",""),16):new _bignumber.default(a.toString(10),10)}}}};exports.default=_default;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _bignumber = _interopRequireDefault(require("bignumber.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable no-inline-comments */
+
+/**
+ * Module dependencies.
+ */
+// import { map, set } from 'lodash'
+var isBigNumber = function isBigNumber(object) {
+  return object instanceof _bignumber.default || object && object.constructor && object.constructor.name === 'BigNumber';
+};
+
+var isString = function isString(object) {
+  return typeof object === 'string' || object && object.constructor && object.constructor.name === 'String';
+};
+/**
+ * Export available rpc methods.
+ */
+
+
+var _default = {
+  eth_getBalance: {
+    formatter: {
+      output: function output(number) {
+        number = number || 0;
+
+        if (isBigNumber(number)) {
+          return number;
+        }
+
+        if (isString(number) && (number.indexOf('0x') === 0 || number.indexOf('-0x') === 0)) {
+          return new _bignumber.default(number.replace('0x', ''), 16);
+        }
+
+        return new _bignumber.default(number.toString(10), 10);
+      }
+    }
+  }
+};
+exports.default = _default;

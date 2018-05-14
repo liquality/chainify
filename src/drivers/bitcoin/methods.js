@@ -196,5 +196,7 @@ export default {
       }
     },
     version: '>=0.1.0'
-  }
+  },
+  getAddressBalance: { version: '>=0.1.0' },
+  getAddressUtxos: { version: '>=0.1.0' }
 }

@@ -1,1 +1,27 @@
-"use strict";var _methods=_interopRequireDefault(require("./methods"));Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;function _interopRequireDefault(a){return a&&a.__esModule?a:{default:a}}var _default={methods:_methods.default,formatter:{objMethod(a){return a},request(a,b,c){return{method:a.toLowerCase(),params:b,suffix:c}}}};exports.default=_default;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _methods = _interopRequireDefault(require("./methods"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _default = {
+  methods: _methods.default,
+  formatter: {
+    objMethod: function objMethod(method) {
+      return method;
+    },
+    request: function request(method, params, suffix) {
+      return {
+        method: method.toLowerCase(),
+        params: params,
+        suffix: suffix
+      };
+    }
+  }
+};
+exports.default = _default;

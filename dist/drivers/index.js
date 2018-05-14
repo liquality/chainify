@@ -1,1 +1,12 @@
-"use strict";var _bitcoin=_interopRequireDefault(require("./bitcoin")),_ethereum=_interopRequireDefault(require("./ethereum"));function _interopRequireDefault(a){return a&&a.__esModule?a:{default:a}}module.exports={bitcoin:_bitcoin.default,ethereum:_ethereum.default};
+"use strict";
+
+var _bitcoin = _interopRequireDefault(require("./bitcoin"));
+
+var _ethereum = _interopRequireDefault(require("./ethereum"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = {
+  bitcoin: _bitcoin.default,
+  ethereum: _ethereum.default
+};
