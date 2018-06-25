@@ -246,7 +246,16 @@ var _default2 = {
     version: '>=0.1.0'
   },
   getTransaction: {
-    version: '>=0.1.0'
+    version: '>=0.1.0',
+    formatter: {
+      output: function output(object) {
+        object = (0, _util.renameKey)(object, 'txid', 'hash');
+        object = (0, _util.renameKey)(object, 'amount', 'value');
+        object = (0, _util.renameKey)(object, 'blockhash', 'blockHash');
+        object = (0, _util.renameKey)(object, 'blockindex', 'blockNumber');
+        return object;
+      }
+    }
   },
   getTxOut: {
     version: '>=0.7.0'

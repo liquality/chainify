@@ -106,7 +106,18 @@ export default {
   getRawTransaction: { version: '>=0.7.0' },
   getReceivedByAccount: { version: '>=0.1.0' },
   getReceivedByAddress: { version: '>=0.1.0' },
-  getTransaction: { version: '>=0.1.0' },
+  getTransaction: {
+    version: '>=0.1.0',
+    formatter: {
+      output (object) {
+        object = renameKey(object, 'txid', 'hash')
+        object = renameKey(object, 'amount', 'value')
+        object = renameKey(object, 'blockhash', 'blockHash')
+        object = renameKey(object, 'blockindex', 'blockNumber')
+        return object
+      }
+    }
+  },
   getTxOut: { version: '>=0.7.0' },
   getTxOutProof: { version: '>=0.11.0' },
   getTxOutSetInfo: { version: '>=0.7.0' },

@@ -51,6 +51,7 @@ var _default = {
     formatter: {
       output: function output(object) {
         object = (0, _util.renameKey)(object, 'number', 'height');
+        object.timestamp = parseInt(object.timestamp);
         return object;
       }
     }
@@ -59,6 +60,7 @@ var _default = {
     formatter: {
       output: function output(object) {
         object = (0, _util.renameKey)(object, 'number', 'height');
+        object.timestamp = parseInt(object.timestamp);
         return object;
       }
     }

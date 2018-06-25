@@ -43,6 +43,7 @@ export default {
     formatter: {
       output (object) {
         object = renameKey(object, 'number', 'height')
+        object.timestamp = parseInt(object.timestamp)
         return object
       }
     }
@@ -51,6 +52,7 @@ export default {
     formatter: {
       output (object) {
         object = renameKey(object, 'number', 'height')
+        object.timestamp = parseInt(object.timestamp)
         return object
       }
     }
