@@ -7,6 +7,8 @@ exports.default = void 0;
 
 var _bignumber = _interopRequireDefault(require("bignumber.js"));
 
+var _util = require("../util");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* eslint-disable no-inline-comments */
@@ -42,6 +44,24 @@ var _default = {
         }
 
         return new _bignumber.default(number.toString(10), 10);
+      }
+    }
+  },
+  eth_getBlockByNumber: {
+    formatter: {
+      output: function output(object) {
+        object = (0, _util.renameKey)(object, 'number', 'height');
+        object.timestamp = parseInt(object.timestamp);
+        return object;
+      }
+    }
+  },
+  eth_getBlockByHash: {
+    formatter: {
+      output: function output(object) {
+        object = (0, _util.renameKey)(object, 'number', 'height');
+        object.timestamp = parseInt(object.timestamp);
+        return object;
       }
     }
   }

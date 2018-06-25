@@ -6,6 +6,7 @@
 
 import { map, set } from 'lodash'
 import BigNumber from 'bignumber.js'
+import { asyncForEach, renameKey } from '../util'
 
 /**
  * Export available rpc methods.
@@ -66,7 +67,17 @@ export default {
     }
   },
   getBestBlockHash: { version: '>=0.9.0' },
-  getBlock: { version: '>=0.6.0' },
+  getBlock: {
+    version: '>=0.6.0',
+    formatter: {
+      output (object) {
+        object = renameKey(object, 'tx', 'transactions')
+        object = renameKey(object, 'time', 'timestamp')
+        object = renameKey(object, 'previousblockhash', 'parentHash')
+        return object
+      }
+    }
+  },
   getBlockCount: { version: '>=0.1.0' },
   getBlockHash: { version: '>=0.6.0' },
   getBlockHeader: { version: '>=0.12.0' },
@@ -95,7 +106,18 @@ export default {
   getRawTransaction: { version: '>=0.7.0' },
   getReceivedByAccount: { version: '>=0.1.0' },
   getReceivedByAddress: { version: '>=0.1.0' },
-  getTransaction: { version: '>=0.1.0' },
+  getTransaction: {
+    version: '>=0.1.0',
+    formatter: {
+      output (object) {
+        object = renameKey(object, 'txid', 'hash')
+        object = renameKey(object, 'amount', 'value')
+        object = renameKey(object, 'blockhash', 'blockHash')
+        object = renameKey(object, 'blockindex', 'blockNumber')
+        return object
+      }
+    }
+  },
   getTxOut: { version: '>=0.7.0' },
   getTxOutProof: { version: '>=0.11.0' },
   getTxOutSetInfo: { version: '>=0.7.0' },
@@ -198,5 +220,45 @@ export default {
     version: '>=0.1.0'
   },
   getAddressBalance: { version: '>=0.1.0' },
-  getAddressUtxos: { version: '>=0.1.0' }
+  getAddressUtxos: { version: '>=0.1.0' },
+  getBlockByNumber: {
+    version: '>=0.6.0',
+    custom: true,
+    function: {
+      async run (_this, params) {
+        let data, txFull, hash, blockData
+        [data,txFull] = params
+        hash = await _this.getBlockHash(data)
+        blockData = await getBlockData(_this, hash, txFull)
+        return blockData
+      }
+    }
+  },
+  getBlockByHash: {
+    version: '>=0.6.0',
+    custom: true,
+    function: {
+      async run (_this, params) {
+        let data, txFull, blockData
+        [data,txFull] = params
+        blockData = await getBlockData(_this, data, txFull)
+        return blockData
+      }
+    }
+  }
+}
+
+const getBlockData = async (_this, hash, txFull) => {
+  let blockData = await _this.getBlock(hash)
+  if (txFull) {
+    let transactions = []
+    await asyncForEach(blockData.transactions, async (txid) => {
+      let transaction = await _this.getTransaction(txid)
+      transactions.push(transaction)
+    })
+    blockData.transactions = transactions
+    return blockData
+  } else {
+    return blockData
+  }
 }

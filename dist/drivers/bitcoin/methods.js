@@ -9,7 +9,19 @@ var _lodash = require("lodash");
 
 var _bignumber = _interopRequireDefault(require("bignumber.js"));
 
+var _util = require("../util");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } } function _next(value) { step("next", value); } function _throw(err) { step("throw", err); } _next(); }); }; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -139,7 +151,15 @@ var _default2 = {
     version: '>=0.9.0'
   },
   getBlock: {
-    version: '>=0.6.0'
+    version: '>=0.6.0',
+    formatter: {
+      output: function output(object) {
+        object = (0, _util.renameKey)(object, 'tx', 'transactions');
+        object = (0, _util.renameKey)(object, 'time', 'timestamp');
+        object = (0, _util.renameKey)(object, 'previousblockhash', 'parentHash');
+        return object;
+      }
+    }
   },
   getBlockCount: {
     version: '>=0.1.0'
@@ -226,7 +246,16 @@ var _default2 = {
     version: '>=0.1.0'
   },
   getTransaction: {
-    version: '>=0.1.0'
+    version: '>=0.1.0',
+    formatter: {
+      output: function output(object) {
+        object = (0, _util.renameKey)(object, 'txid', 'hash');
+        object = (0, _util.renameKey)(object, 'amount', 'value');
+        object = (0, _util.renameKey)(object, 'blockhash', 'blockHash');
+        object = (0, _util.renameKey)(object, 'blockindex', 'blockNumber');
+        return object;
+      }
+    }
   },
   getTxOut: {
     version: '>=0.7.0'
@@ -464,6 +493,162 @@ var _default2 = {
   },
   getAddressUtxos: {
     version: '>=0.1.0'
+  },
+  getBlockByNumber: {
+    version: '>=0.6.0',
+    custom: true,
+    function: {
+      run: function () {
+        var _run = _asyncToGenerator(
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee(_this, params) {
+          var data, txFull, hash, blockData, _params;
+
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _params = _slicedToArray(params, 2);
+                  data = _params[0];
+                  txFull = _params[1];
+                  _context.next = 5;
+                  return _this.getBlockHash(data);
+
+                case 5:
+                  hash = _context.sent;
+                  _context.next = 8;
+                  return getBlockData(_this, hash, txFull);
+
+                case 8:
+                  blockData = _context.sent;
+                  return _context.abrupt("return", blockData);
+
+                case 10:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, this);
+        }));
+
+        return function run(_x, _x2) {
+          return _run.apply(this, arguments);
+        };
+      }()
+    }
+  },
+  getBlockByHash: {
+    version: '>=0.6.0',
+    custom: true,
+    function: {
+      run: function () {
+        var _run2 = _asyncToGenerator(
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee2(_this, params) {
+          var data, txFull, blockData, _params2;
+
+          return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  _params2 = _slicedToArray(params, 2);
+                  data = _params2[0];
+                  txFull = _params2[1];
+                  _context2.next = 5;
+                  return getBlockData(_this, data, txFull);
+
+                case 5:
+                  blockData = _context2.sent;
+                  return _context2.abrupt("return", blockData);
+
+                case 7:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2, this);
+        }));
+
+        return function run(_x3, _x4) {
+          return _run2.apply(this, arguments);
+        };
+      }()
+    }
   }
 };
 exports.default = _default2;
+
+var getBlockData =
+/*#__PURE__*/
+function () {
+  var _ref = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee4(_this, hash, txFull) {
+    var blockData, transactions;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            _context4.next = 2;
+            return _this.getBlock(hash);
+
+          case 2:
+            blockData = _context4.sent;
+
+            if (!txFull) {
+              _context4.next = 11;
+              break;
+            }
+
+            transactions = [];
+            _context4.next = 7;
+            return (0, _util.asyncForEach)(blockData.transactions,
+            /*#__PURE__*/
+            function () {
+              var _ref2 = _asyncToGenerator(
+              /*#__PURE__*/
+              regeneratorRuntime.mark(function _callee3(txid) {
+                var transaction;
+                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        _context3.next = 2;
+                        return _this.getTransaction(txid);
+
+                      case 2:
+                        transaction = _context3.sent;
+                        transactions.push(transaction);
+
+                      case 4:
+                      case "end":
+                        return _context3.stop();
+                    }
+                  }
+                }, _callee3, this);
+              }));
+
+              return function (_x8) {
+                return _ref2.apply(this, arguments);
+              };
+            }());
+
+          case 7:
+            blockData.transactions = transactions;
+            return _context4.abrupt("return", blockData);
+
+          case 11:
+            return _context4.abrupt("return", blockData);
+
+          case 12:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, this);
+  }));
+
+  return function getBlockData(_x5, _x6, _x7) {
+    return _ref.apply(this, arguments);
+  };
+}();
