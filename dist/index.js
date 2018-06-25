@@ -13,6 +13,8 @@ var _semver = _interopRequireDefault(require("semver"));
 
 var _debugnyan = _interopRequireDefault(require("debugnyan"));
 
+require("regenerator-runtime/runtime");
+
 var _parser = _interopRequireDefault(require("./parser"));
 
 var _requester = _interopRequireDefault(require("./requester"));
@@ -22,6 +24,8 @@ var _drivers = _interopRequireDefault(require("./drivers"));
 var _request = _interopRequireDefault(require("./request"));
 
 var _dsnParser = _interopRequireDefault(require("./dsnParser"));
+
+var _caller = _interopRequireDefault(require("./caller"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -112,6 +116,9 @@ function () {
       driver: driver,
       headers: this.returnHeaders
     });
+    this.caller = new _caller.default({
+      driver: driver
+    });
     /**
      * Add all known RPC methods.
      */
@@ -153,36 +160,44 @@ function () {
         params = params[0];
       }
 
-      return _bluebird.default.try(function () {
-        if (Array.isArray(method)) {
-          body = method.map(function (method, index) {
-            return _this2.requester.prepare({
-              method: method.method,
-              params: method.params,
-              suffix: index
+      if (this.driver.methods[method].custom) {
+        return this.caller.run({
+          method: method,
+          params: params,
+          _this: this
+        });
+      } else {
+        return _bluebird.default.try(function () {
+          if (Array.isArray(method)) {
+            body = method.map(function (method, index) {
+              return _this2.requester.prepare({
+                method: method.method,
+                params: method.params,
+                suffix: index
+              });
             });
-          });
-        } else {
-          body = _this2.requester.prepare({
-            method: method,
-            params: params
-          });
-        }
-
-        return _this2.request.postAsync({
-          auth: _lodash.default.pickBy(_this2.auth, _lodash.default.identity),
-          body: JSON.stringify(body),
-          uri: '/'
-        }).bind(_this2).then(function () {
-          var _this2$parser;
-
-          for (var _len2 = arguments.length, data = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            data[_key2] = arguments[_key2];
+          } else {
+            body = _this2.requester.prepare({
+              method: method,
+              params: params
+            });
           }
 
-          return (_this2$parser = _this2.parser).rpc.apply(_this2$parser, [body].concat(data));
-        });
-      }).asCallback(callback);
+          return _this2.request.postAsync({
+            auth: _lodash.default.pickBy(_this2.auth, _lodash.default.identity),
+            body: JSON.stringify(body),
+            uri: '/'
+          }).bind(_this2).then(function () {
+            var _this2$parser;
+
+            for (var _len2 = arguments.length, data = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+              data[_key2] = arguments[_key2];
+            }
+
+            return (_this2$parser = _this2.parser).rpc.apply(_this2$parser, [body].concat(data));
+          });
+        }).asCallback(callback);
+      }
     }
   }]);
 

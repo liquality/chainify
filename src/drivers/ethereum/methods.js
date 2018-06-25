@@ -6,6 +6,7 @@
 
 // import { map, set } from 'lodash'
 import BigNumber from 'bignumber.js'
+import { renameKey } from '../util'
 
 const isBigNumber = function (object) {
   return object instanceof BigNumber ||
@@ -35,6 +36,22 @@ export default {
         }
 
         return new BigNumber(number.toString(10), 10)
+      }
+    }
+  },
+  eth_getBlockByNumber: {
+    formatter: {
+      output (object) {
+        object = renameKey(object, 'number', 'height')
+        return object
+      }
+    }
+  },
+  eth_getBlockByHash: {
+    formatter: {
+      output (object) {
+        object = renameKey(object, 'number', 'height')
+        return object
       }
     }
   }

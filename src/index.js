@@ -6,12 +6,14 @@ import Promise from 'bluebird'
 import _ from 'lodash'
 import semver from 'semver'
 import debugnyan from 'debugnyan'
+import 'regenerator-runtime/runtime'
 
 import Parser from './parser'
 import Requester from './requester'
 import drivers from './drivers'
 import request from './request'
 import DNSParser from './dsnParser'
+import Caller from './caller'
 
 /**
  * Constructor.
@@ -76,6 +78,7 @@ class Client {
     }), { multiArgs: true })
     this.requester = new Requester({ driver, unsupported, version })
     this.parser = new Parser({ driver, headers: this.returnHeaders })
+    this.caller = new Caller({ driver })
 
     /**
      * Add all known RPC methods.
@@ -107,20 +110,24 @@ class Client {
       params = params[0]
     }
 
-    return Promise.try(() => {
-      if (Array.isArray(method)) {
-        body = method.map((method, index) => this.requester.prepare({ method: method.method, params: method.params, suffix: index }))
-      } else {
-        body = this.requester.prepare({ method: method, params })
-      }
+    if (this.driver.methods[method].custom) {
+      return this.caller.run({ method: method, params: params, _this: this })
+    } else {
+      return Promise.try(() => {
+        if (Array.isArray(method)) {
+          body = method.map((method, index) => this.requester.prepare({ method: method.method, params: method.params, suffix: index }))
+        } else {
+          body = this.requester.prepare({ method: method, params })
+        }
 
-      return this.request.postAsync({
-        auth: _.pickBy(this.auth, _.identity),
-        body: JSON.stringify(body),
-        uri: '/'
-      }).bind(this)
-        .then((...data) => this.parser.rpc(body, ...data))
-    }).asCallback(callback)
+        return this.request.postAsync({
+          auth: _.pickBy(this.auth, _.identity),
+          body: JSON.stringify(body),
+          uri: '/'
+        }).bind(this)
+          .then((...data) => this.parser.rpc(body, ...data))
+      }).asCallback(callback)
+    }
   }
 }
 
