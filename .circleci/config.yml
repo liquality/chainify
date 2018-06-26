@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: mblackmblack/bitcoind-node:0.0.2
+    working_directory: ~/chainabstractionlayer
+    steps:
+      - checkout
+      - run:
+          name: test
+          command: yarn test
