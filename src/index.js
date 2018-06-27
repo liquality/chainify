@@ -157,7 +157,7 @@ export default class Client {
               if (typeof t === 'string') {
                 result[key] = result[type[key]]
               } else if (_.isFunction(t)) {
-                result[key] = t(result[key])
+                result[key] = t(key, result)
               } else {
                 throw new Error('This type of mapping is not implemented yet.')
               }

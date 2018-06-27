@@ -263,11 +263,22 @@ var BitcoinProvider = function () {
 BitcoinProvider.Block = {
   number: 'height',
   hash: 'hash',
-  timestamp: 'timestamp',
+  timestamp: 'time',
   difficulty: 'difficulty',
   size: 'size',
   parentHash: 'parentHash',
-  nonce: 'nonce'
+  nonce: 'nonce',
+  value: function value(key, result) {
+    var value = 0;
+
+    result.tx.forEach(function (tx) {
+      value += tx.amount;
+    });
+
+    console.log('xxxxxx', JSON.stringify(result.tx, null, 2), 'yyyyyyy');
+
+    return value;
+  }
 };
 
 var _createClass$3 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -537,7 +548,7 @@ var Client = function () {
             if (typeof t === 'string') {
               result[key] = result[type[key]];
             } else if (_.isFunction(t)) {
-              result[key] = t(result[key]);
+              result[key] = t(key, result);
             } else {
               throw new Error('This type of mapping is not implemented yet.');
             }

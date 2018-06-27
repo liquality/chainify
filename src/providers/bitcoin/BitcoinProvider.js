@@ -28,5 +28,14 @@ BitcoinProvider.Block = {
   difficulty: 'difficulty',
   size: 'size',
   parentHash: 'parentHash',
-  nonce: 'nonce'
+  nonce: 'nonce',
+  exampleComputedValue: (key, result) => {
+    let value = 0
+
+    result.tx.forEach(tx => {
+      value += tx.amount
+    })
+
+    return value
+  }
 }
