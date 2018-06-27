@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-import { STATUS_CODES } from 'http'
+// import { STATUS_CODES } from 'http'
 import StandardError from './standard-error'
 
 /**
@@ -23,7 +23,7 @@ export default class RpcError extends StandardError {
 
     props.code = code
 
-    super(msg || STATUS_CODES[code], props)
+    super(msg || code, props)
   }
 
   get status () {

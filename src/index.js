@@ -1,27 +1,19 @@
-/**
- * Module dependencies.
- */
-
-import Promise from 'bluebird'
 import _ from 'lodash'
 import semver from 'semver'
-import debugnyan from 'debugnyan'
+import Promise from 'bluebird'
 
-import Parser from './parser'
-import Requester from './requester'
-import drivers from './drivers'
-import request from './request'
-import DNSParser from './dsnParser'
+import DNSParser from './DsnParser'
+import JsonRpcHelper from './JsonRpcHelper'
 
-/**
- * Constructor.
- */
+import providers from './providers'
 
-class Client {
+// DEV: hack
+const request = require('request-promise')
+
+export default class Client {
   constructor (uri) {
     const {
       baseUrl,
-      loggerName,
       driverName,
       timeout,
       returnHeaders,
@@ -30,108 +22,168 @@ class Client {
       version
     } = DNSParser(uri)
 
-    const driver = drivers[driverName]
+    this.transforms = {
+      methodToRpc (method) {
+        return method.toLowerCase()
+      },
+      value (val, unit) {
+        return val
+      }
+    }
 
-    if (!driver) throw new Error(`${driverName} is not supported, yet.`)
+    this.methods = {}
 
-    this.driver = driver
+    // unused. remove later
+    this.rpcMethods = {}
+
+    this.chainName = driverName
     this.baseUrl = baseUrl
     this.timeout = timeout
     this.returnHeaders = returnHeaders
     this.strictSSL = strictSSL
-
     this.auth = auth
-    this.hasNamedParametersSupport = false
+    this.version = version
 
-    // Find unsupported methods according to version.
-    let unsupported = []
+    this.jsonRpcHelper = new JsonRpcHelper({ version })
+    this.request = request.defaults({
+      baseUrl: this.baseUrl,
+      strictSSL: this.strictSSL,
+      timeout: this.timeout,
+      resolveWithFullResponse: true
+    })
 
-    if (version) {
-      // Capture X.Y.Z when X.Y.Z.A is passed to support oddly formatted Bitcoin Core
-      // versions such as 0.15.0.1.
-      const result = /[0-9]+\.[0-9]+\.[0-9]+/.exec(version)
+    // load default providers
+    if (providers[driverName]) {
+      providers[driverName].forEach(provider => this.addProvider(provider))
+    }
+  }
+
+  addProvider (provider) {
+    provider.setClient(this)
+
+    _.forOwn(provider.transforms(), (fn, transform) => {
+      this.transforms[transform] = fn
+    })
+
+    const methods = provider.methods()
+
+    if (this.version) {
+      const result = /[0-9]+\.[0-9]+\.[0-9]+/.exec(this.version)
 
       if (!result) {
-        throw new Error(`Invalid Version "${version}"`, { version })
+        throw new Error(`Invalid version "${this.version}"`, { version: this.version })
       }
 
-      const [ v ] = result
+      const [ version ] = result
 
-      if (this.driver === 'bitcoin') {
-        this.hasNamedParametersSupport = semver.satisfies(v, '>=0.14.0')
-      }
-
-      unsupported = _.chain(driver.methods)
-        .pickBy(method => !semver.satisfies(v, method.version))
+      this.unsupportedMethods = _.chain(methods)
+        .pickBy(method => !semver.satisfies(version, method.version))
         .keys()
         .value()
     }
 
-    const req = request(driver, debugnyan(loggerName))
+    _.forOwn(provider.methods(), (obj, method) => {
+      this.methods[method] = obj
 
-    this.request = Promise.promisifyAll(req.defaults({
-      baseUrl: this.baseUrl,
-      strictSSL: this.strictSSL,
-      timeout: this.timeout
-    }), { multiArgs: true })
-    this.requester = new Requester({ driver, unsupported, version })
-    this.parser = new Parser({ driver, headers: this.returnHeaders })
+      if (obj.rpc) {
+        if (_.isFunction(obj.rpc)) {
+          this[method] = _.partial(obj.rpc)
+        } else {
+          this[method] = _.partial(this.rpcWrapper, method, obj.rpc)
+        }
+      } else {
+        const rpcMethod = this.getRpcMethod(method, obj)
 
-    /**
-     * Add all known RPC methods.
-     */
-
-    _.forOwn(driver.methods, (range, method) => {
-      const objMethod = driver.formatter.objMethod(method)
-      this[objMethod] = _.partial(this.command, method)
+        if (!this.rpcMethods[rpcMethod]) this.rpcMethods[rpcMethod] = obj
+        this[method] = _.partial(this.rpcWrapper, method, rpcMethod)
+      }
     })
   }
 
-  /**
-   * Execute `rpc` command.
-   */
-
-  command (...args) {
-    let body
-    let callback
-    let params = _.tail(args)
-    const method = _.head(args)
-    const lastArg = _.last(args)
-
-    if (_.isFunction(lastArg)) {
-      callback = lastArg
-      params = _.dropRight(params)
+  getRpcMethod (method, obj) {
+    if (obj.alias) {
+      return this.getRpcMethod(obj.alias, this.methods[obj.alias])
+    } else {
+      return this.transforms.methodToRpc(method)
     }
+  }
 
-    if (this.hasNamedParametersSupport && params.length === 1 && _.isPlainObject(params[0])) {
-      params = params[0]
+  handleTransformation (transformation, result) {
+    if (_.isFunction(transformation)) {
+      return Promise.resolve(transformation(result))
+    } else if (transformation.rpc) {
+      return this.rpc(transformation.rpc, result)
+    } else if (_.isArray(transformation)) {
+      const [ obj ] = transformation
+
+      return Promise
+        .map(result, param => this.handleTransformation(obj, param))
+    } else {
+      return Promise.reject(new Error('This type of mapping is not implemented yet.'))
     }
+  }
 
-    return Promise.try(() => {
-      if (Array.isArray(method)) {
-        body = method.map((method, index) => this.requester.prepare({ method: method.method, params: method.params, suffix: index }))
-      } else {
-        body = this.requester.prepare({ method: method, params })
-      }
+  rpcWrapper (method, rpcMethod, ...args) {
+    return this.rpc(rpcMethod, ...args)
+      .then(result => {
+        const { transform } = this.methods[method]
 
-      return this.request.postAsync({
-        auth: _.pickBy(this.auth, _.identity),
-        body: JSON.stringify(body),
-        uri: '/'
-      }).bind(this)
-        .then((...data) => this.parser.rpc(body, ...data))
-    }).asCallback(callback)
+        if (transform) {
+          return Promise
+            .map(
+              Object.keys(transform),
+              field => {
+                return this
+                  .handleTransformation(transform[field], result[field])
+                  .then(transformedField => {
+                    result[field] = transformedField
+                  })
+              }
+            )
+            .then(__ => result)
+        } else {
+          return result
+        }
+      })
+      .then(result => {
+        const { type } = this.methods[method]
+
+        if (type) {
+          Object
+            .keys(type)
+            .forEach(key => {
+              const t = type[key]
+
+              if (typeof t === 'string') {
+                result[key] = result[type[key]]
+              } else if (_.isFunction(t)) {
+                result[key] = t(result[key])
+              } else {
+                throw new Error('This type of mapping is not implemented yet.')
+              }
+            })
+        }
+
+        return result
+      })
+  }
+
+  rpc (_method, ...args) {
+    const methods = _method.split('|')
+
+    return Promise
+      .reduce(methods, (params, method) => {
+        if (!_.isArray(params)) params = [ params ]
+
+        const requestBody = this.jsonRpcHelper.prepareRequest({ method, params })
+
+        return this.request.post({
+          auth: _.pickBy(this.auth, _.identity),
+          body: requestBody,
+          uri: '/'
+        }).then(this.jsonRpcHelper.parseResponse.bind(this.jsonRpcHelper))
+      }, args)
   }
 }
 
-/**
- * Export Client class (ESM).
- */
-
-export default Client
-
-/**
- * Export Client class (CJS) for compatibility with require.
- */
-
-module.exports = Client
+Client.providers = providers
