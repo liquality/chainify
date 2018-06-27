@@ -27881,13 +27881,9 @@
 	  parentHash: 'parentHash',
 	  nonce: 'nonce',
 	  exampleComputedValue: function exampleComputedValue(key, result) {
-	    var value = 0;
-
-	    result.tx.forEach(function (tx) {
-	      value += tx.amount;
-	    });
-
-	    return value;
+	    return result.tx.reduce(function (value, tx) {
+	      return value + tx.amount;
+	    }, 0);
 	  }
 	};
 
