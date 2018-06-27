@@ -24,7 +24,7 @@ export default class BitcoinProvider {
 BitcoinProvider.Block = {
   number: 'height',
   hash: 'hash',
-  timestamp: 'timestamp',
+  timestamp: 'time',
   difficulty: 'difficulty',
   size: 'size',
   parentHash: 'parentHash',
