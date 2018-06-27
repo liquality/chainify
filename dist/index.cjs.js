@@ -273,14 +273,12 @@ BitcoinProvider.Block = {
   size: 'size',
   parentHash: 'parentHash',
   nonce: 'nonce',
-  value: function value(key, result) {
+  exampleComputedValue: function exampleComputedValue(key, result) {
     var value = 0;
 
     result.tx.forEach(function (tx) {
       value += tx.amount;
     });
-
-    console.log('xxxxxx', JSON.stringify(result.tx, null, 2), 'yyyyyyy');
 
     return value;
   }
