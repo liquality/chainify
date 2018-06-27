@@ -27872,18 +27872,20 @@
 	}();
 
 
-	BitcoinProvider.Block = {
-	  number: 'height',
-	  hash: 'hash',
-	  timestamp: 'time',
-	  difficulty: 'difficulty',
-	  size: 'size',
-	  parentHash: 'parentHash',
-	  nonce: 'nonce',
-	  exampleComputedValue: function exampleComputedValue(key, result) {
-	    return result.tx.reduce(function (value, tx) {
-	      return value + tx.amount;
-	    }, 0);
+	BitcoinProvider.Types = {
+	  Block: {
+	    number: 'height',
+	    hash: 'hash',
+	    timestamp: 'time',
+	    difficulty: 'difficulty',
+	    size: 'size',
+	    parentHash: 'parentHash',
+	    nonce: 'nonce',
+	    exampleComputedValue: function exampleComputedValue(key, result) {
+	      return result.tx.reduce(function (value, tx) {
+	        return value + tx.amount;
+	      }, 0);
+	    }
 	  }
 	};
 
@@ -27934,7 +27936,7 @@
 	              return 'Tx<' + value + '>';
 	            }]
 	          },
-	          type: BitcoinProvider.Block
+	          type: BitcoinProvider.Types.Block
 	        },
 
 	        getBlockByNumber: {
@@ -27949,13 +27951,13 @@
 	              rpc: 'gettransaction' // populate all tx
 	            }]
 	          },
-	          type: BitcoinProvider.Block
+	          type: BitcoinProvider.Types.Block
 	        },
 
 	        getBlockByHash: {
 	          version: '>=0.6.0',
 	          alias: 'getBlock', // alias object methods
-	          type: BitcoinProvider.Block
+	          type: BitcoinProvider.Types.Block
 	        },
 
 	        getBlockHeight: {

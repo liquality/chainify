@@ -21,13 +21,15 @@ export default class BitcoinProvider {
   }
 }
 
-BitcoinProvider.Block = {
-  number: 'height',
-  hash: 'hash',
-  timestamp: 'time',
-  difficulty: 'difficulty',
-  size: 'size',
-  parentHash: 'parentHash',
-  nonce: 'nonce',
-  exampleComputedValue: (key, result) => result.tx.reduce((value, tx) => value + tx.amount, 0)
+BitcoinProvider.Types = {
+  Block: {
+    number: 'height',
+    hash: 'hash',
+    timestamp: 'time',
+    difficulty: 'difficulty',
+    size: 'size',
+    parentHash: 'parentHash',
+    nonce: 'nonce',
+    exampleComputedValue: (key, result) => result.tx.reduce((value, tx) => value + tx.amount, 0)
+  }
 }

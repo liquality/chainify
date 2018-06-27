@@ -28,7 +28,7 @@ export default class BlockProvider extends BitcoinProvider {
             return `Tx<${value}>`
           } ]
         },
-        type: BitcoinProvider.Block
+        type: BitcoinProvider.Types.Block
       },
 
       getBlockByNumber: {
@@ -43,13 +43,13 @@ export default class BlockProvider extends BitcoinProvider {
             rpc: 'gettransaction' // populate all tx
           }]
         },
-        type: BitcoinProvider.Block
+        type: BitcoinProvider.Types.Block
       },
 
       getBlockByHash: {
         version: '>=0.6.0',
         alias: 'getBlock', // alias object methods
-        type: BitcoinProvider.Block
+        type: BitcoinProvider.Types.Block
       },
 
       getBlockHeight: {
