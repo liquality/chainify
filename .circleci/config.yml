@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: mblackmblack/bitcoin-core-with-npm:0.0.1
+    working_directory: ~/chainabstractionlayer
+    steps:
+      - checkout
+      - run:
+          name: npm install
+          command: npm install
+      - run:
+          name: test
+          command: npm test
+
