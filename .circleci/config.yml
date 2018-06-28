@@ -1,14 +1,19 @@
 version: 2
 jobs:
   build:
+    environment:
+      BASH_ENV: /etc/profile
     docker:
-      - image: mblackmblack/bitcoin-core-with-npm:0.0.1
+      - image: mblackmblack/bitcoin-core-with-nvm:0.0.5
     working_directory: ~/chainabstractionlayer
     steps:
       - checkout
       - run:
+          name: bitcoind
+          command: bitcoind
+      - run:
           name: npm install
-          command: npm install && npm build
+          command: npm install
       - run:
           name: test
           command: npm test
