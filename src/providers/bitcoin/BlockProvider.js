@@ -63,6 +63,10 @@ export default class BlockProvider extends BitcoinProvider {
 
       getBlockHeader: {
         version: '>=0.12.0'
+      },
+
+      generate: {
+        version: '>=0.1.0'
       }
     }
   }
