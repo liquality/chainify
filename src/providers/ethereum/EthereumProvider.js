@@ -11,10 +11,10 @@ export default class BitcoinProvider {
   transforms () {
     return {
       methodToRpc (method, params) {
-        return method.toLowerCase()
+        return `eth_${method}`
       },
       value (val, unit) {
-        // convert hex to satoshi/mBTC/BTC
+        // convert hex to wei/gwei/eth
         return val
       }
     }
@@ -23,14 +23,13 @@ export default class BitcoinProvider {
 
 BitcoinProvider.Types = {
   Block: {
-    number: 'height',
+    number: 'number',
     hash: 'hash',
     timestamp: 'time',
     difficulty: 'difficulty',
     size: 'size',
-    parentHash: 'previousblockhash',
+    parentHash: 'parentHash',
     nonce: 'nonce',
-    transactions: 'tx',
-    exampleComputedValue: (key, result) => result.tx.reduce((value, tx) => value + tx.amount, 0)
+    transactions: 'transactions'
   }
 }

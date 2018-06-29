@@ -192,7 +192,6 @@ var JsonRpcHelper = function () {
   }, {
     key: 'parseResponse',
     value: function parseResponse(response) {
-      // console.log(response)
       // The RPC api returns a `text/html; charset=ISO-8859-1` encoded response with an empty string as the body
       // when an error occurs.
       if (typeof response.body === 'string' && response.headers['content-type'] !== 'application/json' && response.statusCode !== 200) {
@@ -237,7 +236,13 @@ var Provider = function () {
   _createClass$2(Provider, [{
     key: 'methods',
     value: function methods() {
-      return ['getBlockByNumber', 'getBlockByHash', 'getBlockHeight', 'getBlockHash', 'getAddress', 'signMessage'];
+      return ['getBlockByNumber'
+      // 'getBlockByHash',
+      // 'getBlockHeight',
+      // 'getBlockHash',
+      // 'getAddress',
+      // 'signMessage'
+      ];
     }
   }]);
 
@@ -291,6 +296,7 @@ BitcoinProvider.Types = {
     size: 'size',
     parentHash: 'previousblockhash',
     nonce: 'nonce',
+    transactions: 'tx',
     exampleComputedValue: function exampleComputedValue(key, result) {
       return result.tx.reduce(function (value, tx) {
         return value + tx.amount;
@@ -529,15 +535,130 @@ var LedgerWalletProvider = function (_BitcoinProvider) {
 
 var bitcoin = [new BlockProvider(), new LedgerWalletProvider()];
 
+var _createClass$6 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck$7(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+ * BitcoinProvider class
+ * with bitcoin related transforms
+ */
+
+var BitcoinProvider$1 = function () {
+  function BitcoinProvider() {
+    _classCallCheck$7(this, BitcoinProvider);
+  }
+
+  _createClass$6(BitcoinProvider, [{
+    key: 'setClient',
+    value: function setClient(client) {
+      this.client = client;
+    }
+  }, {
+    key: 'transforms',
+    value: function transforms() {
+      return {
+        methodToRpc: function methodToRpc(method, params) {
+          return 'eth_' + method;
+        },
+        value: function value(val, unit) {
+          // convert hex to wei/gwei/eth
+          return val;
+        }
+      };
+    }
+  }]);
+
+  return BitcoinProvider;
+}();
+
+
+BitcoinProvider$1.Types = {
+  Block: {
+    number: 'number',
+    hash: 'hash',
+    timestamp: 'time',
+    difficulty: 'difficulty',
+    size: 'size',
+    parentHash: 'parentHash',
+    nonce: 'nonce',
+    transactions: 'transactions'
+  }
+};
+
+var _createClass$7 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck$8(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn$4(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits$4(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BlockProvider$1 = function (_EthereumProvider) {
+  _inherits$4(BlockProvider, _EthereumProvider);
+
+  function BlockProvider() {
+    _classCallCheck$8(this, BlockProvider);
+
+    return _possibleConstructorReturn$4(this, (BlockProvider.__proto__ || Object.getPrototypeOf(BlockProvider)).apply(this, arguments));
+  }
+
+  _createClass$7(BlockProvider, [{
+    key: 'methods',
+    value: function methods() {
+      var client = this.client;
+
+
+      return {
+        getBlockByNumber: {
+          handle: function handle() {
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+              args[_key] = arguments[_key];
+            }
+
+            return client.rpc.apply(client, ['eth_getBlockByNumber'].concat(args, [false]));
+          },
+          mapping: BitcoinProvider$1.Types.Block,
+          type: 'Block'
+
+          // getBlockByHash: {
+          //   version: '>=0.6.0',
+          //   alias: 'getBlock', // alias object methods
+          //   mapping: EthereumProvider.Types.Block,
+          //   type: 'Block'
+          // },
+          //
+          // getBlockHeight: {
+          //   version: '>=0.1.0',
+          //   handle: 'getblockcount' // custom object method mapped to rpc method
+          // },
+          //
+          // getBlockHash: {
+          //   version: '>=0.6.0'
+          // },
+          //
+          // getBlockHeader: {
+          //   version: '>=0.12.0'
+          // }
+        } };
+    }
+  }]);
+
+  return BlockProvider;
+}(BitcoinProvider$1);
+
+var ethereum = [new BlockProvider$1()];
+
 var providers = {
-  bitcoin: bitcoin
+  bitcoin: bitcoin,
+  ethereum: ethereum
 };
 
 var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _createClass$6 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass$8 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck$7(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck$9(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // DEV: hack
 var request = require('request-promise');
@@ -546,7 +667,7 @@ var Client = function () {
   function Client(uri) {
     var _this = this;
 
-    _classCallCheck$7(this, Client);
+    _classCallCheck$9(this, Client);
 
     var _DNSParser = DNSParser$1(uri),
         baseUrl = _DNSParser.baseUrl,
@@ -602,7 +723,7 @@ var Client = function () {
     });
   }
 
-  _createClass$6(Client, [{
+  _createClass$8(Client, [{
     key: 'addProvider',
     value: function addProvider(provider) {
       var _this2 = this;
