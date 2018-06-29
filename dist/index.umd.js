@@ -27979,7 +27979,100 @@
 	  return BlockProvider;
 	}(BitcoinProvider);
 
-	var bitcoin = [new BlockProvider()];
+	var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+	function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn$3(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits$3(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Transport = require('@ledgerhq/hw-transport-node-hid');
+	var AppBtc = require('@ledgerhq/hw-app-btc');
+
+	var WalletProvider = function (_BitcoinProvider) {
+	  _inherits$3(WalletProvider, _BitcoinProvider);
+
+	  function WalletProvider() {
+	    _classCallCheck$5(this, WalletProvider);
+
+	    return _possibleConstructorReturn$3(this, (WalletProvider.__proto__ || Object.getPrototypeOf(WalletProvider)).apply(this, arguments));
+	  }
+
+	  _createClass$4(WalletProvider, [{
+	    key: 'methods',
+	    value: function methods() {
+	      var _this2 = this;
+
+	      var _provider = this;
+
+	      return {
+	        connectToLedger: {
+	          rpc: function () {
+	            var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+	              var transport, btc;
+	              return regeneratorRuntime.wrap(function _callee$(_context) {
+	                while (1) {
+	                  switch (_context.prev = _context.next) {
+	                    case 0:
+	                      _context.next = 2;
+	                      return Transport.create();
+
+	                    case 2:
+	                      transport = _context.sent;
+	                      btc = new AppBtc(transport);
+
+	                      _provider._ledgerBtc = btc;
+
+	                    case 5:
+	                    case 'end':
+	                      return _context.stop();
+	                  }
+	                }
+	              }, _callee, _this2);
+	            }));
+
+	            function rpc() {
+	              return _ref.apply(this, arguments);
+	            }
+
+	            return rpc;
+	          }()
+	        },
+	        getAddress: {
+	          rpc: function () {
+	            var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+	              return regeneratorRuntime.wrap(function _callee2$(_context2) {
+	                while (1) {
+	                  switch (_context2.prev = _context2.next) {
+	                    case 0:
+	                      return _context2.abrupt('return', _provider._ledgerBtc.getWalletPublicKey('44\'/0\'/0\'/0'));
+
+	                    case 1:
+	                    case 'end':
+	                      return _context2.stop();
+	                  }
+	                }
+	              }, _callee2, _this2);
+	            }));
+
+	            function rpc() {
+	              return _ref2.apply(this, arguments);
+	            }
+
+	            return rpc;
+	          }()
+	        }
+	      };
+	    }
+	  }]);
+
+	  return WalletProvider;
+	}(BitcoinProvider);
+
+	var bitcoin = [new BlockProvider(), new WalletProvider()];
 
 	var providers = {
 	  bitcoin: bitcoin
@@ -27987,9 +28080,9 @@
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass$5 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck$6(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	// DEV: hack
 	var request = require('request-promise');
@@ -27998,7 +28091,7 @@
 	  function Client(uri) {
 	    var _this = this;
 
-	    _classCallCheck$5(this, Client);
+	    _classCallCheck$6(this, Client);
 
 	    var _DNSParser = DNSParser(uri),
 	        baseUrl = _DNSParser.baseUrl,
@@ -28047,7 +28140,7 @@
 	    }
 	  }
 
-	  _createClass$4(Client, [{
+	  _createClass$5(Client, [{
 	    key: 'addProvider',
 	    value: function addProvider(provider) {
 	      var _this2 = this;

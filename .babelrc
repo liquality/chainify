@@ -10,7 +10,8 @@
   "env": {
     "production": {
       "plugins": [
-        "external-helpers"
+        "external-helpers",
+        "transform-runtime"
       ]
     },
     "test": {

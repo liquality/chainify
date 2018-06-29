@@ -5,6 +5,7 @@ import Promise from 'bluebird'
 import DNSParser from './DsnParser'
 import JsonRpcHelper from './JsonRpcHelper'
 
+import Provider from './Provider'
 import providers from './providers'
 
 // DEV: hack
@@ -56,6 +57,13 @@ export default class Client {
     if (providers[driverName]) {
       providers[driverName].forEach(provider => this.addProvider(provider))
     }
+
+    const provider = new Provider()
+    provider.methods().forEach(method => {
+      if (!_.isFunction(this[method])) {
+        throw new Error(`Implement ${method} method`)
+      }
+    })
   }
 
   addProvider (provider) {
@@ -85,11 +93,11 @@ export default class Client {
     _.forOwn(provider.methods(), (obj, method) => {
       this.methods[method] = obj
 
-      if (obj.rpc) {
-        if (_.isFunction(obj.rpc)) {
-          this[method] = _.partial(obj.rpc)
+      if (obj.handle) {
+        if (_.isFunction(obj.handle)) {
+          this[method] = _.partial(obj.handle)
         } else {
-          this[method] = _.partial(this.rpcWrapper, method, obj.rpc)
+          this[method] = _.partial(this.rpcWrapper, method, obj.handle)
         }
       } else {
         const rpcMethod = this.getRpcMethod(method, obj)
@@ -111,8 +119,8 @@ export default class Client {
   handleTransformation (transformation, result) {
     if (_.isFunction(transformation)) {
       return Promise.resolve(transformation(result))
-    } else if (transformation.rpc) {
-      return this.rpc(transformation.rpc, result)
+    } else if (transformation.handle) {
+      return this.rpc(transformation.handle, result)
     } else if (_.isArray(transformation)) {
       const [ obj ] = transformation
 
@@ -146,20 +154,36 @@ export default class Client {
         }
       })
       .then(result => {
-        const { type } = this.methods[method]
+        const { mapping, type } = this.methods[method]
 
-        if (type) {
+        if (mapping) {
           Object
-            .keys(type)
+            .keys(mapping)
             .forEach(key => {
-              const t = type[key]
+              const t = mapping[key]
 
               if (typeof t === 'string') {
-                result[key] = result[type[key]]
+                result[key] = result[t]
               } else if (_.isFunction(t)) {
                 result[key] = t(key, result)
               } else {
                 throw new Error('This type of mapping is not implemented yet.')
+              }
+            })
+        }
+
+        if (type) {
+          const _interface = Client.Types[type]
+
+          if (!_interface) {
+            throw new Error(`Unknown type ${type}`)
+          }
+
+          Object
+            .keys(_interface)
+            .forEach(key => {
+              if (result[key] === undefined) {
+                throw new Error(`Method did not return ${key}. ${JSON.stringify(result)}`)
               }
             })
         }
@@ -184,6 +208,21 @@ export default class Client {
         }).then(this.jsonRpcHelper.parseResponse.bind(this.jsonRpcHelper))
       }, args)
   }
+
+  wire (_method, ...args) {
+    throw new Error('Method not implemented yet')
+  }
 }
 
 Client.providers = providers
+Client.Types = {
+  Block: {
+    number: 'number',
+    hash: 'string',
+    timestamp: 'timestamp',
+    difficulty: 'number',
+    size: 'number',
+    parentHash: 'string',
+    nonce: 'number'
+  }
+}

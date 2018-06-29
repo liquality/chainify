@@ -10,73 +10,77 @@ import globals from 'rollup-plugin-node-globals'
 import pkg from './package.json'
 
 export default [
+  // {
+  //   input: 'src/index.js',
+  //   output: [ {
+  //     file: pkg.browser,
+  //     format: 'umd',
+  //     name: 'ChainAbstractionLibrary',
+  //     sourcemap: false
+  //   } ],
+  //   plugins: [
+  //     builtins(),
+  //     resolve({
+  //       module: true,
+  //       browser: true,
+  //       preferBuiltins: false
+  //     }),
+  //     commonjs({
+  //       namedExports: {
+  //         'node_modules/lodash/lodash.js': [
+  //           'reduce',
+  //           'find',
+  //           'forEach',
+  //           'includes',
+  //           'endsWith',
+  //           'assign',
+  //           'defaults',
+  //           'get',
+  //           'has',
+  //           'isArray',
+  //           'isEmpty',
+  //           'isPlainObject',
+  //           'isString',
+  //           'map',
+  //           'mapKeys',
+  //           'set'
+  //         ],
+  //         'node_modules/buffer/index.js': [
+  //           'isBuffer'
+  //         ],
+  //         'node_modules/request-promise-native/lib/rp.js': [
+  //           'request'
+  //         ]
+  //       },
+  //       exclude: [
+  //         'node_modules/rollup-plugin-node-globals/**'
+  //       ]
+  //     }),
+  //     globals(),
+  //     json(),
+  //     babel({
+  //       exclude: [
+  //         'node_modules/**'
+  //       ]
+  //     }),
+  //     (process.env.NODE_ENV === 'production' && terser())
+  //   ]
+  // },
   {
     input: 'src/index.js',
-    output: [ {
-      file: pkg.browser,
-      format: 'umd',
-      name: 'ChainAbstractionLibrary',
-      sourcemap: false
-    } ],
-    plugins: [
-      builtins(),
-      resolve({
-        module: true,
-        browser: true,
-        preferBuiltins: false
-      }),
-      commonjs({
-        namedExports: {
-          'node_modules/lodash/lodash.js': [
-            'reduce',
-            'find',
-            'forEach',
-            'includes',
-            'endsWith',
-            'assign',
-            'defaults',
-            'get',
-            'has',
-            'isArray',
-            'isEmpty',
-            'isPlainObject',
-            'isString',
-            'map',
-            'mapKeys',
-            'set'
-          ],
-          'node_modules/buffer/index.js': [
-            'isBuffer'
-          ],
-          'node_modules/request-promise-native/lib/rp.js': [
-            'request'
-          ]
-        },
-        exclude: [
-          'node_modules/rollup-plugin-node-globals/**'
-        ]
-      }),
-      globals(),
-      json(),
-      babel({
-        exclude: [
-          'node_modules/**'
-        ]
-      }),
-      (process.env.NODE_ENV === 'production' && terser())
-    ]
-  },
-  {
-    input: 'src/index.js',
-    external: [ '@uphold/request-logger', 'bignumber.js', 'bluebird', 'debugnyan', 'dsn-parser', 'json-bigint', 'lodash', 'ms', 'request', 'semver', 'standard-error', 'http' ],
+    external: [
+      '@uphold/request-logger', 'bignumber.js', 'bluebird', 'debugnyan', 'dsn-parser', 'json-bigint', 'lodash', 'ms', 'request', 'semver', 'standard-error', 'http', '@ledgerhq/hw-app-btc', '@ledgerhq/hw-transport-node-hid'
+    ],
     output: [
       {
         file: pkg.main,
-        format: 'cjs'
+        format: 'cjs',
+        intro: "var regeneratorRuntime = require('regenerator-runtime');\n"
       },
       {
         file: pkg.module,
-        format: 'es'
+        format: 'es',
+        intro: "var regeneratorRuntime = require('regenerator-runtime');\n"
       }
     ],
     plugins: [

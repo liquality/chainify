@@ -1,5 +1,8 @@
 'use strict';
 
+var regeneratorRuntime = require('regenerator-runtime');
+
+
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var DNSParser = _interopDefault(require('dsn-parser'));
@@ -8,7 +11,7 @@ var JSONBigInt = _interopDefault(require('json-bigint'));
 var _ = require('lodash');
 var ___default = _interopDefault(_);
 var semver = _interopDefault(require('semver'));
-var Promise = _interopDefault(require('bluebird'));
+var Promise$1 = _interopDefault(require('bluebird'));
 
 /**
  * Secure driver connection postfix and checker
@@ -231,6 +234,25 @@ var _createClass$2 = function () { function defineProperties(target, props) { fo
 
 function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Provider = function () {
+  function Provider() {
+    _classCallCheck$3(this, Provider);
+  }
+
+  _createClass$2(Provider, [{
+    key: 'methods',
+    value: function methods() {
+      return ['getBlockByNumber', 'getBlockByHash', 'getBlockHeight', 'getBlockHash', 'getAddress', 'signMessage'];
+    }
+  }]);
+
+  return Provider;
+}();
+
+var _createClass$3 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /*
  * BitcoinProvider class
  * with bitcoin related transforms
@@ -238,10 +260,10 @@ function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Co
 
 var BitcoinProvider = function () {
   function BitcoinProvider() {
-    _classCallCheck$3(this, BitcoinProvider);
+    _classCallCheck$4(this, BitcoinProvider);
   }
 
-  _createClass$2(BitcoinProvider, [{
+  _createClass$3(BitcoinProvider, [{
     key: 'setClient',
     value: function setClient(client) {
       this.client = client;
@@ -272,7 +294,7 @@ BitcoinProvider.Types = {
     timestamp: 'time',
     difficulty: 'difficulty',
     size: 'size',
-    parentHash: 'parentHash',
+    parentHash: 'previousblockhash',
     nonce: 'nonce',
     exampleComputedValue: function exampleComputedValue(key, result) {
       return result.tx.reduce(function (value, tx) {
@@ -282,9 +304,9 @@ BitcoinProvider.Types = {
   }
 };
 
-var _createClass$3 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn$2(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
@@ -294,12 +316,12 @@ var BlockProvider = function (_BitcoinProvider) {
   _inherits$2(BlockProvider, _BitcoinProvider);
 
   function BlockProvider() {
-    _classCallCheck$4(this, BlockProvider);
+    _classCallCheck$5(this, BlockProvider);
 
     return _possibleConstructorReturn$2(this, (BlockProvider.__proto__ || Object.getPrototypeOf(BlockProvider)).apply(this, arguments));
   }
 
-  _createClass$3(BlockProvider, [{
+  _createClass$4(BlockProvider, [{
     key: 'methods',
     value: function methods() {
       var client = this.client;
@@ -308,14 +330,14 @@ var BlockProvider = function (_BitcoinProvider) {
       return {
         getCustomMethod: {
           version: '>=0.0.0',
-          rpc: function rpc() {
+          handle: function handle() {
             return client.getBlock.apply(client, arguments); // or Promise.resolve('Custom Response')
           }
         },
 
         getCustomBlockX: {
           version: '>=0.0.0',
-          rpc: 'getblock' // custom object method mapped to rpc method
+          handle: 'getblock' // custom object method mapped to rpc method
         },
 
         getBlock: {
@@ -329,33 +351,36 @@ var BlockProvider = function (_BitcoinProvider) {
               return 'Tx<' + value + '>';
             }]
           },
-          type: BitcoinProvider.Types.Block
+          mapping: BitcoinProvider.Types.Block,
+          type: 'Block'
         },
 
         getBlockByNumber: {
           version: '>=0.6.0',
-          rpc: 'getblockhash|getblock', // pipe rpc methods
+          handle: 'getblockhash|getblock', // pipe rpc methods
           transform: {
             confirmations: function confirmations(_confirmations2) {
               // transform
               if (_confirmations2 > 100) return 'Enough';else return 'Wait';
             },
             tx: [{
-              rpc: 'gettransaction' // populate all tx
+              handle: 'gettransaction' // populate all tx
             }]
           },
-          type: BitcoinProvider.Types.Block
+          mapping: BitcoinProvider.Types.Block,
+          type: 'Block'
         },
 
         getBlockByHash: {
           version: '>=0.6.0',
           alias: 'getBlock', // alias object methods
-          type: BitcoinProvider.Types.Block
+          mapping: BitcoinProvider.Types.Block,
+          type: 'Block'
         },
 
         getBlockHeight: {
           version: '>=0.1.0',
-          rpc: 'getblockcount' // custom object method mapped to rpc method
+          handle: 'getblockcount' // custom object method mapped to rpc method
         },
 
         getBlockHash: {
@@ -372,17 +397,152 @@ var BlockProvider = function (_BitcoinProvider) {
   return BlockProvider;
 }(BitcoinProvider);
 
-var bitcoin = [new BlockProvider()];
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _createClass$5 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck$6(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn$3(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits$3(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Transport = require('@ledgerhq/hw-transport-node-hid').default;
+var LedgerBtc = require('@ledgerhq/hw-app-btc').default;
+
+var LedgerWalletProvider = function (_BitcoinProvider) {
+  _inherits$3(LedgerWalletProvider, _BitcoinProvider);
+
+  function LedgerWalletProvider() {
+    _classCallCheck$6(this, LedgerWalletProvider);
+
+    return _possibleConstructorReturn$3(this, (LedgerWalletProvider.__proto__ || Object.getPrototypeOf(LedgerWalletProvider)).apply(this, arguments));
+  }
+
+  _createClass$5(LedgerWalletProvider, [{
+    key: 'methods',
+    value: function methods() {
+      var _this2 = this;
+
+      var connectToLedger = function () {
+        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+          var transport;
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  if (ledgerBtc) {
+                    _context.next = 5;
+                    break;
+                  }
+
+                  _context.next = 3;
+                  return Transport.create();
+
+                case 3:
+                  transport = _context.sent;
+
+                  ledgerBtc = new LedgerBtc(transport);
+
+                case 5:
+                case 'end':
+                  return _context.stop();
+              }
+            }
+          }, _callee, this);
+        }));
+
+        return function connectToLedger() {
+          return _ref.apply(this, arguments);
+        };
+      }();
+
+      var ledgerBtc = false;
+
+      return {
+        getAddress: {
+          handle: function () {
+            var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+              return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      _context2.next = 2;
+                      return connectToLedger();
+
+                    case 2:
+                      return _context2.abrupt('return', ledgerBtc.getWalletPublicKey('44\'/0\'/0\'/0').bitcoinAddress);
+
+                    case 3:
+                    case 'end':
+                      return _context2.stop();
+                  }
+                }
+              }, _callee2, _this2);
+            }));
+
+            function handle() {
+              return _ref2.apply(this, arguments);
+            }
+
+            return handle;
+          }()
+        },
+        signMessage: {
+          handle: function () {
+            var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+              for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+              }
+
+              var _args3, message;
+
+              return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                while (1) {
+                  switch (_context3.prev = _context3.next) {
+                    case 0:
+                      _context3.next = 2;
+                      return connectToLedger();
+
+                    case 2:
+                      _args3 = _slicedToArray(args, 1), message = _args3[0];
+                      return _context3.abrupt('return', ledgerBtc.signMessageNew('44\'/0\'/0\'/0', Buffer.from(message).toString('hex')));
+
+                    case 4:
+                    case 'end':
+                      return _context3.stop();
+                  }
+                }
+              }, _callee3, _this2);
+            }));
+
+            function handle() {
+              return _ref3.apply(this, arguments);
+            }
+
+            return handle;
+          }()
+        }
+      };
+    }
+  }]);
+
+  return LedgerWalletProvider;
+}(BitcoinProvider);
+
+var bitcoin = [new BlockProvider(), new LedgerWalletProvider()];
 
 var providers = {
   bitcoin: bitcoin
 };
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass$6 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck$7(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // DEV: hack
 var request = require('request-promise');
@@ -391,7 +551,7 @@ var Client = function () {
   function Client(uri) {
     var _this = this;
 
-    _classCallCheck$5(this, Client);
+    _classCallCheck$7(this, Client);
 
     var _DNSParser = DNSParser$1(uri),
         baseUrl = _DNSParser.baseUrl,
@@ -438,9 +598,16 @@ var Client = function () {
         return _this.addProvider(provider);
       });
     }
+
+    var provider = new Provider();
+    provider.methods().forEach(function (method) {
+      if (!___default.isFunction(_this[method])) {
+        throw new Error('Implement ' + method + ' method');
+      }
+    });
   }
 
-  _createClass$4(Client, [{
+  _createClass$6(Client, [{
     key: 'addProvider',
     value: function addProvider(provider) {
       var _this2 = this;
@@ -460,7 +627,7 @@ var Client = function () {
           throw new Error('Invalid version "' + this.version + '"', { version: this.version });
         }
 
-        var _result = _slicedToArray(result, 1),
+        var _result = _slicedToArray$1(result, 1),
             version = _result[0];
 
         this.unsupportedMethods = ___default.chain(methods).pickBy(function (method) {
@@ -471,11 +638,11 @@ var Client = function () {
       ___default.forOwn(provider.methods(), function (obj, method) {
         _this2.methods[method] = obj;
 
-        if (obj.rpc) {
-          if (___default.isFunction(obj.rpc)) {
-            _this2[method] = ___default.partial(obj.rpc);
+        if (obj.handle) {
+          if (___default.isFunction(obj.handle)) {
+            _this2[method] = ___default.partial(obj.handle);
           } else {
-            _this2[method] = ___default.partial(_this2.rpcWrapper, method, obj.rpc);
+            _this2[method] = ___default.partial(_this2.rpcWrapper, method, obj.handle);
           }
         } else {
           var rpcMethod = _this2.getRpcMethod(method, obj);
@@ -500,18 +667,18 @@ var Client = function () {
       var _this3 = this;
 
       if (___default.isFunction(transformation)) {
-        return Promise.resolve(transformation(result));
-      } else if (transformation.rpc) {
-        return this.rpc(transformation.rpc, result);
+        return Promise$1.resolve(transformation(result));
+      } else if (transformation.handle) {
+        return this.rpc(transformation.handle, result);
       } else if (___default.isArray(transformation)) {
-        var _transformation = _slicedToArray(transformation, 1),
+        var _transformation = _slicedToArray$1(transformation, 1),
             obj = _transformation[0];
 
-        return Promise.map(result, function (param) {
+        return Promise$1.map(result, function (param) {
           return _this3.handleTransformation(obj, param);
         });
       } else {
-        return Promise.reject(new Error('This type of mapping is not implemented yet.'));
+        return Promise$1.reject(new Error('This type of mapping is not implemented yet.'));
       }
     }
   }, {
@@ -528,7 +695,7 @@ var Client = function () {
 
 
         if (transform) {
-          return Promise.map(Object.keys(transform), function (field) {
+          return Promise$1.map(Object.keys(transform), function (field) {
             return _this4.handleTransformation(transform[field], result[field]).then(function (transformedField) {
               result[field] = transformedField;
             });
@@ -539,19 +706,35 @@ var Client = function () {
           return result;
         }
       }).then(function (result) {
-        var type = _this4.methods[method].type;
+        var _methods$method = _this4.methods[method],
+            mapping = _methods$method.mapping,
+            type = _methods$method.type;
 
 
-        if (type) {
-          Object.keys(type).forEach(function (key) {
-            var t = type[key];
+        if (mapping) {
+          Object.keys(mapping).forEach(function (key) {
+            var t = mapping[key];
 
             if (typeof t === 'string') {
-              result[key] = result[type[key]];
+              result[key] = result[t];
             } else if (___default.isFunction(t)) {
               result[key] = t(key, result);
             } else {
               throw new Error('This type of mapping is not implemented yet.');
+            }
+          });
+        }
+
+        if (type) {
+          var _interface = Client.Types[type];
+
+          if (!_interface) {
+            throw new Error('Unknown type ' + type);
+          }
+
+          Object.keys(_interface).forEach(function (key) {
+            if (result[key] === undefined) {
+              throw new Error('Method did not return ' + key + '. ' + JSON.stringify(result));
             }
           });
         }
@@ -570,7 +753,7 @@ var Client = function () {
         args[_key2 - 1] = arguments[_key2];
       }
 
-      return Promise.reduce(methods, function (params, method) {
+      return Promise$1.reduce(methods, function (params, method) {
         if (!___default.isArray(params)) params = [params];
 
         var requestBody = _this5.jsonRpcHelper.prepareRequest({ method: method, params: params });
@@ -582,6 +765,11 @@ var Client = function () {
         }).then(_this5.jsonRpcHelper.parseResponse.bind(_this5.jsonRpcHelper));
       }, args);
     }
+  }, {
+    key: 'wire',
+    value: function wire(_method) {
+      throw new Error('Method not implemented yet');
+    }
   }]);
 
   return Client;
@@ -589,5 +777,16 @@ var Client = function () {
 
 
 Client.providers = providers;
+Client.Types = {
+  Block: {
+    number: 'number',
+    hash: 'string',
+    timestamp: 'timestamp',
+    difficulty: 'number',
+    size: 'number',
+    parentHash: 'string',
+    nonce: 'number'
+  }
+};
 
 module.exports = Client;

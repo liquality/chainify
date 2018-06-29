@@ -28,7 +28,7 @@ BitcoinProvider.Types = {
     timestamp: 'time',
     difficulty: 'difficulty',
     size: 'size',
-    parentHash: 'parentHash',
+    parentHash: 'previousblockhash',
     nonce: 'nonce',
     exampleComputedValue: (key, result) => result.tx.reduce((value, tx) => value + tx.amount, 0)
   }
