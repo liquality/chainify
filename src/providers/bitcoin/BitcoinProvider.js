@@ -36,7 +36,9 @@ BitcoinProvider.Types = {
   Transaction: {
     confirmations: 'confirmations',
     hash: 'txid',
-    value: 'amount',
+    value: (key, result, client) => {
+      return Number(result['amount']) * 1e8
+    },
     blockHash: 'blockhash',
     blockNumber: 'blockindex'
   }
