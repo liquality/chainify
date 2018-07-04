@@ -11,8 +11,15 @@ export default class BlockProvider extends EthereumProvider {
         },
         mapping: EthereumProvider.Types.Block
       },
+
       getTransactionByHash: {
         mapping: EthereumProvider.Types.Transaction
+      },
+
+      getBlockHeight: {
+        handle: (...args) => {
+          return client.rpc('eth_blockNumber')
+        }
       }
     }
   }

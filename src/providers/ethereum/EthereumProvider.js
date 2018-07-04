@@ -21,7 +21,7 @@ export default class EthereumProvider {
   }
 }
 
-BitcoinProvider.Types = {
+EthereumProvider.Types = {
   Block: {
     number: 'number',
     hash: 'hash',
