@@ -392,30 +392,55 @@ var BlockProvider = function (_BitcoinProvider) {
 
         getBlock: {
           version: '>=0.6.0',
-          transform: {
-            confirmations: function confirmations(_confirmations) {
-              // transform
-              if (_confirmations > 100) return 'Enough';else return 'Wait';
-            },
-            tx: [function transform(value) {
-              return 'Tx<' + value + '>';
-            }]
-          },
           mapping: BitcoinProvider.Types.Block,
           type: 'Block'
         },
 
         getBlockByNumber: {
           version: '>=0.6.0',
-          handle: 'getblockhash|getblock', // pipe rpc methods
-          transform: {
-            confirmations: function confirmations(_confirmations2) {
-              // transform
-              if (_confirmations2 > 100) return 'Enough';else return 'Wait';
-            },
-            tx: [{
-              handle: 'gettransaction' // populate all tx
-            }]
+          handle: function () {
+            var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(number, includeTx) {
+              var hash, block;
+              return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      _context2.next = 2;
+                      return client.rpc('getblockhash', number);
+
+                    case 2:
+                      hash = _context2.sent;
+                      _context2.next = 5;
+                      return client.rpc('getblock', hash);
+
+                    case 5:
+                      block = _context2.sent;
+                      return _context2.abrupt('return', block);
+
+                    case 7:
+                    case 'end':
+                      return _context2.stop();
+                  }
+                }
+              }, _callee2, _this2);
+            }));
+
+            function handle(_x, _x2) {
+              return _ref2.apply(this, arguments);
+            }
+
+            return handle;
+          }(),
+          transform: function transform(number, includeTx) {
+            if (includeTx) {
+              return {
+                tx: [{
+                  handle: 'gettransaction' // populate all tx
+                }]
+              };
+            } else {
+              return {};
+            }
           },
           mapping: BitcoinProvider.Types.Block,
           type: 'Block'
@@ -676,7 +701,7 @@ var BlockProvider$1 = function (_EthereumProvider) {
               args[_key] = arguments[_key];
             }
 
-            return client.rpc.apply(client, ['eth_getBlockByNumber'].concat(args, [false]));
+            return client.rpc.apply(client, ['eth_getBlockByNumber'].concat(args, [true]));
           },
           mapping: BitcoinProvider$1.Types.Block
         },
@@ -720,6 +745,8 @@ var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr =
 var _createClass$8 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _asyncToGenerator$2(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise$1(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise$1.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _toConsumableArray$1(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck$9(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -863,7 +890,7 @@ var Client = function () {
     }
   }, {
     key: 'handleResponse',
-    value: function handleResponse(response, method) {
+    value: function handleResponse(response, method, args) {
       var _this4 = this;
 
       var ref = this;
@@ -872,8 +899,9 @@ var Client = function () {
 
 
         if (transform) {
-          return Promise$1.map(Object.keys(transform), function (field) {
-            return ref.handleTransformation(transform[field], response[field]).then(function (transformedField) {
+          var tObj = transform.apply(undefined, _toConsumableArray$1(args));
+          return Promise$1.map(Object.keys(tObj), function (field) {
+            return ref.handleTransformation(tObj[field], response[field]).then(function (transformedField) {
               response[field] = transformedField;
             });
           }).then(function (__) {
@@ -958,27 +986,27 @@ var Client = function () {
   }, {
     key: 'methodWrapper',
     value: function methodWrapper(method, fn) {
-      var _this5 = this;
-
       for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
         args[_key - 2] = arguments[_key];
       }
 
+      var _this5 = this;
+
       return Promise$1.resolve(fn.apply(undefined, args)).then(function (x) {
-        return _this5.handleResponse(x, method);
+        return _this5.handleResponse(x, method, args);
       });
     }
   }, {
     key: 'rpcWrapper',
     value: function rpcWrapper(method, rpcMethod) {
-      var _this6 = this;
-
       for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
         args[_key2 - 2] = arguments[_key2];
       }
 
+      var _this6 = this;
+
       return this.rpc.apply(this, [rpcMethod].concat(args)).then(function (x) {
-        return _this6.handleResponse(x, method);
+        return _this6.handleResponse(x, method, args);
       });
     }
   }, {

@@ -19,30 +19,28 @@ export default class BlockProvider extends BitcoinProvider {
 
       getBlock: {
         version: '>=0.6.0',
-        transform: {
-          confirmations: (confirmations) => { // transform
-            if (confirmations > 100) return 'Enough'
-            else return 'Wait'
-          },
-          tx: [ function transform (value) {
-            return `Tx<${value}>`
-          } ]
-        },
         mapping: BitcoinProvider.Types.Block,
         type: 'Block'
       },
 
       getBlockByNumber: {
         version: '>=0.6.0',
-        handle: 'getblockhash|getblock', // pipe rpc methods
-        transform: {
-          confirmations: (confirmations) => { // transform
-            if (confirmations > 100) return 'Enough'
-            else return 'Wait'
-          },
-          tx: [{
-            handle: 'gettransaction' // populate all tx
-          }]
+        handle: async (number, includeTx) => {
+          const hash = await client.rpc('getblockhash', number)
+          const block = await client.rpc('getblock', hash)
+
+          return block
+        },
+        transform: (number, includeTx) => {
+          if (includeTx) {
+            return {
+              tx: [{
+                handle: 'gettransaction' // populate all tx
+              }]
+            }
+          } else {
+            return {}
+          }
         },
         mapping: BitcoinProvider.Types.Block,
         type: 'Block'

@@ -132,18 +132,19 @@ export default class Client {
     }
   }
 
-  handleResponse (response, method) {
+  handleResponse (response, method, args) {
     const ref = this
     return Promise.resolve(function () {
       const { transform } = ref.methods[method]
 
       if (transform) {
+        const tObj = transform(...args)
         return Promise
           .map(
-            Object.keys(transform),
+            Object.keys(tObj),
             field => {
               return ref
-                .handleTransformation(transform[field], response[field])
+                .handleTransformation(tObj[field], response[field])
                 .then(transformedField => {
                   response[field] = transformedField
                 })
@@ -195,12 +196,12 @@ export default class Client {
   methodWrapper (method, fn, ...args) {
     return Promise
       .resolve(fn(...args))
-      .then(x => this.handleResponse(x, method))
+      .then(x => this.handleResponse(x, method, args))
   }
 
   rpcWrapper (method, rpcMethod, ...args) {
     return this.rpc(rpcMethod, ...args)
-      .then(x => this.handleResponse(x, method))
+      .then(x => this.handleResponse(x, method, args))
   }
 
   rpc (_method, ...args) {
