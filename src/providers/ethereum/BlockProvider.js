@@ -7,7 +7,7 @@ export default class BlockProvider extends EthereumProvider {
     return {
       getBlockByNumber: {
         handle: (...args) => {
-          return client.rpc('eth_getBlockByNumber', ...args, true)
+          return client.rpc('eth_getBlockByNumber', ...args)
         },
         mapping: EthereumProvider.Types.Block
       },
