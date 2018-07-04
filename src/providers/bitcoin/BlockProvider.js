@@ -5,6 +5,7 @@ export default class BlockProvider extends BitcoinProvider {
     const { client } = this
 
     return {
+      generate: {},
       getTransactionByHash: {
         version: '>=0.0.0',
         handle: (...args) => {

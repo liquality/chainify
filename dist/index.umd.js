@@ -28666,6 +28666,7 @@
 
 
 	      return {
+	        generate: {},
 	        getTransactionByHash: {
 	          version: '>=0.0.0',
 	          handle: function handle() {

@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  build:
+    environment:
+      BASH_ENV: /etc/profile
+    docker:
+      - image: mblackmblack/bitcoin-core-with-nvm:0.0.5
+    working_directory: ~/chainabstractionlayer
+    steps:
+      - checkout
+      - run:
+          name: bitcoind
+          command: bitcoind
+      - run:
+          name: npm install
+          command: npm install
+  test:
+    environment:
+      BASH_ENV: /etc/profile
+    docker:
+      - image: mblackmblack/bitcoin-core-with-nvm:0.0.5
+    working_directory: ~/chainabstractionlayer
+    steps:
+      - checkout
+      - run:
+          name: test
+          command: npm test
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - requires: build
