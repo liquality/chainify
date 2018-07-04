@@ -28634,7 +28634,9 @@
 	  Transaction: {
 	    confirmations: 'confirmations',
 	    hash: 'txid',
-	    value: 'amount',
+	    value: function value(key, result, client) {
+	      return Number(result['amount']) * 1e8;
+	    },
 	    blockHash: 'blockhash',
 	    blockNumber: 'blockindex'
 	  }
