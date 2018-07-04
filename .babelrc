@@ -1,0 +1,24 @@
+{
+  "presets": [
+    [ "env", {
+      "targets": {
+        "browsers": [ "last 2 versions", "safari >= 7" ]
+      },
+      "modules": false
+    } ]
+  ],
+  "env": {
+    "production": {
+      "plugins": [
+        "external-helpers",
+        "transform-runtime"
+      ]
+    },
+    "test": {
+      "plugins": [
+        "transform-async-to-generator",
+        "istanbul"
+      ]
+    }
+  }
+}
