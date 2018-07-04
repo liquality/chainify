@@ -5,16 +5,16 @@ export default class BlockProvider extends BitcoinProvider {
     const { client } = this
 
     return {
-      getCustomMethod: {
+      getTransactionByHash: {
         version: '>=0.0.0',
-        handle: (...params) => {
-          return client.getBlock(...params) // or Promise.resolve('Custom Response')
-        }
-      },
+        handle: async (...args) => {
+          const tx = await client.rpc('gettransaction', ...args)
+          const txd = await client.rpc('decoderawtransaction', tx.hex)
+          const obj = Object.assign({}, tx, txd)
 
-      getCustomBlockX: {
-        version: '>=0.0.0',
-        handle: 'getblock' // custom object method mapped to rpc method
+          return obj
+        },
+        mapping: BitcoinProvider.Types.Transaction
       },
 
       getBlock: {

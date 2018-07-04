@@ -307,10 +307,21 @@ BitcoinProvider.Types = {
         return value + tx.amount;
       }, 0);
     }
+  },
+  Transaction: {
+    confirmations: 'confirmations',
+    hash: 'txid',
+    value: 'amount',
+    blockHash: 'blockHash',
+    blockNumber: 'blockNumber'
   }
 };
 
 var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -330,20 +341,53 @@ var BlockProvider = function (_BitcoinProvider) {
   _createClass$4(BlockProvider, [{
     key: 'methods',
     value: function methods() {
+      var _this2 = this;
+
       var client = this.client;
 
 
       return {
-        getCustomMethod: {
+        getTransactionByHash: {
           version: '>=0.0.0',
-          handle: function handle() {
-            return client.getBlock.apply(client, arguments); // or Promise.resolve('Custom Response')
-          }
-        },
+          handle: function () {
+            var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+              for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+              }
 
-        getCustomBlockX: {
-          version: '>=0.0.0',
-          handle: 'getblock' // custom object method mapped to rpc method
+              var tx, txd, obj;
+              return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      _context.next = 2;
+                      return client.rpc.apply(client, ['gettransaction'].concat(_toConsumableArray(args)));
+
+                    case 2:
+                      tx = _context.sent;
+                      _context.next = 5;
+                      return client.rpc('decoderawtransaction', tx.hex);
+
+                    case 5:
+                      txd = _context.sent;
+                      obj = Object.assign({}, tx, txd);
+                      return _context.abrupt('return', obj);
+
+                    case 8:
+                    case 'end':
+                      return _context.stop();
+                  }
+                }
+              }, _callee, _this2);
+            }));
+
+            function handle() {
+              return _ref.apply(this, arguments);
+            }
+
+            return handle;
+          }(),
+          mapping: BitcoinProvider.Types.Transaction
         },
 
         getBlock: {
@@ -407,7 +451,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass$5 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator$1(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck$6(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -433,7 +477,7 @@ var LedgerWalletProvider = function (_BitcoinProvider) {
       var _this2 = this;
 
       var connectToLedger = function () {
-        var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var _ref = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
           var transport;
           return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
@@ -470,7 +514,7 @@ var LedgerWalletProvider = function (_BitcoinProvider) {
       return {
         getAddress: {
           handle: function () {
-            var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+            var _ref2 = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
               return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                   switch (_context2.prev = _context2.next) {
@@ -498,7 +542,7 @@ var LedgerWalletProvider = function (_BitcoinProvider) {
         },
         signMessage: {
           handle: function () {
-            var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+            var _ref3 = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
               for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                 args[_key] = arguments[_key];
               }
@@ -588,6 +632,17 @@ BitcoinProvider$1.Types = {
     parentHash: 'parentHash',
     nonce: 'nonce',
     transactions: 'transactions'
+  },
+  Transaction: {
+    confirmations: function confirmations(key, result, client) {
+      return client.rpc('eth_blockNumber').then(function (currentBlock) {
+        return Number(currentBlock) - result[key];
+      });
+    },
+    hash: 'hash',
+    value: 'value',
+    blockHash: 'blockHash',
+    blockNumber: 'blockNumber'
   }
 };
 
@@ -623,9 +678,10 @@ var BlockProvider$1 = function (_EthereumProvider) {
 
             return client.rpc.apply(client, ['eth_getBlockByNumber'].concat(args, [false]));
           },
-          mapping: BitcoinProvider$1.Types.Block,
-          type: 'Block'
-
+          mapping: BitcoinProvider$1.Types.Block
+        },
+        getTransactionByHash: {
+          mapping: BitcoinProvider$1.Types.Transaction
           // getBlockByHash: {
           //   version: '>=0.6.0',
           //   alias: 'getBlock', // alias object methods
@@ -662,6 +718,8 @@ var providers = {
 var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass$8 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _asyncToGenerator$2(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise$1(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise$1.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck$9(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -761,7 +819,8 @@ var Client = function () {
 
         if (obj.handle) {
           if (___default.isFunction(obj.handle)) {
-            _this2[method] = ___default.partial(obj.handle);
+            // this[method] = _.partial(obj.handle)
+            _this2[method] = ___default.partial(_this2.methodWrapper, method, obj.handle);
           } else {
             _this2[method] = ___default.partial(_this2.rpcWrapper, method, obj.handle);
           }
@@ -803,47 +862,80 @@ var Client = function () {
       }
     }
   }, {
-    key: 'rpcWrapper',
-    value: function rpcWrapper(method, rpcMethod) {
+    key: 'handleResponse',
+    value: function handleResponse(response, method) {
       var _this4 = this;
 
-      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        args[_key - 2] = arguments[_key];
-      }
-
-      return this.rpc.apply(this, [rpcMethod].concat(args)).then(function (result) {
-        var transform = _this4.methods[method].transform;
+      var ref = this;
+      return Promise$1.resolve(function () {
+        var transform = ref.methods[method].transform;
 
 
         if (transform) {
           return Promise$1.map(Object.keys(transform), function (field) {
-            return _this4.handleTransformation(transform[field], result[field]).then(function (transformedField) {
-              result[field] = transformedField;
+            return ref.handleTransformation(transform[field], response[field]).then(function (transformedField) {
+              response[field] = transformedField;
             });
           }).then(function (__) {
-            return result;
+            return response;
           });
         } else {
-          return result;
+          return response;
         }
-      }).then(function (result) {
-        var _methods$method = _this4.methods[method],
-            mapping = _methods$method.mapping,
-            type = _methods$method.type;
+      }()).then(function (result) {
+        var _ref$methods$method = ref.methods[method],
+            mapping = _ref$methods$method.mapping,
+            type = _ref$methods$method.type;
 
 
         if (mapping) {
-          Object.keys(mapping).forEach(function (key) {
-            var t = mapping[key];
+          Object.keys(mapping).forEach(function () {
+            var _ref = _asyncToGenerator$2( /*#__PURE__*/regeneratorRuntime.mark(function _callee(key) {
+              var t;
+              return regeneratorRuntime.wrap(function _callee$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      t = mapping[key];
 
-            if (typeof t === 'string') {
-              result[key] = result[t];
-            } else if (___default.isFunction(t)) {
-              result[key] = t(key, result);
-            } else {
-              throw new Error('This type of mapping is not implemented yet.');
-            }
-          });
+                      if (!(typeof t === 'string')) {
+                        _context.next = 5;
+                        break;
+                      }
+
+                      result[key] = result[t];
+                      _context.next = 12;
+                      break;
+
+                    case 5:
+                      if (!___default.isFunction(t)) {
+                        _context.next = 11;
+                        break;
+                      }
+
+                      _context.next = 8;
+                      return t(key, result, ref);
+
+                    case 8:
+                      result[key] = _context.sent;
+                      _context.next = 12;
+                      break;
+
+                    case 11:
+                      throw new Error('This type of mapping is not implemented yet.');
+
+                    case 12:
+                    case 'end':
+                      return _context.stop();
+                  }
+                }
+              }, _callee, _this4);
+            }));
+
+            return function (_x) {
+              return _ref.apply(this, arguments);
+            };
+          }());
         }
 
         if (type) {
@@ -864,26 +956,52 @@ var Client = function () {
       });
     }
   }, {
+    key: 'methodWrapper',
+    value: function methodWrapper(method, fn) {
+      var _this5 = this;
+
+      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        args[_key - 2] = arguments[_key];
+      }
+
+      return Promise$1.resolve(fn.apply(undefined, args)).then(function (x) {
+        return _this5.handleResponse(x, method);
+      });
+    }
+  }, {
+    key: 'rpcWrapper',
+    value: function rpcWrapper(method, rpcMethod) {
+      var _this6 = this;
+
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
+      }
+
+      return this.rpc.apply(this, [rpcMethod].concat(args)).then(function (x) {
+        return _this6.handleResponse(x, method);
+      });
+    }
+  }, {
     key: 'rpc',
     value: function rpc(_method) {
-      var _this5 = this;
+      var _this7 = this;
 
       var methods = _method.split('|');
 
-      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
+      for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        args[_key3 - 1] = arguments[_key3];
       }
 
       return Promise$1.reduce(methods, function (params, method) {
         if (!___default.isArray(params)) params = [params];
 
-        var requestBody = _this5.jsonRpcHelper.prepareRequest({ method: method, params: params });
+        var requestBody = _this7.jsonRpcHelper.prepareRequest({ method: method, params: params });
 
-        return _this5.request.post({
-          auth: ___default.pickBy(_this5.auth, ___default.identity),
+        return _this7.request.post({
+          auth: ___default.pickBy(_this7.auth, ___default.identity),
           body: requestBody,
           uri: '/'
-        }).then(_this5.jsonRpcHelper.parseResponse.bind(_this5.jsonRpcHelper));
+        }).then(_this7.jsonRpcHelper.parseResponse.bind(_this7.jsonRpcHelper));
       }, args);
     }
   }, {

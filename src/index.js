@@ -95,7 +95,8 @@ export default class Client {
 
       if (obj.handle) {
         if (_.isFunction(obj.handle)) {
-          this[method] = _.partial(obj.handle)
+          // this[method] = _.partial(obj.handle)
+          this[method] = _.partial(this.methodWrapper, method, obj.handle)
         } else {
           this[method] = _.partial(this.rpcWrapper, method, obj.handle)
         }
@@ -131,65 +132,75 @@ export default class Client {
     }
   }
 
+  handleResponse (response, method) {
+    const ref = this
+    return Promise.resolve(function () {
+      const { transform } = ref.methods[method]
+
+      if (transform) {
+        return Promise
+          .map(
+            Object.keys(transform),
+            field => {
+              return ref
+                .handleTransformation(transform[field], response[field])
+                .then(transformedField => {
+                  response[field] = transformedField
+                })
+            }
+          )
+          .then(__ => response)
+      } else {
+        return response
+      }
+    }()).then(result => {
+      const { mapping, type } = ref.methods[method]
+
+      if (mapping) {
+        Object
+          .keys(mapping)
+          .forEach(async key => {
+            const t = mapping[key]
+
+            if (typeof t === 'string') {
+              result[key] = result[t]
+            } else if (_.isFunction(t)) {
+              result[key] = await t(key, result, ref)
+            } else {
+              throw new Error('This type of mapping is not implemented yet.')
+            }
+          })
+      }
+
+      if (type) {
+        const _interface = Client.Types[type]
+
+        if (!_interface) {
+          throw new Error(`Unknown type ${type}`)
+        }
+
+        Object
+          .keys(_interface)
+          .forEach(key => {
+            if (result[key] === undefined) {
+              throw new Error(`Method did not return ${key}. ${JSON.stringify(result)}`)
+            }
+          })
+      }
+
+      return result
+    })
+  }
+
+  methodWrapper (method, fn, ...args) {
+    return Promise
+      .resolve(fn(...args))
+      .then(x => this.handleResponse(x, method))
+  }
+
   rpcWrapper (method, rpcMethod, ...args) {
     return this.rpc(rpcMethod, ...args)
-      .then(result => {
-        const { transform } = this.methods[method]
-
-        if (transform) {
-          return Promise
-            .map(
-              Object.keys(transform),
-              field => {
-                return this
-                  .handleTransformation(transform[field], result[field])
-                  .then(transformedField => {
-                    result[field] = transformedField
-                  })
-              }
-            )
-            .then(__ => result)
-        } else {
-          return result
-        }
-      })
-      .then(result => {
-        const { mapping, type } = this.methods[method]
-
-        if (mapping) {
-          Object
-            .keys(mapping)
-            .forEach(key => {
-              const t = mapping[key]
-
-              if (typeof t === 'string') {
-                result[key] = result[t]
-              } else if (_.isFunction(t)) {
-                result[key] = t(key, result)
-              } else {
-                throw new Error('This type of mapping is not implemented yet.')
-              }
-            })
-        }
-
-        if (type) {
-          const _interface = Client.Types[type]
-
-          if (!_interface) {
-            throw new Error(`Unknown type ${type}`)
-          }
-
-          Object
-            .keys(_interface)
-            .forEach(key => {
-              if (result[key] === undefined) {
-                throw new Error(`Method did not return ${key}. ${JSON.stringify(result)}`)
-              }
-            })
-        }
-
-        return result
-      })
+      .then(x => this.handleResponse(x, method))
   }
 
   rpc (_method, ...args) {

@@ -9,10 +9,11 @@ export default class BlockProvider extends EthereumProvider {
         handle: (...args) => {
           return client.rpc('eth_getBlockByNumber', ...args, false)
         },
-        mapping: EthereumProvider.Types.Block,
-        type: 'Block'
+        mapping: EthereumProvider.Types.Block
+      },
+      getTransactionByHash: {
+        mapping: EthereumProvider.Types.Transaction
       }
-
       // getBlockByHash: {
       //   version: '>=0.6.0',
       //   alias: 'getBlock', // alias object methods

@@ -31,5 +31,16 @@ BitcoinProvider.Types = {
     parentHash: 'parentHash',
     nonce: 'nonce',
     transactions: 'transactions'
+  },
+  Transaction: {
+    confirmations: (key, result, client) => {
+      return client.rpc('eth_blockNumber').then(currentBlock => {
+        return Number(currentBlock) - result[key]
+      })
+    },
+    hash: 'hash',
+    value: 'value',
+    blockHash: 'blockHash',
+    blockNumber: 'blockNumber'
   }
 }

@@ -32,5 +32,12 @@ BitcoinProvider.Types = {
     nonce: 'nonce',
     transactions: 'tx',
     exampleComputedValue: (key, result) => result.tx.reduce((value, tx) => value + tx.amount, 0)
+  },
+  Transaction: {
+    confirmations: 'confirmations',
+    hash: 'txid',
+    value: 'amount',
+    blockHash: 'blockHash',
+    blockNumber: 'blockNumber'
   }
 }
