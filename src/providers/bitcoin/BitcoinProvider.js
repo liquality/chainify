@@ -37,7 +37,7 @@ BitcoinProvider.Types = {
     confirmations: 'confirmations',
     hash: 'txid',
     value: 'amount',
-    blockHash: 'blockHash',
-    blockNumber: 'blockNumber'
+    blockHash: 'blockhash',
+    blockNumber: 'blockindex'
   }
 }
