@@ -23,12 +23,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: bitcoind
-          command: bitcoind
-      - run:
-          name: npm install
-          command: npm install
-      - run:
           name: test
           command: npm test
 
@@ -36,5 +30,5 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
       - test
+      - requires: build
