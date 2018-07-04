@@ -614,16 +614,16 @@ var _createClass$6 = function () { function defineProperties(target, props) { fo
 function _classCallCheck$7(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
- * BitcoinProvider class
- * with bitcoin related transforms
+ * EthereumProvider class
+ * with ethereum related transforms
  */
 
-var BitcoinProvider$1 = function () {
-  function BitcoinProvider() {
-    _classCallCheck$7(this, BitcoinProvider);
+var EthereumProvider = function () {
+  function EthereumProvider() {
+    _classCallCheck$7(this, EthereumProvider);
   }
 
-  _createClass$6(BitcoinProvider, [{
+  _createClass$6(EthereumProvider, [{
     key: 'setClient',
     value: function setClient(client) {
       this.client = client;
@@ -633,21 +633,21 @@ var BitcoinProvider$1 = function () {
     value: function transforms() {
       return {
         methodToRpc: function methodToRpc(method, params) {
-          return 'eth_' + method;
+          return method;
         },
         value: function value(val, unit) {
-          // convert hex to wei/gwei/eth
+          // convert hex to satoshi/mBTC/BTC
           return val;
         }
       };
     }
   }]);
 
-  return BitcoinProvider;
+  return EthereumProvider;
 }();
 
 
-BitcoinProvider$1.Types = {
+EthereumProvider.Types = {
   Block: {
     number: 'number',
     hash: 'hash',
@@ -703,35 +703,24 @@ var BlockProvider$1 = function (_EthereumProvider) {
 
             return client.rpc.apply(client, ['eth_getBlockByNumber'].concat(args, [true]));
           },
-          mapping: BitcoinProvider$1.Types.Block
+          mapping: EthereumProvider.Types.Block
         },
+
         getTransactionByHash: {
-          mapping: BitcoinProvider$1.Types.Transaction
-          // getBlockByHash: {
-          //   version: '>=0.6.0',
-          //   alias: 'getBlock', // alias object methods
-          //   mapping: EthereumProvider.Types.Block,
-          //   type: 'Block'
-          // },
-          //
-          // getBlockHeight: {
-          //   version: '>=0.1.0',
-          //   handle: 'getblockcount' // custom object method mapped to rpc method
-          // },
-          //
-          // getBlockHash: {
-          //   version: '>=0.6.0'
-          // },
-          //
-          // getBlockHeader: {
-          //   version: '>=0.12.0'
-          // }
-        } };
+          mapping: EthereumProvider.Types.Transaction
+        },
+
+        getBlockHeight: {
+          handle: function handle() {
+            return client.rpc('eth_blockNumber');
+          }
+        }
+      };
     }
   }]);
 
   return BlockProvider;
-}(BitcoinProvider$1);
+}(EthereumProvider);
 
 var ethereum = [new BlockProvider$1()];
 

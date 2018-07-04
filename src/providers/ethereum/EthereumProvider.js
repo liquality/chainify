@@ -1,9 +1,9 @@
 /*
- * BitcoinProvider class
- * with bitcoin related transforms
+ * EthereumProvider class
+ * with ethereum related transforms
  */
 
-export default class BitcoinProvider {
+export default class EthereumProvider {
   setClient (client) {
     this.client = client
   }
@@ -11,17 +11,17 @@ export default class BitcoinProvider {
   transforms () {
     return {
       methodToRpc (method, params) {
-        return `eth_${method}`
+        return method
       },
       value (val, unit) {
-        // convert hex to wei/gwei/eth
+        // convert hex to satoshi/mBTC/BTC
         return val
       }
     }
   }
 }
 
-BitcoinProvider.Types = {
+EthereumProvider.Types = {
   Block: {
     number: 'number',
     hash: 'hash',
