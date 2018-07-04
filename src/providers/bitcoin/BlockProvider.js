@@ -7,12 +7,14 @@ export default class BlockProvider extends BitcoinProvider {
     return {
       getTransactionByHash: {
         version: '>=0.0.0',
-        handle: async (...args) => {
-          const tx = await client.rpc('gettransaction', ...args)
-          const txd = await client.rpc('decoderawtransaction', tx.hex)
-          const obj = Object.assign({}, tx, txd)
-
-          return obj
+        handle: (...args) => {
+          return client
+            .rpc('gettransaction', ...args)
+            .then(tx => {
+              return client
+                .rpc('decoderawtransaction', tx.hex)
+                .then(txd => Object.assign({}, tx, txd))
+            })
         },
         mapping: BitcoinProvider.Types.Transaction
       },
@@ -25,11 +27,12 @@ export default class BlockProvider extends BitcoinProvider {
 
       getBlockByNumber: {
         version: '>=0.6.0',
-        handle: async (number, includeTx) => {
-          const hash = await client.rpc('getblockhash', number)
-          const block = await client.rpc('getblock', hash)
-
-          return block
+        handle: (number, includeTx) => {
+          return client
+            .rpc('getblockhash', number)
+            .then(hash => {
+              return client.rpc('getblock', hash)
+            })
         },
         transform: (number, includeTx) => {
           if (includeTx) {
