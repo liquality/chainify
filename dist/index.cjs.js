@@ -263,7 +263,7 @@ function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Co
  * with bitcoin related transforms
  */
 
-var BitcoinProvider = function () {
+var BitcoinProvider$1 = function () {
   function BitcoinProvider() {
     _classCallCheck$4(this, BitcoinProvider);
   }
@@ -292,7 +292,7 @@ var BitcoinProvider = function () {
 }();
 
 
-BitcoinProvider.Types = {
+BitcoinProvider$1.Types = {
   Block: {
     number: 'height',
     hash: 'hash',
@@ -387,7 +387,7 @@ var BlockProvider = function (_BitcoinProvider) {
 
             return handle;
           }(),
-          mapping: BitcoinProvider.Types.Transaction
+          mapping: BitcoinProvider$1.Types.Transaction
         },
 
         getBlock: {
@@ -401,7 +401,7 @@ var BlockProvider = function (_BitcoinProvider) {
               return 'Tx<' + value + '>';
             }]
           },
-          mapping: BitcoinProvider.Types.Block,
+          mapping: BitcoinProvider$1.Types.Block,
           type: 'Block'
         },
 
@@ -417,14 +417,14 @@ var BlockProvider = function (_BitcoinProvider) {
               handle: 'gettransaction' // populate all tx
             }]
           },
-          mapping: BitcoinProvider.Types.Block,
+          mapping: BitcoinProvider$1.Types.Block,
           type: 'Block'
         },
 
         getBlockByHash: {
           version: '>=0.6.0',
           alias: 'getBlock', // alias object methods
-          mapping: BitcoinProvider.Types.Block,
+          mapping: BitcoinProvider$1.Types.Block,
           type: 'Block'
         },
 
@@ -445,7 +445,7 @@ var BlockProvider = function (_BitcoinProvider) {
   }]);
 
   return BlockProvider;
-}(BitcoinProvider);
+}(BitcoinProvider$1);
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -580,7 +580,7 @@ var LedgerWalletProvider = function (_BitcoinProvider) {
   }]);
 
   return LedgerWalletProvider;
-}(BitcoinProvider);
+}(BitcoinProvider$1);
 
 var bitcoin = [new BlockProvider(), new LedgerWalletProvider()];
 
@@ -589,16 +589,16 @@ var _createClass$6 = function () { function defineProperties(target, props) { fo
 function _classCallCheck$7(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
- * BitcoinProvider class
- * with bitcoin related transforms
+ * EthereumProvider class
+ * with ethereum related transforms
  */
 
-var BitcoinProvider$1 = function () {
-  function BitcoinProvider() {
-    _classCallCheck$7(this, BitcoinProvider);
+var EthereumProvider = function () {
+  function EthereumProvider() {
+    _classCallCheck$7(this, EthereumProvider);
   }
 
-  _createClass$6(BitcoinProvider, [{
+  _createClass$6(EthereumProvider, [{
     key: 'setClient',
     value: function setClient(client) {
       this.client = client;
@@ -608,21 +608,21 @@ var BitcoinProvider$1 = function () {
     value: function transforms() {
       return {
         methodToRpc: function methodToRpc(method, params) {
-          return 'eth_' + method;
+          return method;
         },
         value: function value(val, unit) {
-          // convert hex to wei/gwei/eth
+          // convert hex to satoshi/mBTC/BTC
           return val;
         }
       };
     }
   }]);
 
-  return BitcoinProvider;
+  return EthereumProvider;
 }();
 
 
-BitcoinProvider$1.Types = {
+BitcoinProvider.Types = {
   Block: {
     number: 'number',
     hash: 'hash',
@@ -678,35 +678,17 @@ var BlockProvider$1 = function (_EthereumProvider) {
 
             return client.rpc.apply(client, ['eth_getBlockByNumber'].concat(args, [false]));
           },
-          mapping: BitcoinProvider$1.Types.Block
+          mapping: EthereumProvider.Types.Block
         },
         getTransactionByHash: {
-          mapping: BitcoinProvider$1.Types.Transaction
-          // getBlockByHash: {
-          //   version: '>=0.6.0',
-          //   alias: 'getBlock', // alias object methods
-          //   mapping: EthereumProvider.Types.Block,
-          //   type: 'Block'
-          // },
-          //
-          // getBlockHeight: {
-          //   version: '>=0.1.0',
-          //   handle: 'getblockcount' // custom object method mapped to rpc method
-          // },
-          //
-          // getBlockHash: {
-          //   version: '>=0.6.0'
-          // },
-          //
-          // getBlockHeader: {
-          //   version: '>=0.12.0'
-          // }
-        } };
+          mapping: EthereumProvider.Types.Transaction
+        }
+      };
     }
   }]);
 
   return BlockProvider;
-}(BitcoinProvider$1);
+}(EthereumProvider);
 
 var ethereum = [new BlockProvider$1()];
 
