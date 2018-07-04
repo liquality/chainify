@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import semver from 'semver'
 import Promise from 'bluebird'
+import 'regenerator-runtime/runtime'
 
 import DNSParser from './DsnParser'
 import JsonRpcHelper from './JsonRpcHelper'
