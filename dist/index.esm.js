@@ -1026,8 +1026,8 @@ BitcoinProvider.Types = {
     confirmations: 'confirmations',
     hash: 'txid',
     value: 'amount',
-    blockHash: 'blockHash',
-    blockNumber: 'blockNumber'
+    blockHash: 'blockhash',
+    blockNumber: 'blockindex'
   }
 };
 
@@ -1318,9 +1318,27 @@ BitcoinProvider$1.Types = {
       });
     },
     hash: 'hash',
-    value: 'value',
-    blockHash: 'blockHash',
-    blockNumber: 'blockNumber'
+    value: function value(key, result, client) {
+      return Number(result[key]);
+    },
+    blockNumber: function blockNumber(key, result, client) {
+      return Number(result[key]);
+    },
+    nonce: function nonce(key, result, client) {
+      return Number(result[key]);
+    },
+    gas: function gas(key, result, client) {
+      return Number(result[key]);
+    },
+    gasPrice: function gasPrice(key, result, client) {
+      return Number(result[key]);
+    },
+    input: function input(key, result, client) {
+      return Number(result[key]);
+    },
+    transactionIndex: function transactionIndex(key, result, client) {
+      return Number(result[key]);
+    }
   }
 };
 

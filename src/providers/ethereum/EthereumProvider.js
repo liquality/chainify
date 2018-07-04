@@ -39,8 +39,26 @@ BitcoinProvider.Types = {
       })
     },
     hash: 'hash',
-    value: 'value',
-    blockHash: 'blockHash',
-    blockNumber: 'blockNumber'
+    value: (key, result, client) => {
+      return Number(result[key])
+    },
+    blockNumber: (key, result, client) => {
+      return Number(result[key])
+    },
+    nonce: (key, result, client) => {
+      return Number(result[key])
+    },
+    gas: (key, result, client) => {
+      return Number(result[key])
+    },
+    gasPrice: (key, result, client) => {
+      return Number(result[key])
+    },
+    input: (key, result, client) => {
+      return Number(result[key])
+    },
+    transactionIndex: (key, result, client) => {
+      return Number(result[key])
+    }
   }
 }
