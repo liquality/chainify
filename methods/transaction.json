@@ -1,0 +1,20 @@
+{
+  "getTransactionByHash": {
+    "description": "Get transaction by [hash]",
+    "args": [
+      {
+        "name": "hash",
+        "type": "BlockHash"
+      }
+    ],
+    "chains": {
+      "bitcoin": {
+        "rpc": [ "gettransaction", "decoderawtransaction" ]
+      },
+      "ethereum": {
+        "rpc": [ "eth_getTransactionByHash" ]
+      }
+    },
+    "returns": "Transaction"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "generate": {
+    "description": "Generate [n] block(s)",
+    "args": [
+      {
+        "name": "n",
+        "type": "number"
+      }
+    ],
+    "chains": {
+      "bitcoin": {
+        "rpc": [ "generate" ]
+      },
+      "ethereum": null
+    },
+    "returns": "[BlockHash]"
+  },
+  "getBlockByNumber": {
+    "description": "Get block by [n] with complete transactions if [fetchTx] is true",
+    "args": [
+      {
+        "name": "hash",
+        "type": "BlockHash"
+      }
+    ],
+    "chains": {
+      "bitcoin": {
+        "rpc": [ "getblockhash", "getblock", "gettransaction", "decoderawtransaction" ]
+      },
+      "ethereum": {
+        "rpc": [ "eth_getTransactionByHash" ]
+      }
+    },
+    "returns": "Block{transactions:[Transaction]}"
+  }
+}
