@@ -800,17 +800,64 @@ var TransactionSchema = {
 	properties: properties$1
 };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var asyncToGenerator = function (fn) {
+  return function () {
+    var gen = fn.apply(this, arguments);
+    return new Promise(function (resolve, reject) {
+      function step(key, arg) {
+        try {
+          var info = gen[key](arg);
+          var value = info.value;
+        } catch (error) {
+          reject(error);
+          return;
+        }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+        if (info.done) {
+          resolve(value);
+        } else {
+          return Promise.resolve(value).then(function (value) {
+            step("next", value);
+          }, function (err) {
+            step("throw", err);
+          });
+        }
+      }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+      return step("next");
+    });
+  };
+};
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
 
 var Ajv = require('ajv');
 
 var Client = function () {
   function Client(provider, version) {
-    _classCallCheck(this, Client);
+    classCallCheck(this, Client);
 
     if (provider) this.addProvider(provider);
     if (version) this.version = version;
@@ -820,7 +867,7 @@ var Client = function () {
     this.validateBlock = ajv.compile(BlockSchema);
   }
 
-  _createClass(Client, [{
+  createClass(Client, [{
     key: 'addProvider',
     value: function addProvider(provider) {
       this.provider = provider;
@@ -849,7 +896,7 @@ var Client = function () {
   }, {
     key: 'generateBlock',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
+      var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
         var blockHashes, invalidBlock;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -910,7 +957,7 @@ var Client = function () {
   }, {
     key: 'getBlockByNumber',
     value: function () {
-      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(blockNumber, includeTx) {
+      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(blockNumber, includeTx) {
         var block;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
@@ -967,7 +1014,7 @@ var Client = function () {
   }, {
     key: 'getBlockHeight',
     value: function () {
-      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
         var blockHeight;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -1008,7 +1055,7 @@ var Client = function () {
   }, {
     key: 'getTransactionByHash',
     value: function () {
-      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(txHash) {
+      var _ref4 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(txHash) {
         var transaction;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
@@ -1055,7 +1102,6 @@ var Client = function () {
       return getTransactionByHash;
     }()
   }]);
-
   return Client;
 }();
 
