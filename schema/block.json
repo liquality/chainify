@@ -3,7 +3,7 @@
   "title": "Block",
   "description": "Blockchain block",
   "type": "object",
-  "required": [ "number", "hash", "timestamp", "difficulty", "size", "previousBlockHash", "nonce" ],
+  "required": [ "number", "hash", "timestamp", "difficulty", "size", "parentHash", "nonce" ],
   "properties": {
     "hash": {
       "type": "string",
@@ -30,9 +30,9 @@
       "title": "Size",
       "minimum": 0
     },
-    "previousBlockHash": {
+    "parentHash": {
       "type": "string",
-      "title": "Previous Block Hash",
+      "title": "Parent Hash",
       "pattern": "^0x([A-Fa-f0-9]{64})$"
     },
     "nonce": {
@@ -41,161 +41,7 @@
       "minimum": 0
     },
     "_raw": {
-      "type": "object",
-      "properties": {
-        "height": {
-          "type": "number",
-          "title": "Height",
-          "minimum": 0
-        },
-        "number": {
-          "type": "number",
-          "title": "Number",
-          "minimum": 0
-        },
-        "hash": {
-          "type": "string",
-          "title": "Hash",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "time": {
-          "type": "number",
-          "title": "Time",
-          "minimum": 0
-        },
-        "timestamp": {
-          "type": "number",
-          "title": "Timestamp",
-          "minimum": 0
-        },
-        "difficulty": {
-          "type": "number",
-          "title": "Difficulty",
-          "minimum": 0
-        },
-        "size": {
-          "type": "number",
-          "title": "Size",
-          "minimum": 0
-        },
-        "parentHash": {
-          "type": "string",
-          "title": "Parent Hash",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "previousBlockHash": {
-          "type": "string",
-          "title": "Previous Block Hash",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "nextBlockHash": {
-          "type": "string",
-          "title": "Next Block Hash",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "nonce": {
-          "type": "number",
-          "title": "Nonce",
-          "minimum": 0
-        },
-        "confirmations": {
-          "type": "number",
-          "title": "Confirmations",
-          "minimum": 0
-        },
-        "strippedSize": {
-          "type": "number",
-          "title": "Stripped Size",
-          "minimum": 0
-        },
-        "weight": {
-          "type": "number",
-          "title": "Weight",
-          "minimum": 0
-        },
-        "version": {
-          "type": "number",
-          "title": "Version",
-          "minimum": 0
-        },
-        "versionHex": {
-          "type": "number",
-          "title": "Version Hex",
-          "minimum": 0
-        },
-        "merkleRoot": {
-          "type": "string",
-          "title": "Merkle Root",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "medianTime": {
-          "type": "number",
-          "title": "Median Time",
-          "minimum": 0
-        },
-        "bits": {
-          "type": "string",
-          "title": "Bits",
-        },
-        "chainWork": {
-          "type": "string",
-          "title": "Chain Work",
-        },
-        "mixHash": {
-          "type": "string",
-          "title": "Mix Hash",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "sha3Uncles": {
-          "type": "string",
-          "title": "Sha 3 Uncles",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "logsBloom": {
-          "type": "string",
-          "title": "Logs Bloom",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "transactionsRoot": {
-          "type": "string",
-          "title": "Transactions Root",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "stateRoot": {
-          "type": "string",
-          "title": "State Root",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "receiptsRoot": {
-          "type": "string",
-          "title": "Receipts Root",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "miner": {
-          "type": "string",
-          "title": "Miner",
-        },
-        "totalDifficulty": {
-          "type": "number",
-          "title": "Total Difficulty",
-          "minimum": 0
-        },
-        "extraData": {
-          "type": "string",
-          "title": "Extra Data",
-          "pattern": "^0x([A-Fa-f0-9]{64})$"
-        },
-        "gasLimit": {
-          "type": "number",
-          "title": "Gas Limit",
-          "minimum": 0
-        },
-        "gasUsed": {
-          "type": "number",
-          "title": "Gas Used",
-          "minimum": 0
-        }
-      }
+      "type": "object"
     }
   }
 }
