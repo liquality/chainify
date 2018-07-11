@@ -2,10 +2,10 @@
   "name": "chainabstractionlayer",
   "private": "true",
   "keywords": [
+    "blockchain",
     "bitcoin",
     "ethereum",
-    "client",
-    "rpc"
+    "client"
   ],
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -13,46 +13,30 @@
   "scripts": {
     "changelog": "github_changelog_generator --no-issues --header-label='# Changelog' --future-release=$npm_config_future_release && sed -i '' -e :a -e '$d;N;2,4ba' -e 'P;D' CHANGELOG.md",
     "cover": "nyc --reporter=html --reporter=text npm test",
-    "dependencies": "docker-compose up -d bitcoind bitcoind-ssl bitcoind-username-only",
     "lint": "standard src test",
     "test": "NODE_ENV=test mocha $npm_package_options_mocha",
-    "testdocker": "docker-compose run --rm sut",
-    "version": "npm run changelog --future-release=$npm_package_version && npm run transpile && git add -A CHANGELOG.md dist",
     "build": "rollup -c",
     "build:prod": "NODE_ENV=production BABEL_ENV=production npm run build"
   },
   "dependencies": {
-    "@ledgerhq/hw-app-btc": "^4.15.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.16.0",
-    "@uphold/request-logger": "^2.0.0",
-    "ajv": "^6.4.0",
-    "bignumber.js": "^7.0.1",
-    "bluebird": "^3.4.1",
-    "debugnyan": "^2.0.1",
-    "dsn-parser": "^1.0.1",
-    "json-bigint": "^0.2.0",
+    "ajv": "^6.5.2",
     "lodash": "^4.0.0",
-    "regenerator-runtime": "^0.12.0",
-    "request": "^2.87.0",
-    "request-promise": "^4.2.2",
-    "semver": "^5.1.0",
-    "standard-error": "^1.1.0"
+    "regenerator-runtime": "^0.12.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-istanbul": "^4.1.6",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
     "browserify": "^16.2.2",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^5.2.0",
     "nock": "^9.3.0",
     "nyc": "^12.0.2",
     "pre-commit": "^1.2.2",
-    "rollup": "^0.59.4",
+    "rollup": "^0.62.0",
     "rollup-plugin-babel": "^3.0.4",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-json": "^3.0.0",
@@ -77,5 +61,11 @@
   },
   "options": {
     "mocha": "--require babel-register --require babel-polyfill --timeout 20000 --recursive --require should"
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "build",
+    "build:prod",
+    "test"
+  ]
 }

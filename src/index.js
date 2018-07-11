@@ -1,241 +1,113 @@
-import _ from 'lodash'
-import semver from 'semver'
-import Promise from 'bluebird'
 import 'regenerator-runtime/runtime'
 
-import DNSParser from './DsnParser'
-import JsonRpcHelper from './JsonRpcHelper'
+import _ from 'lodash'
 
-import Provider from './Provider'
-import providers from './providers'
+import BlockSchema from './schema/Block.json'
+import TransactionSchema from './schema/Transaction.json'
 
-// DEV: hack
-const request = require('request-promise')
+const Ajv = require('ajv')
 
 export default class Client {
-  constructor (uri) {
-    const {
-      baseUrl,
-      driverName,
-      timeout,
-      returnHeaders,
-      strictSSL,
-      auth,
-      version
-    } = DNSParser(uri)
+  constructor (provider, version) {
+    if (provider) this.addProvider(provider)
+    if (version) this.version = version
 
-    this.transforms = {
-      methodToRpc (method) {
-        return method.toLowerCase()
-      },
-      value (val, unit) {
-        return val
-      }
-    }
-
-    this.methods = {}
-
-    // unused. remove later
-    this.rpcMethods = {}
-
-    this.chainName = driverName
-    this.baseUrl = baseUrl
-    this.timeout = timeout
-    this.returnHeaders = returnHeaders
-    this.strictSSL = strictSSL
-    this.auth = auth
-    this.version = version
-
-    this.jsonRpcHelper = new JsonRpcHelper({ version })
-    this.request = request.defaults({
-      baseUrl: this.baseUrl,
-      strictSSL: this.strictSSL,
-      timeout: this.timeout,
-      resolveWithFullResponse: true
-    })
-
-    // load default providers
-    if (providers[driverName]) {
-      providers[driverName].forEach(provider => this.addProvider(provider))
-    }
-
-    const provider = new Provider()
-    provider.methods().forEach(method => {
-      if (!_.isFunction(this[method])) {
-        throw new Error(`Implement ${method} method`)
-      }
-    })
+    const ajv = new Ajv()
+    this.validateTransaction = ajv.compile(TransactionSchema)
+    this.validateBlock = ajv.compile(BlockSchema)
   }
 
   addProvider (provider) {
-    provider.setClient(this)
-
-    _.forOwn(provider.transforms(), (fn, transform) => {
-      this.transforms[transform] = fn
-    })
-
-    const methods = provider.methods()
-
-    if (this.version) {
-      const result = /[0-9]+\.[0-9]+\.[0-9]+/.exec(this.version)
-
-      if (!result) {
-        throw new Error(`Invalid version "${this.version}"`, { version: this.version })
-      }
-
-      const [ version ] = result
-
-      this.unsupportedMethods = _.chain(methods)
-        .pickBy(method => !semver.satisfies(version, method.version))
-        .keys()
-        .value()
-    }
-
-    _.forOwn(provider.methods(), (obj, method) => {
-      this.methods[method] = obj
-
-      if (obj.handle) {
-        if (_.isFunction(obj.handle)) {
-          // this[method] = _.partial(obj.handle)
-          this[method] = _.partial(this.methodWrapper, method, obj.handle)
-        } else {
-          this[method] = _.partial(this.rpcWrapper, method, obj.handle)
-        }
-      } else {
-        const rpcMethod = this.getRpcMethod(method, obj)
-
-        if (!this.rpcMethods[rpcMethod]) this.rpcMethods[rpcMethod] = obj
-        this[method] = _.partial(this.rpcWrapper, method, rpcMethod)
-      }
-    })
+    this.provider = provider
   }
 
-  getRpcMethod (method, obj) {
-    if (obj.alias) {
-      return this.getRpcMethod(obj.alias, this.methods[obj.alias])
-    } else {
-      return this.transforms.methodToRpc(method)
+  _checkMethod (method) {
+    if (!this.provider) {
+      throw new Error('No provider provided')
+    }
+
+    if (!_.isFunction(this.provider[method])) {
+      throw new Error(`Unimplemented method: ${method}`)
+    }
+
+    if (_.isFunction(this.provider._checkMethodVersionSupport)) {
+      if (!this.provider._checkMethodVersionSupport(method, this.version)) {
+        throw new Error(`Method "${method}" is not supported by version "${this.version}"`)
+      }
+    }
+
+    if (!_.isFunction(this.provider[method])) {
+      throw new Error(`Unimplemented method: ${method}`)
     }
   }
 
-  handleTransformation (transformation, result) {
-    if (_.isFunction(transformation)) {
-      return Promise.resolve(transformation(result))
-    } else if (transformation.handle) {
-      return this.rpc(transformation.handle, result)
-    } else if (_.isArray(transformation)) {
-      const [ obj ] = transformation
+  async generateBlock (numberOfBlocks) {
+    this._checkMethod('generateBlock')
 
-      return Promise
-        .map(result, param => this.handleTransformation(obj, param))
-    } else {
-      return Promise.reject(new Error('This type of mapping is not implemented yet.'))
+    if (!_.isNumber(numberOfBlocks)) {
+      throw new Error('Invalid number of blocks to be generated')
     }
+
+    const blockHashes = await this.provider.generateBlock(numberOfBlocks)
+
+    if (!_.isArray(blockHashes)) {
+      throw new Error('Provider returned an invalid response')
+    }
+
+    const invalidBlock = _.find(blockHashes, blockHash => !(/^[A-Fa-f0-9]$/.test(blockHash)))
+
+    if (invalidBlock) {
+      throw new Error('Provider returned an invalid response')
+    }
+
+    return blockHashes
   }
 
-  handleResponse (response, method, args) {
-    const ref = this
-    return Promise.resolve(function () {
-      const { transform } = ref.methods[method]
+  async getBlockByNumber (blockNumber, includeTx) {
+    this._checkMethod('getBlockByNumber')
 
-      if (transform) {
-        const tObj = transform(...args)
-        return Promise
-          .map(
-            Object.keys(tObj),
-            field => {
-              return ref
-                .handleTransformation(tObj[field], response[field])
-                .then(transformedField => {
-                  response[field] = transformedField
-                })
-            }
-          )
-          .then(__ => response)
-      } else {
-        return response
-      }
-    }()).then(result => {
-      const { mapping, type } = ref.methods[method]
+    if (!_.isNumber(blockNumber)) {
+      throw new Error('Invalid Block number')
+    }
 
-      if (mapping) {
-        Object
-          .keys(mapping)
-          .forEach(async key => {
-            const t = mapping[key]
+    if (!_.isBoolean(includeTx)) {
+      throw new Error('Second parameter should be boolean')
+    }
 
-            if (typeof t === 'string') {
-              result[key] = result[t]
-            } else if (_.isFunction(t)) {
-              result[key] = await t(key, result, ref)
-            } else {
-              throw new Error('This type of mapping is not implemented yet.')
-            }
-          })
-      }
+    const block = await this.provider.getBlockByNumber(blockNumber, includeTx)
 
-      if (type) {
-        const _interface = Client.Types[type]
+    if (!this.validateBlock(block)) {
+      throw new Error('Provider returned an invalid block')
+    }
 
-        if (!_interface) {
-          throw new Error(`Unknown type ${type}`)
-        }
-
-        Object
-          .keys(_interface)
-          .forEach(key => {
-            if (result[key] === undefined) {
-              throw new Error(`Method did not return ${key}. ${JSON.stringify(result)}`)
-            }
-          })
-      }
-
-      return result
-    })
+    return block
   }
 
-  methodWrapper (method, fn, ...args) {
-    return Promise
-      .resolve(fn(...args))
-      .then(x => this.handleResponse(x, method, args))
+  async getBlockHeight () {
+    this._checkMethod('getBlockHeight')
+
+    const blockHeight = await this.provider.getBlockHeight()
+
+    if (!_.isNumber(blockHeight)) {
+      throw new Error('Provider returned an invalid block height')
+    }
+
+    return blockHeight
   }
 
-  rpcWrapper (method, rpcMethod, ...args) {
-    return this.rpc(rpcMethod, ...args)
-      .then(x => this.handleResponse(x, method, args))
-  }
+  async getTransactionByHash (txHash) {
+    this._checkMethod('getTransactionByHash')
 
-  rpc (_method, ...args) {
-    const methods = _method.split('|')
+    if (!(/^[A-Fa-f0-9]$/.test(txHash))) {
+      throw new Error('Transaction hash should be a valid hex string')
+    }
 
-    return Promise
-      .reduce(methods, (params, method) => {
-        if (!_.isArray(params)) params = [ params ]
+    const transaction = await this.provider.getTransactionByHash(txHash)
 
-        const requestBody = this.jsonRpcHelper.prepareRequest({ method, params })
+    if (!this.validateTransaction(transaction)) {
+      throw new Error('Provider returned an invalid transaction')
+    }
 
-        return this.request.post({
-          auth: _.pickBy(this.auth, _.identity),
-          body: requestBody,
-          uri: '/'
-        }).then(this.jsonRpcHelper.parseResponse.bind(this.jsonRpcHelper))
-      }, args)
-  }
-
-  wire (_method, ...args) {
-    throw new Error('Method not implemented yet')
-  }
-}
-
-Client.providers = providers
-Client.Types = {
-  Block: {
-    number: 'number',
-    hash: 'string',
-    timestamp: 'timestamp',
-    difficulty: 'number',
-    size: 'number',
-    parentHash: 'string',
-    nonce: 'number'
+    return transaction
   }
 }

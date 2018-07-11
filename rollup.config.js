@@ -9,6 +9,8 @@ import globals from 'rollup-plugin-node-globals'
 
 import pkg from './package.json'
 
+const dependencies = Object.keys(pkg.dependencies)
+
 export default [
   {
     input: 'src/index.js',
@@ -68,9 +70,7 @@ export default [
   },
   {
     input: 'src/index.js',
-    external: [
-      '@uphold/request-logger', 'bignumber.js', 'bluebird', 'debugnyan', 'dsn-parser', 'json-bigint', 'lodash', 'ms', 'request', 'semver', 'standard-error', 'http', '@ledgerhq/hw-app-btc', '@ledgerhq/hw-transport-node-hid'
-    ],
+    external: dependencies,
     output: [
       {
         file: pkg.main,

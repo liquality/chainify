@@ -3,34 +3,18 @@
 
 Query different blockchains with a single and simple interface.
 
-## CSN - Chain Source Name
-
-```
-<chain>s?://<user>:<pass>@<host>:<port>
-```
 
 ## Client
 
 ```javascript
 const ChainAbstractionLayer = require('chainabstractionlayer')
 
-const bitcoin = new ChainAbstractionLayer('bitcoin://bitcoin:local321@localhost:18332/?timeout=200&version=0.12.0')
-const ethereum = new ChainAbstractionLayer('ethereum://a:b@127.0.0.1:7545/')
+const chain = new ChainAbstractionLayer()
 
 bitcoin
-  .getBalance('0x0') // returns Promise
-  .then(console.log) // in sat
-
-// or use await
-
-console.log(await ethereum.getBalance('0x0')) // in wei
+  .getBlockByNumber(1) // returns Promise
+  .then(console.log) // in Block
 ```
-
-## Currently Supported Chains
-
-* [Bitcoin](./chains/Bitcoin.js)
-* [Litecoin](./chains/Litecoin.js)
-* [Ethereum](./chains/Ethereum.js)
 
 
 ## Development

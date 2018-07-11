@@ -1,0 +1,32 @@
+{
+  "$id": "https://dev.liquality.com/schema/transaction.json",
+  "title": "Transaction",
+  "description": "Blockchain transaction",
+  "type": "object",
+  "required": [ "blockHash", "blockNumber", "value", "confirmations" ],
+  "properties": {
+    "blockHash": {
+      "type": "string",
+      "title": "Block Hash",
+      "pattern": "^([A-Fa-f0-9]{64})$"
+    },
+    "blockNumber": {
+      "type": "number",
+      "title": "Block Number",
+      "minimum": 0
+    },
+    "value": {
+      "type": "number",
+      "title": "Value",
+      "minimum": 0
+    },
+    "confirmations": {
+      "type": "number",
+      "title": "Confirmations",
+      "minimum": 0
+    },
+    "_raw": {
+      "type": "object"
+    }
+  }
+}
