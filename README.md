@@ -7,13 +7,14 @@ Query different blockchains with a single and simple interface.
 ## Client
 
 ```javascript
-const ChainAbstractionLayer = require('chainabstractionlayer')
+const Client = require('chainabstractionlayer')
+const { BitcoinRPCProvider } = Client.providers.bitcoin
 
-const chain = new ChainAbstractionLayer()
+const bitcoin = new Client(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
 
 bitcoin
-  .getBlockByNumber(1) // returns Promise
-  .then(console.log) // in Block
+  .generateBlock(1) // returns Promise
+  .then(console.log) // Array<BlockHash>
 ```
 
 
