@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  lint_build_test:
     environment:
       BASH_ENV: /etc/profile
     docker:
@@ -14,14 +14,12 @@ jobs:
       - run:
           name: npm install
           command: npm install
-  test:
-    environment:
-      BASH_ENV: /etc/profile
-    docker:
-      - image: mblackmblack/bitcoin-core-with-nvm:0.0.5
-    working_directory: ~/chainabstractionlayer
-    steps:
-      - checkout
+      - run:
+          name: build
+          command: npm run lint
+      - run:
+          name: build
+          command: npm run build:prod
       - run:
           name: test
           command: npm test
@@ -30,7 +28,4 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      - lint_build_test
