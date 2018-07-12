@@ -40,13 +40,14 @@
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="chain-abstraction-layer">Chain Abstraction Layer</h1><p><a href="https://github.com/standard/standard"><img src="https://cdn.rawgit.com/standard/standard/master/badge.svg" alt="JavaScript Style Guide"></a></p>
 <p>Query different blockchains with a single and simple interface.</p>
-<h2 id="client">Client</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">const ChainAbstractionLayer = require(&apos;chainabstractionlayer&apos;)
+<h2 id="client">Client</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">const Client = require(&apos;chainabstractionlayer&apos;)
+const { BitcoinRPCProvider } = Client.providers.bitcoin
 
-const chain = new ChainAbstractionLayer()
+const bitcoin = new Client(new BitcoinRPCProvider(&apos;http://localhost:8080&apos;, &apos;bitcoin&apos;, &apos;local321&apos;))
 
 bitcoin
-  .getBlockByNumber(1) // returns Promise
-  .then(console.log) // in Block</code>
+  .generateBlock(1) // returns Promise
+  .then(console.log) // Array&lt;BlockHash&gt;</code>
 </code></pre>
 <h2 id="development">Development</h2><h3 id="1--clone-the-project-and-link-it-locally">1. Clone the project and link it locally</h3><pre><code class="lang-bash"><code class="source-code prettyprint">git clone git@github.com:ConsenSys/chainabstractionlayer.git
 cd chainabstractionlayer
