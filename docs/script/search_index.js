@@ -1,9 +1,33 @@
 window.esdocSearchIndex = [
   [
+    "chainabstractionlayer/src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html",
+    "<span>BitcoinRPCProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinRPCProvider.js</span>",
+    "class"
+  ],
+  [
     "chainabstractionlayer/src/index.js~client",
     "class/src/index.js~Client.html",
     "<span>Client</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/index.js</span>",
     "class"
+  ],
+  [
+    "chainabstractionlayer/src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html",
+    "<span>EthereumRPCProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumRPCProvider.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/providers/jsonrpchelper.js~praseresponse",
+    "function/index.html#static-function-praseResponse",
+    "<span>praseResponse</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/JsonRpcHelper.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/providers/jsonrpchelper.js~preparerequest",
+    "function/index.html#static-function-prepareRequest",
+    "<span>prepareRequest</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/JsonRpcHelper.js</span>",
+    "function"
   ],
   [
     "src/.external-ecmascript.js~array",
@@ -358,5 +382,77 @@ window.esdocSearchIndex = [
     "class/src/index.js~Client.html#instance-member-version",
     "src/index.js~Client#version",
     "member"
+  ],
+  [
+    "src/providers/jsonrpchelper.js",
+    "file/src/providers/JsonRpcHelper.js.html",
+    "src/providers/JsonRpcHelper.js",
+    "file"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js",
+    "file/src/providers/bitcoin/BitcoinRPCProvider.js.html",
+    "src/providers/bitcoin/BitcoinRPCProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#_rpc",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-_rpc",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#_rpc",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#axios",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-member-axios",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#axios",
+    "member"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#constructor",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-constructor-constructor",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#constructor",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#generateblock",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-generateBlock",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#generateBlock",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js",
+    "file/src/providers/ethereum/EthereumRPCProvider.js.html",
+    "src/providers/ethereum/EthereumRPCProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#_rpc",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-_rpc",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#_rpc",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#axios",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-member-axios",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#axios",
+    "member"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#constructor",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-constructor-constructor",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#constructor",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#generateblock",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-generateBlock",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#generateBlock",
+    "method"
+  ],
+  [
+    "src/providers/index.js",
+    "file/src/providers/index.js.html",
+    "src/providers/index.js",
+    "file"
   ]
 ]

@@ -30,6 +30,10 @@
   <ul>
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Client.html">Client</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-praseResponse">praseResponse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-prepareRequest">prepareRequest</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -39,6 +43,7 @@
 
 import _ from &apos;lodash&apos;
 
+import providers from &apos;./providers&apos;
 import BlockSchema from &apos;./schema/Block.json&apos;
 import TransactionSchema from &apos;./schema/Transaction.json&apos;
 
@@ -91,7 +96,7 @@ export default class Client {
       throw new Error(&apos;Provider returned an invalid response&apos;)
     }
 
-    const invalidBlock = _.find(blockHashes, blockHash =&gt; !(/^[A-Fa-f0-9]$/.test(blockHash)))
+    const invalidBlock = _.find(blockHashes, blockHash =&gt; !(/^[A-Fa-f0-9]+$/.test(blockHash)))
 
     if (invalidBlock) {
       throw new Error(&apos;Provider returned an invalid response&apos;)
@@ -148,6 +153,8 @@ export default class Client {
     return transaction
   }
 }
+
+Client.providers = providers
 </code></pre>
 
 </div>
