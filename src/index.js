@@ -2,6 +2,7 @@ import 'regenerator-runtime/runtime'
 
 import _ from 'lodash'
 
+import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
 
@@ -54,7 +55,7 @@ export default class Client {
       throw new Error('Provider returned an invalid response')
     }
 
-    const invalidBlock = _.find(blockHashes, blockHash => !(/^[A-Fa-f0-9]$/.test(blockHash)))
+    const invalidBlock = _.find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))
 
     if (invalidBlock) {
       throw new Error('Provider returned an invalid response')
@@ -111,3 +112,5 @@ export default class Client {
     return transaction
   }
 }
+
+Client.providers = providers

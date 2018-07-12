@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "ajv": "^6.5.2",
+    "axios": "^0.18.0",
+    "json-bigint": "^0.3.0",
     "lodash": "^4.0.0",
     "regenerator-runtime": "^0.12.0"
   },

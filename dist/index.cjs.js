@@ -5,7 +5,10 @@ var regeneratorRuntime = require('regenerator-runtime');
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var _ = _interopDefault(require('lodash'));
+var JSONBigInt = _interopDefault(require('json-bigint'));
+var _ = require('lodash');
+var ___default = _interopDefault(_);
+var axios = _interopDefault(require('axios'));
 
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -726,6 +729,167 @@ var _ = _interopDefault(require('lodash'));
   (function() { return this })() || Function("return this")()
 );
 
+var _JSONBigInt = JSONBigInt({ storeAsString: true, strict: true }),
+    parse = _JSONBigInt.parse;
+
+function prepareRequest(_ref) {
+  var method = _ref.method,
+      params = _ref.params;
+
+  return JSON.stringify({
+    id: Date.now(),
+    method: method,
+    params: params
+  });
+}
+
+function praseResponse(body, headers) {
+  if (typeof body === 'string' && headers['content-type'] !== 'application/json') {
+    throw new Error(body);
+  }
+
+  body = parse(body);
+
+  if (body.error) {
+    throw new Error('Error occurred while processing the RPC call: ' + body.error);
+  }
+
+  if (!_.has(body, 'result')) {
+    throw new Error('Missing `result` on the RPC call result');
+  }
+
+  return body.result;
+}
+
+var asyncToGenerator = function (fn) {
+  return function () {
+    var gen = fn.apply(this, arguments);
+    return new Promise(function (resolve, reject) {
+      function step(key, arg) {
+        try {
+          var info = gen[key](arg);
+          var value = info.value;
+        } catch (error) {
+          reject(error);
+          return;
+        }
+
+        if (info.done) {
+          resolve(value);
+        } else {
+          return Promise.resolve(value).then(function (value) {
+            step("next", value);
+          }, function (err) {
+            step("throw", err);
+          });
+        }
+      }
+
+      return step("next");
+    });
+  };
+};
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+var BitcoinRPCProvider = function () {
+  function BitcoinRPCProvider(uri, user, pass) {
+    classCallCheck(this, BitcoinRPCProvider);
+
+    this.axios = axios.create({
+      baseURL: uri,
+      transformRequest: [function (_ref, headers) {
+        var data = _ref.data;
+        return prepareRequest(data);
+      }],
+      transformResponse: [function (data, headers) {
+        return praseResponse(data, headers);
+      }],
+      validateStatus: function validateStatus(status) {
+        return status === 200;
+      }
+    });
+
+    if (user || pass) {
+      this.axios.defaults.auth = {
+        username: user,
+        password: pass
+      };
+    }
+  }
+
+  createClass(BitcoinRPCProvider, [{
+    key: '_rpc',
+    value: function _rpc(method) {
+      for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        params[_key - 1] = arguments[_key];
+      }
+
+      return this.axios.post('/', {
+        data: { method: method, params: params }
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+        return data;
+      });
+    }
+  }, {
+    key: 'generateBlock',
+    value: function () {
+      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                return _context.abrupt('return', this._rpc('generate', numberOfBlocks));
+
+              case 1:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function generateBlock(_x) {
+        return _ref3.apply(this, arguments);
+      }
+
+      return generateBlock;
+    }()
+  }]);
+  return BitcoinRPCProvider;
+}();
+
+// import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'
+
+var providers = {
+  bitcoin: {
+    BitcoinRPCProvider: BitcoinRPCProvider
+  }
+};
+
 var $id = "https://dev.liquality.com/schema/transaction.json";
 var title = "Transaction";
 var description = "Blockchain transaction";
@@ -804,59 +968,6 @@ var TransactionSchema = {
 	properties: properties$1
 };
 
-var asyncToGenerator = function (fn) {
-  return function () {
-    var gen = fn.apply(this, arguments);
-    return new Promise(function (resolve, reject) {
-      function step(key, arg) {
-        try {
-          var info = gen[key](arg);
-          var value = info.value;
-        } catch (error) {
-          reject(error);
-          return;
-        }
-
-        if (info.done) {
-          resolve(value);
-        } else {
-          return Promise.resolve(value).then(function (value) {
-            step("next", value);
-          }, function (err) {
-            step("throw", err);
-          });
-        }
-      }
-
-      return step("next");
-    });
-  };
-};
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
 var Ajv = require('ajv');
 
 var Client = function () {
@@ -883,17 +994,17 @@ var Client = function () {
         throw new Error('No provider provided');
       }
 
-      if (!_.isFunction(this.provider[method])) {
+      if (!___default.isFunction(this.provider[method])) {
         throw new Error('Unimplemented method: ' + method);
       }
 
-      if (_.isFunction(this.provider._checkMethodVersionSupport)) {
+      if (___default.isFunction(this.provider._checkMethodVersionSupport)) {
         if (!this.provider._checkMethodVersionSupport(method, this.version)) {
           throw new Error('Method "' + method + '" is not supported by version "' + this.version + '"');
         }
       }
 
-      if (!_.isFunction(this.provider[method])) {
+      if (!___default.isFunction(this.provider[method])) {
         throw new Error('Unimplemented method: ' + method);
       }
     }
@@ -908,7 +1019,7 @@ var Client = function () {
               case 0:
                 this._checkMethod('generateBlock');
 
-                if (_.isNumber(numberOfBlocks)) {
+                if (___default.isNumber(numberOfBlocks)) {
                   _context.next = 3;
                   break;
                 }
@@ -922,7 +1033,7 @@ var Client = function () {
               case 5:
                 blockHashes = _context.sent;
 
-                if (_.isArray(blockHashes)) {
+                if (___default.isArray(blockHashes)) {
                   _context.next = 8;
                   break;
                 }
@@ -930,8 +1041,8 @@ var Client = function () {
                 throw new Error('Provider returned an invalid response');
 
               case 8:
-                invalidBlock = _.find(blockHashes, function (blockHash) {
-                  return !/^[A-Fa-f0-9]$/.test(blockHash);
+                invalidBlock = ___default.find(blockHashes, function (blockHash) {
+                  return !/^[A-Fa-f0-9]+$/.test(blockHash);
                 });
 
                 if (!invalidBlock) {
@@ -969,7 +1080,7 @@ var Client = function () {
               case 0:
                 this._checkMethod('getBlockByNumber');
 
-                if (_.isNumber(blockNumber)) {
+                if (___default.isNumber(blockNumber)) {
                   _context2.next = 3;
                   break;
                 }
@@ -977,7 +1088,7 @@ var Client = function () {
                 throw new Error('Invalid Block number');
 
               case 3:
-                if (_.isBoolean(includeTx)) {
+                if (___default.isBoolean(includeTx)) {
                   _context2.next = 5;
                   break;
                 }
@@ -1032,7 +1143,7 @@ var Client = function () {
               case 3:
                 blockHeight = _context3.sent;
 
-                if (_.isNumber(blockHeight)) {
+                if (___default.isNumber(blockHeight)) {
                   _context3.next = 6;
                   break;
                 }
@@ -1108,5 +1219,8 @@ var Client = function () {
   }]);
   return Client;
 }();
+
+
+Client.providers = providers;
 
 module.exports = Client;
