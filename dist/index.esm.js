@@ -1232,5 +1232,9 @@ var Client = function () {
 
 
 Client.providers = providers;
+Client.schemas = {
+  BlockSchema: BlockSchema,
+  TransactionSchema: TransactionSchema
+};
 
 export default Client;

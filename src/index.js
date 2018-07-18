@@ -116,5 +116,5 @@ export default class Client {
 Client.providers = providers
 Client.schemas = {
   BlockSchema,
-  TransactionSchema,
+  TransactionSchema
 }
