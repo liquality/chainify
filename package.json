@@ -69,7 +69,6 @@
   "pre-commit": [
     "lint",
     "build:prod",
-    "build:docs",
     "test"
   ]
 }
