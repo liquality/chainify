@@ -1237,5 +1237,9 @@ var Client = function () {
 
 
 Client.providers = providers;
+Client.schemas = {
+  BlockSchema: BlockSchema,
+  TransactionSchema: TransactionSchema
+};
 
 module.exports = Client;
