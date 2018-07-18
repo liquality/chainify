@@ -34,3 +34,9 @@ npm link
 cd myblockchainproject
 npm link chainabstractionlayer
 ```
+
+## Build documentation
+
+```bash
+npm run build:docs
+```
