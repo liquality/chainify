@@ -885,30 +885,45 @@ var providers = {
   }
 };
 
-var $id = "https://dev.liquality.com/schema/transaction.json";
-var title = "Transaction";
-var description = "Blockchain transaction";
+var $id = "https://dev.liquality.com/schema/block.json";
+var title = "Block";
+var description = "Blockchain block";
 var type = "object";
-var required = ["blockHash", "blockNumber", "value", "confirmations"];
+var required = ["number", "hash", "timestamp", "difficulty", "size", "parentHash", "nonce"];
 var properties = {
-	blockHash: {
+	hash: {
 		type: "string",
-		title: "Block Hash",
-		pattern: "^([A-Fa-f0-9]{64})$"
+		title: "Hash",
+		pattern: "^0x([A-Fa-f0-9]{64})$"
 	},
-	blockNumber: {
+	number: {
 		type: "number",
-		title: "Block Number",
+		title: "Number",
 		minimum: 0
 	},
-	value: {
+	timestamp: {
 		type: "number",
-		title: "Value",
+		title: "Timestamp",
 		minimum: 0
 	},
-	confirmations: {
+	difficulty: {
 		type: "number",
-		title: "Confirmations",
+		title: "Difficulty",
+		minimum: 0
+	},
+	size: {
+		type: "number",
+		title: "Size",
+		minimum: 0
+	},
+	parentHash: {
+		type: "string",
+		title: "Parent Hash",
+		pattern: "^0x([A-Fa-f0-9]{64})$"
+	},
+	nonce: {
+		type: "number",
+		title: "Nonce",
 		minimum: 0
 	},
 	_raw: {
