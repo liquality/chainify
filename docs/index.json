@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/index.js",
-    "content": "import 'regenerator-runtime/runtime'\n\nimport _ from 'lodash'\n\nimport providers from './providers'\nimport BlockSchema from './schema/Block.json'\nimport TransactionSchema from './schema/Transaction.json'\n\nconst Ajv = require('ajv')\n\nexport default class Client {\n  constructor (provider, version) {\n    if (provider) this.addProvider(provider)\n    if (version) this.version = version\n\n    const ajv = new Ajv()\n    this.validateTransaction = ajv.compile(TransactionSchema)\n    this.validateBlock = ajv.compile(BlockSchema)\n  }\n\n  addProvider (provider) {\n    this.provider = provider\n  }\n\n  _checkMethod (method) {\n    if (!this.provider) {\n      throw new Error('No provider provided')\n    }\n\n    if (!_.isFunction(this.provider[method])) {\n      throw new Error(`Unimplemented method: ${method}`)\n    }\n\n    if (_.isFunction(this.provider._checkMethodVersionSupport)) {\n      if (!this.provider._checkMethodVersionSupport(method, this.version)) {\n        throw new Error(`Method \"${method}\" is not supported by version \"${this.version}\"`)\n      }\n    }\n\n    if (!_.isFunction(this.provider[method])) {\n      throw new Error(`Unimplemented method: ${method}`)\n    }\n  }\n\n  async generateBlock (numberOfBlocks) {\n    this._checkMethod('generateBlock')\n\n    if (!_.isNumber(numberOfBlocks)) {\n      throw new Error('Invalid number of blocks to be generated')\n    }\n\n    const blockHashes = await this.provider.generateBlock(numberOfBlocks)\n\n    if (!_.isArray(blockHashes)) {\n      throw new Error('Provider returned an invalid response')\n    }\n\n    const invalidBlock = _.find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))\n\n    if (invalidBlock) {\n      throw new Error('Provider returned an invalid response')\n    }\n\n    return blockHashes\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    this._checkMethod('getBlockByNumber')\n\n    if (!_.isNumber(blockNumber)) {\n      throw new Error('Invalid Block number')\n    }\n\n    if (!_.isBoolean(includeTx)) {\n      throw new Error('Second parameter should be boolean')\n    }\n\n    const block = await this.provider.getBlockByNumber(blockNumber, includeTx)\n\n    if (!this.validateBlock(block)) {\n      throw new Error('Provider returned an invalid block')\n    }\n\n    return block\n  }\n\n  async getBlockHeight () {\n    this._checkMethod('getBlockHeight')\n\n    const blockHeight = await this.provider.getBlockHeight()\n\n    if (!_.isNumber(blockHeight)) {\n      throw new Error('Provider returned an invalid block height')\n    }\n\n    return blockHeight\n  }\n\n  async getTransactionByHash (txHash) {\n    this._checkMethod('getTransactionByHash')\n\n    if (!(/^[A-Fa-f0-9]$/.test(txHash))) {\n      throw new Error('Transaction hash should be a valid hex string')\n    }\n\n    const transaction = await this.provider.getTransactionByHash(txHash)\n\n    if (!this.validateTransaction(transaction)) {\n      throw new Error('Provider returned an invalid transaction')\n    }\n\n    return transaction\n  }\n}\n\nClient.providers = providers\n",
+    "content": "import 'regenerator-runtime/runtime'\n\nimport _ from 'lodash'\n\nimport providers from './providers'\nimport BlockSchema from './schema/Block.json'\nimport TransactionSchema from './schema/Transaction.json'\n\nconst Ajv = require('ajv')\n\nexport default class Client {\n  /**\n   * ChainAbstractionLayer client\n   * @param {object} [provider] - The provider instance.\n   * @param {string} [version] - Version string\n   */\n  constructor (provider, version) {\n    if (provider) {\n      this.addProvider(provider)\n    }\n\n    if (version) {\n      /**\n       * @type {string}\n       */\n      this.version = version\n    }\n\n    const ajv = new Ajv()\n    this.validateTransaction = ajv.compile(TransactionSchema)\n    this.validateBlock = ajv.compile(BlockSchema)\n  }\n\n  /**\n   * Add a provider.\n   * @param {object} provider - The provider instance.\n   */\n  addProvider (provider) {\n    /**\n     * @type {object}\n     */\n    this.provider = provider\n  }\n\n  _checkMethod (method) {\n    if (!this.provider) {\n      throw new Error('No provider provided')\n    }\n\n    if (!_.isFunction(this.provider[method])) {\n      throw new Error(`Unimplemented method: ${method}`)\n    }\n\n    if (_.isFunction(this.provider._checkMethodVersionSupport)) {\n      if (!this.provider._checkMethodVersionSupport(method, this.version)) {\n        throw new Error(`Method \"${method}\" is not supported by version \"${this.version}\"`)\n      }\n    }\n\n    if (!_.isFunction(this.provider[method])) {\n      throw new Error(`Unimplemented method: ${method}`)\n    }\n  }\n\n  /**\n   * Generate a block\n   * @param {!number} numberOfBlocks - Number of blocks to be generated\n   * @return {Promise<string[], Error>} Returns a promise with Block hash of the\n   *  generated blocks if resolved. Throws an Error if rejected.\n   */\n  async generateBlock (numberOfBlocks) {\n    this._checkMethod('generateBlock')\n\n    if (!_.isNumber(numberOfBlocks)) {\n      throw new Error('Invalid number of blocks to be generated')\n    }\n\n    const blockHashes = await this.provider.generateBlock(numberOfBlocks)\n\n    if (!_.isArray(blockHashes)) {\n      throw new Error('Provider returned an invalid response')\n    }\n\n    const invalidBlock = _.find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))\n\n    if (invalidBlock) {\n      throw new Error('Provider returned an invalid response')\n    }\n\n    return blockHashes\n  }\n\n  /**\n   * Get block by number\n   * @param {!number} blockNumber - Number of the block to be fetched\n   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block\n   * @return {Client.schemas.Block} Returns a Block\n   */\n  async getBlockByNumber (blockNumber, includeTx = false) {\n    this._checkMethod('getBlockByNumber')\n\n    if (!_.isNumber(blockNumber)) {\n      throw new Error('Invalid Block number')\n    }\n\n    if (!_.isBoolean(includeTx)) {\n      throw new Error('Second parameter should be boolean')\n    }\n\n    const block = await this.provider.getBlockByNumber(blockNumber, includeTx)\n\n    if (!this.validateBlock(block)) {\n      throw new Error('Provider returned an invalid block')\n    }\n\n    return block\n  }\n\n  async getBlockHeight () {\n    this._checkMethod('getBlockHeight')\n\n    const blockHeight = await this.provider.getBlockHeight()\n\n    if (!_.isNumber(blockHeight)) {\n      throw new Error('Provider returned an invalid block height')\n    }\n\n    return blockHeight\n  }\n\n  async getTransactionByHash (txHash) {\n    this._checkMethod('getTransactionByHash')\n\n    if (!(/^[A-Fa-f0-9]$/.test(txHash))) {\n      throw new Error('Transaction hash should be a valid hex string')\n    }\n\n    const transaction = await this.provider.getTransactionByHash(txHash)\n\n    if (!this.validateTransaction(transaction)) {\n      throw new Error('Provider returned an invalid transaction')\n    }\n\n    return transaction\n  }\n}\n\nClient.providers = providers\nClient.schemas = {\n  Block: BlockSchema,\n  Transaction: TransactionSchema\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/index.js",
     "access": "public",
@@ -621,9 +621,30 @@
     "static": false,
     "longname": "src/index.js~Client#constructor",
     "access": "public",
-    "description": null,
-    "lineNumber": 12,
-    "undocument": true
+    "description": "ChainAbstractionLayer client",
+    "lineNumber": 17,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "provider",
+        "description": "The provider instance."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "version",
+        "description": "Version string"
+      }
+    ]
   },
   {
     "__docId__": 52,
@@ -633,13 +654,15 @@
     "static": false,
     "longname": "src/index.js~Client#version",
     "access": "public",
-    "description": null,
-    "lineNumber": 14,
-    "undocument": true,
+    "description": "",
+    "lineNumber": 26,
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "string"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -651,7 +674,7 @@
     "longname": "src/index.js~Client#validateTransaction",
     "access": "public",
     "description": null,
-    "lineNumber": 17,
+    "lineNumber": 30,
     "undocument": true,
     "type": {
       "types": [
@@ -668,7 +691,7 @@
     "longname": "src/index.js~Client#validateBlock",
     "access": "public",
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 31,
     "undocument": true,
     "type": {
       "types": [
@@ -686,15 +709,18 @@
     "static": false,
     "longname": "src/index.js~Client#addProvider",
     "access": "public",
-    "description": null,
-    "lineNumber": 21,
-    "undocument": true,
+    "description": "Add a provider.",
+    "lineNumber": 38,
     "params": [
       {
-        "name": "provider",
+        "nullable": null,
         "types": [
-          "*"
-        ]
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "provider",
+        "description": "The provider instance."
       }
     ],
     "return": null
@@ -707,13 +733,15 @@
     "static": false,
     "longname": "src/index.js~Client#provider",
     "access": "public",
-    "description": null,
-    "lineNumber": 22,
-    "undocument": true,
+    "description": "",
+    "lineNumber": 42,
     "type": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "object"
+      ],
+      "spread": false,
+      "description": null
     }
   },
   {
@@ -727,7 +755,7 @@
     "longname": "src/index.js~Client#_checkMethod",
     "access": "private",
     "description": null,
-    "lineNumber": 25,
+    "lineNumber": 45,
     "undocument": true,
     "params": [
       {
@@ -749,21 +777,27 @@
     "static": false,
     "longname": "src/index.js~Client#generateBlock",
     "access": "public",
-    "description": null,
-    "lineNumber": 45,
-    "undocument": true,
+    "description": "Generate a block",
+    "lineNumber": 71,
     "params": [
       {
-        "name": "numberOfBlocks",
+        "nullable": false,
         "types": [
-          "*"
-        ]
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "numberOfBlocks",
+        "description": "Number of blocks to be generated"
       }
     ],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Promise<string[], Error>"
+      ],
+      "spread": false,
+      "description": "Returns a promise with Block hash of the\n generated blocks if resolved. Throws an Error if rejected."
     }
   },
   {
@@ -776,27 +810,39 @@
     "static": false,
     "longname": "src/index.js~Client#getBlockByNumber",
     "access": "public",
-    "description": null,
-    "lineNumber": 67,
-    "undocument": true,
+    "description": "Get block by number",
+    "lineNumber": 99,
     "params": [
       {
-        "name": "blockNumber",
+        "nullable": false,
         "types": [
-          "*"
-        ]
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "blockNumber",
+        "description": "Number of the block to be fetched"
       },
       {
-        "name": "includeTx",
+        "nullable": null,
         "types": [
-          "*"
-        ]
+          "boolean"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "false",
+        "defaultRaw": false,
+        "name": "includeTx",
+        "description": "If true, fetches transaction in the block"
       }
     ],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "Client.schemas.Block"
+      ],
+      "spread": false,
+      "description": "Returns a Block"
     }
   },
   {
@@ -810,7 +856,7 @@
     "longname": "src/index.js~Client#getBlockHeight",
     "access": "public",
     "description": null,
-    "lineNumber": 87,
+    "lineNumber": 119,
     "undocument": true,
     "params": [],
     "return": {
@@ -830,7 +876,7 @@
     "longname": "src/index.js~Client#getTransactionByHash",
     "access": "public",
     "description": null,
-    "lineNumber": 99,
+    "lineNumber": 131,
     "undocument": true,
     "params": [
       {
@@ -1196,7 +1242,7 @@
   },
   {
     "kind": "index",
-    "content": "# Chain Abstraction Layer\n[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)\n\nQuery different blockchains with a single and simple interface.\n\n\n## Client\n\n```javascript\nconst Client = require('chainabstractionlayer')\nconst { BitcoinRPCProvider } = Client.providers.bitcoin\n\nconst bitcoin = new Client(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))\n\nbitcoin\n  .generateBlock(1) // returns Promise\n  .then(console.log) // Array<BlockHash>\n```\n\n\n## Development\n\n### 1. Clone the project and link it locally\n\n```bash\ngit clone git@github.com:ConsenSys/chainabstractionlayer.git\ncd chainabstractionlayer\nnpm link\n```\n\n### 2. Use it in other projects\n\n```bash\ncd myblockchainproject\nnpm link chainabstractionlayer\n```\n",
+    "content": "# Chain Abstraction Layer\n[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)\n\nQuery different blockchains with a single and simple interface.\n\n\n## Client\n\n```javascript\nconst Client = require('chainabstractionlayer')\nconst { BitcoinRPCProvider } = Client.providers.bitcoin\n\nconst bitcoin = new Client(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))\n\nbitcoin\n  .generateBlock(1) // returns Promise\n  .then(console.log) // Array<BlockHash>\n```\n\n\n## Development\n\n### 1. Clone the project and link it locally\n\n```bash\ngit clone git@github.com:ConsenSys/chainabstractionlayer.git\ncd chainabstractionlayer\nnpm link\n```\n\n### 2. Use it in other projects\n\n```bash\ncd myblockchainproject\nnpm link chainabstractionlayer\n```\n\n## Build documentation\n\n```bash\nnpm run build:docs\n```\n",
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/README.md",
     "name": "./README.md",
     "static": true,
@@ -1204,7 +1250,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"chainabstractionlayer\",\n  \"private\": \"true\",\n  \"keywords\": [\n    \"blockchain\",\n    \"bitcoin\",\n    \"ethereum\",\n    \"client\"\n  ],\n  \"main\": \"dist/index.cjs.js\",\n  \"module\": \"dist/index.esm.js\",\n  \"browser\": \"dist/index.umd.js\",\n  \"scripts\": {\n    \"cover\": \"nyc --reporter=html --reporter=text npm test\",\n    \"lint\": \"standard src/* test/*\",\n    \"test\": \"NODE_ENV=test mocha $npm_package_options_mocha\",\n    \"build\": \"rollup -c\",\n    \"build:prod\": \"NODE_ENV=production BABEL_ENV=production npm run build\",\n    \"build:docs\": \"esdoc\"\n  },\n  \"dependencies\": {\n    \"ajv\": \"^6.5.2\",\n    \"axios\": \"^0.18.0\",\n    \"json-bigint\": \"^0.3.0\",\n    \"lodash\": \"^4.0.0\",\n    \"regenerator-runtime\": \"^0.12.0\"\n  },\n  \"devDependencies\": {\n    \"babel-core\": \"^6.26.3\",\n    \"babel-plugin-external-helpers\": \"^6.22.0\",\n    \"babel-plugin-istanbul\": \"^4.1.6\",\n    \"babel-polyfill\": \"^6.26.0\",\n    \"babel-preset-env\": \"^1.7.0\",\n    \"babel-register\": \"^6.26.0\",\n    \"browserify\": \"^16.2.2\",\n    \"chai-as-promised\": \"^7.1.1\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"mocha\": \"^5.2.0\",\n    \"nock\": \"^9.3.0\",\n    \"nyc\": \"^12.0.2\",\n    \"pre-commit\": \"^1.2.2\",\n    \"rollup\": \"^0.62.0\",\n    \"rollup-plugin-babel\": \"^3.0.4\",\n    \"rollup-plugin-commonjs\": \"^9.1.3\",\n    \"rollup-plugin-json\": \"^3.0.0\",\n    \"rollup-plugin-node-builtins\": \"^2.1.2\",\n    \"rollup-plugin-node-globals\": \"^1.2.1\",\n    \"rollup-plugin-node-resolve\": \"^3.3.0\",\n    \"rollup-plugin-terser\": \"^1.0.1\",\n    \"rollup-plugin-uglify\": \"^4.0.0\",\n    \"should\": \"^13.2.1\",\n    \"standard\": \"^11.0.1\"\n  },\n  \"engines\": {\n    \"node\": \">=8\"\n  },\n  \"nyc\": {\n    \"include\": [\n      \"src/\"\n    ],\n    \"instrument\": false,\n    \"report-dir\": \"./coverage\",\n    \"sourceMap\": false\n  },\n  \"options\": {\n    \"mocha\": \"--require babel-register --require babel-polyfill --timeout 20000 --recursive --require should\"\n  },\n  \"pre-commit\": [\n    \"lint\",\n    \"build:prod\",\n    \"build:docs\",\n    \"test\"\n  ]\n}\n",
+    "content": "{\n  \"name\": \"chainabstractionlayer\",\n  \"private\": \"true\",\n  \"keywords\": [\n    \"blockchain\",\n    \"bitcoin\",\n    \"ethereum\",\n    \"client\"\n  ],\n  \"main\": \"dist/index.cjs.js\",\n  \"module\": \"dist/index.esm.js\",\n  \"browser\": \"dist/index.umd.js\",\n  \"scripts\": {\n    \"cover\": \"nyc --reporter=html --reporter=text npm test\",\n    \"lint\": \"standard src/* test/*\",\n    \"test\": \"NODE_ENV=test mocha $npm_package_options_mocha\",\n    \"build\": \"rollup -c\",\n    \"build:prod\": \"NODE_ENV=production BABEL_ENV=production npm run build\",\n    \"build:docs\": \"esdoc\"\n  },\n  \"dependencies\": {\n    \"ajv\": \"^6.5.2\",\n    \"axios\": \"^0.18.0\",\n    \"json-bigint\": \"^0.3.0\",\n    \"lodash\": \"^4.0.0\",\n    \"regenerator-runtime\": \"^0.12.0\"\n  },\n  \"devDependencies\": {\n    \"babel-core\": \"^6.26.3\",\n    \"babel-plugin-external-helpers\": \"^6.22.0\",\n    \"babel-plugin-istanbul\": \"^4.1.6\",\n    \"babel-polyfill\": \"^6.26.0\",\n    \"babel-preset-env\": \"^1.7.0\",\n    \"babel-register\": \"^6.26.0\",\n    \"browserify\": \"^16.2.2\",\n    \"chai-as-promised\": \"^7.1.1\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"mocha\": \"^5.2.0\",\n    \"nock\": \"^9.3.0\",\n    \"nyc\": \"^12.0.2\",\n    \"pre-commit\": \"^1.2.2\",\n    \"rollup\": \"^0.62.0\",\n    \"rollup-plugin-babel\": \"^3.0.4\",\n    \"rollup-plugin-commonjs\": \"^9.1.3\",\n    \"rollup-plugin-json\": \"^3.0.0\",\n    \"rollup-plugin-node-builtins\": \"^2.1.2\",\n    \"rollup-plugin-node-globals\": \"^1.2.1\",\n    \"rollup-plugin-node-resolve\": \"^3.3.0\",\n    \"rollup-plugin-terser\": \"^1.0.1\",\n    \"rollup-plugin-uglify\": \"^4.0.0\",\n    \"should\": \"^13.2.1\",\n    \"standard\": \"^11.0.1\"\n  },\n  \"engines\": {\n    \"node\": \">=8\"\n  },\n  \"nyc\": {\n    \"include\": [\n      \"src/\"\n    ],\n    \"instrument\": false,\n    \"report-dir\": \"./coverage\",\n    \"sourceMap\": false\n  },\n  \"options\": {\n    \"mocha\": \"--require babel-register --require babel-polyfill --timeout 20000 --recursive --require should\"\n  },\n  \"pre-commit\": [\n    \"lint\",\n    \"build:prod\",\n    \"test\"\n  ]\n}\n",
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/package.json",
     "name": "package.json",
     "static": true,

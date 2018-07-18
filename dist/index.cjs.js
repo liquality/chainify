@@ -986,20 +986,42 @@ var TransactionSchema = {
 var Ajv = require('ajv');
 
 var Client = function () {
+  /**
+   * ChainAbstractionLayer client
+   * @param {object} [provider] - The provider instance.
+   * @param {string} [version] - Version string
+   */
   function Client(provider, version) {
     classCallCheck(this, Client);
 
-    if (provider) this.addProvider(provider);
-    if (version) this.version = version;
+    if (provider) {
+      this.addProvider(provider);
+    }
+
+    if (version) {
+      /**
+       * @type {string}
+       */
+      this.version = version;
+    }
 
     var ajv = new Ajv();
     this.validateTransaction = ajv.compile(TransactionSchema);
     this.validateBlock = ajv.compile(BlockSchema);
   }
 
+  /**
+   * Add a provider.
+   * @param {object} provider - The provider instance.
+   */
+
+
   createClass(Client, [{
     key: 'addProvider',
     value: function addProvider(provider) {
+      /**
+       * @type {object}
+       */
       this.provider = provider;
     }
   }, {
@@ -1023,6 +1045,14 @@ var Client = function () {
         throw new Error('Unimplemented method: ' + method);
       }
     }
+
+    /**
+     * Generate a block
+     * @param {!number} numberOfBlocks - Number of blocks to be generated
+     * @return {Promise<string[], Error>} Returns a promise with Block hash of the
+     *  generated blocks if resolved. Throws an Error if rejected.
+     */
+
   }, {
     key: 'generateBlock',
     value: function () {
@@ -1084,10 +1114,19 @@ var Client = function () {
 
       return generateBlock;
     }()
+
+    /**
+     * Get block by number
+     * @param {!number} blockNumber - Number of the block to be fetched
+     * @param {boolean} [includeTx=false] - If true, fetches transaction in the block
+     * @return {Client.schemas.Block} Returns a Block
+     */
+
   }, {
     key: 'getBlockByNumber',
     value: function () {
-      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(blockNumber, includeTx) {
+      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(blockNumber) {
+        var includeTx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
         var block;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
@@ -1135,7 +1174,7 @@ var Client = function () {
         }, _callee2, this);
       }));
 
-      function getBlockByNumber(_x2, _x3) {
+      function getBlockByNumber(_x3) {
         return _ref2.apply(this, arguments);
       }
 
@@ -1238,8 +1277,8 @@ var Client = function () {
 
 Client.providers = providers;
 Client.schemas = {
-  BlockSchema: BlockSchema,
-  TransactionSchema: TransactionSchema
+  Block: BlockSchema,
+  Transaction: TransactionSchema
 };
 
 module.exports = Client;

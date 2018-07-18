@@ -1,25 +1,19 @@
 {
-  "coverage": "0%",
+  "coverage": "23.07%",
   "expectCount": 26,
-  "actualCount": 0,
+  "actualCount": 6,
   "files": {
     "src/index.js": {
       "expectCount": 13,
-      "actualCount": 0,
+      "actualCount": 6,
       "undocumentLines": [
         9,
         11,
-        12,
-        14,
-        17,
-        18,
-        21,
-        22,
-        25,
+        30,
+        31,
         45,
-        67,
-        87,
-        99
+        119,
+        131
       ]
     },
     "src/providers/JsonRpcHelper.js": {

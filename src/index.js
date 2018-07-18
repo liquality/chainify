@@ -9,16 +9,36 @@ import TransactionSchema from './schema/Transaction.json'
 const Ajv = require('ajv')
 
 export default class Client {
+  /**
+   * ChainAbstractionLayer client
+   * @param {object} [provider] - The provider instance.
+   * @param {string} [version] - Version string
+   */
   constructor (provider, version) {
-    if (provider) this.addProvider(provider)
-    if (version) this.version = version
+    if (provider) {
+      this.addProvider(provider)
+    }
+
+    if (version) {
+      /**
+       * @type {string}
+       */
+      this.version = version
+    }
 
     const ajv = new Ajv()
     this.validateTransaction = ajv.compile(TransactionSchema)
     this.validateBlock = ajv.compile(BlockSchema)
   }
 
+  /**
+   * Add a provider.
+   * @param {object} provider - The provider instance.
+   */
   addProvider (provider) {
+    /**
+     * @type {object}
+     */
     this.provider = provider
   }
 
@@ -42,6 +62,12 @@ export default class Client {
     }
   }
 
+  /**
+   * Generate a block
+   * @param {!number} numberOfBlocks - Number of blocks to be generated
+   * @return {Promise<string[], Error>} Returns a promise with Block hash of the
+   *  generated blocks if resolved. Throws an Error if rejected.
+   */
   async generateBlock (numberOfBlocks) {
     this._checkMethod('generateBlock')
 
@@ -64,7 +90,13 @@ export default class Client {
     return blockHashes
   }
 
-  async getBlockByNumber (blockNumber, includeTx) {
+  /**
+   * Get block by number
+   * @param {!number} blockNumber - Number of the block to be fetched
+   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block
+   * @return {Client.schemas.Block} Returns a Block
+   */
+  async getBlockByNumber (blockNumber, includeTx = false) {
     this._checkMethod('getBlockByNumber')
 
     if (!_.isNumber(blockNumber)) {
@@ -115,6 +147,6 @@ export default class Client {
 
 Client.providers = providers
 Client.schemas = {
-  BlockSchema,
-  TransactionSchema
+  Block: BlockSchema,
+  Transaction: TransactionSchema
 }
