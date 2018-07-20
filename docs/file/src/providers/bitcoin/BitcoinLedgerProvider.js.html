@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../../">
-  <title data-ice="title">src/providers/bitcoin/BitcoinRPCProvider.js | chainabstractionlayer</title>
+  <title data-ice="title">src/providers/bitcoin/BitcoinLedgerProvider.js | chainabstractionlayer</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -40,36 +40,45 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/providers/bitcoin/BitcoinRPCProvider.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import axios from &apos;axios&apos;
+<div class="content" data-ice="content"><h1 data-ice="title">src/providers/bitcoin/BitcoinLedgerProvider.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import BitcoinRPCProvider from &apos;./BitcoinRPCProvider&apos;
 
-import { prepareRequest, praseResponse } from &apos;../JsonRpcHelper&apos;
+import Transport from &apos;@ledgerhq/hw-transport-u2f&apos;
+// import Transport from &apos;@ledgerhq/hw-transport-node-hid&apos;
+import LedgerBtc from &apos;@ledgerhq/hw-app-btc&apos;
 
-export default class BitcoinRPCProvider {
+export default class BitcoinLedgerProvider extends BitcoinRPCProvider {
   constructor (uri, user, pass) {
-    this.axios = axios.create({
-      baseURL: uri,
-      transformRequest: [({ data }, headers) =&gt; prepareRequest(data)],
-      transformResponse: [(data, headers) =&gt; praseResponse(data, headers)],
-      validateStatus: (status) =&gt; status === 200
-    })
+    super(uri, user, pass)
+    this._ledgerBtc = false
+    this._derivationPath = `44&apos;/0&apos;/0&apos;/0`
+  }
 
-    if (user || pass) {
-      this.axios.defaults.auth = {
-        username: user,
-        password: pass
-      }
+  async _connectToLedger () {
+    if (!this._ledgerBtc) {
+      const transport = await Transport.create()
+      this._ledgerBtc = new LedgerBtc(transport)
     }
   }
 
-  _rpc (method, ...params) {
-    return this.axios.post(&apos;/&apos;, {
-      data: { method, params }
-    }).then(({ data }) =&gt; data)
+  async _updateDerivationPath (path) {
+    this._derivationPath = path
   }
 
-  async generateBlock (numberOfBlocks) {
-    return this._rpc(&apos;generate&apos;, numberOfBlocks)
+  async getAddress () {
+    await this._connectToLedger()
+
+    const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(this._derivationPath)
+
+    return bitcoinAddress
+  }
+
+  async signMessage (message) {
+    await this._connectToLedger()
+
+    const hex = Buffer.from(message).toString(&apos;hex&apos;)
+
+    return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
   }
 }
 </code></pre>

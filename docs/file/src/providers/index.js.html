@@ -32,19 +32,29 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-praseResponse">praseResponse</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-prepareRequest">prepareRequest</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/providers/index.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import BitcoinRPCProvider from &apos;./bitcoin/BitcoinRPCProvider&apos;
-// import EthereumRPCProvider from &apos;./bitcoin/EthereumRPCProvider&apos;
+import BitcoinLedgerProvider from &apos;./bitcoin/BitcoinLedgerProvider&apos;
+
+import EthereumRPCProvider from &apos;./ethereum/EthereumRPCProvider&apos;
+import EthereumLedgerProvider from &apos;./ethereum/EthereumLedgerProvider&apos;
 
 export default {
   bitcoin: {
-    BitcoinRPCProvider
+    BitcoinRPCProvider,
+    BitcoinLedgerProvider
+  },
+  ethereum: {
+    EthereumRPCProvider,
+    EthereumLedgerProvider
   }
 }
 </code></pre>

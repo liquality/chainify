@@ -1,5 +1,11 @@
 window.esdocSearchIndex = [
   [
+    "chainabstractionlayer/src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html",
+    "<span>BitcoinLedgerProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinLedgerProvider.js</span>",
+    "class"
+  ],
+  [
     "chainabstractionlayer/src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider",
     "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html",
     "<span>BitcoinRPCProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinRPCProvider.js</span>",
@@ -9,6 +15,12 @@ window.esdocSearchIndex = [
     "chainabstractionlayer/src/index.js~client",
     "class/src/index.js~Client.html",
     "<span>Client</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/index.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html",
+    "<span>EthereumLedgerProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumLedgerProvider.js</span>",
     "class"
   ],
   [
@@ -342,6 +354,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/index.js~client#getaddress",
+    "class/src/index.js~Client.html#instance-method-getAddress",
+    "src/index.js~Client#getAddress",
+    "method"
+  ],
+  [
     "src/index.js~client#getblockbynumber",
     "class/src/index.js~Client.html#instance-method-getBlockByNumber",
     "src/index.js~Client#getBlockByNumber",
@@ -366,6 +384,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/index.js~client#signmessage",
+    "class/src/index.js~Client.html#instance-method-signMessage",
+    "src/index.js~Client#signMessage",
+    "method"
+  ],
+  [
     "src/index.js~client#validateblock",
     "class/src/index.js~Client.html#instance-member-validateBlock",
     "src/index.js~Client#validateBlock",
@@ -388,6 +412,54 @@ window.esdocSearchIndex = [
     "file/src/providers/JsonRpcHelper.js.html",
     "src/providers/JsonRpcHelper.js",
     "file"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js",
+    "file/src/providers/bitcoin/BitcoinLedgerProvider.js.html",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_connecttoledger",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_connectToLedger",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_connectToLedger",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_derivationpath",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_derivationPath",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_derivationPath",
+    "member"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_ledgerbtc",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_ledgerBtc",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_ledgerBtc",
+    "member"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_updatederivationpath",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_updateDerivationPath",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_updateDerivationPath",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#constructor",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-constructor-constructor",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#constructor",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getaddress",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getAddress",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getAddress",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#signmessage",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-signMessage",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#signMessage",
+    "method"
   ],
   [
     "src/providers/bitcoin/bitcoinrpcprovider.js",
@@ -417,6 +489,54 @@ window.esdocSearchIndex = [
     "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#generateblock",
     "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-generateBlock",
     "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#generateBlock",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js",
+    "file/src/providers/ethereum/EthereumLedgerProvider.js.html",
+    "src/providers/ethereum/EthereumLedgerProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#_connecttoledger",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-method-_connectToLedger",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#_connectToLedger",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#_derivationpath",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-member-_derivationPath",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#_derivationPath",
+    "member"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#_ledgereth",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-member-_ledgerEth",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#_ledgerEth",
+    "member"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#_updatederivationpath",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-method-_updateDerivationPath",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#_updateDerivationPath",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#constructor",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-constructor-constructor",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#constructor",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#getaddress",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-method-getAddress",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#getAddress",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#signmessage",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-method-signMessage",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#signMessage",
     "method"
   ],
   [

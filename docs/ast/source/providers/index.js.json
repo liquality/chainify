@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 189,
+  "end": 425,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 9,
+      "line": 17,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 189,
+    "end": 425,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 9,
+        "line": 17,
         "column": 0
       }
     },
@@ -94,69 +94,256 @@
             "rawValue": "./bitcoin/BitcoinRPCProvider",
             "raw": "'./bitcoin/BitcoinRPCProvider'"
           },
-          "value": "./bitcoin/BitcoinRPCProvider",
-          "leadingComments": null,
-          "trailingComments": null
+          "value": "./bitcoin/BitcoinRPCProvider"
+        }
+      },
+      {
+        "type": "ImportDeclaration",
+        "start": 62,
+        "end": 129,
+        "loc": {
+          "start": {
+            "line": 2,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 67
+          }
         },
-        "trailingComments": [
+        "specifiers": [
           {
-            "type": "CommentLine",
-            "value": " import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'",
-            "start": 62,
-            "end": 128,
+            "type": "ImportDefaultSpecifier",
+            "start": 69,
+            "end": 90,
             "loc": {
               "start": {
                 "line": 2,
-                "column": 0
+                "column": 7
               },
               "end": {
                 "line": 2,
-                "column": 66
+                "column": 28
               }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 69,
+              "end": 90,
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 7
+                },
+                "end": {
+                  "line": 2,
+                  "column": 28
+                },
+                "identifierName": "BitcoinLedgerProvider"
+              },
+              "name": "BitcoinLedgerProvider"
             }
           }
-        ]
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 96,
+          "end": 129,
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 34
+            },
+            "end": {
+              "line": 2,
+              "column": 67
+            }
+          },
+          "extra": {
+            "rawValue": "./bitcoin/BitcoinLedgerProvider",
+            "raw": "'./bitcoin/BitcoinLedgerProvider'"
+          },
+          "value": "./bitcoin/BitcoinLedgerProvider"
+        }
       },
       {
-        "type": "ExportDefaultDeclaration",
-        "start": 130,
-        "end": 188,
+        "type": "ImportDeclaration",
+        "start": 131,
+        "end": 195,
         "loc": {
           "start": {
             "line": 4,
             "column": 0
           },
           "end": {
-            "line": 8,
+            "line": 4,
+            "column": 64
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 138,
+            "end": 157,
+            "loc": {
+              "start": {
+                "line": 4,
+                "column": 7
+              },
+              "end": {
+                "line": 4,
+                "column": 26
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 138,
+              "end": 157,
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 7
+                },
+                "end": {
+                  "line": 4,
+                  "column": 26
+                },
+                "identifierName": "EthereumRPCProvider"
+              },
+              "name": "EthereumRPCProvider"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 163,
+          "end": 195,
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 32
+            },
+            "end": {
+              "line": 4,
+              "column": 64
+            }
+          },
+          "extra": {
+            "rawValue": "./ethereum/EthereumRPCProvider",
+            "raw": "'./ethereum/EthereumRPCProvider'"
+          },
+          "value": "./ethereum/EthereumRPCProvider"
+        }
+      },
+      {
+        "type": "ImportDeclaration",
+        "start": 196,
+        "end": 266,
+        "loc": {
+          "start": {
+            "line": 5,
+            "column": 0
+          },
+          "end": {
+            "line": 5,
+            "column": 70
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 203,
+            "end": 225,
+            "loc": {
+              "start": {
+                "line": 5,
+                "column": 7
+              },
+              "end": {
+                "line": 5,
+                "column": 29
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 203,
+              "end": 225,
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 7
+                },
+                "end": {
+                  "line": 5,
+                  "column": 29
+                },
+                "identifierName": "EthereumLedgerProvider"
+              },
+              "name": "EthereumLedgerProvider"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 231,
+          "end": 266,
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 35
+            },
+            "end": {
+              "line": 5,
+              "column": 70
+            }
+          },
+          "extra": {
+            "rawValue": "./ethereum/EthereumLedgerProvider",
+            "raw": "'./ethereum/EthereumLedgerProvider'"
+          },
+          "value": "./ethereum/EthereumLedgerProvider"
+        }
+      },
+      {
+        "type": "ExportDefaultDeclaration",
+        "start": 268,
+        "end": 424,
+        "loc": {
+          "start": {
+            "line": 7,
+            "column": 0
+          },
+          "end": {
+            "line": 16,
             "column": 1
           }
         },
         "declaration": {
           "type": "ObjectExpression",
-          "start": 145,
-          "end": 188,
+          "start": 283,
+          "end": 424,
           "loc": {
             "start": {
-              "line": 4,
+              "line": 7,
               "column": 15
             },
             "end": {
-              "line": 8,
+              "line": 16,
               "column": 1
             }
           },
           "properties": [
             {
               "type": "ObjectProperty",
-              "start": 149,
-              "end": 186,
+              "start": 287,
+              "end": 351,
               "loc": {
                 "start": {
-                  "line": 5,
+                  "line": 8,
                   "column": 2
                 },
                 "end": {
-                  "line": 7,
+                  "line": 11,
                   "column": 3
                 }
               },
@@ -165,48 +352,47 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 149,
-                "end": 156,
+                "start": 287,
+                "end": 294,
                 "loc": {
                   "start": {
-                    "line": 5,
+                    "line": 8,
                     "column": 2
                   },
                   "end": {
-                    "line": 5,
+                    "line": 8,
                     "column": 9
                   },
                   "identifierName": "bitcoin"
                 },
-                "name": "bitcoin",
-                "leadingComments": null
+                "name": "bitcoin"
               },
               "value": {
                 "type": "ObjectExpression",
-                "start": 158,
-                "end": 186,
+                "start": 296,
+                "end": 351,
                 "loc": {
                   "start": {
-                    "line": 5,
+                    "line": 8,
                     "column": 11
                   },
                   "end": {
-                    "line": 7,
+                    "line": 11,
                     "column": 3
                   }
                 },
                 "properties": [
                   {
                     "type": "ObjectProperty",
-                    "start": 164,
-                    "end": 182,
+                    "start": 302,
+                    "end": 320,
                     "loc": {
                       "start": {
-                        "line": 6,
+                        "line": 9,
                         "column": 4
                       },
                       "end": {
-                        "line": 6,
+                        "line": 9,
                         "column": 22
                       }
                     },
@@ -215,15 +401,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 164,
-                      "end": 182,
+                      "start": 302,
+                      "end": 320,
                       "loc": {
                         "start": {
-                          "line": 6,
+                          "line": 9,
                           "column": 4
                         },
                         "end": {
-                          "line": 6,
+                          "line": 9,
                           "column": 22
                         },
                         "identifierName": "BitcoinRPCProvider"
@@ -232,15 +418,15 @@
                     },
                     "value": {
                       "type": "Identifier",
-                      "start": 164,
-                      "end": 182,
+                      "start": 302,
+                      "end": 320,
                       "loc": {
                         "start": {
-                          "line": 6,
+                          "line": 9,
                           "column": 4
                         },
                         "end": {
-                          "line": 6,
+                          "line": 9,
                           "column": 22
                         },
                         "identifierName": "BitcoinRPCProvider"
@@ -250,72 +436,236 @@
                     "extra": {
                       "shorthand": true
                     }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 326,
+                    "end": 347,
+                    "loc": {
+                      "start": {
+                        "line": 10,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 25
+                      }
+                    },
+                    "method": false,
+                    "shorthand": true,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 326,
+                      "end": 347,
+                      "loc": {
+                        "start": {
+                          "line": 10,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 25
+                        },
+                        "identifierName": "BitcoinLedgerProvider"
+                      },
+                      "name": "BitcoinLedgerProvider"
+                    },
+                    "value": {
+                      "type": "Identifier",
+                      "start": 326,
+                      "end": 347,
+                      "loc": {
+                        "start": {
+                          "line": 10,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 25
+                        },
+                        "identifierName": "BitcoinLedgerProvider"
+                      },
+                      "name": "BitcoinLedgerProvider"
+                    },
+                    "extra": {
+                      "shorthand": true
+                    }
                   }
                 ]
-              },
-              "leadingComments": null
-            }
-          ],
-          "leadingComments": [
+              }
+            },
             {
-              "type": "CommentLine",
-              "value": " import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'",
-              "start": 62,
-              "end": 128,
+              "type": "ObjectProperty",
+              "start": 355,
+              "end": 422,
               "loc": {
                 "start": {
-                  "line": 2,
-                  "column": 0
+                  "line": 12,
+                  "column": 2
                 },
                 "end": {
-                  "line": 2,
-                  "column": 66
+                  "line": 15,
+                  "column": 3
                 }
+              },
+              "method": false,
+              "shorthand": false,
+              "computed": false,
+              "key": {
+                "type": "Identifier",
+                "start": 355,
+                "end": 363,
+                "loc": {
+                  "start": {
+                    "line": 12,
+                    "column": 2
+                  },
+                  "end": {
+                    "line": 12,
+                    "column": 10
+                  },
+                  "identifierName": "ethereum"
+                },
+                "name": "ethereum"
+              },
+              "value": {
+                "type": "ObjectExpression",
+                "start": 365,
+                "end": 422,
+                "loc": {
+                  "start": {
+                    "line": 12,
+                    "column": 12
+                  },
+                  "end": {
+                    "line": 15,
+                    "column": 3
+                  }
+                },
+                "properties": [
+                  {
+                    "type": "ObjectProperty",
+                    "start": 371,
+                    "end": 390,
+                    "loc": {
+                      "start": {
+                        "line": 13,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 13,
+                        "column": 23
+                      }
+                    },
+                    "method": false,
+                    "shorthand": true,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 371,
+                      "end": 390,
+                      "loc": {
+                        "start": {
+                          "line": 13,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 23
+                        },
+                        "identifierName": "EthereumRPCProvider"
+                      },
+                      "name": "EthereumRPCProvider"
+                    },
+                    "value": {
+                      "type": "Identifier",
+                      "start": 371,
+                      "end": 390,
+                      "loc": {
+                        "start": {
+                          "line": 13,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 23
+                        },
+                        "identifierName": "EthereumRPCProvider"
+                      },
+                      "name": "EthereumRPCProvider"
+                    },
+                    "extra": {
+                      "shorthand": true
+                    }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 396,
+                    "end": 418,
+                    "loc": {
+                      "start": {
+                        "line": 14,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 26
+                      }
+                    },
+                    "method": false,
+                    "shorthand": true,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 396,
+                      "end": 418,
+                      "loc": {
+                        "start": {
+                          "line": 14,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 26
+                        },
+                        "identifierName": "EthereumLedgerProvider"
+                      },
+                      "name": "EthereumLedgerProvider"
+                    },
+                    "value": {
+                      "type": "Identifier",
+                      "start": 396,
+                      "end": 418,
+                      "loc": {
+                        "start": {
+                          "line": 14,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 26
+                        },
+                        "identifierName": "EthereumLedgerProvider"
+                      },
+                      "name": "EthereumLedgerProvider"
+                    },
+                    "extra": {
+                      "shorthand": true
+                    }
+                  }
+                ]
               }
             }
           ],
+          "leadingComments": [],
           "trailingComments": []
-        },
-        "leadingComments": [
-          {
-            "type": "CommentLine",
-            "value": " import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'",
-            "start": 62,
-            "end": 128,
-            "loc": {
-              "start": {
-                "line": 2,
-                "column": 0
-              },
-              "end": {
-                "line": 2,
-                "column": 66
-              }
-            }
-          }
-        ]
+        }
       }
     ],
     "directives": []
   },
-  "comments": [
-    {
-      "type": "CommentLine",
-      "value": " import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'",
-      "start": 62,
-      "end": 128,
-      "loc": {
-        "start": {
-          "line": 2,
-          "column": 0
-        },
-        "end": {
-          "line": 2,
-          "column": 66
-        }
-      }
-    }
-  ],
+  "comments": [],
   "tokens": [
     {
       "type": {
@@ -425,10 +775,22 @@
       }
     },
     {
-      "type": "CommentLine",
-      "value": " import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'",
+      "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
       "start": 62,
-      "end": 128,
+      "end": 68,
       "loc": {
         "start": {
           "line": 2,
@@ -436,7 +798,300 @@
         },
         "end": {
           "line": 2,
-          "column": 66
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "BitcoinLedgerProvider",
+      "start": 69,
+      "end": 90,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 7
+        },
+        "end": {
+          "line": 2,
+          "column": 28
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 91,
+      "end": 95,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 29
+        },
+        "end": {
+          "line": 2,
+          "column": 33
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./bitcoin/BitcoinLedgerProvider",
+      "start": 96,
+      "end": 129,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 34
+        },
+        "end": {
+          "line": 2,
+          "column": 67
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 131,
+      "end": 137,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 4,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "EthereumRPCProvider",
+      "start": 138,
+      "end": 157,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 7
+        },
+        "end": {
+          "line": 4,
+          "column": 26
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 158,
+      "end": 162,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 27
+        },
+        "end": {
+          "line": 4,
+          "column": 31
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./ethereum/EthereumRPCProvider",
+      "start": 163,
+      "end": 195,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 32
+        },
+        "end": {
+          "line": 4,
+          "column": 64
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 196,
+      "end": 202,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 0
+        },
+        "end": {
+          "line": 5,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "EthereumLedgerProvider",
+      "start": 203,
+      "end": 225,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 7
+        },
+        "end": {
+          "line": 5,
+          "column": 29
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 226,
+      "end": 230,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 30
+        },
+        "end": {
+          "line": 5,
+          "column": 34
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./ethereum/EthereumLedgerProvider",
+      "start": 231,
+      "end": 266,
+      "loc": {
+        "start": {
+          "line": 5,
+          "column": 35
+        },
+        "end": {
+          "line": 5,
+          "column": 70
         }
       }
     },
@@ -455,15 +1110,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 130,
-      "end": 136,
+      "start": 268,
+      "end": 274,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 7,
           "column": 0
         },
         "end": {
-          "line": 4,
+          "line": 7,
           "column": 6
         }
       }
@@ -483,15 +1138,15 @@
         "updateContext": null
       },
       "value": "default",
-      "start": 137,
-      "end": 144,
+      "start": 275,
+      "end": 282,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 7,
           "column": 7
         },
         "end": {
-          "line": 4,
+          "line": 7,
           "column": 14
         }
       }
@@ -508,15 +1163,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 145,
-      "end": 146,
+      "start": 283,
+      "end": 284,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 7,
           "column": 15
         },
         "end": {
-          "line": 4,
+          "line": 7,
           "column": 16
         }
       }
@@ -534,15 +1189,15 @@
         "binop": null
       },
       "value": "bitcoin",
-      "start": 149,
-      "end": 156,
+      "start": 287,
+      "end": 294,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 8,
           "column": 2
         },
         "end": {
-          "line": 5,
+          "line": 8,
           "column": 9
         }
       }
@@ -560,15 +1215,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 156,
-      "end": 157,
+      "start": 294,
+      "end": 295,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 8,
           "column": 9
         },
         "end": {
-          "line": 5,
+          "line": 8,
           "column": 10
         }
       }
@@ -585,15 +1240,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 158,
-      "end": 159,
+      "start": 296,
+      "end": 297,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 8,
           "column": 11
         },
         "end": {
-          "line": 5,
+          "line": 8,
           "column": 12
         }
       }
@@ -611,16 +1266,68 @@
         "binop": null
       },
       "value": "BitcoinRPCProvider",
-      "start": 164,
-      "end": 182,
+      "start": 302,
+      "end": 320,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 9,
           "column": 4
         },
         "end": {
-          "line": 6,
+          "line": 9,
           "column": 22
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 320,
+      "end": 321,
+      "loc": {
+        "start": {
+          "line": 9,
+          "column": 22
+        },
+        "end": {
+          "line": 9,
+          "column": 23
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "BitcoinLedgerProvider",
+      "start": 326,
+      "end": 347,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 4
+        },
+        "end": {
+          "line": 10,
+          "column": 25
         }
       }
     },
@@ -636,15 +1343,221 @@
         "postfix": false,
         "binop": null
       },
-      "start": 185,
-      "end": 186,
+      "start": 350,
+      "end": 351,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 11,
           "column": 2
         },
         "end": {
-          "line": 7,
+          "line": 11,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 351,
+      "end": 352,
+      "loc": {
+        "start": {
+          "line": 11,
+          "column": 3
+        },
+        "end": {
+          "line": 11,
+          "column": 4
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "ethereum",
+      "start": 355,
+      "end": 363,
+      "loc": {
+        "start": {
+          "line": 12,
+          "column": 2
+        },
+        "end": {
+          "line": 12,
+          "column": 10
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 363,
+      "end": 364,
+      "loc": {
+        "start": {
+          "line": 12,
+          "column": 10
+        },
+        "end": {
+          "line": 12,
+          "column": 11
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "{",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 365,
+      "end": 366,
+      "loc": {
+        "start": {
+          "line": 12,
+          "column": 12
+        },
+        "end": {
+          "line": 12,
+          "column": 13
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "EthereumRPCProvider",
+      "start": 371,
+      "end": 390,
+      "loc": {
+        "start": {
+          "line": 13,
+          "column": 4
+        },
+        "end": {
+          "line": 13,
+          "column": 23
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 390,
+      "end": 391,
+      "loc": {
+        "start": {
+          "line": 13,
+          "column": 23
+        },
+        "end": {
+          "line": 13,
+          "column": 24
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "EthereumLedgerProvider",
+      "start": 396,
+      "end": 418,
+      "loc": {
+        "start": {
+          "line": 14,
+          "column": 4
+        },
+        "end": {
+          "line": 14,
+          "column": 26
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "}",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 421,
+      "end": 422,
+      "loc": {
+        "start": {
+          "line": 15,
+          "column": 2
+        },
+        "end": {
+          "line": 15,
           "column": 3
         }
       }
@@ -661,15 +1574,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 187,
-      "end": 188,
+      "start": 423,
+      "end": 424,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 16,
           "column": 0
         },
         "end": {
-          "line": 8,
+          "line": 16,
           "column": 1
         }
       }
@@ -687,15 +1600,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 189,
-      "end": 189,
+      "start": 425,
+      "end": 425,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 17,
           "column": 0
         },
         "end": {
-          "line": 9,
+          "line": 17,
           "column": 0
         }
       }
