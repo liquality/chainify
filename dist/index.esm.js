@@ -759,86 +759,15 @@ function praseResponse(body, headers) {
   return body.result;
 }
 
-var asyncToGenerator = function (fn) {
-  return function () {
-    var gen = fn.apply(this, arguments);
-    return new Promise(function (resolve, reject) {
-      function step(key, arg) {
-        try {
-          var info = gen[key](arg);
-          var value = info.value;
-        } catch (error) {
-          reject(error);
-          return;
-        }
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-        if (info.done) {
-          resolve(value);
-        } else {
-          return Promise.resolve(value).then(function (value) {
-            step("next", value);
-          }, function (err) {
-            step("throw", err);
-          });
-        }
-      }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-      return step("next");
-    });
-  };
-};
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-var inherits = function (subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-};
-
-var possibleConstructorReturn = function (self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var BitcoinRPCProvider = function () {
   function BitcoinRPCProvider(uri, user, pass) {
-    classCallCheck(this, BitcoinRPCProvider);
+    _classCallCheck(this, BitcoinRPCProvider);
 
     this.axios = axios.create({
       baseURL: uri,
@@ -862,7 +791,7 @@ var BitcoinRPCProvider = function () {
     }
   }
 
-  createClass(BitcoinRPCProvider, [{
+  _createClass(BitcoinRPCProvider, [{
     key: '_rpc',
     value: function _rpc(method) {
       for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -879,7 +808,7 @@ var BitcoinRPCProvider = function () {
   }, {
     key: 'generateBlock',
     value: function () {
-      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
+      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -901,26 +830,37 @@ var BitcoinRPCProvider = function () {
       return generateBlock;
     }()
   }]);
+
   return BitcoinRPCProvider;
 }();
 
+var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _asyncToGenerator$1(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var BitcoinLedgerProvider = function (_BitcoinRPCProvider) {
-  inherits(BitcoinLedgerProvider, _BitcoinRPCProvider);
+  _inherits(BitcoinLedgerProvider, _BitcoinRPCProvider);
 
   function BitcoinLedgerProvider(uri, user, pass) {
-    classCallCheck(this, BitcoinLedgerProvider);
+    _classCallCheck$1(this, BitcoinLedgerProvider);
 
-    var _this = possibleConstructorReturn(this, (BitcoinLedgerProvider.__proto__ || Object.getPrototypeOf(BitcoinLedgerProvider)).call(this, uri, user, pass));
+    var _this = _possibleConstructorReturn(this, (BitcoinLedgerProvider.__proto__ || Object.getPrototypeOf(BitcoinLedgerProvider)).call(this, uri, user, pass));
 
     _this._ledgerBtc = false;
     _this._derivationPath = '44\'/0\'/0\'/0';
     return _this;
   }
 
-  createClass(BitcoinLedgerProvider, [{
+  _createClass$1(BitcoinLedgerProvider, [{
     key: '_connectToLedger',
     value: function () {
-      var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var _ref = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
         var transport;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -956,7 +896,7 @@ var BitcoinLedgerProvider = function (_BitcoinRPCProvider) {
   }, {
     key: '_updateDerivationPath',
     value: function () {
-      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(path) {
+      var _ref2 = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(path) {
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -978,9 +918,9 @@ var BitcoinLedgerProvider = function (_BitcoinRPCProvider) {
       return _updateDerivationPath;
     }()
   }, {
-    key: 'getAddress',
+    key: 'getAddresses',
     value: function () {
-      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+      var _ref3 = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
         var _ref4, bitcoinAddress;
 
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
@@ -997,7 +937,7 @@ var BitcoinLedgerProvider = function (_BitcoinRPCProvider) {
               case 4:
                 _ref4 = _context3.sent;
                 bitcoinAddress = _ref4.bitcoinAddress;
-                return _context3.abrupt('return', bitcoinAddress);
+                return _context3.abrupt('return', [bitcoinAddress]);
 
               case 7:
               case 'end':
@@ -1007,16 +947,16 @@ var BitcoinLedgerProvider = function (_BitcoinRPCProvider) {
         }, _callee3, this);
       }));
 
-      function getAddress() {
+      function getAddresses() {
         return _ref3.apply(this, arguments);
       }
 
-      return getAddress;
+      return getAddresses;
     }()
   }, {
     key: 'signMessage',
     value: function () {
-      var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(message) {
+      var _ref5 = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(message, from) {
         var hex;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
@@ -1037,19 +977,26 @@ var BitcoinLedgerProvider = function (_BitcoinRPCProvider) {
         }, _callee4, this);
       }));
 
-      function signMessage(_x2) {
+      function signMessage(_x2, _x3) {
         return _ref5.apply(this, arguments);
       }
 
       return signMessage;
     }()
   }]);
+
   return BitcoinLedgerProvider;
 }(BitcoinRPCProvider);
 
+var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _asyncToGenerator$2(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var EthereumRPCProvider = function () {
   function EthereumRPCProvider(uri) {
-    classCallCheck(this, EthereumRPCProvider);
+    _classCallCheck$2(this, EthereumRPCProvider);
 
     this.axios = axios.create({
       baseURL: uri,
@@ -1066,7 +1013,7 @@ var EthereumRPCProvider = function () {
     });
   }
 
-  createClass(EthereumRPCProvider, [{
+  _createClass$2(EthereumRPCProvider, [{
     key: '_rpc',
     value: function _rpc(method) {
       for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -1083,7 +1030,7 @@ var EthereumRPCProvider = function () {
   }, {
     key: 'generateBlock',
     value: function () {
-      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
+      var _ref3 = _asyncToGenerator$2( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -1105,26 +1052,37 @@ var EthereumRPCProvider = function () {
       return generateBlock;
     }()
   }]);
+
   return EthereumRPCProvider;
 }();
 
+var _createClass$3 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _asyncToGenerator$3(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn$1(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits$1(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var EthereumLedgerProvider = function (_EthereumRPCProvider) {
-  inherits(EthereumLedgerProvider, _EthereumRPCProvider);
+  _inherits$1(EthereumLedgerProvider, _EthereumRPCProvider);
 
   function EthereumLedgerProvider(uri, user, pass) {
-    classCallCheck(this, EthereumLedgerProvider);
+    _classCallCheck$3(this, EthereumLedgerProvider);
 
-    var _this = possibleConstructorReturn(this, (EthereumLedgerProvider.__proto__ || Object.getPrototypeOf(EthereumLedgerProvider)).call(this, uri, user, pass));
+    var _this = _possibleConstructorReturn$1(this, (EthereumLedgerProvider.__proto__ || Object.getPrototypeOf(EthereumLedgerProvider)).call(this, uri, user, pass));
 
     _this._ledgerEth = false;
     _this._derivationPath = '44\'/60\'/0\'/0\'/0';
     return _this;
   }
 
-  createClass(EthereumLedgerProvider, [{
+  _createClass$3(EthereumLedgerProvider, [{
     key: '_connectToLedger',
     value: function () {
-      var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var _ref = _asyncToGenerator$3( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
         var transport;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -1160,7 +1118,7 @@ var EthereumLedgerProvider = function (_EthereumRPCProvider) {
   }, {
     key: '_updateDerivationPath',
     value: function () {
-      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(path) {
+      var _ref2 = _asyncToGenerator$3( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(path) {
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -1184,7 +1142,7 @@ var EthereumLedgerProvider = function (_EthereumRPCProvider) {
   }, {
     key: 'getAddress',
     value: function () {
-      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+      var _ref3 = _asyncToGenerator$3( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
         var _ref4, address;
 
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
@@ -1220,7 +1178,7 @@ var EthereumLedgerProvider = function (_EthereumRPCProvider) {
   }, {
     key: 'signMessage',
     value: function () {
-      var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(message) {
+      var _ref5 = _asyncToGenerator$3( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(message) {
         var hex;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
@@ -1248,8 +1206,103 @@ var EthereumLedgerProvider = function (_EthereumRPCProvider) {
       return signMessage;
     }()
   }]);
+
   return EthereumLedgerProvider;
 }(EthereumRPCProvider);
+
+var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _asyncToGenerator$4(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EthereumMetaMaskProvider = function () {
+  function EthereumMetaMaskProvider(metamaskProvider) {
+    _classCallCheck$4(this, EthereumMetaMaskProvider);
+
+    if (!_.isFunction(metamaskProvider.sendAsync)) {
+      throw new Error('Invalid MetaMask Provider');
+    }
+
+    this._metamaskProvider = metamaskProvider;
+  }
+
+  _createClass$4(EthereumMetaMaskProvider, [{
+    key: '_toMM',
+    value: function _toMM(method) {
+      for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        params[_key - 1] = arguments[_key];
+      }
+
+      return this._metamaskProvider.sendAsync({
+        method: method,
+        params: params
+      }).then(function (data) {
+        if (!data) throw new Error('Something went wrong');
+
+        var error = data.error,
+            result = data.result;
+
+
+        if (error) throw new Error('Something went wrong');
+
+        return result;
+      });
+    }
+  }, {
+    key: 'getAddresses',
+    value: function () {
+      var _ref = _asyncToGenerator$4( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                return _context.abrupt('return', this._toMM('eth_accounts'));
+
+              case 1:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getAddresses() {
+        return _ref.apply(this, arguments);
+      }
+
+      return getAddresses;
+    }()
+  }, {
+    key: 'signMessage',
+    value: function () {
+      var _ref2 = _asyncToGenerator$4( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(message, from) {
+        var hex;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                hex = Buffer.from(message).toString('hex');
+                return _context2.abrupt('return', this._toMM('personal_sign', hex, from));
+
+              case 2:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function signMessage(_x, _x2) {
+        return _ref2.apply(this, arguments);
+      }
+
+      return signMessage;
+    }()
+  }]);
+
+  return EthereumMetaMaskProvider;
+}();
 
 var providers = {
   bitcoin: {
@@ -1258,7 +1311,8 @@ var providers = {
   },
   ethereum: {
     EthereumRPCProvider: EthereumRPCProvider,
-    EthereumLedgerProvider: EthereumLedgerProvider
+    EthereumLedgerProvider: EthereumLedgerProvider,
+    EthereumMetaMaskProvider: EthereumMetaMaskProvider
   }
 };
 
@@ -1355,6 +1409,12 @@ var TransactionSchema = {
 	properties: properties$1
 };
 
+var _createClass$5 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _asyncToGenerator$5(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var Ajv = require('ajv');
 
 var Client = function () {
@@ -1364,7 +1424,7 @@ var Client = function () {
    * @param {string} [version] - Version string
    */
   function Client(provider, version) {
-    classCallCheck(this, Client);
+    _classCallCheck$5(this, Client);
 
     if (provider) {
       this.addProvider(provider);
@@ -1388,7 +1448,7 @@ var Client = function () {
    */
 
 
-  createClass(Client, [{
+  _createClass$5(Client, [{
     key: 'addProvider',
     value: function addProvider(provider) {
       /**
@@ -1428,7 +1488,7 @@ var Client = function () {
   }, {
     key: 'generateBlock',
     value: function () {
-      var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
+      var _ref = _asyncToGenerator$5( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
         var blockHashes, invalidBlock;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -1497,7 +1557,7 @@ var Client = function () {
   }, {
     key: 'getBlockByNumber',
     value: function () {
-      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(blockNumber) {
+      var _ref2 = _asyncToGenerator$5( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(blockNumber) {
         var includeTx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
         var block;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
@@ -1555,7 +1615,7 @@ var Client = function () {
   }, {
     key: 'getBlockHeight',
     value: function () {
-      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+      var _ref3 = _asyncToGenerator$5( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
         var blockHeight;
         return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
@@ -1596,7 +1656,7 @@ var Client = function () {
   }, {
     key: 'getTransactionByHash',
     value: function () {
-      var _ref4 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(txHash) {
+      var _ref4 = _asyncToGenerator$5( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(txHash) {
         var transaction;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
           while (1) {
@@ -1643,24 +1703,33 @@ var Client = function () {
       return getTransactionByHash;
     }()
   }, {
-    key: 'getAddress',
+    key: 'getAddresses',
     value: function () {
-      var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-        var address;
+      var _ref5 = _asyncToGenerator$5( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+        var addresses;
         return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                this._checkMethod('getAddress');
+                this._checkMethod('getAddresses');
 
                 _context5.next = 3;
-                return this.provider.getAddress();
+                return this.provider.getAddresses();
 
               case 3:
-                address = _context5.sent;
-                return _context5.abrupt('return', address);
+                addresses = _context5.sent;
 
-              case 5:
+                if (_.isArray(addresses)) {
+                  _context5.next = 6;
+                  break;
+                }
+
+                throw new Error('Provider returned an invalid response');
+
+              case 6:
+                return _context5.abrupt('return', addresses);
+
+              case 7:
               case 'end':
                 return _context5.stop();
             }
@@ -1668,16 +1737,16 @@ var Client = function () {
         }, _callee5, this);
       }));
 
-      function getAddress() {
+      function getAddresses() {
         return _ref5.apply(this, arguments);
       }
 
-      return getAddress;
+      return getAddresses;
     }()
   }, {
     key: 'signMessage',
     value: function () {
-      var _ref6 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(message) {
+      var _ref6 = _asyncToGenerator$5( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(message, from) {
         var signedMessage;
         return regeneratorRuntime.wrap(function _callee6$(_context6) {
           while (1) {
@@ -1686,7 +1755,7 @@ var Client = function () {
                 this._checkMethod('signMessage');
 
                 _context6.next = 3;
-                return this.provider.signMessage();
+                return this.provider.signMessage(message, from);
 
               case 3:
                 signedMessage = _context6.sent;
@@ -1700,13 +1769,14 @@ var Client = function () {
         }, _callee6, this);
       }));
 
-      function signMessage(_x5) {
+      function signMessage(_x5, _x6) {
         return _ref6.apply(this, arguments);
       }
 
       return signMessage;
     }()
   }]);
+
   return Client;
 }();
 

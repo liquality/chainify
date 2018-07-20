@@ -144,18 +144,22 @@ export default class Client {
     return transaction
   }
 
-  async getAddress () {
-    this._checkMethod('getAddress')
+  async getAddresses () {
+    this._checkMethod('getAddresses')
 
-    const address = await this.provider.getAddress()
+    const addresses = await this.provider.getAddresses()
 
-    return address
+    if (!_.isArray(addresses)) {
+      throw new Error('Provider returned an invalid response')
+    }
+
+    return addresses
   }
 
-  async signMessage (message) {
+  async signMessage (message, from) {
     this._checkMethod('signMessage')
 
-    const signedMessage = await this.provider.signMessage()
+    const signedMessage = await this.provider.signMessage(message, from)
 
     return signedMessage
   }

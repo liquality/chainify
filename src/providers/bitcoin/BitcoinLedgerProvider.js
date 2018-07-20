@@ -22,15 +22,15 @@ export default class BitcoinLedgerProvider extends BitcoinRPCProvider {
     this._derivationPath = path
   }
 
-  async getAddress () {
+  async getAddresses () {
     await this._connectToLedger()
 
     const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(this._derivationPath)
 
-    return bitcoinAddress
+    return [ bitcoinAddress ]
   }
 
-  async signMessage (message) {
+  async signMessage (message, from) {
     await this._connectToLedger()
 
     const hex = Buffer.from(message).toString('hex')
