@@ -1,8 +1,16 @@
 import BitcoinRPCProvider from './bitcoin/BitcoinRPCProvider'
-// import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'
+import BitcoinLedgerProvider from './bitcoin/BitcoinLedgerProvider'
+
+import EthereumRPCProvider from './ethereum/EthereumRPCProvider'
+import EthereumLedgerProvider from './ethereum/EthereumLedgerProvider'
 
 export default {
   bitcoin: {
-    BitcoinRPCProvider
+    BitcoinRPCProvider,
+    BitcoinLedgerProvider
+  },
+  ethereum: {
+    EthereumRPCProvider,
+    EthereumLedgerProvider
   }
 }

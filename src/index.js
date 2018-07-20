@@ -143,6 +143,22 @@ export default class Client {
 
     return transaction
   }
+
+  async getAddress () {
+    this._checkMethod('getAddress')
+
+    const address = await this.provider.getAddress()
+
+    return address
+  }
+
+  async signMessage (message) {
+    this._checkMethod('signMessage')
+
+    const signedMessage = await this.provider.signMessage()
+
+    return signedMessage
+  }
 }
 
 Client.providers = providers

@@ -9,6 +9,9 @@ var JSONBigInt = _interopDefault(require('json-bigint'));
 var _ = require('lodash');
 var ___default = _interopDefault(_);
 var axios = _interopDefault(require('axios'));
+var Transport = _interopDefault(require('@ledgerhq/hw-transport-u2f'));
+var LedgerBtc = _interopDefault(require('@ledgerhq/hw-app-btc'));
+var LedgerEth = _interopDefault(require('@ledgerhq/hw-app-eth'));
 
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -814,6 +817,30 @@ var createClass = function () {
   };
 }();
 
+var inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+var possibleConstructorReturn = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
+
 var BitcoinRPCProvider = function () {
   function BitcoinRPCProvider(uri, user, pass) {
     classCallCheck(this, BitcoinRPCProvider);
@@ -882,11 +909,361 @@ var BitcoinRPCProvider = function () {
   return BitcoinRPCProvider;
 }();
 
-// import EthereumRPCProvider from './bitcoin/EthereumRPCProvider'
+var BitcoinLedgerProvider = function (_BitcoinRPCProvider) {
+  inherits(BitcoinLedgerProvider, _BitcoinRPCProvider);
+
+  function BitcoinLedgerProvider(uri, user, pass) {
+    classCallCheck(this, BitcoinLedgerProvider);
+
+    var _this = possibleConstructorReturn(this, (BitcoinLedgerProvider.__proto__ || Object.getPrototypeOf(BitcoinLedgerProvider)).call(this, uri, user, pass));
+
+    _this._ledgerBtc = false;
+    _this._derivationPath = '44\'/0\'/0\'/0';
+    return _this;
+  }
+
+  createClass(BitcoinLedgerProvider, [{
+    key: '_connectToLedger',
+    value: function () {
+      var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var transport;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (this._ledgerBtc) {
+                  _context.next = 5;
+                  break;
+                }
+
+                _context.next = 3;
+                return Transport.create();
+
+              case 3:
+                transport = _context.sent;
+
+                this._ledgerBtc = new LedgerBtc(transport);
+
+              case 5:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function _connectToLedger() {
+        return _ref.apply(this, arguments);
+      }
+
+      return _connectToLedger;
+    }()
+  }, {
+    key: '_updateDerivationPath',
+    value: function () {
+      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(path) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                this._derivationPath = path;
+
+              case 1:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function _updateDerivationPath(_x) {
+        return _ref2.apply(this, arguments);
+      }
+
+      return _updateDerivationPath;
+    }()
+  }, {
+    key: 'getAddress',
+    value: function () {
+      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var _ref4, bitcoinAddress;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this._connectToLedger();
+
+              case 2:
+                _context3.next = 4;
+                return this._ledgerBtc.getWalletPublicKey(this._derivationPath);
+
+              case 4:
+                _ref4 = _context3.sent;
+                bitcoinAddress = _ref4.bitcoinAddress;
+                return _context3.abrupt('return', bitcoinAddress);
+
+              case 7:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getAddress() {
+        return _ref3.apply(this, arguments);
+      }
+
+      return getAddress;
+    }()
+  }, {
+    key: 'signMessage',
+    value: function () {
+      var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(message) {
+        var hex;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return this._connectToLedger();
+
+              case 2:
+                hex = Buffer.from(message).toString('hex');
+                return _context4.abrupt('return', this._ledgerBtc.signMessageNew(this._derivationPath, hex));
+
+              case 4:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function signMessage(_x2) {
+        return _ref5.apply(this, arguments);
+      }
+
+      return signMessage;
+    }()
+  }]);
+  return BitcoinLedgerProvider;
+}(BitcoinRPCProvider);
+
+var EthereumRPCProvider = function () {
+  function EthereumRPCProvider(uri) {
+    classCallCheck(this, EthereumRPCProvider);
+
+    this.axios = axios.create({
+      baseURL: uri,
+      transformRequest: [function (_ref, headers) {
+        var data = _ref.data;
+        return prepareRequest(data);
+      }],
+      transformResponse: [function (data, headers) {
+        return praseResponse(data, headers);
+      }],
+      validateStatus: function validateStatus(status) {
+        return status === 200;
+      }
+    });
+  }
+
+  createClass(EthereumRPCProvider, [{
+    key: '_rpc',
+    value: function _rpc(method) {
+      for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        params[_key - 1] = arguments[_key];
+      }
+
+      return this.axios.post('/', {
+        data: { method: method, params: params }
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+        return data;
+      });
+    }
+  }, {
+    key: 'generateBlock',
+    value: function () {
+      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(numberOfBlocks) {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                throw new Error('This method isn\'t supported by Ethereum');
+
+              case 1:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function generateBlock(_x) {
+        return _ref3.apply(this, arguments);
+      }
+
+      return generateBlock;
+    }()
+  }]);
+  return EthereumRPCProvider;
+}();
+
+var EthereumLedgerProvider = function (_EthereumRPCProvider) {
+  inherits(EthereumLedgerProvider, _EthereumRPCProvider);
+
+  function EthereumLedgerProvider(uri, user, pass) {
+    classCallCheck(this, EthereumLedgerProvider);
+
+    var _this = possibleConstructorReturn(this, (EthereumLedgerProvider.__proto__ || Object.getPrototypeOf(EthereumLedgerProvider)).call(this, uri, user, pass));
+
+    _this._ledgerEth = false;
+    _this._derivationPath = '44\'/60\'/0\'/0\'/0';
+    return _this;
+  }
+
+  createClass(EthereumLedgerProvider, [{
+    key: '_connectToLedger',
+    value: function () {
+      var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var transport;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (this._ledgerEth) {
+                  _context.next = 5;
+                  break;
+                }
+
+                _context.next = 3;
+                return Transport.create();
+
+              case 3:
+                transport = _context.sent;
+
+                this._ledgerEth = new LedgerEth(transport);
+
+              case 5:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function _connectToLedger() {
+        return _ref.apply(this, arguments);
+      }
+
+      return _connectToLedger;
+    }()
+  }, {
+    key: '_updateDerivationPath',
+    value: function () {
+      var _ref2 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(path) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                this._derivationPath = path;
+
+              case 1:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function _updateDerivationPath(_x) {
+        return _ref2.apply(this, arguments);
+      }
+
+      return _updateDerivationPath;
+    }()
+  }, {
+    key: 'getAddress',
+    value: function () {
+      var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var _ref4, address;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this._connectToLedger();
+
+              case 2:
+                _context3.next = 4;
+                return this._ledgerEth.getAddress(this._derivationPath);
+
+              case 4:
+                _ref4 = _context3.sent;
+                address = _ref4.address;
+                return _context3.abrupt('return', address);
+
+              case 7:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getAddress() {
+        return _ref3.apply(this, arguments);
+      }
+
+      return getAddress;
+    }()
+  }, {
+    key: 'signMessage',
+    value: function () {
+      var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(message) {
+        var hex;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return this._connectToLedger();
+
+              case 2:
+                hex = Buffer.from(message).toString('hex');
+                return _context4.abrupt('return', this._ledgerEth.signPersonalMessage(this._derivationPath, hex));
+
+              case 4:
+              case 'end':
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function signMessage(_x2) {
+        return _ref5.apply(this, arguments);
+      }
+
+      return signMessage;
+    }()
+  }]);
+  return EthereumLedgerProvider;
+}(EthereumRPCProvider);
 
 var providers = {
   bitcoin: {
-    BitcoinRPCProvider: BitcoinRPCProvider
+    BitcoinRPCProvider: BitcoinRPCProvider,
+    BitcoinLedgerProvider: BitcoinLedgerProvider
+  },
+  ethereum: {
+    EthereumRPCProvider: EthereumRPCProvider,
+    EthereumLedgerProvider: EthereumLedgerProvider
   }
 };
 
@@ -1269,6 +1646,70 @@ var Client = function () {
       }
 
       return getTransactionByHash;
+    }()
+  }, {
+    key: 'getAddress',
+    value: function () {
+      var _ref5 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+        var address;
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                this._checkMethod('getAddress');
+
+                _context5.next = 3;
+                return this.provider.getAddress();
+
+              case 3:
+                address = _context5.sent;
+                return _context5.abrupt('return', address);
+
+              case 5:
+              case 'end':
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      function getAddress() {
+        return _ref5.apply(this, arguments);
+      }
+
+      return getAddress;
+    }()
+  }, {
+    key: 'signMessage',
+    value: function () {
+      var _ref6 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(message) {
+        var signedMessage;
+        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                this._checkMethod('signMessage');
+
+                _context6.next = 3;
+                return this.provider.signMessage();
+
+              case 3:
+                signedMessage = _context6.sent;
+                return _context6.abrupt('return', signedMessage);
+
+              case 5:
+              case 'end':
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      function signMessage(_x5) {
+        return _ref6.apply(this, arguments);
+      }
+
+      return signMessage;
     }()
   }]);
   return Client;
