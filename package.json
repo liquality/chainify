@@ -14,8 +14,10 @@
     "cover": "nyc --reporter=html --reporter=text npm test",
     "lint": "standard src/**/*.js test/**/*.js",
     "test": "NODE_ENV=test mocha $npm_package_options_mocha",
-    "build": "rollup -c",
-    "build:prod": "NODE_ENV=production BABEL_ENV=production npm run build",
+    "build:node": "rollup -c",
+    "build:browser": "webpack --config webpack.browser.config.js",
+    "build:node:prod": "NODE_ENV=production BABEL_ENV=production npm run build:node",
+    "build:browser:prod": "NODE_ENV=production BABEL_ENV=production npm run build:browser",
     "build:docs": "esdoc"
   },
   "dependencies": {
@@ -54,7 +56,9 @@
     "rollup-plugin-terser": "^1.0.1",
     "rollup-plugin-uglify": "^4.0.0",
     "should": "^13.2.1",
-    "standard": "^11.0.1"
+    "standard": "^11.0.1",
+    "webpack": "^4.16.1",
+    "webpack-cli": "^3.1.0"
   },
   "engines": {
     "node": ">=8"
@@ -72,7 +76,8 @@
   },
   "pre-commit": [
     "lint",
-    "build:prod",
+    "build:node:prod",
+    "build:browser:prod",
     "test"
   ]
 }

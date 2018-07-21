@@ -1,8 +1,5 @@
 'use strict';
 
-var regeneratorRuntime = require('regenerator-runtime');
-
-
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var JSONBigInt = _interopDefault(require('json-bigint'));
@@ -1187,7 +1184,7 @@ var EthereumLedgerProvider = function (_EthereumRPCProvider) {
       return _updateDerivationPath;
     }()
   }, {
-    key: 'getAddress',
+    key: 'getAddresses',
     value: function () {
       var _ref3 = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
         var _ref4, address;
@@ -1206,7 +1203,7 @@ var EthereumLedgerProvider = function (_EthereumRPCProvider) {
               case 4:
                 _ref4 = _context3.sent;
                 address = _ref4.address;
-                return _context3.abrupt('return', address);
+                return _context3.abrupt('return', [address]);
 
               case 7:
               case 'end':
@@ -1216,11 +1213,11 @@ var EthereumLedgerProvider = function (_EthereumRPCProvider) {
         }, _callee3, this);
       }));
 
-      function getAddress() {
+      function getAddresses() {
         return _ref3.apply(this, arguments);
       }
 
-      return getAddress;
+      return getAddresses;
     }()
   }, {
     key: 'signMessage',
@@ -1270,23 +1267,31 @@ var EthereumMetaMaskProvider = function () {
   createClass(EthereumMetaMaskProvider, [{
     key: '_toMM',
     value: function _toMM(method) {
+      var _this = this;
+
       for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         params[_key - 1] = arguments[_key];
       }
 
-      return this._metamaskProvider.sendAsync({
-        method: method,
-        params: params
-      }).then(function (data) {
-        if (!data) throw new Error('Something went wrong');
+      return new Promise(function (resolve, reject) {
+        _this._metamaskProvider.sendAsync({ method: method, params: params }, function (err, data) {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-        var error = data.error,
-            result = data.result;
+          if (!data) {
+            reject(new Error('Something went wrong'));
+            return;
+          }
 
+          if (!data.result) {
+            reject(new Error('Something went wrong'));
+            return;
+          }
 
-        if (error) throw new Error('Something went wrong');
-
-        return result;
+          resolve(data.result);
+        });
       });
     }
   }, {
@@ -1323,7 +1328,7 @@ var EthereumMetaMaskProvider = function () {
             switch (_context2.prev = _context2.next) {
               case 0:
                 hex = Buffer.from(message).toString('hex');
-                return _context2.abrupt('return', this._toMM('personal_sign', hex, from));
+                return _context2.abrupt('return', this._toMM('personal_sign', '0x' + hex, from));
 
               case 2:
               case 'end':
