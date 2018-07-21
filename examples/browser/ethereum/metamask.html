@@ -1,0 +1,27 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="../../../dist/index.browser.js"></script>
+</head>
+<body>
+  <h1>CAL + MetaMask: Sign a message (Ethereum)</h1>
+  <p>From: <span id="address"></span></p>
+  <p>Message: <input type="text" id="message"/> <button id="sign">Sign</button></p>
+  <p>Result: <span id="result"></span></p>
+  <p><code>For errors and logs, check console</code></p>
+  <script>
+  const CAL = ChainAbstractionLayer.default
+  const cal = new CAL(new CAL.providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
+  cal.getAddresses().then(addresses => {
+    const from = addresses[0]
+    $('#address').text(from)
+
+    $('#sign').click(() => {
+      cal.signMessage($('#message').val(), from).then(result => {
+        $('#result').text(JSON.stringify(result))
+      })
+    })
+  })
+  </script>
+</body>
+</html>
