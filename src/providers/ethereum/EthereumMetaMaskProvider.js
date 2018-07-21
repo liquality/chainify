@@ -10,21 +10,28 @@ export default class EthereumMetaMaskProvider {
   }
 
   _toMM (method, ...params) {
-    return this
-      ._metamaskProvider
-      .sendAsync({
-        method,
-        params
-      })
-      .then(data => {
-        if (!data) throw new Error('Something went wrong')
+    return new Promise((resolve, reject) => {
+      this
+        ._metamaskProvider
+        .sendAsync({ method, params }, (err, data) => {
+          if (err) {
+            reject(err)
+            return
+          }
 
-        const { error, result } = data
+          if (!data) {
+            reject(new Error('Something went wrong'))
+            return
+          }
 
-        if (error) throw new Error('Something went wrong')
+          if (!data.result) {
+            reject(new Error('Something went wrong'))
+            return
+          }
 
-        return result
-      })
+          resolve(data.result)
+        })
+    })
   }
 
   async getAddresses () {
@@ -34,6 +41,6 @@ export default class EthereumMetaMaskProvider {
   async signMessage (message, from) {
     const hex = Buffer.from(message).toString('hex')
 
-    return this._toMM('personal_sign', hex, from)
+    return this._toMM('personal_sign', `0x${hex}`, from)
   }
 }

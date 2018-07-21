@@ -22,12 +22,12 @@ export default class EthereumLedgerProvider extends EthereumRPCProvider {
     this._derivationPath = path
   }
 
-  async getAddress () {
+  async getAddresses () {
     await this._connectToLedger()
 
     const { address } = await this._ledgerEth.getAddress(this._derivationPath)
 
-    return address
+    return [ address ]
   }
 
   async signMessage (message) {
