@@ -43,4 +43,12 @@ export default class EthereumMetaMaskProvider {
 
     return this._toMM('personal_sign', `0x${hex}`, from)
   }
+
+  async sendTransaction (from, to, value, data) { 
+    const tx = {
+      from, to, value, data,
+    }
+
+    return this._toMM('eth_sendTransaction', tx);
+  }
 }
