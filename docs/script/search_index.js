@@ -24,6 +24,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "chainabstractionlayer/src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html",
+    "<span>EthereumMetaMaskProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumMetaMaskProvider.js</span>",
+    "class"
+  ],
+  [
     "chainabstractionlayer/src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider",
     "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html",
     "<span>EthereumRPCProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumRPCProvider.js</span>",
@@ -354,9 +360,9 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/index.js~client#getaddress",
-    "class/src/index.js~Client.html#instance-method-getAddress",
-    "src/index.js~Client#getAddress",
+    "src/index.js~client#getaddresses",
+    "class/src/index.js~Client.html#instance-method-getAddresses",
+    "src/index.js~Client#getAddresses",
     "method"
   ],
   [
@@ -450,9 +456,9 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getaddress",
-    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getAddress",
-    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getAddress",
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getaddresses",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getAddresses",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getAddresses",
     "method"
   ],
   [
@@ -528,15 +534,51 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#getaddress",
-    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-method-getAddress",
-    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#getAddress",
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#getaddresses",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-method-getAddresses",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#getAddresses",
     "method"
   ],
   [
     "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#signmessage",
     "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-method-signMessage",
     "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#signMessage",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js",
+    "file/src/providers/ethereum/EthereumMetaMaskProvider.js.html",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#_metamaskprovider",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-member-_metamaskProvider",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#_metamaskProvider",
+    "member"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#_tomm",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-_toMM",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#_toMM",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#constructor",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-constructor-constructor",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#constructor",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#getaddresses",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-getAddresses",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#getAddresses",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#signmessage",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-signMessage",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#signMessage",
     "method"
   ],
   [

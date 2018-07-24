@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 425,
+  "end": 530,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 17,
+      "line": 19,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 425,
+    "end": 530,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 17,
+        "line": 19,
         "column": 0
       }
     },
@@ -305,45 +305,114 @@
         }
       },
       {
-        "type": "ExportDefaultDeclaration",
-        "start": 268,
-        "end": 424,
+        "type": "ImportDeclaration",
+        "start": 267,
+        "end": 341,
         "loc": {
           "start": {
-            "line": 7,
+            "line": 6,
             "column": 0
           },
           "end": {
-            "line": 16,
+            "line": 6,
+            "column": 74
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 274,
+            "end": 298,
+            "loc": {
+              "start": {
+                "line": 6,
+                "column": 7
+              },
+              "end": {
+                "line": 6,
+                "column": 31
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 274,
+              "end": 298,
+              "loc": {
+                "start": {
+                  "line": 6,
+                  "column": 7
+                },
+                "end": {
+                  "line": 6,
+                  "column": 31
+                },
+                "identifierName": "EthereumMetaMaskProvider"
+              },
+              "name": "EthereumMetaMaskProvider"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 304,
+          "end": 341,
+          "loc": {
+            "start": {
+              "line": 6,
+              "column": 37
+            },
+            "end": {
+              "line": 6,
+              "column": 74
+            }
+          },
+          "extra": {
+            "rawValue": "./ethereum/EthereumMetaMaskProvider",
+            "raw": "'./ethereum/EthereumMetaMaskProvider'"
+          },
+          "value": "./ethereum/EthereumMetaMaskProvider"
+        }
+      },
+      {
+        "type": "ExportDefaultDeclaration",
+        "start": 343,
+        "end": 529,
+        "loc": {
+          "start": {
+            "line": 8,
+            "column": 0
+          },
+          "end": {
+            "line": 18,
             "column": 1
           }
         },
         "declaration": {
           "type": "ObjectExpression",
-          "start": 283,
-          "end": 424,
+          "start": 358,
+          "end": 529,
           "loc": {
             "start": {
-              "line": 7,
+              "line": 8,
               "column": 15
             },
             "end": {
-              "line": 16,
+              "line": 18,
               "column": 1
             }
           },
           "properties": [
             {
               "type": "ObjectProperty",
-              "start": 287,
-              "end": 351,
+              "start": 362,
+              "end": 426,
               "loc": {
                 "start": {
-                  "line": 8,
+                  "line": 9,
                   "column": 2
                 },
                 "end": {
-                  "line": 11,
+                  "line": 12,
                   "column": 3
                 }
               },
@@ -352,15 +421,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 287,
-                "end": 294,
+                "start": 362,
+                "end": 369,
                 "loc": {
                   "start": {
-                    "line": 8,
+                    "line": 9,
                     "column": 2
                   },
                   "end": {
-                    "line": 8,
+                    "line": 9,
                     "column": 9
                   },
                   "identifierName": "bitcoin"
@@ -369,30 +438,30 @@
               },
               "value": {
                 "type": "ObjectExpression",
-                "start": 296,
-                "end": 351,
+                "start": 371,
+                "end": 426,
                 "loc": {
                   "start": {
-                    "line": 8,
+                    "line": 9,
                     "column": 11
                   },
                   "end": {
-                    "line": 11,
+                    "line": 12,
                     "column": 3
                   }
                 },
                 "properties": [
                   {
                     "type": "ObjectProperty",
-                    "start": 302,
-                    "end": 320,
+                    "start": 377,
+                    "end": 395,
                     "loc": {
                       "start": {
-                        "line": 9,
+                        "line": 10,
                         "column": 4
                       },
                       "end": {
-                        "line": 9,
+                        "line": 10,
                         "column": 22
                       }
                     },
@@ -401,15 +470,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 302,
-                      "end": 320,
+                      "start": 377,
+                      "end": 395,
                       "loc": {
                         "start": {
-                          "line": 9,
+                          "line": 10,
                           "column": 4
                         },
                         "end": {
-                          "line": 9,
+                          "line": 10,
                           "column": 22
                         },
                         "identifierName": "BitcoinRPCProvider"
@@ -418,15 +487,15 @@
                     },
                     "value": {
                       "type": "Identifier",
-                      "start": 302,
-                      "end": 320,
+                      "start": 377,
+                      "end": 395,
                       "loc": {
                         "start": {
-                          "line": 9,
+                          "line": 10,
                           "column": 4
                         },
                         "end": {
-                          "line": 9,
+                          "line": 10,
                           "column": 22
                         },
                         "identifierName": "BitcoinRPCProvider"
@@ -439,15 +508,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 326,
-                    "end": 347,
+                    "start": 401,
+                    "end": 422,
                     "loc": {
                       "start": {
-                        "line": 10,
+                        "line": 11,
                         "column": 4
                       },
                       "end": {
-                        "line": 10,
+                        "line": 11,
                         "column": 25
                       }
                     },
@@ -456,15 +525,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 326,
-                      "end": 347,
+                      "start": 401,
+                      "end": 422,
                       "loc": {
                         "start": {
-                          "line": 10,
+                          "line": 11,
                           "column": 4
                         },
                         "end": {
-                          "line": 10,
+                          "line": 11,
                           "column": 25
                         },
                         "identifierName": "BitcoinLedgerProvider"
@@ -473,15 +542,15 @@
                     },
                     "value": {
                       "type": "Identifier",
-                      "start": 326,
-                      "end": 347,
+                      "start": 401,
+                      "end": 422,
                       "loc": {
                         "start": {
-                          "line": 10,
+                          "line": 11,
                           "column": 4
                         },
                         "end": {
-                          "line": 10,
+                          "line": 11,
                           "column": 25
                         },
                         "identifierName": "BitcoinLedgerProvider"
@@ -497,15 +566,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 355,
-              "end": 422,
+              "start": 430,
+              "end": 527,
               "loc": {
                 "start": {
-                  "line": 12,
+                  "line": 13,
                   "column": 2
                 },
                 "end": {
-                  "line": 15,
+                  "line": 17,
                   "column": 3
                 }
               },
@@ -514,15 +583,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 355,
-                "end": 363,
+                "start": 430,
+                "end": 438,
                 "loc": {
                   "start": {
-                    "line": 12,
+                    "line": 13,
                     "column": 2
                   },
                   "end": {
-                    "line": 12,
+                    "line": 13,
                     "column": 10
                   },
                   "identifierName": "ethereum"
@@ -531,30 +600,30 @@
               },
               "value": {
                 "type": "ObjectExpression",
-                "start": 365,
-                "end": 422,
+                "start": 440,
+                "end": 527,
                 "loc": {
                   "start": {
-                    "line": 12,
+                    "line": 13,
                     "column": 12
                   },
                   "end": {
-                    "line": 15,
+                    "line": 17,
                     "column": 3
                   }
                 },
                 "properties": [
                   {
                     "type": "ObjectProperty",
-                    "start": 371,
-                    "end": 390,
+                    "start": 446,
+                    "end": 465,
                     "loc": {
                       "start": {
-                        "line": 13,
+                        "line": 14,
                         "column": 4
                       },
                       "end": {
-                        "line": 13,
+                        "line": 14,
                         "column": 23
                       }
                     },
@@ -563,15 +632,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 371,
-                      "end": 390,
+                      "start": 446,
+                      "end": 465,
                       "loc": {
                         "start": {
-                          "line": 13,
+                          "line": 14,
                           "column": 4
                         },
                         "end": {
-                          "line": 13,
+                          "line": 14,
                           "column": 23
                         },
                         "identifierName": "EthereumRPCProvider"
@@ -580,15 +649,15 @@
                     },
                     "value": {
                       "type": "Identifier",
-                      "start": 371,
-                      "end": 390,
+                      "start": 446,
+                      "end": 465,
                       "loc": {
                         "start": {
-                          "line": 13,
+                          "line": 14,
                           "column": 4
                         },
                         "end": {
-                          "line": 13,
+                          "line": 14,
                           "column": 23
                         },
                         "identifierName": "EthereumRPCProvider"
@@ -601,15 +670,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 396,
-                    "end": 418,
+                    "start": 471,
+                    "end": 493,
                     "loc": {
                       "start": {
-                        "line": 14,
+                        "line": 15,
                         "column": 4
                       },
                       "end": {
-                        "line": 14,
+                        "line": 15,
                         "column": 26
                       }
                     },
@@ -618,15 +687,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 396,
-                      "end": 418,
+                      "start": 471,
+                      "end": 493,
                       "loc": {
                         "start": {
-                          "line": 14,
+                          "line": 15,
                           "column": 4
                         },
                         "end": {
-                          "line": 14,
+                          "line": 15,
                           "column": 26
                         },
                         "identifierName": "EthereumLedgerProvider"
@@ -635,20 +704,75 @@
                     },
                     "value": {
                       "type": "Identifier",
-                      "start": 396,
-                      "end": 418,
+                      "start": 471,
+                      "end": 493,
                       "loc": {
                         "start": {
-                          "line": 14,
+                          "line": 15,
                           "column": 4
                         },
                         "end": {
-                          "line": 14,
+                          "line": 15,
                           "column": 26
                         },
                         "identifierName": "EthereumLedgerProvider"
                       },
                       "name": "EthereumLedgerProvider"
+                    },
+                    "extra": {
+                      "shorthand": true
+                    }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 499,
+                    "end": 523,
+                    "loc": {
+                      "start": {
+                        "line": 16,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 28
+                      }
+                    },
+                    "method": false,
+                    "shorthand": true,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 499,
+                      "end": 523,
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 28
+                        },
+                        "identifierName": "EthereumMetaMaskProvider"
+                      },
+                      "name": "EthereumMetaMaskProvider"
+                    },
+                    "value": {
+                      "type": "Identifier",
+                      "start": 499,
+                      "end": 523,
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 28
+                        },
+                        "identifierName": "EthereumMetaMaskProvider"
+                      },
+                      "name": "EthereumMetaMaskProvider"
                     },
                     "extra": {
                       "shorthand": true
@@ -1097,6 +1221,113 @@
     },
     {
       "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 267,
+      "end": 273,
+      "loc": {
+        "start": {
+          "line": 6,
+          "column": 0
+        },
+        "end": {
+          "line": 6,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "EthereumMetaMaskProvider",
+      "start": 274,
+      "end": 298,
+      "loc": {
+        "start": {
+          "line": 6,
+          "column": 7
+        },
+        "end": {
+          "line": 6,
+          "column": 31
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 299,
+      "end": 303,
+      "loc": {
+        "start": {
+          "line": 6,
+          "column": 32
+        },
+        "end": {
+          "line": 6,
+          "column": 36
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./ethereum/EthereumMetaMaskProvider",
+      "start": 304,
+      "end": 341,
+      "loc": {
+        "start": {
+          "line": 6,
+          "column": 37
+        },
+        "end": {
+          "line": 6,
+          "column": 74
+        }
+      }
+    },
+    {
+      "type": {
         "label": "export",
         "keyword": "export",
         "beforeExpr": false,
@@ -1110,15 +1341,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 268,
-      "end": 274,
+      "start": 343,
+      "end": 349,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 0
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 6
         }
       }
@@ -1138,15 +1369,15 @@
         "updateContext": null
       },
       "value": "default",
-      "start": 275,
-      "end": 282,
+      "start": 350,
+      "end": 357,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 7
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 14
         }
       }
@@ -1163,15 +1394,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 283,
-      "end": 284,
+      "start": 358,
+      "end": 359,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 15
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 16
         }
       }
@@ -1189,15 +1420,15 @@
         "binop": null
       },
       "value": "bitcoin",
-      "start": 287,
-      "end": 294,
+      "start": 362,
+      "end": 369,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 2
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 9
         }
       }
@@ -1215,15 +1446,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 294,
-      "end": 295,
+      "start": 369,
+      "end": 370,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 9
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 10
         }
       }
@@ -1240,15 +1471,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 296,
-      "end": 297,
+      "start": 371,
+      "end": 372,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 11
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 12
         }
       }
@@ -1266,15 +1497,15 @@
         "binop": null
       },
       "value": "BitcoinRPCProvider",
-      "start": 302,
-      "end": 320,
+      "start": 377,
+      "end": 395,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 4
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 22
         }
       }
@@ -1292,15 +1523,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 320,
-      "end": 321,
+      "start": 395,
+      "end": 396,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 22
         },
         "end": {
-          "line": 9,
+          "line": 10,
           "column": 23
         }
       }
@@ -1318,15 +1549,15 @@
         "binop": null
       },
       "value": "BitcoinLedgerProvider",
-      "start": 326,
-      "end": 347,
+      "start": 401,
+      "end": 422,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 11,
           "column": 4
         },
         "end": {
-          "line": 10,
+          "line": 11,
           "column": 25
         }
       }
@@ -1343,15 +1574,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 350,
-      "end": 351,
+      "start": 425,
+      "end": 426,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 2
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "column": 3
         }
       }
@@ -1369,15 +1600,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 351,
-      "end": 352,
+      "start": 426,
+      "end": 427,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 12,
           "column": 3
         },
         "end": {
-          "line": 11,
+          "line": 12,
           "column": 4
         }
       }
@@ -1395,15 +1626,15 @@
         "binop": null
       },
       "value": "ethereum",
-      "start": 355,
-      "end": 363,
+      "start": 430,
+      "end": 438,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 13,
           "column": 2
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "column": 10
         }
       }
@@ -1421,15 +1652,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 363,
-      "end": 364,
+      "start": 438,
+      "end": 439,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 13,
           "column": 10
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "column": 11
         }
       }
@@ -1446,15 +1677,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 365,
-      "end": 366,
+      "start": 440,
+      "end": 441,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 13,
           "column": 12
         },
         "end": {
-          "line": 12,
+          "line": 13,
           "column": 13
         }
       }
@@ -1472,15 +1703,15 @@
         "binop": null
       },
       "value": "EthereumRPCProvider",
-      "start": 371,
-      "end": 390,
+      "start": 446,
+      "end": 465,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 14,
           "column": 4
         },
         "end": {
-          "line": 13,
+          "line": 14,
           "column": 23
         }
       }
@@ -1498,15 +1729,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 390,
-      "end": 391,
+      "start": 465,
+      "end": 466,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 14,
           "column": 23
         },
         "end": {
-          "line": 13,
+          "line": 14,
           "column": 24
         }
       }
@@ -1524,16 +1755,68 @@
         "binop": null
       },
       "value": "EthereumLedgerProvider",
-      "start": 396,
-      "end": 418,
+      "start": 471,
+      "end": 493,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 15,
           "column": 4
         },
         "end": {
-          "line": 14,
+          "line": 15,
           "column": 26
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 493,
+      "end": 494,
+      "loc": {
+        "start": {
+          "line": 15,
+          "column": 26
+        },
+        "end": {
+          "line": 15,
+          "column": 27
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "EthereumMetaMaskProvider",
+      "start": 499,
+      "end": 523,
+      "loc": {
+        "start": {
+          "line": 16,
+          "column": 4
+        },
+        "end": {
+          "line": 16,
+          "column": 28
         }
       }
     },
@@ -1549,15 +1832,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 421,
-      "end": 422,
+      "start": 526,
+      "end": 527,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 17,
           "column": 2
         },
         "end": {
-          "line": 15,
+          "line": 17,
           "column": 3
         }
       }
@@ -1574,15 +1857,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 423,
-      "end": 424,
+      "start": 528,
+      "end": 529,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 18,
           "column": 0
         },
         "end": {
-          "line": 16,
+          "line": 18,
           "column": 1
         }
       }
@@ -1600,15 +1883,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 425,
-      "end": 425,
+      "start": 530,
+      "end": 530,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 19,
           "column": 0
         },
         "end": {
-          "line": 17,
+          "line": 19,
           "column": 0
         }
       }

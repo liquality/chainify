@@ -35,6 +35,7 @@
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
 </ul>
 </div>
@@ -42,14 +43,12 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import &apos;regenerator-runtime/runtime&apos;
-
-import _ from &apos;lodash&apos;
+import { find, isArray, isBoolean, isFunction, isNumber } from &apos;lodash&apos;
+import * as Ajv from &apos;ajv&apos;
 
 import providers from &apos;./providers&apos;
 import BlockSchema from &apos;./schema/Block.json&apos;
 import TransactionSchema from &apos;./schema/Transaction.json&apos;
-
-const Ajv = require(&apos;ajv&apos;)
 
 export default class Client {
   /**
@@ -90,17 +89,17 @@ export default class Client {
       throw new Error(&apos;No provider provided&apos;)
     }
 
-    if (!_.isFunction(this.provider[method])) {
+    if (!isFunction(this.provider[method])) {
       throw new Error(`Unimplemented method: ${method}`)
     }
 
-    if (_.isFunction(this.provider._checkMethodVersionSupport)) {
+    if (isFunction(this.provider._checkMethodVersionSupport)) {
       if (!this.provider._checkMethodVersionSupport(method, this.version)) {
         throw new Error(`Method &quot;${method}&quot; is not supported by version &quot;${this.version}&quot;`)
       }
     }
 
-    if (!_.isFunction(this.provider[method])) {
+    if (!isFunction(this.provider[method])) {
       throw new Error(`Unimplemented method: ${method}`)
     }
   }
@@ -114,17 +113,17 @@ export default class Client {
   async generateBlock (numberOfBlocks) {
     this._checkMethod(&apos;generateBlock&apos;)
 
-    if (!_.isNumber(numberOfBlocks)) {
+    if (!isNumber(numberOfBlocks)) {
       throw new Error(&apos;Invalid number of blocks to be generated&apos;)
     }
 
     const blockHashes = await this.provider.generateBlock(numberOfBlocks)
 
-    if (!_.isArray(blockHashes)) {
+    if (!isArray(blockHashes)) {
       throw new Error(&apos;Provider returned an invalid response&apos;)
     }
 
-    const invalidBlock = _.find(blockHashes, blockHash =&gt; !(/^[A-Fa-f0-9]+$/.test(blockHash)))
+    const invalidBlock = find(blockHashes, blockHash =&gt; !(/^[A-Fa-f0-9]+$/.test(blockHash)))
 
     if (invalidBlock) {
       throw new Error(&apos;Provider returned an invalid response&apos;)
@@ -142,11 +141,11 @@ export default class Client {
   async getBlockByNumber (blockNumber, includeTx = false) {
     this._checkMethod(&apos;getBlockByNumber&apos;)
 
-    if (!_.isNumber(blockNumber)) {
+    if (!isNumber(blockNumber)) {
       throw new Error(&apos;Invalid Block number&apos;)
     }
 
-    if (!_.isBoolean(includeTx)) {
+    if (!isBoolean(includeTx)) {
       throw new Error(&apos;Second parameter should be boolean&apos;)
     }
 
@@ -164,7 +163,7 @@ export default class Client {
 
     const blockHeight = await this.provider.getBlockHeight()
 
-    if (!_.isNumber(blockHeight)) {
+    if (!isNumber(blockHeight)) {
       throw new Error(&apos;Provider returned an invalid block height&apos;)
     }
 
@@ -187,18 +186,22 @@ export default class Client {
     return transaction
   }
 
-  async getAddress () {
-    this._checkMethod(&apos;getAddress&apos;)
+  async getAddresses () {
+    this._checkMethod(&apos;getAddresses&apos;)
 
-    const address = await this.provider.getAddress()
+    const addresses = await this.provider.getAddresses()
 
-    return address
+    if (!isArray(addresses)) {
+      throw new Error(&apos;Provider returned an invalid response&apos;)
+    }
+
+    return addresses
   }
 
-  async signMessage (message) {
+  async signMessage (message, from) {
     this._checkMethod(&apos;signMessage&apos;)
 
-    const signedMessage = await this.provider.signMessage()
+    const signedMessage = await this.provider.signMessage(message, from)
 
     return signedMessage
   }

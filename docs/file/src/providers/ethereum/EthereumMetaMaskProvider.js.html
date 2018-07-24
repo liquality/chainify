@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../../">
-  <title data-ice="title">src/providers/bitcoin/BitcoinLedgerProvider.js | chainabstractionlayer</title>
+  <title data-ice="title">src/providers/ethereum/EthereumMetaMaskProvider.js | chainabstractionlayer</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -41,45 +41,51 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/providers/bitcoin/BitcoinLedgerProvider.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import BitcoinRPCProvider from &apos;./BitcoinRPCProvider&apos;
+<div class="content" data-ice="content"><h1 data-ice="title">src/providers/ethereum/EthereumMetaMaskProvider.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { isFunction } from &apos;lodash&apos;
 
-import Transport from &apos;@ledgerhq/hw-transport-u2f&apos;
-// import Transport from &apos;@ledgerhq/hw-transport-node-hid&apos;
-import LedgerBtc from &apos;@ledgerhq/hw-app-btc&apos;
-
-export default class BitcoinLedgerProvider extends BitcoinRPCProvider {
-  constructor (uri, user, pass) {
-    super(uri, user, pass)
-    this._ledgerBtc = false
-    this._derivationPath = `44&apos;/0&apos;/0&apos;/0`
-  }
-
-  async _connectToLedger () {
-    if (!this._ledgerBtc) {
-      const transport = await Transport.create()
-      this._ledgerBtc = new LedgerBtc(transport)
+export default class EthereumMetaMaskProvider {
+  constructor (metamaskProvider) {
+    if (!isFunction(metamaskProvider.sendAsync)) {
+      throw new Error(&apos;Invalid MetaMask Provider&apos;)
     }
+
+    this._metamaskProvider = metamaskProvider
   }
 
-  async _updateDerivationPath (path) {
-    this._derivationPath = path
+  _toMM (method, ...params) {
+    return new Promise((resolve, reject) =&gt; {
+      this
+        ._metamaskProvider
+        .sendAsync({ method, params }, (err, data) =&gt; {
+          if (err) {
+            reject(err)
+            return
+          }
+
+          if (!data) {
+            reject(new Error(&apos;Something went wrong&apos;))
+            return
+          }
+
+          if (!data.result) {
+            reject(new Error(&apos;Something went wrong&apos;))
+            return
+          }
+
+          resolve(data.result)
+        })
+    })
   }
 
   async getAddresses () {
-    await this._connectToLedger()
-
-    const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(this._derivationPath)
-
-    return [ bitcoinAddress ]
+    return this._toMM(&apos;eth_accounts&apos;)
   }
 
   async signMessage (message, from) {
-    await this._connectToLedger()
-
     const hex = Buffer.from(message).toString(&apos;hex&apos;)
 
-    return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
+    return this._toMM(&apos;personal_sign&apos;, `0x${hex}`, from)
   }
 }
 </code></pre>

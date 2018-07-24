@@ -1,21 +1,20 @@
 {
-  "coverage": "13.63%",
-  "expectCount": 44,
+  "coverage": "12.24%",
+  "expectCount": 49,
   "actualCount": 6,
   "files": {
     "src/index.js": {
-      "expectCount": 15,
+      "expectCount": 14,
       "actualCount": 6,
       "undocumentLines": [
         9,
-        11,
-        30,
-        31,
-        45,
-        119,
-        131,
-        147,
-        155
+        28,
+        29,
+        43,
+        117,
+        129,
+        145,
+        157
       ]
     },
     "src/providers/JsonRpcHelper.js": {
@@ -64,6 +63,18 @@
         21,
         25,
         33
+      ]
+    },
+    "src/providers/ethereum/EthereumMetaMaskProvider.js": {
+      "expectCount": 6,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        4,
+        9,
+        12,
+        37,
+        41
       ]
     },
     "src/providers/ethereum/EthereumRPCProvider.js": {

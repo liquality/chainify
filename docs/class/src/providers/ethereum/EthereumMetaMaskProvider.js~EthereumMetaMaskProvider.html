@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl" href="../../../../">
-  <title data-ice="title">BitcoinRPCProvider | chainabstractionlayer</title>
+  <title data-ice="title">EthereumMetaMaskProvider | chainabstractionlayer</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -42,24 +42,24 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import BitcoinRPCProvider from &apos;<span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#lineNumber5">chainabstractionlayer/src/providers/bitcoin/BitcoinRPCProvider.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import EthereumMetaMaskProvider from &apos;<span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#lineNumber3">chainabstractionlayer/src/providers/ethereum/EthereumMetaMaskProvider.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#lineNumber5">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#lineNumber3">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
-  <h1 data-ice="name">BitcoinRPCProvider</h1>
+  <h1 data-ice="name">EthereumMetaMaskProvider</h1>
 
   
 
   
   
   
-  <div class="flat-list" data-ice="directSubclass"><h4>Direct Subclass:</h4><div><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></div></div>
+  
   
   
   
@@ -100,7 +100,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">()</span>
+          <span class="code" data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">()</span>
         </p>
       </div>
       <div>
@@ -118,12 +118,12 @@
 </table>
 </div>
 <div data-ice="memberSummary"><h2>Member Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Members</td></tr></thead>
+  <thead><tr><td data-ice="title" colspan="3">Private Members</td></tr></thead>
   <tbody>
   
   <tr data-ice="target">
     <td>
-      <span class="access" data-ice="access">public</span>
+      <span class="access" data-ice="access">private</span>
       
       
       
@@ -135,7 +135,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-member-axios">axios</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-member-_metamaskProvider">_metamaskProvider</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -170,7 +170,35 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-generateBlock">generateBlock</a></span></span><span class="code" data-ice="signature">(numberOfBlocks: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-getAddresses">getAddresses</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-signMessage">signMessage</a></span></span><span class="code" data-ice="signature">(message: <span>*</span>, from: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -204,7 +232,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-_rpc">_rpc</a></span></span><span class="code" data-ice="signature">(method: <span>*</span>, params: ...<span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-_toMM">_toMM</a></span></span><span class="code" data-ice="signature">(method: <span>*</span>, params: ...<span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -240,7 +268,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#lineNumber6">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#lineNumber4">source</a></span></span>
     </span>
   </h3>
 
@@ -272,21 +300,21 @@
   
 </div>
 </div>
-<div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
+<div data-ice="memberDetails"><h2 data-ice="title">Private Members</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-axios">
-    <span class="access" data-ice="access">public</span>
+  <h3 data-ice="anchor" id="instance-member-_metamaskProvider">
+    <span class="access" data-ice="access">private</span>
     
     
     
     
     
-    <span class="code" data-ice="name">axios</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">_metamaskProvider</span><span class="code" data-ice="signature">: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#lineNumber7">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#lineNumber9">source</a></span></span>
     </span>
   </h3>
 
@@ -321,18 +349,73 @@
 <div data-ice="methodDetails"><h2 data-ice="title">Public Methods</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-generateBlock">
+  <h3 data-ice="anchor" id="instance-method-getAddresses">
     <span class="access" data-ice="access">public</span>
     
     
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">generateBlock</span><span class="code" data-ice="signature">(numberOfBlocks: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">getAddresses</span><span class="code" data-ice="signature">(): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#lineNumber28">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#lineNumber37">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-signMessage">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">signMessage</span><span class="code" data-ice="signature">(message: <span>*</span>, from: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#lineNumber41">source</a></span></span>
     </span>
   </h3>
 
@@ -352,7 +435,13 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">numberOfBlocks</td>
+      <td data-ice="name" class="code" data-depth="0">message</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">from</td>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
@@ -394,18 +483,18 @@
 <h2 data-ice="title">Private Methods</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-_rpc">
+  <h3 data-ice="anchor" id="instance-method-_toMM">
     <span class="access" data-ice="access">private</span>
     
     
     
     
     
-    <span class="code" data-ice="name">_rpc</span><span class="code" data-ice="signature">(method: <span>*</span>, params: ...<span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">_toMM</span><span class="code" data-ice="signature">(method: <span>*</span>, params: ...<span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#lineNumber22">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#lineNumber12">source</a></span></span>
     </span>
   </h3>
 
