@@ -7,8 +7,9 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.browser.js',
-    library: 'ChainAbstractionLayer'
+    filename: 'index.umd.js',
+    library: 'ChainAbstractionLayer',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [
