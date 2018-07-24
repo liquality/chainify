@@ -1,3 +1,4 @@
+import commonjs from 'rollup-plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
 import json from 'rollup-plugin-json'
@@ -22,8 +23,18 @@ export default [
     ],
     plugins: [
       json(),
-      resolve({
-        preferBuiltins: false
+      resolve(),
+      commonjs({
+        namedExports: {
+          'node_modules/lodash/lodash.js': [
+            'find',
+            'isArray',
+            'isBoolean',
+            'isFunction',
+            'isNumber',
+            'has'
+          ]
+        }
       }),
       babel({
         exclude: [
