@@ -5,6 +5,7 @@ import * as Ajv from 'ajv'
 import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
+import { isString } from 'util';
 
 export default class Client {
   /**
@@ -160,6 +161,18 @@ export default class Client {
     const signedMessage = await this.provider.signMessage(message, from)
 
     return signedMessage
+  }
+
+  async sendTransaction (from, to, value, data) {
+    this._checkMethod('sendTransaction')
+
+    const txHash = await this.provider.sendTransaction(from, to, value, data)
+
+    if (!isString(txHash)) {
+      throw new Error('sendTransaction method should return a transaction id string')
+    }
+
+    return txHash
   }
 }
 
