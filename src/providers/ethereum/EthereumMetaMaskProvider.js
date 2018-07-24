@@ -1,8 +1,8 @@
-import _ from 'lodash'
+import { isFunction } from 'lodash'
 
 export default class EthereumMetaMaskProvider {
   constructor (metamaskProvider) {
-    if (!_.isFunction(metamaskProvider.sendAsync)) {
+    if (!isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
 

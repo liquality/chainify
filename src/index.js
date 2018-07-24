@@ -1,12 +1,10 @@
 import 'regenerator-runtime/runtime'
-
-import _ from 'lodash'
+import { find, isArray, isBoolean, isFunction, isNumber } from 'lodash'
+import * as Ajv from 'ajv'
 
 import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
-
-const Ajv = require('ajv')
 
 export default class Client {
   /**
@@ -47,17 +45,17 @@ export default class Client {
       throw new Error('No provider provided')
     }
 
-    if (!_.isFunction(this.provider[method])) {
+    if (!isFunction(this.provider[method])) {
       throw new Error(`Unimplemented method: ${method}`)
     }
 
-    if (_.isFunction(this.provider._checkMethodVersionSupport)) {
+    if (isFunction(this.provider._checkMethodVersionSupport)) {
       if (!this.provider._checkMethodVersionSupport(method, this.version)) {
         throw new Error(`Method "${method}" is not supported by version "${this.version}"`)
       }
     }
 
-    if (!_.isFunction(this.provider[method])) {
+    if (!isFunction(this.provider[method])) {
       throw new Error(`Unimplemented method: ${method}`)
     }
   }
@@ -71,17 +69,17 @@ export default class Client {
   async generateBlock (numberOfBlocks) {
     this._checkMethod('generateBlock')
 
-    if (!_.isNumber(numberOfBlocks)) {
+    if (!isNumber(numberOfBlocks)) {
       throw new Error('Invalid number of blocks to be generated')
     }
 
     const blockHashes = await this.provider.generateBlock(numberOfBlocks)
 
-    if (!_.isArray(blockHashes)) {
+    if (!isArray(blockHashes)) {
       throw new Error('Provider returned an invalid response')
     }
 
-    const invalidBlock = _.find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))
+    const invalidBlock = find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))
 
     if (invalidBlock) {
       throw new Error('Provider returned an invalid response')
@@ -99,11 +97,11 @@ export default class Client {
   async getBlockByNumber (blockNumber, includeTx = false) {
     this._checkMethod('getBlockByNumber')
 
-    if (!_.isNumber(blockNumber)) {
+    if (!isNumber(blockNumber)) {
       throw new Error('Invalid Block number')
     }
 
-    if (!_.isBoolean(includeTx)) {
+    if (!isBoolean(includeTx)) {
       throw new Error('Second parameter should be boolean')
     }
 
@@ -121,7 +119,7 @@ export default class Client {
 
     const blockHeight = await this.provider.getBlockHeight()
 
-    if (!_.isNumber(blockHeight)) {
+    if (!isNumber(blockHeight)) {
       throw new Error('Provider returned an invalid block height')
     }
 
@@ -149,7 +147,7 @@ export default class Client {
 
     const addresses = await this.provider.getAddresses()
 
-    if (!_.isArray(addresses)) {
+    if (!isArray(addresses)) {
       throw new Error('Provider returned an invalid response')
     }
 
