@@ -82,8 +82,8 @@
   },
   "pre-commit": [
     "lint",
-    "build:node:prod",
-    "build:browser:prod",
+    "build:prod",
+    "build:prod",
     "test"
   ],
   "standard": {
