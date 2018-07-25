@@ -12,9 +12,6 @@ jobs:
           name: bitcoind
           command: bitcoind
       - run:
-          name: node-hid
-          command: apt install libusb-1.0-0 libusb-1.0-0-dev
-      - run:
           name: npm install
           command: npm install
       - run:
