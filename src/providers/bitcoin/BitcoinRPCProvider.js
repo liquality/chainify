@@ -30,7 +30,7 @@ export default class BitcoinRPCProvider {
     const { hash: txHash, txid: hash, vout } = data
     const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
 
-    const output = { hash, txHash, value, _raw: { hex: rawTransaction, data } }
+    const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }
 
     return output
   }

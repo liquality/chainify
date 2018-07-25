@@ -3,7 +3,7 @@
   "title": "Transaction",
   "description": "Blockchain transaction",
   "type": "object",
-  "required": [ "blockHash", "blockNumber", "transactionHash", "hash", "value", "confirmations" ],
+  "required": [ "blockHash", "blockNumber", "hash", "value", "confirmations" ],
   "properties": {
     "blockHash": {
       "type": "string",
@@ -16,11 +16,6 @@
       "minimum": 0
     },
     "hash": {
-      "type": "string",
-      "title": "Transaction Hash",
-      "pattern": "^([A-Fa-f0-9]{64})$"
-    },
-    "transactionHash": {
       "type": "string",
       "title": "Transaction Hash",
       "pattern": "^([A-Fa-f0-9]{64})$"
