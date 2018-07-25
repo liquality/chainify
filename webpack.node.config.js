@@ -1,7 +1,14 @@
 const path = require('path')
 
-const externals = Object
+const externals = {}
+
+Object
   .keys(require('./package.json').dependencies)
+  .forEach(dep => {
+    externals[dep] = dep
+  })
+
+externals['@alias/ledger-transport'] = '@ledgerhq/hw-transport-node-hid'
 
 module.exports = {
   entry: './src/index.js',
@@ -9,7 +16,9 @@ module.exports = {
   externals,
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.node.js'
+    filename: 'index.cjs.js',
+    libraryTarget: 'commonjs2',
+    libraryExport: 'default'
   },
   module: {
     rules: [

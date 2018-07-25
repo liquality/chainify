@@ -1,8 +1,7 @@
-import BitcoinRPCProvider from './BitcoinRPCProvider'
-
-import Transport from '@ledgerhq/hw-transport-u2f'
-// import Transport from '@ledgerhq/hw-transport-node-hid'
+import Transport from '@alias/ledger-transport'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
+
+import BitcoinRPCProvider from './BitcoinRPCProvider'
 
 export default class BitcoinLedgerProvider extends BitcoinRPCProvider {
   constructor (uri, user, pass) {

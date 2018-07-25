@@ -11,8 +11,7 @@
   <p><code>For errors and logs, check console</code></p>
   <script>
   /* global $, web3, ChainAbstractionLayer */
-  const CAL = ChainAbstractionLayer.default
-  const cal = new CAL(new CAL.providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
+  const cal = new ChainAbstractionLayer(new ChainAbstractionLayer.providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
   cal.getAddresses().then(addresses => {
     const from = addresses[0]
     $('#address').text(from)

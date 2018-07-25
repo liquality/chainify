@@ -1,8 +1,7 @@
-import EthereumRPCProvider from './EthereumRPCProvider'
-
-import Transport from '@ledgerhq/hw-transport-u2f'
-// import Transport from '@ledgerhq/hw-transport-node-hid'
+import Transport from '@alias/ledger-transport'
 import LedgerEth from '@ledgerhq/hw-app-eth'
+
+import EthereumRPCProvider from './EthereumRPCProvider'
 
 export default class EthereumLedgerProvider extends EthereumRPCProvider {
   constructor (uri, user, pass) {
