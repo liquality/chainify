@@ -18,7 +18,8 @@
     "build:browser": "webpack --config webpack.browser.config.js",
     "build:node:prod": "NODE_ENV=production BABEL_ENV=production npm run build:node",
     "build:browser:prod": "NODE_ENV=production BABEL_ENV=production npm run build:browser",
-    "build:docs": "esdoc"
+    "build:docs": "esdoc",
+    "build:prod": "run-p build:browser:prod build:node:prod"
   },
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^4.20.0",
@@ -28,6 +29,7 @@
     "axios": "^0.18.0",
     "json-bigint": "^0.3.0",
     "lodash": "^4.0.0",
+    "npm-run-all": "^4.1.3",
     "regenerator-runtime": "^0.12.0"
   },
   "devDependencies": {
