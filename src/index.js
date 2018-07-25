@@ -31,15 +31,21 @@ export default class Client {
 
   /**
    * Add a provider.
-   * @param {object} provider - The provider instance.
+   * @param {Object} provider - The provider instance.
+   * @return {Client}
    */
   addProvider (provider) {
     /**
-     * @type {object}
+     * @type {Object}
      */
     this.provider = provider
+    return this
   }
 
+  /**
+   * Check the availability of a method.
+   * @return {boolean}
+   */
   _checkMethod (method) {
     if (!this.provider) {
       throw new Error('No provider provided')
@@ -89,10 +95,20 @@ export default class Client {
   }
 
   /**
-   * Get block by number
-   * @param {!number} blockNumber - Number of the block to be fetched
-   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block
-   * @return {Client.schemas.Block} Returns a Block
+   * Get a block given its hash.
+   * @param {!string} blockHash - A hexadecimal string that represents the *hash* of the desired block. If txHash is not a string, it will get converted through the `toString(16)` method.
+   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
+   * @return {Promise<Client.schemas.Block, null>} Returns a Block with the same hash as the given input. Returns null if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
+   */
+  async getBlockByHash (blockHash, includeTx = false) {
+    this._checkMethod('getBlockByHash')
+  }
+
+  /**
+   * Get a block given its number.
+   * @param {!number} blockNumber - The number of the desired block.
+   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
+   * @return {Promise<Client.schemas.Block, null>} Returns a Block with the same number as the given input. Returns null if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
    */
   async getBlockByNumber (blockNumber, includeTx = false) {
     this._checkMethod('getBlockByNumber')
@@ -114,6 +130,10 @@ export default class Client {
     return block
   }
 
+  /**
+   * Get the current block height of the chain.
+   * @return {Promise<number>}
+   */
   async getBlockHeight () {
     this._checkMethod('getBlockHeight')
 
@@ -126,6 +146,11 @@ export default class Client {
     return blockHeight
   }
 
+  /**
+   * Get a transaction given its hash.
+   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the desired transaction. If txHash is not a string, it will get converted through the `toString(16)` method.
+   * @return {Promise<Client.schemas.Transaction, null>} Returns a Transaction with the same hash as the given input. Returns null if no transaction was found.
+   */
   async getTransactionByHash (txHash) {
     this._checkMethod('getTransactionByHash')
 
@@ -140,6 +165,15 @@ export default class Client {
     }
 
     return transaction
+  }
+
+  /**
+   * Get a raw hexadecimal transaction given its hash.
+   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the desired transaction. If `hash` is not a string, it will be converted through the `toString(16)` method.
+   * @return {Promise<string, null>} Returns the raw Transaction with the same hash as the given output. Returns null if no transaction was found.
+   */
+  async getRawTransactionByHash (txHash) {
+    this._checkMethod('getRawTransactionByHash')
   }
 
   async getAddresses () {
