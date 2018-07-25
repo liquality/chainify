@@ -102,6 +102,22 @@ export default class Client {
    */
   async getBlockByHash (blockHash, includeTx = false) {
     this._checkMethod('getBlockByHash')
+
+    // if (!isString(blockNumber)) {
+    //   throw new Error('Invalid Block hash')
+    // }
+
+    if (!isBoolean(includeTx)) {
+      throw new Error('Second parameter should be boolean')
+    }
+
+    const block = await this.provider.getBlockByHash(blockHash, includeTx)
+
+    // if (!this.validateBlock(block)) {
+    //   throw new Error('Provider returned an invalid block')
+    // }
+
+    return block
   }
 
   /**
@@ -123,9 +139,9 @@ export default class Client {
 
     const block = await this.provider.getBlockByNumber(blockNumber, includeTx)
 
-    if (!this.validateBlock(block)) {
-      throw new Error('Provider returned an invalid block')
-    }
+    // if (!this.validateBlock(block)) {
+    //   throw new Error('Provider returned an invalid block')
+    // }
 
     return block
   }
@@ -154,15 +170,15 @@ export default class Client {
   async getTransactionByHash (txHash) {
     this._checkMethod('getTransactionByHash')
 
-    if (!(/^[A-Fa-f0-9]$/.test(txHash))) {
+    if (!(/^(0x)?[A-Fa-f0-9]+$/.test(txHash))) {
       throw new Error('Transaction hash should be a valid hex string')
     }
 
     const transaction = await this.provider.getTransactionByHash(txHash)
 
-    if (!this.validateTransaction(transaction)) {
-      throw new Error('Provider returned an invalid transaction')
-    }
+    // if (!this.validateTransaction(transaction)) {
+    //   throw new Error('Provider returned an invalid transaction')
+    // }
 
     return transaction
   }
@@ -174,6 +190,18 @@ export default class Client {
    */
   async getRawTransactionByHash (txHash) {
     this._checkMethod('getRawTransactionByHash')
+
+    if (!(/^(0x)?[A-Fa-f0-9]+$/.test(txHash))) {
+      throw new Error('Transaction hash should be a valid hex string')
+    }
+
+    const transaction = await this.provider.getRawTransactionByHash(txHash)
+
+    // if (!this.validateTransaction(transaction)) {
+    //   throw new Error('Provider returned an invalid transaction')
+    // }
+
+    return transaction
   }
 
   async getAddresses () {
