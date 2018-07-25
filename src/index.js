@@ -1,11 +1,10 @@
 import 'regenerator-runtime/runtime'
-import { find, isArray, isBoolean, isFunction, isNumber } from 'lodash'
+import { find, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
 import * as Ajv from 'ajv'
 
 import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
-import { isString } from 'util';
 
 export default class Client {
   /**

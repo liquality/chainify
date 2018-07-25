@@ -231,6 +231,33 @@ function baseGetTag(value) {
 var _baseGetTag = baseGetTag;
 
 /**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+var isArray_1 = isArray;
+
+/**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
  *
@@ -259,6 +286,33 @@ function isObjectLike(value) {
 }
 
 var isObjectLike_1 = isObjectLike;
+
+/** `Object#toString` result references. */
+var stringTag = '[object String]';
+
+/**
+ * Checks if `value` is classified as a `String` primitive or object.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a string, else `false`.
+ * @example
+ *
+ * _.isString('abc');
+ * // => true
+ *
+ * _.isString(1);
+ * // => false
+ */
+function isString(value) {
+  return typeof value == 'string' ||
+    (!isArray_1(value) && isObjectLike_1(value) && _baseGetTag(value) == stringTag);
+}
+
+var isString_1 = isString;
 
 /** `Object#toString` result references. */
 var numberTag = '[object Number]';
@@ -389,33 +443,6 @@ function isBoolean(value) {
 }
 
 var isBoolean_1 = isBoolean;
-
-/**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
-var isArray = Array.isArray;
-
-var isArray_1 = isArray;
 
 /**
  * Removes all key-value entries from the list cache.
@@ -1366,7 +1393,7 @@ var boolTag$1 = '[object Boolean]',
     numberTag$1 = '[object Number]',
     regexpTag = '[object RegExp]',
     setTag = '[object Set]',
-    stringTag = '[object String]',
+    stringTag$1 = '[object String]',
     symbolTag = '[object Symbol]';
 
 var arrayBufferTag = '[object ArrayBuffer]',
@@ -1421,7 +1448,7 @@ function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
       return object.name == other.name && object.message == other.message;
 
     case regexpTag:
-    case stringTag:
+    case stringTag$1:
       // Coerce regexes to strings and treat strings, primitives and objects,
       // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
       // for more details.
@@ -1779,7 +1806,7 @@ var argsTag$1 = '[object Arguments]',
     objectTag = '[object Object]',
     regexpTag$1 = '[object RegExp]',
     setTag$1 = '[object Set]',
-    stringTag$1 = '[object String]',
+    stringTag$2 = '[object String]',
     weakMapTag = '[object WeakMap]';
 
 var arrayBufferTag$1 = '[object ArrayBuffer]',
@@ -1807,7 +1834,7 @@ typedArrayTags[dataViewTag$1] = typedArrayTags[dateTag$1] =
 typedArrayTags[errorTag$1] = typedArrayTags[funcTag$1] =
 typedArrayTags[mapTag$1] = typedArrayTags[numberTag$2] =
 typedArrayTags[objectTag] = typedArrayTags[regexpTag$1] =
-typedArrayTags[setTag$1] = typedArrayTags[stringTag$1] =
+typedArrayTags[setTag$1] = typedArrayTags[stringTag$2] =
 typedArrayTags[weakMapTag] = false;
 
 /**
@@ -4654,6 +4681,37 @@ function () {
         return _signMessage.apply(this, arguments);
       };
     }()
+  }, {
+    key: "sendTransaction",
+    value: function () {
+      var _sendTransaction = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3(from, to, value, data) {
+        var tx;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                tx = {
+                  from: from,
+                  to: to,
+                  value: value,
+                  data: data
+                };
+                return _context3.abrupt("return", this._toMM('eth_sendTransaction', tx));
+
+              case 2:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      return function sendTransaction(_x3, _x4, _x5, _x6) {
+        return _sendTransaction.apply(this, arguments);
+      };
+    }()
   }]);
 
   return EthereumMetaMaskProvider;
@@ -5122,6 +5180,47 @@ function () {
 
       return function signMessage(_x4, _x5) {
         return _signMessage.apply(this, arguments);
+      };
+    }()
+  }, {
+    key: "sendTransaction",
+    value: function () {
+      var _sendTransaction = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee7(from, to, value, data) {
+        var txHash;
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                this._checkMethod('sendTransaction');
+
+                _context7.next = 3;
+                return this.provider.sendTransaction(from, to, value, data);
+
+              case 3:
+                txHash = _context7.sent;
+
+                if (isString_1(txHash)) {
+                  _context7.next = 6;
+                  break;
+                }
+
+                throw new Error('sendTransaction method should return a transaction id string');
+
+              case 6:
+                return _context7.abrupt("return", txHash);
+
+              case 7:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this);
+      }));
+
+      return function sendTransaction(_x6, _x7, _x8, _x9) {
+        return _sendTransaction.apply(this, arguments);
       };
     }()
   }]);

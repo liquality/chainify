@@ -10,6 +10,7 @@
   <p>Result: <span id="result"></span></p>
   <p><code>For errors and logs, check console</code></p>
   <script>
+  /* global $, ChainAbstractionLayer */
   const CAL = ChainAbstractionLayer.default
   const cal = new CAL(new CAL.providers.bitcoin.BitcoinLedgerProvider())
   cal.getAddresses().then(addresses => {

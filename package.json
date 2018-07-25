@@ -12,7 +12,7 @@
   "browser": "dist/index.umd.js",
   "scripts": {
     "cover": "nyc --reporter=html --reporter=text npm test",
-    "lint": "standard src/**/*.js test/**/*.js",
+    "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",
     "test": "NODE_ENV=test mocha $npm_package_options_mocha",
     "build:node": "rollup -c",
     "build:browser": "webpack --config webpack.browser.config.js",
@@ -23,7 +23,6 @@
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^4.20.0",
     "@ledgerhq/hw-app-eth": "^4.19.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.19.1",
     "@ledgerhq/hw-transport-u2f": "^4.20.0",
     "ajv": "^6.5.2",
     "axios": "^0.18.0",
@@ -43,6 +42,8 @@
     "chai-as-promised": "^7.1.1",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
+    "eslint-plugin-html": "^4.0.5",
+    "eslint-plugin-markdown": "^1.0.0-beta.6",
     "lodash-webpack-plugin": "^0.11.5",
     "mocha": "^5.2.0",
     "nock": "^9.3.0",
@@ -82,5 +83,15 @@
     "build:node:prod",
     "build:browser:prod",
     "test"
-  ]
+  ],
+  "standard": {
+    "plugins": [
+      "html",
+      "markdown"
+    ],
+    "ignore": [
+      "dist/**",
+      "docs/**"
+    ]
+  }
 }

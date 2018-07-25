@@ -10,6 +10,7 @@
   <p>Result: <span id="result"></span></p>
   <p><code>For errors and logs, check console</code></p>
   <script>
+  /* global $, web3, ChainAbstractionLayer */
   const CAL = ChainAbstractionLayer.default
   const cal = new CAL(new CAL.providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
   cal.getAddresses().then(addresses => {
