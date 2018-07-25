@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 1054,
+  "end": 992,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 41,
+      "line": 40,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 1054,
+    "end": 992,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 41,
+        "line": 40,
         "column": 0
       }
     },
@@ -31,7 +31,7 @@
       {
         "type": "ImportDeclaration",
         "start": 0,
-        "end": 53,
+        "end": 47,
         "loc": {
           "start": {
             "line": 1,
@@ -39,14 +39,14 @@
           },
           "end": {
             "line": 1,
-            "column": 53
+            "column": 47
           }
         },
         "specifiers": [
           {
             "type": "ImportDefaultSpecifier",
             "start": 7,
-            "end": 25,
+            "end": 16,
             "loc": {
               "start": {
                 "line": 1,
@@ -54,13 +54,13 @@
               },
               "end": {
                 "line": 1,
-                "column": 25
+                "column": 16
               }
             },
             "local": {
               "type": "Identifier",
               "start": 7,
-              "end": 25,
+              "end": 16,
               "loc": {
                 "start": {
                   "line": 1,
@@ -68,6 +68,144 @@
                 },
                 "end": {
                   "line": 1,
+                  "column": 16
+                },
+                "identifierName": "Transport"
+              },
+              "name": "Transport"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 22,
+          "end": 47,
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 22
+            },
+            "end": {
+              "line": 1,
+              "column": 47
+            }
+          },
+          "extra": {
+            "rawValue": "@alias/ledger-transport",
+            "raw": "'@alias/ledger-transport'"
+          },
+          "value": "@alias/ledger-transport"
+        }
+      },
+      {
+        "type": "ImportDeclaration",
+        "start": 48,
+        "end": 92,
+        "loc": {
+          "start": {
+            "line": 2,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 44
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 55,
+            "end": 64,
+            "loc": {
+              "start": {
+                "line": 2,
+                "column": 7
+              },
+              "end": {
+                "line": 2,
+                "column": 16
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 55,
+              "end": 64,
+              "loc": {
+                "start": {
+                  "line": 2,
+                  "column": 7
+                },
+                "end": {
+                  "line": 2,
+                  "column": 16
+                },
+                "identifierName": "LedgerBtc"
+              },
+              "name": "LedgerBtc"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 70,
+          "end": 92,
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 22
+            },
+            "end": {
+              "line": 2,
+              "column": 44
+            }
+          },
+          "extra": {
+            "rawValue": "@ledgerhq/hw-app-btc",
+            "raw": "'@ledgerhq/hw-app-btc'"
+          },
+          "value": "@ledgerhq/hw-app-btc"
+        }
+      },
+      {
+        "type": "ImportDeclaration",
+        "start": 94,
+        "end": 147,
+        "loc": {
+          "start": {
+            "line": 4,
+            "column": 0
+          },
+          "end": {
+            "line": 4,
+            "column": 53
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 101,
+            "end": 119,
+            "loc": {
+              "start": {
+                "line": 4,
+                "column": 7
+              },
+              "end": {
+                "line": 4,
+                "column": 25
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 101,
+              "end": 119,
+              "loc": {
+                "start": {
+                  "line": 4,
+                  "column": 7
+                },
+                "end": {
+                  "line": 4,
                   "column": 25
                 },
                 "identifierName": "BitcoinRPCProvider"
@@ -78,15 +216,15 @@
         ],
         "source": {
           "type": "StringLiteral",
-          "start": 31,
-          "end": 53,
+          "start": 125,
+          "end": 147,
           "loc": {
             "start": {
-              "line": 1,
+              "line": 4,
               "column": 31
             },
             "end": {
-              "line": 1,
+              "line": 4,
               "column": 53
             }
           },
@@ -98,222 +236,44 @@
         }
       },
       {
-        "type": "ImportDeclaration",
-        "start": 55,
-        "end": 105,
-        "loc": {
-          "start": {
-            "line": 3,
-            "column": 0
-          },
-          "end": {
-            "line": 3,
-            "column": 50
-          }
-        },
-        "specifiers": [
-          {
-            "type": "ImportDefaultSpecifier",
-            "start": 62,
-            "end": 71,
-            "loc": {
-              "start": {
-                "line": 3,
-                "column": 7
-              },
-              "end": {
-                "line": 3,
-                "column": 16
-              }
-            },
-            "local": {
-              "type": "Identifier",
-              "start": 62,
-              "end": 71,
-              "loc": {
-                "start": {
-                  "line": 3,
-                  "column": 7
-                },
-                "end": {
-                  "line": 3,
-                  "column": 16
-                },
-                "identifierName": "Transport"
-              },
-              "name": "Transport"
-            }
-          }
-        ],
-        "source": {
-          "type": "StringLiteral",
-          "start": 77,
-          "end": 105,
-          "loc": {
-            "start": {
-              "line": 3,
-              "column": 22
-            },
-            "end": {
-              "line": 3,
-              "column": 50
-            }
-          },
-          "extra": {
-            "rawValue": "@ledgerhq/hw-transport-u2f",
-            "raw": "'@ledgerhq/hw-transport-u2f'"
-          },
-          "value": "@ledgerhq/hw-transport-u2f",
-          "leadingComments": null,
-          "trailingComments": null
-        },
-        "trailingComments": [
-          {
-            "type": "CommentLine",
-            "value": " import Transport from '@ledgerhq/hw-transport-node-hid'",
-            "start": 106,
-            "end": 164,
-            "loc": {
-              "start": {
-                "line": 4,
-                "column": 0
-              },
-              "end": {
-                "line": 4,
-                "column": 58
-              }
-            }
-          }
-        ]
-      },
-      {
-        "type": "ImportDeclaration",
-        "start": 165,
-        "end": 209,
-        "loc": {
-          "start": {
-            "line": 5,
-            "column": 0
-          },
-          "end": {
-            "line": 5,
-            "column": 44
-          }
-        },
-        "specifiers": [
-          {
-            "type": "ImportDefaultSpecifier",
-            "start": 172,
-            "end": 181,
-            "loc": {
-              "start": {
-                "line": 5,
-                "column": 7
-              },
-              "end": {
-                "line": 5,
-                "column": 16
-              }
-            },
-            "local": {
-              "type": "Identifier",
-              "start": 172,
-              "end": 181,
-              "loc": {
-                "start": {
-                  "line": 5,
-                  "column": 7
-                },
-                "end": {
-                  "line": 5,
-                  "column": 16
-                },
-                "identifierName": "LedgerBtc"
-              },
-              "name": "LedgerBtc",
-              "leadingComments": null
-            },
-            "leadingComments": null
-          }
-        ],
-        "source": {
-          "type": "StringLiteral",
-          "start": 187,
-          "end": 209,
-          "loc": {
-            "start": {
-              "line": 5,
-              "column": 22
-            },
-            "end": {
-              "line": 5,
-              "column": 44
-            }
-          },
-          "extra": {
-            "rawValue": "@ledgerhq/hw-app-btc",
-            "raw": "'@ledgerhq/hw-app-btc'"
-          },
-          "value": "@ledgerhq/hw-app-btc"
-        },
-        "leadingComments": [
-          {
-            "type": "CommentLine",
-            "value": " import Transport from '@ledgerhq/hw-transport-node-hid'",
-            "start": 106,
-            "end": 164,
-            "loc": {
-              "start": {
-                "line": 4,
-                "column": 0
-              },
-              "end": {
-                "line": 4,
-                "column": 58
-              }
-            }
-          }
-        ]
-      },
-      {
         "type": "ExportDefaultDeclaration",
-        "start": 211,
-        "end": 1053,
+        "start": 149,
+        "end": 991,
         "loc": {
           "start": {
-            "line": 7,
+            "line": 6,
             "column": 0
           },
           "end": {
-            "line": 40,
+            "line": 39,
             "column": 1
           }
         },
         "declaration": {
           "type": "ClassDeclaration",
-          "start": 226,
-          "end": 1053,
+          "start": 164,
+          "end": 991,
           "loc": {
             "start": {
-              "line": 7,
+              "line": 6,
               "column": 15
             },
             "end": {
-              "line": 40,
+              "line": 39,
               "column": 1
             }
           },
           "id": {
             "type": "Identifier",
-            "start": 232,
-            "end": 253,
+            "start": 170,
+            "end": 191,
             "loc": {
               "start": {
-                "line": 7,
+                "line": 6,
                 "column": 21
               },
               "end": {
-                "line": 7,
+                "line": 6,
                 "column": 42
               },
               "identifierName": "BitcoinLedgerProvider"
@@ -322,15 +282,15 @@
           },
           "superClass": {
             "type": "Identifier",
-            "start": 262,
-            "end": 280,
+            "start": 200,
+            "end": 218,
             "loc": {
               "start": {
-                "line": 7,
+                "line": 6,
                 "column": 51
               },
               "end": {
-                "line": 7,
+                "line": 6,
                 "column": 69
               },
               "identifierName": "BitcoinRPCProvider"
@@ -339,30 +299,30 @@
           },
           "body": {
             "type": "ClassBody",
-            "start": 281,
-            "end": 1053,
+            "start": 219,
+            "end": 991,
             "loc": {
               "start": {
-                "line": 7,
+                "line": 6,
                 "column": 70
               },
               "end": {
-                "line": 40,
+                "line": 39,
                 "column": 1
               }
             },
             "body": [
               {
                 "type": "ClassMethod",
-                "start": 285,
-                "end": 416,
+                "start": 223,
+                "end": 354,
                 "loc": {
                   "start": {
-                    "line": 8,
+                    "line": 7,
                     "column": 2
                   },
                   "end": {
-                    "line": 12,
+                    "line": 11,
                     "column": 3
                   }
                 },
@@ -370,15 +330,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 285,
-                  "end": 296,
+                  "start": 223,
+                  "end": 234,
                   "loc": {
                     "start": {
-                      "line": 8,
+                      "line": 7,
                       "column": 2
                     },
                     "end": {
-                      "line": 8,
+                      "line": 7,
                       "column": 13
                     },
                     "identifierName": "constructor"
@@ -393,15 +353,15 @@
                 "params": [
                   {
                     "type": "Identifier",
-                    "start": 298,
-                    "end": 301,
+                    "start": 236,
+                    "end": 239,
                     "loc": {
                       "start": {
-                        "line": 8,
+                        "line": 7,
                         "column": 15
                       },
                       "end": {
-                        "line": 8,
+                        "line": 7,
                         "column": 18
                       },
                       "identifierName": "uri"
@@ -410,15 +370,15 @@
                   },
                   {
                     "type": "Identifier",
-                    "start": 303,
-                    "end": 307,
+                    "start": 241,
+                    "end": 245,
                     "loc": {
                       "start": {
-                        "line": 8,
+                        "line": 7,
                         "column": 20
                       },
                       "end": {
-                        "line": 8,
+                        "line": 7,
                         "column": 24
                       },
                       "identifierName": "user"
@@ -427,15 +387,15 @@
                   },
                   {
                     "type": "Identifier",
-                    "start": 309,
-                    "end": 313,
+                    "start": 247,
+                    "end": 251,
                     "loc": {
                       "start": {
-                        "line": 8,
+                        "line": 7,
                         "column": 26
                       },
                       "end": {
-                        "line": 8,
+                        "line": 7,
                         "column": 30
                       },
                       "identifierName": "pass"
@@ -445,58 +405,58 @@
                 ],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 315,
-                  "end": 416,
+                  "start": 253,
+                  "end": 354,
                   "loc": {
                     "start": {
-                      "line": 8,
+                      "line": 7,
                       "column": 32
                     },
                     "end": {
-                      "line": 12,
+                      "line": 11,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 321,
-                      "end": 343,
+                      "start": 259,
+                      "end": 281,
                       "loc": {
                         "start": {
-                          "line": 9,
+                          "line": 8,
                           "column": 4
                         },
                         "end": {
-                          "line": 9,
+                          "line": 8,
                           "column": 26
                         }
                       },
                       "expression": {
                         "type": "CallExpression",
-                        "start": 321,
-                        "end": 343,
+                        "start": 259,
+                        "end": 281,
                         "loc": {
                           "start": {
-                            "line": 9,
+                            "line": 8,
                             "column": 4
                           },
                           "end": {
-                            "line": 9,
+                            "line": 8,
                             "column": 26
                           }
                         },
                         "callee": {
                           "type": "Super",
-                          "start": 321,
-                          "end": 326,
+                          "start": 259,
+                          "end": 264,
                           "loc": {
                             "start": {
-                              "line": 9,
+                              "line": 8,
                               "column": 4
                             },
                             "end": {
-                              "line": 9,
+                              "line": 8,
                               "column": 9
                             }
                           }
@@ -504,15 +464,15 @@
                         "arguments": [
                           {
                             "type": "Identifier",
-                            "start": 327,
-                            "end": 330,
+                            "start": 265,
+                            "end": 268,
                             "loc": {
                               "start": {
-                                "line": 9,
+                                "line": 8,
                                 "column": 10
                               },
                               "end": {
-                                "line": 9,
+                                "line": 8,
                                 "column": 13
                               },
                               "identifierName": "uri"
@@ -521,15 +481,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 332,
-                            "end": 336,
+                            "start": 270,
+                            "end": 274,
                             "loc": {
                               "start": {
-                                "line": 9,
+                                "line": 8,
                                 "column": 15
                               },
                               "end": {
-                                "line": 9,
+                                "line": 8,
                                 "column": 19
                               },
                               "identifierName": "user"
@@ -538,15 +498,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 338,
-                            "end": 342,
+                            "start": 276,
+                            "end": 280,
                             "loc": {
                               "start": {
-                                "line": 9,
+                                "line": 8,
                                 "column": 21
                               },
                               "end": {
-                                "line": 9,
+                                "line": 8,
                                 "column": 25
                               },
                               "identifierName": "pass"
@@ -558,73 +518,73 @@
                     },
                     {
                       "type": "ExpressionStatement",
-                      "start": 348,
-                      "end": 371,
+                      "start": 286,
+                      "end": 309,
                       "loc": {
                         "start": {
-                          "line": 10,
+                          "line": 9,
                           "column": 4
                         },
                         "end": {
-                          "line": 10,
+                          "line": 9,
                           "column": 27
                         }
                       },
                       "expression": {
                         "type": "AssignmentExpression",
-                        "start": 348,
-                        "end": 371,
+                        "start": 286,
+                        "end": 309,
                         "loc": {
                           "start": {
-                            "line": 10,
+                            "line": 9,
                             "column": 4
                           },
                           "end": {
-                            "line": 10,
+                            "line": 9,
                             "column": 27
                           }
                         },
                         "operator": "=",
                         "left": {
                           "type": "MemberExpression",
-                          "start": 348,
-                          "end": 363,
+                          "start": 286,
+                          "end": 301,
                           "loc": {
                             "start": {
-                              "line": 10,
+                              "line": 9,
                               "column": 4
                             },
                             "end": {
-                              "line": 10,
+                              "line": 9,
                               "column": 19
                             }
                           },
                           "object": {
                             "type": "ThisExpression",
-                            "start": 348,
-                            "end": 352,
+                            "start": 286,
+                            "end": 290,
                             "loc": {
                               "start": {
-                                "line": 10,
+                                "line": 9,
                                 "column": 4
                               },
                               "end": {
-                                "line": 10,
+                                "line": 9,
                                 "column": 8
                               }
                             }
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 353,
-                            "end": 363,
+                            "start": 291,
+                            "end": 301,
                             "loc": {
                               "start": {
-                                "line": 10,
+                                "line": 9,
                                 "column": 9
                               },
                               "end": {
-                                "line": 10,
+                                "line": 9,
                                 "column": 19
                               },
                               "identifierName": "_ledgerBtc"
@@ -635,15 +595,15 @@
                         },
                         "right": {
                           "type": "BooleanLiteral",
-                          "start": 366,
-                          "end": 371,
+                          "start": 304,
+                          "end": 309,
                           "loc": {
                             "start": {
-                              "line": 10,
+                              "line": 9,
                               "column": 22
                             },
                             "end": {
-                              "line": 10,
+                              "line": 9,
                               "column": 27
                             }
                           },
@@ -653,73 +613,73 @@
                     },
                     {
                       "type": "ExpressionStatement",
-                      "start": 376,
-                      "end": 412,
+                      "start": 314,
+                      "end": 350,
                       "loc": {
                         "start": {
-                          "line": 11,
+                          "line": 10,
                           "column": 4
                         },
                         "end": {
-                          "line": 11,
+                          "line": 10,
                           "column": 40
                         }
                       },
                       "expression": {
                         "type": "AssignmentExpression",
-                        "start": 376,
-                        "end": 412,
+                        "start": 314,
+                        "end": 350,
                         "loc": {
                           "start": {
-                            "line": 11,
+                            "line": 10,
                             "column": 4
                           },
                           "end": {
-                            "line": 11,
+                            "line": 10,
                             "column": 40
                           }
                         },
                         "operator": "=",
                         "left": {
                           "type": "MemberExpression",
-                          "start": 376,
-                          "end": 396,
+                          "start": 314,
+                          "end": 334,
                           "loc": {
                             "start": {
-                              "line": 11,
+                              "line": 10,
                               "column": 4
                             },
                             "end": {
-                              "line": 11,
+                              "line": 10,
                               "column": 24
                             }
                           },
                           "object": {
                             "type": "ThisExpression",
-                            "start": 376,
-                            "end": 380,
+                            "start": 314,
+                            "end": 318,
                             "loc": {
                               "start": {
-                                "line": 11,
+                                "line": 10,
                                 "column": 4
                               },
                               "end": {
-                                "line": 11,
+                                "line": 10,
                                 "column": 8
                               }
                             }
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 381,
-                            "end": 396,
+                            "start": 319,
+                            "end": 334,
                             "loc": {
                               "start": {
-                                "line": 11,
+                                "line": 10,
                                 "column": 9
                               },
                               "end": {
-                                "line": 11,
+                                "line": 10,
                                 "column": 24
                               },
                               "identifierName": "_derivationPath"
@@ -730,15 +690,15 @@
                         },
                         "right": {
                           "type": "TemplateLiteral",
-                          "start": 399,
-                          "end": 412,
+                          "start": 337,
+                          "end": 350,
                           "loc": {
                             "start": {
-                              "line": 11,
+                              "line": 10,
                               "column": 27
                             },
                             "end": {
-                              "line": 11,
+                              "line": 10,
                               "column": 40
                             }
                           },
@@ -746,15 +706,15 @@
                           "quasis": [
                             {
                               "type": "TemplateElement",
-                              "start": 400,
-                              "end": 411,
+                              "start": 338,
+                              "end": 349,
                               "loc": {
                                 "start": {
-                                  "line": 11,
+                                  "line": 10,
                                   "column": 28
                                 },
                                 "end": {
-                                  "line": 11,
+                                  "line": 10,
                                   "column": 39
                                 }
                               },
@@ -774,15 +734,15 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 420,
-                "end": 583,
+                "start": 358,
+                "end": 521,
                 "loc": {
                   "start": {
-                    "line": 14,
+                    "line": 13,
                     "column": 2
                   },
                   "end": {
-                    "line": 19,
+                    "line": 18,
                     "column": 3
                   }
                 },
@@ -790,15 +750,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 426,
-                  "end": 442,
+                  "start": 364,
+                  "end": 380,
                   "loc": {
                     "start": {
-                      "line": 14,
+                      "line": 13,
                       "column": 8
                     },
                     "end": {
-                      "line": 14,
+                      "line": 13,
                       "column": 24
                     },
                     "identifierName": "_connectToLedger"
@@ -813,44 +773,44 @@
                 "params": [],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 446,
-                  "end": 583,
+                  "start": 384,
+                  "end": 521,
                   "loc": {
                     "start": {
-                      "line": 14,
+                      "line": 13,
                       "column": 28
                     },
                     "end": {
-                      "line": 19,
+                      "line": 18,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "IfStatement",
-                      "start": 452,
-                      "end": 579,
+                      "start": 390,
+                      "end": 517,
                       "loc": {
                         "start": {
-                          "line": 15,
+                          "line": 14,
                           "column": 4
                         },
                         "end": {
-                          "line": 18,
+                          "line": 17,
                           "column": 5
                         }
                       },
                       "test": {
                         "type": "UnaryExpression",
-                        "start": 456,
-                        "end": 472,
+                        "start": 394,
+                        "end": 410,
                         "loc": {
                           "start": {
-                            "line": 15,
+                            "line": 14,
                             "column": 8
                           },
                           "end": {
-                            "line": 15,
+                            "line": 14,
                             "column": 24
                           }
                         },
@@ -858,44 +818,44 @@
                         "prefix": true,
                         "argument": {
                           "type": "MemberExpression",
-                          "start": 457,
-                          "end": 472,
+                          "start": 395,
+                          "end": 410,
                           "loc": {
                             "start": {
-                              "line": 15,
+                              "line": 14,
                               "column": 9
                             },
                             "end": {
-                              "line": 15,
+                              "line": 14,
                               "column": 24
                             }
                           },
                           "object": {
                             "type": "ThisExpression",
-                            "start": 457,
-                            "end": 461,
+                            "start": 395,
+                            "end": 399,
                             "loc": {
                               "start": {
-                                "line": 15,
+                                "line": 14,
                                 "column": 9
                               },
                               "end": {
-                                "line": 15,
+                                "line": 14,
                                 "column": 13
                               }
                             }
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 462,
-                            "end": 472,
+                            "start": 400,
+                            "end": 410,
                             "loc": {
                               "start": {
-                                "line": 15,
+                                "line": 14,
                                 "column": 14
                               },
                               "end": {
-                                "line": 15,
+                                "line": 14,
                                 "column": 24
                               },
                               "identifierName": "_ledgerBtc"
@@ -910,59 +870,59 @@
                       },
                       "consequent": {
                         "type": "BlockStatement",
-                        "start": 474,
-                        "end": 579,
+                        "start": 412,
+                        "end": 517,
                         "loc": {
                           "start": {
-                            "line": 15,
+                            "line": 14,
                             "column": 26
                           },
                           "end": {
-                            "line": 18,
+                            "line": 17,
                             "column": 5
                           }
                         },
                         "body": [
                           {
                             "type": "VariableDeclaration",
-                            "start": 482,
-                            "end": 524,
+                            "start": 420,
+                            "end": 462,
                             "loc": {
                               "start": {
-                                "line": 16,
+                                "line": 15,
                                 "column": 6
                               },
                               "end": {
-                                "line": 16,
+                                "line": 15,
                                 "column": 48
                               }
                             },
                             "declarations": [
                               {
                                 "type": "VariableDeclarator",
-                                "start": 488,
-                                "end": 524,
+                                "start": 426,
+                                "end": 462,
                                 "loc": {
                                   "start": {
-                                    "line": 16,
+                                    "line": 15,
                                     "column": 12
                                   },
                                   "end": {
-                                    "line": 16,
+                                    "line": 15,
                                     "column": 48
                                   }
                                 },
                                 "id": {
                                   "type": "Identifier",
-                                  "start": 488,
-                                  "end": 497,
+                                  "start": 426,
+                                  "end": 435,
                                   "loc": {
                                     "start": {
-                                      "line": 16,
+                                      "line": 15,
                                       "column": 12
                                     },
                                     "end": {
-                                      "line": 16,
+                                      "line": 15,
                                       "column": 21
                                     },
                                     "identifierName": "transport"
@@ -971,57 +931,57 @@
                                 },
                                 "init": {
                                   "type": "AwaitExpression",
-                                  "start": 500,
-                                  "end": 524,
+                                  "start": 438,
+                                  "end": 462,
                                   "loc": {
                                     "start": {
-                                      "line": 16,
+                                      "line": 15,
                                       "column": 24
                                     },
                                     "end": {
-                                      "line": 16,
+                                      "line": 15,
                                       "column": 48
                                     }
                                   },
                                   "argument": {
                                     "type": "CallExpression",
-                                    "start": 506,
-                                    "end": 524,
+                                    "start": 444,
+                                    "end": 462,
                                     "loc": {
                                       "start": {
-                                        "line": 16,
+                                        "line": 15,
                                         "column": 30
                                       },
                                       "end": {
-                                        "line": 16,
+                                        "line": 15,
                                         "column": 48
                                       }
                                     },
                                     "callee": {
                                       "type": "MemberExpression",
-                                      "start": 506,
-                                      "end": 522,
+                                      "start": 444,
+                                      "end": 460,
                                       "loc": {
                                         "start": {
-                                          "line": 16,
+                                          "line": 15,
                                           "column": 30
                                         },
                                         "end": {
-                                          "line": 16,
+                                          "line": 15,
                                           "column": 46
                                         }
                                       },
                                       "object": {
                                         "type": "Identifier",
-                                        "start": 506,
-                                        "end": 515,
+                                        "start": 444,
+                                        "end": 453,
                                         "loc": {
                                           "start": {
-                                            "line": 16,
+                                            "line": 15,
                                             "column": 30
                                           },
                                           "end": {
-                                            "line": 16,
+                                            "line": 15,
                                             "column": 39
                                           },
                                           "identifierName": "Transport"
@@ -1030,15 +990,15 @@
                                       },
                                       "property": {
                                         "type": "Identifier",
-                                        "start": 516,
-                                        "end": 522,
+                                        "start": 454,
+                                        "end": 460,
                                         "loc": {
                                           "start": {
-                                            "line": 16,
+                                            "line": 15,
                                             "column": 40
                                           },
                                           "end": {
-                                            "line": 16,
+                                            "line": 15,
                                             "column": 46
                                           },
                                           "identifierName": "create"
@@ -1056,73 +1016,73 @@
                           },
                           {
                             "type": "ExpressionStatement",
-                            "start": 531,
-                            "end": 573,
+                            "start": 469,
+                            "end": 511,
                             "loc": {
                               "start": {
-                                "line": 17,
+                                "line": 16,
                                 "column": 6
                               },
                               "end": {
-                                "line": 17,
+                                "line": 16,
                                 "column": 48
                               }
                             },
                             "expression": {
                               "type": "AssignmentExpression",
-                              "start": 531,
-                              "end": 573,
+                              "start": 469,
+                              "end": 511,
                               "loc": {
                                 "start": {
-                                  "line": 17,
+                                  "line": 16,
                                   "column": 6
                                 },
                                 "end": {
-                                  "line": 17,
+                                  "line": 16,
                                   "column": 48
                                 }
                               },
                               "operator": "=",
                               "left": {
                                 "type": "MemberExpression",
-                                "start": 531,
-                                "end": 546,
+                                "start": 469,
+                                "end": 484,
                                 "loc": {
                                   "start": {
-                                    "line": 17,
+                                    "line": 16,
                                     "column": 6
                                   },
                                   "end": {
-                                    "line": 17,
+                                    "line": 16,
                                     "column": 21
                                   }
                                 },
                                 "object": {
                                   "type": "ThisExpression",
-                                  "start": 531,
-                                  "end": 535,
+                                  "start": 469,
+                                  "end": 473,
                                   "loc": {
                                     "start": {
-                                      "line": 17,
+                                      "line": 16,
                                       "column": 6
                                     },
                                     "end": {
-                                      "line": 17,
+                                      "line": 16,
                                       "column": 10
                                     }
                                   }
                                 },
                                 "property": {
                                   "type": "Identifier",
-                                  "start": 536,
-                                  "end": 546,
+                                  "start": 474,
+                                  "end": 484,
                                   "loc": {
                                     "start": {
-                                      "line": 17,
+                                      "line": 16,
                                       "column": 11
                                     },
                                     "end": {
-                                      "line": 17,
+                                      "line": 16,
                                       "column": 21
                                     },
                                     "identifierName": "_ledgerBtc"
@@ -1133,29 +1093,29 @@
                               },
                               "right": {
                                 "type": "NewExpression",
-                                "start": 549,
-                                "end": 573,
+                                "start": 487,
+                                "end": 511,
                                 "loc": {
                                   "start": {
-                                    "line": 17,
+                                    "line": 16,
                                     "column": 24
                                   },
                                   "end": {
-                                    "line": 17,
+                                    "line": 16,
                                     "column": 48
                                   }
                                 },
                                 "callee": {
                                   "type": "Identifier",
-                                  "start": 553,
-                                  "end": 562,
+                                  "start": 491,
+                                  "end": 500,
                                   "loc": {
                                     "start": {
-                                      "line": 17,
+                                      "line": 16,
                                       "column": 28
                                     },
                                     "end": {
-                                      "line": 17,
+                                      "line": 16,
                                       "column": 37
                                     },
                                     "identifierName": "LedgerBtc"
@@ -1165,15 +1125,15 @@
                                 "arguments": [
                                   {
                                     "type": "Identifier",
-                                    "start": 563,
-                                    "end": 572,
+                                    "start": 501,
+                                    "end": 510,
                                     "loc": {
                                       "start": {
-                                        "line": 17,
+                                        "line": 16,
                                         "column": 38
                                       },
                                       "end": {
-                                        "line": 17,
+                                        "line": 16,
                                         "column": 47
                                       },
                                       "identifierName": "transport"
@@ -1195,15 +1155,15 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 587,
-                "end": 659,
+                "start": 525,
+                "end": 597,
                 "loc": {
                   "start": {
-                    "line": 21,
+                    "line": 20,
                     "column": 2
                   },
                   "end": {
-                    "line": 23,
+                    "line": 22,
                     "column": 3
                   }
                 },
@@ -1211,15 +1171,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 593,
-                  "end": 614,
+                  "start": 531,
+                  "end": 552,
                   "loc": {
                     "start": {
-                      "line": 21,
+                      "line": 20,
                       "column": 8
                     },
                     "end": {
-                      "line": 21,
+                      "line": 20,
                       "column": 29
                     },
                     "identifierName": "_updateDerivationPath"
@@ -1234,15 +1194,15 @@
                 "params": [
                   {
                     "type": "Identifier",
-                    "start": 616,
-                    "end": 620,
+                    "start": 554,
+                    "end": 558,
                     "loc": {
                       "start": {
-                        "line": 21,
+                        "line": 20,
                         "column": 31
                       },
                       "end": {
-                        "line": 21,
+                        "line": 20,
                         "column": 35
                       },
                       "identifierName": "path"
@@ -1252,88 +1212,88 @@
                 ],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 622,
-                  "end": 659,
+                  "start": 560,
+                  "end": 597,
                   "loc": {
                     "start": {
-                      "line": 21,
+                      "line": 20,
                       "column": 37
                     },
                     "end": {
-                      "line": 23,
+                      "line": 22,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 628,
-                      "end": 655,
+                      "start": 566,
+                      "end": 593,
                       "loc": {
                         "start": {
-                          "line": 22,
+                          "line": 21,
                           "column": 4
                         },
                         "end": {
-                          "line": 22,
+                          "line": 21,
                           "column": 31
                         }
                       },
                       "expression": {
                         "type": "AssignmentExpression",
-                        "start": 628,
-                        "end": 655,
+                        "start": 566,
+                        "end": 593,
                         "loc": {
                           "start": {
-                            "line": 22,
+                            "line": 21,
                             "column": 4
                           },
                           "end": {
-                            "line": 22,
+                            "line": 21,
                             "column": 31
                           }
                         },
                         "operator": "=",
                         "left": {
                           "type": "MemberExpression",
-                          "start": 628,
-                          "end": 648,
+                          "start": 566,
+                          "end": 586,
                           "loc": {
                             "start": {
-                              "line": 22,
+                              "line": 21,
                               "column": 4
                             },
                             "end": {
-                              "line": 22,
+                              "line": 21,
                               "column": 24
                             }
                           },
                           "object": {
                             "type": "ThisExpression",
-                            "start": 628,
-                            "end": 632,
+                            "start": 566,
+                            "end": 570,
                             "loc": {
                               "start": {
-                                "line": 22,
+                                "line": 21,
                                 "column": 4
                               },
                               "end": {
-                                "line": 22,
+                                "line": 21,
                                 "column": 8
                               }
                             }
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 633,
-                            "end": 648,
+                            "start": 571,
+                            "end": 586,
                             "loc": {
                               "start": {
-                                "line": 22,
+                                "line": 21,
                                 "column": 9
                               },
                               "end": {
-                                "line": 22,
+                                "line": 21,
                                 "column": 24
                               },
                               "identifierName": "_derivationPath"
@@ -1344,15 +1304,15 @@
                         },
                         "right": {
                           "type": "Identifier",
-                          "start": 651,
-                          "end": 655,
+                          "start": 589,
+                          "end": 593,
                           "loc": {
                             "start": {
-                              "line": 22,
+                              "line": 21,
                               "column": 27
                             },
                             "end": {
-                              "line": 22,
+                              "line": 21,
                               "column": 31
                             },
                             "identifierName": "path"
@@ -1367,15 +1327,15 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 663,
-                "end": 850,
+                "start": 601,
+                "end": 788,
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 24,
                     "column": 2
                   },
                   "end": {
-                    "line": 31,
+                    "line": 30,
                     "column": 3
                   }
                 },
@@ -1383,15 +1343,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 669,
-                  "end": 681,
+                  "start": 607,
+                  "end": 619,
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 24,
                       "column": 8
                     },
                     "end": {
-                      "line": 25,
+                      "line": 24,
                       "column": 20
                     },
                     "identifierName": "getAddresses"
@@ -1406,101 +1366,101 @@
                 "params": [],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 685,
-                  "end": 850,
+                  "start": 623,
+                  "end": 788,
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 24,
                       "column": 24
                     },
                     "end": {
-                      "line": 31,
+                      "line": 30,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 691,
-                      "end": 720,
+                      "start": 629,
+                      "end": 658,
                       "loc": {
                         "start": {
-                          "line": 26,
+                          "line": 25,
                           "column": 4
                         },
                         "end": {
-                          "line": 26,
+                          "line": 25,
                           "column": 33
                         }
                       },
                       "expression": {
                         "type": "AwaitExpression",
-                        "start": 691,
-                        "end": 720,
+                        "start": 629,
+                        "end": 658,
                         "loc": {
                           "start": {
-                            "line": 26,
+                            "line": 25,
                             "column": 4
                           },
                           "end": {
-                            "line": 26,
+                            "line": 25,
                             "column": 33
                           }
                         },
                         "argument": {
                           "type": "CallExpression",
-                          "start": 697,
-                          "end": 720,
+                          "start": 635,
+                          "end": 658,
                           "loc": {
                             "start": {
-                              "line": 26,
+                              "line": 25,
                               "column": 10
                             },
                             "end": {
-                              "line": 26,
+                              "line": 25,
                               "column": 33
                             }
                           },
                           "callee": {
                             "type": "MemberExpression",
-                            "start": 697,
-                            "end": 718,
+                            "start": 635,
+                            "end": 656,
                             "loc": {
                               "start": {
-                                "line": 26,
+                                "line": 25,
                                 "column": 10
                               },
                               "end": {
-                                "line": 26,
+                                "line": 25,
                                 "column": 31
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 697,
-                              "end": 701,
+                              "start": 635,
+                              "end": 639,
                               "loc": {
                                 "start": {
-                                  "line": 26,
+                                  "line": 25,
                                   "column": 10
                                 },
                                 "end": {
-                                  "line": 26,
+                                  "line": 25,
                                   "column": 14
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 702,
-                              "end": 718,
+                              "start": 640,
+                              "end": 656,
                               "loc": {
                                 "start": {
-                                  "line": 26,
+                                  "line": 25,
                                   "column": 15
                                 },
                                 "end": {
-                                  "line": 26,
+                                  "line": 25,
                                   "column": 31
                                 },
                                 "identifierName": "_connectToLedger"
@@ -1515,59 +1475,59 @@
                     },
                     {
                       "type": "VariableDeclaration",
-                      "start": 726,
-                      "end": 815,
+                      "start": 664,
+                      "end": 753,
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 27,
                           "column": 4
                         },
                         "end": {
-                          "line": 28,
+                          "line": 27,
                           "column": 93
                         }
                       },
                       "declarations": [
                         {
                           "type": "VariableDeclarator",
-                          "start": 732,
-                          "end": 815,
+                          "start": 670,
+                          "end": 753,
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 27,
                               "column": 10
                             },
                             "end": {
-                              "line": 28,
+                              "line": 27,
                               "column": 93
                             }
                           },
                           "id": {
                             "type": "ObjectPattern",
-                            "start": 732,
-                            "end": 750,
+                            "start": 670,
+                            "end": 688,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 27,
                                 "column": 10
                               },
                               "end": {
-                                "line": 28,
+                                "line": 27,
                                 "column": 28
                               }
                             },
                             "properties": [
                               {
                                 "type": "ObjectProperty",
-                                "start": 734,
-                                "end": 748,
+                                "start": 672,
+                                "end": 686,
                                 "loc": {
                                   "start": {
-                                    "line": 28,
+                                    "line": 27,
                                     "column": 12
                                   },
                                   "end": {
-                                    "line": 28,
+                                    "line": 27,
                                     "column": 26
                                   }
                                 },
@@ -1576,15 +1536,15 @@
                                 "computed": false,
                                 "key": {
                                   "type": "Identifier",
-                                  "start": 734,
-                                  "end": 748,
+                                  "start": 672,
+                                  "end": 686,
                                   "loc": {
                                     "start": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 12
                                     },
                                     "end": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 26
                                     },
                                     "identifierName": "bitcoinAddress"
@@ -1593,15 +1553,15 @@
                                 },
                                 "value": {
                                   "type": "Identifier",
-                                  "start": 734,
-                                  "end": 748,
+                                  "start": 672,
+                                  "end": 686,
                                   "loc": {
                                     "start": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 12
                                     },
                                     "end": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 26
                                     },
                                     "identifierName": "bitcoinAddress"
@@ -1616,86 +1576,86 @@
                           },
                           "init": {
                             "type": "AwaitExpression",
-                            "start": 753,
-                            "end": 815,
+                            "start": 691,
+                            "end": 753,
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 27,
                                 "column": 31
                               },
                               "end": {
-                                "line": 28,
+                                "line": 27,
                                 "column": 93
                               }
                             },
                             "argument": {
                               "type": "CallExpression",
-                              "start": 759,
-                              "end": 815,
+                              "start": 697,
+                              "end": 753,
                               "loc": {
                                 "start": {
-                                  "line": 28,
+                                  "line": 27,
                                   "column": 37
                                 },
                                 "end": {
-                                  "line": 28,
+                                  "line": 27,
                                   "column": 93
                                 }
                               },
                               "callee": {
                                 "type": "MemberExpression",
-                                "start": 759,
-                                "end": 793,
+                                "start": 697,
+                                "end": 731,
                                 "loc": {
                                   "start": {
-                                    "line": 28,
+                                    "line": 27,
                                     "column": 37
                                   },
                                   "end": {
-                                    "line": 28,
+                                    "line": 27,
                                     "column": 71
                                   }
                                 },
                                 "object": {
                                   "type": "MemberExpression",
-                                  "start": 759,
-                                  "end": 774,
+                                  "start": 697,
+                                  "end": 712,
                                   "loc": {
                                     "start": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 37
                                     },
                                     "end": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 52
                                     }
                                   },
                                   "object": {
                                     "type": "ThisExpression",
-                                    "start": 759,
-                                    "end": 763,
+                                    "start": 697,
+                                    "end": 701,
                                     "loc": {
                                       "start": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 37
                                       },
                                       "end": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 41
                                       }
                                     }
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "start": 764,
-                                    "end": 774,
+                                    "start": 702,
+                                    "end": 712,
                                     "loc": {
                                       "start": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 42
                                       },
                                       "end": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 52
                                       },
                                       "identifierName": "_ledgerBtc"
@@ -1706,15 +1666,15 @@
                                 },
                                 "property": {
                                   "type": "Identifier",
-                                  "start": 775,
-                                  "end": 793,
+                                  "start": 713,
+                                  "end": 731,
                                   "loc": {
                                     "start": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 53
                                     },
                                     "end": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 71
                                     },
                                     "identifierName": "getWalletPublicKey"
@@ -1726,44 +1686,44 @@
                               "arguments": [
                                 {
                                   "type": "MemberExpression",
-                                  "start": 794,
-                                  "end": 814,
+                                  "start": 732,
+                                  "end": 752,
                                   "loc": {
                                     "start": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 72
                                     },
                                     "end": {
-                                      "line": 28,
+                                      "line": 27,
                                       "column": 92
                                     }
                                   },
                                   "object": {
                                     "type": "ThisExpression",
-                                    "start": 794,
-                                    "end": 798,
+                                    "start": 732,
+                                    "end": 736,
                                     "loc": {
                                       "start": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 72
                                       },
                                       "end": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 76
                                       }
                                     }
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "start": 799,
-                                    "end": 814,
+                                    "start": 737,
+                                    "end": 752,
                                     "loc": {
                                       "start": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 77
                                       },
                                       "end": {
-                                        "line": 28,
+                                        "line": 27,
                                         "column": 92
                                       },
                                       "identifierName": "_derivationPath"
@@ -1781,44 +1741,44 @@
                     },
                     {
                       "type": "ReturnStatement",
-                      "start": 821,
-                      "end": 846,
+                      "start": 759,
+                      "end": 784,
                       "loc": {
                         "start": {
-                          "line": 30,
+                          "line": 29,
                           "column": 4
                         },
                         "end": {
-                          "line": 30,
+                          "line": 29,
                           "column": 29
                         }
                       },
                       "argument": {
                         "type": "ArrayExpression",
-                        "start": 828,
-                        "end": 846,
+                        "start": 766,
+                        "end": 784,
                         "loc": {
                           "start": {
-                            "line": 30,
+                            "line": 29,
                             "column": 11
                           },
                           "end": {
-                            "line": 30,
+                            "line": 29,
                             "column": 29
                           }
                         },
                         "elements": [
                           {
                             "type": "Identifier",
-                            "start": 830,
-                            "end": 844,
+                            "start": 768,
+                            "end": 782,
                             "loc": {
                               "start": {
-                                "line": 30,
+                                "line": 29,
                                 "column": 13
                               },
                               "end": {
-                                "line": 30,
+                                "line": 29,
                                 "column": 27
                               },
                               "identifierName": "bitcoinAddress"
@@ -1834,15 +1794,15 @@
               },
               {
                 "type": "ClassMethod",
-                "start": 854,
-                "end": 1051,
+                "start": 792,
+                "end": 989,
                 "loc": {
                   "start": {
-                    "line": 33,
+                    "line": 32,
                     "column": 2
                   },
                   "end": {
-                    "line": 39,
+                    "line": 38,
                     "column": 3
                   }
                 },
@@ -1850,15 +1810,15 @@
                 "computed": false,
                 "key": {
                   "type": "Identifier",
-                  "start": 860,
-                  "end": 871,
+                  "start": 798,
+                  "end": 809,
                   "loc": {
                     "start": {
-                      "line": 33,
+                      "line": 32,
                       "column": 8
                     },
                     "end": {
-                      "line": 33,
+                      "line": 32,
                       "column": 19
                     },
                     "identifierName": "signMessage"
@@ -1873,15 +1833,15 @@
                 "params": [
                   {
                     "type": "Identifier",
-                    "start": 873,
-                    "end": 880,
+                    "start": 811,
+                    "end": 818,
                     "loc": {
                       "start": {
-                        "line": 33,
+                        "line": 32,
                         "column": 21
                       },
                       "end": {
-                        "line": 33,
+                        "line": 32,
                         "column": 28
                       },
                       "identifierName": "message"
@@ -1890,15 +1850,15 @@
                   },
                   {
                     "type": "Identifier",
-                    "start": 882,
-                    "end": 886,
+                    "start": 820,
+                    "end": 824,
                     "loc": {
                       "start": {
-                        "line": 33,
+                        "line": 32,
                         "column": 30
                       },
                       "end": {
-                        "line": 33,
+                        "line": 32,
                         "column": 34
                       },
                       "identifierName": "from"
@@ -1908,101 +1868,101 @@
                 ],
                 "body": {
                   "type": "BlockStatement",
-                  "start": 888,
-                  "end": 1051,
+                  "start": 826,
+                  "end": 989,
                   "loc": {
                     "start": {
-                      "line": 33,
+                      "line": 32,
                       "column": 36
                     },
                     "end": {
-                      "line": 39,
+                      "line": 38,
                       "column": 3
                     }
                   },
                   "body": [
                     {
                       "type": "ExpressionStatement",
-                      "start": 894,
-                      "end": 923,
+                      "start": 832,
+                      "end": 861,
                       "loc": {
                         "start": {
-                          "line": 34,
+                          "line": 33,
                           "column": 4
                         },
                         "end": {
-                          "line": 34,
+                          "line": 33,
                           "column": 33
                         }
                       },
                       "expression": {
                         "type": "AwaitExpression",
-                        "start": 894,
-                        "end": 923,
+                        "start": 832,
+                        "end": 861,
                         "loc": {
                           "start": {
-                            "line": 34,
+                            "line": 33,
                             "column": 4
                           },
                           "end": {
-                            "line": 34,
+                            "line": 33,
                             "column": 33
                           }
                         },
                         "argument": {
                           "type": "CallExpression",
-                          "start": 900,
-                          "end": 923,
+                          "start": 838,
+                          "end": 861,
                           "loc": {
                             "start": {
-                              "line": 34,
+                              "line": 33,
                               "column": 10
                             },
                             "end": {
-                              "line": 34,
+                              "line": 33,
                               "column": 33
                             }
                           },
                           "callee": {
                             "type": "MemberExpression",
-                            "start": 900,
-                            "end": 921,
+                            "start": 838,
+                            "end": 859,
                             "loc": {
                               "start": {
-                                "line": 34,
+                                "line": 33,
                                 "column": 10
                               },
                               "end": {
-                                "line": 34,
+                                "line": 33,
                                 "column": 31
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 900,
-                              "end": 904,
+                              "start": 838,
+                              "end": 842,
                               "loc": {
                                 "start": {
-                                  "line": 34,
+                                  "line": 33,
                                   "column": 10
                                 },
                                 "end": {
-                                  "line": 34,
+                                  "line": 33,
                                   "column": 14
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 905,
-                              "end": 921,
+                              "start": 843,
+                              "end": 859,
                               "loc": {
                                 "start": {
-                                  "line": 34,
+                                  "line": 33,
                                   "column": 15
                                 },
                                 "end": {
-                                  "line": 34,
+                                  "line": 33,
                                   "column": 31
                                 },
                                 "identifierName": "_connectToLedger"
@@ -2017,44 +1977,44 @@
                     },
                     {
                       "type": "VariableDeclaration",
-                      "start": 929,
-                      "end": 977,
+                      "start": 867,
+                      "end": 915,
                       "loc": {
                         "start": {
-                          "line": 36,
+                          "line": 35,
                           "column": 4
                         },
                         "end": {
-                          "line": 36,
+                          "line": 35,
                           "column": 52
                         }
                       },
                       "declarations": [
                         {
                           "type": "VariableDeclarator",
-                          "start": 935,
-                          "end": 977,
+                          "start": 873,
+                          "end": 915,
                           "loc": {
                             "start": {
-                              "line": 36,
+                              "line": 35,
                               "column": 10
                             },
                             "end": {
-                              "line": 36,
+                              "line": 35,
                               "column": 52
                             }
                           },
                           "id": {
                             "type": "Identifier",
-                            "start": 935,
-                            "end": 938,
+                            "start": 873,
+                            "end": 876,
                             "loc": {
                               "start": {
-                                "line": 36,
+                                "line": 35,
                                 "column": 10
                               },
                               "end": {
-                                "line": 36,
+                                "line": 35,
                                 "column": 13
                               },
                               "identifierName": "hex"
@@ -2063,71 +2023,71 @@
                           },
                           "init": {
                             "type": "CallExpression",
-                            "start": 941,
-                            "end": 977,
+                            "start": 879,
+                            "end": 915,
                             "loc": {
                               "start": {
-                                "line": 36,
+                                "line": 35,
                                 "column": 16
                               },
                               "end": {
-                                "line": 36,
+                                "line": 35,
                                 "column": 52
                               }
                             },
                             "callee": {
                               "type": "MemberExpression",
-                              "start": 941,
-                              "end": 970,
+                              "start": 879,
+                              "end": 908,
                               "loc": {
                                 "start": {
-                                  "line": 36,
+                                  "line": 35,
                                   "column": 16
                                 },
                                 "end": {
-                                  "line": 36,
+                                  "line": 35,
                                   "column": 45
                                 }
                               },
                               "object": {
                                 "type": "CallExpression",
-                                "start": 941,
-                                "end": 961,
+                                "start": 879,
+                                "end": 899,
                                 "loc": {
                                   "start": {
-                                    "line": 36,
+                                    "line": 35,
                                     "column": 16
                                   },
                                   "end": {
-                                    "line": 36,
+                                    "line": 35,
                                     "column": 36
                                   }
                                 },
                                 "callee": {
                                   "type": "MemberExpression",
-                                  "start": 941,
-                                  "end": 952,
+                                  "start": 879,
+                                  "end": 890,
                                   "loc": {
                                     "start": {
-                                      "line": 36,
+                                      "line": 35,
                                       "column": 16
                                     },
                                     "end": {
-                                      "line": 36,
+                                      "line": 35,
                                       "column": 27
                                     }
                                   },
                                   "object": {
                                     "type": "Identifier",
-                                    "start": 941,
-                                    "end": 947,
+                                    "start": 879,
+                                    "end": 885,
                                     "loc": {
                                       "start": {
-                                        "line": 36,
+                                        "line": 35,
                                         "column": 16
                                       },
                                       "end": {
-                                        "line": 36,
+                                        "line": 35,
                                         "column": 22
                                       },
                                       "identifierName": "Buffer"
@@ -2136,15 +2096,15 @@
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "start": 948,
-                                    "end": 952,
+                                    "start": 886,
+                                    "end": 890,
                                     "loc": {
                                       "start": {
-                                        "line": 36,
+                                        "line": 35,
                                         "column": 23
                                       },
                                       "end": {
-                                        "line": 36,
+                                        "line": 35,
                                         "column": 27
                                       },
                                       "identifierName": "from"
@@ -2156,15 +2116,15 @@
                                 "arguments": [
                                   {
                                     "type": "Identifier",
-                                    "start": 953,
-                                    "end": 960,
+                                    "start": 891,
+                                    "end": 898,
                                     "loc": {
                                       "start": {
-                                        "line": 36,
+                                        "line": 35,
                                         "column": 28
                                       },
                                       "end": {
-                                        "line": 36,
+                                        "line": 35,
                                         "column": 35
                                       },
                                       "identifierName": "message"
@@ -2175,15 +2135,15 @@
                               },
                               "property": {
                                 "type": "Identifier",
-                                "start": 962,
-                                "end": 970,
+                                "start": 900,
+                                "end": 908,
                                 "loc": {
                                   "start": {
-                                    "line": 36,
+                                    "line": 35,
                                     "column": 37
                                   },
                                   "end": {
-                                    "line": 36,
+                                    "line": 35,
                                     "column": 45
                                   },
                                   "identifierName": "toString"
@@ -2195,15 +2155,15 @@
                             "arguments": [
                               {
                                 "type": "StringLiteral",
-                                "start": 971,
-                                "end": 976,
+                                "start": 909,
+                                "end": 914,
                                 "loc": {
                                   "start": {
-                                    "line": 36,
+                                    "line": 35,
                                     "column": 46
                                   },
                                   "end": {
-                                    "line": 36,
+                                    "line": 35,
                                     "column": 51
                                   }
                                 },
@@ -2221,86 +2181,86 @@
                     },
                     {
                       "type": "ReturnStatement",
-                      "start": 983,
-                      "end": 1047,
+                      "start": 921,
+                      "end": 985,
                       "loc": {
                         "start": {
-                          "line": 38,
+                          "line": 37,
                           "column": 4
                         },
                         "end": {
-                          "line": 38,
+                          "line": 37,
                           "column": 68
                         }
                       },
                       "argument": {
                         "type": "CallExpression",
-                        "start": 990,
-                        "end": 1047,
+                        "start": 928,
+                        "end": 985,
                         "loc": {
                           "start": {
-                            "line": 38,
+                            "line": 37,
                             "column": 11
                           },
                           "end": {
-                            "line": 38,
+                            "line": 37,
                             "column": 68
                           }
                         },
                         "callee": {
                           "type": "MemberExpression",
-                          "start": 990,
-                          "end": 1020,
+                          "start": 928,
+                          "end": 958,
                           "loc": {
                             "start": {
-                              "line": 38,
+                              "line": 37,
                               "column": 11
                             },
                             "end": {
-                              "line": 38,
+                              "line": 37,
                               "column": 41
                             }
                           },
                           "object": {
                             "type": "MemberExpression",
-                            "start": 990,
-                            "end": 1005,
+                            "start": 928,
+                            "end": 943,
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 11
                               },
                               "end": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 26
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 990,
-                              "end": 994,
+                              "start": 928,
+                              "end": 932,
                               "loc": {
                                 "start": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 11
                                 },
                                 "end": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 15
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 995,
-                              "end": 1005,
+                              "start": 933,
+                              "end": 943,
                               "loc": {
                                 "start": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 16
                                 },
                                 "end": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 26
                                 },
                                 "identifierName": "_ledgerBtc"
@@ -2311,15 +2271,15 @@
                           },
                           "property": {
                             "type": "Identifier",
-                            "start": 1006,
-                            "end": 1020,
+                            "start": 944,
+                            "end": 958,
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 27
                               },
                               "end": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 41
                               },
                               "identifierName": "signMessageNew"
@@ -2331,44 +2291,44 @@
                         "arguments": [
                           {
                             "type": "MemberExpression",
-                            "start": 1021,
-                            "end": 1041,
+                            "start": 959,
+                            "end": 979,
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 42
                               },
                               "end": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 62
                               }
                             },
                             "object": {
                               "type": "ThisExpression",
-                              "start": 1021,
-                              "end": 1025,
+                              "start": 959,
+                              "end": 963,
                               "loc": {
                                 "start": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 42
                                 },
                                 "end": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 46
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "start": 1026,
-                              "end": 1041,
+                              "start": 964,
+                              "end": 979,
                               "loc": {
                                 "start": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 47
                                 },
                                 "end": {
-                                  "line": 38,
+                                  "line": 37,
                                   "column": 62
                                 },
                                 "identifierName": "_derivationPath"
@@ -2379,15 +2339,15 @@
                           },
                           {
                             "type": "Identifier",
-                            "start": 1043,
-                            "end": 1046,
+                            "start": 981,
+                            "end": 984,
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 64
                               },
                               "end": {
-                                "line": 38,
+                                "line": 37,
                                 "column": 67
                               },
                               "identifierName": "hex"
@@ -2410,24 +2370,7 @@
     ],
     "directives": []
   },
-  "comments": [
-    {
-      "type": "CommentLine",
-      "value": " import Transport from '@ledgerhq/hw-transport-node-hid'",
-      "start": 106,
-      "end": 164,
-      "loc": {
-        "start": {
-          "line": 4,
-          "column": 0
-        },
-        "end": {
-          "line": 4,
-          "column": 58
-        }
-      }
-    }
-  ],
+  "comments": [],
   "tokens": [
     {
       "type": {
@@ -2469,123 +2412,16 @@
         "postfix": false,
         "binop": null
       },
-      "value": "BitcoinRPCProvider",
-      "start": 7,
-      "end": 25,
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 7
-        },
-        "end": {
-          "line": 1,
-          "column": 25
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "from",
-      "start": 26,
-      "end": 30,
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 26
-        },
-        "end": {
-          "line": 1,
-          "column": 30
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "string",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "./BitcoinRPCProvider",
-      "start": 31,
-      "end": 53,
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 31
-        },
-        "end": {
-          "line": 1,
-          "column": 53
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "import",
-        "keyword": "import",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "import",
-      "start": 55,
-      "end": 61,
-      "loc": {
-        "start": {
-          "line": 3,
-          "column": 0
-        },
-        "end": {
-          "line": 3,
-          "column": 6
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
       "value": "Transport",
-      "start": 62,
-      "end": 71,
+      "start": 7,
+      "end": 16,
       "loc": {
         "start": {
-          "line": 3,
+          "line": 1,
           "column": 7
         },
         "end": {
-          "line": 3,
+          "line": 1,
           "column": 16
         }
       }
@@ -2603,15 +2439,15 @@
         "binop": null
       },
       "value": "from",
-      "start": 72,
-      "end": 76,
+      "start": 17,
+      "end": 21,
       "loc": {
         "start": {
-          "line": 3,
+          "line": 1,
           "column": 17
         },
         "end": {
-          "line": 3,
+          "line": 1,
           "column": 21
         }
       }
@@ -2629,33 +2465,17 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "@ledgerhq/hw-transport-u2f",
-      "start": 77,
-      "end": 105,
+      "value": "@alias/ledger-transport",
+      "start": 22,
+      "end": 47,
       "loc": {
         "start": {
-          "line": 3,
+          "line": 1,
           "column": 22
         },
         "end": {
-          "line": 3,
-          "column": 50
-        }
-      }
-    },
-    {
-      "type": "CommentLine",
-      "value": " import Transport from '@ledgerhq/hw-transport-node-hid'",
-      "start": 106,
-      "end": 164,
-      "loc": {
-        "start": {
-          "line": 4,
-          "column": 0
-        },
-        "end": {
-          "line": 4,
-          "column": 58
+          "line": 1,
+          "column": 47
         }
       }
     },
@@ -2674,15 +2494,15 @@
         "updateContext": null
       },
       "value": "import",
-      "start": 165,
-      "end": 171,
+      "start": 48,
+      "end": 54,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 2,
           "column": 0
         },
         "end": {
-          "line": 5,
+          "line": 2,
           "column": 6
         }
       }
@@ -2700,15 +2520,15 @@
         "binop": null
       },
       "value": "LedgerBtc",
-      "start": 172,
-      "end": 181,
+      "start": 55,
+      "end": 64,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 2,
           "column": 7
         },
         "end": {
-          "line": 5,
+          "line": 2,
           "column": 16
         }
       }
@@ -2726,15 +2546,15 @@
         "binop": null
       },
       "value": "from",
-      "start": 182,
-      "end": 186,
+      "start": 65,
+      "end": 69,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 2,
           "column": 17
         },
         "end": {
-          "line": 5,
+          "line": 2,
           "column": 21
         }
       }
@@ -2753,16 +2573,123 @@
         "updateContext": null
       },
       "value": "@ledgerhq/hw-app-btc",
-      "start": 187,
-      "end": 209,
+      "start": 70,
+      "end": 92,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 2,
           "column": 22
         },
         "end": {
-          "line": 5,
+          "line": 2,
           "column": 44
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 94,
+      "end": 100,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 0
+        },
+        "end": {
+          "line": 4,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "BitcoinRPCProvider",
+      "start": 101,
+      "end": 119,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 7
+        },
+        "end": {
+          "line": 4,
+          "column": 25
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 120,
+      "end": 124,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 26
+        },
+        "end": {
+          "line": 4,
+          "column": 30
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./BitcoinRPCProvider",
+      "start": 125,
+      "end": 147,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 31
+        },
+        "end": {
+          "line": 4,
+          "column": 53
         }
       }
     },
@@ -2781,15 +2708,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 211,
-      "end": 217,
+      "start": 149,
+      "end": 155,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 6,
           "column": 0
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "column": 6
         }
       }
@@ -2809,15 +2736,15 @@
         "updateContext": null
       },
       "value": "default",
-      "start": 218,
-      "end": 225,
+      "start": 156,
+      "end": 163,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 6,
           "column": 7
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "column": 14
         }
       }
@@ -2837,15 +2764,15 @@
         "updateContext": null
       },
       "value": "class",
-      "start": 226,
-      "end": 231,
+      "start": 164,
+      "end": 169,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 6,
           "column": 15
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "column": 20
         }
       }
@@ -2863,15 +2790,15 @@
         "binop": null
       },
       "value": "BitcoinLedgerProvider",
-      "start": 232,
-      "end": 253,
+      "start": 170,
+      "end": 191,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 6,
           "column": 21
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "column": 42
         }
       }
@@ -2891,15 +2818,15 @@
         "updateContext": null
       },
       "value": "extends",
-      "start": 254,
-      "end": 261,
+      "start": 192,
+      "end": 199,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 6,
           "column": 43
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "column": 50
         }
       }
@@ -2917,15 +2844,15 @@
         "binop": null
       },
       "value": "BitcoinRPCProvider",
-      "start": 262,
-      "end": 280,
+      "start": 200,
+      "end": 218,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 6,
           "column": 51
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "column": 69
         }
       }
@@ -2942,15 +2869,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 281,
-      "end": 282,
+      "start": 219,
+      "end": 220,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 6,
           "column": 70
         },
         "end": {
-          "line": 7,
+          "line": 6,
           "column": 71
         }
       }
@@ -2968,15 +2895,15 @@
         "binop": null
       },
       "value": "constructor",
-      "start": 285,
-      "end": 296,
+      "start": 223,
+      "end": 234,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 2
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 13
         }
       }
@@ -2993,15 +2920,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 297,
-      "end": 298,
+      "start": 235,
+      "end": 236,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 14
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 15
         }
       }
@@ -3019,15 +2946,15 @@
         "binop": null
       },
       "value": "uri",
-      "start": 298,
-      "end": 301,
+      "start": 236,
+      "end": 239,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 15
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 18
         }
       }
@@ -3045,15 +2972,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 301,
-      "end": 302,
+      "start": 239,
+      "end": 240,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 18
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 19
         }
       }
@@ -3071,15 +2998,15 @@
         "binop": null
       },
       "value": "user",
-      "start": 303,
-      "end": 307,
+      "start": 241,
+      "end": 245,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 20
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 24
         }
       }
@@ -3097,15 +3024,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 307,
-      "end": 308,
+      "start": 245,
+      "end": 246,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 24
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 25
         }
       }
@@ -3123,15 +3050,15 @@
         "binop": null
       },
       "value": "pass",
-      "start": 309,
-      "end": 313,
+      "start": 247,
+      "end": 251,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 26
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 30
         }
       }
@@ -3148,15 +3075,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 313,
-      "end": 314,
+      "start": 251,
+      "end": 252,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 30
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 31
         }
       }
@@ -3173,15 +3100,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 315,
-      "end": 316,
+      "start": 253,
+      "end": 254,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 7,
           "column": 32
         },
         "end": {
-          "line": 8,
+          "line": 7,
           "column": 33
         }
       }
@@ -3201,15 +3128,15 @@
         "updateContext": null
       },
       "value": "super",
-      "start": 321,
-      "end": 326,
+      "start": 259,
+      "end": 264,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 4
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 9
         }
       }
@@ -3226,15 +3153,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 326,
-      "end": 327,
+      "start": 264,
+      "end": 265,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 9
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 10
         }
       }
@@ -3252,15 +3179,15 @@
         "binop": null
       },
       "value": "uri",
-      "start": 327,
-      "end": 330,
+      "start": 265,
+      "end": 268,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 10
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 13
         }
       }
@@ -3278,15 +3205,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 330,
-      "end": 331,
+      "start": 268,
+      "end": 269,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 13
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 14
         }
       }
@@ -3304,15 +3231,15 @@
         "binop": null
       },
       "value": "user",
-      "start": 332,
-      "end": 336,
+      "start": 270,
+      "end": 274,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 15
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 19
         }
       }
@@ -3330,15 +3257,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 336,
-      "end": 337,
+      "start": 274,
+      "end": 275,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 19
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 20
         }
       }
@@ -3356,15 +3283,15 @@
         "binop": null
       },
       "value": "pass",
-      "start": 338,
-      "end": 342,
+      "start": 276,
+      "end": 280,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 21
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 25
         }
       }
@@ -3381,15 +3308,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 342,
-      "end": 343,
+      "start": 280,
+      "end": 281,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 8,
           "column": 25
         },
         "end": {
-          "line": 9,
+          "line": 8,
           "column": 26
         }
       }
@@ -3409,15 +3336,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 348,
-      "end": 352,
+      "start": 286,
+      "end": 290,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 9,
           "column": 4
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "column": 8
         }
       }
@@ -3435,15 +3362,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 352,
-      "end": 353,
+      "start": 290,
+      "end": 291,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 9,
           "column": 8
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "column": 9
         }
       }
@@ -3461,15 +3388,15 @@
         "binop": null
       },
       "value": "_ledgerBtc",
-      "start": 353,
-      "end": 363,
+      "start": 291,
+      "end": 301,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 9,
           "column": 9
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "column": 19
         }
       }
@@ -3488,15 +3415,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 364,
-      "end": 365,
+      "start": 302,
+      "end": 303,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 9,
           "column": 20
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "column": 21
         }
       }
@@ -3516,15 +3443,15 @@
         "updateContext": null
       },
       "value": "false",
-      "start": 366,
-      "end": 371,
+      "start": 304,
+      "end": 309,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 9,
           "column": 22
         },
         "end": {
-          "line": 10,
+          "line": 9,
           "column": 27
         }
       }
@@ -3544,15 +3471,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 376,
-      "end": 380,
+      "start": 314,
+      "end": 318,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 10,
           "column": 4
         },
         "end": {
-          "line": 11,
+          "line": 10,
           "column": 8
         }
       }
@@ -3570,15 +3497,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 380,
-      "end": 381,
+      "start": 318,
+      "end": 319,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 10,
           "column": 8
         },
         "end": {
-          "line": 11,
+          "line": 10,
           "column": 9
         }
       }
@@ -3596,15 +3523,15 @@
         "binop": null
       },
       "value": "_derivationPath",
-      "start": 381,
-      "end": 396,
+      "start": 319,
+      "end": 334,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 10,
           "column": 9
         },
         "end": {
-          "line": 11,
+          "line": 10,
           "column": 24
         }
       }
@@ -3623,15 +3550,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 397,
-      "end": 398,
+      "start": 335,
+      "end": 336,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 10,
           "column": 25
         },
         "end": {
-          "line": 11,
+          "line": 10,
           "column": 26
         }
       }
@@ -3648,15 +3575,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 399,
-      "end": 400,
+      "start": 337,
+      "end": 338,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 10,
           "column": 27
         },
         "end": {
-          "line": 11,
+          "line": 10,
           "column": 28
         }
       }
@@ -3675,15 +3602,15 @@
         "updateContext": null
       },
       "value": "44'/0'/0'/0",
-      "start": 400,
-      "end": 411,
+      "start": 338,
+      "end": 349,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 10,
           "column": 28
         },
         "end": {
-          "line": 11,
+          "line": 10,
           "column": 39
         }
       }
@@ -3700,15 +3627,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 411,
-      "end": 412,
+      "start": 349,
+      "end": 350,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 10,
           "column": 39
         },
         "end": {
-          "line": 11,
+          "line": 10,
           "column": 40
         }
       }
@@ -3725,15 +3652,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 415,
-      "end": 416,
+      "start": 353,
+      "end": 354,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 11,
           "column": 2
         },
         "end": {
-          "line": 12,
+          "line": 11,
           "column": 3
         }
       }
@@ -3751,15 +3678,15 @@
         "binop": null
       },
       "value": "async",
-      "start": 420,
-      "end": 425,
+      "start": 358,
+      "end": 363,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 13,
           "column": 2
         },
         "end": {
-          "line": 14,
+          "line": 13,
           "column": 7
         }
       }
@@ -3777,15 +3704,15 @@
         "binop": null
       },
       "value": "_connectToLedger",
-      "start": 426,
-      "end": 442,
+      "start": 364,
+      "end": 380,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 13,
           "column": 8
         },
         "end": {
-          "line": 14,
+          "line": 13,
           "column": 24
         }
       }
@@ -3802,15 +3729,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 443,
-      "end": 444,
+      "start": 381,
+      "end": 382,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 13,
           "column": 25
         },
         "end": {
-          "line": 14,
+          "line": 13,
           "column": 26
         }
       }
@@ -3827,15 +3754,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 444,
-      "end": 445,
+      "start": 382,
+      "end": 383,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 13,
           "column": 26
         },
         "end": {
-          "line": 14,
+          "line": 13,
           "column": 27
         }
       }
@@ -3852,15 +3779,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 446,
-      "end": 447,
+      "start": 384,
+      "end": 385,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 13,
           "column": 28
         },
         "end": {
-          "line": 14,
+          "line": 13,
           "column": 29
         }
       }
@@ -3880,15 +3807,15 @@
         "updateContext": null
       },
       "value": "if",
-      "start": 452,
-      "end": 454,
+      "start": 390,
+      "end": 392,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 4
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 6
         }
       }
@@ -3905,15 +3832,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 455,
-      "end": 456,
+      "start": 393,
+      "end": 394,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 7
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 8
         }
       }
@@ -3932,15 +3859,15 @@
         "updateContext": null
       },
       "value": "!",
-      "start": 456,
-      "end": 457,
+      "start": 394,
+      "end": 395,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 8
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 9
         }
       }
@@ -3960,15 +3887,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 457,
-      "end": 461,
+      "start": 395,
+      "end": 399,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 9
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 13
         }
       }
@@ -3986,15 +3913,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 461,
-      "end": 462,
+      "start": 399,
+      "end": 400,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 13
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 14
         }
       }
@@ -4012,15 +3939,15 @@
         "binop": null
       },
       "value": "_ledgerBtc",
-      "start": 462,
-      "end": 472,
+      "start": 400,
+      "end": 410,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 14
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 24
         }
       }
@@ -4037,15 +3964,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 472,
-      "end": 473,
+      "start": 410,
+      "end": 411,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 24
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 25
         }
       }
@@ -4062,15 +3989,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 474,
-      "end": 475,
+      "start": 412,
+      "end": 413,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 14,
           "column": 26
         },
         "end": {
-          "line": 15,
+          "line": 14,
           "column": 27
         }
       }
@@ -4090,15 +4017,15 @@
         "updateContext": null
       },
       "value": "const",
-      "start": 482,
-      "end": 487,
+      "start": 420,
+      "end": 425,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 6
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 11
         }
       }
@@ -4116,15 +4043,15 @@
         "binop": null
       },
       "value": "transport",
-      "start": 488,
-      "end": 497,
+      "start": 426,
+      "end": 435,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 12
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 21
         }
       }
@@ -4143,15 +4070,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 498,
-      "end": 499,
+      "start": 436,
+      "end": 437,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 22
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 23
         }
       }
@@ -4169,15 +4096,15 @@
         "binop": null
       },
       "value": "await",
-      "start": 500,
-      "end": 505,
+      "start": 438,
+      "end": 443,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 24
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 29
         }
       }
@@ -4195,15 +4122,15 @@
         "binop": null
       },
       "value": "Transport",
-      "start": 506,
-      "end": 515,
+      "start": 444,
+      "end": 453,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 30
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 39
         }
       }
@@ -4221,15 +4148,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 515,
-      "end": 516,
+      "start": 453,
+      "end": 454,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 39
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 40
         }
       }
@@ -4247,15 +4174,15 @@
         "binop": null
       },
       "value": "create",
-      "start": 516,
-      "end": 522,
+      "start": 454,
+      "end": 460,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 40
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 46
         }
       }
@@ -4272,15 +4199,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 522,
-      "end": 523,
+      "start": 460,
+      "end": 461,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 46
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 47
         }
       }
@@ -4297,15 +4224,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 523,
-      "end": 524,
+      "start": 461,
+      "end": 462,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 15,
           "column": 47
         },
         "end": {
-          "line": 16,
+          "line": 15,
           "column": 48
         }
       }
@@ -4325,15 +4252,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 531,
-      "end": 535,
+      "start": 469,
+      "end": 473,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 6
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 10
         }
       }
@@ -4351,15 +4278,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 535,
-      "end": 536,
+      "start": 473,
+      "end": 474,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 10
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 11
         }
       }
@@ -4377,15 +4304,15 @@
         "binop": null
       },
       "value": "_ledgerBtc",
-      "start": 536,
-      "end": 546,
+      "start": 474,
+      "end": 484,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 11
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 21
         }
       }
@@ -4404,15 +4331,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 547,
-      "end": 548,
+      "start": 485,
+      "end": 486,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 22
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 23
         }
       }
@@ -4432,15 +4359,15 @@
         "updateContext": null
       },
       "value": "new",
-      "start": 549,
-      "end": 552,
+      "start": 487,
+      "end": 490,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 24
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 27
         }
       }
@@ -4458,15 +4385,15 @@
         "binop": null
       },
       "value": "LedgerBtc",
-      "start": 553,
-      "end": 562,
+      "start": 491,
+      "end": 500,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 28
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 37
         }
       }
@@ -4483,15 +4410,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 562,
-      "end": 563,
+      "start": 500,
+      "end": 501,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 37
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 38
         }
       }
@@ -4509,15 +4436,15 @@
         "binop": null
       },
       "value": "transport",
-      "start": 563,
-      "end": 572,
+      "start": 501,
+      "end": 510,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 38
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 47
         }
       }
@@ -4534,15 +4461,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 572,
-      "end": 573,
+      "start": 510,
+      "end": 511,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 16,
           "column": 47
         },
         "end": {
-          "line": 17,
+          "line": 16,
           "column": 48
         }
       }
@@ -4559,15 +4486,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 578,
-      "end": 579,
+      "start": 516,
+      "end": 517,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 17,
           "column": 4
         },
         "end": {
-          "line": 18,
+          "line": 17,
           "column": 5
         }
       }
@@ -4584,15 +4511,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 582,
-      "end": 583,
+      "start": 520,
+      "end": 521,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 18,
           "column": 2
         },
         "end": {
-          "line": 19,
+          "line": 18,
           "column": 3
         }
       }
@@ -4610,15 +4537,15 @@
         "binop": null
       },
       "value": "async",
-      "start": 587,
-      "end": 592,
+      "start": 525,
+      "end": 530,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 20,
           "column": 2
         },
         "end": {
-          "line": 21,
+          "line": 20,
           "column": 7
         }
       }
@@ -4636,15 +4563,15 @@
         "binop": null
       },
       "value": "_updateDerivationPath",
-      "start": 593,
-      "end": 614,
+      "start": 531,
+      "end": 552,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 20,
           "column": 8
         },
         "end": {
-          "line": 21,
+          "line": 20,
           "column": 29
         }
       }
@@ -4661,15 +4588,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 615,
-      "end": 616,
+      "start": 553,
+      "end": 554,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 20,
           "column": 30
         },
         "end": {
-          "line": 21,
+          "line": 20,
           "column": 31
         }
       }
@@ -4687,15 +4614,15 @@
         "binop": null
       },
       "value": "path",
-      "start": 616,
-      "end": 620,
+      "start": 554,
+      "end": 558,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 20,
           "column": 31
         },
         "end": {
-          "line": 21,
+          "line": 20,
           "column": 35
         }
       }
@@ -4712,15 +4639,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 620,
-      "end": 621,
+      "start": 558,
+      "end": 559,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 20,
           "column": 35
         },
         "end": {
-          "line": 21,
+          "line": 20,
           "column": 36
         }
       }
@@ -4737,15 +4664,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 622,
-      "end": 623,
+      "start": 560,
+      "end": 561,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 20,
           "column": 37
         },
         "end": {
-          "line": 21,
+          "line": 20,
           "column": 38
         }
       }
@@ -4765,15 +4692,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 628,
-      "end": 632,
+      "start": 566,
+      "end": 570,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 21,
           "column": 4
         },
         "end": {
-          "line": 22,
+          "line": 21,
           "column": 8
         }
       }
@@ -4791,15 +4718,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 632,
-      "end": 633,
+      "start": 570,
+      "end": 571,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 21,
           "column": 8
         },
         "end": {
-          "line": 22,
+          "line": 21,
           "column": 9
         }
       }
@@ -4817,15 +4744,15 @@
         "binop": null
       },
       "value": "_derivationPath",
-      "start": 633,
-      "end": 648,
+      "start": 571,
+      "end": 586,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 21,
           "column": 9
         },
         "end": {
-          "line": 22,
+          "line": 21,
           "column": 24
         }
       }
@@ -4844,15 +4771,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 649,
-      "end": 650,
+      "start": 587,
+      "end": 588,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 21,
           "column": 25
         },
         "end": {
-          "line": 22,
+          "line": 21,
           "column": 26
         }
       }
@@ -4870,15 +4797,15 @@
         "binop": null
       },
       "value": "path",
-      "start": 651,
-      "end": 655,
+      "start": 589,
+      "end": 593,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 21,
           "column": 27
         },
         "end": {
-          "line": 22,
+          "line": 21,
           "column": 31
         }
       }
@@ -4895,15 +4822,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 658,
-      "end": 659,
+      "start": 596,
+      "end": 597,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 22,
           "column": 2
         },
         "end": {
-          "line": 23,
+          "line": 22,
           "column": 3
         }
       }
@@ -4921,15 +4848,15 @@
         "binop": null
       },
       "value": "async",
-      "start": 663,
-      "end": 668,
+      "start": 601,
+      "end": 606,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 24,
           "column": 2
         },
         "end": {
-          "line": 25,
+          "line": 24,
           "column": 7
         }
       }
@@ -4947,15 +4874,15 @@
         "binop": null
       },
       "value": "getAddresses",
-      "start": 669,
-      "end": 681,
+      "start": 607,
+      "end": 619,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 24,
           "column": 8
         },
         "end": {
-          "line": 25,
+          "line": 24,
           "column": 20
         }
       }
@@ -4972,15 +4899,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 682,
-      "end": 683,
+      "start": 620,
+      "end": 621,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 24,
           "column": 21
         },
         "end": {
-          "line": 25,
+          "line": 24,
           "column": 22
         }
       }
@@ -4997,15 +4924,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 683,
-      "end": 684,
+      "start": 621,
+      "end": 622,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 24,
           "column": 22
         },
         "end": {
-          "line": 25,
+          "line": 24,
           "column": 23
         }
       }
@@ -5022,16 +4949,303 @@
         "postfix": false,
         "binop": null
       },
-      "start": 685,
-      "end": 686,
+      "start": 623,
+      "end": 624,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 24,
           "column": 24
         },
         "end": {
-          "line": 25,
+          "line": 24,
           "column": 25
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "await",
+      "start": 629,
+      "end": 634,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 4
+        },
+        "end": {
+          "line": 25,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "this",
+        "keyword": "this",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "this",
+      "start": 635,
+      "end": 639,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 10
+        },
+        "end": {
+          "line": 25,
+          "column": 14
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ".",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 639,
+      "end": 640,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 14
+        },
+        "end": {
+          "line": 25,
+          "column": 15
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "_connectToLedger",
+      "start": 640,
+      "end": 656,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 15
+        },
+        "end": {
+          "line": 25,
+          "column": 31
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "(",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 656,
+      "end": 657,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 31
+        },
+        "end": {
+          "line": 25,
+          "column": 32
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ")",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 657,
+      "end": 658,
+      "loc": {
+        "start": {
+          "line": 25,
+          "column": 32
+        },
+        "end": {
+          "line": 25,
+          "column": 33
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "const",
+        "keyword": "const",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "const",
+      "start": 664,
+      "end": 669,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 4
+        },
+        "end": {
+          "line": 27,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "{",
+        "beforeExpr": true,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 670,
+      "end": 671,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 10
+        },
+        "end": {
+          "line": 27,
+          "column": 11
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "bitcoinAddress",
+      "start": 672,
+      "end": 686,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 12
+        },
+        "end": {
+          "line": 27,
+          "column": 26
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "}",
+        "beforeExpr": false,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "start": 687,
+      "end": 688,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 27
+        },
+        "end": {
+          "line": 27,
+          "column": 28
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "=",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": true,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "=",
+      "start": 689,
+      "end": 690,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 29
+        },
+        "end": {
+          "line": 27,
+          "column": 30
         }
       }
     },
@@ -5052,12 +5266,12 @@
       "end": 696,
       "loc": {
         "start": {
-          "line": 26,
-          "column": 4
+          "line": 27,
+          "column": 31
         },
         "end": {
-          "line": 26,
-          "column": 9
+          "line": 27,
+          "column": 36
         }
       }
     },
@@ -5080,12 +5294,12 @@
       "end": 701,
       "loc": {
         "start": {
-          "line": 26,
-          "column": 10
+          "line": 27,
+          "column": 37
         },
         "end": {
-          "line": 26,
-          "column": 14
+          "line": 27,
+          "column": 41
         }
       }
     },
@@ -5106,298 +5320,11 @@
       "end": 702,
       "loc": {
         "start": {
-          "line": 26,
-          "column": 14
-        },
-        "end": {
-          "line": 26,
-          "column": 15
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "_connectToLedger",
-      "start": 702,
-      "end": 718,
-      "loc": {
-        "start": {
-          "line": 26,
-          "column": 15
-        },
-        "end": {
-          "line": 26,
-          "column": 31
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "(",
-        "beforeExpr": true,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 718,
-      "end": 719,
-      "loc": {
-        "start": {
-          "line": 26,
-          "column": 31
-        },
-        "end": {
-          "line": 26,
-          "column": 32
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ")",
-        "beforeExpr": false,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 719,
-      "end": 720,
-      "loc": {
-        "start": {
-          "line": 26,
-          "column": 32
-        },
-        "end": {
-          "line": 26,
-          "column": 33
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "const",
-        "keyword": "const",
-        "beforeExpr": false,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "const",
-      "start": 726,
-      "end": 731,
-      "loc": {
-        "start": {
-          "line": 28,
-          "column": 4
-        },
-        "end": {
-          "line": 28,
-          "column": 9
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "{",
-        "beforeExpr": true,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 732,
-      "end": 733,
-      "loc": {
-        "start": {
-          "line": 28,
-          "column": 10
-        },
-        "end": {
-          "line": 28,
-          "column": 11
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "bitcoinAddress",
-      "start": 734,
-      "end": 748,
-      "loc": {
-        "start": {
-          "line": 28,
-          "column": 12
-        },
-        "end": {
-          "line": 28,
-          "column": 26
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "}",
-        "beforeExpr": false,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "start": 749,
-      "end": 750,
-      "loc": {
-        "start": {
-          "line": 28,
-          "column": 27
-        },
-        "end": {
-          "line": 28,
-          "column": 28
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "=",
-        "beforeExpr": true,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": true,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "=",
-      "start": 751,
-      "end": 752,
-      "loc": {
-        "start": {
-          "line": 28,
-          "column": 29
-        },
-        "end": {
-          "line": 28,
-          "column": 30
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "name",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null
-      },
-      "value": "await",
-      "start": 753,
-      "end": 758,
-      "loc": {
-        "start": {
-          "line": 28,
-          "column": 31
-        },
-        "end": {
-          "line": 28,
-          "column": 36
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "this",
-        "keyword": "this",
-        "beforeExpr": false,
-        "startsExpr": true,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "this",
-      "start": 759,
-      "end": 763,
-      "loc": {
-        "start": {
-          "line": 28,
-          "column": 37
-        },
-        "end": {
-          "line": 28,
-          "column": 41
-        }
-      }
-    },
-    {
-      "type": {
-        "label": ".",
-        "beforeExpr": false,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "start": 763,
-      "end": 764,
-      "loc": {
-        "start": {
-          "line": 28,
+          "line": 27,
           "column": 41
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 42
         }
       }
@@ -5415,15 +5342,15 @@
         "binop": null
       },
       "value": "_ledgerBtc",
-      "start": 764,
-      "end": 774,
+      "start": 702,
+      "end": 712,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 42
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 52
         }
       }
@@ -5441,15 +5368,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 774,
-      "end": 775,
+      "start": 712,
+      "end": 713,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 52
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 53
         }
       }
@@ -5467,15 +5394,15 @@
         "binop": null
       },
       "value": "getWalletPublicKey",
-      "start": 775,
-      "end": 793,
+      "start": 713,
+      "end": 731,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 53
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 71
         }
       }
@@ -5492,15 +5419,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 793,
-      "end": 794,
+      "start": 731,
+      "end": 732,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 71
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 72
         }
       }
@@ -5520,15 +5447,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 794,
-      "end": 798,
+      "start": 732,
+      "end": 736,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 72
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 76
         }
       }
@@ -5546,15 +5473,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 798,
-      "end": 799,
+      "start": 736,
+      "end": 737,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 76
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 77
         }
       }
@@ -5572,15 +5499,15 @@
         "binop": null
       },
       "value": "_derivationPath",
-      "start": 799,
-      "end": 814,
+      "start": 737,
+      "end": 752,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 77
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 92
         }
       }
@@ -5597,15 +5524,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 814,
-      "end": 815,
+      "start": 752,
+      "end": 753,
       "loc": {
         "start": {
-          "line": 28,
+          "line": 27,
           "column": 92
         },
         "end": {
-          "line": 28,
+          "line": 27,
           "column": 93
         }
       }
@@ -5625,15 +5552,15 @@
         "updateContext": null
       },
       "value": "return",
-      "start": 821,
-      "end": 827,
+      "start": 759,
+      "end": 765,
       "loc": {
         "start": {
-          "line": 30,
+          "line": 29,
           "column": 4
         },
         "end": {
-          "line": 30,
+          "line": 29,
           "column": 10
         }
       }
@@ -5651,15 +5578,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 828,
-      "end": 829,
+      "start": 766,
+      "end": 767,
       "loc": {
         "start": {
-          "line": 30,
+          "line": 29,
           "column": 11
         },
         "end": {
-          "line": 30,
+          "line": 29,
           "column": 12
         }
       }
@@ -5677,15 +5604,15 @@
         "binop": null
       },
       "value": "bitcoinAddress",
-      "start": 830,
-      "end": 844,
+      "start": 768,
+      "end": 782,
       "loc": {
         "start": {
-          "line": 30,
+          "line": 29,
           "column": 13
         },
         "end": {
-          "line": 30,
+          "line": 29,
           "column": 27
         }
       }
@@ -5703,15 +5630,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 845,
-      "end": 846,
+      "start": 783,
+      "end": 784,
       "loc": {
         "start": {
-          "line": 30,
+          "line": 29,
           "column": 28
         },
         "end": {
-          "line": 30,
+          "line": 29,
           "column": 29
         }
       }
@@ -5728,15 +5655,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 849,
-      "end": 850,
+      "start": 787,
+      "end": 788,
       "loc": {
         "start": {
-          "line": 31,
+          "line": 30,
           "column": 2
         },
         "end": {
-          "line": 31,
+          "line": 30,
           "column": 3
         }
       }
@@ -5754,15 +5681,15 @@
         "binop": null
       },
       "value": "async",
-      "start": 854,
-      "end": 859,
+      "start": 792,
+      "end": 797,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 2
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 7
         }
       }
@@ -5780,15 +5707,15 @@
         "binop": null
       },
       "value": "signMessage",
-      "start": 860,
-      "end": 871,
+      "start": 798,
+      "end": 809,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 8
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 19
         }
       }
@@ -5805,15 +5732,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 872,
-      "end": 873,
+      "start": 810,
+      "end": 811,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 20
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 21
         }
       }
@@ -5831,15 +5758,15 @@
         "binop": null
       },
       "value": "message",
-      "start": 873,
-      "end": 880,
+      "start": 811,
+      "end": 818,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 21
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 28
         }
       }
@@ -5857,15 +5784,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 880,
-      "end": 881,
+      "start": 818,
+      "end": 819,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 28
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 29
         }
       }
@@ -5883,15 +5810,15 @@
         "binop": null
       },
       "value": "from",
-      "start": 882,
-      "end": 886,
+      "start": 820,
+      "end": 824,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 30
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 34
         }
       }
@@ -5908,15 +5835,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 886,
-      "end": 887,
+      "start": 824,
+      "end": 825,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 34
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 35
         }
       }
@@ -5933,15 +5860,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 888,
-      "end": 889,
+      "start": 826,
+      "end": 827,
       "loc": {
         "start": {
-          "line": 33,
+          "line": 32,
           "column": 36
         },
         "end": {
-          "line": 33,
+          "line": 32,
           "column": 37
         }
       }
@@ -5959,15 +5886,15 @@
         "binop": null
       },
       "value": "await",
-      "start": 894,
-      "end": 899,
+      "start": 832,
+      "end": 837,
       "loc": {
         "start": {
-          "line": 34,
+          "line": 33,
           "column": 4
         },
         "end": {
-          "line": 34,
+          "line": 33,
           "column": 9
         }
       }
@@ -5987,15 +5914,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 900,
-      "end": 904,
+      "start": 838,
+      "end": 842,
       "loc": {
         "start": {
-          "line": 34,
+          "line": 33,
           "column": 10
         },
         "end": {
-          "line": 34,
+          "line": 33,
           "column": 14
         }
       }
@@ -6013,15 +5940,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 904,
-      "end": 905,
+      "start": 842,
+      "end": 843,
       "loc": {
         "start": {
-          "line": 34,
+          "line": 33,
           "column": 14
         },
         "end": {
-          "line": 34,
+          "line": 33,
           "column": 15
         }
       }
@@ -6039,15 +5966,15 @@
         "binop": null
       },
       "value": "_connectToLedger",
-      "start": 905,
-      "end": 921,
+      "start": 843,
+      "end": 859,
       "loc": {
         "start": {
-          "line": 34,
+          "line": 33,
           "column": 15
         },
         "end": {
-          "line": 34,
+          "line": 33,
           "column": 31
         }
       }
@@ -6064,15 +5991,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 921,
-      "end": 922,
+      "start": 859,
+      "end": 860,
       "loc": {
         "start": {
-          "line": 34,
+          "line": 33,
           "column": 31
         },
         "end": {
-          "line": 34,
+          "line": 33,
           "column": 32
         }
       }
@@ -6089,15 +6016,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 922,
-      "end": 923,
+      "start": 860,
+      "end": 861,
       "loc": {
         "start": {
-          "line": 34,
+          "line": 33,
           "column": 32
         },
         "end": {
-          "line": 34,
+          "line": 33,
           "column": 33
         }
       }
@@ -6117,15 +6044,15 @@
         "updateContext": null
       },
       "value": "const",
-      "start": 929,
-      "end": 934,
+      "start": 867,
+      "end": 872,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 4
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 9
         }
       }
@@ -6143,15 +6070,15 @@
         "binop": null
       },
       "value": "hex",
-      "start": 935,
-      "end": 938,
+      "start": 873,
+      "end": 876,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 10
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 13
         }
       }
@@ -6170,15 +6097,15 @@
         "updateContext": null
       },
       "value": "=",
-      "start": 939,
-      "end": 940,
+      "start": 877,
+      "end": 878,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 14
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 15
         }
       }
@@ -6196,15 +6123,15 @@
         "binop": null
       },
       "value": "Buffer",
-      "start": 941,
-      "end": 947,
+      "start": 879,
+      "end": 885,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 16
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 22
         }
       }
@@ -6222,15 +6149,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 947,
-      "end": 948,
+      "start": 885,
+      "end": 886,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 22
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 23
         }
       }
@@ -6248,15 +6175,15 @@
         "binop": null
       },
       "value": "from",
-      "start": 948,
-      "end": 952,
+      "start": 886,
+      "end": 890,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 23
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 27
         }
       }
@@ -6273,15 +6200,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 952,
-      "end": 953,
+      "start": 890,
+      "end": 891,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 27
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 28
         }
       }
@@ -6299,15 +6226,15 @@
         "binop": null
       },
       "value": "message",
-      "start": 953,
-      "end": 960,
+      "start": 891,
+      "end": 898,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 28
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 35
         }
       }
@@ -6324,15 +6251,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 960,
-      "end": 961,
+      "start": 898,
+      "end": 899,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 35
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 36
         }
       }
@@ -6350,15 +6277,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 961,
-      "end": 962,
+      "start": 899,
+      "end": 900,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 36
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 37
         }
       }
@@ -6376,15 +6303,15 @@
         "binop": null
       },
       "value": "toString",
-      "start": 962,
-      "end": 970,
+      "start": 900,
+      "end": 908,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 37
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 45
         }
       }
@@ -6401,15 +6328,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 970,
-      "end": 971,
+      "start": 908,
+      "end": 909,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 45
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 46
         }
       }
@@ -6428,15 +6355,15 @@
         "updateContext": null
       },
       "value": "hex",
-      "start": 971,
-      "end": 976,
+      "start": 909,
+      "end": 914,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 46
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 51
         }
       }
@@ -6453,15 +6380,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 976,
-      "end": 977,
+      "start": 914,
+      "end": 915,
       "loc": {
         "start": {
-          "line": 36,
+          "line": 35,
           "column": 51
         },
         "end": {
-          "line": 36,
+          "line": 35,
           "column": 52
         }
       }
@@ -6481,15 +6408,15 @@
         "updateContext": null
       },
       "value": "return",
-      "start": 983,
-      "end": 989,
+      "start": 921,
+      "end": 927,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 4
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 10
         }
       }
@@ -6509,15 +6436,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 990,
-      "end": 994,
+      "start": 928,
+      "end": 932,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 11
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 15
         }
       }
@@ -6535,15 +6462,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 994,
-      "end": 995,
+      "start": 932,
+      "end": 933,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 15
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 16
         }
       }
@@ -6561,15 +6488,15 @@
         "binop": null
       },
       "value": "_ledgerBtc",
-      "start": 995,
-      "end": 1005,
+      "start": 933,
+      "end": 943,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 16
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 26
         }
       }
@@ -6587,15 +6514,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1005,
-      "end": 1006,
+      "start": 943,
+      "end": 944,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 26
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 27
         }
       }
@@ -6613,15 +6540,15 @@
         "binop": null
       },
       "value": "signMessageNew",
-      "start": 1006,
-      "end": 1020,
+      "start": 944,
+      "end": 958,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 27
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 41
         }
       }
@@ -6638,15 +6565,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1020,
-      "end": 1021,
+      "start": 958,
+      "end": 959,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 41
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 42
         }
       }
@@ -6666,15 +6593,15 @@
         "updateContext": null
       },
       "value": "this",
-      "start": 1021,
-      "end": 1025,
+      "start": 959,
+      "end": 963,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 42
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 46
         }
       }
@@ -6692,15 +6619,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1025,
-      "end": 1026,
+      "start": 963,
+      "end": 964,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 46
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 47
         }
       }
@@ -6718,15 +6645,15 @@
         "binop": null
       },
       "value": "_derivationPath",
-      "start": 1026,
-      "end": 1041,
+      "start": 964,
+      "end": 979,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 47
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 62
         }
       }
@@ -6744,15 +6671,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1041,
-      "end": 1042,
+      "start": 979,
+      "end": 980,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 62
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 63
         }
       }
@@ -6770,15 +6697,15 @@
         "binop": null
       },
       "value": "hex",
-      "start": 1043,
-      "end": 1046,
+      "start": 981,
+      "end": 984,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 64
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 67
         }
       }
@@ -6795,15 +6722,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1046,
-      "end": 1047,
+      "start": 984,
+      "end": 985,
       "loc": {
         "start": {
-          "line": 38,
+          "line": 37,
           "column": 67
         },
         "end": {
-          "line": 38,
+          "line": 37,
           "column": 68
         }
       }
@@ -6820,15 +6747,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1050,
-      "end": 1051,
+      "start": 988,
+      "end": 989,
       "loc": {
         "start": {
-          "line": 39,
+          "line": 38,
           "column": 2
         },
         "end": {
-          "line": 39,
+          "line": 38,
           "column": 3
         }
       }
@@ -6845,15 +6772,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 1052,
-      "end": 1053,
+      "start": 990,
+      "end": 991,
       "loc": {
         "start": {
-          "line": 40,
+          "line": 39,
           "column": 0
         },
         "end": {
-          "line": 40,
+          "line": 39,
           "column": 1
         }
       }
@@ -6871,15 +6798,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 1054,
-      "end": 1054,
+      "start": 992,
+      "end": 992,
       "loc": {
         "start": {
-          "line": 41,
+          "line": 40,
           "column": 0
         },
         "end": {
-          "line": 41,
+          "line": 40,
           "column": 0
         }
       }

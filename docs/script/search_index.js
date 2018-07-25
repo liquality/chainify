@@ -390,6 +390,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/index.js~client#sendtransaction",
+    "class/src/index.js~Client.html#instance-method-sendTransaction",
+    "src/index.js~Client#sendTransaction",
+    "method"
+  ],
+  [
     "src/index.js~client#signmessage",
     "class/src/index.js~Client.html#instance-method-signMessage",
     "src/index.js~Client#signMessage",
@@ -573,6 +579,12 @@ window.esdocSearchIndex = [
     "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#getaddresses",
     "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-getAddresses",
     "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#getAddresses",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#sendtransaction",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-sendTransaction",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#sendTransaction",
     "method"
   ],
   [

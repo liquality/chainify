@@ -42,11 +42,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/providers/ethereum/EthereumLedgerProvider.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import EthereumRPCProvider from &apos;./EthereumRPCProvider&apos;
-
-import Transport from &apos;@ledgerhq/hw-transport-u2f&apos;
-// import Transport from &apos;@ledgerhq/hw-transport-node-hid&apos;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Transport from &apos;@alias/ledger-transport&apos;
 import LedgerEth from &apos;@ledgerhq/hw-app-eth&apos;
+
+import EthereumRPCProvider from &apos;./EthereumRPCProvider&apos;
 
 export default class EthereumLedgerProvider extends EthereumRPCProvider {
   constructor (uri, user, pass) {

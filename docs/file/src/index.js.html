@@ -43,7 +43,7 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import &apos;regenerator-runtime/runtime&apos;
-import { find, isArray, isBoolean, isFunction, isNumber } from &apos;lodash&apos;
+import { find, isArray, isBoolean, isFunction, isNumber, isString } from &apos;lodash&apos;
 import * as Ajv from &apos;ajv&apos;
 
 import providers from &apos;./providers&apos;
@@ -204,6 +204,18 @@ export default class Client {
     const signedMessage = await this.provider.signMessage(message, from)
 
     return signedMessage
+  }
+
+  async sendTransaction (from, to, value, data) {
+    this._checkMethod(&apos;sendTransaction&apos;)
+
+    const txHash = await this.provider.sendTransaction(from, to, value, data)
+
+    if (!isString(txHash)) {
+      throw new Error(&apos;sendTransaction method should return a transaction id string&apos;)
+    }
+
+    return txHash
   }
 }
 
