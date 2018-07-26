@@ -366,6 +366,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/index.js~client#getblockbyhash",
+    "class/src/index.js~Client.html#instance-method-getBlockByHash",
+    "src/index.js~Client#getBlockByHash",
+    "method"
+  ],
+  [
     "src/index.js~client#getblockbynumber",
     "class/src/index.js~Client.html#instance-method-getBlockByNumber",
     "src/index.js~Client#getBlockByNumber",
@@ -375,6 +381,12 @@ window.esdocSearchIndex = [
     "src/index.js~client#getblockheight",
     "class/src/index.js~Client.html#instance-method-getBlockHeight",
     "src/index.js~Client#getBlockHeight",
+    "method"
+  ],
+  [
+    "src/index.js~client#getrawtransactionbyhash",
+    "class/src/index.js~Client.html#instance-method-getRawTransactionByHash",
+    "src/index.js~Client#getRawTransactionByHash",
     "method"
   ],
   [
@@ -480,6 +492,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#_decoderawtransaction",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-_decodeRawTransaction",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#_decodeRawTransaction",
+    "method"
+  ],
+  [
     "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#_rpc",
     "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-_rpc",
     "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#_rpc",
@@ -501,6 +519,30 @@ window.esdocSearchIndex = [
     "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#generateblock",
     "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-generateBlock",
     "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#generateBlock",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#getblockbyhash",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-getBlockByHash",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#getBlockByHash",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#getblockbynumber",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-getBlockByNumber",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#getBlockByNumber",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#getrawtransactionbyhash",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-getRawTransactionByHash",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#getRawTransactionByHash",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#gettransactionbyhash",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-getTransactionByHash",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#getTransactionByHash",
     "method"
   ],
   [

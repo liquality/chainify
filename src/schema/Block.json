@@ -8,7 +8,7 @@
     "hash": {
       "type": "string",
       "title": "Hash",
-      "pattern": "^0x([A-Fa-f0-9]{64})$"
+      "pattern": "^([A-Fa-f0-9]{64})$"
     },
     "number": {
       "type": "number",
@@ -21,9 +21,9 @@
       "minimum": 0
     },
     "difficulty": {
-      "type": "number",
+      "type": "string",
       "title": "Difficulty",
-      "minimum": 0
+      "minLength": 1
     },
     "size": {
       "type": "number",
@@ -33,7 +33,7 @@
     "parentHash": {
       "type": "string",
       "title": "Parent Hash",
-      "pattern": "^0x([A-Fa-f0-9]{64})$"
+      "pattern": "^([A-Fa-f0-9]{64})$"
     },
     "nonce": {
       "type": "number",

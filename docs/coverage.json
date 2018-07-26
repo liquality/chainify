@@ -1,21 +1,18 @@
 {
-  "coverage": "11.76%",
-  "expectCount": 51,
-  "actualCount": 6,
+  "coverage": "18.96%",
+  "expectCount": 58,
+  "actualCount": 11,
   "files": {
     "src/index.js": {
-      "expectCount": 15,
-      "actualCount": 6,
+      "expectCount": 17,
+      "actualCount": 11,
       "undocumentLines": [
         9,
         28,
         29,
-        43,
-        117,
-        129,
-        145,
-        157,
-        165
+        207,
+        219,
+        227
       ]
     },
     "src/providers/JsonRpcHelper.js": {
@@ -42,14 +39,19 @@
       ]
     },
     "src/providers/bitcoin/BitcoinRPCProvider.js": {
-      "expectCount": 5,
+      "expectCount": 10,
       "actualCount": 0,
       "undocumentLines": [
         5,
         6,
         7,
         22,
-        28
+        28,
+        38,
+        42,
+        72,
+        76,
+        95
       ]
     },
     "src/providers/ethereum/EthereumLedgerProvider.js": {
