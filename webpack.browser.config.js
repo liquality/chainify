@@ -3,6 +3,8 @@ const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 
+const pkg = require('./package.json')
+
 const plugins = []
 
 if (process.env.NODE_ENV === 'production') {
@@ -30,7 +32,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.umd.js',
+    filename: path.basename(pkg.browser),
     library: 'ChainAbstractionLayer',
     libraryTarget: 'umd',
     libraryExport: 'default'
@@ -45,7 +47,21 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        loader: 'babel-loader?cacheDirectory=true',
+        options: {
+          plugins: [ 'lodash' ],
+          presets: [
+            [
+              '@babel/preset-env', {
+                debug: true,
+                modules: false,
+                targets: {
+                  browsers: [ 'last 2 versions', 'safari >= 7' ]
+                }
+              }
+            ]
+          ]
+        }
       }
     ]
   },

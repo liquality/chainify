@@ -1,0 +1,7 @@
+.babelrc
+.esdoc.json
+.circleci
+webpack.*
+test/
+src/
+examples/
