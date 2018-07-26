@@ -7,11 +7,10 @@ import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
 
-import hash160 from './util/hash160'
-import sha256 from './util/sha256'
-import ripemd160 from './util/ripemd160'
-import basex from './util/base-x'
-import bech32 from './util/bech32'
+import sha256 from 'crypto-js/sha256'
+import ripemd160 from 'crypto-js/ripemd160'
+import basex from 'base-x'
+import bech32 from 'bech32'
 
 const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
@@ -274,7 +273,9 @@ export default class ChainAbstractionLayer {
   }
 
   async hash160 (message) {
-    return hash160(message)
+    const sha256Hashed = this.sha256(message)
+    const ripemd160Hashed = this.ripemd160(sha256Hashed)
+    return ripemd160Hashed
   }
 
   async sha256 (message) {
