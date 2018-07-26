@@ -7,6 +7,14 @@ import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
 
+import hash160 from './util/hash160'
+import sha256 from './util/sha256'
+import ripemd160 from './util/ripemd160'
+import basex from './util/base-x'
+import bech32 from './util/bech32'
+
+const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+
 export default class ChainAbstractionLayer {
   /**
    * ChainAbstractionLayer client
@@ -24,6 +32,8 @@ export default class ChainAbstractionLayer {
     if (provider) {
       this.addProvider(provider)
     }
+    this.base58 = basex(BASE58)
+    this.bech32 = bech32
   }
 
   /**
@@ -255,6 +265,24 @@ export default class ChainAbstractionLayer {
     }
 
     return txHash
+  }
+
+  async generateSecret (message) {
+    const from = await this.getAddress()
+    const signedMessage = await this.signMessage(message, from)
+    return signedMessage
+  }
+
+  async hash160 (message) {
+    return hash160(message)
+  }
+
+  async sha256 (message) {
+    return sha256(message).toString()
+  }
+
+  async ripemd160 (message) {
+    return ripemd160(message).toString()
   }
 }
 
