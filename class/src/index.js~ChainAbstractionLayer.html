@@ -136,7 +136,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-member-provider">provider</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-member-provider">provider</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
         </p>
       </div>
       <div>
@@ -255,7 +255,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-addProvider">addProvider</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-addProvider">addProvider</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>Client</span></span>
         </p>
       </div>
       <div>
@@ -341,13 +341,13 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByNumber">getBlockByNumber</a></span></span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span>ChainAbstractionLayer.schemas.Block</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByHash">getBlockByHash</a></span></span><span class="code" data-ice="signature">(blockHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Get block by number</p>
+        <div data-ice="description"><p>Get a block given its hash.</p>
 </div>
       </div>
     </td>
@@ -370,13 +370,14 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockHeight">getBlockHeight</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByNumber">getBlockByNumber</a></span></span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Get a block given its number.</p>
+</div>
       </div>
     </td>
     <td>
@@ -398,13 +399,72 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getTransactionByHash">getTransactionByHash</a></span></span><span class="code" data-ice="signature">(txHash: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockHeight">getBlockHeight</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
+        <div data-ice="description"><p>Get the current block height of the chain.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getRawTransactionByHash">getRawTransactionByHash</a></span></span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+        </p>
+      </div>
+      <div>
         
+        
+        <div data-ice="description"><p>Get a raw hexadecimal transaction given its hash.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getTransactionByHash">getTransactionByHash</a></span></span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Get a transaction given its hash.</p>
+</div>
       </div>
     </td>
     <td>
@@ -488,13 +548,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-_checkMethod">_checkMethod</a></span></span><span class="code" data-ice="signature">(method: <span>*</span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-_checkMethod">_checkMethod</a></span></span><span class="code" data-ice="signature">(method: <span>*</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Check the availability of a method.</p>
+</div>
       </div>
     </td>
     <td>
@@ -591,11 +652,11 @@
     
     
     
-    <span class="code" data-ice="name">provider</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span>
+    <span class="code" data-ice="name">provider</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber40">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber41">source</a></span></span>
     </span>
   </h3>
 
@@ -766,11 +827,11 @@
     
     
     
-    <span class="code" data-ice="name">addProvider</span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>)</span>
+    <span class="code" data-ice="name">addProvider</span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>Client</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber36">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber37">source</a></span></span>
     </span>
   </h3>
 
@@ -792,7 +853,7 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">provider</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>The provider instance.</p>
 </td>
@@ -802,7 +863,19 @@
 </div>
 </div>
 
-  
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>Client</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
 
   
 
@@ -831,7 +904,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber69">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber75">source</a></span></span>
     </span>
   </h3>
 
@@ -906,7 +979,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber145">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber219">source</a></span></span>
     </span>
   </h3>
 
@@ -950,6 +1023,88 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getBlockByHash">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">getBlockByHash</span><span class="code" data-ice="signature">(blockHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber103">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Get a block given its hash.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">blockHash</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>A hexadecimal string that represents the <em>hash</em> of the desired block.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">includeTx</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: false</li></ul></td>
+      <td data-ice="description"><p>If true, fetches transaction in the block.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns a Block with the same hash as the given input. Throws an Error if no block was found. If <code>includeTx</code> is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-getBlockByNumber">
     <span class="access" data-ice="access">public</span>
     
@@ -957,18 +1112,18 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getBlockByNumber</span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span>ChainAbstractionLayer.schemas.Block</span></span>
+    <span class="code" data-ice="name">getBlockByNumber</span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber97">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber133">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Get block by number</p>
+  <div data-ice="description"><p>Get a block given its number.</p>
 </div>
 
   
@@ -985,7 +1140,7 @@
       <td data-ice="name" class="code" data-depth="0">blockNumber</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
       <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
-      <td data-ice="description"><p>Number of the block to be fetched</p>
+      <td data-ice="description"><p>The number of the desired block.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
@@ -993,7 +1148,7 @@
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: false</li></ul></td>
-      <td data-ice="description"><p>If true, fetches transaction in the block</p>
+      <td data-ice="description"><p>If true, fetches transaction in the block.</p>
 </td>
     </tr>
 </tbody>
@@ -1006,8 +1161,8 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>ChainAbstractionLayer.schemas.Block</span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns a Block</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns a Block with the same number as the given input. Throws an Error if no block was found. If <code>includeTx</code> is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.</p>
 </td>
         </tr>
       </tbody>
@@ -1039,18 +1194,19 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getBlockHeight</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">getBlockHeight</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber117">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber157">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Get the current block height of the chain.</p>
+</div>
 
   
 
@@ -1062,8 +1218,82 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
           
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getRawTransactionByHash">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">getRawTransactionByHash</span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber199">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Get a raw hexadecimal transaction given its hash.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">txHash</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>A hexadecimal string that represents the <em>hash</em> of the desired transaction.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns the raw Transaction with the same hash as the given output. Throws an Error if no transaction was found.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1094,18 +1324,19 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getTransactionByHash</span><span class="code" data-ice="signature">(txHash: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">getTransactionByHash</span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber129">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber174">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Get a transaction given its hash.</p>
+</div>
 
   
 
@@ -1119,9 +1350,10 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">txHash</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>A hexadecimal string that represents the <em>hash</em> of the desired transaction.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -1133,8 +1365,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns a Transaction with the same hash as the given input. Throws an Error if no transaction was found.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1169,7 +1402,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber165">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber239">source</a></span></span>
     </span>
   </h3>
 
@@ -1258,7 +1491,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber157">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber231">source</a></span></span>
     </span>
   </h3>
 
@@ -1333,18 +1566,19 @@
     
     
     
-    <span class="code" data-ice="name">_checkMethod</span><span class="code" data-ice="signature">(method: <span>*</span>)</span>
+    <span class="code" data-ice="name">_checkMethod</span><span class="code" data-ice="signature">(method: <span>*</span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber43">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber49">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Check the availability of a method.</p>
+</div>
 
   
 
@@ -1367,7 +1601,19 @@
 </div>
 </div>
 
-  
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
 
   
 

@@ -43,7 +43,8 @@
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="chain-abstraction-layer">Chain Abstraction Layer</h1><p><a href="https://github.com/standard/standard"><img src="https://cdn.rawgit.com/standard/standard/master/badge.svg" alt="JavaScript Style Guide"></a></p>
 <p>Query different blockchains with a single and simple interface.</p>
-<h2 id="usage">Usage</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">const ChainAbstractionLayer = require(&apos;chainabstractionlayer&apos;)
+<h2 id="usage">Usage</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import ChainAbstractionLayer from &apos;chainabstractionlayer&apos;
+
 const { BitcoinRPCProvider } = ChainAbstractionLayer.providers.bitcoin
 
 const bitcoin = new ChainAbstractionLayer(new BitcoinRPCProvider(&apos;http://localhost:8080&apos;, &apos;bitcoin&apos;, &apos;local321&apos;))
@@ -56,10 +57,12 @@ bitcoin
 cd chainabstractionlayer
 npm link</code>
 </code></pre>
-<h3 id="2--use-it-in-other-projects">2. Use it in other projects</h3><pre><code class="lang-bash"><code class="source-code prettyprint">cd myblockchainproject
+<h3 id="2--use-it-in-other-projects">2. Use it in other projects</h3><pre><code class="lang-bash"><code class="source-code prettyprint">cd mycrosschain
 npm link chainabstractionlayer</code>
 </code></pre>
 <h2 id="build-documentation">Build documentation</h2><pre><code class="lang-bash"><code class="source-code prettyprint">npm run build:docs</code>
+</code></pre>
+<h2 id="publish-documentation">Publish documentation</h2><pre><code class="lang-bash"><code class="source-code prettyprint">npm run publish:docs</code>
 </code></pre>
 </div>
 </div>

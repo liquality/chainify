@@ -75,15 +75,21 @@ export default class ChainAbstractionLayer {
 
   /**
    * Add a provider.
-   * @param {object} provider - The provider instance.
+   * @param {Object} provider - The provider instance.
+   * @return {Client}
    */
   addProvider (provider) {
     /**
-     * @type {object}
+     * @type {Object}
      */
     this.provider = provider
+    return this
   }
 
+  /**
+   * Check the availability of a method.
+   * @return {boolean}
+   */
   _checkMethod (method) {
     if (!this.provider) {
       throw new Error(&apos;No provider provided&apos;)
@@ -133,10 +139,40 @@ export default class ChainAbstractionLayer {
   }
 
   /**
-   * Get block by number
-   * @param {!number} blockNumber - Number of the block to be fetched
-   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block
-   * @return {ChainAbstractionLayer.schemas.Block} Returns a Block
+   * Get a block given its hash.
+   * @param {!string} blockHash - A hexadecimal string that represents the *hash* of the desired block.
+   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
+   * @return {Promise&lt;Client.schemas.Block, Error&gt;} Returns a Block with the same hash as the given input. Throws an Error if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
+   */
+  async getBlockByHash (blockHash, includeTx = false) {
+    this._checkMethod(&apos;getBlockByHash&apos;)
+
+    if (!isString(blockHash)) {
+      throw new Error(&apos;Block hash should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(blockHash))) {
+      throw new Error(&apos;Block hash should be a valid hex string&apos;)
+    }
+
+    if (!isBoolean(includeTx)) {
+      throw new Error(&apos;Second parameter should be boolean&apos;)
+    }
+
+    const block = await this.provider.getBlockByHash(blockHash, includeTx)
+
+    if (!this.validateBlock(block)) {
+      throw new Error(&apos;Provider returned an invalid block&apos;)
+    }
+
+    return block
+  }
+
+  /**
+   * Get a block given its number.
+   * @param {!number} blockNumber - The number of the desired block.
+   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
+   * @return {Promise&lt;Client.schemas.Block, Error&gt;} Returns a Block with the same number as the given input. Throws an Error if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
    */
   async getBlockByNumber (blockNumber, includeTx = false) {
     this._checkMethod(&apos;getBlockByNumber&apos;)
@@ -158,6 +194,10 @@ export default class ChainAbstractionLayer {
     return block
   }
 
+  /**
+   * Get the current block height of the chain.
+   * @return {Promise&lt;number, Error&gt;}
+   */
   async getBlockHeight () {
     this._checkMethod(&apos;getBlockHeight&apos;)
 
@@ -170,14 +210,48 @@ export default class ChainAbstractionLayer {
     return blockHeight
   }
 
+  /**
+   * Get a transaction given its hash.
+   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the desired transaction.
+   * @return {Promise&lt;Client.schemas.Transaction, Error&gt;} Returns a Transaction with the same hash as the given input. Throws an Error if no transaction was found.
+   */
   async getTransactionByHash (txHash) {
     this._checkMethod(&apos;getTransactionByHash&apos;)
 
-    if (!(/^[A-Fa-f0-9]$/.test(txHash))) {
+    if (!isString(txHash)) {
+      throw new Error(&apos;Transaction hash should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
       throw new Error(&apos;Transaction hash should be a valid hex string&apos;)
     }
 
     const transaction = await this.provider.getTransactionByHash(txHash)
+
+    if (!this.validateTransaction(transaction)) {
+      throw new Error(&apos;Provider returned an invalid transaction&apos;)
+    }
+
+    return transaction
+  }
+
+  /**
+   * Get a raw hexadecimal transaction given its hash.
+   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the desired transaction.
+   * @return {Promise&lt;string, Error&gt;} Returns the raw Transaction with the same hash as the given output. Throws an Error if no transaction was found.
+   */
+  async getRawTransactionByHash (txHash) {
+    this._checkMethod(&apos;getRawTransactionByHash&apos;)
+
+    if (!isString(txHash)) {
+      throw new Error(&apos;Transaction hash should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
+      throw new Error(&apos;Transaction hash should be a valid hex string&apos;)
+    }
+
+    const transaction = await this.provider.getRawTransactionByHash(txHash)
 
     if (!this.validateTransaction(transaction)) {
       throw new Error(&apos;Provider returned an invalid transaction&apos;)
