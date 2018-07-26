@@ -1,0 +1,94 @@
+{
+  "coverage": "11.76%",
+  "expectCount": 51,
+  "actualCount": 6,
+  "files": {
+    "src/index.js": {
+      "expectCount": 15,
+      "actualCount": 6,
+      "undocumentLines": [
+        9,
+        28,
+        29,
+        43,
+        117,
+        129,
+        145,
+        157,
+        165
+      ]
+    },
+    "src/providers/JsonRpcHelper.js": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        14
+      ]
+    },
+    "src/providers/bitcoin/BitcoinLedgerProvider.js": {
+      "expectCount": 8,
+      "actualCount": 0,
+      "undocumentLines": [
+        6,
+        7,
+        9,
+        10,
+        13,
+        20,
+        24,
+        32
+      ]
+    },
+    "src/providers/bitcoin/BitcoinRPCProvider.js": {
+      "expectCount": 5,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        6,
+        7,
+        22,
+        28
+      ]
+    },
+    "src/providers/ethereum/EthereumLedgerProvider.js": {
+      "expectCount": 8,
+      "actualCount": 0,
+      "undocumentLines": [
+        6,
+        7,
+        9,
+        10,
+        13,
+        20,
+        24,
+        32
+      ]
+    },
+    "src/providers/ethereum/EthereumMetaMaskProvider.js": {
+      "expectCount": 7,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        4,
+        9,
+        12,
+        37,
+        41,
+        47
+      ]
+    },
+    "src/providers/ethereum/EthereumRPCProvider.js": {
+      "expectCount": 5,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        6,
+        7,
+        15,
+        21
+      ]
+    }
+  }
+}
