@@ -40,8 +40,6 @@ export default class BitcoinRPCProvider {
   }
 
   async getBlockByHash (blockHash, includeTx) {
-    blockHash = typeof blockHash === 'string' ? blockHash : blockHash.toString(16)
-
     const data = await this._rpc('getblock', blockHash)
     const { hash,
       height: number,
@@ -74,27 +72,23 @@ export default class BitcoinRPCProvider {
   }
 
   async getTransactionByHash (transactionHash) {
-    transactionHash = typeof transactionHash === 'string' ? transactionHash : transactionHash.toString(16)
-
     const rawTx = await this.getRawTransactionByHash(transactionHash)
     const tx = await this._decodeRawTransaction(rawTx)
     const data = await this._rpc('gettransaction', transactionHash)
 
     const { confirmations } = data
-    Object.assign(tx, { confirmations })
+    const output = Object.assign({}, tx, { confirmations })
 
     if (confirmations > 0) {
       const { blockhash: blockHash } = data
       const { number: blockNumber } = await this.getBlockByHash(blockHash)
-      Object.assign(tx, { blockHash, blockNumber })
+      Object.assign(output, { blockHash, blockNumber })
     }
 
-    return tx
+    return output
   }
 
   async getRawTransactionByHash (transactionHash) {
-    transactionHash = typeof transactionHash === 'string' ? transactionHash : transactionHash.toString(16)
-
     return this._rpc('getrawtransaction', transactionHash)
   }
 }
