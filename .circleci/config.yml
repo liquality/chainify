@@ -6,9 +6,6 @@ jobs:
     docker:
       - image: harshjv/liquality-cal-dev
     working_directory: ~/chainabstractionlayer
-    branches:
-        ignore:
-            - gh-pages
     steps:
       - checkout
       - run:
