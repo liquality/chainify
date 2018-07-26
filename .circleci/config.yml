@@ -16,7 +16,7 @@ jobs:
           command: parity-daemon
       - run:
           name: node 8
-          command: nvm install 8
+          command: . "$NVM_DIR/nvm.sh" && nvm install 8
       - run:
           name: npm install
           command: npm install
