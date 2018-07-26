@@ -51,4 +51,12 @@ export default class EthereumMetaMaskProvider {
 
     return this._toMM('eth_sendTransaction', tx)
   }
+
+  async getBlockByNumber (blockNumber, includeTx) {
+    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
+  }
+
+  async getTransactionByHash (txHash) {
+    return this._toMM('eth_getTransactionByHash', txHash)
+  }
 }

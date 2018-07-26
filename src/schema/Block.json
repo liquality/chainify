@@ -8,7 +8,7 @@
     "hash": {
       "type": "string",
       "title": "Hash",
-      "pattern": "^([A-Fa-f0-9]{64})$"
+      "pattern": "^([0x]{2}?)([A-Fa-f0-9]{64})$"
     },
     "number": {
       "type": "number",

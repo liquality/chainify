@@ -22,4 +22,12 @@ export default class EthereumRPCProvider {
     // Q: throw or silently pass?
     throw new Error('This method isn\'t supported by Ethereum')
   }
+
+  async getBlockByNumber (blockNumber, includeTx) {
+    return this._rpc('eth_getBlockByNumber', blockNumber, includeTx)
+  }
+
+  async getTransactionByHash (txHash) {
+    return this._rpc('eth_getTransactionByHash', txHash)
+  }
 }
