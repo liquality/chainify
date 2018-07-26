@@ -1,14 +1,13 @@
-/* eslint-env jest */
+/* eslint-env mocha */
 
-import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
-import BitcoinLedgerProvider from 'BitcoinLedgerProvider'
-
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
-
 const { expect } = chai
 
-const lib = new BitcoinLedgerProvider()
+const ChainAbstractionLayer = require('../')
+
+const lib = new ChainAbstractionLayer.providers.bitcoin.BitcoinLedgerProvider()
 
 describe('Bitcoin Ledger provider', () => {
   describe('Generate swap', () => {

@@ -203,17 +203,14 @@ export default class BitcoinLedgerProvider extends Provider {
     //         # Check PKH and sig
     // [75+ex] OP_EQUALVERIFY OP_CHECKSIG
 
-    const expirationHex = expiration.toString(16)
-    let exLen = expirationHex.length
-    exLen += exLen % 2
-    expirationHex.padStart(exLen, '0')
-    exLen /= 2
+    let expirationHex = expiration.toString(16)
+    if (expirationHex.length % 2 === 1) {
+      expirationHex = '0' + expirationHex
+    }
+    expirationHex = expirationHex.match(/.{2}/g).reverse()
+    expirationHex.length = Math.min(expirationHex.length, 5)
+    expirationHex[expirationHex.length - 1] = '00'
 
-    return `76a97263a914\
-${secretHash}8814\
-${recipientAddress}67\
-${exLen.toString(16).padStart(2, '0')}\
-${expirationHex}b16d14\
-${refundAddress}6888ac`
+    return `76a97263a914${secretHash}8814${recipientAddress}67${expirationHex.length.toString(16).padStart(2, '0')}${expirationHex.join('')}b16d14${refundAddress}6888ac`
   }
 }
