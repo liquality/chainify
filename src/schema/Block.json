@@ -23,7 +23,7 @@
     "difficulty": {
       "type": "string",
       "title": "Difficulty",
-      "minimum": 0
+      "minLength": 1
     },
     "size": {
       "type": "number",
