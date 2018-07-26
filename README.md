@@ -7,7 +7,8 @@ Query different blockchains with a single and simple interface.
 ## Usage
 
 ```javascript
-const ChainAbstractionLayer = require('chainabstractionlayer')
+import ChainAbstractionLayer from 'chainabstractionlayer'
+
 const { BitcoinRPCProvider } = ChainAbstractionLayer.providers.bitcoin
 
 const bitcoin = new ChainAbstractionLayer(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
@@ -31,7 +32,7 @@ npm link
 ### 2. Use it in other projects
 
 ```bash
-cd myblockchainproject
+cd mycrosschain
 npm link chainabstractionlayer
 ```
 
@@ -39,4 +40,10 @@ npm link chainabstractionlayer
 
 ```bash
 npm run build:docs
+```
+
+## Publish documentation
+
+```bash
+npm run publish:docs
 ```
