@@ -24,7 +24,7 @@
     "build:docs": "esdoc",
     "build:dev": "run-p build:dev:*",
     "build": "run-p build:browser build:node",
-    "publish:docs": "npm run build:docs && gh-pages -d docs/ -m \"Auto-generated commit for documentation\""
+    "publish:docs": "npm run build && npm run build:docs && gh-pages -d docs/ -m \"Auto-generated commit for documentation\""
   },
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^4.20.0",
