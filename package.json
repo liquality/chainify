@@ -91,7 +91,8 @@
     ],
     "ignore": [
       "dist/**",
-      "docs/**"
+      "docs/**",
+      "src/util/**"
     ]
   }
 }
