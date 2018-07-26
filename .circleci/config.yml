@@ -19,16 +19,16 @@ jobs:
           command: . /root/.nvm/nvm.sh && nvm install 8
       - run:
           name: npm install
-          command: npm install
+          command: . /root/.nvm/nvm.sh && nvm use 8 && npm install
       - run:
           name: lint
-          command: npm run lint
+          command: . /root/.nvm/nvm.sh && nvm use 8 && npm run lint
       - run:
           name: build
-          command: npm run build
+          command: . /root/.nvm/nvm.sh && nvm use 8 && npm run build
       - run:
           name: test
-          command: npm test
+          command: . /root/.nvm/nvm.sh && nvm use 8 && npm test
 
 workflows:
   version: 2
