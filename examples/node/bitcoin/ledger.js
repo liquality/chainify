@@ -1,10 +1,10 @@
-const Client = require('./')
-const { BitcoinLedgerProvider } = Client.providers.bitcoin
+const ChainAbstractionLayer = require('./')
+const { BitcoinLedgerProvider } = ChainAbstractionLayer.providers.bitcoin
 
 const prettyPrintJson = (val) => console.log(JSON.stringify(val, null, 2))
 
 const bitcoinLedgerProvider = new BitcoinLedgerProvider('http://localhost:8080', 'bitcoin', 'local321')
-const bitcoin = new Client(bitcoinLedgerProvider)
+const bitcoin = new ChainAbstractionLayer(bitcoinLedgerProvider)
 
 ;(async () => {
   prettyPrintJson(await bitcoin.generateBlock(1))

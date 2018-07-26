@@ -9,17 +9,22 @@
   ],
   "main": "dist/index.cjs.js",
   "browser": "dist/index.umd.js",
+  "files": [
+    "dist/index.cjs.js",
+    "dist/index.umd.js"
+  ],
   "scripts": {
     "cover": "nyc --reporter=html --reporter=text npm test",
     "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",
-    "test": "NODE_ENV=test mocha $npm_package_options_mocha",
-    "build:node": "webpack --config webpack.node.config.js",
-    "build:browser": "webpack --config webpack.browser.config.js",
-    "build:node:prod": "NODE_ENV=production BABEL_ENV=production npm run build:node",
-    "build:browser:prod": "NODE_ENV=production BABEL_ENV=production npm run build:browser",
+    "test": "cross-env NODE_ENV=test mocha $npm_package_options_mocha",
+    "build:dev:node": "webpack --config webpack.node.config.js",
+    "build:dev:browser": "webpack --config webpack.browser.config.js",
+    "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
+    "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
     "build:docs": "esdoc",
+    "build:dev": "run-p build:dev:*",
     "build": "run-p build:browser build:node",
-    "build:prod": "run-p build:browser:prod build:node:prod"
+    "publish:docs": "npm run build && npm run build:docs && gh-pages -d docs/ -m \"Auto-generated commit for documentation\""
   },
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^4.20.0",
@@ -42,10 +47,12 @@
     "babel-plugin-lodash": "^3.3.4",
     "browserify": "^16.2.2",
     "chai-as-promised": "^7.1.1",
+    "cross-env": "^5.2.0",
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint-plugin-html": "^4.0.5",
     "eslint-plugin-markdown": "^1.0.0-beta.6",
+    "gh-pages": "^1.2.0",
     "lodash-webpack-plugin": "^0.11.5",
     "mocha": "^5.2.0",
     "nock": "^9.3.0",
@@ -74,7 +81,7 @@
   },
   "pre-commit": [
     "lint",
-    "build:prod",
+    "build",
     "test"
   ],
   "standard": {

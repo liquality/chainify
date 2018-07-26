@@ -4,13 +4,14 @@
 Query different blockchains with a single and simple interface.
 
 
-## Client
+## Usage
 
 ```javascript
-const Client = require('chainabstractionlayer')
-const { BitcoinRPCProvider } = Client.providers.bitcoin
+import ChainAbstractionLayer from 'chainabstractionlayer'
 
-const bitcoin = new Client(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
+const { BitcoinRPCProvider } = ChainAbstractionLayer.providers.bitcoin
+
+const bitcoin = new ChainAbstractionLayer(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
 
 bitcoin
   .generateBlock(1) // returns Promise
@@ -31,7 +32,7 @@ npm link
 ### 2. Use it in other projects
 
 ```bash
-cd myblockchainproject
+cd mycrosschain
 npm link chainabstractionlayer
 ```
 
@@ -39,4 +40,10 @@ npm link chainabstractionlayer
 
 ```bash
 npm run build:docs
+```
+
+## Publish documentation
+
+```bash
+npm run publish:docs
 ```

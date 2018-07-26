@@ -1,22 +1,29 @@
 const path = require('path')
+const webpack = require('webpack')
 
-const externals = {}
+const pkg = require('./package.json')
 
-Object
-  .keys(require('./package.json').dependencies)
-  .forEach(dep => {
-    externals[dep] = dep
-  })
+function getExternalDependencies () {
+  const externals = {}
 
-externals['@alias/ledger-transport'] = '@ledgerhq/hw-transport-node-hid'
+  Object
+    .keys(pkg.dependencies)
+    .forEach(dep => {
+      externals[dep] = dep
+    })
+
+  externals['@alias/ledger-transport'] = '@ledgerhq/hw-transport-node-hid'
+
+  return externals
+}
 
 module.exports = {
   entry: './src/index.js',
   target: 'node',
-  externals,
+  externals: getExternalDependencies(),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.cjs.js',
+    filename: path.basename(pkg.main),
     libraryTarget: 'commonjs2',
     libraryExport: 'default'
   },
@@ -25,9 +32,29 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        loader: 'babel-loader?cacheDirectory=true',
+        options: {
+          presets: [
+            [
+              '@babel/preset-env', {
+                debug: true,
+                modules: false,
+                targets: {
+                  node: '8'
+                }
+              }
+            ]
+          ]
+        }
       }
     ]
   },
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development'
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    })
+  ]
 }

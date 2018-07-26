@@ -6,7 +6,7 @@ import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
 
-export default class Client {
+export default class ChainAbstractionLayer {
   /**
    * ChainAbstractionLayer client
    * @param {object} [provider] - The provider instance.
@@ -249,8 +249,8 @@ export default class Client {
   }
 }
 
-Client.providers = providers
-Client.schemas = {
+ChainAbstractionLayer.providers = providers
+ChainAbstractionLayer.schemas = {
   Block: BlockSchema,
   Transaction: TransactionSchema
 }
