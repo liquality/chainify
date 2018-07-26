@@ -4,16 +4,19 @@ jobs:
     environment:
       BASH_ENV: /etc/profile
     docker:
-      - image: mblackmblack/bitcoin-core-with-nvm:0.0.5
+      - image: harshjv/liquality-cal-dev
     working_directory: ~/chainabstractionlayer
     steps:
       - checkout
       - run:
           name: bitcoind
-          command: bitcoind
+          command: bitcoind-daemon
       - run:
-          name: node-hid
-          command: apk add libusb-1.0-0 libusb-1.0-0-dev
+          name: parity
+          command: parity-daemon
+      - run:
+          name: node 8
+          command: nvm install 8
       - run:
           name: npm install
           command: npm install
@@ -22,7 +25,7 @@ jobs:
           command: npm run lint
       - run:
           name: build
-          command: npm run build:prod
+          command: npm run build
       - run:
           name: test
           command: npm test

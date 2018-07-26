@@ -23,7 +23,8 @@
     "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
     "build:docs": "esdoc",
     "build:dev": "run-p build:dev:*",
-    "build": "run-p build:browser build:node"
+    "build": "run-p build:browser build:node",
+    "publish:docs": "npm run build:docs && gh-pages -d docs/ -m \"Auto-generated commit for documentation\""
   },
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^4.20.0",
@@ -51,6 +52,7 @@
     "esdoc-standard-plugin": "^1.0.0",
     "eslint-plugin-html": "^4.0.5",
     "eslint-plugin-markdown": "^1.0.0-beta.6",
+    "gh-pages": "^1.2.0",
     "lodash-webpack-plugin": "^0.11.5",
     "mocha": "^5.2.0",
     "nock": "^9.3.0",
