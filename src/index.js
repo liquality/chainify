@@ -25,7 +25,6 @@ export default class ChainAbstractionLayer {
     if (provider) {
       this.addProvider(provider)
     }
-    this.crypto = crypto
   }
 
   /**

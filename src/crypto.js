@@ -18,7 +18,7 @@ const crypto = {
    * @param {!string} message - any string.
    * @return {string} Returns the bech32 of a string.
    */
-  bech32: bech32,
+  bech32,
 
   /**
    * Get hash160 of message.
