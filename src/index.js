@@ -4,6 +4,7 @@ import * as Ajv from 'ajv'
 
 import Provider from './Provider'
 import providers from './providers'
+import crypto from './crypto'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
 
@@ -256,6 +257,12 @@ export default class ChainAbstractionLayer {
 
     return txHash
   }
+
+  async generateSecret (message) {
+    const from = await this.getAddress()
+    const signedMessage = await this.signMessage(message, from)
+    return signedMessage
+  }
 }
 
 ChainAbstractionLayer.Provider = Provider
@@ -264,3 +271,4 @@ ChainAbstractionLayer.schemas = {
   Block: BlockSchema,
   Transaction: TransactionSchema
 }
+ChainAbstractionLayer.crypto = crypto
