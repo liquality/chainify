@@ -12,6 +12,10 @@ export default class EthereumRPCProvider {
     })
   }
 
+  setClient (client) {
+    this.client = client
+  }
+
   _rpc (method, ...params) {
     return this.axios.post('/', {
       data: { method, params }

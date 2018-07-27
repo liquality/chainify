@@ -9,6 +9,10 @@ export default class EthereumMetaMaskProvider {
     this._metamaskProvider = metamaskProvider
   }
 
+  setClient (client) {
+    this.client = client
+  }
+
   _toMM (method, ...params) {
     return new Promise((resolve, reject) => {
       this

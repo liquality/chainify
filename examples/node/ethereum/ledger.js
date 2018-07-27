@@ -1,4 +1,4 @@
-const ChainAbstractionLayer = require('./')
+const ChainAbstractionLayer = require('../../../')
 const { EthereumLedgerProvider } = ChainAbstractionLayer.providers.ethereum
 
 const prettyPrintJson = (val) => console.log(JSON.stringify(val, null, 2))

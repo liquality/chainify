@@ -1,4 +1,4 @@
-const ChainAbstractionLayer = require('./')
+const ChainAbstractionLayer = require('../../../')
 const { BitcoinLedgerProvider } = ChainAbstractionLayer.providers.bitcoin
 
 const prettyPrintJson = (val) => console.log(JSON.stringify(val, null, 2))

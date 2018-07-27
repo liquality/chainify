@@ -10,6 +10,10 @@ export default class EthereumLedgerProvider extends EthereumRPCProvider {
     this._derivationPath = `44'/60'/0'/0'/0`
   }
 
+  setClient (client) {
+    this.client = client
+  }
+
   async _connectToLedger () {
     if (!this._ledgerEth) {
       const transport = await Transport.create()

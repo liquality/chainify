@@ -19,6 +19,10 @@ export default class BitcoinRPCProvider {
     }
   }
 
+  setClient (client) {
+    this.client = client
+  }
+
   _rpc (method, ...params) {
     return this.axios.post('/', {
       data: { method, params }

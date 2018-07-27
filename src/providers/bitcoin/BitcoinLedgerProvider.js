@@ -10,6 +10,10 @@ export default class BitcoinLedgerProvider extends BitcoinRPCProvider {
     this._derivationPath = `44'/0'/0'/0`
   }
 
+  setClient (client) {
+    this.client = client
+  }
+
   async _connectToLedger () {
     if (!this._ledgerBtc) {
       const transport = await Transport.create()

@@ -1,7 +1,8 @@
 import 'regenerator-runtime/runtime'
-import { find, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
+import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
 import * as Ajv from 'ajv'
 
+import Provider from './Provider'
 import providers from './providers'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
@@ -13,20 +14,16 @@ export default class ChainAbstractionLayer {
    * @param {string} [version] - Version string
    */
   constructor (provider, version) {
-    if (provider) {
-      this.addProvider(provider)
-    }
-
-    if (version) {
-      /**
-       * @type {string}
-       */
-      this.version = version
-    }
+    this.version = version
+    this._providers = []
 
     const ajv = new Ajv()
     this.validateTransaction = ajv.compile(TransactionSchema)
     this.validateBlock = ajv.compile(BlockSchema)
+
+    if (provider) {
+      this.addProvider(provider)
+    }
   }
 
   /**
@@ -35,10 +32,18 @@ export default class ChainAbstractionLayer {
    * @return {Client}
    */
   addProvider (provider) {
-    /**
-     * @type {Object}
-     */
-    this.provider = provider
+    if (!isFunction(provider.setClient)) {
+      throw new Error(`Invalid provider`)
+    }
+
+    const duplicate = find(this._providers, _provider => provider.constructor === _provider.constructor)
+
+    if (duplicate) {
+      throw new Error('Duplicate provider')
+    }
+
+    provider.setClient(this)
+    this._providers.push(provider)
     return this
   }
 
@@ -46,24 +51,28 @@ export default class ChainAbstractionLayer {
    * Check the availability of a method.
    * @return {boolean}
    */
-  _checkMethod (method) {
-    if (!this.provider) {
+  getProviderForMethod (method, requestor = false) {
+    if (this._providers.length === 0) {
       throw new Error('No provider provided')
     }
 
-    if (!isFunction(this.provider[method])) {
+    const indexOfRequestor = requestor
+      ? findLastIndex(this._providers, provider => requestor.constructor === provider.constructor)
+      : this._providers.length
+
+    const provider = findLast(this._providers, provider => isFunction(provider[method]), indexOfRequestor - 1)
+
+    if (!provider) {
       throw new Error(`Unimplemented method: ${method}`)
     }
 
-    if (isFunction(this.provider._checkMethodVersionSupport)) {
-      if (!this.provider._checkMethodVersionSupport(method, this.version)) {
+    if (isFunction(provider._checkMethodVersionSupport)) {
+      if (!provider._checkMethodVersionSupport(method, this.version)) {
         throw new Error(`Method "${method}" is not supported by version "${this.version}"`)
       }
     }
 
-    if (!isFunction(this.provider[method])) {
-      throw new Error(`Unimplemented method: ${method}`)
-    }
+    return provider
   }
 
   /**
@@ -73,13 +82,13 @@ export default class ChainAbstractionLayer {
    *  generated blocks if resolved. Throws an Error if rejected.
    */
   async generateBlock (numberOfBlocks) {
-    this._checkMethod('generateBlock')
+    const provider = this.getProviderForMethod('generateBlock')
 
     if (!isNumber(numberOfBlocks)) {
       throw new Error('Invalid number of blocks to be generated')
     }
 
-    const blockHashes = await this.provider.generateBlock(numberOfBlocks)
+    const blockHashes = await provider.generateBlock(numberOfBlocks)
 
     if (!isArray(blockHashes)) {
       throw new Error('Provider returned an invalid response')
@@ -101,7 +110,7 @@ export default class ChainAbstractionLayer {
    * @return {Promise<Client.schemas.Block, Error>} Returns a Block with the same hash as the given input. Throws an Error if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
    */
   async getBlockByHash (blockHash, includeTx = false) {
-    this._checkMethod('getBlockByHash')
+    const provider = this.getProviderForMethod('getBlockByHash')
 
     if (!isString(blockHash)) {
       throw new Error('Block hash should be a string')
@@ -115,7 +124,7 @@ export default class ChainAbstractionLayer {
       throw new Error('Second parameter should be boolean')
     }
 
-    const block = await this.provider.getBlockByHash(blockHash, includeTx)
+    const block = await provider.getBlockByHash(blockHash, includeTx)
 
     if (!this.validateBlock(block)) {
       throw new Error('Provider returned an invalid block')
@@ -131,7 +140,7 @@ export default class ChainAbstractionLayer {
    * @return {Promise<Client.schemas.Block, Error>} Returns a Block with the same number as the given input. Throws an Error if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
    */
   async getBlockByNumber (blockNumber, includeTx = false) {
-    this._checkMethod('getBlockByNumber')
+    const provider = this.getProviderForMethod('getBlockByNumber')
 
     if (!isNumber(blockNumber)) {
       throw new Error('Invalid Block number')
@@ -141,7 +150,7 @@ export default class ChainAbstractionLayer {
       throw new Error('Second parameter should be boolean')
     }
 
-    const block = await this.provider.getBlockByNumber(blockNumber, includeTx)
+    const block = await provider.getBlockByNumber(blockNumber, includeTx)
 
     if (!this.validateBlock(block)) {
       throw new Error('Provider returned an invalid block')
@@ -155,9 +164,9 @@ export default class ChainAbstractionLayer {
    * @return {Promise<number, Error>}
    */
   async getBlockHeight () {
-    this._checkMethod('getBlockHeight')
+    const provider = this.getProviderForMethod('getBlockHeight')
 
-    const blockHeight = await this.provider.getBlockHeight()
+    const blockHeight = await provider.getBlockHeight()
 
     if (!isNumber(blockHeight)) {
       throw new Error('Provider returned an invalid block height')
@@ -172,7 +181,7 @@ export default class ChainAbstractionLayer {
    * @return {Promise<Client.schemas.Transaction, Error>} Returns a Transaction with the same hash as the given input. Throws an Error if no transaction was found.
    */
   async getTransactionByHash (txHash) {
-    this._checkMethod('getTransactionByHash')
+    const provider = this.getProviderForMethod('getTransactionByHash')
 
     if (!isString(txHash)) {
       throw new Error('Transaction hash should be a string')
@@ -182,7 +191,7 @@ export default class ChainAbstractionLayer {
       throw new Error('Transaction hash should be a valid hex string')
     }
 
-    const transaction = await this.provider.getTransactionByHash(txHash)
+    const transaction = await provider.getTransactionByHash(txHash)
 
     if (!this.validateTransaction(transaction)) {
       throw new Error('Provider returned an invalid transaction')
@@ -197,7 +206,7 @@ export default class ChainAbstractionLayer {
    * @return {Promise<string, Error>} Returns the raw Transaction with the same hash as the given output. Throws an Error if no transaction was found.
    */
   async getRawTransactionByHash (txHash) {
-    this._checkMethod('getRawTransactionByHash')
+    const provider = this.getProviderForMethod('getRawTransactionByHash')
 
     if (!isString(txHash)) {
       throw new Error('Transaction hash should be a string')
@@ -207,7 +216,7 @@ export default class ChainAbstractionLayer {
       throw new Error('Transaction hash should be a valid hex string')
     }
 
-    const transaction = await this.provider.getRawTransactionByHash(txHash)
+    const transaction = await provider.getRawTransactionByHash(txHash)
 
     if (!this.validateTransaction(transaction)) {
       throw new Error('Provider returned an invalid transaction')
@@ -217,9 +226,9 @@ export default class ChainAbstractionLayer {
   }
 
   async getAddresses () {
-    this._checkMethod('getAddresses')
+    const provider = this.getProviderForMethod('getAddresses')
 
-    const addresses = await this.provider.getAddresses()
+    const addresses = await provider.getAddresses()
 
     if (!isArray(addresses)) {
       throw new Error('Provider returned an invalid response')
@@ -229,17 +238,17 @@ export default class ChainAbstractionLayer {
   }
 
   async signMessage (message, from) {
-    this._checkMethod('signMessage')
+    const provider = this.getProviderForMethod('signMessage')
 
-    const signedMessage = await this.provider.signMessage(message, from)
+    const signedMessage = await provider.signMessage(message, from)
 
     return signedMessage
   }
 
   async sendTransaction (from, to, value, data) {
-    this._checkMethod('sendTransaction')
+    const provider = this.getProviderForMethod('sendTransaction')
 
-    const txHash = await this.provider.sendTransaction(from, to, value, data)
+    const txHash = await provider.sendTransaction(from, to, value, data)
 
     if (!isString(txHash)) {
       throw new Error('sendTransaction method should return a transaction id string')
@@ -249,6 +258,7 @@ export default class ChainAbstractionLayer {
   }
 }
 
+ChainAbstractionLayer.Provider = Provider
 ChainAbstractionLayer.providers = providers
 ChainAbstractionLayer.schemas = {
   Block: BlockSchema,
