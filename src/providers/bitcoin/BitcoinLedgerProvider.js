@@ -38,26 +38,39 @@ export default class BitcoinLedgerProvider extends Provider {
     return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
   }
 
-  async _getAddressDetails(address) {
+  async _getAddressDetails (address) {
     return (await axios.get(`https://testnet.blockchain.info/balance?active=${address}&cors=true`)).data[address]
   }
 
-  async _getUnspentTransactions(address) {
+  async _getUnspentTransactions (address) {
     return (await axios.get(`https://testnet.blockchain.info/unspent?active=${address}&cors=true`)).data.unspent_outputs
   }
 
-  async _getUnspentInputs(amount) { // TODO: actually implement this properly
-    const getAddressAtIndex = async (index) => this._ledgerBtc.getWalletPublicKey(`44'/0'/0'/${index}`)
+  async _getTransactionHex (transactionHash) {
+    return (await axios.get(`https://testnet.blockchain.info/rawtx/${transactionHash}?format=hex&cors=true`)).data
+  }
 
+  async _getSpendingDetails () {
+    let addresses = []
     let unspentInputs = []
     let unusedAddress
-    let currentPath = 0
-    for (let addressHasTransactions = true; addressHasTransactions; ++currentPath) {
-      const address = await getAddressAtIndex(currentPath)
+    let addressIndex = 0
+    for (let addressHasTransactions = true; addressHasTransactions; ++addressIndex) {
+      const path = `44'/0'/0'/${addressIndex}`
+      const address = {
+        ...(await this._ledgerBtc.getWalletPublicKey(path)),
+        path
+      }
+      addresses.push(address)
       const addressDetails = await this._getAddressDetails(address.bitcoinAddress)
       addressHasTransactions = addressDetails.n_tx > 0
       if (addressHasTransactions) {
-        const utxos = await this._getUnspentTransactions(address.bitcoinAddress)
+        let utxos = await this._getUnspentTransactions(address.bitcoinAddress)
+        utxos = utxos.map((utxo) => ({
+          ...utxo,
+          path,
+          address: address.bitcoinAddress
+        }))
         unspentInputs.push.apply(unspentInputs, utxos)
       } else {
         unusedAddress = address
@@ -65,32 +78,58 @@ export default class BitcoinLedgerProvider extends Provider {
     }
 
     return {
+      addresses,
       unusedAddress,
       unspentInputs
     }
   }
 
-  async _getUnspentInputsToUse (amount, utxos) {
+  _getUnspentInputsForAmount (unspentInputs, amount) {
     let unspentInputsToUse = []
     let amountAccumulated = 0
-    const unspentInputs = this._getUnspentInputs(amount)
     unspentInputs.every((utxo) => {
       amountAccumulated += utxo.value
       unspentInputsToUse.push(utxo)
-      return (amountAccumulated > amount)
+      return (amountAccumulated < amount) // TODO: FEES?
     })
+    return unspentInputsToUse
+  }
+
+  async _getLedgerInputs (unspentInputs) {
+    const ledgerInputs = []
+    for (let unspentInput of unspentInputs) {
+      const transactionHex = await this._getTransactionHex(unspentInput.tx_hash_big_endian)
+      const tx = await this._ledgerBtc.splitTransaction(transactionHex)
+      ledgerInputs.push([tx, unspentInput.tx_output_n])
+    }
+    return ledgerInputs
   }
 
   async sendTransaction (from, to, value) {
     await this._connectToLedger()
 
-    const inputs = await this._getInputs(value)
+    const {addresses, unusedAddress, unspentInputs} = await this._getSpendingDetails()
+
+    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value)
+
+    const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)
+
+    if (totalAmount < value) {
+      throw new Error('Not enough balance')
+    }
+
+    const ledgerInputs = await this._getLedgerInputs(unspentInputsToUse)
 
     console.log(addresses)
 
-    // console.log(addresses)
-    // find UTXOs for addresses[0]
+    console.log(ledgerInputs)
 
-    // this._ledgerBtc.createPaymentTransactionNew()
+    const paths = unspentInputsToUse.map(input => input.path)
+
+    const changePath = unusedAddress.path
+
+    console.log(changePath)
+
+    console.log(paths)
   }
 }
