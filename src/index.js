@@ -4,15 +4,9 @@ import * as Ajv from 'ajv'
 
 import Provider from './Provider'
 import providers from './providers'
+import crypto from './crypto'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
-
-import sha256 from 'crypto-js/sha256'
-import ripemd160 from 'crypto-js/ripemd160'
-import basex from 'base-x'
-import bech32 from 'bech32'
-
-const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
 export default class ChainAbstractionLayer {
   /**
@@ -31,8 +25,7 @@ export default class ChainAbstractionLayer {
     if (provider) {
       this.addProvider(provider)
     }
-    this.base58 = basex(BASE58)
-    this.bech32 = bech32
+    this.crypto = crypto
   }
 
   /**
@@ -270,20 +263,6 @@ export default class ChainAbstractionLayer {
     const from = await this.getAddress()
     const signedMessage = await this.signMessage(message, from)
     return signedMessage
-  }
-
-  async hash160 (message) {
-    const sha256Hashed = this.sha256(message)
-    const ripemd160Hashed = this.ripemd160(sha256Hashed)
-    return ripemd160Hashed
-  }
-
-  async sha256 (message) {
-    return sha256(message).toString()
-  }
-
-  async ripemd160 (message) {
-    return ripemd160(message).toString()
   }
 }
 
