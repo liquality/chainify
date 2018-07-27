@@ -1,9 +1,12 @@
+import Provider from '../../Provider'
+
 import axios from 'axios'
 
 import { prepareRequest, praseResponse } from '../JsonRpcHelper'
 
-export default class BitcoinRPCProvider {
+export default class BitcoinRPCProvider extends Provider {
   constructor (uri, user, pass) {
+    super()
     this.axios = axios.create({
       baseURL: uri,
       transformRequest: [({ data }, headers) => prepareRequest(data)],
@@ -17,10 +20,6 @@ export default class BitcoinRPCProvider {
         password: pass
       }
     }
-  }
-
-  setClient (client) {
-    this.client = client
   }
 
   _rpc (method, ...params) {

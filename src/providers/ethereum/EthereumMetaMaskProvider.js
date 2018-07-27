@@ -1,16 +1,15 @@
+import Provider from '../../Provider'
+
 import { isFunction } from 'lodash'
 
-export default class EthereumMetaMaskProvider {
+export default class EthereumMetaMaskProvider extends Provider {
   constructor (metamaskProvider) {
+    super()
     if (!isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
 
     this._metamaskProvider = metamaskProvider
-  }
-
-  setClient (client) {
-    this.client = client
   }
 
   _toMM (method, ...params) {
