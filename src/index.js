@@ -272,3 +272,4 @@ ChainAbstractionLayer.schemas = {
   Block: BlockSchema,
   Transaction: TransactionSchema
 }
+ChainAbstractionLayer.crypto = crypto
