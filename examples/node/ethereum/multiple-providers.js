@@ -1,6 +1,7 @@
 const ChainAbstractionLayer = require('../../../')
+const Provider = ChainAbstractionLayer.Provider
 
-class X {
+class X extends Provider {
   setClient (client) {
     this.client = client
   }
@@ -10,34 +11,34 @@ class X {
   }
 }
 
-class Y {
+class Y extends Provider {
   setClient (client) {
     this.client = client
   }
 
   signMessage (message, from) {
-    const provider = this.client.getProviderForMethod('signMessage', this)
-    const res = provider.signMessage(message, from)
-    return 'Y' + ' ' + res
+    // const provider = this.client.getProviderForMethod('signMessage', this)
+    // const res = provider.signMessage(message, from)
+    return 'Y ' + this.getMethod('signMessage')(message, from)
   }
 }
 
-class Z {
+class Z extends Provider {
   setClient (client) {
     this.client = client
   }
 
   signMessage (message, from) {
-    const provider = this.client.getProviderForMethod('signMessage', this)
-    const res = provider.signMessage(message, from)
-    return 'Z' + ' ' + res
+    // const provider = this.client.getProviderForMethod('signMessage', this)
+    // const res = provider.signMessage(message, from)
+    return 'Z ' + this.getMethod('signMessage')(message, from)
   }
 }
 
 const ethereum = new ChainAbstractionLayer()
+ethereum.addProvider(new X())
 ethereum.addProvider(new Y())
 ethereum.addProvider(new Z())
-ethereum.addProvider(new X())
 
 ;(async () => {
   console.log(await ethereum.signMessage('hello world'))

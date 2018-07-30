@@ -4,6 +4,7 @@ export default class Provider {
   }
 
   getMethod (method) {
-    return this.client.getProviderForMethod(method, this)[method]
+    const provider = this.client.getProviderForMethod(method, this)
+    return provider[method].bind(provider)
   }
 }
