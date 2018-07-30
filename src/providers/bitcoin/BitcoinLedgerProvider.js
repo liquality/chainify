@@ -84,13 +84,17 @@ export default class BitcoinLedgerProvider extends Provider {
     }
   }
 
-  _getUnspentInputsForAmount (unspentInputs, amount) {
+  _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation
+    return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte
+  }
+
+  _getUnspentInputsForAmount (unspentInputs, amount, numOutputs) {
     let unspentInputsToUse = []
     let amountAccumulated = 0
     unspentInputs.every((utxo) => {
       amountAccumulated += utxo.value
       unspentInputsToUse.push(utxo)
-      return (amountAccumulated < amount) // TODO: FEES?
+      return amountAccumulated < (amount + this._getFee(unspentInputsToUse.length, numOutputs, 3)) // TODO: hardcoded satoshi per byte
     })
     return unspentInputsToUse
   }
@@ -105,12 +109,12 @@ export default class BitcoinLedgerProvider extends Provider {
     return ledgerInputs
   }
 
-  async sendTransaction (from, to, value) {
+  async sendTransaction (from, to, value, data) {
     await this._connectToLedger()
 
     const {addresses, unusedAddress, unspentInputs} = await this._getSpendingDetails()
 
-    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value)
+    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)
 
     const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)
 
@@ -126,10 +130,25 @@ export default class BitcoinLedgerProvider extends Provider {
 
     const paths = unspentInputsToUse.map(input => input.path)
 
-    const changePath = unusedAddress.path
-
-    console.log(changePath)
-
     console.log(paths)
+
+    const sendAmount = value
+    // TODO: hardcoded num outputs + satoshi per byte fee
+    const changeAmount = totalAmount - value - this._getFee(unspentInputsToUse.length, 2, 3)
+
+    // OP_DUP OP_HASH160 <PUB_KEY> OP_EQUALVERIFY OP_CHECKSIG
+    const sendP2PKHScript = `76a914${to}88ac`
+    const changeP2PKHScript = `76a914${unusedAddress.bitcoinAddress}88ac`
+
+    const outputs = [
+      {amount: Buffer.alloc(8, sendAmount), script: Buffer.alloc(sendP2PKHScript.length / 2, sendP2PKHScript, 'hex')},
+      {amount: Buffer.alloc(8, changeAmount), script: Buffer.alloc(changeP2PKHScript.length / 2, changeP2PKHScript, 'hex')}
+    ]
+
+    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
+
+    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
+
+    return signedTransaction
   }
 }
