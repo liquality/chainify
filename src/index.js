@@ -259,9 +259,11 @@ export default class ChainAbstractionLayer {
   }
 
   async generateSecret (message) {
-    const from = await this.getAddress()
+    const addresses = await this.getAddresses()
+    const from = addresses[0]
     const signedMessage = await this.signMessage(message, from)
-    return signedMessage
+    const secret = crypto.hash160(signedMessage)
+    return secret
   }
 }
 
