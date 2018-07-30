@@ -1,4 +1,5 @@
 import { isFunction } from 'lodash'
+import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
 
 export default class EthereumMetaMaskProvider {
   constructor (metamaskProvider) {
@@ -29,7 +30,9 @@ export default class EthereumMetaMaskProvider {
             return
           }
 
-          resolve(data.result)
+          const formattedResult = formatEthResponse(data.result)
+
+          resolve(formattedResult)
         })
     })
   }
@@ -57,6 +60,7 @@ export default class EthereumMetaMaskProvider {
   }
 
   async getTransactionByHash (txHash) {
+    txHash = ensureEthFormat(txHash)
     return this._toMM('eth_getTransactionByHash', txHash)
   }
 }

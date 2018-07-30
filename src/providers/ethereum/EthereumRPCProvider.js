@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import { prepareRequest, praseResponse } from '../JsonRpcHelper'
+import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
 
 export default class EthereumRPCProvider {
   constructor (uri) {
@@ -15,7 +16,10 @@ export default class EthereumRPCProvider {
   _rpc (method, ...params) {
     return this.axios.post('/', {
       data: { method, params }
-    }).then(({ data }) => data)
+    }).then(({ data }) => {
+      const formattedResult = formatEthResponse(data)
+      return formattedResult
+    })
   }
 
   async generateBlock (numberOfBlocks) {
@@ -28,6 +32,7 @@ export default class EthereumRPCProvider {
   }
 
   async getTransactionByHash (txHash) {
+    txHash = ensureEthFormat(txHash)
     return this._rpc('eth_getTransactionByHash', txHash)
   }
 }

@@ -3,7 +3,7 @@
   "title": "Transaction",
   "description": "Blockchain transaction",
   "type": "object",
-  "required": [ "blockHash", "blockNumber", "hash", "value", "confirmations" ],
+  "required": [ "blockHash", "blockNumber", "hash", "value" ],
   "properties": {
     "blockHash": {
       "type": "string",
@@ -23,11 +23,6 @@
     "value": {
       "type": "number",
       "title": "Value",
-      "minimum": 0
-    },
-    "confirmations": {
-      "type": "number",
-      "title": "Confirmations",
       "minimum": 0
     },
     "_raw": {

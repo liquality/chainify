@@ -143,12 +143,12 @@ export default class ChainAbstractionLayer {
 
     const block = await this.provider.getBlockByNumber(blockNumber, includeTx)
 
-    // const valid = this.validateBlock(block)
+    const valid = this.validateBlock(block)
 
-    // if (!valid) {
-    //   console.log(this.validateBlock.errors)
-    //   throw new Error('Provider returned an invalid block')
-    // }
+    if (!valid) {
+      console.log(this.validateBlock.errors)
+      throw new Error('Provider returned an invalid block')
+    }
 
     return block
   }
@@ -177,19 +177,22 @@ export default class ChainAbstractionLayer {
   async getTransactionByHash (txHash) {
     this._checkMethod('getTransactionByHash')
 
-    // if (!isString(txHash)) {
-    //   throw new Error('Transaction hash should be a string')
-    // }
+    if (!isString(txHash)) {
+      throw new Error('Transaction hash should be a string')
+    }
 
-    // if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-    //   throw new Error('Transaction hash should be a valid hex string')
-    // }
+    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
+      throw new Error('Transaction hash should be a valid hex string')
+    }
 
     const transaction = await this.provider.getTransactionByHash(txHash)
 
-    // if (!this.validateTransaction(transaction)) {
-    //   throw new Error('Provider returned an invalid transaction')
-    // }
+    const valid = this.validateTransaction(transaction)
+
+    if (!valid) {
+      console.log(this.validateTransaction.errors)
+      throw new Error('Provider returned an invalid transaction')
+    }
 
     return transaction
   }
