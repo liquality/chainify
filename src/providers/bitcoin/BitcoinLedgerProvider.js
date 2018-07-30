@@ -3,6 +3,7 @@ import Provider from '../../Provider'
 import axios from 'axios'
 import Transport from '@alias/ledger-transport'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
+import { BigNumber } from 'bignumber.js'
 
 export default class BitcoinLedgerProvider extends Provider {
   constructor () {
@@ -141,9 +142,16 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendP2PKHScript = `76a914${to}88ac`
     const changeP2PKHScript = `76a914${unusedAddress.bitcoinAddress}88ac`
 
+    const getAmountBuffer = (amount) => {
+      const valueBuffer = Buffer.from(BigNumber(amount).toString(16), 'hex')
+      const buffer = Buffer.alloc(8)
+      valueBuffer.copy(buffer, 8 - valueBuffer.length)
+      return buffer.reverse()
+    }
+
     const outputs = [
-      {amount: Buffer.alloc(8, sendAmount), script: Buffer.alloc(sendP2PKHScript.length / 2, sendP2PKHScript, 'hex')},
-      {amount: Buffer.alloc(8, changeAmount), script: Buffer.alloc(changeP2PKHScript.length / 2, changeP2PKHScript, 'hex')}
+      {amount: getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex')},
+      {amount: getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex')}
     ]
 
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
