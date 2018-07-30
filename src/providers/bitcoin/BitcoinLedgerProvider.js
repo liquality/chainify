@@ -116,9 +116,11 @@ export default class BitcoinLedgerProvider extends Provider {
 
     const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)
 
+    const fee = this._getFee(unspentInputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee
+
     const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)
 
-    if (totalAmount < value) {
+    if (totalAmount < value + fee) {
       throw new Error('Not enough balance')
     }
 
@@ -133,8 +135,7 @@ export default class BitcoinLedgerProvider extends Provider {
     console.log(paths)
 
     const sendAmount = value
-    // TODO: hardcoded num outputs + satoshi per byte fee
-    const changeAmount = totalAmount - value - this._getFee(unspentInputsToUse.length, 2, 3)
+    const changeAmount = totalAmount - value - fee
 
     // OP_DUP OP_HASH160 <PUB_KEY> OP_EQUALVERIFY OP_CHECKSIG
     const sendP2PKHScript = `76a914${to}88ac`
