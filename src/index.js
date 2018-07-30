@@ -105,9 +105,13 @@ export default class ChainAbstractionLayer {
 
   /**
    * Get a block given its hash.
-   * @param {!string} blockHash - A hexadecimal string that represents the *hash* of the desired block.
+   * @param {!string} blockHash - A hexadecimal string that represents the *hash* of the
+   *  desired block.
    * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
-   * @return {Promise<Client.schemas.Block, Error>} Returns a Block with the same hash as the given input. Throws an Error if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
+   * @return {Promise<Client.schemas.Block, Error>} Returns a Block with the same hash as
+   *  the given input. Throws an Error if no block was found. If `includeTx` is true, the
+   *  transaction property is an array of Transactions; otherwise, it is a list of
+   *  transaction hashes.
    */
   async getBlockByHash (blockHash, includeTx = false) {
     const provider = this.getProviderForMethod('getBlockByHash')
@@ -137,7 +141,10 @@ export default class ChainAbstractionLayer {
    * Get a block given its number.
    * @param {!number} blockNumber - The number of the desired block.
    * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
-   * @return {Promise<Client.schemas.Block, Error>} Returns a Block with the same number as the given input. Throws an Error if no block was found. If `includeTx` is true, the transaction property is an array of Transactions; otherwise, it is a list of transaction hashes.
+   * @return {Promise<Client.schemas.Block, Error>} Returns a Block with the same number as
+   *  the given input. Throws an Error if no block was found. If `includeTx` is true, the
+   *  transaction property is an array of Transactions; otherwise, it is a list of
+   *  transaction hashes.
    */
   async getBlockByNumber (blockNumber, includeTx = false) {
     const provider = this.getProviderForMethod('getBlockByNumber')
@@ -177,8 +184,10 @@ export default class ChainAbstractionLayer {
 
   /**
    * Get a transaction given its hash.
-   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the desired transaction.
-   * @return {Promise<Client.schemas.Transaction, Error>} Returns a Transaction with the same hash as the given input. Throws an Error if no transaction was found.
+   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the
+   *  desired transaction.
+   * @return {Promise<Client.schemas.Transaction, Error>} Returns a Transaction with the
+   *  same hash as the given input. Throws an Error if no transaction was found.
    */
   async getTransactionByHash (txHash) {
     const provider = this.getProviderForMethod('getTransactionByHash')
@@ -202,8 +211,10 @@ export default class ChainAbstractionLayer {
 
   /**
    * Get a raw hexadecimal transaction given its hash.
-   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the desired transaction.
-   * @return {Promise<string, Error>} Returns the raw Transaction with the same hash as the given output. Throws an Error if no transaction was found.
+   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the
+   *  desired transaction.
+   * @return {Promise<string, Error>} Returns the raw Transaction with the same hash as the
+   *  given output. Throws an Error if no transaction was found.
    */
   async getRawTransactionByHash (txHash) {
     const provider = this.getProviderForMethod('getRawTransactionByHash')
