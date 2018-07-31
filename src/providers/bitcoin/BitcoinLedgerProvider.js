@@ -5,6 +5,8 @@ import Transport from '@alias/ledger-transport'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 
+import crypto from '../../crypto'
+
 export default class BitcoinLedgerProvider extends Provider {
   constructor () {
     super()
@@ -102,10 +104,12 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getLedgerInputs (unspentInputs) {
     const ledgerInputs = []
+    let i = 0;
     for (let unspentInput of unspentInputs) {
       const transactionHex = await this._getTransactionHex(unspentInput.tx_hash_big_endian)
       const tx = await this._ledgerBtc.splitTransaction(transactionHex)
       ledgerInputs.push([tx, unspentInput.tx_output_n])
+      i++
     }
     return ledgerInputs
   }
@@ -127,23 +131,22 @@ export default class BitcoinLedgerProvider extends Provider {
 
     const ledgerInputs = await this._getLedgerInputs(unspentInputsToUse)
 
-    console.log(addresses)
-
-    console.log(ledgerInputs)
-
     const paths = unspentInputsToUse.map(input => input.path)
-
-    console.log(paths)
 
     const sendAmount = value
     const changeAmount = totalAmount - value - fee
 
+    const sendPubKeyHash = crypto.base58.decode(to).toString('hex').substring(2,42)
+    const changePubKeyHash = crypto.base58.decode(unusedAddress.bitcoinAddress).toString('hex').substring(2,42)
+
     // OP_DUP OP_HASH160 <PUB_KEY> OP_EQUALVERIFY OP_CHECKSIG
-    const sendP2PKHScript = `76a914${to}88ac`
-    const changeP2PKHScript = `76a914${unusedAddress.bitcoinAddress}88ac`
+    const sendP2PKHScript = `76a914${sendPubKeyHash}88ac`
+    const changeP2PKHScript = `76a914${changePubKeyHash}88ac`
 
     const getAmountBuffer = (amount) => {
-      const valueBuffer = Buffer.from(BigNumber(amount).toString(16), 'hex')
+      let hexAmount = BigNumber(amount).toString(16)
+      if (hexAmount.length % 2 == 1) { hexAmount = '0' + hexAmount }
+      const valueBuffer = Buffer.from(hexAmount, 'hex')
       const buffer = Buffer.alloc(8)
       valueBuffer.copy(buffer, 8 - valueBuffer.length)
       return buffer.reverse()
