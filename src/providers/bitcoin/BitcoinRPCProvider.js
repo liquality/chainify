@@ -1,36 +1,8 @@
-import axios from 'axios'
+import JsonRpcProvider from '../JsonRpcProvider'
 
-import { prepareRequest, praseResponse } from '../JsonRpcHelper'
-
-export default class BitcoinRPCProvider {
-  constructor (uri, user, pass) {
-    this.axios = axios.create({
-      baseURL: uri,
-      transformRequest: [({ data }, headers) => prepareRequest(data)],
-      transformResponse: [(data, headers) => praseResponse(data, headers)],
-      validateStatus: (status) => status === 200
-    })
-
-    if (user || pass) {
-      this.axios.defaults.auth = {
-        username: user,
-        password: pass
-      }
-    }
-  }
-
-  setClient (client) {
-    this.client = client
-  }
-
-  _rpc (method, ...params) {
-    return this.axios.post('/', {
-      data: { method, params }
-    }).then(({ data }) => data)
-  }
-
+export default class BitcoinRPCProvider extends JsonRpcProvider {
   async _decodeRawTransaction (rawTransaction) {
-    const data = await this._rpc('decoderawtransaction', rawTransaction)
+    const data = await this.rpc('decoderawtransaction', rawTransaction)
     const { hash: txHash, txid: hash, vout } = data
     const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
 
@@ -40,11 +12,11 @@ export default class BitcoinRPCProvider {
   }
 
   async generateBlock (numberOfBlocks) {
-    return this._rpc('generate', numberOfBlocks)
+    return this.rpc('generate', numberOfBlocks)
   }
 
   async getBlockByHash (blockHash, includeTx) {
-    const data = await this._rpc('getblock', blockHash)
+    const data = await this.rpc('getblock', blockHash)
     const { hash,
       height: number,
       time: timestamp,
@@ -72,13 +44,13 @@ export default class BitcoinRPCProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this.getBlockByHash(await this._rpc('getblockhash', blockNumber), includeTx)
+    return this.getBlockByHash(await this.rpc('getblockhash', blockNumber), includeTx)
   }
 
   async getTransactionByHash (transactionHash) {
     const rawTx = await this.getRawTransactionByHash(transactionHash)
     const tx = await this._decodeRawTransaction(rawTx)
-    const data = await this._rpc('gettransaction', transactionHash)
+    const data = await this.rpc('gettransaction', transactionHash)
 
     const { confirmations } = data
     const output = Object.assign({}, tx, { confirmations })
@@ -93,6 +65,6 @@ export default class BitcoinRPCProvider {
   }
 
   async getRawTransactionByHash (transactionHash) {
-    return this._rpc('getrawtransaction', transactionHash)
+    return this.rpc('getrawtransaction', transactionHash)
   }
 }

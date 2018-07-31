@@ -1,29 +1,7 @@
-import axios from 'axios'
+import JsonRpcProvider from '../JsonRpcProvider'
 
-import { prepareRequest, praseResponse } from '../JsonRpcHelper'
-
-export default class EthereumRPCProvider {
-  constructor (uri) {
-    this.axios = axios.create({
-      baseURL: uri,
-      transformRequest: [({ data }, headers) => prepareRequest(data)],
-      transformResponse: [(data, headers) => praseResponse(data, headers)],
-      validateStatus: (status) => status === 200
-    })
-  }
-
-  setClient (client) {
-    this.client = client
-  }
-
-  _rpc (method, ...params) {
-    return this.axios.post('/', {
-      data: { method, params }
-    }).then(({ data }) => data)
-  }
-
-  async generateBlock (numberOfBlocks) {
-    // Q: throw or silently pass?
-    throw new Error('This method isn\'t supported by Ethereum')
+export default class EthereumRPCProvider extends JsonRpcProvider {
+  async getAddresses () {
+    return this.rpc('eth_accounts')
   }
 }
