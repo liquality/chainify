@@ -1,17 +1,13 @@
+import Provider from '../../Provider'
+
 import Transport from '@alias/ledger-transport'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 
-import BitcoinRPCProvider from './BitcoinRPCProvider'
-
-export default class BitcoinLedgerProvider extends BitcoinRPCProvider {
-  constructor (uri, user, pass) {
-    super(uri, user, pass)
+export default class BitcoinLedgerProvider extends Provider {
+  constructor () {
+    super()
     this._ledgerBtc = false
     this._derivationPath = `44'/0'/0'/0`
-  }
-
-  setClient (client) {
-    this.client = client
   }
 
   async _connectToLedger () {

@@ -1,19 +1,18 @@
+import Provider from '../../Provider'
+
 import axios from 'axios'
 
 import { prepareRequest, praseResponse } from '../JsonRpcHelper'
 
-export default class EthereumRPCProvider {
+export default class EthereumRPCProvider extends Provider {
   constructor (uri) {
+    super()
     this.axios = axios.create({
       baseURL: uri,
       transformRequest: [({ data }, headers) => prepareRequest(data)],
       transformResponse: [(data, headers) => praseResponse(data, headers)],
       validateStatus: (status) => status === 200
     })
-  }
-
-  setClient (client) {
-    this.client = client
   }
 
   _rpc (method, ...params) {

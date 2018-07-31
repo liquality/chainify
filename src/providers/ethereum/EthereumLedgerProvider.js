@@ -1,17 +1,13 @@
+import Provider from '../../Provider'
+
 import Transport from '@alias/ledger-transport'
 import LedgerEth from '@ledgerhq/hw-app-eth'
 
-import EthereumRPCProvider from './EthereumRPCProvider'
-
-export default class EthereumLedgerProvider extends EthereumRPCProvider {
-  constructor (uri, user, pass) {
-    super(uri, user, pass)
+export default class EthereumLedgerProvider extends Provider {
+  constructor () {
+    super()
     this._ledgerEth = false
     this._derivationPath = `44'/60'/0'/0'/0`
-  }
-
-  setClient (client) {
-    this.client = client
   }
 
   async _connectToLedger () {

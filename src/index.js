@@ -63,7 +63,7 @@ export default class ChainAbstractionLayer {
 
     const provider = findLast(this._providers, provider => isFunction(provider[method]), indexOfRequestor - 1)
 
-    if (!provider) {
+    if (provider == null) {
       throw new Error(`Unimplemented method: ${method}`)
     }
 
