@@ -1,17 +1,14 @@
 import BlockSchema from '../../schema/Block.json'
 import TransactionSchema from '../../schema/Transaction.json'
 
-function formatEthHex (match, p1, p2, offset, string) {
-  return p2
-}
-
 export function formatEthResponse (obj) {
   if (Array.isArray(obj)) {
-    for (let i = 0; i < obj.length; i++) {
-      if (obj[i].startsWith('0x')) {
-        obj[i] = obj[i].replace(/(0x)([A-Fa-f0-9]{1,})/, formatEthHex)
+    obj = obj.map((elem) => {
+      if (elem.startsWith('0x')) {
+        elem = elem.replace('0x', '')
       }
-    }
+      return elem
+    })
   } else {
     for (let key in obj) {
       if (Array.isArray(obj[key])) {
@@ -24,7 +21,7 @@ export function formatEthResponse (obj) {
           obj[key] = parseInt(obj[key])
         } else {
           if (obj[key].startsWith('0x')) {
-            obj[key] = obj[key].replace(/(0x)([A-Fa-f0-9]{1,})/, formatEthHex)
+            obj[key] = obj[key].replace('0x', '')
           }
         }
       }

@@ -146,8 +146,8 @@ export default class ChainAbstractionLayer {
     const valid = this.validateBlock(block)
 
     if (!valid) {
-      console.log(this.validateBlock.errors)
-      throw new Error('Provider returned an invalid block')
+      const errors = this.validateBlock.errors
+      throw new Error(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)
     }
 
     return block
@@ -190,8 +190,8 @@ export default class ChainAbstractionLayer {
     const valid = this.validateTransaction(transaction)
 
     if (!valid) {
-      console.log(this.validateTransaction.errors)
-      throw new Error('Provider returned an invalid transaction')
+      const errors = this.validateTransaction.errors
+      throw new Error(`Provider returned an invalid transaction, ${errors[0].dataPath} ${errors[0].message}`)
     }
 
     return transaction
