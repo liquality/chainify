@@ -9,16 +9,12 @@ class X extends Provider {
 
 class Y extends Provider {
   signMessage (message, from) {
-    // const provider = this.client.getProviderForMethod('signMessage', this)
-    // const res = provider.signMessage(message, from)
     return 'Y ' + this.getMethod('signMessage')(message, from)
   }
 }
 
 class Z extends Provider {
   signMessage (message, from) {
-    // const provider = this.client.getProviderForMethod('signMessage', this)
-    // const res = provider.signMessage(message, from)
     return 'Z ' + this.getMethod('signMessage')(message, from)
   }
 }
