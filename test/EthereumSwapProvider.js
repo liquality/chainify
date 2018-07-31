@@ -7,10 +7,7 @@ const { expect } = chai
 
 const ChainAbstractionLayer = require('../')
 
-const fakeProvider = {}
-fakeProvider.sendAsync = () => 1
-
-const lib = new ChainAbstractionLayer.providers.ethereum.EthereumMetaMaskProvider(fakeProvider)
+const lib = new ChainAbstractionLayer.providers.ethereum.EthereumSwapProvider()
 
 describe('Ethereum MetaMask provider', () => {
   describe('Generate swap', () => {

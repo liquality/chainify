@@ -179,38 +179,4 @@ export default class BitcoinLedgerProvider extends Provider {
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
-
-  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    //         # Prep inputed PK for PKH check
-    // [2]     OP_DUP OP_HASH160
-    //         # Swap for boolean
-    // [3]     OP_2SWAP
-    // [4]     OP_IF
-    //             # Check secret
-    // [5]         OP_HASH160
-    // [26]        (20)(0x14) secretHash[20]
-    // [27]        OP_EQUALVERIFY
-    //             # Prep PKH check
-    // [48]        (20)(0x14) redeemPKH[20]
-    // [49]    OP_ELSE
-    //             # Check expiration
-    // [49+ex]     (?)(0x??) expiration[?]
-    // [50+ex]     OP_CHECKLOCKTIMEVERIFY
-    // [51+ex]     OP_2DROP
-    //             # Prep PKH check
-    // [72+ex]     (20)(0x14) refundPKH[20]
-    // [73+ex]  OP_ENDIF
-    //         # Check PKH and sig
-    // [75+ex] OP_EQUALVERIFY OP_CHECKSIG
-
-    let expirationHex = expiration.toString(16)
-    if (expirationHex.length % 2 === 1) {
-      expirationHex = '0' + expirationHex
-    }
-    expirationHex = expirationHex.match(/.{2}/g).reverse()
-    expirationHex.length = Math.min(expirationHex.length, 5)
-    expirationHex[expirationHex.length - 1] = '00'
-
-    return `76a97263a914${secretHash}8814${recipientAddress}67${expirationHex.length.toString(16).padStart(2, '0')}${expirationHex.join('')}b16d14${refundAddress}6888ac`
-  }
 }

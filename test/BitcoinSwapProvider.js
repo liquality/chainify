@@ -7,7 +7,7 @@ const { expect } = chai
 
 const ChainAbstractionLayer = require('../')
 
-const lib = new ChainAbstractionLayer.providers.bitcoin.BitcoinLedgerProvider()
+const lib = new ChainAbstractionLayer.providers.bitcoin.BitcoinSwapProvider()
 
 describe('Bitcoin Ledger provider', () => {
   describe('Generate swap', () => {
