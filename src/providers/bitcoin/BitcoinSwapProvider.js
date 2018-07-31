@@ -1,7 +1,6 @@
-// import Provider from '../../Provider'
+import Provider from '../../Provider'
 
-// export default class BitcoinSwapProvider extends Provider {
-export default class BitcoinSwapProvider {
+export default class BitcoinSwapProvider extends Provider {
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
     const OPCODES = {
       OP_DUP: '76',

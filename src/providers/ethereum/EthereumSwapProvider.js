@@ -1,7 +1,6 @@
-// import { Provider } from '../..'
+import Provider from '../../Provider'
 
-// export default class EthereumSwapProvider extends Provider {
-export default class EthereumSwapProvider {
+export default class EthereumSwapProvider extends Provider {
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
     const dataSizeBase = 112
     const redeemDestinationBase = 66
