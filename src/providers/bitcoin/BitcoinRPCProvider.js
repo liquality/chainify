@@ -94,4 +94,8 @@ export default class BitcoinRPCProvider extends Provider {
   async getRawTransactionByHash (transactionHash) {
     return this._rpc('getrawtransaction', transactionHash)
   }
+
+  async sendRawTransaction (rawTransaction) {
+    return this._rpc('sendrawtransaction', rawTransaction)
+  }
 }

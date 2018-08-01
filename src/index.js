@@ -257,6 +257,16 @@ export default class ChainAbstractionLayer {
     return signedMessage
   }
 
+  /**
+   * Send a transaction to the chain
+   * @param {!string} from - The address identifier for the sender.
+   * @param {!string} to - The address identifier for the receiver.
+   * @param {!number} value - Number representing the amount associated with.
+   * the transaction.
+   * @param {!string} [data] - Optional data to send with the transaction.
+   * @return {Promise<string, Error>} Returns an identifier for the broadcasted
+   * transaction.
+   */
   async sendTransaction (from, to, value, data) {
     const provider = this.getProviderForMethod('sendTransaction')
 
@@ -264,6 +274,25 @@ export default class ChainAbstractionLayer {
 
     if (!isString(txHash)) {
       throw new Error('sendTransaction method should return a transaction id string')
+    }
+
+    return txHash
+  }
+
+  /**
+   * Broadcast a transaction to the network using it's raw seriealized transaction
+   * @param {!string} rawTransaction - A raw transaction usually in the form of a
+   * hexadecimal string that represents the serialized transaction.
+   * @return {Promise<string, Error>} Returns an identifier for the broadcasted
+   * transaction.
+   */
+  async sendRawTransaction (rawTransaction) {
+    const provider = this.getProviderForMethod('sendRawTransaction')
+
+    const txHash = await provider.sendRawTransaction(rawTransaction)
+
+    if (!isString(txHash)) {
+      throw new Error('sendRawTransaction method should return a transaction id string')
     }
 
     return txHash
