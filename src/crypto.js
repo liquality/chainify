@@ -4,9 +4,7 @@ import bech32 from 'bech32'
 
 const crypto = {
   /**
-   * Get base58 of message.
-   * @param {!string} message - any string.
-   * @return {string} Returns the base58 of a string.
+   * Base58 object with decode, decodeUnsafe, and encode functions.
    */
   base58,
 
@@ -42,6 +40,11 @@ const crypto = {
    */
   ripemd160,
 
+  /**
+   * Ensure message is in buffer format.
+   * @param {string} message - any string.
+   * @return {string} Returns Buffer of string.
+   */
   ensureBuffer (message) {
     if (typeof message === 'string') {
       message = Buffer.from(message, 'hex')
