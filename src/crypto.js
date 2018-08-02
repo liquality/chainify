@@ -40,7 +40,14 @@ const crypto = {
    * @param {!string} message - any string.
    * @return {string} Returns the ripemd160 of a string.
    */
-  ripemd160
+  ripemd160,
+
+  ensureBuffer (message) {
+    if (typeof message === 'string') {
+      message = Buffer.from(message, 'hex')
+    }
+    return message
+  }
 }
 
 export default crypto
