@@ -39,7 +39,8 @@
     "json-bigint": "^0.3.0",
     "lodash": "^4.0.0",
     "regenerator-runtime": "^0.12.0",
-    "standard-error": "^1.1.0"
+    "standard-error": "^1.1.0",
+    "usb": "https://github.com/mattBlackDesign/node-usb"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.54",

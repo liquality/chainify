@@ -4,7 +4,7 @@ jobs:
     environment:
       BASH_ENV: /etc/profile
     docker:
-      - image: harshjv/liquality-cal-dev
+      - image: mblackmblack/chainabstractionlayer-dev:0.0.5
     working_directory: ~/chainabstractionlayer
     steps:
       - checkout
