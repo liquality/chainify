@@ -1,6 +1,7 @@
 import Provider from '../../Provider'
 
 import { isFunction } from 'lodash'
+import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
 
 export default class EthereumMetaMaskProvider extends Provider {
   constructor (metamaskProvider) {
@@ -32,7 +33,9 @@ export default class EthereumMetaMaskProvider extends Provider {
             return
           }
 
-          resolve(data.result)
+          const formattedResult = formatEthResponse(data.result)
+
+          resolve(formattedResult)
         })
     })
   }
@@ -53,5 +56,14 @@ export default class EthereumMetaMaskProvider extends Provider {
     }
 
     return this._toMM('eth_sendTransaction', tx)
+  }
+
+  async getBlockByNumber (blockNumber, includeTx) {
+    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
+  }
+
+  async getTransactionByHash (txHash) {
+    txHash = ensureEthFormat(txHash)
+    return this._toMM('eth_getTransactionByHash', txHash)
   }
 }
