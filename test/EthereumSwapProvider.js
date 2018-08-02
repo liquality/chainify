@@ -9,7 +9,7 @@ const ChainAbstractionLayer = require('../')
 
 const lib = new ChainAbstractionLayer.providers.ethereum.EthereumSwapProvider()
 
-describe('Ethereum MetaMask provider', () => {
+describe('Ethereum Swap provider', () => {
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
       return expect(lib.generateSwap('0x5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',

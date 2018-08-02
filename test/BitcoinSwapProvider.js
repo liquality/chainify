@@ -9,14 +9,14 @@ const ChainAbstractionLayer = require('../')
 
 const lib = new ChainAbstractionLayer.providers.bitcoin.BitcoinSwapProvider()
 
-describe('Bitcoin Ledger provider', () => {
+describe('Bitcoin Swap provider', () => {
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.generateSwap('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-        'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        'ffffffffffffffffffffffffffffffffffffffff',
+      return expect(lib.generateSwap('1J7eFp9p48g3U3yCREyhd6LJzhnkywhi5s',
+        '1GZQKjsC97yasxRj1wtYf5rC61AxpR1zmr',
+        'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         1532622116403))
-        .to.equal('76a97263a914ffffffffffffffffffffffffffffffffffffffff8814bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb6705339665d700b16d14aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6888ac')
+        .to.equal('76a97263a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8814bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb6705339665d700b16d14aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6888ac')
     })
   })
 })
