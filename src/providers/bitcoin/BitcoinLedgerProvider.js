@@ -7,11 +7,16 @@ import { BigNumber } from 'bignumber.js'
 
 import crypto from '../../crypto'
 
+// TODO: Abstract out non signing methods into another provider?
 export default class BitcoinLedgerProvider extends Provider {
-  constructor () {
+  /**
+   * @param {boolean} testnet True if the testnet network is being used
+   */
+  constructor (testnet = false) {
     super()
     this._ledgerBtc = false
     this._derivationPath = `44'/0'/0'/0`
+    this._blockChainInfoBaseUrl = testnet ? 'https://testnet.blockchain.info' : 'https://blockchain.info'
   }
 
   async _connectToLedger () {
@@ -26,15 +31,15 @@ export default class BitcoinLedgerProvider extends Provider {
   }
 
   async _getAddressDetails (address) {
-    return (await axios.get(`https://testnet.blockchain.info/balance?active=${address}&cors=true`)).data[address]
+    return (await axios.get(`${this._blockChainInfoBaseUrl}/balance?active=${address}&cors=true`)).data[address]
   }
 
   async _getUnspentTransactions (address) {
-    return (await axios.get(`https://testnet.blockchain.info/unspent?active=${address}&cors=true`)).data.unspent_outputs
+    return (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs
   }
 
   async _getTransactionHex (transactionHash) {
-    return (await axios.get(`https://testnet.blockchain.info/rawtx/${transactionHash}?format=hex&cors=true`)).data
+    return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
   }
 
   async _getSpendingDetails () {
@@ -56,7 +61,7 @@ export default class BitcoinLedgerProvider extends Provider {
           path,
           address: address.bitcoinAddress
         }))
-        unspentInputs.push.apply(unspentInputs, utxos)
+        unspentInputs.push(...utxos)
       } else {
         unusedAddress = address
       }
