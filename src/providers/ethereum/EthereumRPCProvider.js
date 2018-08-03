@@ -1,28 +1,16 @@
-import Provider from '../../Provider'
+import JsonRpcProvider from '../JsonRpcProvider'
 
-import axios from 'axios'
-
-import { prepareRequest, praseResponse } from '../JsonRpcHelper'
 import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
 
-export default class EthereumRPCProvider extends Provider {
-  constructor (uri) {
-    super()
-    this.axios = axios.create({
-      baseURL: uri,
-      transformRequest: [({ data }, headers) => prepareRequest(data)],
-      transformResponse: [(data, headers) => praseResponse(data, headers)],
-      validateStatus: (status) => status === 200
-    })
+export default class EthereumRPCProvider extends JsonRpcProvider {
+  _parseResponse (response) {
+    const data = super._parseResponse(response)
+
+    return formatEthResponse(data)
   }
 
-  _rpc (method, ...params) {
-    return this.axios.post('/', {
-      data: { method, params }
-    }).then(({ data }) => {
-      const formattedResult = formatEthResponse(data)
-      return formattedResult
-    })
+  async getAddresses () {
+    return this.rpc('eth_accounts')
   }
 
   async generateBlock (numberOfBlocks) {
