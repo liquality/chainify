@@ -1,16 +1,16 @@
-import { isFunction } from 'lodash'
+import Provider from '../../Provider'
 
-export default class EthereumMetaMaskProvider {
+import { isFunction } from 'lodash'
+import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
+
+export default class EthereumMetaMaskProvider extends Provider {
   constructor (metamaskProvider) {
+    super()
     if (!isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
 
     this._metamaskProvider = metamaskProvider
-  }
-
-  setClient (client) {
-    this.client = client
   }
 
   _toMM (method, ...params) {
@@ -33,7 +33,9 @@ export default class EthereumMetaMaskProvider {
             return
           }
 
-          resolve(data.result)
+          const formattedResult = formatEthResponse(data.result)
+
+          resolve(formattedResult)
         })
     })
   }
@@ -54,5 +56,14 @@ export default class EthereumMetaMaskProvider {
     }
 
     return this._toMM('eth_sendTransaction', tx)
+  }
+
+  async getBlockByNumber (blockNumber, includeTx) {
+    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
+  }
+
+  async getTransactionByHash (txHash) {
+    txHash = ensureEthFormat(txHash)
+    return this._toMM('eth_getTransactionByHash', txHash)
   }
 }

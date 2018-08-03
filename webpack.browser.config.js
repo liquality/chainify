@@ -37,6 +37,9 @@ module.exports = {
     libraryTarget: 'umd',
     libraryExport: 'default'
   },
+  node: {
+    fs: 'empty'
+  },
   resolve: {
     alias: {
       '@alias/ledger-transport': path.resolve(__dirname, 'node_modules', '@ledgerhq', 'hw-transport-u2f')

@@ -63,7 +63,7 @@ export default class ChainAbstractionLayer {
 
     const provider = findLast(this._providers, provider => isFunction(provider[method]), indexOfRequestor - 1)
 
-    if (!provider) {
+    if (provider == null) {
       throw new Error(`Unimplemented method: ${method}`)
     }
 
@@ -160,8 +160,11 @@ export default class ChainAbstractionLayer {
 
     const block = await provider.getBlockByNumber(blockNumber, includeTx)
 
-    if (!this.validateBlock(block)) {
-      throw new Error('Provider returned an invalid block')
+    const valid = this.validateBlock(block)
+
+    if (!valid) {
+      const errors = this.validateBlock.errors
+      throw new Error(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)
     }
 
     return block
@@ -203,8 +206,11 @@ export default class ChainAbstractionLayer {
 
     const transaction = await provider.getTransactionByHash(txHash)
 
-    if (!this.validateTransaction(transaction)) {
-      throw new Error('Provider returned an invalid transaction')
+    const valid = this.validateTransaction(transaction)
+
+    if (!valid) {
+      const errors = this.validateTransaction.errors
+      throw new Error(`Provider returned an invalid transaction, ${errors[0].dataPath} ${errors[0].message}`)
     }
 
     return transaction
