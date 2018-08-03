@@ -29,14 +29,20 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-praseResponse">praseResponse</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-prepareRequest">prepareRequest</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/StandardError.js~StandardError.html">StandardError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureEthFormat">ensureEthFormat</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -60,7 +66,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-praseResponse">praseResponse</a></span></span><span class="code" data-ice="signature">(body: <span>*</span>, headers: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-ensureEthFormat">ensureEthFormat</a></span></span><span class="code" data-ice="signature">(hash: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -88,7 +94,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-prepareRequest">prepareRequest</a></span></span><span class="code" data-ice="signature">(objectPattern: {&quot;method&quot;: <span>*</span>, &quot;params&quot;: <span>*</span>}): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></span><span class="code" data-ice="signature">(obj: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -108,22 +114,22 @@
 <div data-ice="details"><h2 data-ice="title">Static Public </h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="static-function-praseResponse">
+  <h3 data-ice="anchor" id="static-function-ensureEthFormat">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">praseResponse</span><span class="code" data-ice="signature">(body: <span>*</span>, headers: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">ensureEthFormat</span><span class="code" data-ice="signature">(hash: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/JsonRpcHelper.js.html#lineNumber14">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/ethereum/EthereumUtil.js.html#lineNumber33">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {praseResponse} from &apos;<span><a href="file/src/providers/JsonRpcHelper.js.html#lineNumber14">chainabstractionlayer/src/providers/JsonRpcHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {ensureEthFormat} from &apos;<span><a href="file/src/providers/ethereum/EthereumUtil.js.html#lineNumber33">chainabstractionlayer/src/providers/ethereum/EthereumUtil.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -139,13 +145,7 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">body</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
-    </tr>
-<tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">headers</td>
+      <td data-ice="name" class="code" data-depth="0">hash</td>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
@@ -185,22 +185,22 @@
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="static-function-prepareRequest">
+  <h3 data-ice="anchor" id="static-function-formatEthResponse">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">prepareRequest</span><span class="code" data-ice="signature">(objectPattern: {&quot;method&quot;: <span>*</span>, &quot;params&quot;: <span>*</span>}): <span>*</span></span>
+    <span class="code" data-ice="name">formatEthResponse</span><span class="code" data-ice="signature">(obj: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/JsonRpcHelper.js.html#lineNumber6">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/ethereum/EthereumUtil.js.html#lineNumber4">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {prepareRequest} from &apos;<span><a href="file/src/providers/JsonRpcHelper.js.html#lineNumber6">chainabstractionlayer/src/providers/JsonRpcHelper.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {formatEthResponse} from &apos;<span><a href="file/src/providers/ethereum/EthereumUtil.js.html#lineNumber4">chainabstractionlayer/src/providers/ethereum/EthereumUtil.js</a></span>&apos;</code></pre></div>
   
   
   
@@ -216,9 +216,9 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">objectPattern</td>
-      <td data-ice="type" class="code">{&quot;method&quot;: <span>*</span>, &quot;params&quot;: <span>*</span>}</td>
-      <td data-ice="appendix"><ul><li>default: {&quot;method&quot;:null,&quot;params&quot;:null}</li></ul></td>
+      <td data-ice="name" class="code" data-depth="0">obj</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
       <td data-ice="description"></td>
     </tr>
 </tbody>

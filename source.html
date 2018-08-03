@@ -29,19 +29,25 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-praseResponse">praseResponse</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-prepareRequest">prepareRequest</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/StandardError.js~StandardError.html">StandardError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureEthFormat">ensureEthFormat</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></span></li>
 </ul>
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">11/58</span></h1>
+<div class="content" data-ice="content"><h1>Source <img data-ice="coverageBadge" src="./badge.svg"><span data-ice="totalCoverageCount" class="total-coverage-count">9/78</span></h1>
 
 <table class="files-summary" data-ice="files" data-use-coverage="true">
   <thead>
@@ -57,69 +63,117 @@
   <tbody>
     
   <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/index.js.html#errorLines=219,231,239,28,29,9">src/index.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></td>
-      <td class="coverage"><span data-ice="coverage">64 %</span><span data-ice="coverageCount" class="coverage-count">11/17</span></td>
-      <td style="display: none;" data-ice="size">7592 byte</td>
-      <td style="display: none;" data-ice="lines">256</td>
-      <td style="display: none;" data-ice="updated">2018-07-05 15:02:34 (UTC)</td>
+      <td data-ice="filePath"><span><a href="file/src/Provider.js.html#errorLines=1,2,3,6">src/Provider.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/4</span></td>
+      <td style="display: none;" data-ice="size">225 byte</td>
+      <td style="display: none;" data-ice="lines">10</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/providers/JsonRpcHelper.js.html#errorLines=14,4,6">src/providers/JsonRpcHelper.js</a></span></td>
-      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-praseResponse">praseResponse</a></span>
-<span><a href="function/index.html#static-function-prepareRequest">prepareRequest</a></span></td>
-      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/3</span></td>
-      <td style="display: none;" data-ice="size">729 byte</td>
-      <td style="display: none;" data-ice="lines">35</td>
-      <td style="display: none;" data-ice="updated">2018-07-03 11:59:58 (UTC)</td>
+      <td data-ice="filePath"><span><a href="file/src/crypto.js.html#errorLines=5">src/crypto.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/1</span></td>
+      <td style="display: none;" data-ice="size">1269 byte</td>
+      <td style="display: none;" data-ice="lines">56</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/index.js.html#errorLines=11,18,19,22,23,246,258,266,278">src/index.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></td>
+      <td class="coverage"><span data-ice="coverage">50 %</span><span data-ice="coverageCount" class="coverage-count">9/18</span></td>
+      <td style="display: none;" data-ice="size">8921 byte</td>
+      <td style="display: none;" data-ice="lines">293</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/providers/JsonRpcProvider.js.html#errorLines=10,11,14,25,30,51,8">src/providers/JsonRpcProvider.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/7</span></td>
+      <td style="display: none;" data-ice="size">1487 byte</td>
+      <td style="display: none;" data-ice="lines">57</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:37:42 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/providers/RpcError.js.html#errorLines=20,24,33,4,5">src/providers/RpcError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/5</span></td>
+      <td style="display: none;" data-ice="size">719 byte</td>
+      <td style="display: none;" data-ice="lines">36</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:37:42 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/providers/StandardError.js.html#errorLines=2">src/providers/StandardError.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/StandardError.js~StandardError.html">StandardError</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/1</span></td>
+      <td style="display: none;" data-ice="size">95 byte</td>
+      <td style="display: none;" data-ice="lines">2</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:37:42 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/providers/bitcoin/BitcoinCrypto.js.html#errorLines=3,9">src/providers/bitcoin/BitcoinCrypto.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/2</span></td>
+      <td style="display: none;" data-ice="size">1808 byte</td>
+      <td style="display: none;" data-ice="lines">59</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#errorLines=10,13,20,24,32,6,7,9">src/providers/bitcoin/BitcoinLedgerProvider.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></td>
       <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/8</span></td>
-      <td style="display: none;" data-ice="size">992 byte</td>
+      <td style="display: none;" data-ice="size">936 byte</td>
       <td style="display: none;" data-ice="lines">39</td>
-      <td style="display: none;" data-ice="updated">2018-07-04 11:50:39 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#errorLines=22,28,38,42,5,6,7,70,74,91">src/providers/bitcoin/BitcoinRPCProvider.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/providers/bitcoin/BitcoinRPCProvider.js.html#errorLines=14,18,3,4,46,50,67">src/providers/bitcoin/BitcoinRPCProvider.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></td>
-      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/10</span></td>
-      <td style="display: none;" data-ice="size">2561 byte</td>
-      <td style="display: none;" data-ice="lines">94</td>
-      <td style="display: none;" data-ice="updated">2018-07-05 15:00:54 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/7</span></td>
+      <td style="display: none;" data-ice="size">1990 byte</td>
+      <td style="display: none;" data-ice="lines">70</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:37:42 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/providers/ethereum/EthereumLedgerProvider.js.html#errorLines=10,13,20,24,32,6,7,9">src/providers/ethereum/EthereumLedgerProvider.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></td>
       <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/8</span></td>
-      <td style="display: none;" data-ice="size">977 byte</td>
+      <td style="display: none;" data-ice="size">918 byte</td>
       <td style="display: none;" data-ice="lines">39</td>
-      <td style="display: none;" data-ice="updated">2018-07-04 11:50:52 (UTC)</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#errorLines=12,3,37,4,41,47,9">src/providers/ethereum/EthereumMetaMaskProvider.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/providers/ethereum/EthereumMetaMaskProvider.js.html#errorLines=13,16,43,47,53,6,61,65,7">src/providers/ethereum/EthereumMetaMaskProvider.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></td>
-      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/7</span></td>
-      <td style="display: none;" data-ice="size">1186 byte</td>
-      <td style="display: none;" data-ice="lines">54</td>
-      <td style="display: none;" data-ice="updated">2018-07-04 06:31:35 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/9</span></td>
+      <td style="display: none;" data-ice="size">1679 byte</td>
+      <td style="display: none;" data-ice="lines">69</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
     </tr>
 <tr data-ice="file">
-      <td data-ice="filePath"><span><a href="file/src/providers/ethereum/EthereumRPCProvider.js.html#errorLines=15,21,5,6,7">src/providers/ethereum/EthereumRPCProvider.js</a></span></td>
+      <td data-ice="filePath"><span><a href="file/src/providers/ethereum/EthereumRPCProvider.js.html#errorLines=12,16,21,25,5,6">src/providers/ethereum/EthereumRPCProvider.js</a></span></td>
       <td data-ice="identifier" class="identifiers"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></td>
-      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/5</span></td>
-      <td style="display: none;" data-ice="size">694 byte</td>
-      <td style="display: none;" data-ice="lines">25</td>
-      <td style="display: none;" data-ice="updated">2018-07-06 13:21:03 (UTC)</td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/6</span></td>
+      <td style="display: none;" data-ice="size">782 byte</td>
+      <td style="display: none;" data-ice="lines">29</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:37:42 (UTC)</td>
+    </tr>
+<tr data-ice="file">
+      <td data-ice="filePath"><span><a href="file/src/providers/ethereum/EthereumUtil.js.html#errorLines=33,4">src/providers/ethereum/EthereumUtil.js</a></span></td>
+      <td data-ice="identifier" class="identifiers"><span><a href="function/index.html#static-function-ensureEthFormat">ensureEthFormat</a></span>
+<span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></td>
+      <td class="coverage"><span data-ice="coverage">0 %</span><span data-ice="coverageCount" class="coverage-count">0/2</span></td>
+      <td style="display: none;" data-ice="size">990 byte</td>
+      <td style="display: none;" data-ice="lines">36</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
     </tr>
 <tr data-ice="file">
       <td data-ice="filePath"><span><a href="file/src/providers/index.js.html">src/providers/index.js</a></span></td>
       <td data-ice="identifier" class="identifiers">-</td>
       <td class="coverage"><span data-ice="coverage">-</span></td>
-      <td style="display: none;" data-ice="size">530 byte</td>
-      <td style="display: none;" data-ice="lines">18</td>
-      <td style="display: none;" data-ice="updated">2018-07-03 13:25:40 (UTC)</td>
+      <td style="display: none;" data-ice="size">609 byte</td>
+      <td style="display: none;" data-ice="lines">20</td>
+      <td style="display: none;" data-ice="updated">2018-08-06 08:06:46 (UTC)</td>
     </tr>
 </tbody>
 </table>

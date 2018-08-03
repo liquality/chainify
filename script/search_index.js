@@ -1,5 +1,11 @@
 window.esdocSearchIndex = [
   [
+    "chainabstractionlayer/src/providers/bitcoin/bitcoincrypto.js~bitcoincrypto",
+    "variable/index.html#static-variable-BitcoinCrypto",
+    "<span>BitcoinCrypto</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinCrypto.js</span>",
+    "variable"
+  ],
+  [
     "chainabstractionlayer/src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html",
     "<span>BitcoinLedgerProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinLedgerProvider.js</span>",
@@ -36,15 +42,45 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "chainabstractionlayer/src/providers/jsonrpchelper.js~praseresponse",
-    "function/index.html#static-function-praseResponse",
-    "<span>praseResponse</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/JsonRpcHelper.js</span>",
+    "chainabstractionlayer/src/providers/jsonrpcprovider.js~jsonrpcprovider",
+    "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html",
+    "<span>JsonRpcProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/JsonRpcProvider.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/provider.js~provider",
+    "class/src/Provider.js~Provider.html",
+    "<span>Provider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/Provider.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/providers/rpcerror.js~rpcerror",
+    "class/src/providers/RpcError.js~RpcError.html",
+    "<span>RpcError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/RpcError.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/providers/standarderror.js~standarderror",
+    "class/src/providers/StandardError.js~StandardError.html",
+    "<span>StandardError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/StandardError.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/crypto.js~crypto",
+    "variable/index.html#static-variable-crypto",
+    "<span>crypto</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
+    "variable"
+  ],
+  [
+    "chainabstractionlayer/src/providers/ethereum/ethereumutil.js~ensureethformat",
+    "function/index.html#static-function-ensureEthFormat",
+    "<span>ensureEthFormat</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumUtil.js</span>",
     "function"
   ],
   [
-    "chainabstractionlayer/src/providers/jsonrpchelper.js~preparerequest",
-    "function/index.html#static-function-prepareRequest",
-    "<span>prepareRequest</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/JsonRpcHelper.js</span>",
+    "chainabstractionlayer/src/providers/ethereum/ethereumutil.js~formatethresponse",
+    "function/index.html#static-function-formatEthResponse",
+    "<span>formatEthResponse</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumUtil.js</span>",
     "function"
   ],
   [
@@ -330,16 +366,46 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "src/provider.js",
+    "file/src/Provider.js.html",
+    "src/Provider.js",
+    "file"
+  ],
+  [
+    "src/provider.js~provider#client",
+    "class/src/Provider.js~Provider.html#instance-member-client",
+    "src/Provider.js~Provider#client",
+    "member"
+  ],
+  [
+    "src/provider.js~provider#getmethod",
+    "class/src/Provider.js~Provider.html#instance-method-getMethod",
+    "src/Provider.js~Provider#getMethod",
+    "method"
+  ],
+  [
+    "src/provider.js~provider#setclient",
+    "class/src/Provider.js~Provider.html#instance-method-setClient",
+    "src/Provider.js~Provider#setClient",
+    "method"
+  ],
+  [
+    "src/crypto.js",
+    "file/src/crypto.js.html",
+    "src/crypto.js",
+    "file"
+  ],
+  [
     "src/index.js",
     "file/src/index.js.html",
     "src/index.js",
     "file"
   ],
   [
-    "src/index.js~chainabstractionlayer#_checkmethod",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-_checkMethod",
-    "src/index.js~ChainAbstractionLayer#_checkMethod",
-    "method"
+    "src/index.js~chainabstractionlayer#_providers",
+    "class/src/index.js~ChainAbstractionLayer.html#instance-member-_providers",
+    "src/index.js~ChainAbstractionLayer#_providers",
+    "member"
   ],
   [
     "src/index.js~chainabstractionlayer#addprovider",
@@ -357,6 +423,12 @@ window.esdocSearchIndex = [
     "src/index.js~chainabstractionlayer#generateblock",
     "class/src/index.js~ChainAbstractionLayer.html#instance-method-generateBlock",
     "src/index.js~ChainAbstractionLayer#generateBlock",
+    "method"
+  ],
+  [
+    "src/index.js~chainabstractionlayer#generatesecret",
+    "class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSecret",
+    "src/index.js~ChainAbstractionLayer#generateSecret",
     "method"
   ],
   [
@@ -384,6 +456,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/index.js~chainabstractionlayer#getproviderformethod",
+    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getProviderForMethod",
+    "src/index.js~ChainAbstractionLayer#getProviderForMethod",
+    "method"
+  ],
+  [
     "src/index.js~chainabstractionlayer#getrawtransactionbyhash",
     "class/src/index.js~ChainAbstractionLayer.html#instance-method-getRawTransactionByHash",
     "src/index.js~ChainAbstractionLayer#getRawTransactionByHash",
@@ -394,12 +472,6 @@ window.esdocSearchIndex = [
     "class/src/index.js~ChainAbstractionLayer.html#instance-method-getTransactionByHash",
     "src/index.js~ChainAbstractionLayer#getTransactionByHash",
     "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#provider",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-member-provider",
-    "src/index.js~ChainAbstractionLayer#provider",
-    "member"
   ],
   [
     "src/index.js~chainabstractionlayer#sendtransaction",
@@ -432,9 +504,81 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/providers/jsonrpchelper.js",
-    "file/src/providers/JsonRpcHelper.js.html",
-    "src/providers/JsonRpcHelper.js",
+    "src/providers/jsonrpcprovider.js",
+    "file/src/providers/JsonRpcProvider.js.html",
+    "src/providers/JsonRpcProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/jsonrpcprovider.js~jsonrpcprovider#_axios",
+    "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html#instance-member-_axios",
+    "src/providers/JsonRpcProvider.js~JsonRpcProvider#_axios",
+    "member"
+  ],
+  [
+    "src/providers/jsonrpcprovider.js~jsonrpcprovider#_parseresponse",
+    "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html#instance-method-_parseResponse",
+    "src/providers/JsonRpcProvider.js~JsonRpcProvider#_parseResponse",
+    "method"
+  ],
+  [
+    "src/providers/jsonrpcprovider.js~jsonrpcprovider#_preparerequest",
+    "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html#instance-method-_prepareRequest",
+    "src/providers/JsonRpcProvider.js~JsonRpcProvider#_prepareRequest",
+    "method"
+  ],
+  [
+    "src/providers/jsonrpcprovider.js~jsonrpcprovider#constructor",
+    "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html#instance-constructor-constructor",
+    "src/providers/JsonRpcProvider.js~JsonRpcProvider#constructor",
+    "method"
+  ],
+  [
+    "src/providers/jsonrpcprovider.js~jsonrpcprovider#rpc",
+    "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html#instance-method-rpc",
+    "src/providers/JsonRpcProvider.js~JsonRpcProvider#rpc",
+    "method"
+  ],
+  [
+    "src/providers/rpcerror.js",
+    "file/src/providers/RpcError.js.html",
+    "src/providers/RpcError.js",
+    "file"
+  ],
+  [
+    "src/providers/rpcerror.js~rpcerror#constructor",
+    "class/src/providers/RpcError.js~RpcError.html#instance-constructor-constructor",
+    "src/providers/RpcError.js~RpcError#constructor",
+    "method"
+  ],
+  [
+    "src/providers/rpcerror.js~rpcerror#status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-set-status",
+    "src/providers/RpcError.js~RpcError#status",
+    "member"
+  ],
+  [
+    "src/providers/rpcerror.js~rpcerror#status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-get-status",
+    "src/providers/RpcError.js~RpcError#status",
+    "member"
+  ],
+  [
+    "src/providers/rpcerror.js~rpcerror#tostring",
+    "class/src/providers/RpcError.js~RpcError.html#instance-method-toString",
+    "src/providers/RpcError.js~RpcError#toString",
+    "method"
+  ],
+  [
+    "src/providers/standarderror.js",
+    "file/src/providers/StandardError.js.html",
+    "src/providers/StandardError.js",
+    "file"
+  ],
+  [
+    "src/providers/bitcoin/bitcoincrypto.js",
+    "file/src/providers/bitcoin/BitcoinCrypto.js.html",
+    "src/providers/bitcoin/BitcoinCrypto.js",
     "file"
   ],
   [
@@ -495,24 +639,6 @@ window.esdocSearchIndex = [
     "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#_decoderawtransaction",
     "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-_decodeRawTransaction",
     "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#_decodeRawTransaction",
-    "method"
-  ],
-  [
-    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#_rpc",
-    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-_rpc",
-    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#_rpc",
-    "method"
-  ],
-  [
-    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#axios",
-    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-member-axios",
-    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#axios",
-    "member"
-  ],
-  [
-    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#constructor",
-    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-constructor-constructor",
-    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#constructor",
     "method"
   ],
   [
@@ -624,6 +750,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#getblockbynumber",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-getBlockByNumber",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#getBlockByNumber",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#gettransactionbyhash",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-getTransactionByHash",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#getTransactionByHash",
+    "method"
+  ],
+  [
     "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#sendtransaction",
     "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-sendTransaction",
     "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#sendTransaction",
@@ -642,21 +780,9 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#_rpc",
-    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-_rpc",
-    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#_rpc",
-    "method"
-  ],
-  [
-    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#axios",
-    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-member-axios",
-    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#axios",
-    "member"
-  ],
-  [
-    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#constructor",
-    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-constructor-constructor",
-    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#constructor",
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#_parseresponse",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-_parseResponse",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#_parseResponse",
     "method"
   ],
   [
@@ -664,6 +790,30 @@ window.esdocSearchIndex = [
     "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-generateBlock",
     "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#generateBlock",
     "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#getaddresses",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-getAddresses",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#getAddresses",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#getblockbynumber",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-getBlockByNumber",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#getBlockByNumber",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumrpcprovider.js~ethereumrpcprovider#gettransactionbyhash",
+    "class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html#instance-method-getTransactionByHash",
+    "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider#getTransactionByHash",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumutil.js",
+    "file/src/providers/ethereum/EthereumUtil.js.html",
+    "src/providers/ethereum/EthereumUtil.js",
+    "file"
   ],
   [
     "src/providers/index.js",
