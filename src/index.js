@@ -368,6 +368,43 @@ export default class ChainAbstractionLayer {
     const secret = crypto.hash160(signedMessage)
     return secret
   }
+
+  /**
+   * Generate swap transaction data
+   */
+  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
+    this._checkMethod('generateSwap')
+
+    if (!isString(recipientAddress)) {
+      throw new Error('Recipient address should be a string')
+    }
+
+    if (!isString(refundAddress)) {
+      throw new Error('Refund address should be a string')
+    }
+
+    if (!isString(secretHash)) {
+      throw new Error('Secret hash should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(recipientAddress))) {
+      throw new Error('Recipient address should be a valid hex string')
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(refundAddress))) {
+      throw new Error('Refund address should be a valid hex string')
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {
+      throw new Error('Secret hash should be a valid hex string')
+    }
+
+    if (!isNumber(expiration)) {
+      throw new Error('Invalid expiration time')
+    }
+
+    return this.provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+  }
 }
 
 ChainAbstractionLayer.Provider = Provider
