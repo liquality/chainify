@@ -1,20 +1,7 @@
-import BitcoinRPCProvider from './bitcoin/BitcoinRPCProvider'
-import BitcoinLedgerProvider from './bitcoin/BitcoinLedgerProvider'
-import BitcoinCrypto from './bitcoin/BitcoinCrypto'
-
-import EthereumRPCProvider from './ethereum/EthereumRPCProvider'
-import EthereumLedgerProvider from './ethereum/EthereumLedgerProvider'
-import EthereumMetaMaskProvider from './ethereum/EthereumMetaMaskProvider'
+import bitcoin from './bitcoin/'
+import ethereum from './ethereum/'
 
 export default {
-  bitcoin: {
-    BitcoinRPCProvider,
-    BitcoinLedgerProvider,
-    crypto: BitcoinCrypto
-  },
-  ethereum: {
-    EthereumRPCProvider,
-    EthereumLedgerProvider,
-    EthereumMetaMaskProvider
-  }
+  bitcoin,
+  ethereum
 }
