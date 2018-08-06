@@ -13,6 +13,7 @@
   <script>
   /* global $, ChainAbstractionLayer */
   const cal = new ChainAbstractionLayer()
+  cal.addProvider(new ChainAbstractionLayer.providers.bitcoin.BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
   cal.addProvider(new ChainAbstractionLayer.providers.bitcoin.BitcoinLedgerProvider(true))
   cal.getAddresses().then(addresses => {
     const from = addresses[0]
