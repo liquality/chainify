@@ -12,19 +12,27 @@ import TransactionSchema from './schema/Transaction.json'
 export default class ChainAbstractionLayer {
   /**
    * ChainAbstractionLayer client
+   * @param {Provider} [provider] - Data source/provider for the instance
    * @param {string} [version] - Minimum blockchain node version to support
    */
-  constructor (version) {
-    this.version = version
+  constructor (provider, version) {
+    const ajv = new Ajv()
+    this.validateTransaction = ajv.compile(TransactionSchema)
+    this.validateBlock = ajv.compile(BlockSchema)
 
     /**
      * @type {Array}
      */
     this._providers = []
 
-    const ajv = new Ajv()
-    this.validateTransaction = ajv.compile(TransactionSchema)
-    this.validateBlock = ajv.compile(BlockSchema)
+    /**
+     * @type {string}
+     */
+    this.version = version
+
+    if (provider) {
+      this.addProvider(provider)
+    }
   }
 
   /**
