@@ -69,6 +69,6 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async sendRawTransaction (rawTransaction) {
-    return this._rpc('sendrawtransaction', rawTransaction)
+    return this.rpc('sendrawtransaction', rawTransaction)
   }
 }

@@ -14,7 +14,8 @@ export default class JsonRpcProvider extends Provider {
     this._axios = axios.create({
       baseURL: uri,
       responseType: 'text',
-      transformResponse: undefined // https://github.com/axios/axios/issues/907
+      transformResponse: undefined, // https://github.com/axios/axios/issues/907,
+      validateStatus: (status) => true
     })
 
     if (username || password) {
@@ -52,6 +53,6 @@ export default class JsonRpcProvider extends Provider {
     return this._axios.post(
       '/',
       this._prepareRequest(method, params)
-    ).then(this._parseResponse).catch(e => console.error(e))
+    ).then(this._parseResponse)
   }
 }

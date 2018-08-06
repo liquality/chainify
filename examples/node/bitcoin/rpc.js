@@ -8,4 +8,14 @@ bitcoin.addProvider(new BitcoinRPCProvider('http://localhost:18332', 'bitcoin', 
 
 ;(async () => {
   prettyPrintJson(await bitcoin.generateBlock(1))
+  try {
+    await bitcoin.signMessage()
+  } catch (e) {
+    console.error(e)
+  }
+  try {
+    await bitcoin.sendRawTransaction()
+  } catch (e) {
+    console.error(e)
+  }
 })()

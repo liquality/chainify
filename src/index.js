@@ -5,6 +5,7 @@ import * as Ajv from 'ajv'
 import Provider from './Provider'
 import providers from './providers'
 import crypto from './crypto'
+import * as errors from './errors'
 import BlockSchema from './schema/Block.json'
 import TransactionSchema from './schema/Transaction.json'
 
@@ -34,13 +35,13 @@ export default class ChainAbstractionLayer {
    */
   addProvider (provider) {
     if (!isFunction(provider.setClient)) {
-      throw new Error(`Invalid provider`)
+      throw new errors.InvalidProviderError('Provider should have "setClient" method')
     }
 
     const duplicate = find(this._providers, _provider => provider.constructor === _provider.constructor)
 
     if (duplicate) {
-      throw new Error('Duplicate provider')
+      throw new errors.DuplicateProviderError('Duplicate provider')
     }
 
     provider.setClient(this)
@@ -54,7 +55,7 @@ export default class ChainAbstractionLayer {
    */
   getProviderForMethod (method, requestor = false) {
     if (this._providers.length === 0) {
-      throw new Error('No provider provided')
+      throw new errors.NoProviderError('No provider provided. Add a provider to the client')
     }
 
     const indexOfRequestor = requestor
@@ -64,12 +65,12 @@ export default class ChainAbstractionLayer {
     const provider = findLast(this._providers, provider => isFunction(provider[method]), indexOfRequestor - 1)
 
     if (provider == null) {
-      throw new Error(`Unimplemented method: ${method}`)
+      throw new errors.UnimplementedMethodError(`Unimplemented method "${method}"`)
     }
 
     if (isFunction(provider._checkMethodVersionSupport)) {
       if (!provider._checkMethodVersionSupport(method, this.version)) {
-        throw new Error(`Method "${method}" is not supported by version "${this.version}"`)
+        throw new errors.UnsupportedMethodError(`Method "${method}" is not supported by version "${this.version}"`)
       }
     }
 
@@ -86,19 +87,19 @@ export default class ChainAbstractionLayer {
     const provider = this.getProviderForMethod('generateBlock')
 
     if (!isNumber(numberOfBlocks)) {
-      throw new Error('Invalid number of blocks to be generated')
+      throw new TypeError('First argument should be a number')
     }
 
     const blockHashes = await provider.generateBlock(numberOfBlocks)
 
     if (!isArray(blockHashes)) {
-      throw new Error('Provider returned an invalid response')
+      throw new errors.InvalidProviderResponseError('Response should be an array')
     }
 
     const invalidBlock = find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))
 
     if (invalidBlock) {
-      throw new Error('Provider returned an invalid response')
+      throw new errors.InvalidProviderResponseError('Invalid block(s) found in provider\'s reponse')
     }
 
     return blockHashes
@@ -118,21 +119,21 @@ export default class ChainAbstractionLayer {
     const provider = this.getProviderForMethod('getBlockByHash')
 
     if (!isString(blockHash)) {
-      throw new Error('Block hash should be a string')
+      throw new TypeError('Block hash should be a string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(blockHash))) {
-      throw new Error('Block hash should be a valid hex string')
+      throw new TypeError('Block hash should be a valid hex string')
     }
 
     if (!isBoolean(includeTx)) {
-      throw new Error('Second parameter should be boolean')
+      throw new TypeError('Second parameter should be boolean')
     }
 
     const block = await provider.getBlockByHash(blockHash, includeTx)
 
     if (!this.validateBlock(block)) {
-      throw new Error('Provider returned an invalid block')
+      throw new errors.InvalidProviderResponseError('Provider returned an invalid block')
     }
 
     return block
@@ -151,11 +152,11 @@ export default class ChainAbstractionLayer {
     const provider = this.getProviderForMethod('getBlockByNumber')
 
     if (!isNumber(blockNumber)) {
-      throw new Error('Invalid Block number')
+      throw new TypeError('Invalid Block number')
     }
 
     if (!isBoolean(includeTx)) {
-      throw new Error('Second parameter should be boolean')
+      throw new TypeError('Second parameter should be boolean')
     }
 
     const block = await provider.getBlockByNumber(blockNumber, includeTx)
@@ -164,7 +165,7 @@ export default class ChainAbstractionLayer {
 
     if (!valid) {
       const errors = this.validateBlock.errors
-      throw new Error(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)
+      throw new errors.InvalidProviderResponseError(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)
     }
 
     return block
@@ -180,7 +181,7 @@ export default class ChainAbstractionLayer {
     const blockHeight = await provider.getBlockHeight()
 
     if (!isNumber(blockHeight)) {
-      throw new Error('Provider returned an invalid block height')
+      throw new errors.InvalidProviderResponseError('Provider returned an invalid block height')
     }
 
     return blockHeight
@@ -197,11 +198,11 @@ export default class ChainAbstractionLayer {
     const provider = this.getProviderForMethod('getTransactionByHash')
 
     if (!isString(txHash)) {
-      throw new Error('Transaction hash should be a string')
+      throw new TypeError('Transaction hash should be a string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-      throw new Error('Transaction hash should be a valid hex string')
+      throw new TypeError('Transaction hash should be a valid hex string')
     }
 
     const transaction = await provider.getTransactionByHash(txHash)
@@ -210,7 +211,7 @@ export default class ChainAbstractionLayer {
 
     if (!valid) {
       const errors = this.validateTransaction.errors
-      throw new Error(`Provider returned an invalid transaction, ${errors[0].dataPath} ${errors[0].message}`)
+      throw new errors.InvalidProviderResponseError(`Provider returned an invalid transaction: ${errors[0].dataPath} ${errors[0].message}`)
     }
 
     return transaction
@@ -227,17 +228,17 @@ export default class ChainAbstractionLayer {
     const provider = this.getProviderForMethod('getRawTransactionByHash')
 
     if (!isString(txHash)) {
-      throw new Error('Transaction hash should be a string')
+      throw new TypeError('Transaction hash should be a string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-      throw new Error('Transaction hash should be a valid hex string')
+      throw new TypeError('Transaction hash should be a valid hex string')
     }
 
     const transaction = await provider.getRawTransactionByHash(txHash)
 
     if (!this.validateTransaction(transaction)) {
-      throw new Error('Provider returned an invalid transaction')
+      throw new errors.InvalidProviderResponseError('Provider returned an invalid transaction')
     }
 
     return transaction
@@ -249,7 +250,7 @@ export default class ChainAbstractionLayer {
     const addresses = await provider.getAddresses()
 
     if (!isArray(addresses)) {
-      throw new Error('Provider returned an invalid response')
+      throw new errors.InvalidProviderResponseError('Provider returned an invalid response')
     }
 
     return addresses
@@ -279,7 +280,7 @@ export default class ChainAbstractionLayer {
     const txHash = await provider.sendTransaction(from, to, value, data)
 
     if (!isString(txHash)) {
-      throw new Error('sendTransaction method should return a transaction id string')
+      throw new TypeError('sendTransaction method should return a transaction id string')
     }
 
     return txHash
@@ -298,7 +299,7 @@ export default class ChainAbstractionLayer {
     const txHash = await provider.sendRawTransaction(rawTransaction)
 
     if (!isString(txHash)) {
-      throw new Error('sendRawTransaction method should return a transaction id string')
+      throw new errors.InvalidProviderResponseError('sendRawTransaction method should return a transaction id string')
     }
 
     return txHash
@@ -315,8 +316,9 @@ export default class ChainAbstractionLayer {
 
 ChainAbstractionLayer.Provider = Provider
 ChainAbstractionLayer.providers = providers
+ChainAbstractionLayer.crypto = crypto
+ChainAbstractionLayer.errors = errors
 ChainAbstractionLayer.schemas = {
   Block: BlockSchema,
   Transaction: TransactionSchema
 }
-ChainAbstractionLayer.crypto = crypto
