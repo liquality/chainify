@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../../">
+  <title data-ice="title">src/providers/ethereum/EthereumSwapProvider.js | chainabstractionlayer</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NoProviderError">NoProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StandardError">StandardError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html">BitcoinSwapProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html">EthereumSwapProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureEthFormat">ensureEthFormat</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/providers/ethereum/EthereumSwapProvider.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Provider from &apos;../../Provider&apos;
+
+export default class EthereumSwapProvider extends Provider {
+  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
+    const dataSizeBase = 112
+    const redeemDestinationBase = 66
+    const refundDestinationBase = 89
+    const expirationHex = expiration.toString(16)
+    const expirationEncoded = expirationHex.length % 2 ? &apos;0&apos; + expirationHex : expirationHex // Pad with 0
+    const expirationSize = expirationEncoded.length / 2
+    const expirationPushOpcode = (0x60 - 1 + expirationSize).toString(16)
+    const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)
+    const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)
+    const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)
+    const recipientAddressEncoded = recipientAddress.replace(&apos;0x&apos;, &apos;&apos;) // Remove 0x if exists
+    const refundAddressEncoded = refundAddress.replace(&apos;0x&apos;, &apos;&apos;) // Remove 0x if exists
+    const secretHashEncoded = secretHash.replace(&apos;0x&apos;, &apos;&apos;) // Remove 0x if exists
+
+    return [
+      // Constructor
+      &apos;60&apos;, dataSizeEncoded, // PUSH1 {dataSizeEncoded}
+      &apos;80&apos;, // DUP1
+      &apos;60&apos;, &apos;0b&apos;, // PUSH1 0b
+      &apos;60&apos;, &apos;00&apos;, // PUSH1 00
+      &apos;39&apos;, // CODECOPY
+      &apos;60&apos;, &apos;00&apos;, // PUSH1 00
+      &apos;f3&apos;, // RETURN
+
+      // Contract
+      &apos;60&apos;, &apos;20&apos;, // PUSH1 20
+
+      // Get secret
+      &apos;80&apos;, // DUP1
+      &apos;60&apos;, &apos;00&apos;, // PUSH1 00
+      &apos;80&apos;, // DUP1
+      &apos;37&apos;, // CALLDATACOPY
+
+      // SHA256
+      &apos;60&apos;, &apos;21&apos;, // PUSH1 21
+      &apos;81&apos;, // DUP2
+      &apos;60&apos;, &apos;00&apos;, // PUSH1 00
+      &apos;80&apos;, // DUP1
+      &apos;60&apos;, &apos;02&apos;, // PUSH1 02
+      &apos;60&apos;, &apos;48&apos;, // PUSH1 48
+      &apos;f1&apos;, // CALL
+
+      // Validate with secretHash
+      &apos;7f&apos;, secretHashEncoded, // PUSH32 {secretHashEncoded}
+      &apos;60&apos;, &apos;21&apos;, // PUSH1 21
+      &apos;51&apos;, // MLOAD
+      &apos;14&apos;, // EQ
+      &apos;16&apos;, // AND (to make sure CALL succeeded)
+      // Redeem if secret is valid
+      &apos;60&apos;, redeemDestinationEncoded, // PUSH1 {redeemDestinationEncoded}
+      &apos;57&apos;, // JUMPI
+
+      // Check time lock
+      expirationPushOpcode, // PUSH{expirationSize}
+      expirationEncoded, // {expirationEncoded}
+      &apos;42&apos;, // TIMESTAMP
+      &apos;11&apos;, // GT
+      // Refund if timelock passed
+      &apos;60&apos;, refundDestinationEncoded, // PUSH1 {refundDestinationEncoded}
+      &apos;57&apos;,
+
+      &apos;00&apos;, // STOP
+
+      &apos;5b&apos;, // JUMPDEST
+      &apos;73&apos;, recipientAddressEncoded, // PUSH20 {recipientAddressEncoded}
+      &apos;ff&apos;, // SUICIDE
+
+      &apos;5b&apos;, // JUMPDEST
+      &apos;73&apos;, refundAddressEncoded, // PUSH20 {refundAddressEncoded}
+      &apos;ff&apos; // SUICIDE
+    ].join(&apos;&apos;)
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

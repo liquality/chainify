@@ -32,15 +32,23 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NoProviderError">NoProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StandardError">StandardError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/StandardError.js~StandardError.html">StandardError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html">BitcoinSwapProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html">EthereumSwapProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureEthFormat">ensureEthFormat</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></span></li>
 </ul>
@@ -50,14 +58,23 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/providers/bitcoin/BitcoinLedgerProvider.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Provider from &apos;../../Provider&apos;
 
+import axios from &apos;axios&apos;
 import Transport from &apos;@alias/ledger-transport&apos;
 import LedgerBtc from &apos;@ledgerhq/hw-app-btc&apos;
+import { BigNumber } from &apos;bignumber.js&apos;
 
+import crypto from &apos;../../crypto&apos;
+
+// TODO: Abstract out non signing methods into another provider?
 export default class BitcoinLedgerProvider extends Provider {
-  constructor () {
+  /**
+   * @param {boolean} testnet True if the testnet network is being used
+   */
+  constructor (testnet = false) {
     super()
     this._ledgerBtc = false
     this._derivationPath = `44&apos;/0&apos;/0&apos;/0`
+    this._blockChainInfoBaseUrl = testnet ? &apos;https://testnet.blockchain.info&apos; : &apos;https://blockchain.info&apos;
   }
 
   async _connectToLedger () {
@@ -69,6 +86,89 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _updateDerivationPath (path) {
     this._derivationPath = path
+  }
+
+  async _getAddressDetails (address) {
+    return (await axios.get(`${this._blockChainInfoBaseUrl}/balance?active=${address}&amp;cors=true`)).data[address]
+  }
+
+  async _getUnspentTransactions (address) {
+    return (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&amp;cors=true`)).data.unspent_outputs
+  }
+
+  async _getTransactionHex (transactionHash) {
+    return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&amp;cors=true`)).data
+  }
+
+  async _getSpendingDetails () {
+    let unspentInputs = []
+    let unusedAddress
+    let addressIndex = 0
+    for (let addressHasTransactions = true; addressHasTransactions; ++addressIndex) {
+      const path = `44&apos;/0&apos;/0&apos;/${addressIndex}`
+      const address = {
+        ...(await this._ledgerBtc.getWalletPublicKey(path)),
+        path
+      }
+      const addressDetails = await this._getAddressDetails(address.bitcoinAddress)
+      addressHasTransactions = addressDetails.n_tx &gt; 0
+      if (addressHasTransactions) {
+        let utxos = await this._getUnspentTransactions(address.bitcoinAddress)
+        utxos = utxos.map((utxo) =&gt; ({
+          ...utxo,
+          path,
+          address: address.bitcoinAddress
+        }))
+        unspentInputs.push(...utxos)
+      } else {
+        unusedAddress = address
+      }
+    }
+
+    return {
+      unusedAddress,
+      unspentInputs
+    }
+  }
+
+  _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation
+    return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte
+  }
+
+  _getUnspentInputsForAmount (unspentInputs, amount, numOutputs) {
+    let unspentInputsToUse = []
+    let amountAccumulated = 0
+    unspentInputs.every((utxo) =&gt; {
+      amountAccumulated += utxo.value
+      unspentInputsToUse.push(utxo)
+      return amountAccumulated &lt; (amount + this._getFee(unspentInputsToUse.length, numOutputs, 3)) // TODO: hardcoded satoshi per byte
+    })
+    return unspentInputsToUse
+  }
+
+  async _getLedgerInputs (unspentInputs) {
+    const ledgerInputs = []
+    for (let unspentInput of unspentInputs) {
+      const transactionHex = await this._getTransactionHex(unspentInput.tx_hash_big_endian)
+      const tx = await this._ledgerBtc.splitTransaction(transactionHex)
+      ledgerInputs.push([tx, unspentInput.tx_output_n])
+    }
+    return ledgerInputs
+  }
+
+  _getAmountBuffer (amount) {
+    let hexAmount = BigNumber(amount).toString(16)
+    if (hexAmount.length % 2 === 1) { // Pad with 0 if required
+      hexAmount = &apos;0&apos; + hexAmount
+    }
+    const valueBuffer = Buffer.from(hexAmount, &apos;hex&apos;)
+    const buffer = Buffer.alloc(8)
+    valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes
+    return buffer.reverse() // Amount needs to be little endian
+  }
+
+  _addressToPubKeyHash (address) {
+    return crypto.base58.decode(address).toString(&apos;hex&apos;).substring(2, 42)
   }
 
   async getAddresses () {
@@ -85,6 +185,57 @@ export default class BitcoinLedgerProvider extends Provider {
     const hex = Buffer.from(message).toString(&apos;hex&apos;)
 
     return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
+  }
+
+  async sendTransaction (from, to, value, data) {
+    await this._connectToLedger()
+
+    const {unusedAddress, unspentInputs} = await this._getSpendingDetails()
+    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)
+    const fee = this._getFee(unspentInputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee
+    const totalAmount = unspentInputsToUse.reduce((acc, input) =&gt; acc + input.value, 0)
+
+    if (totalAmount &lt; value + fee) {
+      throw new Error(&apos;Not enough balance&apos;)
+    }
+
+    const ledgerInputs = await this._getLedgerInputs(unspentInputsToUse)
+    const paths = unspentInputsToUse.map(input =&gt; input.path)
+
+    const sendAmount = value
+    const changeAmount = totalAmount - value - fee
+
+    const sendPubKeyHash = this._addressToPubKeyHash(to)
+    const changePubKeyHash = this._addressToPubKeyHash(unusedAddress.bitcoinAddress)
+
+    const sendP2PKHScript = [
+      &apos;76&apos;, // OP_DUP
+      &apos;a9&apos;, // OP_HASH160
+      &apos;14&apos;, // data size to be pushed
+      sendPubKeyHash, // &lt;PUB_KEY_HASH&gt;
+      &apos;88&apos;, // OP_EQUAL_VERIFY
+      &apos;ac&apos; // OP_CHECKSIG
+    ].join(&apos;&apos;)
+
+    const changeP2PKHScript = [
+      &apos;76&apos;, // OP_DUP
+      &apos;a9&apos;, // OP_HASH160
+      &apos;14&apos;, // data size to be pushed
+      changePubKeyHash, // &lt;PUB_KEY_HASH&gt;
+      &apos;88&apos;, // OP_EQUAL_VERIFY
+      &apos;ac&apos; // OP_CHECKSIG
+    ].join(&apos;&apos;)
+
+    const outputs = [
+      {amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, &apos;hex&apos;)},
+      {amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, &apos;hex&apos;)}
+    ]
+
+    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
+
+    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
+
+    return this.getMethod(&apos;sendRawTransaction&apos;)(signedTransaction)
   }
 }
 </code></pre>

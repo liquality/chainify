@@ -32,15 +32,23 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NoProviderError">NoProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StandardError">StandardError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/StandardError.js~StandardError.html">StandardError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html">BitcoinSwapProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html">EthereumSwapProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureEthFormat">ensureEthFormat</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></span></li>
 </ul>
@@ -48,13 +56,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import ChainAbstractionLayer from &apos;<span><a href="file/src/index.js.html#lineNumber11">chainabstractionlayer/src/index.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import ChainAbstractionLayer from &apos;<span><a href="file/src/index.js.html#lineNumber12">chainabstractionlayer/src/index.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/index.js.html#lineNumber11">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/index.js.html#lineNumber12">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -106,7 +114,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
         </p>
       </div>
       <div>
@@ -198,7 +206,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-member-version">version</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-member-version">version</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
@@ -232,7 +240,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-member-_providers">_providers</a></span></span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-member-_providers">_providers</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></span>
         </p>
       </div>
       <div>
@@ -267,13 +275,13 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-addProvider">addProvider</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>Client</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-addProvider">addProvider</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>): <span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Add a provider.</p>
+        <div data-ice="description"><p>Add a provider</p>
 </div>
       </div>
     </td>
@@ -296,7 +304,7 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-generateBlock">generateBlock</a></span></span><span class="code" data-ice="signature">(numberOfBlocks: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span><span>[]</span></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-generateBlock">generateBlock</a></span></span><span class="code" data-ice="signature">(numberOfBlocks: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span><span>[]</span></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -325,13 +333,43 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSecret">generateSecret</a></span></span><span class="code" data-ice="signature">(message: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSecret">generateSecret</a></span></span><span class="code" data-ice="signature">(message: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
+        <div data-ice="description"><p>Generate a secret.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSwap">generateSwap</a></span></span><span class="code" data-ice="signature">(recipientAddress: <span>*</span>, refundAddress: <span>*</span>, secretHash: <span>*</span>, expiration: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
         
+        
+        <div data-ice="description"><p>Generate swap transaction data</p>
+</div>
       </div>
     </td>
     <td>
@@ -353,13 +391,14 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getAddresses">getAddresses</a></span></span><span class="code" data-ice="signature">(): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getAddresses">getAddresses</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Get addresses/accounts of the user.</p>
+</div>
       </div>
     </td>
     <td>
@@ -381,7 +420,7 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByHash">getBlockByHash</a></span></span><span class="code" data-ice="signature">(blockHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByHash">getBlockByHash</a></span></span><span class="code" data-ice="signature">(blockHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -410,7 +449,7 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByNumber">getBlockByNumber</a></span></span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByNumber">getBlockByNumber</a></span></span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -439,13 +478,13 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockHeight">getBlockHeight</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockHeight">getBlockHeight</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Get the current block height of the chain.</p>
+        <div data-ice="description"><p>Get current block height of the chain.</p>
 </div>
       </div>
     </td>
@@ -468,7 +507,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getProviderForMethod">getProviderForMethod</a></span></span><span class="code" data-ice="signature">(method: <span>*</span>, requestor: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getProviderForMethod">getProviderForMethod</a></span></span><span class="code" data-ice="signature">(method: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, requestor: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span>
         </p>
       </div>
       <div>
@@ -497,7 +536,7 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getRawTransactionByHash">getRawTransactionByHash</a></span></span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getRawTransactionByHash">getRawTransactionByHash</a></span></span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -526,7 +565,7 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getTransactionByHash">getTransactionByHash</a></span></span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-getTransactionByHash">getTransactionByHash</a></span></span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -555,13 +594,14 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-sendTransaction">sendTransaction</a></span></span><span class="code" data-ice="signature">(from: <span>*</span>, to: <span>*</span>, value: <span>*</span>, data: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-sendRawTransaction">sendRawTransaction</a></span></span><span class="code" data-ice="signature">(rawTransaction: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Broadcast a transaction to the network using it&apos;s raw seriealized transaction.</p>
+</div>
       </div>
     </td>
     <td>
@@ -583,13 +623,43 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-signMessage">signMessage</a></span></span><span class="code" data-ice="signature">(message: <span>*</span>, from: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-sendTransaction">sendTransaction</a></span></span><span class="code" data-ice="signature">(from: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, to: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, value: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
         </p>
       </div>
       <div>
         
         
+        <div data-ice="description"><p>Send a transaction to the chain</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html#instance-method-signMessage">signMessage</a></span></span><span class="code" data-ice="signature">(message: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, from: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</a></span>&gt;</span>
+        </p>
+      </div>
+      <div>
         
+        
+        <div data-ice="description"><p>Sign a message.</p>
+</div>
       </div>
     </td>
     <td>
@@ -615,11 +685,11 @@
     
     
     
-    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
+    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber17">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber18">source</a></span></span>
     </span>
   </h3>
 
@@ -641,16 +711,16 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">provider</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></td>
+      <td data-ice="type" class="code"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
-      <td data-ice="description"><p>The provider instance.</p>
+      <td data-ice="description"><p>Data source/provider for the instance</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">version</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
-      <td data-ice="description"><p>Version string</p>
+      <td data-ice="description"><p>Minimum blockchain node version to support</p>
 </td>
     </tr>
 </tbody>
@@ -690,7 +760,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber23">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber21">source</a></span></span>
     </span>
   </h3>
 
@@ -733,7 +803,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber22">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber20">source</a></span></span>
     </span>
   </h3>
 
@@ -772,11 +842,11 @@
     
     
     
-    <span class="code" data-ice="name">version</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">version</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber18">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber31">source</a></span></span>
     </span>
   </h3>
 
@@ -817,11 +887,11 @@
     
     
     
-    <span class="code" data-ice="name">_providers</span><span class="code" data-ice="signature">: <span><span>*</span><span>[]</span></span></span>
+    <span class="code" data-ice="name">_providers</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber19">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber26">source</a></span></span>
     </span>
   </h3>
 
@@ -863,18 +933,18 @@
     
     
     
-    <span class="code" data-ice="name">addProvider</span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>Client</span></span>
+    <span class="code" data-ice="name">addProvider</span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>): <span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber35">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber45">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Add a provider.</p>
+  <div data-ice="description"><p>Add a provider</p>
 </div>
 
   
@@ -889,9 +959,9 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">provider</td>
-      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"><p>The provider instance.</p>
+      <td data-ice="type" class="code"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>The provider instance</p>
 </td>
     </tr>
 </tbody>
@@ -904,8 +974,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>Client</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns instance of ChainAbstractionLayer</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -917,7 +988,24 @@
 
   
 
-  
+  <div data-ice="throwWrap">
+    <h4>Throw:</h4>
+    <table>
+      <tbody>
+      
+      <tr class="throw" data-ice="throw">
+        <td><p data-ice="throwName"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></p></td>
+        <td data-ice="throwDesc"><p>When invalid provider is provider</p>
+</td>
+      </tr>
+<tr class="throw" data-ice="throw">
+        <td><p data-ice="throwName"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></p></td>
+        <td data-ice="throwDesc"><p>When same provider is added again</p>
+</td>
+      </tr>
+</tbody>
+    </table>
+  </div>
 
   
 
@@ -936,11 +1024,11 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">generateBlock</span><span class="code" data-ice="signature">(numberOfBlocks: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span><span>[]</span></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="code" data-ice="name">generateBlock</span><span class="code" data-ice="signature">(numberOfBlocks: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span><span>[]</span></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber85">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber113">source</a></span></span>
     </span>
   </h3>
 
@@ -977,9 +1065,11 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span><span>[]</span></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns a promise with Block hash of the
- generated blocks if resolved. Throws an Error if rejected.</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span><span>[]</span></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves
+ with Block hash of the generated blocks.
+ Rejects with TypeError if input is invalid.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
 </td>
         </tr>
       </tbody>
@@ -1011,18 +1101,19 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">generateSecret</span><span class="code" data-ice="signature">(message: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">generateSecret</span><span class="code" data-ice="signature">(message: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber278">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber364">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Generate a secret.</p>
+</div>
 
   
 
@@ -1036,6 +1127,98 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">message</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>Message to be used for generating secret.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with a secret.</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-generateSwap">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">generateSwap</span><span class="code" data-ice="signature">(recipientAddress: <span>*</span>, refundAddress: <span>*</span>, secretHash: <span>*</span>, expiration: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber375">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Generate swap transaction data</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">recipientAddress</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">refundAddress</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">secretHash</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">expiration</td>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
@@ -1082,18 +1265,19 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getAddresses</span><span class="code" data-ice="signature">(): <span>*</span></span>
+    <span class="code" data-ice="name">getAddresses</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber246">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber290">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Get addresses/accounts of the user.</p>
+</div>
 
   
 
@@ -1105,8 +1289,11 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with a list
+ of accounts.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1137,11 +1324,11 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getBlockByHash</span><span class="code" data-ice="signature">(blockHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="code" data-ice="name">getBlockByHash</span><span class="code" data-ice="signature">(blockHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber117">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber147">source</a></span></span>
     </span>
   </h3>
 
@@ -1165,8 +1352,8 @@
       <td data-ice="name" class="code" data-depth="0">blockHash</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
       <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
-      <td data-ice="description"><p>A hexadecimal string that represents the <em>hash</em> of the
- desired block.</p>
+      <td data-ice="description"><p>A hexadecimal string that represents the
+ <em>hash</em> of the desired block.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="0">
@@ -1187,11 +1374,12 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns a Block with the same hash as
- the given input. Throws an Error if no block was found. If <code>includeTx</code> is true, the
- transaction property is an array of Transactions; otherwise, it is a list of
- transaction hashes.</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with a Block with the same hash as the given input.
+ If <code>includeTx</code> is true, the transaction property is an array of Transactions;
+ otherwise, it is a list of transaction hashes.
+ Rejects with TypeError if input is invalid.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
 </td>
         </tr>
       </tbody>
@@ -1223,11 +1411,11 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getBlockByNumber</span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="code" data-ice="name">getBlockByNumber</span><span class="code" data-ice="signature">(blockNumber: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, includeTx: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber150">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber182">source</a></span></span>
     </span>
   </h3>
 
@@ -1272,11 +1460,12 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns a Block with the same number as
- the given input. Throws an Error if no block was found. If <code>includeTx</code> is true, the
- transaction property is an array of Transactions; otherwise, it is a list of
- transaction hashes.</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Block</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with a Block with the same number as the given input.
+ If <code>includeTx</code> is true, the transaction property is an array of Transactions;
+ otherwise, it is a list of transaction hashes.
+ Rejects with TypeError if input is invalid.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
 </td>
         </tr>
       </tbody>
@@ -1308,18 +1497,18 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getBlockHeight</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="code" data-ice="name">getBlockHeight</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber177">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber211">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Get the current block height of the chain.</p>
+  <div data-ice="description"><p>Get current block height of the chain.</p>
 </div>
 
   
@@ -1332,8 +1521,11 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with
+ chain height.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1364,11 +1556,11 @@
     
     
     
-    <span class="code" data-ice="name">getProviderForMethod</span><span class="code" data-ice="signature">(method: <span>*</span>, requestor: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
+    <span class="code" data-ice="name">getProviderForMethod</span><span class="code" data-ice="signature">(method: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, requestor: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>): <span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber55">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber76">source</a></span></span>
     </span>
   </h3>
 
@@ -1390,16 +1582,19 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">method</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>Name of the method to look for in the provider stack</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">requestor</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: false</li></ul></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>If provided, it returns providers only
+ above the requestor in the stack.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -1411,8 +1606,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Returns a provider instance associated with the requested method</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1424,7 +1620,31 @@
 
   
 
-  
+  <div data-ice="throwWrap">
+    <h4>Throw:</h4>
+    <table>
+      <tbody>
+      
+      <tr class="throw" data-ice="throw">
+        <td><p data-ice="throwName"><span><a href="variable/index.html#static-variable-NoProviderError">NoProviderError</a></span></p></td>
+        <td data-ice="throwDesc"><p>When no provider is available in the stack.</p>
+</td>
+      </tr>
+<tr class="throw" data-ice="throw">
+        <td><p data-ice="throwName"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></p></td>
+        <td data-ice="throwDesc"><p>When the requested method is not provided
+ by any provider above requestor in the provider stack</p>
+</td>
+      </tr>
+<tr class="throw" data-ice="throw">
+        <td><p data-ice="throwName"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></p></td>
+        <td data-ice="throwDesc"><p>When requested method is not supported by
+ version specified</p>
+</td>
+      </tr>
+</tbody>
+    </table>
+  </div>
 
   
 
@@ -1443,11 +1663,11 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getRawTransactionByHash</span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="code" data-ice="name">getRawTransactionByHash</span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber226">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber264">source</a></span></span>
     </span>
   </h3>
 
@@ -1485,9 +1705,11 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns the raw Transaction with the same hash as the
- given output. Throws an Error if no transaction was found.</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with the raw Transaction with
+ the same hash as the given output.
+ Rejects with TypeError if input is invalid.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
 </td>
         </tr>
       </tbody>
@@ -1519,11 +1741,11 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">getTransactionByHash</span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</span>
+    <span class="code" data-ice="name">getTransactionByHash</span><span class="code" data-ice="signature">(txHash: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber196">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber232">source</a></span></span>
     </span>
   </h3>
 
@@ -1561,9 +1783,87 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>Client.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a></span>&gt;</td>
-          <td class="return-desc" data-ice="returnDescription"><p>Returns a Transaction with the
- same hash as the given input. Throws an Error if no transaction was found.</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span>ChainAbstractionLayer.schemas.Transaction</span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError">TypeError</a></span>|<span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with a Transaction with the same hash as the given input.
+ Rejects with TypeError if input is invalid.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-sendRawTransaction">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">sendRawTransaction</span><span class="code" data-ice="signature">(rawTransaction: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber347">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Broadcast a transaction to the network using it&apos;s raw seriealized transaction.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">rawTransaction</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>A raw transaction usually in the form of a
+ hexadecimal string that represents the serialized transaction.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with an
+ identifier for the broadcasted transaction.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
 </td>
         </tr>
       </tbody>
@@ -1595,18 +1895,19 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">sendTransaction</span><span class="code" data-ice="signature">(from: <span>*</span>, to: <span>*</span>, value: <span>*</span>, data: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">sendTransaction</span><span class="code" data-ice="signature">(from: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, to: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, value: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, data: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber266">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber327">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Send a transaction to the chain</p>
+</div>
 
   
 
@@ -1620,27 +1921,33 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">from</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>The address identifier for the sender.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">to</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>The address identifier for the receiver.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">value</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>Number representing the amount associated with.
+ the transaction.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">data</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>Optional data to send with the transaction.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -1652,8 +1959,11 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with an identifier for
+ the broadcasted transaction.
+ Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1684,18 +1994,19 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">signMessage</span><span class="code" data-ice="signature">(message: <span>*</span>, from: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">signMessage</span><span class="code" data-ice="signature">(message: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, from: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</a></span>&gt;</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber258">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/index.js.html#lineNumber308">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Sign a message.</p>
+</div>
 
   
 
@@ -1709,15 +2020,17 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">message</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>Message to be signed.</p>
+</td>
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">from</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
+      <td data-ice="description"><p>The address from which the message is signed.</p>
+</td>
     </tr>
 </tbody>
   </table>
@@ -1729,8 +2042,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</a></span>&gt;</td>
+          <td class="return-desc" data-ice="returnDescription"><p>Resolves with a signed message.</p>
+</td>
         </tr>
       </tbody>
     </table>

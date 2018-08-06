@@ -18,10 +18,22 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "chainabstractionlayer/src/providers/bitcoin/bitcoinswapprovider.js~bitcoinswapprovider",
+    "class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html",
+    "<span>BitcoinSwapProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinSwapProvider.js</span>",
+    "class"
+  ],
+  [
     "chainabstractionlayer/src/index.js~chainabstractionlayer",
     "class/src/index.js~ChainAbstractionLayer.html",
     "<span>ChainAbstractionLayer</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/index.js</span>",
     "class"
+  ],
+  [
+    "chainabstractionlayer/src/errors.js~duplicateprovidererror",
+    "variable/index.html#static-variable-DuplicateProviderError",
+    "<span>DuplicateProviderError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
   ],
   [
     "chainabstractionlayer/src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider",
@@ -42,10 +54,34 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "chainabstractionlayer/src/providers/ethereum/ethereumswapprovider.js~ethereumswapprovider",
+    "class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html",
+    "<span>EthereumSwapProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumSwapProvider.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/errors.js~invalidprovidererror",
+    "variable/index.html#static-variable-InvalidProviderError",
+    "<span>InvalidProviderError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
+  ],
+  [
+    "chainabstractionlayer/src/errors.js~invalidproviderresponseerror",
+    "variable/index.html#static-variable-InvalidProviderResponseError",
+    "<span>InvalidProviderResponseError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
+  ],
+  [
     "chainabstractionlayer/src/providers/jsonrpcprovider.js~jsonrpcprovider",
     "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html",
     "<span>JsonRpcProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/JsonRpcProvider.js</span>",
     "class"
+  ],
+  [
+    "chainabstractionlayer/src/errors.js~noprovidererror",
+    "variable/index.html#static-variable-NoProviderError",
+    "<span>NoProviderError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
   ],
   [
     "chainabstractionlayer/src/provider.js~provider",
@@ -60,10 +96,22 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "chainabstractionlayer/src/providers/standarderror.js~standarderror",
-    "class/src/providers/StandardError.js~StandardError.html",
-    "<span>StandardError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/StandardError.js</span>",
-    "class"
+    "chainabstractionlayer/src/errors.js~standarderror",
+    "variable/index.html#static-variable-StandardError",
+    "<span>StandardError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
+  ],
+  [
+    "chainabstractionlayer/src/errors.js~unimplementedmethoderror",
+    "variable/index.html#static-variable-UnimplementedMethodError",
+    "<span>UnimplementedMethodError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
+  ],
+  [
+    "chainabstractionlayer/src/errors.js~unsupportedmethoderror",
+    "variable/index.html#static-variable-UnsupportedMethodError",
+    "<span>UnsupportedMethodError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
   ],
   [
     "chainabstractionlayer/src/crypto.js~crypto",
@@ -396,6 +444,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/errors.js",
+    "file/src/errors.js.html",
+    "src/errors.js",
+    "file"
+  ],
+  [
     "src/index.js",
     "file/src/index.js.html",
     "src/index.js",
@@ -429,6 +483,12 @@ window.esdocSearchIndex = [
     "src/index.js~chainabstractionlayer#generatesecret",
     "class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSecret",
     "src/index.js~ChainAbstractionLayer#generateSecret",
+    "method"
+  ],
+  [
+    "src/index.js~chainabstractionlayer#generateswap",
+    "class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSwap",
+    "src/index.js~ChainAbstractionLayer#generateSwap",
     "method"
   ],
   [
@@ -471,6 +531,12 @@ window.esdocSearchIndex = [
     "src/index.js~chainabstractionlayer#gettransactionbyhash",
     "class/src/index.js~ChainAbstractionLayer.html#instance-method-getTransactionByHash",
     "src/index.js~ChainAbstractionLayer#getTransactionByHash",
+    "method"
+  ],
+  [
+    "src/index.js~chainabstractionlayer#sendrawtransaction",
+    "class/src/index.js~ChainAbstractionLayer.html#instance-method-sendRawTransaction",
+    "src/index.js~ChainAbstractionLayer#sendRawTransaction",
     "method"
   ],
   [
@@ -570,12 +636,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/providers/standarderror.js",
-    "file/src/providers/StandardError.js.html",
-    "src/providers/StandardError.js",
-    "file"
-  ],
-  [
     "src/providers/bitcoin/bitcoincrypto.js",
     "file/src/providers/bitcoin/BitcoinCrypto.js.html",
     "src/providers/bitcoin/BitcoinCrypto.js",
@@ -588,6 +648,18 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_addresstopubkeyhash",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_addressToPubKeyHash",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_addressToPubKeyHash",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_blockchaininfobaseurl",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_blockChainInfoBaseUrl",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_blockChainInfoBaseUrl",
+    "member"
+  ],
+  [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_connecttoledger",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_connectToLedger",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_connectToLedger",
@@ -598,6 +670,54 @@ window.esdocSearchIndex = [
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_derivationPath",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_derivationPath",
     "member"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getaddressdetails",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAddressDetails",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getAddressDetails",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getamountbuffer",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAmountBuffer",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getAmountBuffer",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getfee",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getFee",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getFee",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getledgerinputs",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getLedgerInputs",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getLedgerInputs",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getspendingdetails",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getSpendingDetails",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getSpendingDetails",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_gettransactionhex",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getTransactionHex",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getTransactionHex",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getunspentinputsforamount",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getUnspentInputsForAmount",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getUnspentInputsForAmount",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getunspenttransactions",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getUnspentTransactions",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getUnspentTransactions",
+    "method"
   ],
   [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_ledgerbtc",
@@ -621,6 +741,12 @@ window.esdocSearchIndex = [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getaddresses",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getAddresses",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getAddresses",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#sendtransaction",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-sendTransaction",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#sendTransaction",
     "method"
   ],
   [
@@ -670,6 +796,30 @@ window.esdocSearchIndex = [
     "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-getTransactionByHash",
     "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#getTransactionByHash",
     "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinrpcprovider.js~bitcoinrpcprovider#sendrawtransaction",
+    "class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html#instance-method-sendRawTransaction",
+    "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider#sendRawTransaction",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinswapprovider.js",
+    "file/src/providers/bitcoin/BitcoinSwapProvider.js.html",
+    "src/providers/bitcoin/BitcoinSwapProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinswapprovider.js~bitcoinswapprovider#generateswap",
+    "class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html#instance-method-generateSwap",
+    "src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider#generateSwap",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/index.js",
+    "file/src/providers/bitcoin/index.js.html",
+    "src/providers/bitcoin/index.js",
+    "file"
   ],
   [
     "src/providers/ethereum/ethereumledgerprovider.js",
@@ -744,6 +894,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#generateswap",
+    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-generateSwap",
+    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#generateSwap",
+    "method"
+  ],
+  [
     "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#getaddresses",
     "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-getAddresses",
     "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#getAddresses",
@@ -810,9 +966,27 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/providers/ethereum/ethereumswapprovider.js",
+    "file/src/providers/ethereum/EthereumSwapProvider.js.html",
+    "src/providers/ethereum/EthereumSwapProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/ethereum/ethereumswapprovider.js~ethereumswapprovider#generateswap",
+    "class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html#instance-method-generateSwap",
+    "src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider#generateSwap",
+    "method"
+  ],
+  [
     "src/providers/ethereum/ethereumutil.js",
     "file/src/providers/ethereum/EthereumUtil.js.html",
     "src/providers/ethereum/EthereumUtil.js",
+    "file"
+  ],
+  [
+    "src/providers/ethereum/index.js",
+    "file/src/providers/ethereum/index.js.html",
+    "src/providers/ethereum/index.js",
     "file"
   ],
   [
