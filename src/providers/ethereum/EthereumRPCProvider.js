@@ -19,11 +19,11 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this._rpc('eth_getBlockByNumber', blockNumber, includeTx)
+    return this.rpc('eth_getBlockByNumber', blockNumber, includeTx)
   }
 
   async getTransactionByHash (txHash) {
     txHash = ensureEthFormat(txHash)
-    return this._rpc('eth_getTransactionByHash', txHash)
+    return this.rpc('eth_getTransactionByHash', txHash)
   }
 }
