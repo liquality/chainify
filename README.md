@@ -11,7 +11,8 @@ import ChainAbstractionLayer from 'chainabstractionlayer'
 
 const { BitcoinRPCProvider } = ChainAbstractionLayer.providers.bitcoin
 
-const bitcoin = new ChainAbstractionLayer(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
+const bitcoin = new ChainAbstractionLayer()
+bitcoin.addProvider(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
 
 bitcoin
   .generateBlock(1) // returns Promise
