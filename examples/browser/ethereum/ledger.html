@@ -11,7 +11,8 @@
   <p><code>For errors and logs, check console</code></p>
   <script>
   /* global $, ChainAbstractionLayer */
-  const cal = new ChainAbstractionLayer(new ChainAbstractionLayer.providers.ethereum.EthereumLedgerProvider())
+  const cal = new ChainAbstractionLayer()
+  cal.addProvider(new ChainAbstractionLayer.providers.ethereum.EthereumLedgerProvider())
   cal.getAddresses().then(addresses => {
     const from = addresses[0]
     $('#address').text(from)

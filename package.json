@@ -53,6 +53,7 @@
     "chai-as-promised": "^7.1.1",
     "cross-env": "^5.2.0",
     "esdoc": "^1.1.0",
+    "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint-plugin-html": "^4.0.5",
     "eslint-plugin-markdown": "^1.0.0-beta.6",

@@ -1,5 +1,5 @@
 import { STATUS_CODES } from 'http'
-import StandardError from './StandardError'
+import { StandardError } from '../errors'
 
 export default class RpcError extends StandardError {
   constructor (code, msg, props = {}) {
@@ -34,3 +34,5 @@ export default class RpcError extends StandardError {
     return `${this.name}: ${this.code} ${this.message}`
   }
 }
+
+RpcError.prototype.name = 'RpcError'

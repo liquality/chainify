@@ -1,5 +1,5 @@
 const ChainAbstractionLayer = require('../../../')
-const Provider = ChainAbstractionLayer.Provider
+const { Provider } = ChainAbstractionLayer
 
 class X extends Provider {
   signMessage (message, from) {
