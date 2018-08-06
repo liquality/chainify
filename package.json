@@ -29,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/hw-app-btc": "^4.20.0",
     "@ledgerhq/hw-app-eth": "^4.19.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.19.1",
+    "@ledgerhq/hw-transport-node-hid": "~4.21.0",
     "@ledgerhq/hw-transport-u2f": "^4.20.0",
     "ajv": "^6.5.2",
     "axios": "^0.18.0",
