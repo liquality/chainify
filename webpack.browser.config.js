@@ -48,7 +48,10 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader?cacheDirectory=true',
         options: {
-          plugins: [ 'lodash' ],
+          plugins: [
+            'lodash',
+            '@babel/plugin-transform-runtime'
+          ],
           presets: [
             [
               '@babel/preset-env', {

@@ -1,5 +1,3 @@
-import 'regenerator-runtime/runtime'
-
 import Client from './Client'
 import Provider from './Provider'
 
