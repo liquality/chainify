@@ -1,11 +1,9 @@
-const ChainAbstractionLayer = require('../../../')
-const { BitcoinRPCProvider } = ChainAbstractionLayer.providers.bitcoin
+const { Client, providers } = require('../../../')
+const { BitcoinRPCProvider } = providers.bitcoin
 
-const prettyPrintJson = (val) => console.log(JSON.stringify(val, null, 2))
-
-const bitcoin = new ChainAbstractionLayer()
+const bitcoin = new Client()
 bitcoin.addProvider(new BitcoinRPCProvider('http://localhost:18332', 'bitcoin', 'local321'))
 
 ;(async () => {
-  prettyPrintJson(await bitcoin.generateBlock(1))
+  console.log(await bitcoin.generateBlock(1))
 })()

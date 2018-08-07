@@ -11,14 +11,15 @@
   <p><code>For errors and logs, check console</code></p>
   <script>
   /* global $, ChainAbstractionLayer */
-  const cal = new ChainAbstractionLayer()
-  cal.addProvider(new ChainAbstractionLayer.providers.bitcoin.BitcoinLedgerProvider())
-  cal.getAddresses().then(addresses => {
+  const { Client, providers } = ChainAbstractionLayer
+  const bitcoin = new Client()
+  bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider())
+  bitcoin.getAddresses().then(addresses => {
     const from = addresses[0]
     $('#address').text(from)
 
     $('#sign').click(() => {
-      cal.signMessage($('#message').val(), from).then(result => {
+      bitcoin.signMessage($('#message').val(), from).then(result => {
         $('#result').text(JSON.stringify(result, null, 2))
       })
     })

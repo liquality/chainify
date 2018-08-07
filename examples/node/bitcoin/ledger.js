@@ -1,11 +1,9 @@
-const ChainAbstractionLayer = require('../../../')
-const { BitcoinLedgerProvider } = ChainAbstractionLayer.providers.bitcoin
+const { Client, providers } = require('../../../')
+const { BitcoinLedgerProvider } = providers.bitcoin
 
-const prettyPrintJson = (val) => console.log(JSON.stringify(val, null, 2))
-
-const bitcoin = new ChainAbstractionLayer()
+const bitcoin = new Client()
 bitcoin.addProvider(new BitcoinLedgerProvider())
 
 ;(async () => {
-  prettyPrintJson(await bitcoin.signMessage('hello world'))
+  console.log(await bitcoin.signMessage('hello world'))
 })()

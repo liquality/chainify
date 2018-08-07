@@ -1,11 +1,9 @@
-const ChainAbstractionLayer = require('../../../')
-const { EthereumRPCProvider } = ChainAbstractionLayer.providers.ethereum
+const { Client, providers } = require('../../../')
+const { EthereumRPCProvider } = providers.ethereum
 
-const prettyPrintJson = (val) => console.log(JSON.stringify(val, null, 2))
-
-const ethereum = new ChainAbstractionLayer()
+const ethereum = new Client()
 ethereum.addProvider(new EthereumRPCProvider('http://localhost:8545'))
 
 ;(async () => {
-  prettyPrintJson(await ethereum.getAddresses())
+  console.log(await ethereum.getAddresses())
 })()
