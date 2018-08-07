@@ -1,11 +1,11 @@
 import BitcoinRPCProvider from './BitcoinRPCProvider'
 import BitcoinLedgerProvider from './BitcoinLedgerProvider'
-import BitcoinCrypto from './BitcoinCrypto'
 import BitcoinSwapProvider from './BitcoinSwapProvider'
+import * as BitcoinUtil from './BitcoinUtil'
 
-export default {
+export {
   BitcoinRPCProvider,
   BitcoinLedgerProvider,
-  crypto: BitcoinCrypto,
-  BitcoinSwapProvider
+  BitcoinSwapProvider,
+  BitcoinUtil
 }

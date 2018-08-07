@@ -34,11 +34,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: path.basename(pkg.browser),
     library: 'ChainAbstractionLayer',
-    libraryTarget: 'umd',
-    libraryExport: 'default'
-  },
-  node: {
-    fs: 'empty'
+    libraryTarget: 'umd'
   },
   resolve: {
     alias: {

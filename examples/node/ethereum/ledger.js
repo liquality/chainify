@@ -1,11 +1,9 @@
-const ChainAbstractionLayer = require('../../../')
-const { EthereumLedgerProvider } = ChainAbstractionLayer.providers.ethereum
+const { Client, providers } = require('../../../')
+const { EthereumLedgerProvider } = providers.ethereum
 
-const prettyPrintJson = (val) => console.log(JSON.stringify(val, null, 2))
-
-const ethereum = new ChainAbstractionLayer()
+const ethereum = new Client()
 ethereum.addProvider(new EthereumLedgerProvider())
 
 ;(async () => {
-  prettyPrintJson(await ethereum.signMessage('hello world'))
+  console.log(await ethereum.signMessage('hello world'))
 })()

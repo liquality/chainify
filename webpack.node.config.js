@@ -24,8 +24,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: path.basename(pkg.main),
-    libraryTarget: 'commonjs2',
-    libraryExport: 'default'
+    libraryTarget: 'commonjs2'
   },
   module: {
     rules: [

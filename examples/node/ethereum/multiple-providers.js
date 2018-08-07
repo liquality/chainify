@@ -1,5 +1,4 @@
-const ChainAbstractionLayer = require('../../../')
-const { Provider } = ChainAbstractionLayer
+const { Client, Provider } = require('../../../')
 
 class X extends Provider {
   signMessage (message, from) {
@@ -19,7 +18,7 @@ class Z extends Provider {
   }
 }
 
-const ethereum = new ChainAbstractionLayer()
+const ethereum = new Client()
 ethereum.addProvider(new X())
   .addProvider(new Y())
   .addProvider(new Z())

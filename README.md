@@ -7,11 +7,11 @@ Query different blockchains with a single and simple interface.
 ## Usage
 
 ```javascript
-import ChainAbstractionLayer from 'chainabstractionlayer'
+import { Client, providers } from 'chainabstractionlayer'
 
-const { BitcoinRPCProvider } = ChainAbstractionLayer.providers.bitcoin
+const { BitcoinRPCProvider } = providers.bitcoin
 
-const bitcoin = new ChainAbstractionLayer()
+const bitcoin = new Client()
 bitcoin.addProvider(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
 
 bitcoin

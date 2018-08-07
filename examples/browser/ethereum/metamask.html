@@ -11,14 +11,15 @@
   <p><code>For errors and logs, check console</code></p>
   <script>
   /* global $, web3, ChainAbstractionLayer */
-  const cal = new ChainAbstractionLayer()
-  cal.addProvider(new ChainAbstractionLayer.providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
-  cal.getAddresses().then(addresses => {
+  const { Client, providers } = ChainAbstractionLayer
+  const ethereum = new Client()
+  ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
+  ethereum.getAddresses().then(addresses => {
     const from = addresses[0]
     $('#address').text(from)
 
     $('#sign').click(() => {
-      cal.signMessage($('#message').val(), from).then(result => {
+      ethereum.signMessage($('#message').val(), from).then(result => {
         $('#result').text(JSON.stringify(result))
       })
     })

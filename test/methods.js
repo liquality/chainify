@@ -2,10 +2,9 @@
 
 const { expect } = require('chai').use(require('chai-as-promised'))
 
-const ChainAbstractionLayer = require('../')
-const { errors } = ChainAbstractionLayer
+const { Client, errors } = require('../')
 
-const lib = new ChainAbstractionLayer()
+const lib = new Client()
 
 describe('Client methods', () => {
   describe('generateBlock', () => {

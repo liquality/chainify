@@ -5,9 +5,9 @@ const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const { expect } = chai
 
-const ChainAbstractionLayer = require('../')
+const { providers: { ethereum: { EthereumSwapProvider } } } = require('../')
 
-const lib = new ChainAbstractionLayer.providers.ethereum.EthereumSwapProvider()
+const lib = new EthereumSwapProvider()
 
 describe('Ethereum Swap provider', () => {
   describe('Generate swap', () => {
