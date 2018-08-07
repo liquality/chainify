@@ -1,6 +1,5 @@
 import Provider from '../../Provider'
-import crypto from './BitcoinCrypto'
-const { addressToPubKeyHash } = crypto
+import { addressToPubKeyHash } from './BitcoinUtil'
 
 export default class BitcoinSwapProvider extends Provider {
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {

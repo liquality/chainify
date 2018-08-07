@@ -1,7 +1,7 @@
-import bitcoin from './bitcoin/'
-import ethereum from './ethereum/'
+import * as bitcoin from './bitcoin'
+import * as ethereum from './ethereum'
 
-export default {
+export {
   bitcoin,
   ethereum
 }

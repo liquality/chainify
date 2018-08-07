@@ -5,7 +5,7 @@ import Transport from '@alias/ledger-transport'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 
-import crypto from '../../crypto'
+import { addressToPubKeyHash } from './BitcoinUtil'
 
 // TODO: Abstract out non signing methods into another provider?
 export default class BitcoinLedgerProvider extends Provider {
@@ -109,10 +109,6 @@ export default class BitcoinLedgerProvider extends Provider {
     return buffer.reverse() // Amount needs to be little endian
   }
 
-  _addressToPubKeyHash (address) {
-    return crypto.base58.decode(address).toString('hex').substring(2, 42)
-  }
-
   async getAddresses () {
     await this._connectToLedger()
 
@@ -147,8 +143,8 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendAmount = value
     const changeAmount = totalAmount - value - fee
 
-    const sendPubKeyHash = this._addressToPubKeyHash(to)
-    const changePubKeyHash = this._addressToPubKeyHash(unusedAddress.bitcoinAddress)
+    const sendPubKeyHash = addressToPubKeyHash(to)
+    const changePubKeyHash = addressToPubKeyHash(unusedAddress.bitcoinAddress)
 
     const sendP2PKHScript = [
       '76', // OP_DUP
@@ -169,8 +165,8 @@ export default class BitcoinLedgerProvider extends Provider {
     ].join('')
 
     const outputs = [
-      {amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex')},
-      {amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex')}
+      { amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex') },
+      { amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex') }
     ]
 
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })

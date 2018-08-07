@@ -1,5 +1,4 @@
-import BlockSchema from '../../schema/Block.json'
-import TransactionSchema from '../../schema/Transaction.json'
+import { Block, Transaction } from '../../schema'
 
 export function formatEthResponse (obj) {
   if (Array.isArray(obj)) {
@@ -14,10 +13,10 @@ export function formatEthResponse (obj) {
       if (Array.isArray(obj[key])) {
         obj[key] = formatEthResponse(obj[key])
       } else {
-        if ((BlockSchema.properties[key] &&
-          BlockSchema.properties[key].type === 'number') ||
-          (TransactionSchema.properties[key] &&
-          TransactionSchema.properties[key].type === 'number')) {
+        if ((Block.properties[key] &&
+          Block.properties[key].type === 'number') ||
+          (Transaction.properties[key] &&
+          Transaction.properties[key].type === 'number')) {
           obj[key] = parseInt(obj[key])
         } else {
           if (obj[key].startsWith('0x')) {

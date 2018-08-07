@@ -3,7 +3,7 @@ import EthereumLedgerProvider from './EthereumLedgerProvider'
 import EthereumMetaMaskProvider from './EthereumMetaMaskProvider'
 import EthereumSwapProvider from './EthereumSwapProvider'
 
-export default {
+export {
   EthereumRPCProvider,
   EthereumLedgerProvider,
   EthereumMetaMaskProvider,

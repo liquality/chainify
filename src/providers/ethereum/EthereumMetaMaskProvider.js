@@ -47,7 +47,7 @@ export default class EthereumMetaMaskProvider extends Provider {
   async signMessage (message, from) {
     const hex = Buffer.from(message).toString('hex')
 
-    return this._toMM('personal_sign', `0x${hex}`, from)
+    return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)
   }
 
   async sendTransaction (from, to, value, data) {
