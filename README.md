@@ -19,6 +19,17 @@ bitcoin
   .then(console.log) // Array<BlockHash>
 ```
 
+## Try Browser Version Now
+
+### Sign a message using Ledger
+
+* Source: [examples/browser/bitcoin/ledger.html](examples/browser/bitcoin/ledger.html)
+* Link: https://consensys.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html
+
+### Sign a message using MetaMask
+
+* Source: [examples/browser/ethereum/ledger.html](examples/browser/ethereum/ledger.html)
+* Link: https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/ledger.html
 
 ## Development
 
