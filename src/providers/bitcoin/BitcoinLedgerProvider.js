@@ -17,6 +17,7 @@ export default class BitcoinLedgerProvider extends Provider {
     this._ledgerBtc = false
     this._derivationPath = `44'/0'/0'/0`
     this._blockChainInfoBaseUrl = testnet ? 'https://testnet.blockchain.info' : 'https://blockchain.info'
+    this._coinType = testnet ? 1 : 0
   }
 
   async _connectToLedger () {
@@ -113,12 +114,33 @@ export default class BitcoinLedgerProvider extends Provider {
     return crypto.base58.decode(address).toString('hex').substring(2, 42)
   }
 
-  async getAddresses () {
+  async getAddresses (min = 5, segwit = false) {
     await this._connectToLedger()
 
-    const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(this._derivationPath)
+    let balance
+    let x = 0
+    let addresses = []
+    while (x < min + 1 || balance > 0) {
+      const address = await this.getAddress(x, segwit)
+      const addressDetails = await this._getAddressDetails(address)
+      balance = addressDetails.final_balance
+      addresses.push(address)
+      x++
+    }
 
-    return [ bitcoinAddress ]
+    return addresses
+  }
+
+  async getAddress (x, segwit = false) {
+    await this._connectToLedger()
+
+    const purpose = segwit ? 49 : 44
+
+    const derivationPath = `${purpose}'/${this._coinType}'/0'/0/${x}`
+
+    const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(derivationPath, false, segwit)
+
+    return bitcoinAddress
   }
 
   async signMessage (message, from) {
