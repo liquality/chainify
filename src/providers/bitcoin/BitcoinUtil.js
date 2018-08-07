@@ -6,9 +6,18 @@ import {
 } from '../../crypto'
 
 const networks = {
-  mainnet: '00',
-  testnet: '6F',
-  litecoin: '30'
+  bitcoin: {
+    pubKeyHash: '00',
+    scriptHash: '05'
+  },
+  testnet: {
+    pubKeyHash: '6F',
+    scriptHash: 'C4'
+  },
+  litecoin: {
+    pubKeyHash: '30',
+    scriptHash: '32'
+  }
 }
 
 /**
@@ -28,25 +37,27 @@ export function compressPubKey (pubKey) {
 /**
  * Get address from pubKey.
  * @param {!string|Buffer} pubKey - 65 byte uncompressed pubKey or 33 byte compressed pubKey.
- * @param {!string} network - Network.
+ * @param {!string} network - bitcoin, testnet, or litecoin.
+ * @param {!string} type - pubKeyHash or scriptHash.
  * @return {string} Returns the address of pubKey.
  */
-export function pubKeyToAddress (pubKey, network) {
+export function pubKeyToAddress (pubKey, network, type) {
   pubKey = ensureBuffer(pubKey)
   const pubKeyHash = hash160(pubKey)
-  const addr = this.pubKeyHashToAddress(pubKeyHash, network)
+  const addr = this.pubKeyHashToAddress(pubKeyHash, network, type)
   return addr
 }
 
 /**
  * Get address from pubKeyHash.
  * @param {!string} pubKeyHash - hash160 of pubKey.
- * @param {!string} network - Network.
+ * @param {!string} network - bitcoin, testnet, or litecoin.
+ * @param {!string} type - pubKeyHash or scriptHash.
  * @return {string} Returns the address derived from pubKeyHash.
  */
-export function pubKeyHashToAddress (pubKeyHash, network) {
+export function pubKeyHashToAddress (pubKeyHash, network, type) {
   pubKeyHash = ensureBuffer(pubKeyHash)
-  const prefixHash = Buffer.concat([Buffer.from(networks[network], 'hex'), pubKeyHash])
+  const prefixHash = Buffer.concat([Buffer.from(networks[network][type], 'hex'), pubKeyHash])
   const checksum = sha256(sha256(prefixHash)).slice(0, 4)
   const addr = base58.encode(Buffer.concat([prefixHash, checksum]))
   return addr
