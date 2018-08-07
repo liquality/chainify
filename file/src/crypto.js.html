@@ -29,9 +29,12 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
@@ -44,7 +47,10 @@
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html">BitcoinSwapProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-addressToPubKeyHash">addressToPubKeyHash</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-compressPubKey">compressPubKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pubKeyHashToAddress">pubKeyHashToAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pubKeyToAddress">pubKeyToAddress</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
@@ -56,11 +62,61 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/crypto.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { sha256, ripemd160 } from &apos;bcrypto&apos;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import cryptoHash from &apos;crypto-hashing&apos;
 import base58 from &apos;bs58&apos;
 import bech32 from &apos;bech32&apos;
 
-const crypto = {
+/**
+ * Ensure message is in buffer format.
+ * @param {string} message - any string.
+ * @return {string} Returns Buffer of string.
+ */
+function ensureBuffer (message) {
+  if (typeof message === &apos;string&apos;) {
+    message = Buffer.from(message, &apos;hex&apos;)
+  }
+
+  return message
+}
+
+/**
+ * Get hash of a message in hex.
+ * @param {!string} algorithm - Hashing algorithm.
+ * @param {!string|Buffer} message - Message to be hashed.
+ * @return {string} Returns the hash of a string.
+ */
+function hashToHex (algorithm, message) {
+  return cryptoHash(algorithm, ensureBuffer(message)).toString(&apos;hex&apos;)
+}
+
+/**
+ * Get hash160 of message.
+ * @param {!string|Buffer} message - message in string or Buffer.
+ * @return {string} Returns the hash160 of a string.
+ */
+function hash160 (message) {
+  return hashToHex(&apos;hash160&apos;, message)
+}
+
+/**
+ * Get sha256 of message.
+ * @param {!string|Buffer} message - message in string or Buffer.
+ * @return {string} Returns the sha256 of a string.
+ */
+function sha256 (message) {
+  return hashToHex(&apos;sha256&apos;, message)
+}
+
+/**
+ * Get ripemd160 of message.
+ * @param {!string|Buffer} message - message in string or Buffer.
+ * @return {string} Returns the ripemd160 of a string.
+ */
+function ripemd160 (message) {
+  return hashToHex(&apos;ripemd160&apos;, message)
+}
+
+export {
   /**
    * Base58 object with decode, decodeUnsafe, and encode functions.
    */
@@ -73,45 +129,11 @@ const crypto = {
    */
   bech32,
 
-  /**
-   * Get hash160 of message.
-   * @param {!string} message - any string.
-   * @return {string} Returns the hash160 of a string.
-   */
-  hash160 (message) {
-    const sha256Hashed = this.sha256(message)
-    const ripemd160Hashed = this.ripemd160(sha256Hashed)
-    return ripemd160Hashed
-  },
-
-  /**
-   * Get sha256 of message.
-   * @param {!string} message - any string.
-   * @return {string} Returns the sha256 of a string.
-   */
   sha256,
-
-  /**
-   * Get ripemd160 of message.
-   * @param {!string} message - any string.
-   * @return {string} Returns the ripemd160 of a string.
-   */
   ripemd160,
-
-  /**
-   * Ensure message is in buffer format.
-   * @param {string} message - any string.
-   * @return {string} Returns Buffer of string.
-   */
-  ensureBuffer (message) {
-    if (typeof message === &apos;string&apos;) {
-      message = Buffer.from(message, &apos;hex&apos;)
-    }
-    return message
-  }
+  hash160,
+  ensureBuffer
 }
-
-export default crypto
 </code></pre>
 
 </div>

@@ -566,10 +566,10 @@
   {
     "__docId__": 48,
     "kind": "file",
-    "name": "src/Provider.js",
-    "content": "export default class Provider {\n  /**\n   * Set client to a provider instance.\n   * @param {!ChainAbstractionLayer} client - The ChainAbstractionLayer instance\n   */\n  setClient (client) {\n    this.client = client\n  }\n\n  /**\n   * Get method for the provider\n   * @param {!string} method - Name of the method\n   * @return {function} Returns a method from a provider above current Provider\n   *  in the stack.\n   */\n  getMethod (method) {\n    const provider = this.client.getProviderForMethod(method, this)\n    return provider[method].bind(provider)\n  }\n}\n",
+    "name": "src/Client.js",
+    "content": "import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'\nimport * as Ajv from 'ajv'\n\nimport { Block, Transaction } from './schema'\nimport { hash160 } from './crypto'\nimport {\n  DuplicateProviderError,\n  InvalidProviderError,\n  InvalidProviderResponseError,\n  NoProviderError,\n  UnimplementedMethodError,\n  UnsupportedMethodError\n} from './errors'\n\nexport default class Client {\n  /**\n   * Client\n   * @param {Provider} [provider] - Data source/provider for the instance\n   * @param {string} [version] - Minimum blockchain node version to support\n   */\n  constructor (provider, version) {\n    const ajv = new Ajv()\n    this.validateTransaction = ajv.compile(Transaction)\n    this.validateBlock = ajv.compile(Block)\n\n    /**\n     * @type {Array}\n     */\n    this._providers = []\n\n    /**\n     * @type {string}\n     */\n    this.version = version\n\n    if (provider) {\n      this.addProvider(provider)\n    }\n  }\n\n  /**\n   * Add a provider\n   * @param {!Provider} provider - The provider instance\n   * @return {Client} Returns instance of Client\n   * @throws {InvalidProviderError} When invalid provider is provider\n   * @throws {DuplicateProviderError} When same provider is added again\n   */\n  addProvider (provider) {\n    if (!isFunction(provider.setClient)) {\n      throw new InvalidProviderError('Provider should have \"setClient\" method')\n    }\n\n    const duplicate = find(\n      this._providers,\n      _provider => provider.constructor === _provider.constructor\n    )\n\n    if (duplicate) {\n      throw new DuplicateProviderError('Duplicate provider')\n    }\n\n    provider.setClient(this)\n    this._providers.push(provider)\n    return this\n  }\n\n  /**\n   * Check the availability of a method.\n   * @param {!string} method - Name of the method to look for in the provider stack\n   * @param {boolean} [requestor=false] - If provided, it returns providers only\n   *  above the requestor in the stack.\n   * @return {Provider} Returns a provider instance associated with the requested method\n   * @throws {NoProviderError} When no provider is available in the stack.\n   * @throws {UnimplementedMethodError} When the requested method is not provided\n   *  by any provider above requestor in the provider stack\n   * @throws {UnsupportedMethodError} When requested method is not supported by\n   *  version specified\n   */\n  getProviderForMethod (method, requestor = false) {\n    if (this._providers.length === 0) {\n      throw new NoProviderError('No provider provided. Add a provider to the client')\n    }\n\n    const indexOfRequestor = requestor\n      ? findLastIndex(\n        this._providers,\n        provider => requestor.constructor === provider.constructor\n      ) : this._providers.length\n\n    const provider = findLast(\n      this._providers,\n      provider => isFunction(provider[method]), indexOfRequestor - 1\n    )\n\n    if (provider == null) {\n      throw new UnimplementedMethodError(`Unimplemented method \"${method}\"`)\n    }\n\n    if (isFunction(provider._checkMethodVersionSupport)) {\n      if (!provider._checkMethodVersionSupport(method, this.version)) {\n        throw new UnsupportedMethodError(`Method \"${method}\" is not supported by version \"${this.version}\"`)\n      }\n    }\n\n    return provider\n  }\n\n  /**\n   * Generate a block\n   * @param {!number} numberOfBlocks - Number of blocks to be generated\n   * @return {Promise<string[], TypeError|InvalidProviderResponseError>} Resolves\n   *  with Block hash of the generated blocks.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async generateBlock (numberOfBlocks) {\n    const provider = this.getProviderForMethod('generateBlock')\n\n    if (!isNumber(numberOfBlocks)) {\n      throw new TypeError('First argument should be a number')\n    }\n\n    const blockHashes = await provider.generateBlock(numberOfBlocks)\n\n    if (!isArray(blockHashes)) {\n      throw new InvalidProviderResponseError('Response should be an array')\n    }\n\n    const invalidBlock = find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))\n\n    if (invalidBlock) {\n      throw new InvalidProviderResponseError('Invalid block(s) found in provider\\'s reponse')\n    }\n\n    return blockHashes\n  }\n\n  /**\n   * Get a block given its hash.\n   * @param {!string} blockHash - A hexadecimal string that represents the\n   *  *hash* of the desired block.\n   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.\n   * @return {Promise<ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError>}\n   *  Resolves with a Block with the same hash as the given input.\n   *  If `includeTx` is true, the transaction property is an array of Transactions;\n   *  otherwise, it is a list of transaction hashes.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getBlockByHash (blockHash, includeTx = false) {\n    const provider = this.getProviderForMethod('getBlockByHash')\n\n    if (!isString(blockHash)) {\n      throw new TypeError('Block hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(blockHash))) {\n      throw new TypeError('Block hash should be a valid hex string')\n    }\n\n    if (!isBoolean(includeTx)) {\n      throw new TypeError('Second parameter should be boolean')\n    }\n\n    const block = await provider.getBlockByHash(blockHash, includeTx)\n\n    if (!this.validateBlock(block)) {\n      throw new InvalidProviderResponseError('Provider returned an invalid block')\n    }\n\n    return block\n  }\n\n  /**\n   * Get a block given its number.\n   * @param {!number} blockNumber - The number of the desired block.\n   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.\n   * @return {Promise<ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError>}\n   *  Resolves with a Block with the same number as the given input.\n   *  If `includeTx` is true, the transaction property is an array of Transactions;\n   *  otherwise, it is a list of transaction hashes.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getBlockByNumber (blockNumber, includeTx = false) {\n    const provider = this.getProviderForMethod('getBlockByNumber')\n\n    if (!isNumber(blockNumber)) {\n      throw new TypeError('Invalid Block number')\n    }\n\n    if (!isBoolean(includeTx)) {\n      throw new TypeError('Second parameter should be boolean')\n    }\n\n    const block = await provider.getBlockByNumber(blockNumber, includeTx)\n\n    const valid = this.validateBlock(block)\n\n    if (!valid) {\n      const errors = this.validateBlock.errors\n      throw new InvalidProviderResponseError(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)\n    }\n\n    return block\n  }\n\n  /**\n   * Get current block height of the chain.\n   * @return {Promise<number, InvalidProviderResponseError>} Resolves with\n   *  chain height.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getBlockHeight () {\n    const provider = this.getProviderForMethod('getBlockHeight')\n\n    const blockHeight = await provider.getBlockHeight()\n\n    if (!isNumber(blockHeight)) {\n      throw new InvalidProviderResponseError('Provider returned an invalid block height')\n    }\n\n    return blockHeight\n  }\n\n  /**\n   * Get a transaction given its hash.\n   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the\n   *  desired transaction.\n   * @return {Promise<ChainAbstractionLayer.schemas.Transaction, TypeError|InvalidProviderResponseError>}\n   *  Resolves with a Transaction with the same hash as the given input.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getTransactionByHash (txHash) {\n    const provider = this.getProviderForMethod('getTransactionByHash')\n\n    if (!isString(txHash)) {\n      throw new TypeError('Transaction hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {\n      throw new TypeError('Transaction hash should be a valid hex string')\n    }\n\n    const transaction = await provider.getTransactionByHash(txHash)\n\n    const valid = this.validateTransaction(transaction)\n\n    if (!valid) {\n      const errors = this.validateTransaction.errors\n      throw new InvalidProviderResponseError(`Provider returned an invalid transaction: ${errors[0].dataPath} ${errors[0].message}`)\n    }\n\n    return transaction\n  }\n\n  /**\n   * Get a raw hexadecimal transaction given its hash.\n   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the\n   *  desired transaction.\n   * @return {Promise<string, TypeError|InvalidProviderResponseError>} Resolves with the raw Transaction with\n   *  the same hash as the given output.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getRawTransactionByHash (txHash) {\n    const provider = this.getProviderForMethod('getRawTransactionByHash')\n\n    if (!isString(txHash)) {\n      throw new TypeError('Transaction hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {\n      throw new TypeError('Transaction hash should be a valid hex string')\n    }\n\n    const transaction = await provider.getRawTransactionByHash(txHash)\n\n    if (!this.validateTransaction(transaction)) {\n      throw new InvalidProviderResponseError('Provider returned an invalid transaction')\n    }\n\n    return transaction\n  }\n\n  /**\n   * Get addresses/accounts of the user.\n   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list\n   *  of accounts.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getAddresses () {\n    const provider = this.getProviderForMethod('getAddresses')\n\n    const addresses = await provider.getAddresses()\n\n    if (!isArray(addresses)) {\n      throw new InvalidProviderResponseError('Provider returned an invalid response')\n    }\n\n    return addresses\n  }\n\n  /**\n   * Sign a message.\n   * @param {!string} message - Message to be signed.\n   * @param {!string} from - The address from which the message is signed.\n   * @return {Promise<string, null>} Resolves with a signed message.\n   */\n  async signMessage (message, from) {\n    const provider = this.getProviderForMethod('signMessage')\n\n    const signedMessage = await provider.signMessage(message, from)\n\n    return signedMessage\n  }\n\n  /**\n   * Send a transaction to the chain\n   * @param {!string} from - The address identifier for the sender.\n   * @param {!string} to - The address identifier for the receiver.\n   * @param {!number} value - Number representing the amount associated with.\n   *  the transaction.\n   * @param {!string} [data] - Optional data to send with the transaction.\n   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an identifier for\n   *  the broadcasted transaction.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async sendTransaction (from, to, value, data) {\n    const provider = this.getProviderForMethod('sendTransaction')\n\n    const txHash = await provider.sendTransaction(from, to, value, data)\n\n    if (!isString(txHash)) {\n      throw new InvalidProviderResponseError('sendTransaction method should return a transaction id string')\n    }\n\n    return txHash\n  }\n\n  /**\n   * Broadcast a transaction to the network using it's raw seriealized transaction.\n   * @param {!string} rawTransaction - A raw transaction usually in the form of a\n   *  hexadecimal string that represents the serialized transaction.\n   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an\n   *  identifier for the broadcasted transaction.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async sendRawTransaction (rawTransaction) {\n    const provider = this.getProviderForMethod('sendRawTransaction')\n\n    const txHash = await provider.sendRawTransaction(rawTransaction)\n\n    if (!isString(txHash)) {\n      throw new InvalidProviderResponseError('sendRawTransaction method should return a transaction id string')\n    }\n\n    return txHash\n  }\n\n  /**\n   * Generate a secret.\n   * @param {!string} message - Message to be used for generating secret.\n   * @return {Promise<string, null>} Resolves with a secret.\n   */\n  async generateSecret (message) {\n    const addresses = await this.getAddresses()\n    const from = addresses[0]\n    const signedMessage = await this.signMessage(message, from)\n    const secret = hash160(signedMessage)\n    return secret\n  }\n\n  /**\n   * Generate swap transaction data\n   */\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    this._checkMethod('generateSwap')\n\n    if (!isString(recipientAddress)) {\n      throw new Error('Recipient address should be a string')\n    }\n\n    if (!isString(refundAddress)) {\n      throw new Error('Refund address should be a string')\n    }\n\n    if (!isString(secretHash)) {\n      throw new Error('Secret hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(recipientAddress))) {\n      throw new Error('Recipient address should be a valid hex string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(refundAddress))) {\n      throw new Error('Refund address should be a valid hex string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {\n      throw new Error('Secret hash should be a valid hex string')\n    }\n\n    if (!isNumber(expiration)) {\n      throw new Error('Invalid expiration time')\n    }\n\n    return this.provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)\n  }\n}\n",
     "static": true,
-    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/Provider.js",
+    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/Client.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
@@ -577,347 +577,31 @@
   {
     "__docId__": 49,
     "kind": "class",
-    "name": "Provider",
-    "memberof": "src/Provider.js",
+    "name": "Client",
+    "memberof": "src/Client.js",
     "static": true,
-    "longname": "src/Provider.js~Provider",
+    "longname": "src/Client.js~Client",
     "access": "public",
     "export": true,
-    "importPath": "chainabstractionlayer/src/Provider.js",
-    "importStyle": "Provider",
+    "importPath": "chainabstractionlayer/src/Client.js",
+    "importStyle": "Client",
     "description": null,
-    "lineNumber": 1,
+    "lineNumber": 15,
     "undocument": true,
     "interface": false
   },
   {
     "__docId__": 50,
-    "kind": "method",
-    "name": "setClient",
-    "memberof": "src/Provider.js~Provider",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/Provider.js~Provider#setClient",
-    "access": "public",
-    "description": "Set client to a provider instance.",
-    "lineNumber": 6,
-    "params": [
-      {
-        "nullable": false,
-        "types": [
-          "ChainAbstractionLayer"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "client",
-        "description": "The ChainAbstractionLayer instance"
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 51,
-    "kind": "member",
-    "name": "client",
-    "memberof": "src/Provider.js~Provider",
-    "static": false,
-    "longname": "src/Provider.js~Provider#client",
-    "access": "public",
-    "description": null,
-    "lineNumber": 7,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 52,
-    "kind": "method",
-    "name": "getMethod",
-    "memberof": "src/Provider.js~Provider",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/Provider.js~Provider#getMethod",
-    "access": "public",
-    "description": "Get method for the provider",
-    "lineNumber": 16,
-    "params": [
-      {
-        "nullable": false,
-        "types": [
-          "string"
-        ],
-        "spread": false,
-        "optional": false,
-        "name": "method",
-        "description": "Name of the method"
-      }
-    ],
-    "return": {
-      "nullable": null,
-      "types": [
-        "function"
-      ],
-      "spread": false,
-      "description": "Returns a method from a provider above current Provider\n in the stack."
-    }
-  },
-  {
-    "__docId__": 53,
-    "kind": "file",
-    "name": "src/crypto.js",
-    "content": "import { sha256, ripemd160 } from 'bcrypto'\nimport base58 from 'bs58'\nimport bech32 from 'bech32'\n\nconst crypto = {\n  /**\n   * Base58 object with decode, decodeUnsafe, and encode functions.\n   */\n  base58,\n\n  /**\n   * Get bech32 of message.\n   * @param {!string} message - any string.\n   * @return {string} Returns the bech32 of a string.\n   */\n  bech32,\n\n  /**\n   * Get hash160 of message.\n   * @param {!string} message - any string.\n   * @return {string} Returns the hash160 of a string.\n   */\n  hash160 (message) {\n    const sha256Hashed = this.sha256(message)\n    const ripemd160Hashed = this.ripemd160(sha256Hashed)\n    return ripemd160Hashed\n  },\n\n  /**\n   * Get sha256 of message.\n   * @param {!string} message - any string.\n   * @return {string} Returns the sha256 of a string.\n   */\n  sha256,\n\n  /**\n   * Get ripemd160 of message.\n   * @param {!string} message - any string.\n   * @return {string} Returns the ripemd160 of a string.\n   */\n  ripemd160,\n\n  /**\n   * Ensure message is in buffer format.\n   * @param {string} message - any string.\n   * @return {string} Returns Buffer of string.\n   */\n  ensureBuffer (message) {\n    if (typeof message === 'string') {\n      message = Buffer.from(message, 'hex')\n    }\n    return message\n  }\n}\n\nexport default crypto\n",
-    "static": true,
-    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/crypto.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 54,
-    "kind": "variable",
-    "name": "crypto",
-    "memberof": "src/crypto.js",
-    "static": true,
-    "longname": "src/crypto.js~crypto",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/crypto.js",
-    "importStyle": "crypto",
-    "description": null,
-    "lineNumber": 5,
-    "undocument": true,
-    "type": {
-      "types": [
-        "{\"base58\": *, \"bech32\": *, \"hash160\": function, \"sha256\": *, \"ripemd160\": *, \"ensureBuffer\": function}"
-      ]
-    }
-  },
-  {
-    "__docId__": 55,
-    "kind": "file",
-    "name": "src/errors.js",
-    "content": "import BaseError from 'standard-error'\n\nfunction createError (name) {\n  class NewError extends BaseError {}\n  NewError.prototype.name = name\n  return NewError\n}\n\nexport const StandardError = createError('StandardError')\nexport const InvalidProviderError = createError('InvalidProviderError')\nexport const DuplicateProviderError = createError('DuplicateProviderError')\nexport const NoProviderError = createError('NoProviderError')\nexport const UnsupportedMethodError = createError('UnsupportedMethodError')\nexport const UnimplementedMethodError = createError('UnimplementedMethodError')\nexport const InvalidProviderResponseError = createError('InvalidProviderResponseError')\n",
-    "static": true,
-    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/errors.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 56,
-    "kind": "function",
-    "name": "createError",
-    "memberof": "src/errors.js",
-    "generator": false,
-    "async": false,
-    "static": true,
-    "longname": "src/errors.js~createError",
-    "access": "public",
-    "export": false,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 3,
-    "undocument": true,
-    "params": [
-      {
-        "name": "name",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 57,
-    "kind": "variable",
-    "name": "StandardError",
-    "memberof": "src/errors.js",
-    "static": true,
-    "longname": "src/errors.js~StandardError",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": "{StandardError}",
-    "description": null,
-    "lineNumber": 9,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 58,
-    "kind": "variable",
-    "name": "InvalidProviderError",
-    "memberof": "src/errors.js",
-    "static": true,
-    "longname": "src/errors.js~InvalidProviderError",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": "{InvalidProviderError}",
-    "description": null,
-    "lineNumber": 10,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 59,
-    "kind": "variable",
-    "name": "DuplicateProviderError",
-    "memberof": "src/errors.js",
-    "static": true,
-    "longname": "src/errors.js~DuplicateProviderError",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": "{DuplicateProviderError}",
-    "description": null,
-    "lineNumber": 11,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 60,
-    "kind": "variable",
-    "name": "NoProviderError",
-    "memberof": "src/errors.js",
-    "static": true,
-    "longname": "src/errors.js~NoProviderError",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": "{NoProviderError}",
-    "description": null,
-    "lineNumber": 12,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 61,
-    "kind": "variable",
-    "name": "UnsupportedMethodError",
-    "memberof": "src/errors.js",
-    "static": true,
-    "longname": "src/errors.js~UnsupportedMethodError",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": "{UnsupportedMethodError}",
-    "description": null,
-    "lineNumber": 13,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 62,
-    "kind": "variable",
-    "name": "UnimplementedMethodError",
-    "memberof": "src/errors.js",
-    "static": true,
-    "longname": "src/errors.js~UnimplementedMethodError",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": "{UnimplementedMethodError}",
-    "description": null,
-    "lineNumber": 14,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 63,
-    "kind": "variable",
-    "name": "InvalidProviderResponseError",
-    "memberof": "src/errors.js",
-    "static": true,
-    "longname": "src/errors.js~InvalidProviderResponseError",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/errors.js",
-    "importStyle": "{InvalidProviderResponseError}",
-    "description": null,
-    "lineNumber": 15,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 64,
-    "kind": "file",
-    "name": "src/index.js",
-    "content": "import 'regenerator-runtime/runtime'\nimport { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'\nimport * as Ajv from 'ajv'\n\nimport Provider from './Provider'\nimport providers from './providers'\nimport crypto from './crypto'\nimport * as errors from './errors'\nimport BlockSchema from './schema/Block.json'\nimport TransactionSchema from './schema/Transaction.json'\n\nexport default class ChainAbstractionLayer {\n  /**\n   * ChainAbstractionLayer client\n   * @param {Provider} [provider] - Data source/provider for the instance\n   * @param {string} [version] - Minimum blockchain node version to support\n   */\n  constructor (provider, version) {\n    const ajv = new Ajv()\n    this.validateTransaction = ajv.compile(TransactionSchema)\n    this.validateBlock = ajv.compile(BlockSchema)\n\n    /**\n     * @type {Array}\n     */\n    this._providers = []\n\n    /**\n     * @type {string}\n     */\n    this.version = version\n\n    if (provider) {\n      this.addProvider(provider)\n    }\n  }\n\n  /**\n   * Add a provider\n   * @param {!Provider} provider - The provider instance\n   * @return {ChainAbstractionLayer} Returns instance of ChainAbstractionLayer\n   * @throws {InvalidProviderError} When invalid provider is provider\n   * @throws {DuplicateProviderError} When same provider is added again\n   */\n  addProvider (provider) {\n    if (!isFunction(provider.setClient)) {\n      throw new errors.InvalidProviderError('Provider should have \"setClient\" method')\n    }\n\n    const duplicate = find(\n      this._providers,\n      _provider => provider.constructor === _provider.constructor\n    )\n\n    if (duplicate) {\n      throw new errors.DuplicateProviderError('Duplicate provider')\n    }\n\n    provider.setClient(this)\n    this._providers.push(provider)\n    return this\n  }\n\n  /**\n   * Check the availability of a method.\n   * @param {!string} method - Name of the method to look for in the provider stack\n   * @param {boolean} [requestor=false] - If provided, it returns providers only\n   *  above the requestor in the stack.\n   * @return {Provider} Returns a provider instance associated with the requested method\n   * @throws {NoProviderError} When no provider is available in the stack.\n   * @throws {UnimplementedMethodError} When the requested method is not provided\n   *  by any provider above requestor in the provider stack\n   * @throws {UnsupportedMethodError} When requested method is not supported by\n   *  version specified\n   */\n  getProviderForMethod (method, requestor = false) {\n    if (this._providers.length === 0) {\n      throw new errors.NoProviderError('No provider provided. Add a provider to the client')\n    }\n\n    const indexOfRequestor = requestor\n      ? findLastIndex(\n        this._providers,\n        provider => requestor.constructor === provider.constructor\n      ) : this._providers.length\n\n    const provider = findLast(\n      this._providers,\n      provider => isFunction(provider[method]), indexOfRequestor - 1\n    )\n\n    if (provider == null) {\n      throw new errors.UnimplementedMethodError(`Unimplemented method \"${method}\"`)\n    }\n\n    if (isFunction(provider._checkMethodVersionSupport)) {\n      if (!provider._checkMethodVersionSupport(method, this.version)) {\n        throw new errors.UnsupportedMethodError(`Method \"${method}\" is not supported by version \"${this.version}\"`)\n      }\n    }\n\n    return provider\n  }\n\n  /**\n   * Generate a block\n   * @param {!number} numberOfBlocks - Number of blocks to be generated\n   * @return {Promise<string[], TypeError|InvalidProviderResponseError>} Resolves\n   *  with Block hash of the generated blocks.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async generateBlock (numberOfBlocks) {\n    const provider = this.getProviderForMethod('generateBlock')\n\n    if (!isNumber(numberOfBlocks)) {\n      throw new TypeError('First argument should be a number')\n    }\n\n    const blockHashes = await provider.generateBlock(numberOfBlocks)\n\n    if (!isArray(blockHashes)) {\n      throw new errors.InvalidProviderResponseError('Response should be an array')\n    }\n\n    const invalidBlock = find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))\n\n    if (invalidBlock) {\n      throw new errors.InvalidProviderResponseError('Invalid block(s) found in provider\\'s reponse')\n    }\n\n    return blockHashes\n  }\n\n  /**\n   * Get a block given its hash.\n   * @param {!string} blockHash - A hexadecimal string that represents the\n   *  *hash* of the desired block.\n   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.\n   * @return {Promise<ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError>}\n   *  Resolves with a Block with the same hash as the given input.\n   *  If `includeTx` is true, the transaction property is an array of Transactions;\n   *  otherwise, it is a list of transaction hashes.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getBlockByHash (blockHash, includeTx = false) {\n    const provider = this.getProviderForMethod('getBlockByHash')\n\n    if (!isString(blockHash)) {\n      throw new TypeError('Block hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(blockHash))) {\n      throw new TypeError('Block hash should be a valid hex string')\n    }\n\n    if (!isBoolean(includeTx)) {\n      throw new TypeError('Second parameter should be boolean')\n    }\n\n    const block = await provider.getBlockByHash(blockHash, includeTx)\n\n    if (!this.validateBlock(block)) {\n      throw new errors.InvalidProviderResponseError('Provider returned an invalid block')\n    }\n\n    return block\n  }\n\n  /**\n   * Get a block given its number.\n   * @param {!number} blockNumber - The number of the desired block.\n   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.\n   * @return {Promise<ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError>}\n   *  Resolves with a Block with the same number as the given input.\n   *  If `includeTx` is true, the transaction property is an array of Transactions;\n   *  otherwise, it is a list of transaction hashes.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getBlockByNumber (blockNumber, includeTx = false) {\n    const provider = this.getProviderForMethod('getBlockByNumber')\n\n    if (!isNumber(blockNumber)) {\n      throw new TypeError('Invalid Block number')\n    }\n\n    if (!isBoolean(includeTx)) {\n      throw new TypeError('Second parameter should be boolean')\n    }\n\n    const block = await provider.getBlockByNumber(blockNumber, includeTx)\n\n    const valid = this.validateBlock(block)\n\n    if (!valid) {\n      const errors = this.validateBlock.errors\n      throw new errors.InvalidProviderResponseError(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)\n    }\n\n    return block\n  }\n\n  /**\n   * Get current block height of the chain.\n   * @return {Promise<number, InvalidProviderResponseError>} Resolves with\n   *  chain height.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getBlockHeight () {\n    const provider = this.getProviderForMethod('getBlockHeight')\n\n    const blockHeight = await provider.getBlockHeight()\n\n    if (!isNumber(blockHeight)) {\n      throw new errors.InvalidProviderResponseError('Provider returned an invalid block height')\n    }\n\n    return blockHeight\n  }\n\n  /**\n   * Get a transaction given its hash.\n   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the\n   *  desired transaction.\n   * @return {Promise<ChainAbstractionLayer.schemas.Transaction, TypeError|InvalidProviderResponseError>}\n   *  Resolves with a Transaction with the same hash as the given input.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getTransactionByHash (txHash) {\n    const provider = this.getProviderForMethod('getTransactionByHash')\n\n    if (!isString(txHash)) {\n      throw new TypeError('Transaction hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {\n      throw new TypeError('Transaction hash should be a valid hex string')\n    }\n\n    const transaction = await provider.getTransactionByHash(txHash)\n\n    const valid = this.validateTransaction(transaction)\n\n    if (!valid) {\n      const errors = this.validateTransaction.errors\n      throw new errors.InvalidProviderResponseError(`Provider returned an invalid transaction: ${errors[0].dataPath} ${errors[0].message}`)\n    }\n\n    return transaction\n  }\n\n  /**\n   * Get a raw hexadecimal transaction given its hash.\n   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the\n   *  desired transaction.\n   * @return {Promise<string, TypeError|InvalidProviderResponseError>} Resolves with the raw Transaction with\n   *  the same hash as the given output.\n   *  Rejects with TypeError if input is invalid.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getRawTransactionByHash (txHash) {\n    const provider = this.getProviderForMethod('getRawTransactionByHash')\n\n    if (!isString(txHash)) {\n      throw new TypeError('Transaction hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {\n      throw new TypeError('Transaction hash should be a valid hex string')\n    }\n\n    const transaction = await provider.getRawTransactionByHash(txHash)\n\n    if (!this.validateTransaction(transaction)) {\n      throw new errors.InvalidProviderResponseError('Provider returned an invalid transaction')\n    }\n\n    return transaction\n  }\n\n  /**\n   * Get addresses/accounts of the user.\n   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list\n   *  of accounts.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async getAddresses () {\n    const provider = this.getProviderForMethod('getAddresses')\n\n    const addresses = await provider.getAddresses()\n\n    if (!isArray(addresses)) {\n      throw new errors.InvalidProviderResponseError('Provider returned an invalid response')\n    }\n\n    return addresses\n  }\n\n  /**\n   * Sign a message.\n   * @param {!string} message - Message to be signed.\n   * @param {!string} from - The address from which the message is signed.\n   * @return {Promise<string, null>} Resolves with a signed message.\n   */\n  async signMessage (message, from) {\n    const provider = this.getProviderForMethod('signMessage')\n\n    const signedMessage = await provider.signMessage(message, from)\n\n    return signedMessage\n  }\n\n  /**\n   * Send a transaction to the chain\n   * @param {!string} from - The address identifier for the sender.\n   * @param {!string} to - The address identifier for the receiver.\n   * @param {!number} value - Number representing the amount associated with.\n   *  the transaction.\n   * @param {!string} [data] - Optional data to send with the transaction.\n   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an identifier for\n   *  the broadcasted transaction.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async sendTransaction (from, to, value, data) {\n    const provider = this.getProviderForMethod('sendTransaction')\n\n    const txHash = await provider.sendTransaction(from, to, value, data)\n\n    if (!isString(txHash)) {\n      throw new errors.InvalidProviderResponseError('sendTransaction method should return a transaction id string')\n    }\n\n    return txHash\n  }\n\n  /**\n   * Broadcast a transaction to the network using it's raw seriealized transaction.\n   * @param {!string} rawTransaction - A raw transaction usually in the form of a\n   *  hexadecimal string that represents the serialized transaction.\n   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an\n   *  identifier for the broadcasted transaction.\n   *  Rejects with InvalidProviderResponseError if provider's response is invalid.\n   */\n  async sendRawTransaction (rawTransaction) {\n    const provider = this.getProviderForMethod('sendRawTransaction')\n\n    const txHash = await provider.sendRawTransaction(rawTransaction)\n\n    if (!isString(txHash)) {\n      throw new errors.InvalidProviderResponseError('sendRawTransaction method should return a transaction id string')\n    }\n\n    return txHash\n  }\n\n  /**\n   * Generate a secret.\n   * @param {!string} message - Message to be used for generating secret.\n   * @return {Promise<string, null>} Resolves with a secret.\n   */\n  async generateSecret (message) {\n    const addresses = await this.getAddresses()\n    const from = addresses[0]\n    const signedMessage = await this.signMessage(message, from)\n    const secret = crypto.hash160(signedMessage)\n    return secret\n  }\n\n  /**\n   * Generate swap transaction data\n   */\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    this._checkMethod('generateSwap')\n\n    if (!isString(recipientAddress)) {\n      throw new Error('Recipient address should be a string')\n    }\n\n    if (!isString(refundAddress)) {\n      throw new Error('Refund address should be a string')\n    }\n\n    if (!isString(secretHash)) {\n      throw new Error('Secret hash should be a string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(recipientAddress))) {\n      throw new Error('Recipient address should be a valid hex string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(refundAddress))) {\n      throw new Error('Refund address should be a valid hex string')\n    }\n\n    if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {\n      throw new Error('Secret hash should be a valid hex string')\n    }\n\n    if (!isNumber(expiration)) {\n      throw new Error('Invalid expiration time')\n    }\n\n    return this.provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)\n  }\n}\n\nChainAbstractionLayer.Provider = Provider\nChainAbstractionLayer.providers = providers\nChainAbstractionLayer.crypto = crypto\nChainAbstractionLayer.errors = errors\nChainAbstractionLayer.schemas = {\n  Block: BlockSchema,\n  Transaction: TransactionSchema\n}\n",
-    "static": true,
-    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/index.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 65,
-    "kind": "class",
-    "name": "ChainAbstractionLayer",
-    "memberof": "src/index.js",
-    "static": true,
-    "longname": "src/index.js~ChainAbstractionLayer",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/index.js",
-    "importStyle": "ChainAbstractionLayer",
-    "description": null,
-    "lineNumber": 12,
-    "undocument": true,
-    "interface": false
-  },
-  {
-    "__docId__": 66,
     "kind": "constructor",
     "name": "constructor",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#constructor",
+    "longname": "src/Client.js~Client#constructor",
     "access": "public",
-    "description": "ChainAbstractionLayer client",
-    "lineNumber": 18,
+    "description": "Client",
+    "lineNumber": 21,
     "params": [
       {
         "nullable": null,
@@ -942,15 +626,15 @@
     ]
   },
   {
-    "__docId__": 67,
+    "__docId__": 51,
     "kind": "member",
     "name": "validateTransaction",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#validateTransaction",
+    "longname": "src/Client.js~Client#validateTransaction",
     "access": "public",
     "description": null,
-    "lineNumber": 20,
+    "lineNumber": 23,
     "undocument": true,
     "type": {
       "types": [
@@ -959,15 +643,15 @@
     }
   },
   {
-    "__docId__": 68,
+    "__docId__": 52,
     "kind": "member",
     "name": "validateBlock",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#validateBlock",
+    "longname": "src/Client.js~Client#validateBlock",
     "access": "public",
     "description": null,
-    "lineNumber": 21,
+    "lineNumber": 24,
     "undocument": true,
     "type": {
       "types": [
@@ -976,15 +660,15 @@
     }
   },
   {
-    "__docId__": 69,
+    "__docId__": 53,
     "kind": "member",
     "name": "_providers",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#_providers",
+    "longname": "src/Client.js~Client#_providers",
     "access": "private",
     "description": "",
-    "lineNumber": 26,
+    "lineNumber": 29,
     "type": {
       "nullable": null,
       "types": [
@@ -995,15 +679,15 @@
     }
   },
   {
-    "__docId__": 70,
+    "__docId__": 54,
     "kind": "member",
     "name": "version",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#version",
+    "longname": "src/Client.js~Client#version",
     "access": "public",
     "description": "",
-    "lineNumber": 31,
+    "lineNumber": 34,
     "type": {
       "nullable": null,
       "types": [
@@ -1014,17 +698,17 @@
     }
   },
   {
-    "__docId__": 71,
+    "__docId__": 55,
     "kind": "method",
     "name": "addProvider",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#addProvider",
+    "longname": "src/Client.js~Client#addProvider",
     "access": "public",
     "description": "Add a provider",
-    "lineNumber": 45,
+    "lineNumber": 48,
     "params": [
       {
         "nullable": false,
@@ -1040,10 +724,10 @@
     "return": {
       "nullable": null,
       "types": [
-        "ChainAbstractionLayer"
+        "Client"
       ],
       "spread": false,
-      "description": "Returns instance of ChainAbstractionLayer"
+      "description": "Returns instance of Client"
     },
     "throws": [
       {
@@ -1061,17 +745,17 @@
     ]
   },
   {
-    "__docId__": 72,
+    "__docId__": 56,
     "kind": "method",
     "name": "getProviderForMethod",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#getProviderForMethod",
+    "longname": "src/Client.js~Client#getProviderForMethod",
     "access": "public",
     "description": "Check the availability of a method.",
-    "lineNumber": 76,
+    "lineNumber": 79,
     "params": [
       {
         "nullable": false,
@@ -1126,17 +810,17 @@
     ]
   },
   {
-    "__docId__": 73,
+    "__docId__": 57,
     "kind": "method",
     "name": "generateBlock",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#generateBlock",
+    "longname": "src/Client.js~Client#generateBlock",
     "access": "public",
     "description": "Generate a block",
-    "lineNumber": 113,
+    "lineNumber": 116,
     "params": [
       {
         "nullable": false,
@@ -1159,17 +843,17 @@
     }
   },
   {
-    "__docId__": 74,
+    "__docId__": 58,
     "kind": "method",
     "name": "getBlockByHash",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#getBlockByHash",
+    "longname": "src/Client.js~Client#getBlockByHash",
     "access": "public",
     "description": "Get a block given its hash.",
-    "lineNumber": 147,
+    "lineNumber": 150,
     "params": [
       {
         "nullable": false,
@@ -1204,17 +888,17 @@
     }
   },
   {
-    "__docId__": 75,
+    "__docId__": 59,
     "kind": "method",
     "name": "getBlockByNumber",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#getBlockByNumber",
+    "longname": "src/Client.js~Client#getBlockByNumber",
     "access": "public",
     "description": "Get a block given its number.",
-    "lineNumber": 182,
+    "lineNumber": 185,
     "params": [
       {
         "nullable": false,
@@ -1249,17 +933,17 @@
     }
   },
   {
-    "__docId__": 76,
+    "__docId__": 60,
     "kind": "method",
     "name": "getBlockHeight",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#getBlockHeight",
+    "longname": "src/Client.js~Client#getBlockHeight",
     "access": "public",
     "description": "Get current block height of the chain.",
-    "lineNumber": 211,
+    "lineNumber": 214,
     "return": {
       "nullable": null,
       "types": [
@@ -1271,17 +955,17 @@
     "params": []
   },
   {
-    "__docId__": 77,
+    "__docId__": 61,
     "kind": "method",
     "name": "getTransactionByHash",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#getTransactionByHash",
+    "longname": "src/Client.js~Client#getTransactionByHash",
     "access": "public",
     "description": "Get a transaction given its hash.",
-    "lineNumber": 232,
+    "lineNumber": 235,
     "params": [
       {
         "nullable": false,
@@ -1304,17 +988,17 @@
     }
   },
   {
-    "__docId__": 78,
+    "__docId__": 62,
     "kind": "method",
     "name": "getRawTransactionByHash",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#getRawTransactionByHash",
+    "longname": "src/Client.js~Client#getRawTransactionByHash",
     "access": "public",
     "description": "Get a raw hexadecimal transaction given its hash.",
-    "lineNumber": 264,
+    "lineNumber": 267,
     "params": [
       {
         "nullable": false,
@@ -1337,17 +1021,17 @@
     }
   },
   {
-    "__docId__": 79,
+    "__docId__": 63,
     "kind": "method",
     "name": "getAddresses",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#getAddresses",
+    "longname": "src/Client.js~Client#getAddresses",
     "access": "public",
     "description": "Get addresses/accounts of the user.",
-    "lineNumber": 290,
+    "lineNumber": 293,
     "return": {
       "nullable": null,
       "types": [
@@ -1359,17 +1043,17 @@
     "params": []
   },
   {
-    "__docId__": 80,
+    "__docId__": 64,
     "kind": "method",
     "name": "signMessage",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#signMessage",
+    "longname": "src/Client.js~Client#signMessage",
     "access": "public",
     "description": "Sign a message.",
-    "lineNumber": 308,
+    "lineNumber": 311,
     "params": [
       {
         "nullable": false,
@@ -1402,17 +1086,17 @@
     }
   },
   {
-    "__docId__": 81,
+    "__docId__": 65,
     "kind": "method",
     "name": "sendTransaction",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#sendTransaction",
+    "longname": "src/Client.js~Client#sendTransaction",
     "access": "public",
     "description": "Send a transaction to the chain",
-    "lineNumber": 327,
+    "lineNumber": 330,
     "params": [
       {
         "nullable": false,
@@ -1465,17 +1149,17 @@
     }
   },
   {
-    "__docId__": 82,
+    "__docId__": 66,
     "kind": "method",
     "name": "sendRawTransaction",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#sendRawTransaction",
+    "longname": "src/Client.js~Client#sendRawTransaction",
     "access": "public",
     "description": "Broadcast a transaction to the network using it's raw seriealized transaction.",
-    "lineNumber": 347,
+    "lineNumber": 350,
     "params": [
       {
         "nullable": false,
@@ -1498,17 +1182,17 @@
     }
   },
   {
-    "__docId__": 83,
+    "__docId__": 67,
     "kind": "method",
     "name": "generateSecret",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": true,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#generateSecret",
+    "longname": "src/Client.js~Client#generateSecret",
     "access": "public",
     "description": "Generate a secret.",
-    "lineNumber": 364,
+    "lineNumber": 367,
     "params": [
       {
         "nullable": false,
@@ -1531,17 +1215,17 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 68,
     "kind": "method",
     "name": "generateSwap",
-    "memberof": "src/index.js~ChainAbstractionLayer",
+    "memberof": "src/Client.js~Client",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/index.js~ChainAbstractionLayer#generateSwap",
+    "longname": "src/Client.js~Client#generateSwap",
     "access": "public",
     "description": "Generate swap transaction data",
-    "lineNumber": 375,
+    "lineNumber": 378,
     "params": [
       {
         "name": "recipientAddress",
@@ -1575,7 +1259,509 @@
     }
   },
   {
+    "__docId__": 69,
+    "kind": "file",
+    "name": "src/Provider.js",
+    "content": "export default class Provider {\n  /**\n   * Set client to a provider instance.\n   * @param {!ChainAbstractionLayer} client - The ChainAbstractionLayer instance\n   */\n  setClient (client) {\n    this.client = client\n  }\n\n  /**\n   * Get method for the provider\n   * @param {!string} method - Name of the method\n   * @return {function} Returns a method from a provider above current Provider\n   *  in the stack.\n   */\n  getMethod (method) {\n    const provider = this.client.getProviderForMethod(method, this)\n    return provider[method].bind(provider)\n  }\n}\n",
+    "static": true,
+    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/Provider.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 70,
+    "kind": "class",
+    "name": "Provider",
+    "memberof": "src/Provider.js",
+    "static": true,
+    "longname": "src/Provider.js~Provider",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/Provider.js",
+    "importStyle": "Provider",
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "__docId__": 71,
+    "kind": "method",
+    "name": "setClient",
+    "memberof": "src/Provider.js~Provider",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Provider.js~Provider#setClient",
+    "access": "public",
+    "description": "Set client to a provider instance.",
+    "lineNumber": 6,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "ChainAbstractionLayer"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "client",
+        "description": "The ChainAbstractionLayer instance"
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 72,
+    "kind": "member",
+    "name": "client",
+    "memberof": "src/Provider.js~Provider",
+    "static": false,
+    "longname": "src/Provider.js~Provider#client",
+    "access": "public",
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 73,
+    "kind": "method",
+    "name": "getMethod",
+    "memberof": "src/Provider.js~Provider",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Provider.js~Provider#getMethod",
+    "access": "public",
+    "description": "Get method for the provider",
+    "lineNumber": 16,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "method",
+        "description": "Name of the method"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "function"
+      ],
+      "spread": false,
+      "description": "Returns a method from a provider above current Provider\n in the stack."
+    }
+  },
+  {
+    "__docId__": 74,
+    "kind": "file",
+    "name": "src/crypto.js",
+    "content": "import cryptoHash from 'crypto-hashing'\nimport base58 from 'bs58'\nimport bech32 from 'bech32'\n\n/**\n * Ensure message is in buffer format.\n * @param {string} message - any string.\n * @return {string} Returns Buffer of string.\n */\nfunction ensureBuffer (message) {\n  if (typeof message === 'string') {\n    message = Buffer.from(message, 'hex')\n  }\n\n  return message\n}\n\n/**\n * Get hash of a message in hex.\n * @param {!string} algorithm - Hashing algorithm.\n * @param {!string|Buffer} message - Message to be hashed.\n * @return {string} Returns the hash of a string.\n */\nfunction hashToHex (algorithm, message) {\n  return cryptoHash(algorithm, ensureBuffer(message)).toString('hex')\n}\n\n/**\n * Get hash160 of message.\n * @param {!string|Buffer} message - message in string or Buffer.\n * @return {string} Returns the hash160 of a string.\n */\nfunction hash160 (message) {\n  return hashToHex('hash160', message)\n}\n\n/**\n * Get sha256 of message.\n * @param {!string|Buffer} message - message in string or Buffer.\n * @return {string} Returns the sha256 of a string.\n */\nfunction sha256 (message) {\n  return hashToHex('sha256', message)\n}\n\n/**\n * Get ripemd160 of message.\n * @param {!string|Buffer} message - message in string or Buffer.\n * @return {string} Returns the ripemd160 of a string.\n */\nfunction ripemd160 (message) {\n  return hashToHex('ripemd160', message)\n}\n\nexport {\n  /**\n   * Base58 object with decode, decodeUnsafe, and encode functions.\n   */\n  base58,\n\n  /**\n   * Get bech32 of message.\n   * @param {!string} message - any string.\n   * @return {string} Returns the bech32 of a string.\n   */\n  bech32,\n\n  sha256,\n  ripemd160,\n  hash160,\n  ensureBuffer\n}\n",
+    "static": true,
+    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/crypto.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 75,
+    "kind": "function",
+    "name": "hashToHex",
+    "memberof": "src/crypto.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/crypto.js~hashToHex",
+    "access": "public",
+    "export": false,
+    "importPath": "chainabstractionlayer/src/crypto.js",
+    "importStyle": null,
+    "description": "Get hash of a message in hex.",
+    "lineNumber": 24,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "algorithm",
+        "description": "Hashing algorithm."
+      },
+      {
+        "nullable": false,
+        "types": [
+          "string",
+          "Buffer"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "Message to be hashed."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns the hash of a string."
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "function",
+    "name": "sha256",
+    "memberof": "src/crypto.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/crypto.js~sha256",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/crypto.js",
+    "importStyle": "{sha256}",
+    "description": "Get sha256 of message.",
+    "lineNumber": 42,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string",
+          "Buffer"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "message in string or Buffer."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns the sha256 of a string."
+    }
+  },
+  {
+    "__docId__": 77,
+    "kind": "function",
+    "name": "ripemd160",
+    "memberof": "src/crypto.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/crypto.js~ripemd160",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/crypto.js",
+    "importStyle": "{ripemd160}",
+    "description": "Get ripemd160 of message.",
+    "lineNumber": 51,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string",
+          "Buffer"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "message in string or Buffer."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns the ripemd160 of a string."
+    }
+  },
+  {
+    "__docId__": 78,
+    "kind": "function",
+    "name": "hash160",
+    "memberof": "src/crypto.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/crypto.js~hash160",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/crypto.js",
+    "importStyle": "{hash160}",
+    "description": "Get hash160 of message.",
+    "lineNumber": 33,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string",
+          "Buffer"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "message in string or Buffer."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns the hash160 of a string."
+    }
+  },
+  {
+    "__docId__": 79,
+    "kind": "function",
+    "name": "ensureBuffer",
+    "memberof": "src/crypto.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/crypto.js~ensureBuffer",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/crypto.js",
+    "importStyle": "{ensureBuffer}",
+    "description": "Ensure message is in buffer format.",
+    "lineNumber": 10,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "message",
+        "description": "any string."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns Buffer of string."
+    }
+  },
+  {
+    "__docId__": 80,
+    "kind": "file",
+    "name": "src/errors.js",
+    "content": "import BaseError from 'standard-error'\n\nfunction createError (name) {\n  class NewError extends BaseError {}\n  NewError.prototype.name = name\n  return NewError\n}\n\nexport const StandardError = createError('StandardError')\nexport const InvalidProviderError = createError('InvalidProviderError')\nexport const DuplicateProviderError = createError('DuplicateProviderError')\nexport const NoProviderError = createError('NoProviderError')\nexport const UnsupportedMethodError = createError('UnsupportedMethodError')\nexport const UnimplementedMethodError = createError('UnimplementedMethodError')\nexport const InvalidProviderResponseError = createError('InvalidProviderResponseError')\n",
+    "static": true,
+    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/errors.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 81,
+    "kind": "function",
+    "name": "createError",
+    "memberof": "src/errors.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/errors.js~createError",
+    "access": "public",
+    "export": false,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "params": [
+      {
+        "name": "name",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "variable",
+    "name": "StandardError",
+    "memberof": "src/errors.js",
+    "static": true,
+    "longname": "src/errors.js~StandardError",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": "{StandardError}",
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 83,
+    "kind": "variable",
+    "name": "InvalidProviderError",
+    "memberof": "src/errors.js",
+    "static": true,
+    "longname": "src/errors.js~InvalidProviderError",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": "{InvalidProviderError}",
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 84,
+    "kind": "variable",
+    "name": "DuplicateProviderError",
+    "memberof": "src/errors.js",
+    "static": true,
+    "longname": "src/errors.js~DuplicateProviderError",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": "{DuplicateProviderError}",
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
     "__docId__": 85,
+    "kind": "variable",
+    "name": "NoProviderError",
+    "memberof": "src/errors.js",
+    "static": true,
+    "longname": "src/errors.js~NoProviderError",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": "{NoProviderError}",
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 86,
+    "kind": "variable",
+    "name": "UnsupportedMethodError",
+    "memberof": "src/errors.js",
+    "static": true,
+    "longname": "src/errors.js~UnsupportedMethodError",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": "{UnsupportedMethodError}",
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 87,
+    "kind": "variable",
+    "name": "UnimplementedMethodError",
+    "memberof": "src/errors.js",
+    "static": true,
+    "longname": "src/errors.js~UnimplementedMethodError",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": "{UnimplementedMethodError}",
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 88,
+    "kind": "variable",
+    "name": "InvalidProviderResponseError",
+    "memberof": "src/errors.js",
+    "static": true,
+    "longname": "src/errors.js~InvalidProviderResponseError",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/errors.js",
+    "importStyle": "{InvalidProviderResponseError}",
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 89,
+    "kind": "file",
+    "name": "src/index.js",
+    "content": "import 'regenerator-runtime/runtime'\n\nimport Client from './Client'\nimport Provider from './Provider'\n\nimport * as providers from './providers'\nimport * as crypto from './crypto'\nimport * as errors from './errors'\nimport * as schema from './schema'\n\nexport {\n  Client,\n  Provider,\n  providers,\n  crypto,\n  errors,\n  schema\n}\n",
+    "static": true,
+    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/index.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 90,
     "kind": "file",
     "name": "src/providers/JsonRpcProvider.js",
     "content": "import axios from 'axios'\nimport JSONBigInt from 'json-bigint'\nimport { get, has } from 'lodash'\n\nimport Provider from '../Provider'\nimport RpcError from './RpcError'\n\nconst { parse } = JSONBigInt({ storeAsString: true, strict: true })\n\nexport default class JsonRpcProvider extends Provider {\n  constructor (uri, username, password) {\n    super()\n\n    this._axios = axios.create({\n      baseURL: uri,\n      responseType: 'text',\n      transformResponse: undefined, // https://github.com/axios/axios/issues/907,\n      validateStatus: (status) => true\n    })\n\n    if (username || password) {\n      this._axios.defaults.auth = { username, password }\n    }\n  }\n\n  _prepareRequest (method, params) {\n    const id = Date.now()\n    return { id, method, params }\n  }\n\n  _parseResponse ({ data, status, statusText, headers }) {\n    if (typeof data === 'string' && headers['content-type'] !== 'application/json' && status !== 200) {\n      throw new RpcError(status, statusText, { data })\n    }\n\n    data = parse(data)\n\n    if (data.error != null) {\n      throw new RpcError(\n        get(data, 'error.code', -32603),\n        get(data, 'error.message', 'An error occurred while processing the RPC call')\n      )\n    }\n\n    if (!has(data, 'result')) {\n      throw new RpcError(-32700, 'Missing `result` on the RPC call result')\n    }\n\n    return data.result\n  }\n\n  rpc (method, ...params) {\n    return this._axios.post(\n      '/',\n      this._prepareRequest(method, params)\n    ).then(this._parseResponse)\n  }\n}\n",
@@ -1586,7 +1772,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 86,
+    "__docId__": 91,
     "kind": "variable",
     "name": "parse",
     "memberof": "src/providers/JsonRpcProvider.js",
@@ -1607,7 +1793,7 @@
     "ignore": true
   },
   {
-    "__docId__": 87,
+    "__docId__": 92,
     "kind": "class",
     "name": "JsonRpcProvider",
     "memberof": "src/providers/JsonRpcProvider.js",
@@ -1626,7 +1812,7 @@
     ]
   },
   {
-    "__docId__": 88,
+    "__docId__": 93,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/providers/JsonRpcProvider.js~JsonRpcProvider",
@@ -1640,7 +1826,7 @@
     "undocument": true
   },
   {
-    "__docId__": 89,
+    "__docId__": 94,
     "kind": "member",
     "name": "_axios",
     "memberof": "src/providers/JsonRpcProvider.js~JsonRpcProvider",
@@ -1657,7 +1843,7 @@
     }
   },
   {
-    "__docId__": 90,
+    "__docId__": 95,
     "kind": "method",
     "name": "_prepareRequest",
     "memberof": "src/providers/JsonRpcProvider.js~JsonRpcProvider",
@@ -1690,7 +1876,7 @@
     }
   },
   {
-    "__docId__": 91,
+    "__docId__": 96,
     "kind": "method",
     "name": "_parseResponse",
     "memberof": "src/providers/JsonRpcProvider.js~JsonRpcProvider",
@@ -1724,7 +1910,7 @@
     }
   },
   {
-    "__docId__": 92,
+    "__docId__": 97,
     "kind": "method",
     "name": "rpc",
     "memberof": "src/providers/JsonRpcProvider.js~JsonRpcProvider",
@@ -1758,7 +1944,7 @@
     }
   },
   {
-    "__docId__": 93,
+    "__docId__": 98,
     "kind": "file",
     "name": "src/providers/RpcError.js",
     "content": "import { STATUS_CODES } from 'http'\nimport { StandardError } from '../errors'\n\nexport default class RpcError extends StandardError {\n  constructor (code, msg, props = {}) {\n    if (typeof code !== 'number') {\n      throw new TypeError(`Non-numeric HTTP code`)\n    }\n\n    if (typeof msg === 'object' && msg !== null) {\n      props = msg\n      msg = null\n    }\n\n    props.code = code\n\n    super(msg || STATUS_CODES[code], props)\n  }\n\n  get status () {\n    return this.code\n  }\n\n  set status (value) {\n    Object.defineProperty(this, 'status', {\n      configurable: true,\n      enumerable: true,\n      value,\n      writable: true\n    })\n  }\n\n  toString () {\n    return `${this.name}: ${this.code} ${this.message}`\n  }\n}\n\nRpcError.prototype.name = 'RpcError'\n",
@@ -1769,7 +1955,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 94,
+    "__docId__": 99,
     "kind": "class",
     "name": "RpcError",
     "memberof": "src/providers/RpcError.js",
@@ -1788,7 +1974,7 @@
     ]
   },
   {
-    "__docId__": 95,
+    "__docId__": 100,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/providers/RpcError.js~RpcError",
@@ -1802,7 +1988,7 @@
     "undocument": true
   },
   {
-    "__docId__": 96,
+    "__docId__": 101,
     "kind": "get",
     "name": "status",
     "memberof": "src/providers/RpcError.js~RpcError",
@@ -1821,7 +2007,7 @@
     }
   },
   {
-    "__docId__": 97,
+    "__docId__": 102,
     "kind": "set",
     "name": "status",
     "memberof": "src/providers/RpcError.js~RpcError",
@@ -1835,7 +2021,7 @@
     "undocument": true
   },
   {
-    "__docId__": 98,
+    "__docId__": 103,
     "kind": "method",
     "name": "toString",
     "memberof": "src/providers/RpcError.js~RpcError",
@@ -1855,62 +2041,10 @@
     }
   },
   {
-    "__docId__": 99,
-    "kind": "file",
-    "name": "src/providers/bitcoin/BitcoinCrypto.js",
-    "content": "import crypto from '../../crypto'\n\nconst networks = {\n  mainnet: '00',\n  testnet: '6F',\n  litecoin: '30'\n}\n\nconst BitcoinCrypto = {\n  /**\n   * Get compressed pubKey from pubKey.\n   * @param {!string} pubkey - 65 byte string with prefix, x, y.\n   * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n   */\n  compressPubKey (pubKey) {\n    let x = pubKey.substring(2, 66)\n    let y = pubKey.substring(66, 130)\n    let prefix\n    let even = parseInt(y.substring(62, 64), 16) % 2 === 0\n    even ? prefix = '02' : prefix = '03'\n    return prefix + x\n  },\n\n  /**\n   * Get address from pubKey.\n   * @param {!string} pubkey - 65 byte uncompressed pubKey or 33 byte compressed pubKey.\n   * @return {string} Returns the address of pubKey.\n   */\n  pubKeyToAddress (pubKey, network) {\n    pubKey = crypto.ensureBuffer(pubKey)\n    const pubKeyHash = crypto.hash160(pubKey)\n    const addr = this.pubKeyHashToAddress(pubKeyHash, network)\n    return addr\n  },\n\n  /**\n   * Get address from pubKeyHash.\n   * @param {!string} pubKeyHash - hash160 of pubKey.\n   * @return {string} Returns the address derived from pubKeyHash.\n   */\n  pubKeyHashToAddress (pubKeyHash, network) {\n    pubKeyHash = crypto.ensureBuffer(pubKeyHash)\n    const prefixHash = Buffer.concat([Buffer.from(networks[network], 'hex'), pubKeyHash])\n    const checksum = crypto.sha256(crypto.sha256(prefixHash)).slice(0, 4)\n    const addr = crypto.base58.encode(Buffer.concat([prefixHash, checksum]))\n    return addr\n  },\n\n  /**\n   * Get pubKeyHash from address.\n   * @param {!string} address - bitcoin base58 encoded address.\n   * @return {string} Returns the pubKeyHash of bitcoin address.\n   */\n  addressToPubKeyHash (address) {\n    return crypto.base58.decode(address).toString('hex').substring(2, 42)\n  }\n}\n\nexport default BitcoinCrypto\n",
-    "static": true,
-    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/bitcoin/BitcoinCrypto.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 100,
-    "kind": "variable",
-    "name": "networks",
-    "memberof": "src/providers/bitcoin/BitcoinCrypto.js",
-    "static": true,
-    "longname": "src/providers/bitcoin/BitcoinCrypto.js~networks",
-    "access": "public",
-    "export": false,
-    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinCrypto.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 3,
-    "undocument": true,
-    "type": {
-      "types": [
-        "{\"mainnet\": string, \"testnet\": string, \"litecoin\": string}"
-      ]
-    },
-    "ignore": true
-  },
-  {
-    "__docId__": 101,
-    "kind": "variable",
-    "name": "BitcoinCrypto",
-    "memberof": "src/providers/bitcoin/BitcoinCrypto.js",
-    "static": true,
-    "longname": "src/providers/bitcoin/BitcoinCrypto.js~BitcoinCrypto",
-    "access": "public",
-    "export": true,
-    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinCrypto.js",
-    "importStyle": "BitcoinCrypto",
-    "description": null,
-    "lineNumber": 9,
-    "undocument": true,
-    "type": {
-      "types": [
-        "{\"compressPubKey\": function, \"pubKeyToAddress\": function, \"pubKeyHashToAddress\": function, \"addressToPubKeyHash\": function}"
-      ]
-    }
-  },
-  {
-    "__docId__": 102,
+    "__docId__": 104,
     "kind": "file",
     "name": "src/providers/bitcoin/BitcoinLedgerProvider.js",
-    "content": "import Provider from '../../Provider'\n\nimport axios from 'axios'\nimport Transport from '@alias/ledger-transport'\nimport LedgerBtc from '@ledgerhq/hw-app-btc'\nimport { BigNumber } from 'bignumber.js'\n\nimport crypto from '../../crypto'\n\n// TODO: Abstract out non signing methods into another provider?\nexport default class BitcoinLedgerProvider extends Provider {\n  /**\n   * @param {boolean} testnet True if the testnet network is being used\n   */\n  constructor (testnet = false) {\n    super()\n    this._ledgerBtc = false\n    this._derivationPath = `44'/0'/0'/0`\n    this._blockChainInfoBaseUrl = testnet ? 'https://testnet.blockchain.info' : 'https://blockchain.info'\n  }\n\n  async _connectToLedger () {\n    if (!this._ledgerBtc) {\n      const transport = await Transport.create()\n      this._ledgerBtc = new LedgerBtc(transport)\n    }\n  }\n\n  async _updateDerivationPath (path) {\n    this._derivationPath = path\n  }\n\n  async _getAddressDetails (address) {\n    return (await axios.get(`${this._blockChainInfoBaseUrl}/balance?active=${address}&cors=true`)).data[address]\n  }\n\n  async _getUnspentTransactions (address) {\n    return (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs\n  }\n\n  async _getTransactionHex (transactionHash) {\n    return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data\n  }\n\n  async _getSpendingDetails () {\n    let unspentInputs = []\n    let unusedAddress\n    let addressIndex = 0\n    for (let addressHasTransactions = true; addressHasTransactions; ++addressIndex) {\n      const path = `44'/0'/0'/${addressIndex}`\n      const address = {\n        ...(await this._ledgerBtc.getWalletPublicKey(path)),\n        path\n      }\n      const addressDetails = await this._getAddressDetails(address.bitcoinAddress)\n      addressHasTransactions = addressDetails.n_tx > 0\n      if (addressHasTransactions) {\n        let utxos = await this._getUnspentTransactions(address.bitcoinAddress)\n        utxos = utxos.map((utxo) => ({\n          ...utxo,\n          path,\n          address: address.bitcoinAddress\n        }))\n        unspentInputs.push(...utxos)\n      } else {\n        unusedAddress = address\n      }\n    }\n\n    return {\n      unusedAddress,\n      unspentInputs\n    }\n  }\n\n  _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation\n    return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte\n  }\n\n  _getUnspentInputsForAmount (unspentInputs, amount, numOutputs) {\n    let unspentInputsToUse = []\n    let amountAccumulated = 0\n    unspentInputs.every((utxo) => {\n      amountAccumulated += utxo.value\n      unspentInputsToUse.push(utxo)\n      return amountAccumulated < (amount + this._getFee(unspentInputsToUse.length, numOutputs, 3)) // TODO: hardcoded satoshi per byte\n    })\n    return unspentInputsToUse\n  }\n\n  async _getLedgerInputs (unspentInputs) {\n    const ledgerInputs = []\n    for (let unspentInput of unspentInputs) {\n      const transactionHex = await this._getTransactionHex(unspentInput.tx_hash_big_endian)\n      const tx = await this._ledgerBtc.splitTransaction(transactionHex)\n      ledgerInputs.push([tx, unspentInput.tx_output_n])\n    }\n    return ledgerInputs\n  }\n\n  _getAmountBuffer (amount) {\n    let hexAmount = BigNumber(amount).toString(16)\n    if (hexAmount.length % 2 === 1) { // Pad with 0 if required\n      hexAmount = '0' + hexAmount\n    }\n    const valueBuffer = Buffer.from(hexAmount, 'hex')\n    const buffer = Buffer.alloc(8)\n    valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes\n    return buffer.reverse() // Amount needs to be little endian\n  }\n\n  _addressToPubKeyHash (address) {\n    return crypto.base58.decode(address).toString('hex').substring(2, 42)\n  }\n\n  async getAddresses () {\n    await this._connectToLedger()\n\n    const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(this._derivationPath)\n\n    return [ bitcoinAddress ]\n  }\n\n  async signMessage (message, from) {\n    await this._connectToLedger()\n\n    const hex = Buffer.from(message).toString('hex')\n\n    return this._ledgerBtc.signMessageNew(this._derivationPath, hex)\n  }\n\n  async sendTransaction (from, to, value, data) {\n    await this._connectToLedger()\n\n    const {unusedAddress, unspentInputs} = await this._getSpendingDetails()\n    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)\n    const fee = this._getFee(unspentInputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee\n    const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)\n\n    if (totalAmount < value + fee) {\n      throw new Error('Not enough balance')\n    }\n\n    const ledgerInputs = await this._getLedgerInputs(unspentInputsToUse)\n    const paths = unspentInputsToUse.map(input => input.path)\n\n    const sendAmount = value\n    const changeAmount = totalAmount - value - fee\n\n    const sendPubKeyHash = this._addressToPubKeyHash(to)\n    const changePubKeyHash = this._addressToPubKeyHash(unusedAddress.bitcoinAddress)\n\n    const sendP2PKHScript = [\n      '76', // OP_DUP\n      'a9', // OP_HASH160\n      '14', // data size to be pushed\n      sendPubKeyHash, // <PUB_KEY_HASH>\n      '88', // OP_EQUAL_VERIFY\n      'ac' // OP_CHECKSIG\n    ].join('')\n\n    const changeP2PKHScript = [\n      '76', // OP_DUP\n      'a9', // OP_HASH160\n      '14', // data size to be pushed\n      changePubKeyHash, // <PUB_KEY_HASH>\n      '88', // OP_EQUAL_VERIFY\n      'ac' // OP_CHECKSIG\n    ].join('')\n\n    const outputs = [\n      {amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex')},\n      {amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex')}\n    ]\n\n    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })\n\n    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)\n\n    return this.getMethod('sendRawTransaction')(signedTransaction)\n  }\n}\n",
+    "content": "import Provider from '../../Provider'\n\nimport axios from 'axios'\nimport Transport from '@alias/ledger-transport'\nimport LedgerBtc from '@ledgerhq/hw-app-btc'\nimport { BigNumber } from 'bignumber.js'\n\nimport { addressToPubKeyHash } from './BitcoinUtil'\n\n// TODO: Abstract out non signing methods into another provider?\nexport default class BitcoinLedgerProvider extends Provider {\n  /**\n   * @param {boolean} testnet True if the testnet network is being used\n   */\n  constructor (testnet = false) {\n    super()\n    this._ledgerBtc = false\n    this._derivationPath = `44'/0'/0'/0`\n    this._blockChainInfoBaseUrl = testnet ? 'https://testnet.blockchain.info' : 'https://blockchain.info'\n  }\n\n  async _connectToLedger () {\n    if (!this._ledgerBtc) {\n      const transport = await Transport.create()\n      this._ledgerBtc = new LedgerBtc(transport)\n    }\n  }\n\n  async _updateDerivationPath (path) {\n    this._derivationPath = path\n  }\n\n  async _getAddressDetails (address) {\n    return (await axios.get(`${this._blockChainInfoBaseUrl}/balance?active=${address}&cors=true`)).data[address]\n  }\n\n  async _getUnspentTransactions (address) {\n    return (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs\n  }\n\n  async _getTransactionHex (transactionHash) {\n    return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data\n  }\n\n  async _getSpendingDetails () {\n    let unspentInputs = []\n    let unusedAddress\n    let addressIndex = 0\n    for (let addressHasTransactions = true; addressHasTransactions; ++addressIndex) {\n      const path = `44'/0'/0'/${addressIndex}`\n      const address = {\n        ...(await this._ledgerBtc.getWalletPublicKey(path)),\n        path\n      }\n      const addressDetails = await this._getAddressDetails(address.bitcoinAddress)\n      addressHasTransactions = addressDetails.n_tx > 0\n      if (addressHasTransactions) {\n        let utxos = await this._getUnspentTransactions(address.bitcoinAddress)\n        utxos = utxos.map((utxo) => ({\n          ...utxo,\n          path,\n          address: address.bitcoinAddress\n        }))\n        unspentInputs.push(...utxos)\n      } else {\n        unusedAddress = address\n      }\n    }\n\n    return {\n      unusedAddress,\n      unspentInputs\n    }\n  }\n\n  _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation\n    return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte\n  }\n\n  _getUnspentInputsForAmount (unspentInputs, amount, numOutputs) {\n    let unspentInputsToUse = []\n    let amountAccumulated = 0\n    unspentInputs.every((utxo) => {\n      amountAccumulated += utxo.value\n      unspentInputsToUse.push(utxo)\n      return amountAccumulated < (amount + this._getFee(unspentInputsToUse.length, numOutputs, 3)) // TODO: hardcoded satoshi per byte\n    })\n    return unspentInputsToUse\n  }\n\n  async _getLedgerInputs (unspentInputs) {\n    const ledgerInputs = []\n    for (let unspentInput of unspentInputs) {\n      const transactionHex = await this._getTransactionHex(unspentInput.tx_hash_big_endian)\n      const tx = await this._ledgerBtc.splitTransaction(transactionHex)\n      ledgerInputs.push([tx, unspentInput.tx_output_n])\n    }\n    return ledgerInputs\n  }\n\n  _getAmountBuffer (amount) {\n    let hexAmount = BigNumber(amount).toString(16)\n    if (hexAmount.length % 2 === 1) { // Pad with 0 if required\n      hexAmount = '0' + hexAmount\n    }\n    const valueBuffer = Buffer.from(hexAmount, 'hex')\n    const buffer = Buffer.alloc(8)\n    valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes\n    return buffer.reverse() // Amount needs to be little endian\n  }\n\n  async getAddresses () {\n    await this._connectToLedger()\n\n    const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(this._derivationPath)\n\n    return [ bitcoinAddress ]\n  }\n\n  async signMessage (message, from) {\n    await this._connectToLedger()\n\n    const hex = Buffer.from(message).toString('hex')\n\n    return this._ledgerBtc.signMessageNew(this._derivationPath, hex)\n  }\n\n  async sendTransaction (from, to, value, data) {\n    await this._connectToLedger()\n\n    const {unusedAddress, unspentInputs} = await this._getSpendingDetails()\n    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)\n    const fee = this._getFee(unspentInputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee\n    const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)\n\n    if (totalAmount < value + fee) {\n      throw new Error('Not enough balance')\n    }\n\n    const ledgerInputs = await this._getLedgerInputs(unspentInputsToUse)\n    const paths = unspentInputsToUse.map(input => input.path)\n\n    const sendAmount = value\n    const changeAmount = totalAmount - value - fee\n\n    const sendPubKeyHash = addressToPubKeyHash(to)\n    const changePubKeyHash = addressToPubKeyHash(unusedAddress.bitcoinAddress)\n\n    const sendP2PKHScript = [\n      '76', // OP_DUP\n      'a9', // OP_HASH160\n      '14', // data size to be pushed\n      sendPubKeyHash, // <PUB_KEY_HASH>\n      '88', // OP_EQUAL_VERIFY\n      'ac' // OP_CHECKSIG\n    ].join('')\n\n    const changeP2PKHScript = [\n      '76', // OP_DUP\n      'a9', // OP_HASH160\n      '14', // data size to be pushed\n      changePubKeyHash, // <PUB_KEY_HASH>\n      '88', // OP_EQUAL_VERIFY\n      'ac' // OP_CHECKSIG\n    ].join('')\n\n    const outputs = [\n      { amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex') },\n      { amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex') }\n    ]\n\n    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })\n\n    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)\n\n    return this.getMethod('sendRawTransaction')(signedTransaction)\n  }\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/bitcoin/BitcoinLedgerProvider.js",
     "access": "public",
@@ -1918,7 +2052,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 103,
+    "__docId__": 105,
     "kind": "class",
     "name": "BitcoinLedgerProvider",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js",
@@ -1937,7 +2071,7 @@
     ]
   },
   {
-    "__docId__": 104,
+    "__docId__": 106,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -1962,7 +2096,7 @@
     ]
   },
   {
-    "__docId__": 105,
+    "__docId__": 107,
     "kind": "member",
     "name": "_ledgerBtc",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -1979,7 +2113,7 @@
     }
   },
   {
-    "__docId__": 106,
+    "__docId__": 108,
     "kind": "member",
     "name": "_derivationPath",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -1996,7 +2130,7 @@
     }
   },
   {
-    "__docId__": 107,
+    "__docId__": 109,
     "kind": "member",
     "name": "_blockChainInfoBaseUrl",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2013,7 +2147,7 @@
     }
   },
   {
-    "__docId__": 108,
+    "__docId__": 110,
     "kind": "method",
     "name": "_connectToLedger",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2029,7 +2163,7 @@
     "return": null
   },
   {
-    "__docId__": 110,
+    "__docId__": 112,
     "kind": "method",
     "name": "_updateDerivationPath",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2052,7 +2186,7 @@
     "return": null
   },
   {
-    "__docId__": 112,
+    "__docId__": 114,
     "kind": "method",
     "name": "_getAddressDetails",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2079,7 +2213,7 @@
     }
   },
   {
-    "__docId__": 113,
+    "__docId__": 115,
     "kind": "method",
     "name": "_getUnspentTransactions",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2106,7 +2240,7 @@
     }
   },
   {
-    "__docId__": 114,
+    "__docId__": 116,
     "kind": "method",
     "name": "_getTransactionHex",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2133,7 +2267,7 @@
     }
   },
   {
-    "__docId__": 115,
+    "__docId__": 117,
     "kind": "method",
     "name": "_getSpendingDetails",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2153,7 +2287,7 @@
     }
   },
   {
-    "__docId__": 116,
+    "__docId__": 118,
     "kind": "method",
     "name": "_getFee",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2192,7 +2326,7 @@
     }
   },
   {
-    "__docId__": 117,
+    "__docId__": 119,
     "kind": "method",
     "name": "_getUnspentInputsForAmount",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2231,7 +2365,7 @@
     }
   },
   {
-    "__docId__": 118,
+    "__docId__": 120,
     "kind": "method",
     "name": "_getLedgerInputs",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2258,7 +2392,7 @@
     }
   },
   {
-    "__docId__": 119,
+    "__docId__": 121,
     "kind": "method",
     "name": "_getAmountBuffer",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2285,34 +2419,7 @@
     }
   },
   {
-    "__docId__": 120,
-    "kind": "method",
-    "name": "_addressToPubKeyHash",
-    "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_addressToPubKeyHash",
-    "access": "private",
-    "description": null,
-    "lineNumber": 112,
-    "undocument": true,
-    "params": [
-      {
-        "name": "address",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
-    "__docId__": 121,
+    "__docId__": 122,
     "kind": "method",
     "name": "getAddresses",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2322,7 +2429,7 @@
     "longname": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getAddresses",
     "access": "public",
     "description": null,
-    "lineNumber": 116,
+    "lineNumber": 112,
     "undocument": true,
     "params": [],
     "return": {
@@ -2332,7 +2439,7 @@
     }
   },
   {
-    "__docId__": 122,
+    "__docId__": 123,
     "kind": "method",
     "name": "signMessage",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2342,7 +2449,7 @@
     "longname": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#signMessage",
     "access": "public",
     "description": null,
-    "lineNumber": 124,
+    "lineNumber": 120,
     "undocument": true,
     "params": [
       {
@@ -2365,7 +2472,7 @@
     }
   },
   {
-    "__docId__": 123,
+    "__docId__": 124,
     "kind": "method",
     "name": "sendTransaction",
     "memberof": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider",
@@ -2375,7 +2482,7 @@
     "longname": "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#sendTransaction",
     "access": "public",
     "description": null,
-    "lineNumber": 132,
+    "lineNumber": 128,
     "undocument": true,
     "params": [
       {
@@ -2410,7 +2517,7 @@
     }
   },
   {
-    "__docId__": 124,
+    "__docId__": 125,
     "kind": "file",
     "name": "src/providers/bitcoin/BitcoinRPCProvider.js",
     "content": "import JsonRpcProvider from '../JsonRpcProvider'\n\nexport default class BitcoinRPCProvider extends JsonRpcProvider {\n  async _decodeRawTransaction (rawTransaction) {\n    const data = await this.rpc('decoderawtransaction', rawTransaction)\n    const { hash: txHash, txid: hash, vout } = data\n    const value = vout.reduce((p, n) => p + parseInt(n.value), 0)\n\n    const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }\n\n    return output\n  }\n\n  async generateBlock (numberOfBlocks) {\n    return this.rpc('generate', numberOfBlocks)\n  }\n\n  async getBlockByHash (blockHash, includeTx) {\n    const data = await this.rpc('getblock', blockHash)\n    const { hash,\n      height: number,\n      time: timestamp,\n      difficulty,\n      size,\n      previousblockhash: parentHash,\n      nonce,\n      confirmations } = data\n    let { tx: transactions } = data\n\n    if (includeTx) {\n      const txs = transactions.map(this.getTransactionByHash)\n      transactions = await Promise.all(txs)\n    }\n\n    return { hash,\n      number,\n      timestamp,\n      difficulty,\n      size,\n      parentHash,\n      nonce,\n      transactions,\n      confirmations }\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    return this.getBlockByHash(await this.rpc('getblockhash', blockNumber), includeTx)\n  }\n\n  async getTransactionByHash (transactionHash) {\n    const rawTx = await this.getRawTransactionByHash(transactionHash)\n    const tx = await this._decodeRawTransaction(rawTx)\n    const data = await this.rpc('gettransaction', transactionHash)\n\n    const { confirmations } = data\n    const output = Object.assign({}, tx, { confirmations })\n\n    if (confirmations > 0) {\n      const { blockhash: blockHash } = data\n      const { number: blockNumber } = await this.getBlockByHash(blockHash)\n      Object.assign(output, { blockHash, blockNumber })\n    }\n\n    return output\n  }\n\n  async getRawTransactionByHash (transactionHash) {\n    return this.rpc('getrawtransaction', transactionHash)\n  }\n\n  async sendRawTransaction (rawTransaction) {\n    return this.rpc('sendrawtransaction', rawTransaction)\n  }\n}\n",
@@ -2421,7 +2528,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 125,
+    "__docId__": 126,
     "kind": "class",
     "name": "BitcoinRPCProvider",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js",
@@ -2440,7 +2547,7 @@
     ]
   },
   {
-    "__docId__": 126,
+    "__docId__": 127,
     "kind": "method",
     "name": "_decodeRawTransaction",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider",
@@ -2467,7 +2574,7 @@
     }
   },
   {
-    "__docId__": 127,
+    "__docId__": 128,
     "kind": "method",
     "name": "generateBlock",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider",
@@ -2494,7 +2601,7 @@
     }
   },
   {
-    "__docId__": 128,
+    "__docId__": 129,
     "kind": "method",
     "name": "getBlockByHash",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider",
@@ -2527,7 +2634,7 @@
     }
   },
   {
-    "__docId__": 129,
+    "__docId__": 130,
     "kind": "method",
     "name": "getBlockByNumber",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider",
@@ -2560,7 +2667,7 @@
     }
   },
   {
-    "__docId__": 130,
+    "__docId__": 131,
     "kind": "method",
     "name": "getTransactionByHash",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider",
@@ -2587,7 +2694,7 @@
     }
   },
   {
-    "__docId__": 131,
+    "__docId__": 132,
     "kind": "method",
     "name": "getRawTransactionByHash",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider",
@@ -2614,7 +2721,7 @@
     }
   },
   {
-    "__docId__": 132,
+    "__docId__": 133,
     "kind": "method",
     "name": "sendRawTransaction",
     "memberof": "src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider",
@@ -2641,36 +2748,15 @@
     }
   },
   {
-    "__docId__": 133,
+    "__docId__": 134,
     "kind": "file",
     "name": "src/providers/bitcoin/BitcoinSwapProvider.js",
-    "content": "import Provider from '../../Provider'\nimport crypto from './BitcoinCrypto'\nconst { addressToPubKeyHash } = crypto\n\nexport default class BitcoinSwapProvider extends Provider {\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    let expirationHex = expiration.toString(16)\n    if (expirationHex.length % 2 === 1) {\n      expirationHex = '0' + expirationHex\n    }\n    expirationHex = expirationHex.match(/.{2}/g).reverse()\n    expirationHex.length = Math.min(expirationHex.length, 5)\n    expirationHex[expirationHex.length - 1] = '00'\n\n    const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)\n    const refundPubKeyHash = addressToPubKeyHash(refundAddress)\n    const expirationPushDataOpcode = expirationHex.length.toString(16).padStart(2, '0')\n    const expirationHexEncoded = expirationHex.join('')\n\n    return [\n      '76', 'a9', // OP_DUP OP_HASH160\n      '72', // OP_2SWAP\n      '63', // OP_IF\n      'a8', // OP_SHA256\n      '20', secretHash, // OP_PUSHDATA20 {secretHash}\n      '88', // OP_EQUALVERIFY\n      '14', recipientPubKeyHash, // OP_PUSHDATA20 {recipientPubKeyHash}\n      '67', // OP_ELSE\n      expirationPushDataOpcode, // OP_PUSHDATA{expirationHexLength}\n      expirationHexEncoded, // {expirationHexEncoded}\n      'b1', // OP_CHECKLOCKTIMEVERIFY\n      '6d', // OP_2DROP\n      '14', refundPubKeyHash, // OP_PUSHDATA20 {refundPubKeyHash}\n      '68', // OP_ENDIF\n      '88', 'ac' // OP_EQUALVERIFY OP_CHECKSIG\n    ].join('')\n  }\n}\n",
+    "content": "import Provider from '../../Provider'\nimport { addressToPubKeyHash } from './BitcoinUtil'\n\nexport default class BitcoinSwapProvider extends Provider {\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    let expirationHex = expiration.toString(16)\n    if (expirationHex.length % 2 === 1) {\n      expirationHex = '0' + expirationHex\n    }\n    expirationHex = expirationHex.match(/.{2}/g).reverse()\n    expirationHex.length = Math.min(expirationHex.length, 5)\n    expirationHex[expirationHex.length - 1] = '00'\n\n    const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)\n    const refundPubKeyHash = addressToPubKeyHash(refundAddress)\n    const expirationPushDataOpcode = expirationHex.length.toString(16).padStart(2, '0')\n    const expirationHexEncoded = expirationHex.join('')\n\n    return [\n      '76', 'a9', // OP_DUP OP_HASH160\n      '72', // OP_2SWAP\n      '63', // OP_IF\n      'a8', // OP_SHA256\n      '20', secretHash, // OP_PUSHDATA20 {secretHash}\n      '88', // OP_EQUALVERIFY\n      '14', recipientPubKeyHash, // OP_PUSHDATA20 {recipientPubKeyHash}\n      '67', // OP_ELSE\n      expirationPushDataOpcode, // OP_PUSHDATA{expirationHexLength}\n      expirationHexEncoded, // {expirationHexEncoded}\n      'b1', // OP_CHECKLOCKTIMEVERIFY\n      '6d', // OP_2DROP\n      '14', refundPubKeyHash, // OP_PUSHDATA20 {refundPubKeyHash}\n      '68', // OP_ENDIF\n      '88', 'ac' // OP_EQUALVERIFY OP_CHECKSIG\n    ].join('')\n  }\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/bitcoin/BitcoinSwapProvider.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
-  },
-  {
-    "__docId__": 134,
-    "kind": "variable",
-    "name": "addressToPubKeyHash",
-    "memberof": "src/providers/bitcoin/BitcoinSwapProvider.js",
-    "static": true,
-    "longname": "src/providers/bitcoin/BitcoinSwapProvider.js~addressToPubKeyHash",
-    "access": "public",
-    "export": false,
-    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinSwapProvider.js",
-    "importStyle": null,
-    "description": null,
-    "lineNumber": 3,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    },
-    "ignore": true
   },
   {
     "__docId__": 135,
@@ -2684,7 +2770,7 @@
     "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinSwapProvider.js",
     "importStyle": "BitcoinSwapProvider",
     "description": null,
-    "lineNumber": 5,
+    "lineNumber": 4,
     "undocument": true,
     "interface": false,
     "extends": [
@@ -2702,7 +2788,7 @@
     "longname": "src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider#generateSwap",
     "access": "public",
     "description": null,
-    "lineNumber": 6,
+    "lineNumber": 5,
     "undocument": true,
     "params": [
       {
@@ -2739,8 +2825,219 @@
   {
     "__docId__": 137,
     "kind": "file",
+    "name": "src/providers/bitcoin/BitcoinUtil.js",
+    "content": "import {\n  ensureBuffer,\n  hash160,\n  sha256,\n  base58\n} from '../../crypto'\n\nconst networks = {\n  bitcoin: {\n    pubKeyHash: '00',\n    scriptHash: '05'\n  },\n  testnet: {\n    pubKeyHash: '6F',\n    scriptHash: 'C4'\n  },\n  litecoin: {\n    pubKeyHash: '30',\n    scriptHash: '32'\n  }\n}\n\n/**\n * Get compressed pubKey from pubKey.\n * @param {!string} pubkey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n */\nexport function compressPubKey (pubKey) {\n  const x = pubKey.substring(2, 66)\n  const y = pubKey.substring(66, 130)\n  let prefix\n  const even = parseInt(y.substring(62, 64), 16) % 2 === 0\n  even ? prefix = '02' : prefix = '03'\n  return prefix + x\n}\n\n/**\n * Get address from pubKey.\n * @param {!string|Buffer} pubKey - 65 byte uncompressed pubKey or 33 byte compressed pubKey.\n * @param {!string} network - bitcoin, testnet, or litecoin.\n * @param {!string} type - pubKeyHash or scriptHash.\n * @return {string} Returns the address of pubKey.\n */\nexport function pubKeyToAddress (pubKey, network, type) {\n  pubKey = ensureBuffer(pubKey)\n  const pubKeyHash = hash160(pubKey)\n  const addr = this.pubKeyHashToAddress(pubKeyHash, network, type)\n  return addr\n}\n\n/**\n * Get address from pubKeyHash.\n * @param {!string} pubKeyHash - hash160 of pubKey.\n * @param {!string} network - bitcoin, testnet, or litecoin.\n * @param {!string} type - pubKeyHash or scriptHash.\n * @return {string} Returns the address derived from pubKeyHash.\n */\nexport function pubKeyHashToAddress (pubKeyHash, network, type) {\n  pubKeyHash = ensureBuffer(pubKeyHash)\n  const prefixHash = Buffer.concat([Buffer.from(networks[network][type], 'hex'), pubKeyHash])\n  const checksum = sha256(sha256(prefixHash)).slice(0, 4)\n  const addr = base58.encode(Buffer.concat([prefixHash, checksum]))\n  return addr\n}\n\n/**\n * Get pubKeyHash from address.\n * @param {!string} address - bitcoin base58 encoded address.\n * @return {string} Returns the pubKeyHash of bitcoin address.\n */\nexport function addressToPubKeyHash (address) {\n  return base58.decode(address).toString('hex').substring(2, 42)\n}\n",
+    "static": true,
+    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 138,
+    "kind": "variable",
+    "name": "networks",
+    "memberof": "src/providers/bitcoin/BitcoinUtil.js",
+    "static": true,
+    "longname": "src/providers/bitcoin/BitcoinUtil.js~networks",
+    "access": "public",
+    "export": false,
+    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"bitcoin\": *, \"testnet\": *, \"litecoin\": *}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 139,
+    "kind": "function",
+    "name": "compressPubKey",
+    "memberof": "src/providers/bitcoin/BitcoinUtil.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/providers/bitcoin/BitcoinUtil.js~compressPubKey",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js",
+    "importStyle": "{compressPubKey}",
+    "description": null,
+    "lineNumber": 28,
+    "undocument": true,
+    "params": [
+      {
+        "name": "pubKey",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 140,
+    "kind": "function",
+    "name": "pubKeyToAddress",
+    "memberof": "src/providers/bitcoin/BitcoinUtil.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/providers/bitcoin/BitcoinUtil.js~pubKeyToAddress",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js",
+    "importStyle": "{pubKeyToAddress}",
+    "description": "Get address from pubKey.",
+    "lineNumber": 44,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string",
+          "Buffer"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pubKey",
+        "description": "65 byte uncompressed pubKey or 33 byte compressed pubKey."
+      },
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "network",
+        "description": "bitcoin, testnet, or litecoin."
+      },
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "type",
+        "description": "pubKeyHash or scriptHash."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns the address of pubKey."
+    }
+  },
+  {
+    "__docId__": 141,
+    "kind": "function",
+    "name": "pubKeyHashToAddress",
+    "memberof": "src/providers/bitcoin/BitcoinUtil.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/providers/bitcoin/BitcoinUtil.js~pubKeyHashToAddress",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js",
+    "importStyle": "{pubKeyHashToAddress}",
+    "description": "Get address from pubKeyHash.",
+    "lineNumber": 58,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pubKeyHash",
+        "description": "hash160 of pubKey."
+      },
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "network",
+        "description": "bitcoin, testnet, or litecoin."
+      },
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "type",
+        "description": "pubKeyHash or scriptHash."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns the address derived from pubKeyHash."
+    }
+  },
+  {
+    "__docId__": 142,
+    "kind": "function",
+    "name": "addressToPubKeyHash",
+    "memberof": "src/providers/bitcoin/BitcoinUtil.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/providers/bitcoin/BitcoinUtil.js~addressToPubKeyHash",
+    "access": "public",
+    "export": true,
+    "importPath": "chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js",
+    "importStyle": "{addressToPubKeyHash}",
+    "description": "Get pubKeyHash from address.",
+    "lineNumber": 71,
+    "params": [
+      {
+        "nullable": false,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "address",
+        "description": "bitcoin base58 encoded address."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Returns the pubKeyHash of bitcoin address."
+    }
+  },
+  {
+    "__docId__": 143,
+    "kind": "file",
     "name": "src/providers/bitcoin/index.js",
-    "content": "import BitcoinRPCProvider from './BitcoinRPCProvider'\nimport BitcoinLedgerProvider from './BitcoinLedgerProvider'\nimport BitcoinCrypto from './BitcoinCrypto'\nimport BitcoinSwapProvider from './BitcoinSwapProvider'\n\nexport default {\n  BitcoinRPCProvider,\n  BitcoinLedgerProvider,\n  crypto: BitcoinCrypto,\n  BitcoinSwapProvider\n}\n",
+    "content": "import BitcoinRPCProvider from './BitcoinRPCProvider'\nimport BitcoinLedgerProvider from './BitcoinLedgerProvider'\nimport BitcoinSwapProvider from './BitcoinSwapProvider'\nimport * as BitcoinUtil from './BitcoinUtil'\n\nexport {\n  BitcoinRPCProvider,\n  BitcoinLedgerProvider,\n  BitcoinSwapProvider,\n  BitcoinUtil\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/bitcoin/index.js",
     "access": "public",
@@ -2748,7 +3045,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 138,
+    "__docId__": 144,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumLedgerProvider.js",
     "content": "import Provider from '../../Provider'\n\nimport Transport from '@alias/ledger-transport'\nimport LedgerEth from '@ledgerhq/hw-app-eth'\n\nexport default class EthereumLedgerProvider extends Provider {\n  constructor () {\n    super()\n    this._ledgerEth = false\n    this._derivationPath = `44'/60'/0'/0'/0`\n  }\n\n  async _connectToLedger () {\n    if (!this._ledgerEth) {\n      const transport = await Transport.create()\n      this._ledgerEth = new LedgerEth(transport)\n    }\n  }\n\n  async _updateDerivationPath (path) {\n    this._derivationPath = path\n  }\n\n  async getAddresses () {\n    await this._connectToLedger()\n\n    const { address } = await this._ledgerEth.getAddress(this._derivationPath)\n\n    return [ address ]\n  }\n\n  async signMessage (message) {\n    await this._connectToLedger()\n\n    const hex = Buffer.from(message).toString('hex')\n\n    return this._ledgerEth.signPersonalMessage(this._derivationPath, hex)\n  }\n}\n",
@@ -2759,7 +3056,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 139,
+    "__docId__": 145,
     "kind": "class",
     "name": "EthereumLedgerProvider",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js",
@@ -2778,7 +3075,7 @@
     ]
   },
   {
-    "__docId__": 140,
+    "__docId__": 146,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider",
@@ -2792,7 +3089,7 @@
     "undocument": true
   },
   {
-    "__docId__": 141,
+    "__docId__": 147,
     "kind": "member",
     "name": "_ledgerEth",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider",
@@ -2809,7 +3106,7 @@
     }
   },
   {
-    "__docId__": 142,
+    "__docId__": 148,
     "kind": "member",
     "name": "_derivationPath",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider",
@@ -2826,7 +3123,7 @@
     }
   },
   {
-    "__docId__": 143,
+    "__docId__": 149,
     "kind": "method",
     "name": "_connectToLedger",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider",
@@ -2842,7 +3139,7 @@
     "return": null
   },
   {
-    "__docId__": 145,
+    "__docId__": 151,
     "kind": "method",
     "name": "_updateDerivationPath",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider",
@@ -2865,7 +3162,7 @@
     "return": null
   },
   {
-    "__docId__": 147,
+    "__docId__": 153,
     "kind": "method",
     "name": "getAddresses",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider",
@@ -2885,7 +3182,7 @@
     }
   },
   {
-    "__docId__": 148,
+    "__docId__": 154,
     "kind": "method",
     "name": "signMessage",
     "memberof": "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider",
@@ -2912,10 +3209,10 @@
     }
   },
   {
-    "__docId__": 149,
+    "__docId__": 155,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumMetaMaskProvider.js",
-    "content": "import Provider from '../../Provider'\n\nimport { isFunction } from 'lodash'\nimport { formatEthResponse, ensureEthFormat } from './EthereumUtil'\n\nexport default class EthereumMetaMaskProvider extends Provider {\n  constructor (metamaskProvider) {\n    super()\n    if (!isFunction(metamaskProvider.sendAsync)) {\n      throw new Error('Invalid MetaMask Provider')\n    }\n\n    this._metamaskProvider = metamaskProvider\n  }\n\n  _toMM (method, ...params) {\n    return new Promise((resolve, reject) => {\n      this\n        ._metamaskProvider\n        .sendAsync({ method, params }, (err, data) => {\n          if (err) {\n            reject(err)\n            return\n          }\n\n          if (!data) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          if (!data.result) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          const formattedResult = formatEthResponse(data.result)\n\n          resolve(formattedResult)\n        })\n    })\n  }\n\n  async getAddresses () {\n    return this._toMM('eth_accounts')\n  }\n\n  async signMessage (message, from) {\n    const hex = Buffer.from(message).toString('hex')\n\n    return this._toMM('personal_sign', `0x${hex}`, from)\n  }\n\n  async sendTransaction (from, to, value, data) {\n    const tx = {\n      from, to, value, data\n    }\n\n    return this._toMM('eth_sendTransaction', tx)\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)\n  }\n\n  async getTransactionByHash (txHash) {\n    txHash = ensureEthFormat(txHash)\n    return this._toMM('eth_getTransactionByHash', txHash)\n  }\n\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    const dataSizeBase = 112\n    const redeemDestinationBase = 66\n    const refundDestinationBase = 89\n    const expirationHex = expiration.toString(16)\n    const expirationEncoded = expirationHex.length % 2 ? '0' + expirationHex : expirationHex // Pad with 0\n    const expirationSize = expirationEncoded.length / 2\n    const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)\n    const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)\n    const expirationPushOpcode = (0x5f + expirationSize).toString(16)\n    const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)\n    const recipientAddressEncoded = recipientAddress.replace('0x', '') // Remove 0x if exists\n    const refundAddressEncoded = refundAddress.replace('0x', '') // Remove 0x if exists\n    const secretHashEncoded = secretHash.replace('0x', '') // Remove 0x if exists\n    return `60${dataSizeEncoded}80600b6000396000f36020806000803760218160008060026048f17f\\\n${secretHashEncoded}602151141660${redeemDestinationEncoded}57\\\n${expirationPushOpcode}${expirationEncoded}421160${refundDestinationEncoded}\\\n57005b73${recipientAddressEncoded}ff5b73${refundAddressEncoded}ff`\n  }\n}\n",
+    "content": "import Provider from '../../Provider'\n\nimport { isFunction } from 'lodash'\nimport { formatEthResponse, ensureEthFormat } from './EthereumUtil'\n\nexport default class EthereumMetaMaskProvider extends Provider {\n  constructor (metamaskProvider) {\n    super()\n    if (!isFunction(metamaskProvider.sendAsync)) {\n      throw new Error('Invalid MetaMask Provider')\n    }\n\n    this._metamaskProvider = metamaskProvider\n  }\n\n  _toMM (method, ...params) {\n    return new Promise((resolve, reject) => {\n      this\n        ._metamaskProvider\n        .sendAsync({ method, params }, (err, data) => {\n          if (err) {\n            reject(err)\n            return\n          }\n\n          if (!data) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          if (!data.result) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          const formattedResult = formatEthResponse(data.result)\n\n          resolve(formattedResult)\n        })\n    })\n  }\n\n  async getAddresses () {\n    return this._toMM('eth_accounts')\n  }\n\n  async signMessage (message, from) {\n    const hex = Buffer.from(message).toString('hex')\n\n    return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)\n  }\n\n  async sendTransaction (from, to, value, data) {\n    const tx = {\n      from, to, value, data\n    }\n\n    return this._toMM('eth_sendTransaction', tx)\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)\n  }\n\n  async getTransactionByHash (txHash) {\n    txHash = ensureEthFormat(txHash)\n    return this._toMM('eth_getTransactionByHash', txHash)\n  }\n\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    const dataSizeBase = 112\n    const redeemDestinationBase = 66\n    const refundDestinationBase = 89\n    const expirationHex = expiration.toString(16)\n    const expirationEncoded = expirationHex.length % 2 ? '0' + expirationHex : expirationHex // Pad with 0\n    const expirationSize = expirationEncoded.length / 2\n    const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)\n    const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)\n    const expirationPushOpcode = (0x5f + expirationSize).toString(16)\n    const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)\n    const recipientAddressEncoded = recipientAddress.replace('0x', '') // Remove 0x if exists\n    const refundAddressEncoded = refundAddress.replace('0x', '') // Remove 0x if exists\n    const secretHashEncoded = secretHash.replace('0x', '') // Remove 0x if exists\n    return `60${dataSizeEncoded}80600b6000396000f36020806000803760218160008060026048f17f\\\n${secretHashEncoded}602151141660${redeemDestinationEncoded}57\\\n${expirationPushOpcode}${expirationEncoded}421160${refundDestinationEncoded}\\\n57005b73${recipientAddressEncoded}ff5b73${refundAddressEncoded}ff`\n  }\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/ethereum/EthereumMetaMaskProvider.js",
     "access": "public",
@@ -2923,7 +3220,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 150,
+    "__docId__": 156,
     "kind": "class",
     "name": "EthereumMetaMaskProvider",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js",
@@ -2942,7 +3239,7 @@
     ]
   },
   {
-    "__docId__": 151,
+    "__docId__": 157,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -2956,7 +3253,7 @@
     "undocument": true
   },
   {
-    "__docId__": 152,
+    "__docId__": 158,
     "kind": "member",
     "name": "_metamaskProvider",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -2973,7 +3270,7 @@
     }
   },
   {
-    "__docId__": 153,
+    "__docId__": 159,
     "kind": "method",
     "name": "_toMM",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -3007,7 +3304,7 @@
     }
   },
   {
-    "__docId__": 154,
+    "__docId__": 160,
     "kind": "method",
     "name": "getAddresses",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -3027,7 +3324,7 @@
     }
   },
   {
-    "__docId__": 155,
+    "__docId__": 161,
     "kind": "method",
     "name": "signMessage",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -3060,7 +3357,7 @@
     }
   },
   {
-    "__docId__": 156,
+    "__docId__": 162,
     "kind": "method",
     "name": "sendTransaction",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -3105,7 +3402,7 @@
     }
   },
   {
-    "__docId__": 157,
+    "__docId__": 163,
     "kind": "method",
     "name": "getBlockByNumber",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -3138,7 +3435,7 @@
     }
   },
   {
-    "__docId__": 158,
+    "__docId__": 164,
     "kind": "method",
     "name": "getTransactionByHash",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -3165,7 +3462,7 @@
     }
   },
   {
-    "__docId__": 159,
+    "__docId__": 165,
     "kind": "method",
     "name": "generateSwap",
     "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
@@ -3210,7 +3507,7 @@
     }
   },
   {
-    "__docId__": 160,
+    "__docId__": 166,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumRPCProvider.js",
     "content": "import JsonRpcProvider from '../JsonRpcProvider'\n\nimport { formatEthResponse, ensureEthFormat } from './EthereumUtil'\n\nexport default class EthereumRPCProvider extends JsonRpcProvider {\n  _parseResponse (response) {\n    const data = super._parseResponse(response)\n\n    return formatEthResponse(data)\n  }\n\n  async getAddresses () {\n    return this.rpc('eth_accounts')\n  }\n\n  async generateBlock (numberOfBlocks) {\n    // Q: throw or silently pass?\n    throw new Error('This method isn\\'t supported by Ethereum')\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    return this.rpc('eth_getBlockByNumber', blockNumber, includeTx)\n  }\n\n  async getTransactionByHash (txHash) {\n    txHash = ensureEthFormat(txHash)\n    return this.rpc('eth_getTransactionByHash', txHash)\n  }\n}\n",
@@ -3221,7 +3518,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 161,
+    "__docId__": 167,
     "kind": "class",
     "name": "EthereumRPCProvider",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js",
@@ -3240,7 +3537,7 @@
     ]
   },
   {
-    "__docId__": 162,
+    "__docId__": 168,
     "kind": "method",
     "name": "_parseResponse",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3267,7 +3564,7 @@
     }
   },
   {
-    "__docId__": 163,
+    "__docId__": 169,
     "kind": "method",
     "name": "getAddresses",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3287,7 +3584,7 @@
     }
   },
   {
-    "__docId__": 164,
+    "__docId__": 170,
     "kind": "method",
     "name": "generateBlock",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3310,7 +3607,7 @@
     "return": null
   },
   {
-    "__docId__": 165,
+    "__docId__": 171,
     "kind": "method",
     "name": "getBlockByNumber",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3343,7 +3640,7 @@
     }
   },
   {
-    "__docId__": 166,
+    "__docId__": 172,
     "kind": "method",
     "name": "getTransactionByHash",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3370,7 +3667,7 @@
     }
   },
   {
-    "__docId__": 167,
+    "__docId__": 173,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumSwapProvider.js",
     "content": "import Provider from '../../Provider'\n\nexport default class EthereumSwapProvider extends Provider {\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    const dataSizeBase = 112\n    const redeemDestinationBase = 66\n    const refundDestinationBase = 89\n    const expirationHex = expiration.toString(16)\n    const expirationEncoded = expirationHex.length % 2 ? '0' + expirationHex : expirationHex // Pad with 0\n    const expirationSize = expirationEncoded.length / 2\n    const expirationPushOpcode = (0x60 - 1 + expirationSize).toString(16)\n    const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)\n    const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)\n    const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)\n    const recipientAddressEncoded = recipientAddress.replace('0x', '') // Remove 0x if exists\n    const refundAddressEncoded = refundAddress.replace('0x', '') // Remove 0x if exists\n    const secretHashEncoded = secretHash.replace('0x', '') // Remove 0x if exists\n\n    return [\n      // Constructor\n      '60', dataSizeEncoded, // PUSH1 {dataSizeEncoded}\n      '80', // DUP1\n      '60', '0b', // PUSH1 0b\n      '60', '00', // PUSH1 00\n      '39', // CODECOPY\n      '60', '00', // PUSH1 00\n      'f3', // RETURN\n\n      // Contract\n      '60', '20', // PUSH1 20\n\n      // Get secret\n      '80', // DUP1\n      '60', '00', // PUSH1 00\n      '80', // DUP1\n      '37', // CALLDATACOPY\n\n      // SHA256\n      '60', '21', // PUSH1 21\n      '81', // DUP2\n      '60', '00', // PUSH1 00\n      '80', // DUP1\n      '60', '02', // PUSH1 02\n      '60', '48', // PUSH1 48\n      'f1', // CALL\n\n      // Validate with secretHash\n      '7f', secretHashEncoded, // PUSH32 {secretHashEncoded}\n      '60', '21', // PUSH1 21\n      '51', // MLOAD\n      '14', // EQ\n      '16', // AND (to make sure CALL succeeded)\n      // Redeem if secret is valid\n      '60', redeemDestinationEncoded, // PUSH1 {redeemDestinationEncoded}\n      '57', // JUMPI\n\n      // Check time lock\n      expirationPushOpcode, // PUSH{expirationSize}\n      expirationEncoded, // {expirationEncoded}\n      '42', // TIMESTAMP\n      '11', // GT\n      // Refund if timelock passed\n      '60', refundDestinationEncoded, // PUSH1 {refundDestinationEncoded}\n      '57',\n\n      '00', // STOP\n\n      '5b', // JUMPDEST\n      '73', recipientAddressEncoded, // PUSH20 {recipientAddressEncoded}\n      'ff', // SUICIDE\n\n      '5b', // JUMPDEST\n      '73', refundAddressEncoded, // PUSH20 {refundAddressEncoded}\n      'ff' // SUICIDE\n    ].join('')\n  }\n}\n",
@@ -3381,7 +3678,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 168,
+    "__docId__": 174,
     "kind": "class",
     "name": "EthereumSwapProvider",
     "memberof": "src/providers/ethereum/EthereumSwapProvider.js",
@@ -3400,7 +3697,7 @@
     ]
   },
   {
-    "__docId__": 169,
+    "__docId__": 175,
     "kind": "method",
     "name": "generateSwap",
     "memberof": "src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider",
@@ -3445,10 +3742,10 @@
     }
   },
   {
-    "__docId__": 170,
+    "__docId__": 176,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumUtil.js",
-    "content": "import BlockSchema from '../../schema/Block.json'\nimport TransactionSchema from '../../schema/Transaction.json'\n\nexport function formatEthResponse (obj) {\n  if (Array.isArray(obj)) {\n    obj = obj.map((elem) => {\n      if (elem.startsWith('0x')) {\n        elem = elem.replace('0x', '')\n      }\n      return elem\n    })\n  } else {\n    for (let key in obj) {\n      if (Array.isArray(obj[key])) {\n        obj[key] = formatEthResponse(obj[key])\n      } else {\n        if ((BlockSchema.properties[key] &&\n          BlockSchema.properties[key].type === 'number') ||\n          (TransactionSchema.properties[key] &&\n          TransactionSchema.properties[key].type === 'number')) {\n          obj[key] = parseInt(obj[key])\n        } else {\n          if (obj[key].startsWith('0x')) {\n            obj[key] = obj[key].replace('0x', '')\n          }\n        }\n      }\n    }\n  }\n  return obj\n}\n\nexport function ensureEthFormat (hash) {\n  if (!hash.startsWith('0x')) { hash = '0x' + hash }\n  return hash\n}\n",
+    "content": "import { Block, Transaction } from '../../schema'\n\nexport function formatEthResponse (obj) {\n  if (Array.isArray(obj)) {\n    obj = obj.map((elem) => {\n      if (elem.startsWith('0x')) {\n        elem = elem.replace('0x', '')\n      }\n      return elem\n    })\n  } else {\n    for (let key in obj) {\n      if (Array.isArray(obj[key])) {\n        obj[key] = formatEthResponse(obj[key])\n      } else {\n        if ((Block.properties[key] &&\n          Block.properties[key].type === 'number') ||\n          (Transaction.properties[key] &&\n          Transaction.properties[key].type === 'number')) {\n          obj[key] = parseInt(obj[key])\n        } else {\n          if (obj[key].startsWith('0x')) {\n            obj[key] = obj[key].replace('0x', '')\n          }\n        }\n      }\n    }\n  }\n  return obj\n}\n\nexport function ensureEthFormat (hash) {\n  if (!hash.startsWith('0x')) { hash = '0x' + hash }\n  return hash\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/ethereum/EthereumUtil.js",
     "access": "public",
@@ -3456,7 +3753,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 171,
+    "__docId__": 177,
     "kind": "function",
     "name": "formatEthResponse",
     "memberof": "src/providers/ethereum/EthereumUtil.js",
@@ -3469,7 +3766,7 @@
     "importPath": "chainabstractionlayer/src/providers/ethereum/EthereumUtil.js",
     "importStyle": "{formatEthResponse}",
     "description": null,
-    "lineNumber": 4,
+    "lineNumber": 3,
     "undocument": true,
     "params": [
       {
@@ -3486,7 +3783,7 @@
     }
   },
   {
-    "__docId__": 172,
+    "__docId__": 178,
     "kind": "function",
     "name": "ensureEthFormat",
     "memberof": "src/providers/ethereum/EthereumUtil.js",
@@ -3499,7 +3796,7 @@
     "importPath": "chainabstractionlayer/src/providers/ethereum/EthereumUtil.js",
     "importStyle": "{ensureEthFormat}",
     "description": null,
-    "lineNumber": 33,
+    "lineNumber": 32,
     "undocument": true,
     "params": [
       {
@@ -3516,10 +3813,10 @@
     }
   },
   {
-    "__docId__": 173,
+    "__docId__": 179,
     "kind": "file",
     "name": "src/providers/ethereum/index.js",
-    "content": "import EthereumRPCProvider from './EthereumRPCProvider'\nimport EthereumLedgerProvider from './EthereumLedgerProvider'\nimport EthereumMetaMaskProvider from './EthereumMetaMaskProvider'\nimport EthereumSwapProvider from './EthereumSwapProvider'\n\nexport default {\n  EthereumRPCProvider,\n  EthereumLedgerProvider,\n  EthereumMetaMaskProvider,\n  EthereumSwapProvider\n}\n",
+    "content": "import EthereumRPCProvider from './EthereumRPCProvider'\nimport EthereumLedgerProvider from './EthereumLedgerProvider'\nimport EthereumMetaMaskProvider from './EthereumMetaMaskProvider'\nimport EthereumSwapProvider from './EthereumSwapProvider'\n\nexport {\n  EthereumRPCProvider,\n  EthereumLedgerProvider,\n  EthereumMetaMaskProvider,\n  EthereumSwapProvider\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/ethereum/index.js",
     "access": "public",
@@ -3527,10 +3824,10 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 174,
+    "__docId__": 180,
     "kind": "file",
     "name": "src/providers/index.js",
-    "content": "import bitcoin from './bitcoin/'\nimport ethereum from './ethereum/'\n\nexport default {\n  bitcoin,\n  ethereum\n}\n",
+    "content": "import * as bitcoin from './bitcoin'\nimport * as ethereum from './ethereum'\n\nexport {\n  bitcoin,\n  ethereum\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/index.js",
     "access": "public",
@@ -3538,8 +3835,19 @@
     "lineNumber": 1
   },
   {
+    "__docId__": 181,
+    "kind": "file",
+    "name": "src/schema/index.js",
+    "content": "import Block from './Block.json'\nimport Transaction from './Transaction.json'\n\nexport {\n  Block,\n  Transaction\n}\n",
+    "static": true,
+    "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/schema/index.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
     "kind": "index",
-    "content": "# Chain Abstraction Layer\n[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)\n\nQuery different blockchains with a single and simple interface.\n\n\n## Usage\n\n```javascript\nimport ChainAbstractionLayer from 'chainabstractionlayer'\n\nconst { BitcoinRPCProvider } = ChainAbstractionLayer.providers.bitcoin\n\nconst bitcoin = new ChainAbstractionLayer()\nbitcoin.addProvider(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))\n\nbitcoin\n  .generateBlock(1) // returns Promise\n  .then(console.log) // Array<BlockHash>\n```\n\n\n## Development\n\n### 1. Clone the project and link it locally\n\n```bash\ngit clone git@github.com:ConsenSys/chainabstractionlayer.git\ncd chainabstractionlayer\nnpm link\n```\n\n### 2. Use it in other projects\n\n```bash\ncd mycrosschain\nnpm link chainabstractionlayer\n```\n\n## Build documentation\n\n```bash\nnpm run build:docs\n```\n\n## Publish documentation\n\n```bash\nnpm run publish:docs\n```\n",
+    "content": "# Chain Abstraction Layer\n[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)\n\nQuery different blockchains with a single and simple interface.\n\n\n## Usage\n\n```javascript\nimport { Client, providers } from 'chainabstractionlayer'\n\nconst { BitcoinRPCProvider } = providers.bitcoin\n\nconst bitcoin = new Client()\nbitcoin.addProvider(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))\n\nbitcoin\n  .generateBlock(1) // returns Promise\n  .then(console.log) // Array<BlockHash>\n```\n\n\n## Development\n\n### 1. Clone the project and link it locally\n\n```bash\ngit clone git@github.com:ConsenSys/chainabstractionlayer.git\ncd chainabstractionlayer\nnpm link\n```\n\n### 2. Use it in other projects\n\n```bash\ncd mycrosschain\nnpm link chainabstractionlayer\n```\n\n## Build documentation\n\n```bash\nnpm run build:docs\n```\n\n## Publish documentation\n\n```bash\nnpm run publish:docs\n```\n",
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/README.md",
     "name": "./README.md",
     "static": true,
@@ -3547,7 +3855,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"chainabstractionlayer\",\n  \"private\": \"true\",\n  \"keywords\": [\n    \"blockchain\",\n    \"bitcoin\",\n    \"ethereum\",\n    \"client\"\n  ],\n  \"main\": \"dist/index.cjs.js\",\n  \"browser\": \"dist/index.umd.js\",\n  \"files\": [\n    \"dist/index.cjs.js\",\n    \"dist/index.umd.js\"\n  ],\n  \"scripts\": {\n    \"cover\": \"nyc --reporter=html --reporter=text npm test\",\n    \"lint\": \"standard \\\"**/*.js\\\" \\\"**/*.html\\\" \\\"**/*.md\\\"\",\n    \"test\": \"cross-env NODE_ENV=test mocha $npm_package_options_mocha\",\n    \"build:dev:node\": \"webpack --config webpack.node.config.js\",\n    \"build:dev:browser\": \"webpack --config webpack.browser.config.js\",\n    \"build:node\": \"cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node\",\n    \"build:browser\": \"cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser\",\n    \"build:docs\": \"esdoc\",\n    \"build:dev\": \"run-p build:dev:*\",\n    \"build\": \"run-p build:browser build:node\",\n    \"publish:docs\": \"npm run build && npm run build:docs && gh-pages -d docs/ -m \\\"Auto-generated commit for documentation\\\"\"\n  },\n  \"dependencies\": {\n    \"@ledgerhq/hw-app-btc\": \"^4.20.0\",\n    \"@ledgerhq/hw-app-eth\": \"^4.19.0\",\n    \"@ledgerhq/hw-transport-node-hid\": \"~4.21.0\",\n    \"@ledgerhq/hw-transport-u2f\": \"^4.20.0\",\n    \"ajv\": \"^6.5.2\",\n    \"axios\": \"^0.18.0\",\n    \"bcrypto\": \"^1.0.0\",\n    \"bech32\": \"^1.1.3\",\n    \"bs58\": \"^4.0.1\",\n    \"json-bigint\": \"^0.3.0\",\n    \"lodash\": \"^4.0.0\",\n    \"regenerator-runtime\": \"^0.12.0\",\n    \"standard-error\": \"^1.1.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/core\": \"^7.0.0-beta.54\",\n    \"@babel/polyfill\": \"^7.0.0-beta.54\",\n    \"@babel/preset-env\": \"^7.0.0-beta.54\",\n    \"@babel/register\": \"^7.0.0-beta.54\",\n    \"babel-loader\": \"^8.0.0-beta.4\",\n    \"babel-plugin-istanbul\": \"^4.1.6\",\n    \"babel-plugin-lodash\": \"^3.3.4\",\n    \"browserify\": \"^16.2.2\",\n    \"chai-as-promised\": \"^7.1.1\",\n    \"cross-env\": \"^5.2.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-ecmascript-proposal-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint-plugin-html\": \"^4.0.5\",\n    \"eslint-plugin-markdown\": \"^1.0.0-beta.6\",\n    \"gh-pages\": \"^1.2.0\",\n    \"lodash-webpack-plugin\": \"^0.11.5\",\n    \"mocha\": \"^5.2.0\",\n    \"nock\": \"^9.3.0\",\n    \"npm-run-all\": \"^4.1.3\",\n    \"nyc\": \"^12.0.2\",\n    \"pre-commit\": \"^1.2.2\",\n    \"should\": \"^13.2.1\",\n    \"standard\": \"^11.0.1\",\n    \"webpack\": \"^4.16.1\",\n    \"webpack-bundle-analyzer\": \"^2.13.1\",\n    \"webpack-cli\": \"^3.1.0\"\n  },\n  \"engines\": {\n    \"node\": \">=8\"\n  },\n  \"nyc\": {\n    \"include\": [\n      \"src/\"\n    ],\n    \"instrument\": false,\n    \"report-dir\": \"./coverage\",\n    \"sourceMap\": false\n  },\n  \"options\": {\n    \"mocha\": \"--require @babel/register --require @babel/polyfill --timeout 20000 --recursive --require should\"\n  },\n  \"pre-commit\": [\n    \"lint\",\n    \"build\",\n    \"test\"\n  ],\n  \"standard\": {\n    \"plugins\": [\n      \"html\",\n      \"markdown\"\n    ],\n    \"ignore\": [\n      \"dist/**\",\n      \"docs/**\"\n    ]\n  }\n}\n",
+    "content": "{\n  \"name\": \"chainabstractionlayer\",\n  \"private\": \"true\",\n  \"keywords\": [\n    \"blockchain\",\n    \"bitcoin\",\n    \"ethereum\",\n    \"client\"\n  ],\n  \"main\": \"dist/index.cjs.js\",\n  \"browser\": \"dist/index.umd.js\",\n  \"files\": [\n    \"dist/index.cjs.js\",\n    \"dist/index.umd.js\"\n  ],\n  \"scripts\": {\n    \"cover\": \"nyc --reporter=html --reporter=text npm test\",\n    \"lint\": \"standard \\\"**/*.js\\\" \\\"**/*.html\\\" \\\"**/*.md\\\"\",\n    \"test\": \"cross-env NODE_ENV=test mocha $npm_package_options_mocha\",\n    \"build:dev:node\": \"webpack --config webpack.node.config.js\",\n    \"build:dev:browser\": \"webpack --config webpack.browser.config.js\",\n    \"build:node\": \"cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node\",\n    \"build:browser\": \"cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser\",\n    \"build:dev\": \"run-p build:dev:*\",\n    \"build\": \"run-p build:browser build:node\",\n    \"copy:browser-examples-to-docs\": \"copy \\\"examples/browser/**/*\\\" docs/examples/browser\",\n    \"copy:browser-build-to-docs\": \"copy \\\"dist/index.umd.js\\\" docs/\",\n    \"build:docs\": \"esdoc\",\n    \"prepare:docs\": \"run-s build build:docs copy:*\",\n    \"publish:docs\": \"run-s prepare:docs && gh-pages -d docs/ -m \\\"Auto-generated commit for documentation\\\"\"\n  },\n  \"dependencies\": {\n    \"@ledgerhq/hw-app-btc\": \"^4.20.0\",\n    \"@ledgerhq/hw-app-eth\": \"^4.19.0\",\n    \"@ledgerhq/hw-transport-node-hid\": \"~4.21.0\",\n    \"@ledgerhq/hw-transport-u2f\": \"^4.20.0\",\n    \"ajv\": \"^6.5.2\",\n    \"axios\": \"^0.18.0\",\n    \"bech32\": \"^1.1.3\",\n    \"bs58\": \"^4.0.1\",\n    \"crypto-hashing\": \"^1.0.0\",\n    \"json-bigint\": \"^0.3.0\",\n    \"lodash\": \"^4.0.0\",\n    \"regenerator-runtime\": \"^0.12.0\",\n    \"standard-error\": \"^1.1.0\"\n  },\n  \"devDependencies\": {\n    \"@babel/core\": \"^7.0.0-beta.54\",\n    \"@babel/polyfill\": \"^7.0.0-beta.54\",\n    \"@babel/preset-env\": \"^7.0.0-beta.54\",\n    \"@babel/register\": \"^7.0.0-beta.54\",\n    \"babel-loader\": \"^8.0.0-beta.4\",\n    \"babel-plugin-istanbul\": \"^4.1.6\",\n    \"babel-plugin-lodash\": \"^3.3.4\",\n    \"browserify\": \"^16.2.2\",\n    \"chai-as-promised\": \"^7.1.1\",\n    \"cross-env\": \"^5.2.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-ecmascript-proposal-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"eslint-plugin-html\": \"^4.0.5\",\n    \"eslint-plugin-markdown\": \"^1.0.0-beta.6\",\n    \"gh-pages\": \"^1.2.0\",\n    \"lodash-webpack-plugin\": \"^0.11.5\",\n    \"mocha\": \"^5.2.0\",\n    \"nock\": \"^9.3.0\",\n    \"npm-run-all\": \"^4.1.3\",\n    \"nyc\": \"^12.0.2\",\n    \"pre-commit\": \"^1.2.2\",\n    \"should\": \"^13.2.1\",\n    \"standard\": \"^11.0.1\",\n    \"webpack\": \"^4.16.1\",\n    \"webpack-bundle-analyzer\": \"^2.13.1\",\n    \"webpack-cli\": \"^3.1.0\"\n  },\n  \"engines\": {\n    \"node\": \">=8\"\n  },\n  \"nyc\": {\n    \"include\": [\n      \"src/\"\n    ],\n    \"instrument\": false,\n    \"report-dir\": \"./coverage\",\n    \"sourceMap\": false\n  },\n  \"options\": {\n    \"mocha\": \"--require @babel/register --require @babel/polyfill --timeout 20000 --recursive --require should\"\n  },\n  \"pre-commit\": [\n    \"lint\",\n    \"build\",\n    \"test\"\n  ],\n  \"standard\": {\n    \"plugins\": [\n      \"html\",\n      \"markdown\"\n    ],\n    \"ignore\": [\n      \"dist/**\",\n      \"docs/**\"\n    ]\n  }\n}\n",
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/package.json",
     "name": "package.json",
     "static": true,

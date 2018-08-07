@@ -29,9 +29,12 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/index.js~ChainAbstractionLayer.html">ChainAbstractionLayer</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-crypto">crypto</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
@@ -44,7 +47,10 @@
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html">BitcoinSwapProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-BitcoinCrypto">BitcoinCrypto</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-addressToPubKeyHash">addressToPubKeyHash</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-compressPubKey">compressPubKey</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pubKeyHashToAddress">pubKeyHashToAddress</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pubKeyToAddress">pubKeyToAddress</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
@@ -57,421 +63,22 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/index.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import &apos;regenerator-runtime/runtime&apos;
-import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from &apos;lodash&apos;
-import * as Ajv from &apos;ajv&apos;
 
+import Client from &apos;./Client&apos;
 import Provider from &apos;./Provider&apos;
-import providers from &apos;./providers&apos;
-import crypto from &apos;./crypto&apos;
+
+import * as providers from &apos;./providers&apos;
+import * as crypto from &apos;./crypto&apos;
 import * as errors from &apos;./errors&apos;
-import BlockSchema from &apos;./schema/Block.json&apos;
-import TransactionSchema from &apos;./schema/Transaction.json&apos;
-
-export default class ChainAbstractionLayer {
-  /**
-   * ChainAbstractionLayer client
-   * @param {Provider} [provider] - Data source/provider for the instance
-   * @param {string} [version] - Minimum blockchain node version to support
-   */
-  constructor (provider, version) {
-    const ajv = new Ajv()
-    this.validateTransaction = ajv.compile(TransactionSchema)
-    this.validateBlock = ajv.compile(BlockSchema)
-
-    /**
-     * @type {Array}
-     */
-    this._providers = []
-
-    /**
-     * @type {string}
-     */
-    this.version = version
-
-    if (provider) {
-      this.addProvider(provider)
-    }
-  }
-
-  /**
-   * Add a provider
-   * @param {!Provider} provider - The provider instance
-   * @return {ChainAbstractionLayer} Returns instance of ChainAbstractionLayer
-   * @throws {InvalidProviderError} When invalid provider is provider
-   * @throws {DuplicateProviderError} When same provider is added again
-   */
-  addProvider (provider) {
-    if (!isFunction(provider.setClient)) {
-      throw new errors.InvalidProviderError(&apos;Provider should have &quot;setClient&quot; method&apos;)
-    }
-
-    const duplicate = find(
-      this._providers,
-      _provider =&gt; provider.constructor === _provider.constructor
-    )
-
-    if (duplicate) {
-      throw new errors.DuplicateProviderError(&apos;Duplicate provider&apos;)
-    }
-
-    provider.setClient(this)
-    this._providers.push(provider)
-    return this
-  }
-
-  /**
-   * Check the availability of a method.
-   * @param {!string} method - Name of the method to look for in the provider stack
-   * @param {boolean} [requestor=false] - If provided, it returns providers only
-   *  above the requestor in the stack.
-   * @return {Provider} Returns a provider instance associated with the requested method
-   * @throws {NoProviderError} When no provider is available in the stack.
-   * @throws {UnimplementedMethodError} When the requested method is not provided
-   *  by any provider above requestor in the provider stack
-   * @throws {UnsupportedMethodError} When requested method is not supported by
-   *  version specified
-   */
-  getProviderForMethod (method, requestor = false) {
-    if (this._providers.length === 0) {
-      throw new errors.NoProviderError(&apos;No provider provided. Add a provider to the client&apos;)
-    }
-
-    const indexOfRequestor = requestor
-      ? findLastIndex(
-        this._providers,
-        provider =&gt; requestor.constructor === provider.constructor
-      ) : this._providers.length
-
-    const provider = findLast(
-      this._providers,
-      provider =&gt; isFunction(provider[method]), indexOfRequestor - 1
-    )
-
-    if (provider == null) {
-      throw new errors.UnimplementedMethodError(`Unimplemented method &quot;${method}&quot;`)
-    }
-
-    if (isFunction(provider._checkMethodVersionSupport)) {
-      if (!provider._checkMethodVersionSupport(method, this.version)) {
-        throw new errors.UnsupportedMethodError(`Method &quot;${method}&quot; is not supported by version &quot;${this.version}&quot;`)
-      }
-    }
-
-    return provider
-  }
-
-  /**
-   * Generate a block
-   * @param {!number} numberOfBlocks - Number of blocks to be generated
-   * @return {Promise&lt;string[], TypeError|InvalidProviderResponseError&gt;} Resolves
-   *  with Block hash of the generated blocks.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async generateBlock (numberOfBlocks) {
-    const provider = this.getProviderForMethod(&apos;generateBlock&apos;)
-
-    if (!isNumber(numberOfBlocks)) {
-      throw new TypeError(&apos;First argument should be a number&apos;)
-    }
-
-    const blockHashes = await provider.generateBlock(numberOfBlocks)
-
-    if (!isArray(blockHashes)) {
-      throw new errors.InvalidProviderResponseError(&apos;Response should be an array&apos;)
-    }
-
-    const invalidBlock = find(blockHashes, blockHash =&gt; !(/^[A-Fa-f0-9]+$/.test(blockHash)))
-
-    if (invalidBlock) {
-      throw new errors.InvalidProviderResponseError(&apos;Invalid block(s) found in provider\&apos;s reponse&apos;)
-    }
-
-    return blockHashes
-  }
-
-  /**
-   * Get a block given its hash.
-   * @param {!string} blockHash - A hexadecimal string that represents the
-   *  *hash* of the desired block.
-   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
-   * @return {Promise&lt;ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError&gt;}
-   *  Resolves with a Block with the same hash as the given input.
-   *  If `includeTx` is true, the transaction property is an array of Transactions;
-   *  otherwise, it is a list of transaction hashes.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async getBlockByHash (blockHash, includeTx = false) {
-    const provider = this.getProviderForMethod(&apos;getBlockByHash&apos;)
-
-    if (!isString(blockHash)) {
-      throw new TypeError(&apos;Block hash should be a string&apos;)
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(blockHash))) {
-      throw new TypeError(&apos;Block hash should be a valid hex string&apos;)
-    }
-
-    if (!isBoolean(includeTx)) {
-      throw new TypeError(&apos;Second parameter should be boolean&apos;)
-    }
-
-    const block = await provider.getBlockByHash(blockHash, includeTx)
-
-    if (!this.validateBlock(block)) {
-      throw new errors.InvalidProviderResponseError(&apos;Provider returned an invalid block&apos;)
-    }
-
-    return block
-  }
-
-  /**
-   * Get a block given its number.
-   * @param {!number} blockNumber - The number of the desired block.
-   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
-   * @return {Promise&lt;ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError&gt;}
-   *  Resolves with a Block with the same number as the given input.
-   *  If `includeTx` is true, the transaction property is an array of Transactions;
-   *  otherwise, it is a list of transaction hashes.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async getBlockByNumber (blockNumber, includeTx = false) {
-    const provider = this.getProviderForMethod(&apos;getBlockByNumber&apos;)
-
-    if (!isNumber(blockNumber)) {
-      throw new TypeError(&apos;Invalid Block number&apos;)
-    }
-
-    if (!isBoolean(includeTx)) {
-      throw new TypeError(&apos;Second parameter should be boolean&apos;)
-    }
-
-    const block = await provider.getBlockByNumber(blockNumber, includeTx)
-
-    const valid = this.validateBlock(block)
-
-    if (!valid) {
-      const errors = this.validateBlock.errors
-      throw new errors.InvalidProviderResponseError(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)
-    }
-
-    return block
-  }
-
-  /**
-   * Get current block height of the chain.
-   * @return {Promise&lt;number, InvalidProviderResponseError&gt;} Resolves with
-   *  chain height.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async getBlockHeight () {
-    const provider = this.getProviderForMethod(&apos;getBlockHeight&apos;)
-
-    const blockHeight = await provider.getBlockHeight()
-
-    if (!isNumber(blockHeight)) {
-      throw new errors.InvalidProviderResponseError(&apos;Provider returned an invalid block height&apos;)
-    }
-
-    return blockHeight
-  }
-
-  /**
-   * Get a transaction given its hash.
-   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the
-   *  desired transaction.
-   * @return {Promise&lt;ChainAbstractionLayer.schemas.Transaction, TypeError|InvalidProviderResponseError&gt;}
-   *  Resolves with a Transaction with the same hash as the given input.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async getTransactionByHash (txHash) {
-    const provider = this.getProviderForMethod(&apos;getTransactionByHash&apos;)
-
-    if (!isString(txHash)) {
-      throw new TypeError(&apos;Transaction hash should be a string&apos;)
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-      throw new TypeError(&apos;Transaction hash should be a valid hex string&apos;)
-    }
-
-    const transaction = await provider.getTransactionByHash(txHash)
-
-    const valid = this.validateTransaction(transaction)
-
-    if (!valid) {
-      const errors = this.validateTransaction.errors
-      throw new errors.InvalidProviderResponseError(`Provider returned an invalid transaction: ${errors[0].dataPath} ${errors[0].message}`)
-    }
-
-    return transaction
-  }
-
-  /**
-   * Get a raw hexadecimal transaction given its hash.
-   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the
-   *  desired transaction.
-   * @return {Promise&lt;string, TypeError|InvalidProviderResponseError&gt;} Resolves with the raw Transaction with
-   *  the same hash as the given output.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async getRawTransactionByHash (txHash) {
-    const provider = this.getProviderForMethod(&apos;getRawTransactionByHash&apos;)
-
-    if (!isString(txHash)) {
-      throw new TypeError(&apos;Transaction hash should be a string&apos;)
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-      throw new TypeError(&apos;Transaction hash should be a valid hex string&apos;)
-    }
-
-    const transaction = await provider.getRawTransactionByHash(txHash)
-
-    if (!this.validateTransaction(transaction)) {
-      throw new errors.InvalidProviderResponseError(&apos;Provider returned an invalid transaction&apos;)
-    }
-
-    return transaction
-  }
-
-  /**
-   * Get addresses/accounts of the user.
-   * @return {Promise&lt;string, InvalidProviderResponseError&gt;} Resolves with a list
-   *  of accounts.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async getAddresses () {
-    const provider = this.getProviderForMethod(&apos;getAddresses&apos;)
-
-    const addresses = await provider.getAddresses()
-
-    if (!isArray(addresses)) {
-      throw new errors.InvalidProviderResponseError(&apos;Provider returned an invalid response&apos;)
-    }
-
-    return addresses
-  }
-
-  /**
-   * Sign a message.
-   * @param {!string} message - Message to be signed.
-   * @param {!string} from - The address from which the message is signed.
-   * @return {Promise&lt;string, null&gt;} Resolves with a signed message.
-   */
-  async signMessage (message, from) {
-    const provider = this.getProviderForMethod(&apos;signMessage&apos;)
-
-    const signedMessage = await provider.signMessage(message, from)
-
-    return signedMessage
-  }
-
-  /**
-   * Send a transaction to the chain
-   * @param {!string} from - The address identifier for the sender.
-   * @param {!string} to - The address identifier for the receiver.
-   * @param {!number} value - Number representing the amount associated with.
-   *  the transaction.
-   * @param {!string} [data] - Optional data to send with the transaction.
-   * @return {Promise&lt;string, InvalidProviderResponseError&gt;} Resolves with an identifier for
-   *  the broadcasted transaction.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async sendTransaction (from, to, value, data) {
-    const provider = this.getProviderForMethod(&apos;sendTransaction&apos;)
-
-    const txHash = await provider.sendTransaction(from, to, value, data)
-
-    if (!isString(txHash)) {
-      throw new errors.InvalidProviderResponseError(&apos;sendTransaction method should return a transaction id string&apos;)
-    }
-
-    return txHash
-  }
-
-  /**
-   * Broadcast a transaction to the network using it&apos;s raw seriealized transaction.
-   * @param {!string} rawTransaction - A raw transaction usually in the form of a
-   *  hexadecimal string that represents the serialized transaction.
-   * @return {Promise&lt;string, InvalidProviderResponseError&gt;} Resolves with an
-   *  identifier for the broadcasted transaction.
-   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
-   */
-  async sendRawTransaction (rawTransaction) {
-    const provider = this.getProviderForMethod(&apos;sendRawTransaction&apos;)
-
-    const txHash = await provider.sendRawTransaction(rawTransaction)
-
-    if (!isString(txHash)) {
-      throw new errors.InvalidProviderResponseError(&apos;sendRawTransaction method should return a transaction id string&apos;)
-    }
-
-    return txHash
-  }
-
-  /**
-   * Generate a secret.
-   * @param {!string} message - Message to be used for generating secret.
-   * @return {Promise&lt;string, null&gt;} Resolves with a secret.
-   */
-  async generateSecret (message) {
-    const addresses = await this.getAddresses()
-    const from = addresses[0]
-    const signedMessage = await this.signMessage(message, from)
-    const secret = crypto.hash160(signedMessage)
-    return secret
-  }
-
-  /**
-   * Generate swap transaction data
-   */
-  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    this._checkMethod(&apos;generateSwap&apos;)
-
-    if (!isString(recipientAddress)) {
-      throw new Error(&apos;Recipient address should be a string&apos;)
-    }
-
-    if (!isString(refundAddress)) {
-      throw new Error(&apos;Refund address should be a string&apos;)
-    }
-
-    if (!isString(secretHash)) {
-      throw new Error(&apos;Secret hash should be a string&apos;)
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(recipientAddress))) {
-      throw new Error(&apos;Recipient address should be a valid hex string&apos;)
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(refundAddress))) {
-      throw new Error(&apos;Refund address should be a valid hex string&apos;)
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {
-      throw new Error(&apos;Secret hash should be a valid hex string&apos;)
-    }
-
-    if (!isNumber(expiration)) {
-      throw new Error(&apos;Invalid expiration time&apos;)
-    }
-
-    return this.provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
-  }
-}
-
-ChainAbstractionLayer.Provider = Provider
-ChainAbstractionLayer.providers = providers
-ChainAbstractionLayer.crypto = crypto
-ChainAbstractionLayer.errors = errors
-ChainAbstractionLayer.schemas = {
-  Block: BlockSchema,
-  Transaction: TransactionSchema
+import * as schema from &apos;./schema&apos;
+
+export {
+  Client,
+  Provider,
+  providers,
+  crypto,
+  errors,
+  schema
 }
 </code></pre>
 

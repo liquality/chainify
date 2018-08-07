@@ -1,11 +1,5 @@
 window.esdocSearchIndex = [
   [
-    "chainabstractionlayer/src/providers/bitcoin/bitcoincrypto.js~bitcoincrypto",
-    "variable/index.html#static-variable-BitcoinCrypto",
-    "<span>BitcoinCrypto</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinCrypto.js</span>",
-    "variable"
-  ],
-  [
     "chainabstractionlayer/src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html",
     "<span>BitcoinLedgerProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinLedgerProvider.js</span>",
@@ -24,9 +18,9 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "chainabstractionlayer/src/index.js~chainabstractionlayer",
-    "class/src/index.js~ChainAbstractionLayer.html",
-    "<span>ChainAbstractionLayer</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/index.js</span>",
+    "chainabstractionlayer/src/client.js~client",
+    "class/src/Client.js~Client.html",
+    "<span>Client</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/Client.js</span>",
     "class"
   ],
   [
@@ -114,10 +108,22 @@ window.esdocSearchIndex = [
     "variable"
   ],
   [
-    "chainabstractionlayer/src/crypto.js~crypto",
-    "variable/index.html#static-variable-crypto",
-    "<span>crypto</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
-    "variable"
+    "chainabstractionlayer/src/providers/bitcoin/bitcoinutil.js~addresstopubkeyhash",
+    "function/index.html#static-function-addressToPubKeyHash",
+    "<span>addressToPubKeyHash</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/providers/bitcoin/bitcoinutil.js~compresspubkey",
+    "function/index.html#static-function-compressPubKey",
+    "<span>compressPubKey</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/crypto.js~ensurebuffer",
+    "function/index.html#static-function-ensureBuffer",
+    "<span>ensureBuffer</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
+    "function"
   ],
   [
     "chainabstractionlayer/src/providers/ethereum/ethereumutil.js~ensureethformat",
@@ -129,6 +135,36 @@ window.esdocSearchIndex = [
     "chainabstractionlayer/src/providers/ethereum/ethereumutil.js~formatethresponse",
     "function/index.html#static-function-formatEthResponse",
     "<span>formatEthResponse</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/ethereum/EthereumUtil.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/crypto.js~hash160",
+    "function/index.html#static-function-hash160",
+    "<span>hash160</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/providers/bitcoin/bitcoinutil.js~pubkeyhashtoaddress",
+    "function/index.html#static-function-pubKeyHashToAddress",
+    "<span>pubKeyHashToAddress</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/providers/bitcoin/bitcoinutil.js~pubkeytoaddress",
+    "function/index.html#static-function-pubKeyToAddress",
+    "<span>pubKeyToAddress</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/bitcoin/BitcoinUtil.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/crypto.js~ripemd160",
+    "function/index.html#static-function-ripemd160",
+    "<span>ripemd160</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/crypto.js~sha256",
+    "function/index.html#static-function-sha256",
+    "<span>sha256</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
     "function"
   ],
   [
@@ -414,6 +450,126 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "src/client.js",
+    "file/src/Client.js.html",
+    "src/Client.js",
+    "file"
+  ],
+  [
+    "src/client.js~client#_providers",
+    "class/src/Client.js~Client.html#instance-member-_providers",
+    "src/Client.js~Client#_providers",
+    "member"
+  ],
+  [
+    "src/client.js~client#addprovider",
+    "class/src/Client.js~Client.html#instance-method-addProvider",
+    "src/Client.js~Client#addProvider",
+    "method"
+  ],
+  [
+    "src/client.js~client#constructor",
+    "class/src/Client.js~Client.html#instance-constructor-constructor",
+    "src/Client.js~Client#constructor",
+    "method"
+  ],
+  [
+    "src/client.js~client#generateblock",
+    "class/src/Client.js~Client.html#instance-method-generateBlock",
+    "src/Client.js~Client#generateBlock",
+    "method"
+  ],
+  [
+    "src/client.js~client#generatesecret",
+    "class/src/Client.js~Client.html#instance-method-generateSecret",
+    "src/Client.js~Client#generateSecret",
+    "method"
+  ],
+  [
+    "src/client.js~client#generateswap",
+    "class/src/Client.js~Client.html#instance-method-generateSwap",
+    "src/Client.js~Client#generateSwap",
+    "method"
+  ],
+  [
+    "src/client.js~client#getaddresses",
+    "class/src/Client.js~Client.html#instance-method-getAddresses",
+    "src/Client.js~Client#getAddresses",
+    "method"
+  ],
+  [
+    "src/client.js~client#getblockbyhash",
+    "class/src/Client.js~Client.html#instance-method-getBlockByHash",
+    "src/Client.js~Client#getBlockByHash",
+    "method"
+  ],
+  [
+    "src/client.js~client#getblockbynumber",
+    "class/src/Client.js~Client.html#instance-method-getBlockByNumber",
+    "src/Client.js~Client#getBlockByNumber",
+    "method"
+  ],
+  [
+    "src/client.js~client#getblockheight",
+    "class/src/Client.js~Client.html#instance-method-getBlockHeight",
+    "src/Client.js~Client#getBlockHeight",
+    "method"
+  ],
+  [
+    "src/client.js~client#getproviderformethod",
+    "class/src/Client.js~Client.html#instance-method-getProviderForMethod",
+    "src/Client.js~Client#getProviderForMethod",
+    "method"
+  ],
+  [
+    "src/client.js~client#getrawtransactionbyhash",
+    "class/src/Client.js~Client.html#instance-method-getRawTransactionByHash",
+    "src/Client.js~Client#getRawTransactionByHash",
+    "method"
+  ],
+  [
+    "src/client.js~client#gettransactionbyhash",
+    "class/src/Client.js~Client.html#instance-method-getTransactionByHash",
+    "src/Client.js~Client#getTransactionByHash",
+    "method"
+  ],
+  [
+    "src/client.js~client#sendrawtransaction",
+    "class/src/Client.js~Client.html#instance-method-sendRawTransaction",
+    "src/Client.js~Client#sendRawTransaction",
+    "method"
+  ],
+  [
+    "src/client.js~client#sendtransaction",
+    "class/src/Client.js~Client.html#instance-method-sendTransaction",
+    "src/Client.js~Client#sendTransaction",
+    "method"
+  ],
+  [
+    "src/client.js~client#signmessage",
+    "class/src/Client.js~Client.html#instance-method-signMessage",
+    "src/Client.js~Client#signMessage",
+    "method"
+  ],
+  [
+    "src/client.js~client#validateblock",
+    "class/src/Client.js~Client.html#instance-member-validateBlock",
+    "src/Client.js~Client#validateBlock",
+    "member"
+  ],
+  [
+    "src/client.js~client#validatetransaction",
+    "class/src/Client.js~Client.html#instance-member-validateTransaction",
+    "src/Client.js~Client#validateTransaction",
+    "member"
+  ],
+  [
+    "src/client.js~client#version",
+    "class/src/Client.js~Client.html#instance-member-version",
+    "src/Client.js~Client#version",
+    "member"
+  ],
+  [
     "src/provider.js",
     "file/src/Provider.js.html",
     "src/Provider.js",
@@ -454,120 +610,6 @@ window.esdocSearchIndex = [
     "file/src/index.js.html",
     "src/index.js",
     "file"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#_providers",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-member-_providers",
-    "src/index.js~ChainAbstractionLayer#_providers",
-    "member"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#addprovider",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-addProvider",
-    "src/index.js~ChainAbstractionLayer#addProvider",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#constructor",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-constructor-constructor",
-    "src/index.js~ChainAbstractionLayer#constructor",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#generateblock",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-generateBlock",
-    "src/index.js~ChainAbstractionLayer#generateBlock",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#generatesecret",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSecret",
-    "src/index.js~ChainAbstractionLayer#generateSecret",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#generateswap",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-generateSwap",
-    "src/index.js~ChainAbstractionLayer#generateSwap",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#getaddresses",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getAddresses",
-    "src/index.js~ChainAbstractionLayer#getAddresses",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#getblockbyhash",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByHash",
-    "src/index.js~ChainAbstractionLayer#getBlockByHash",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#getblockbynumber",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockByNumber",
-    "src/index.js~ChainAbstractionLayer#getBlockByNumber",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#getblockheight",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getBlockHeight",
-    "src/index.js~ChainAbstractionLayer#getBlockHeight",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#getproviderformethod",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getProviderForMethod",
-    "src/index.js~ChainAbstractionLayer#getProviderForMethod",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#getrawtransactionbyhash",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getRawTransactionByHash",
-    "src/index.js~ChainAbstractionLayer#getRawTransactionByHash",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#gettransactionbyhash",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-getTransactionByHash",
-    "src/index.js~ChainAbstractionLayer#getTransactionByHash",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#sendrawtransaction",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-sendRawTransaction",
-    "src/index.js~ChainAbstractionLayer#sendRawTransaction",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#sendtransaction",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-sendTransaction",
-    "src/index.js~ChainAbstractionLayer#sendTransaction",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#signmessage",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-method-signMessage",
-    "src/index.js~ChainAbstractionLayer#signMessage",
-    "method"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#validateblock",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-member-validateBlock",
-    "src/index.js~ChainAbstractionLayer#validateBlock",
-    "member"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#validatetransaction",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-member-validateTransaction",
-    "src/index.js~ChainAbstractionLayer#validateTransaction",
-    "member"
-  ],
-  [
-    "src/index.js~chainabstractionlayer#version",
-    "class/src/index.js~ChainAbstractionLayer.html#instance-member-version",
-    "src/index.js~ChainAbstractionLayer#version",
-    "member"
   ],
   [
     "src/providers/jsonrpcprovider.js",
@@ -619,13 +661,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/providers/rpcerror.js~rpcerror#status",
-    "class/src/providers/RpcError.js~RpcError.html#instance-set-status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-get-status",
     "src/providers/RpcError.js~RpcError#status",
     "member"
   ],
   [
     "src/providers/rpcerror.js~rpcerror#status",
-    "class/src/providers/RpcError.js~RpcError.html#instance-get-status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-set-status",
     "src/providers/RpcError.js~RpcError#status",
     "member"
   ],
@@ -636,22 +678,10 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/providers/bitcoin/bitcoincrypto.js",
-    "file/src/providers/bitcoin/BitcoinCrypto.js.html",
-    "src/providers/bitcoin/BitcoinCrypto.js",
-    "file"
-  ],
-  [
     "src/providers/bitcoin/bitcoinledgerprovider.js",
     "file/src/providers/bitcoin/BitcoinLedgerProvider.js.html",
     "src/providers/bitcoin/BitcoinLedgerProvider.js",
     "file"
-  ],
-  [
-    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_addresstopubkeyhash",
-    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_addressToPubKeyHash",
-    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_addressToPubKeyHash",
-    "method"
   ],
   [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_blockchaininfobaseurl",
@@ -814,6 +844,12 @@ window.esdocSearchIndex = [
     "class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html#instance-method-generateSwap",
     "src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider#generateSwap",
     "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinutil.js",
+    "file/src/providers/bitcoin/BitcoinUtil.js.html",
+    "src/providers/bitcoin/BitcoinUtil.js",
+    "file"
   ],
   [
     "src/providers/bitcoin/index.js",
@@ -993,6 +1029,12 @@ window.esdocSearchIndex = [
     "src/providers/index.js",
     "file/src/providers/index.js.html",
     "src/providers/index.js",
+    "file"
+  ],
+  [
+    "src/schema/index.js",
+    "file/src/schema/index.js.html",
+    "src/schema/index.js",
     "file"
   ]
 ]

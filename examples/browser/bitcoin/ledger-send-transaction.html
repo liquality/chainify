@@ -1,0 +1,31 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="../../../dist/index.umd.js"></script>
+</head>
+<body>
+  <h1>CAL + Ledger: Send transaction (Bitcoin)</h1>
+  <p>To: <input type="text" id="toAddress"/></p>
+  <p>Value: <input type="text" id="value" value="0"/></p>
+  <p><button id="send">Send</button></p>
+  <p>Result: <span id="result"></span></p>
+  <p><code>For errors and logs, check console</code></p>
+  <script>
+  /* global $, ChainAbstractionLayer */
+  const { Client, providers } = ChainAbstractionLayer
+  const bitcoin = new Client()
+  bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
+  bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider(true))
+  bitcoin.getAddresses().then(addresses => {
+    const from = addresses[0]
+    $('#address').text(from)
+
+    $('#send').click(() => {
+      bitcoin.sendTransaction(from, $('#toAddress').val(), $('#value').val()).then(result => {
+        $('#result').text(JSON.stringify(result, null, 2))
+      })
+    })
+  })
+  </script>
+</body>
+</html>

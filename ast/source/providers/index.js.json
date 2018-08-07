@@ -31,7 +31,7 @@
       {
         "type": "ImportDeclaration",
         "start": 0,
-        "end": 32,
+        "end": 36,
         "loc": {
           "start": {
             "line": 1,
@@ -39,14 +39,14 @@
           },
           "end": {
             "line": 1,
-            "column": 32
+            "column": 36
           }
         },
         "specifiers": [
           {
-            "type": "ImportDefaultSpecifier",
+            "type": "ImportNamespaceSpecifier",
             "start": 7,
-            "end": 14,
+            "end": 19,
             "loc": {
               "start": {
                 "line": 1,
@@ -54,21 +54,21 @@
               },
               "end": {
                 "line": 1,
-                "column": 14
+                "column": 19
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 7,
-              "end": 14,
+              "start": 12,
+              "end": 19,
               "loc": {
                 "start": {
                   "line": 1,
-                  "column": 7
+                  "column": 12
                 },
                 "end": {
                   "line": 1,
-                  "column": 14
+                  "column": 19
                 },
                 "identifierName": "bitcoin"
               },
@@ -78,29 +78,29 @@
         ],
         "source": {
           "type": "StringLiteral",
-          "start": 20,
-          "end": 32,
+          "start": 25,
+          "end": 36,
           "loc": {
             "start": {
               "line": 1,
-              "column": 20
+              "column": 25
             },
             "end": {
               "line": 1,
-              "column": 32
+              "column": 36
             }
           },
           "extra": {
-            "rawValue": "./bitcoin/",
-            "raw": "'./bitcoin/'"
+            "rawValue": "./bitcoin",
+            "raw": "'./bitcoin'"
           },
-          "value": "./bitcoin/"
+          "value": "./bitcoin"
         }
       },
       {
         "type": "ImportDeclaration",
-        "start": 33,
-        "end": 67,
+        "start": 37,
+        "end": 75,
         "loc": {
           "start": {
             "line": 2,
@@ -108,14 +108,14 @@
           },
           "end": {
             "line": 2,
-            "column": 34
+            "column": 38
           }
         },
         "specifiers": [
           {
-            "type": "ImportDefaultSpecifier",
-            "start": 40,
-            "end": 48,
+            "type": "ImportNamespaceSpecifier",
+            "start": 44,
+            "end": 57,
             "loc": {
               "start": {
                 "line": 2,
@@ -123,21 +123,21 @@
               },
               "end": {
                 "line": 2,
-                "column": 15
+                "column": 20
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 40,
-              "end": 48,
+              "start": 49,
+              "end": 57,
               "loc": {
                 "start": {
                   "line": 2,
-                  "column": 7
+                  "column": 12
                 },
                 "end": {
                   "line": 2,
-                  "column": 15
+                  "column": 20
                 },
                 "identifierName": "ethereum"
               },
@@ -147,28 +147,28 @@
         ],
         "source": {
           "type": "StringLiteral",
-          "start": 54,
-          "end": 67,
+          "start": 63,
+          "end": 75,
           "loc": {
             "start": {
               "line": 2,
-              "column": 21
+              "column": 26
             },
             "end": {
               "line": 2,
-              "column": 34
+              "column": 38
             }
           },
           "extra": {
-            "rawValue": "./ethereum/",
-            "raw": "'./ethereum/'"
+            "rawValue": "./ethereum",
+            "raw": "'./ethereum'"
           },
-          "value": "./ethereum/"
+          "value": "./ethereum"
         }
       },
       {
-        "type": "ExportDefaultDeclaration",
-        "start": 69,
+        "type": "ExportNamedDeclaration",
+        "start": 77,
         "end": 109,
         "loc": {
           "start": {
@@ -180,23 +180,24 @@
             "column": 1
           }
         },
-        "declaration": {
-          "type": "ObjectExpression",
-          "start": 84,
-          "end": 109,
-          "loc": {
-            "start": {
-              "line": 4,
-              "column": 15
+        "declaration": null,
+        "specifiers": [
+          {
+            "type": "ExportSpecifier",
+            "start": 88,
+            "end": 95,
+            "loc": {
+              "start": {
+                "line": 5,
+                "column": 2
+              },
+              "end": {
+                "line": 5,
+                "column": 9
+              }
             },
-            "end": {
-              "line": 7,
-              "column": 1
-            }
-          },
-          "properties": [
-            {
-              "type": "ObjectProperty",
+            "local": {
+              "type": "Identifier",
               "start": 88,
               "end": 95,
               "loc": {
@@ -207,51 +208,45 @@
                 "end": {
                   "line": 5,
                   "column": 9
-                }
-              },
-              "method": false,
-              "shorthand": true,
-              "computed": false,
-              "key": {
-                "type": "Identifier",
-                "start": 88,
-                "end": 95,
-                "loc": {
-                  "start": {
-                    "line": 5,
-                    "column": 2
-                  },
-                  "end": {
-                    "line": 5,
-                    "column": 9
-                  },
-                  "identifierName": "bitcoin"
                 },
-                "name": "bitcoin"
+                "identifierName": "bitcoin"
               },
-              "value": {
-                "type": "Identifier",
-                "start": 88,
-                "end": 95,
-                "loc": {
-                  "start": {
-                    "line": 5,
-                    "column": 2
-                  },
-                  "end": {
-                    "line": 5,
-                    "column": 9
-                  },
-                  "identifierName": "bitcoin"
+              "name": "bitcoin"
+            },
+            "exported": {
+              "type": "Identifier",
+              "start": 88,
+              "end": 95,
+              "loc": {
+                "start": {
+                  "line": 5,
+                  "column": 2
                 },
-                "name": "bitcoin"
+                "end": {
+                  "line": 5,
+                  "column": 9
+                },
+                "identifierName": "bitcoin"
               },
-              "extra": {
-                "shorthand": true
+              "name": "bitcoin"
+            }
+          },
+          {
+            "type": "ExportSpecifier",
+            "start": 99,
+            "end": 107,
+            "loc": {
+              "start": {
+                "line": 6,
+                "column": 2
+              },
+              "end": {
+                "line": 6,
+                "column": 10
               }
             },
-            {
-              "type": "ObjectProperty",
+            "local": {
+              "type": "Identifier",
               "start": 99,
               "end": 107,
               "loc": {
@@ -262,53 +257,31 @@
                 "end": {
                   "line": 6,
                   "column": 10
-                }
-              },
-              "method": false,
-              "shorthand": true,
-              "computed": false,
-              "key": {
-                "type": "Identifier",
-                "start": 99,
-                "end": 107,
-                "loc": {
-                  "start": {
-                    "line": 6,
-                    "column": 2
-                  },
-                  "end": {
-                    "line": 6,
-                    "column": 10
-                  },
-                  "identifierName": "ethereum"
                 },
-                "name": "ethereum"
+                "identifierName": "ethereum"
               },
-              "value": {
-                "type": "Identifier",
-                "start": 99,
-                "end": 107,
-                "loc": {
-                  "start": {
-                    "line": 6,
-                    "column": 2
-                  },
-                  "end": {
-                    "line": 6,
-                    "column": 10
-                  },
-                  "identifierName": "ethereum"
+              "name": "ethereum"
+            },
+            "exported": {
+              "type": "Identifier",
+              "start": 99,
+              "end": 107,
+              "loc": {
+                "start": {
+                  "line": 6,
+                  "column": 2
                 },
-                "name": "ethereum"
+                "end": {
+                  "line": 6,
+                  "column": 10
+                },
+                "identifierName": "ethereum"
               },
-              "extra": {
-                "shorthand": true
-              }
+              "name": "ethereum"
             }
-          ],
-          "leadingComments": [],
-          "trailingComments": []
-        }
+          }
+        ],
+        "source": null
       }
     ],
     "directives": []
@@ -345,6 +318,59 @@
     },
     {
       "type": {
+        "label": "*",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": 10,
+        "updateContext": null
+      },
+      "value": "*",
+      "start": 7,
+      "end": 8,
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 7
+        },
+        "end": {
+          "line": 1,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "as",
+      "start": 9,
+      "end": 11,
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 9
+        },
+        "end": {
+          "line": 1,
+          "column": 11
+        }
+      }
+    },
+    {
+      "type": {
         "label": "name",
         "beforeExpr": false,
         "startsExpr": true,
@@ -356,16 +382,16 @@
         "binop": null
       },
       "value": "bitcoin",
-      "start": 7,
-      "end": 14,
+      "start": 12,
+      "end": 19,
       "loc": {
         "start": {
           "line": 1,
-          "column": 7
+          "column": 12
         },
         "end": {
           "line": 1,
-          "column": 14
+          "column": 19
         }
       }
     },
@@ -382,16 +408,16 @@
         "binop": null
       },
       "value": "from",
-      "start": 15,
-      "end": 19,
+      "start": 20,
+      "end": 24,
       "loc": {
         "start": {
           "line": 1,
-          "column": 15
+          "column": 20
         },
         "end": {
           "line": 1,
-          "column": 19
+          "column": 24
         }
       }
     },
@@ -408,17 +434,17 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "./bitcoin/",
-      "start": 20,
-      "end": 32,
+      "value": "./bitcoin",
+      "start": 25,
+      "end": 36,
       "loc": {
         "start": {
           "line": 1,
-          "column": 20
+          "column": 25
         },
         "end": {
           "line": 1,
-          "column": 32
+          "column": 36
         }
       }
     },
@@ -437,8 +463,8 @@
         "updateContext": null
       },
       "value": "import",
-      "start": 33,
-      "end": 39,
+      "start": 37,
+      "end": 43,
       "loc": {
         "start": {
           "line": 2,
@@ -447,6 +473,59 @@
         "end": {
           "line": 2,
           "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "*",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": 10,
+        "updateContext": null
+      },
+      "value": "*",
+      "start": 44,
+      "end": 45,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 7
+        },
+        "end": {
+          "line": 2,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "as",
+      "start": 46,
+      "end": 48,
+      "loc": {
+        "start": {
+          "line": 2,
+          "column": 9
+        },
+        "end": {
+          "line": 2,
+          "column": 11
         }
       }
     },
@@ -463,16 +542,16 @@
         "binop": null
       },
       "value": "ethereum",
-      "start": 40,
-      "end": 48,
+      "start": 49,
+      "end": 57,
       "loc": {
         "start": {
           "line": 2,
-          "column": 7
+          "column": 12
         },
         "end": {
           "line": 2,
-          "column": 15
+          "column": 20
         }
       }
     },
@@ -489,16 +568,16 @@
         "binop": null
       },
       "value": "from",
-      "start": 49,
-      "end": 53,
+      "start": 58,
+      "end": 62,
       "loc": {
         "start": {
           "line": 2,
-          "column": 16
+          "column": 21
         },
         "end": {
           "line": 2,
-          "column": 20
+          "column": 25
         }
       }
     },
@@ -515,17 +594,17 @@
         "binop": null,
         "updateContext": null
       },
-      "value": "./ethereum/",
-      "start": 54,
-      "end": 67,
+      "value": "./ethereum",
+      "start": 63,
+      "end": 75,
       "loc": {
         "start": {
           "line": 2,
-          "column": 21
+          "column": 26
         },
         "end": {
           "line": 2,
-          "column": 34
+          "column": 38
         }
       }
     },
@@ -544,8 +623,8 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 69,
-      "end": 75,
+      "start": 77,
+      "end": 83,
       "loc": {
         "start": {
           "line": 4,
@@ -554,34 +633,6 @@
         "end": {
           "line": 4,
           "column": 6
-        }
-      }
-    },
-    {
-      "type": {
-        "label": "default",
-        "keyword": "default",
-        "beforeExpr": true,
-        "startsExpr": false,
-        "rightAssociative": false,
-        "isLoop": false,
-        "isAssign": false,
-        "prefix": false,
-        "postfix": false,
-        "binop": null,
-        "updateContext": null
-      },
-      "value": "default",
-      "start": 76,
-      "end": 83,
-      "loc": {
-        "start": {
-          "line": 4,
-          "column": 7
-        },
-        "end": {
-          "line": 4,
-          "column": 14
         }
       }
     },
@@ -602,11 +653,11 @@
       "loc": {
         "start": {
           "line": 4,
-          "column": 15
+          "column": 7
         },
         "end": {
           "line": 4,
-          "column": 16
+          "column": 8
         }
       }
     },

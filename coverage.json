@@ -1,8 +1,17 @@
 {
-  "coverage": "19.04%",
-  "expectCount": 105,
-  "actualCount": 20,
+  "coverage": "25.45%",
+  "expectCount": 110,
+  "actualCount": 28,
   "files": {
+    "src/Client.js": {
+      "expectCount": 20,
+      "actualCount": 17,
+      "undocumentLines": [
+        15,
+        23,
+        24
+      ]
+    },
     "src/Provider.js": {
       "expectCount": 4,
       "actualCount": 2,
@@ -12,11 +21,9 @@
       ]
     },
     "src/crypto.js": {
-      "expectCount": 1,
-      "actualCount": 0,
-      "undocumentLines": [
-        5
-      ]
+      "expectCount": 5,
+      "actualCount": 5,
+      "undocumentLines": []
     },
     "src/errors.js": {
       "expectCount": 8,
@@ -30,15 +37,6 @@
         13,
         14,
         15
-      ]
-    },
-    "src/index.js": {
-      "expectCount": 20,
-      "actualCount": 17,
-      "undocumentLines": [
-        12,
-        20,
-        21
       ]
     },
     "src/providers/JsonRpcProvider.js": {
@@ -65,16 +63,8 @@
         33
       ]
     },
-    "src/providers/bitcoin/BitcoinCrypto.js": {
-      "expectCount": 2,
-      "actualCount": 0,
-      "undocumentLines": [
-        3,
-        9
-      ]
-    },
     "src/providers/bitcoin/BitcoinLedgerProvider.js": {
-      "expectCount": 19,
+      "expectCount": 18,
       "actualCount": 1,
       "undocumentLines": [
         11,
@@ -92,9 +82,8 @@
         91,
         101,
         112,
-        116,
-        124,
-        132
+        120,
+        128
       ]
     },
     "src/providers/bitcoin/BitcoinRPCProvider.js": {
@@ -112,12 +101,19 @@
       ]
     },
     "src/providers/bitcoin/BitcoinSwapProvider.js": {
-      "expectCount": 3,
+      "expectCount": 2,
       "actualCount": 0,
       "undocumentLines": [
-        3,
-        5,
-        6
+        4,
+        5
+      ]
+    },
+    "src/providers/bitcoin/BitcoinUtil.js": {
+      "expectCount": 5,
+      "actualCount": 3,
+      "undocumentLines": [
+        8,
+        28
       ]
     },
     "src/providers/ethereum/EthereumLedgerProvider.js": {
@@ -174,8 +170,8 @@
       "expectCount": 2,
       "actualCount": 0,
       "undocumentLines": [
-        4,
-        33
+        3,
+        32
       ]
     }
   }
