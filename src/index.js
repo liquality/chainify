@@ -287,10 +287,10 @@ export default class ChainAbstractionLayer {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddresses () {
+  async getAddresses (min = 5, segwit = false) {
     const provider = this.getProviderForMethod('getAddresses')
 
-    const addresses = await provider.getAddresses()
+    const addresses = await provider.getAddresses(min, segwit)
 
     if (!isArray(addresses)) {
       throw new errors.InvalidProviderResponseError('Provider returned an invalid response')
