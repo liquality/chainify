@@ -3,11 +3,14 @@ import Provider from '../../Provider'
 import Transport from '@alias/ledger-transport'
 import LedgerEth from '@ledgerhq/hw-app-eth'
 
+import { networks } from './EthereumUtil'
+
 export default class EthereumLedgerProvider extends Provider {
-  constructor () {
+  constructor (chain = 'ethereum') {
     super()
     this._ledgerEth = false
-    this._derivationPath = `44'/60'/0'/0'/0`
+    this._coinType = networks[chain].coinType
+    this._derivationPath = `44'/${this._coinType}'/0'/0'/0`
   }
 
   async _connectToLedger () {
@@ -29,11 +32,11 @@ export default class EthereumLedgerProvider extends Provider {
     return [ address ]
   }
 
-  async signMessage (message) {
+  async signMessage (message, path) {
     await this._connectToLedger()
 
     const hex = Buffer.from(message).toString('hex')
 
-    return this._ledgerEth.signPersonalMessage(this._derivationPath, hex)
+    return this._ledgerEth.signPersonalMessage(path, hex)
   }
 }
