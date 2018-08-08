@@ -30,6 +30,7 @@
     "publish:docs": "run-s prepare:docs && gh-pages -d docs/ -m \"Auto-generated commit for documentation\""
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.56",
     "@ledgerhq/hw-app-btc": "^4.20.0",
     "@ledgerhq/hw-app-eth": "^4.19.0",
     "@ledgerhq/hw-transport-node-hid": "~4.21.0",
@@ -41,11 +42,11 @@
     "crypto-hashing": "^1.0.0",
     "json-bigint": "^0.3.0",
     "lodash": "^4.0.0",
-    "regenerator-runtime": "^0.12.0",
     "standard-error": "^1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.54",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.56",
     "@babel/polyfill": "^7.0.0-beta.54",
     "@babel/preset-env": "^7.0.0-beta.54",
     "@babel/register": "^7.0.0-beta.54",

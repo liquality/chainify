@@ -33,6 +33,9 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader?cacheDirectory=true',
         options: {
+          plugins: [
+            '@babel/plugin-transform-runtime'
+          ],
           presets: [
             [
               '@babel/preset-env', {
