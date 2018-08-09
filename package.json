@@ -55,6 +55,7 @@
     "babel-plugin-lodash": "^3.3.4",
     "browserify": "^16.2.2",
     "chai-as-promised": "^7.1.1",
+    "copy": "^0.3.2",
     "cross-env": "^5.2.0",
     "esdoc": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
