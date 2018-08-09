@@ -5,27 +5,6 @@ import {
   base58
 } from '../../crypto'
 
-export const networks = {
-  bitcoin: {
-    pubKeyHash: '00',
-    scriptHash: '05',
-    coinType: '0',
-    explorerUrl: 'https://blockchain.info'
-  },
-  testnet: {
-    pubKeyHash: '6F',
-    scriptHash: 'C4',
-    coinType: '1',
-    explorerUrl: 'https://testnet.blockchain.info'
-  },
-  litecoin: {
-    pubKeyHash: '30',
-    scriptHash: '32',
-    coinType: '2',
-    explorerUrl: 'https://blockchain.info'
-  }
-}
-
 /**
  * Get compressed pubKey from pubKey.
  * @param {!string} pubkey - 65 byte string with prefix, x, y.

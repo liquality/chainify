@@ -1,14 +1,5 @@
 import { Block, Transaction } from '../../schema'
 
-export const networks = {
-  ethereum: {
-    coinType: '60'
-  },
-  ethereum_classic: {
-    coinType: '61'
-  }
-}
-
 export function formatEthResponse (obj) {
   if (Array.isArray(obj)) {
     obj = obj.map((elem) => {

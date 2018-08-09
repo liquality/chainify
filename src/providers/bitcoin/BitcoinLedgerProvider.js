@@ -5,18 +5,19 @@ import Transport from '@alias/ledger-transport'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 
-import { addressToPubKeyHash, networks } from './BitcoinUtil'
+import { addressToPubKeyHash } from './BitcoinUtil'
+import networks from '../../networks'
 
 // TODO: Abstract out non signing methods into another provider?
 export default class BitcoinLedgerProvider extends Provider {
   /**
    * @param {boolean} testnet True if the testnet network is being used
    */
-  constructor (chain = 'bitcoin') {
+  constructor (chain = { network: networks.bitcoin }) {
     super()
     this._ledgerBtc = false
-    this._blockChainInfoBaseUrl = networks[chain].explorerUrl
-    this._coinType = networks[chain].coinType
+    this._blockChainInfoBaseUrl = chain.network.explorerUrl
+    this._coinType = chain.network.coinType
   }
 
   async _connectToLedger () {
