@@ -374,38 +374,44 @@ export default class Client {
 
   /**
    * Generate swap transaction data
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @return {Promise<string, TypeError>} Resolves with swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    this._checkMethod('generateSwap')
+  async generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
+    const provider = this.getProviderForMethod('generateSwap')
 
     if (!isString(recipientAddress)) {
-      throw new Error('Recipient address should be a string')
+      throw new TypeError('Recipient address should be a string')
     }
 
     if (!isString(refundAddress)) {
-      throw new Error('Refund address should be a string')
+      throw new TypeError('Refund address should be a string')
     }
 
     if (!isString(secretHash)) {
-      throw new Error('Secret hash should be a string')
+      throw new TypeError('Secret hash should be a string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(recipientAddress))) {
-      throw new Error('Recipient address should be a valid hex string')
+      throw new TypeError('Recipient address should be a valid hex string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(refundAddress))) {
-      throw new Error('Refund address should be a valid hex string')
+      throw new TypeError('Refund address should be a valid hex string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {
-      throw new Error('Secret hash should be a valid hex string')
+      throw new TypeError('Secret hash should be a valid hex string')
     }
 
     if (!isNumber(expiration)) {
-      throw new Error('Invalid expiration time')
+      throw new TypeError('Invalid expiration time')
     }
 
-    return this.provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
   }
 }
