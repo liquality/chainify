@@ -438,39 +438,45 @@ export default class Client {
 
   /**
    * Generate swap transaction data
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @return {Promise&lt;string, TypeError&gt;} Resolves with swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
    */
-  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    this._checkMethod(&apos;generateSwap&apos;)
+  async generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
+    const provider = this.getProviderForMethod(&apos;generateSwap&apos;)
 
     if (!isString(recipientAddress)) {
-      throw new Error(&apos;Recipient address should be a string&apos;)
+      throw new TypeError(&apos;Recipient address should be a string&apos;)
     }
 
     if (!isString(refundAddress)) {
-      throw new Error(&apos;Refund address should be a string&apos;)
+      throw new TypeError(&apos;Refund address should be a string&apos;)
     }
 
     if (!isString(secretHash)) {
-      throw new Error(&apos;Secret hash should be a string&apos;)
+      throw new TypeError(&apos;Secret hash should be a string&apos;)
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(recipientAddress))) {
-      throw new Error(&apos;Recipient address should be a valid hex string&apos;)
+      throw new TypeError(&apos;Recipient address should be a valid hex string&apos;)
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(refundAddress))) {
-      throw new Error(&apos;Refund address should be a valid hex string&apos;)
+      throw new TypeError(&apos;Refund address should be a valid hex string&apos;)
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {
-      throw new Error(&apos;Secret hash should be a valid hex string&apos;)
+      throw new TypeError(&apos;Secret hash should be a valid hex string&apos;)
     }
 
     if (!isNumber(expiration)) {
-      throw new Error(&apos;Invalid expiration time&apos;)
+      throw new TypeError(&apos;Invalid expiration time&apos;)
     }
 
-    return this.provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
   }
 }
 </code></pre>
