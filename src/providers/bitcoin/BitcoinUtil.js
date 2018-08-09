@@ -4,6 +4,7 @@ import {
   sha256,
   base58
 } from '../../crypto'
+import networks from '../../networks'
 
 /**
  * Get compressed pubKey from pubKey.
@@ -43,7 +44,7 @@ export function pubKeyToAddress (pubKey, network, type) {
 export function pubKeyHashToAddress (pubKeyHash, network, type) {
   pubKeyHash = ensureBuffer(pubKeyHash)
   const prefixHash = Buffer.concat([Buffer.from(networks[network][type], 'hex'), pubKeyHash])
-  const checksum = sha256(sha256(prefixHash)).slice(0, 4)
+  const checksum = Buffer.from(sha256(sha256(prefixHash)).slice(0, 4), 'hex')
   const addr = base58.encode(Buffer.concat([prefixHash, checksum]))
   return addr
 }

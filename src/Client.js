@@ -364,9 +364,7 @@ export default class Client {
    * @param {!string} message - Message to be used for generating secret.
    * @return {Promise<string, null>} Resolves with a secret.
    */
-  async generateSecret (message) {
-    const addresses = await this.getAddresses()
-    const path = addresses[0].path
+  async generateSecret (message, path) {
     const signedMessage = await this.signMessage(message, path)
     const secret = hash160(signedMessage)
     return secret
