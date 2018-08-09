@@ -82,12 +82,19 @@ export default class BitcoinLedgerProvider extends Provider {
   _getUnspentOutputsForAmount (unspentOutputs, amount, numOutputs) {
     let unspentOutputsToUse = []
     let amountAccumulated = 0
+    let numOutputsOffset = 0
     unspentOutputs.every((utxo) => {
       amountAccumulated += utxo.value
       unspentOutputsToUse.push(utxo)
 
-      const fees = this._getFee(unspentOutputsToUse.length, numOutputs, 3) // TODO: hardcoded satoshi per byte
-      const totalCost = amount + fees
+      const fees = this._getFee(unspentOutputsToUse.length, numOutputs + numOutputsOffset, 3) // TODO: hardcoded satoshi per byte
+      let totalCost = amount + fees
+
+      if (numOutputsOffset === 0 && amountAccumulated > totalCost) {
+        totalCost -= fees
+        totalCost += this._getFee(unspentOutputsToUse.length, numOutputs + 1, 3) // TODO: hardcoded satoshi per byte
+        numOutputsOffset = 1
+      }
 
       return amountAccumulated < totalCost
     })
@@ -140,10 +147,17 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     const { unusedAddress, unspentOutputs } = await this._getSpendingDetails()
-    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, 2)
-    const fee = this._getFee(unspentOutputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee
+    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, to.length)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
-    const totalCost = value + fee
+    const fee = this._getFee(unspentOutputsToUse.length, to.length, 3) // TODO: satoshi per byte fee
+    let totalCost = value + fee
+    let hasChange = false
+
+    if (totalAmount > totalCost) {
+      totalCost -= fee
+      totalCost += this._getFee(unspentOutputsToUse.length, to.length + 1, 3) // TODO: satoshi per byte fee
+      hasChange = true
+    }
 
     if (totalAmount < totalCost) {
       throw new Error('Not enough balance')
@@ -163,7 +177,7 @@ export default class BitcoinLedgerProvider extends Provider {
       'a9', // OP_HASH160
       '14', // data size to be pushed
       sendPubKeyHash, // <PUB_KEY_HASH>
-      '88', // OP_EQUAL_VERIFY
+      '88', // OP_EQUALVERIFY
       'ac' // OP_CHECKSIG
     ].join('')
 
@@ -172,14 +186,14 @@ export default class BitcoinLedgerProvider extends Provider {
       'a9', // OP_HASH160
       '14', // data size to be pushed
       changePubKeyHash, // <PUB_KEY_HASH>
-      '88', // OP_EQUAL_VERIFY
+      '88', // OP_EQUALVERIFY
       'ac' // OP_CHECKSIG
     ].join('')
 
-    const outputs = [
-      { amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex') },
-      { amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex') }
-    ]
+    let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex') }]
+    if (hasChange) {
+      outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex') })
+    }
 
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
 
