@@ -41,7 +41,7 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getSpendingDetails (segwit = false) {
     const purpose = segwit ? '49' : '44'
-    let unspentInputs = []
+    let unspentOutputs = []
     let unusedAddress
     let addressIndex = 0
     for (let addressHasTransactions = true; addressHasTransactions; ++addressIndex) {
@@ -59,7 +59,7 @@ export default class BitcoinLedgerProvider extends Provider {
           address: address.bitcoinAddress,
           path
         }))
-        unspentInputs.push(...utxos)
+        unspentOutputs.push(...utxos)
       } else {
         unusedAddress = {
           address: address.bitcoinAddress,
@@ -70,7 +70,7 @@ export default class BitcoinLedgerProvider extends Provider {
 
     return {
       unusedAddress,
-      unspentInputs
+      unspentOutputs
     }
   }
 
@@ -78,23 +78,23 @@ export default class BitcoinLedgerProvider extends Provider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte
   }
 
-  _getUnspentInputsForAmount (unspentInputs, amount, numOutputs) {
-    let unspentInputsToUse = []
+  _getUnspentOutputsForAmount (unspentOutputs, amount, numOutputs) {
+    let unspentOutputsToUse = []
     let amountAccumulated = 0
-    unspentInputs.every((utxo) => {
+    unspentOutputs.every((utxo) => {
       amountAccumulated += utxo.value
-      unspentInputsToUse.push(utxo)
-      return amountAccumulated < (amount + this._getFee(unspentInputsToUse.length, numOutputs, 3)) // TODO: hardcoded satoshi per byte
+      unspentOutputsToUse.push(utxo)
+      return amountAccumulated < (amount + this._getFee(unspentOutputsToUse.length, numOutputs, 3)) // TODO: hardcoded satoshi per byte
     })
-    return unspentInputsToUse
+    return unspentOutputsToUse
   }
 
-  async _getLedgerInputs (unspentInputs) {
+  async _getLedgerInputs (unspentOutputs) {
     const ledgerInputs = []
-    for (let unspentInput of unspentInputs) {
-      const transactionHex = await this._getTransactionHex(unspentInput.tx_hash_big_endian)
+    for (let unspentOutput of unspentOutputs) {
+      const transactionHex = await this._getTransactionHex(unspentOutput.tx_hash_big_endian)
       const tx = await this._ledgerBtc.splitTransaction(transactionHex)
-      ledgerInputs.push([tx, unspentInput.tx_output_n])
+      ledgerInputs.push([tx, unspentOutput.tx_output_n])
     }
     return ledgerInputs
   }
@@ -114,9 +114,9 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     const addresses = []
-    const { unusedAddress, unspentInputs } = await this._getSpendingDetails(segwit)
+    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails(segwit)
 
-    const unspentAddresses = unspentInputs.reduce((acc, detail) => (
+    const unspentAddresses = unspentOutputs.reduce((acc, detail) => (
       acc[acc.length - 1] === detail.address ? acc : acc.concat(detail.address)
     ), [])
     addresses.push(...unspentAddresses, unusedAddress.address)
@@ -135,17 +135,17 @@ export default class BitcoinLedgerProvider extends Provider {
   async sendTransaction (from, to, value, data) {
     await this._connectToLedger()
 
-    const {unusedAddress, unspentInputs} = await this._getSpendingDetails()
-    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)
-    const fee = this._getFee(unspentInputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee
-    const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)
+    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails()
+    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, 2)
+    const fee = this._getFee(unspentOutputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee
+    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
 
     if (totalAmount < value + fee) {
       throw new Error('Not enough balance')
     }
 
-    const ledgerInputs = await this._getLedgerInputs(unspentInputsToUse)
-    const paths = unspentInputsToUse.map(input => input.path)
+    const ledgerInputs = await this._getLedgerInputs(unspentOutputsToUse)
+    const paths = unspentOutputsToUse.map(utxo => utxo.path)
 
     const sendAmount = value
     const changeAmount = totalAmount - value - fee
