@@ -40,10 +40,10 @@ export default class BitcoinLedgerProvider extends Provider {
   }
 
   async _getSpendingDetails (segwit = false) {
+    const purpose = segwit ? '49' : '44'
     let unspentInputs = []
     let unusedAddress
     let addressIndex = 0
-    let purpose = segwit ? '49' : '44'
     for (let addressHasTransactions = true; addressHasTransactions; ++addressIndex) {
       const path = `${purpose}'/${this._coinType}'/0'/0/${addressIndex}`
       const address = {
@@ -55,14 +55,11 @@ export default class BitcoinLedgerProvider extends Provider {
       if (addressHasTransactions) {
         let utxos = await this._getUnspentTransactions(address.bitcoinAddress)
         utxos = utxos.map((utxo) => ({
-          ...utxo
-        }))
-        unspentInputs.push({
+          ...utxo,
           address: address.bitcoinAddress,
-          path,
-          value: utxos.reduce((acc, input) => acc + input.value, 0),
-          utxos
-        })
+          path
+        }))
+        unspentInputs.push(...utxos)
       } else {
         unusedAddress = {
           address: address.bitcoinAddress,
@@ -116,11 +113,13 @@ export default class BitcoinLedgerProvider extends Provider {
   async getAddresses (segwit = false) {
     await this._connectToLedger()
 
-    let addresses = []
-    let spendingDetails = await this._getSpendingDetails(segwit)
+    const addresses = []
+    const { unusedAddress, unspentInputs } = await this._getSpendingDetails(segwit)
 
-    addresses.push(...spendingDetails.unspentInputs.map((detail) => detail.address))
-    addresses.push(spendingDetails.unusedAddress.address)
+    const unspentAddresses = unspentInputs.reduce((acc, detail) => (
+      acc[acc.length - 1] === detail.address ? acc : acc.concat(detail.address)
+    ), [])
+    addresses.push(...unspentAddresses, unusedAddress.address)
 
     return addresses
   }
@@ -137,7 +136,7 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     const {unusedAddress, unspentInputs} = await this._getSpendingDetails()
-    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs.reduce((acc, input) => acc.concat(input.utxos), []), value, 2)
+    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)
     const fee = this._getFee(unspentInputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee
     const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)
 
