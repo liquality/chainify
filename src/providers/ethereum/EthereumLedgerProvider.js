@@ -32,11 +32,11 @@ export default class EthereumLedgerProvider extends Provider {
     return [ address ]
   }
 
-  async signMessage (message, path) {
+  async signMessage (message) {
     await this._connectToLedger()
 
     const hex = Buffer.from(message).toString('hex')
 
-    return this._ledgerEth.signPersonalMessage(path, hex)
+    return this._ledgerEth.signPersonalMessage(this._derivationPath, hex)
   }
 }

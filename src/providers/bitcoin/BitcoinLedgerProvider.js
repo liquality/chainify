@@ -18,6 +18,7 @@ export default class BitcoinLedgerProvider extends Provider {
     this._ledgerBtc = false
     this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
+    this._derivationPath = `44'/${this._coinType}'/0'/0/0`
   }
 
   async _connectToLedger () {
@@ -135,12 +136,12 @@ export default class BitcoinLedgerProvider extends Provider {
     return addresses
   }
 
-  async signMessage (message, path) {
+  async signMessage (message) {
     await this._connectToLedger()
 
     const hex = Buffer.from(message).toString('hex')
 
-    return this._ledgerBtc.signMessageNew(path, hex)
+    return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
   }
 
   async sendTransaction (from, to, value, data) {
