@@ -141,9 +141,9 @@
         43,
         47,
         53,
-        61,
-        65,
-        70
+        63,
+        67,
+        72
       ]
     },
     "src/providers/ethereum/EthereumRPCProvider.js": {
