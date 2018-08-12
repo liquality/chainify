@@ -51,6 +51,8 @@ export default class EthereumMetaMaskProvider extends Provider {
   }
 
   async sendTransaction (from, to, value, data) {
+    value = Number(value).toString(16)
+
     const tx = {
       from, to, value, data
     }
