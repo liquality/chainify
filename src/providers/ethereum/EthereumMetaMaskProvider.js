@@ -2,6 +2,7 @@ import Provider from '../../Provider'
 
 import { isFunction } from 'lodash'
 import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
+import { BigNumber } from 'bignumber.js'
 
 export default class EthereumMetaMaskProvider extends Provider {
   constructor (metamaskProvider) {
@@ -51,6 +52,8 @@ export default class EthereumMetaMaskProvider extends Provider {
   }
 
   async sendTransaction (from, to, value, data) {
+    value = BigNumber(value).toString(16)
+
     const tx = {
       from, to, value, data
     }
