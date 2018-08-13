@@ -3,11 +3,14 @@ import Provider from '../../Provider'
 import Transport from '@alias/ledger-transport'
 import LedgerEth from '@ledgerhq/hw-app-eth'
 
+import networks from '../../networks'
+
 export default class EthereumLedgerProvider extends Provider {
-  constructor () {
+  constructor (chain = { network: networks.ethereum }) {
     super()
     this._ledgerEth = false
-    this._derivationPath = `44'/60'/0'/0'/0`
+    this._coinType = chain.network.coinType
+    this._derivationPath = `44'/${this._coinType}'/0'/0'/0`
   }
 
   async _connectToLedger () {

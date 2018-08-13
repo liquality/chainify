@@ -6,17 +6,19 @@ import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 
 import { addressToPubKeyHash } from './BitcoinUtil'
+import networks from '../../networks'
 
 // TODO: Abstract out non signing methods into another provider?
 export default class BitcoinLedgerProvider extends Provider {
   /**
    * @param {boolean} testnet True if the testnet network is being used
    */
-  constructor (testnet = false) {
+  constructor (chain = { network: networks.bitcoin }) {
     super()
     this._ledgerBtc = false
-    this._derivationPath = `44'/0'/0'/0`
-    this._blockChainInfoBaseUrl = testnet ? 'https://testnet.blockchain.info' : 'https://blockchain.info'
+    this._blockChainInfoBaseUrl = chain.network.explorerUrl
+    this._coinType = chain.network.coinType
+    this._derivationPath = `44'/${this._coinType}'/0'/0/0`
   }
 
   async _connectToLedger () {
@@ -24,10 +26,6 @@ export default class BitcoinLedgerProvider extends Provider {
       const transport = await Transport.create()
       this._ledgerBtc = new LedgerBtc(transport)
     }
-  }
-
-  async _updateDerivationPath (path) {
-    this._derivationPath = path
   }
 
   async _getAddressDetails (address) {
@@ -42,34 +40,39 @@ export default class BitcoinLedgerProvider extends Provider {
     return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
   }
 
-  async _getSpendingDetails () {
-    let unspentInputs = []
+  async _getSpendingDetails (config = { segwit: false }) {
+    const purpose = config.segwit ? '49' : '44'
+    let unspentOutputs = []
     let unusedAddress
     let addressIndex = 0
-    for (let addressHasTransactions = true; addressHasTransactions; ++addressIndex) {
-      const path = `44'/0'/0'/${addressIndex}`
+    let addressHasTransactions = true
+    while (addressHasTransactions) {
+      const path = `${purpose}'/${this._coinType}'/0'/0/${addressIndex}`
       const address = {
-        ...(await this._ledgerBtc.getWalletPublicKey(path)),
+        ...(await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)),
         path
       }
       const addressDetails = await this._getAddressDetails(address.bitcoinAddress)
       addressHasTransactions = addressDetails.n_tx > 0
       if (addressHasTransactions) {
-        let utxos = await this._getUnspentTransactions(address.bitcoinAddress)
-        utxos = utxos.map((utxo) => ({
+        const utxos = (await this._getUnspentTransactions(address.bitcoinAddress)).map(utxo => ({
           ...utxo,
-          path,
-          address: address.bitcoinAddress
+          address: address.bitcoinAddress,
+          path
         }))
-        unspentInputs.push(...utxos)
+        unspentOutputs.push(...utxos)
       } else {
-        unusedAddress = address
+        unusedAddress = {
+          address: address.bitcoinAddress,
+          path
+        }
       }
+      ++addressIndex
     }
 
     return {
       unusedAddress,
-      unspentInputs
+      unspentOutputs
     }
   }
 
@@ -77,25 +80,35 @@ export default class BitcoinLedgerProvider extends Provider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte
   }
 
-  _getUnspentInputsForAmount (unspentInputs, amount, numOutputs) {
-    let unspentInputsToUse = []
+  _getUnspentOutputsForAmount (unspentOutputs, amount, numOutputs) {
+    let unspentOutputsToUse = []
     let amountAccumulated = 0
-    unspentInputs.every((utxo) => {
+    let numOutputsOffset = 0
+    unspentOutputs.every((utxo) => {
       amountAccumulated += utxo.value
-      unspentInputsToUse.push(utxo)
-      return amountAccumulated < (amount + this._getFee(unspentInputsToUse.length, numOutputs, 3)) // TODO: hardcoded satoshi per byte
+      unspentOutputsToUse.push(utxo)
+
+      const fees = this._getFee(unspentOutputsToUse.length, numOutputs + numOutputsOffset, 3) // TODO: hardcoded satoshi per byte
+      let totalCost = amount + fees
+
+      if (numOutputsOffset === 0 && amountAccumulated > totalCost) {
+        totalCost -= fees
+        totalCost += this._getFee(unspentOutputsToUse.length, numOutputs + 1, 3) // TODO: hardcoded satoshi per byte
+        numOutputsOffset = 1
+      }
+
+      return amountAccumulated < totalCost
     })
-    return unspentInputsToUse
+    return unspentOutputsToUse
   }
 
-  async _getLedgerInputs (unspentInputs) {
-    const ledgerInputs = []
-    for (let unspentInput of unspentInputs) {
-      const transactionHex = await this._getTransactionHex(unspentInput.tx_hash_big_endian)
+  async _getLedgerInputs (unspentOutputs) {
+    const ledgerInputs = unspentOutputs.map(async utxo => {
+      const transactionHex = await this._getTransactionHex(utxo.tx_hash_big_endian)
       const tx = await this._ledgerBtc.splitTransaction(transactionHex)
-      ledgerInputs.push([tx, unspentInput.tx_output_n])
-    }
-    return ledgerInputs
+      return [tx, utxo.tx_output_n]
+    })
+    return Promise.all(ledgerInputs)
   }
 
   _getAmountBuffer (amount) {
@@ -109,15 +122,21 @@ export default class BitcoinLedgerProvider extends Provider {
     return buffer.reverse() // Amount needs to be little endian
   }
 
-  async getAddresses () {
+  async getAddresses (config = { segwit: false }) {
     await this._connectToLedger()
 
-    const { bitcoinAddress } = await this._ledgerBtc.getWalletPublicKey(this._derivationPath)
+    let addresses = []
+    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails(config)
 
-    return [ bitcoinAddress ]
+    const unspentAddresses = unspentOutputs.reduce((acc, detail) => (
+      acc[acc.length - 1] === detail.address ? acc : acc.concat(detail.address)
+    ), [])
+    addresses.push(...unspentAddresses, unusedAddress.address)
+
+    return addresses
   }
 
-  async signMessage (message, from) {
+  async signMessage (message) {
     await this._connectToLedger()
 
     const hex = Buffer.from(message).toString('hex')
@@ -128,30 +147,38 @@ export default class BitcoinLedgerProvider extends Provider {
   async sendTransaction (from, to, value, data) {
     await this._connectToLedger()
 
-    const {unusedAddress, unspentInputs} = await this._getSpendingDetails()
-    const unspentInputsToUse = this._getUnspentInputsForAmount(unspentInputs, value, 2)
-    const fee = this._getFee(unspentInputsToUse.length, 2, 3) // TODO: hardcoded num outputs + satoshi per byte fee
-    const totalAmount = unspentInputsToUse.reduce((acc, input) => acc + input.value, 0)
+    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails()
+    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, to.length)
+    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
+    const fee = this._getFee(unspentOutputsToUse.length, to.length, 3) // TODO: satoshi per byte fee
+    let totalCost = value + fee
+    let hasChange = false
 
-    if (totalAmount < value + fee) {
+    if (totalAmount > totalCost) {
+      totalCost -= fee
+      totalCost += this._getFee(unspentOutputsToUse.length, to.length + 1, 3) // TODO: satoshi per byte fee
+      hasChange = true
+    }
+
+    if (totalAmount < totalCost) {
       throw new Error('Not enough balance')
     }
 
-    const ledgerInputs = await this._getLedgerInputs(unspentInputsToUse)
-    const paths = unspentInputsToUse.map(input => input.path)
+    const ledgerInputs = await this._getLedgerInputs(unspentOutputsToUse)
+    const paths = unspentOutputsToUse.map(utxo => utxo.path)
 
     const sendAmount = value
-    const changeAmount = totalAmount - value - fee
+    const changeAmount = totalAmount - totalCost
 
     const sendPubKeyHash = addressToPubKeyHash(to)
-    const changePubKeyHash = addressToPubKeyHash(unusedAddress.bitcoinAddress)
+    const changePubKeyHash = addressToPubKeyHash(unusedAddress.address)
 
     const sendP2PKHScript = [
       '76', // OP_DUP
       'a9', // OP_HASH160
       '14', // data size to be pushed
       sendPubKeyHash, // <PUB_KEY_HASH>
-      '88', // OP_EQUAL_VERIFY
+      '88', // OP_EQUALVERIFY
       'ac' // OP_CHECKSIG
     ].join('')
 
@@ -160,14 +187,14 @@ export default class BitcoinLedgerProvider extends Provider {
       'a9', // OP_HASH160
       '14', // data size to be pushed
       changePubKeyHash, // <PUB_KEY_HASH>
-      '88', // OP_EQUAL_VERIFY
+      '88', // OP_EQUALVERIFY
       'ac' // OP_CHECKSIG
     ].join('')
 
-    const outputs = [
-      { amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex') },
-      { amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex') }
-    ]
+    let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex') }]
+    if (hasChange) {
+      outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex') })
+    }
 
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
 
