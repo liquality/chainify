@@ -40,8 +40,8 @@ export default class BitcoinLedgerProvider extends Provider {
     return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
   }
 
-  async _getSpendingDetails (segwit = false) {
-    const purpose = segwit ? '49' : '44'
+  async _getSpendingDetails (config = { segwit: false }) {
+    const purpose = config.segwit ? '49' : '44'
     let unspentOutputs = []
     let unusedAddress
     let addressIndex = 0
@@ -49,7 +49,7 @@ export default class BitcoinLedgerProvider extends Provider {
     while (addressHasTransactions) {
       const path = `${purpose}'/${this._coinType}'/0'/0/${addressIndex}`
       const address = {
-        ...(await this._ledgerBtc.getWalletPublicKey(path, false, segwit)),
+        ...(await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)),
         path
       }
       const addressDetails = await this._getAddressDetails(address.bitcoinAddress)
@@ -122,11 +122,11 @@ export default class BitcoinLedgerProvider extends Provider {
     return buffer.reverse() // Amount needs to be little endian
   }
 
-  async getAddresses (segwit = false) {
+  async getAddresses (config = { segwit: false }) {
     await this._connectToLedger()
 
     let addresses = []
-    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails(segwit)
+    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails(config)
 
     const unspentAddresses = unspentOutputs.reduce((acc, detail) => (
       acc[acc.length - 1] === detail.address ? acc : acc.concat(detail.address)
