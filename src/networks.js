@@ -5,7 +5,7 @@ export default {
     coinType: '0',
     explorerUrl: 'https://blockchain.info'
   },
-  testnet: {
+  bitcoin_testnet: {
     pubKeyHash: '6F',
     scriptHash: 'C4',
     coinType: '1',

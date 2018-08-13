@@ -15,7 +15,7 @@
   const { Client, providers, networks } = ChainAbstractionLayer
   const bitcoin = new Client()
   bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
-  bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.testnet }))
+  bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
   bitcoin.getAddresses().then(addresses => {
     const from = addresses[0]
     $('#address').text(from)
