@@ -1,6 +1,6 @@
 {
-  "coverage": "26.36%",
-  "expectCount": 110,
+  "coverage": "26.6%",
+  "expectCount": 109,
   "actualCount": 29,
   "files": {
     "src/Client.js": {
@@ -129,7 +129,7 @@
       ]
     },
     "src/providers/ethereum/EthereumMetaMaskProvider.js": {
-      "expectCount": 10,
+      "expectCount": 9,
       "actualCount": 0,
       "undocumentLines": [
         7,
@@ -140,8 +140,7 @@
         48,
         56,
         66,
-        70,
-        75
+        70
       ]
     },
     "src/providers/ethereum/EthereumRPCProvider.js": {

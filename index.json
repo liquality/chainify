@@ -3263,7 +3263,7 @@
     "__docId__": 155,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumMetaMaskProvider.js",
-    "content": "import Provider from '../../Provider'\n\nimport { isFunction } from 'lodash'\nimport { formatEthResponse, ensureEthFormat } from './EthereumUtil'\nimport { BigNumber } from 'bignumber.js'\n\nexport default class EthereumMetaMaskProvider extends Provider {\n  constructor (metamaskProvider) {\n    super()\n    if (!isFunction(metamaskProvider.sendAsync)) {\n      throw new Error('Invalid MetaMask Provider')\n    }\n\n    this._metamaskProvider = metamaskProvider\n  }\n\n  _toMM (method, ...params) {\n    return new Promise((resolve, reject) => {\n      this\n        ._metamaskProvider\n        .sendAsync({ method, params }, (err, data) => {\n          if (err) {\n            reject(err)\n            return\n          }\n\n          if (!data) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          if (!data.result) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          const formattedResult = formatEthResponse(data.result)\n\n          resolve(formattedResult)\n        })\n    })\n  }\n\n  async getAddresses () {\n    return this._toMM('eth_accounts')\n  }\n\n  async signMessage (message) {\n    const hex = Buffer.from(message).toString('hex')\n    const addresses = await this.getAddresses()\n    const from = addresses[0]\n\n    return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)\n  }\n\n  async sendTransaction (from, to, value, data) {\n    value = BigNumber(value).toString(16)\n\n    const tx = {\n      from, to, value, data\n    }\n\n    return this._toMM('eth_sendTransaction', tx)\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)\n  }\n\n  async getTransactionByHash (txHash) {\n    txHash = ensureEthFormat(txHash)\n    return this._toMM('eth_getTransactionByHash', txHash)\n  }\n\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    const dataSizeBase = 112\n    const redeemDestinationBase = 66\n    const refundDestinationBase = 89\n    const expirationHex = expiration.toString(16)\n    const expirationEncoded = expirationHex.length % 2 ? '0' + expirationHex : expirationHex // Pad with 0\n    const expirationSize = expirationEncoded.length / 2\n    const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)\n    const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)\n    const expirationPushOpcode = (0x5f + expirationSize).toString(16)\n    const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)\n    const recipientAddressEncoded = recipientAddress.replace('0x', '') // Remove 0x if exists\n    const refundAddressEncoded = refundAddress.replace('0x', '') // Remove 0x if exists\n    const secretHashEncoded = secretHash.replace('0x', '') // Remove 0x if exists\n    return `60${dataSizeEncoded}80600b6000396000f36020806000803760218160008060026048f17f\\\n${secretHashEncoded}602151141660${redeemDestinationEncoded}57\\\n${expirationPushOpcode}${expirationEncoded}421160${refundDestinationEncoded}\\\n57005b73${recipientAddressEncoded}ff5b73${refundAddressEncoded}ff`\n  }\n}\n",
+    "content": "import Provider from '../../Provider'\n\nimport { isFunction } from 'lodash'\nimport { formatEthResponse, ensureEthFormat } from './EthereumUtil'\nimport { BigNumber } from 'bignumber.js'\n\nexport default class EthereumMetaMaskProvider extends Provider {\n  constructor (metamaskProvider) {\n    super()\n    if (!isFunction(metamaskProvider.sendAsync)) {\n      throw new Error('Invalid MetaMask Provider')\n    }\n\n    this._metamaskProvider = metamaskProvider\n  }\n\n  _toMM (method, ...params) {\n    return new Promise((resolve, reject) => {\n      this\n        ._metamaskProvider\n        .sendAsync({ method, params }, (err, data) => {\n          if (err) {\n            reject(err)\n            return\n          }\n\n          if (!data) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          if (!data.result) {\n            reject(new Error('Something went wrong'))\n            return\n          }\n\n          const formattedResult = formatEthResponse(data.result)\n\n          resolve(formattedResult)\n        })\n    })\n  }\n\n  async getAddresses () {\n    return this._toMM('eth_accounts')\n  }\n\n  async signMessage (message) {\n    const hex = Buffer.from(message).toString('hex')\n    const addresses = await this.getAddresses()\n    const from = addresses[0]\n\n    return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)\n  }\n\n  async sendTransaction (from, to, value, data) {\n    value = BigNumber(value).toString(16)\n\n    const tx = {\n      from, to, value, data\n    }\n\n    return this._toMM('eth_sendTransaction', tx)\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)\n  }\n\n  async getTransactionByHash (txHash) {\n    txHash = ensureEthFormat(txHash)\n    return this._toMM('eth_getTransactionByHash', txHash)\n  }\n}\n",
     "static": true,
     "longname": "/Users/harsh/Work/consensys/chainabstractionlayer/src/providers/ethereum/EthereumMetaMaskProvider.js",
     "access": "public",
@@ -3508,51 +3508,6 @@
   },
   {
     "__docId__": 165,
-    "kind": "method",
-    "name": "generateSwap",
-    "memberof": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#generateSwap",
-    "access": "public",
-    "description": null,
-    "lineNumber": 75,
-    "undocument": true,
-    "params": [
-      {
-        "name": "recipientAddress",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "refundAddress",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "secretHash",
-        "types": [
-          "*"
-        ]
-      },
-      {
-        "name": "expiration",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": {
-      "types": [
-        "string"
-      ]
-    }
-  },
-  {
-    "__docId__": 166,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumRPCProvider.js",
     "content": "import JsonRpcProvider from '../JsonRpcProvider'\n\nimport { formatEthResponse, ensureEthFormat } from './EthereumUtil'\n\nexport default class EthereumRPCProvider extends JsonRpcProvider {\n  _parseResponse (response) {\n    const data = super._parseResponse(response)\n\n    return formatEthResponse(data)\n  }\n\n  async getAddresses () {\n    return this.rpc('eth_accounts')\n  }\n\n  async generateBlock (numberOfBlocks) {\n    // Q: throw or silently pass?\n    throw new Error('This method isn\\'t supported by Ethereum')\n  }\n\n  async getBlockByNumber (blockNumber, includeTx) {\n    return this.rpc('eth_getBlockByNumber', blockNumber, includeTx)\n  }\n\n  async getTransactionByHash (txHash) {\n    txHash = ensureEthFormat(txHash)\n    return this.rpc('eth_getTransactionByHash', txHash)\n  }\n}\n",
@@ -3563,7 +3518,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 167,
+    "__docId__": 166,
     "kind": "class",
     "name": "EthereumRPCProvider",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js",
@@ -3582,7 +3537,7 @@
     ]
   },
   {
-    "__docId__": 168,
+    "__docId__": 167,
     "kind": "method",
     "name": "_parseResponse",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3609,7 +3564,7 @@
     }
   },
   {
-    "__docId__": 169,
+    "__docId__": 168,
     "kind": "method",
     "name": "getAddresses",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3629,7 +3584,7 @@
     }
   },
   {
-    "__docId__": 170,
+    "__docId__": 169,
     "kind": "method",
     "name": "generateBlock",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3652,7 +3607,7 @@
     "return": null
   },
   {
-    "__docId__": 171,
+    "__docId__": 170,
     "kind": "method",
     "name": "getBlockByNumber",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3685,7 +3640,7 @@
     }
   },
   {
-    "__docId__": 172,
+    "__docId__": 171,
     "kind": "method",
     "name": "getTransactionByHash",
     "memberof": "src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider",
@@ -3712,7 +3667,7 @@
     }
   },
   {
-    "__docId__": 173,
+    "__docId__": 172,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumSwapProvider.js",
     "content": "import Provider from '../../Provider'\n\nexport default class EthereumSwapProvider extends Provider {\n  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {\n    const dataSizeBase = 112\n    const redeemDestinationBase = 66\n    const refundDestinationBase = 89\n    const expirationHex = expiration.toString(16)\n    const expirationEncoded = expirationHex.length % 2 ? '0' + expirationHex : expirationHex // Pad with 0\n    const expirationSize = expirationEncoded.length / 2\n    const expirationPushOpcode = (0x60 - 1 + expirationSize).toString(16)\n    const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)\n    const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)\n    const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)\n    const recipientAddressEncoded = recipientAddress.replace('0x', '') // Remove 0x if exists\n    const refundAddressEncoded = refundAddress.replace('0x', '') // Remove 0x if exists\n    const secretHashEncoded = secretHash.replace('0x', '') // Remove 0x if exists\n\n    return [\n      // Constructor\n      '60', dataSizeEncoded, // PUSH1 {dataSizeEncoded}\n      '80', // DUP1\n      '60', '0b', // PUSH1 0b\n      '60', '00', // PUSH1 00\n      '39', // CODECOPY\n      '60', '00', // PUSH1 00\n      'f3', // RETURN\n\n      // Contract\n      '60', '20', // PUSH1 20\n\n      // Get secret\n      '80', // DUP1\n      '60', '00', // PUSH1 00\n      '80', // DUP1\n      '37', // CALLDATACOPY\n\n      // SHA256\n      '60', '21', // PUSH1 21\n      '81', // DUP2\n      '60', '00', // PUSH1 00\n      '80', // DUP1\n      '60', '02', // PUSH1 02\n      '60', '48', // PUSH1 48\n      'f1', // CALL\n\n      // Validate with secretHash\n      '7f', secretHashEncoded, // PUSH32 {secretHashEncoded}\n      '60', '21', // PUSH1 21\n      '51', // MLOAD\n      '14', // EQ\n      '16', // AND (to make sure CALL succeeded)\n      // Redeem if secret is valid\n      '60', redeemDestinationEncoded, // PUSH1 {redeemDestinationEncoded}\n      '57', // JUMPI\n\n      // Check time lock\n      expirationPushOpcode, // PUSH{expirationSize}\n      expirationEncoded, // {expirationEncoded}\n      '42', // TIMESTAMP\n      '11', // GT\n      // Refund if timelock passed\n      '60', refundDestinationEncoded, // PUSH1 {refundDestinationEncoded}\n      '57',\n\n      '00', // STOP\n\n      '5b', // JUMPDEST\n      '73', recipientAddressEncoded, // PUSH20 {recipientAddressEncoded}\n      'ff', // SUICIDE\n\n      '5b', // JUMPDEST\n      '73', refundAddressEncoded, // PUSH20 {refundAddressEncoded}\n      'ff' // SUICIDE\n    ].join('')\n  }\n}\n",
@@ -3723,7 +3678,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 174,
+    "__docId__": 173,
     "kind": "class",
     "name": "EthereumSwapProvider",
     "memberof": "src/providers/ethereum/EthereumSwapProvider.js",
@@ -3742,7 +3697,7 @@
     ]
   },
   {
-    "__docId__": 175,
+    "__docId__": 174,
     "kind": "method",
     "name": "generateSwap",
     "memberof": "src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider",
@@ -3787,7 +3742,7 @@
     }
   },
   {
-    "__docId__": 176,
+    "__docId__": 175,
     "kind": "file",
     "name": "src/providers/ethereum/EthereumUtil.js",
     "content": "import { Block, Transaction } from '../../schema'\n\nexport function formatEthResponse (obj) {\n  if (Array.isArray(obj)) {\n    obj = obj.map((elem) => {\n      if (elem.startsWith('0x')) {\n        elem = elem.replace('0x', '')\n      }\n      return elem\n    })\n  } else {\n    for (let key in obj) {\n      if (Array.isArray(obj[key])) {\n        obj[key] = formatEthResponse(obj[key])\n      } else {\n        if ((Block.properties[key] &&\n          Block.properties[key].type === 'number') ||\n          (Transaction.properties[key] &&\n          Transaction.properties[key].type === 'number')) {\n          obj[key] = parseInt(obj[key])\n        } else {\n          if (obj[key].startsWith('0x')) {\n            obj[key] = obj[key].replace('0x', '')\n          }\n        }\n      }\n    }\n  }\n  return obj\n}\n\nexport function ensureEthFormat (hash) {\n  if (!hash.startsWith('0x')) { hash = '0x' + hash }\n  return hash\n}\n",
@@ -3798,7 +3753,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 177,
+    "__docId__": 176,
     "kind": "function",
     "name": "formatEthResponse",
     "memberof": "src/providers/ethereum/EthereumUtil.js",
@@ -3828,7 +3783,7 @@
     }
   },
   {
-    "__docId__": 178,
+    "__docId__": 177,
     "kind": "function",
     "name": "ensureEthFormat",
     "memberof": "src/providers/ethereum/EthereumUtil.js",
@@ -3858,7 +3813,7 @@
     }
   },
   {
-    "__docId__": 179,
+    "__docId__": 178,
     "kind": "file",
     "name": "src/providers/ethereum/index.js",
     "content": "import EthereumRPCProvider from './EthereumRPCProvider'\nimport EthereumLedgerProvider from './EthereumLedgerProvider'\nimport EthereumMetaMaskProvider from './EthereumMetaMaskProvider'\nimport EthereumSwapProvider from './EthereumSwapProvider'\n\nexport {\n  EthereumRPCProvider,\n  EthereumLedgerProvider,\n  EthereumMetaMaskProvider,\n  EthereumSwapProvider\n}\n",
@@ -3869,7 +3824,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 180,
+    "__docId__": 179,
     "kind": "file",
     "name": "src/providers/index.js",
     "content": "import * as bitcoin from './bitcoin'\nimport * as ethereum from './ethereum'\n\nexport {\n  bitcoin,\n  ethereum\n}\n",
@@ -3880,7 +3835,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 181,
+    "__docId__": 180,
     "kind": "file",
     "name": "src/schema/index.js",
     "content": "import Block from './Block.json'\nimport Transaction from './Transaction.json'\n\nexport {\n  Block,\n  Transaction\n}\n",

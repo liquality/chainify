@@ -942,12 +942,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#generateswap",
-    "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-generateSwap",
-    "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#generateSwap",
-    "method"
-  ],
-  [
     "src/providers/ethereum/ethereummetamaskprovider.js~ethereummetamaskprovider#getaddresses",
     "class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html#instance-method-getAddresses",
     "src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider#getAddresses",
