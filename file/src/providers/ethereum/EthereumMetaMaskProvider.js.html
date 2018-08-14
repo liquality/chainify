@@ -66,6 +66,7 @@
 
 import { isFunction } from &apos;lodash&apos;
 import { formatEthResponse, ensureEthFormat } from &apos;./EthereumUtil&apos;
+import { BigNumber } from &apos;bignumber.js&apos;
 
 export default class EthereumMetaMaskProvider extends Provider {
   constructor (metamaskProvider) {
@@ -108,14 +109,16 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM(&apos;eth_accounts&apos;)
   }
 
-  async signMessage (message, from) {
+  async signMessage (message) {
     const hex = Buffer.from(message).toString(&apos;hex&apos;)
+    const addresses = await this.getAddresses()
+    const from = addresses[0]
 
     return this._toMM(&apos;personal_sign&apos;, `0x${hex}`, `0x${from}`)
   }
 
   async sendTransaction (from, to, value, data) {
-    value = Number(value).toString(16)
+    value = BigNumber(value).toString(16)
 
     const tx = {
       from, to, value, data

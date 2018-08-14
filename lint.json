@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "name": "compressPubKey",
+    "filePath": "src/providers/bitcoin/BitcoinUtil.js",
+    "lines": [
+      {
+        "lineNumber": 8,
+        "line": "/**"
+      },
+      {
+        "lineNumber": 9,
+        "line": " * Get compressed pubKey from pubKey."
+      },
+      {
+        "lineNumber": 10,
+        "line": " * @param {!string} pubkey - 65 byte string with prefix, x, y."
+      },
+      {
+        "lineNumber": 11,
+        "line": " * @return {string} Returns the compressed pubKey of uncompressed pubKey."
+      },
+      {
+        "lineNumber": 12,
+        "line": " */"
+      },
+      {
+        "lineNumber": 13,
+        "line": "export function compressPubKey (pubKey) {"
+      }
+    ],
+    "codeParams": [
+      "pubKey"
+    ],
+    "docParams": [
+      "pubkey"
+    ]
+  }
+]

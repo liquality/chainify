@@ -68,21 +68,7 @@
   sha256,
   base58
 } from &apos;../../crypto&apos;
-
-const networks = {
-  bitcoin: {
-    pubKeyHash: &apos;00&apos;,
-    scriptHash: &apos;05&apos;
-  },
-  testnet: {
-    pubKeyHash: &apos;6F&apos;,
-    scriptHash: &apos;C4&apos;
-  },
-  litecoin: {
-    pubKeyHash: &apos;30&apos;,
-    scriptHash: &apos;32&apos;
-  }
-}
+import networks from &apos;../../networks&apos;
 
 /**
  * Get compressed pubKey from pubKey.
@@ -122,7 +108,7 @@ export function pubKeyToAddress (pubKey, network, type) {
 export function pubKeyHashToAddress (pubKeyHash, network, type) {
   pubKeyHash = ensureBuffer(pubKeyHash)
   const prefixHash = Buffer.concat([Buffer.from(networks[network][type], &apos;hex&apos;), pubKeyHash])
-  const checksum = sha256(sha256(prefixHash)).slice(0, 4)
+  const checksum = Buffer.from(sha256(sha256(prefixHash)).slice(0, 4), &apos;hex&apos;)
   const addr = base58.encode(Buffer.concat([prefixHash, checksum]))
   return addr
 }

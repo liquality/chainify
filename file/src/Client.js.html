@@ -354,10 +354,10 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
    */
-  async getAddresses () {
+  async getAddresses (config) {
     const provider = this.getProviderForMethod(&apos;getAddresses&apos;)
 
-    const addresses = await provider.getAddresses()
+    const addresses = await provider.getAddresses(config)
 
     if (!isArray(addresses)) {
       throw new InvalidProviderResponseError(&apos;Provider returned an invalid response&apos;)
@@ -429,9 +429,7 @@ export default class Client {
    * @return {Promise&lt;string, null&gt;} Resolves with a secret.
    */
   async generateSecret (message) {
-    const addresses = await this.getAddresses()
-    const from = addresses[0]
-    const signedMessage = await this.signMessage(message, from)
+    const signedMessage = await this.signMessage(message)
     const secret = hash160(signedMessage)
     return secret
   }

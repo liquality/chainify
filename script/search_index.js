@@ -612,6 +612,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/networks.js",
+    "file/src/networks.js.html",
+    "src/networks.js",
+    "file"
+  ],
+  [
     "src/providers/jsonrpcprovider.js",
     "file/src/providers/JsonRpcProvider.js.html",
     "src/providers/JsonRpcProvider.js",
@@ -661,13 +667,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/providers/rpcerror.js~rpcerror#status",
-    "class/src/providers/RpcError.js~RpcError.html#instance-get-status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-set-status",
     "src/providers/RpcError.js~RpcError#status",
     "member"
   ],
   [
     "src/providers/rpcerror.js~rpcerror#status",
-    "class/src/providers/RpcError.js~RpcError.html#instance-set-status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-get-status",
     "src/providers/RpcError.js~RpcError#status",
     "member"
   ],
@@ -687,6 +693,12 @@ window.esdocSearchIndex = [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_blockchaininfobaseurl",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_blockChainInfoBaseUrl",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_blockChainInfoBaseUrl",
+    "member"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_cointype",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_coinType",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_coinType",
     "member"
   ],
   [
@@ -738,9 +750,9 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getunspentinputsforamount",
-    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getUnspentInputsForAmount",
-    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getUnspentInputsForAmount",
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getunspentoutputsforamount",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getUnspentOutputsForAmount",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getUnspentOutputsForAmount",
     "method"
   ],
   [
@@ -754,12 +766,6 @@ window.esdocSearchIndex = [
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_ledgerBtc",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_ledgerBtc",
     "member"
-  ],
-  [
-    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_updatederivationpath",
-    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_updateDerivationPath",
-    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_updateDerivationPath",
-    "method"
   ],
   [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#constructor",
@@ -862,6 +868,12 @@ window.esdocSearchIndex = [
     "file/src/providers/ethereum/EthereumLedgerProvider.js.html",
     "src/providers/ethereum/EthereumLedgerProvider.js",
     "file"
+  ],
+  [
+    "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#_cointype",
+    "class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html#instance-member-_coinType",
+    "src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider#_coinType",
+    "member"
   ],
   [
     "src/providers/ethereum/ethereumledgerprovider.js~ethereumledgerprovider#_connecttoledger",
