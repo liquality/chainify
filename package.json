@@ -1,12 +1,26 @@
 {
   "name": "chainabstractionlayer",
-  "private": "true",
+  "version": "0.0.1",
   "keywords": [
     "blockchain",
     "bitcoin",
     "ethereum",
-    "client"
+    "client",
+    "abstraction",
+    "rpc",
+    "wallet",
+    "ledger",
+    "metamask"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/consensys/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/consensys/chainabstractionlayer/issues"
+  },
+  "homepage": "https://github.com/consensys/chainabstractionlayer#readme",
+  "author": "Liquality <contact@liquality.io>",
   "main": "dist/index.cjs.js",
   "browser": "dist/index.umd.js",
   "files": [
