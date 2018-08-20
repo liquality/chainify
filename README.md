@@ -47,16 +47,28 @@ bitcoin
     <tr>
       <td rowspan=2>Ethereum</td>
       <td>Ledger</td>
-      <td>[Source](./examples/browser/ethereum/ledger.html) & [Demo](https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/ledger.html)</td>
+      <td>
+        <a href="./examples/browser/ethereum/ledger.html">Source</a>
+        &amp;
+        <a href="https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/ledger.html">Demo</a>
+      </td>
     </tr>
     <tr>
       <td>MetaMask</td>
-      <td>[Source](./examples/browser/ethereum/metamask.html) & [Demo](https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/metamask.html)</td>
+      <td>
+        <a href="./examples/browser/ethereum/metamask.html">Source</a>
+        &amp;
+        <a href="https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/metamask.html">Demo</a>
+      </td>
     </tr>
     <tr>
       <td>Bitcoin</td>
       <td>Ledger</td>
-      <td>[Source](./examples/browser/bitcoin/ledger.html) & [Demo](https://consensys.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html)</td>
+      <td>
+        <a href="./examples/browser/bitcoin/ledger.html">Source</a>
+        &amp;
+        <a href="https://consensys.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html">Demo</a>
+      </td>
     </tr>
   </tbody>
 </table>
