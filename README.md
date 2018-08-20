@@ -35,16 +35,31 @@ bitcoin
 
 ### Try ChainAbstractionLayer in Browser
 
-#### Sign a message using Ledger
-
-* Source: [examples/browser/bitcoin/ledger.html](examples/browser/bitcoin/ledger.html)
-* Link: https://consensys.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html
-
-#### Sign a message using MetaMask
-
-* Source: [examples/browser/ethereum/metamask.html](examples/browser/ethereum/metamask.html)
-* Link: https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/metamask.html
-
+<table>
+  <thead>
+    <tr>
+      <th>Chain</th>
+      <th>Wallet Provider</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan=2>Ethereum</td>
+      <td>Ledger</td>
+      <td>[Source](./examples/browser/ethereum/ledger.html) & [Demo](https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/ledger.html)</td>
+    </tr>
+    <tr>
+      <td>MetaMask</td>
+      <td>[Source](./examples/browser/ethereum/metamask.html) & [Demo](https://consensys.github.io/chainabstractionlayer/examples/browser/ethereum/metamask.html)</td>
+    </tr>
+    <tr>
+      <td>Bitcoin</td>
+      <td>Ledger</td>
+      <td>[Source](./examples/browser/bitcoin/ledger.html) & [Demo](https://consensys.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html)</td>
+    </tr>
+  </tbody>
+</table>
 
 
 ## Documentation
