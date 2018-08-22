@@ -31,17 +31,18 @@
     "cover": "nyc --reporter=html --reporter=text npm test",
     "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",
     "test": "cross-env NODE_ENV=test mocha $npm_package_options_mocha",
-    "build:dev:node": "webpack --config webpack.node.config.js",
-    "build:dev:browser": "webpack --config webpack.browser.config.js",
+    "build:dev:node": "webpack --config ./webpack/webpack.node.config.js",
+    "build:dev:browser": "webpack --config ./webpack/webpack.browser.config.js",
+    "build:dev": "webpack --config ./webpack/webpack.config.js",
     "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
     "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
-    "build:dev": "run-p build:dev:*",
-    "build": "run-p build:browser build:node",
+    "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev",
     "copy:browser-examples-to-docs": "copy \"examples/browser/**/*\" docs/examples/browser",
     "copy:browser-build-to-docs": "copy \"dist/index.umd.js\" docs/",
     "build:docs": "esdoc",
     "prepare:docs": "run-s build build:docs copy:*",
-    "publish:docs": "run-s prepare:docs && gh-pages -d docs/ -m \"Auto-generated commit for documentation\""
+    "push:docs": "gh-pages -d docs/ -m \"Auto-generated commit for documentation\"",
+    "publish:docs": "run-s prepare:docs push:docs"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.56",
