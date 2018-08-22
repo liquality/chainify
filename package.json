@@ -21,12 +21,11 @@
   },
   "homepage": "https://github.com/consensys/chainabstractionlayer#readme",
   "author": "Liquality <info@liquality.io>",
+  "module": "src/index.js",
+  "browser": {
+    "@ledgerhq/hw-transport-node-hid": "@ledgerhq/hw-transport-u2f"
+  },
   "main": "dist/index.cjs.js",
-  "browser": "dist/index.umd.js",
-  "files": [
-    "dist/index.cjs.js",
-    "dist/index.umd.js"
-  ],
   "scripts": {
     "cover": "nyc --reporter=html --reporter=text npm test",
     "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",

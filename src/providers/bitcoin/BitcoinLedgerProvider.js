@@ -1,7 +1,7 @@
 import Provider from '../../Provider'
 
 import axios from 'axios'
-import Transport from '@alias/ledger-transport'
+import Transport from '@ledgerhq/hw-transport-node-hid'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 

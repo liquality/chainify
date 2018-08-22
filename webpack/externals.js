@@ -9,7 +9,5 @@ module.exports = (config = { target: 'web' }) => {
       externals[dep] = dep
     })
 
-  externals['@alias/ledger-transport'] = '@ledgerhq/hw-transport-node-hid'
-
   return externals
 }

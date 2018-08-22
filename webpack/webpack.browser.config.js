@@ -1,6 +1,5 @@
 const path = require('path')
 
-const pkg = require('../package.json')
 const babelRule = require('./babel.rule.js')
 const plugins = require('./plugins.js')
 
@@ -9,14 +8,9 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, '..', 'dist'),
-    filename: path.basename(pkg.browser),
+    filename: 'index.umd.js',
     library: 'ChainAbstractionLayer',
     libraryTarget: 'umd'
-  },
-  resolve: {
-    alias: {
-      '@alias/ledger-transport': '@ledgerhq/hw-transport-u2f'
-    }
   },
   module: {
     rules: [ babelRule({ target: 'web' }) ]
