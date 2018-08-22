@@ -20,7 +20,7 @@
     "url": "https://github.com/consensys/chainabstractionlayer/issues"
   },
   "homepage": "https://github.com/consensys/chainabstractionlayer#readme",
-  "author": "Liquality <contact@liquality.io>",
+  "author": "Liquality <info@liquality.io>",
   "main": "dist/index.cjs.js",
   "browser": "dist/index.umd.js",
   "files": [
