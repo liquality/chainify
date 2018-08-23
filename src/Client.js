@@ -303,6 +303,42 @@ export default class Client {
   }
 
   /**
+   * Get used addresses/accounts of the user.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
+   *  of accounts.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getUsedAddresses (config) {
+    const provider = this.getProviderForMethod('getUsedAddresses')
+
+    const usedAddresses = await provider.getUsedAddresses(config)
+
+    if (!isArray(usedAddresses)) {
+      throw new InvalidProviderResponseError('Provider returned an invalid response')
+    }
+
+    return usedAddresses
+  }
+
+  /**
+   * Get unused addresses/accounts of the user.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
+   *  of accounts.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getUnusedAddresses (config) {
+    const provider = this.getProviderForMethod('getUnusedAddresses')
+
+    const unusedAddresses = await provider.getUnusedAddresses(config)
+
+    if (!isArray(unusedAddresses)) {
+      throw new InvalidProviderResponseError('Provider returned an invalid response')
+    }
+
+    return unusedAddresses
+  }
+
+  /**
    * Sign a message.
    * @param {!string} message - Message to be signed.
    * @param {!string} from - The address from which the message is signed.
