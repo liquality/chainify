@@ -19,6 +19,7 @@ export default class BitcoinLedgerProvider extends Provider {
     this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
     this._derivationPath = `44'/${this._coinType}'/0'/0/0`
+    this._unusedAddressCountdown = 10
   }
 
   async _connectToLedger () {
@@ -41,38 +42,36 @@ export default class BitcoinLedgerProvider extends Provider {
   }
 
   async _getSpendingDetails (config = { segwit: false }) {
-    const purpose = config.segwit ? '49' : '44'
-    let unspentOutputs = []
-    let unusedAddress
+    const pathBase = `${config.segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
+    let usedAddresses = []
+    let unusedAddresses = []
     let addressIndex = 0
-    let addressHasTransactions = true
-    while (addressHasTransactions) {
-      const path = `${purpose}'/${this._coinType}'/0'/0/${addressIndex}`
+    let unusedAddressCountdown = this._unusedAddressCountdown
+    while (unusedAddressCountdown > 0) {
+      const path = pathBase + addressIndex
       const address = {
-        ...(await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)),
+        address: (await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)).bitcoinAddress,
         path
       }
-      const addressDetails = await this._getAddressDetails(address.bitcoinAddress)
-      addressHasTransactions = addressDetails.n_tx > 0
-      if (addressHasTransactions) {
-        const utxos = (await this._getUnspentTransactions(address.bitcoinAddress)).map(utxo => ({
-          ...utxo,
-          address: address.bitcoinAddress,
-          path
-        }))
-        unspentOutputs.push(...utxos)
+      const addressDetails = await this._getAddressDetails(address.address)
+      if (addressDetails.n_tx > 0) {
+        const utxos = await this._getUnspentTransactions(address.address)
+        usedAddresses.push({
+          ...address,
+          utxos,
+          value: utxos.reduce((acc, utxo) => acc + utxo.value, 0)
+        })
+        unusedAddressCountdown = this._unusedAddressCountdown
       } else {
-        unusedAddress = {
-          address: address.bitcoinAddress,
-          path
-        }
+        unusedAddresses.push(address)
+        --unusedAddressCountdown
       }
       ++addressIndex
     }
 
     return {
-      unusedAddress,
-      unspentOutputs
+      unusedAddresses,
+      usedAddresses
     }
   }
 
@@ -125,15 +124,18 @@ export default class BitcoinLedgerProvider extends Provider {
   async getAddresses (config = { segwit: false }) {
     await this._connectToLedger()
 
-    let addresses = []
-    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails(config)
+    const { unusedAddresses, usedAddresses } = await this._getSpendingDetails(config)
+    let addresses = usedAddresses.map(detail => detail.address)
 
-    const unspentAddresses = unspentOutputs.reduce((acc, detail) => (
-      acc[acc.length - 1] === detail.address ? acc : acc.concat(detail.address)
-    ), [])
-    addresses.push(...unspentAddresses, unusedAddress.address)
+    return addresses.concat(unusedAddresses.map(detail => detail.address))
+  }
 
-    return addresses
+  async getUsedAddresses (config = { segwit: false }) {
+    return (await this.getAddresses(config)).slice(0, -this._unusedAddressCountdown)
+  }
+
+  async getUnusedAddresses (config = { segwit: false }) {
+    return (await this.getAddresses(config)).slice(-this._unusedAddressCountdown)
   }
 
   async signMessage (message) {
@@ -147,7 +149,9 @@ export default class BitcoinLedgerProvider extends Provider {
   async sendTransaction (from, to, value, data) {
     await this._connectToLedger()
 
-    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails()
+    const { unusedAddresses, usedAddresses } = await this._getSpendingDetails()
+    const unusedAddress = unusedAddresses[0]
+    const unspentOutputs = [].concat(...usedAddresses.map(detail => detail.utxos))
     const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, to.length)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
     const fee = this._getFee(unspentOutputsToUse.length, to.length, 3) // TODO: satoshi per byte fee
