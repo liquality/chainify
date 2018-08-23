@@ -12,6 +12,7 @@
     "ledger",
     "metamask"
   ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/consensys/chainabstractionlayer.git"

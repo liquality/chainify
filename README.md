@@ -87,4 +87,4 @@ npm run build:docs
 
 ## License
 
-TBD.
+[MIT](./LICENSE.md)
