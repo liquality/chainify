@@ -27,6 +27,10 @@
     "@ledgerhq/hw-transport-node-hid": "@ledgerhq/hw-transport-u2f"
   },
   "main": "dist/index.cjs.js",
+  "files": [
+    "dist/index.umd.js",
+    "src/**/*"
+  ],
   "scripts": {
     "cover": "nyc --reporter=html --reporter=text npm test",
     "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",
