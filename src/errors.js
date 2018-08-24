@@ -7,6 +7,7 @@ function createError (name) {
 }
 
 export const StandardError = createError('StandardError')
+export const ProviderNotFoundError = createError('ProviderNotFoundError')
 export const InvalidProviderError = createError('InvalidProviderError')
 export const DuplicateProviderError = createError('DuplicateProviderError')
 export const NoProviderError = createError('NoProviderError')
