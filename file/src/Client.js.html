@@ -31,6 +31,7 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DSNParser">DSNParser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
@@ -39,6 +40,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NoProviderError">NoProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ProviderNotFoundError">ProviderNotFoundError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StandardError">StandardError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
@@ -62,9 +64,11 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/Client.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from &apos;lodash&apos;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { get, upperFirst, find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from &apos;lodash&apos;
 import * as Ajv from &apos;ajv&apos;
 
+import * as providers from &apos;./providers&apos;
+import DNSParser from &apos;./DsnParser&apos;
 import { Block, Transaction } from &apos;./schema&apos;
 import { hash160 } from &apos;./crypto&apos;
 import {
@@ -73,13 +77,14 @@ import {
   InvalidProviderResponseError,
   NoProviderError,
   UnimplementedMethodError,
-  UnsupportedMethodError
+  UnsupportedMethodError,
+  ProviderNotFoundError
 } from &apos;./errors&apos;
 
 export default class Client {
   /**
    * Client
-   * @param {Provider} [provider] - Data source/provider for the instance
+   * @param {string|Provider} [provider] - Data source/provider for the instance
    * @param {string} [version] - Minimum blockchain node version to support
    */
   constructor (provider, version) {
@@ -104,12 +109,36 @@ export default class Client {
 
   /**
    * Add a provider
-   * @param {!Provider} provider - The provider instance
+   * @param {!string|Provider} provider - The provider instance or RPC connection string
    * @return {Client} Returns instance of Client
    * @throws {InvalidProviderError} When invalid provider is provider
    * @throws {DuplicateProviderError} When same provider is added again
    */
   addProvider (provider) {
+    if (isString(provider)) {
+      const {
+        baseUrl,
+        driverName,
+        auth
+      } = DNSParser(provider)
+
+      const rpcProviderName = `${upperFirst(driverName)}RPCProvider`
+      const pathToProvider = `${driverName}.${rpcProviderName}`
+      const ProviderClass = get(providers, pathToProvider)
+
+      if (!ProviderClass) {
+        throw new ProviderNotFoundError(`${pathToProvider} not found`)
+      }
+
+      const args = [ baseUrl ]
+
+      if (auth) {
+        args.push(auth.username, auth.password)
+      }
+
+      return this.addProvider(new ProviderClass(...args))
+    }
+
     if (!isFunction(provider.setClient)) {
       throw new InvalidProviderError(&apos;Provider should have &quot;setClient&quot; method&apos;)
     }

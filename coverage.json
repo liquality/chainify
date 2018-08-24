@@ -1,15 +1,24 @@
 {
-  "coverage": "26.6%",
-  "expectCount": 109,
-  "actualCount": 29,
+  "coverage": "26.31%",
+  "expectCount": 114,
+  "actualCount": 30,
   "files": {
     "src/Client.js": {
       "expectCount": 20,
       "actualCount": 17,
       "undocumentLines": [
-        15,
-        23,
-        24
+        18,
+        26,
+        27
+      ]
+    },
+    "src/DSNParser.js": {
+      "expectCount": 4,
+      "actualCount": 1,
+      "undocumentLines": [
+        3,
+        4,
+        5
       ]
     },
     "src/Provider.js": {
@@ -26,7 +35,7 @@
       "undocumentLines": []
     },
     "src/errors.js": {
-      "expectCount": 8,
+      "expectCount": 9,
       "actualCount": 0,
       "undocumentLines": [
         3,
@@ -36,7 +45,8 @@
         12,
         13,
         14,
-        15
+        15,
+        16
       ]
     },
     "src/providers/JsonRpcProvider.js": {

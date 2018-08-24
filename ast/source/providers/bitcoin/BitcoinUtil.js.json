@@ -334,7 +334,7 @@
         "trailingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubkey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
+            "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubKey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
             "start": 116,
             "end": 298,
             "loc": {
@@ -1308,7 +1308,7 @@
           "leadingComments": [
             {
               "type": "CommentBlock",
-              "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubkey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
+              "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubKey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
               "start": 116,
               "end": 298,
               "loc": {
@@ -1345,7 +1345,7 @@
         "leadingComments": [
           {
             "type": "CommentBlock",
-            "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubkey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
+            "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubKey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
             "start": 116,
             "end": 298,
             "loc": {
@@ -3562,7 +3562,7 @@
   "comments": [
     {
       "type": "CommentBlock",
-      "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubkey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
+      "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubKey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
       "start": 116,
       "end": 298,
       "loc": {
@@ -4048,7 +4048,7 @@
     },
     {
       "type": "CommentBlock",
-      "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubkey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
+      "value": "*\n * Get compressed pubKey from pubKey.\n * @param {!string} pubKey - 65 byte string with prefix, x, y.\n * @return {string} Returns the compressed pubKey of uncompressed pubKey.\n ",
       "start": 116,
       "end": 298,
       "loc": {

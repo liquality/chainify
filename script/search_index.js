@@ -24,6 +24,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "chainabstractionlayer/src/dsnparser.js~dsnparser",
+    "function/index.html#static-function-DSNParser",
+    "<span>DSNParser</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/DSNParser.js</span>",
+    "function"
+  ],
+  [
     "chainabstractionlayer/src/errors.js~duplicateprovidererror",
     "variable/index.html#static-variable-DuplicateProviderError",
     "<span>DuplicateProviderError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
@@ -82,6 +88,12 @@ window.esdocSearchIndex = [
     "class/src/Provider.js~Provider.html",
     "<span>Provider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/Provider.js</span>",
     "class"
+  ],
+  [
+    "chainabstractionlayer/src/errors.js~providernotfounderror",
+    "variable/index.html#static-variable-ProviderNotFoundError",
+    "<span>ProviderNotFoundError</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/errors.js</span>",
+    "variable"
   ],
   [
     "chainabstractionlayer/src/providers/rpcerror.js~rpcerror",
@@ -570,6 +582,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/dsnparser.js",
+    "file/src/DSNParser.js.html",
+    "src/DSNParser.js",
+    "file"
+  ],
+  [
     "src/provider.js",
     "file/src/Provider.js.html",
     "src/Provider.js",
@@ -667,13 +685,13 @@ window.esdocSearchIndex = [
   ],
   [
     "src/providers/rpcerror.js~rpcerror#status",
-    "class/src/providers/RpcError.js~RpcError.html#instance-set-status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-get-status",
     "src/providers/RpcError.js~RpcError#status",
     "member"
   ],
   [
     "src/providers/rpcerror.js~rpcerror#status",
-    "class/src/providers/RpcError.js~RpcError.html#instance-get-status",
+    "class/src/providers/RpcError.js~RpcError.html#instance-set-status",
     "src/providers/RpcError.js~RpcError#status",
     "member"
   ],

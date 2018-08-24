@@ -31,6 +31,7 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DSNParser">DSNParser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
@@ -39,6 +40,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NoProviderError">NoProviderError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ProviderNotFoundError">ProviderNotFoundError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StandardError">StandardError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
@@ -62,13 +64,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Client from &apos;<span><a href="file/src/Client.js.html#lineNumber15">chainabstractionlayer/src/Client.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Client from &apos;<span><a href="file/src/Client.js.html#lineNumber18">chainabstractionlayer/src/Client.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/Client.js.html#lineNumber15">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/Client.js.html#lineNumber18">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -120,7 +122,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/Client.js~Client.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
+          <span class="code" data-ice="name"><span><a href="class/src/Client.js~Client.html#instance-constructor-constructor">constructor</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
         </p>
       </div>
       <div>
@@ -281,7 +283,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/Client.js~Client.html#instance-method-addProvider">addProvider</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>): <span><a href="class/src/Client.js~Client.html">Client</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/Client.js~Client.html#instance-method-addProvider">addProvider</a></span></span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>): <span><a href="class/src/Client.js~Client.html">Client</a></span></span>
         </p>
       </div>
       <div>
@@ -691,11 +693,11 @@
     
     
     
-    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
+    <span class="code" data-ice="name">constructor</span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>, version: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber21">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber24">source</a></span></span>
     </span>
   </h3>
 
@@ -717,7 +719,7 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">provider</td>
-      <td data-ice="type" class="code"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>Data source/provider for the instance</p>
 </td>
@@ -766,7 +768,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber24">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber27">source</a></span></span>
     </span>
   </h3>
 
@@ -809,7 +811,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber23">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber26">source</a></span></span>
     </span>
   </h3>
 
@@ -852,7 +854,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber34">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber37">source</a></span></span>
     </span>
   </h3>
 
@@ -897,7 +899,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber29">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber32">source</a></span></span>
     </span>
   </h3>
 
@@ -939,11 +941,11 @@
     
     
     
-    <span class="code" data-ice="name">addProvider</span><span class="code" data-ice="signature">(provider: <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>): <span><a href="class/src/Client.js~Client.html">Client</a></span></span>
+    <span class="code" data-ice="name">addProvider</span><span class="code" data-ice="signature">(provider: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/Provider.js~Provider.html">Provider</a></span>): <span><a href="class/src/Client.js~Client.html">Client</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber48">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber51">source</a></span></span>
     </span>
   </h3>
 
@@ -965,9 +967,9 @@
     
     <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">provider</td>
-      <td data-ice="type" class="code"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span> | <span><a href="class/src/Provider.js~Provider.html">Provider</a></span></td>
       <td data-ice="appendix"><ul><li>nullable: false</li></ul></td>
-      <td data-ice="description"><p>The provider instance</p>
+      <td data-ice="description"><p>The provider instance or RPC connection string</p>
 </td>
     </tr>
 </tbody>
@@ -1034,7 +1036,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber116">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber143">source</a></span></span>
     </span>
   </h3>
 
@@ -1111,7 +1113,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber367">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber394">source</a></span></span>
     </span>
   </h3>
 
@@ -1185,7 +1187,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber382">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber409">source</a></span></span>
     </span>
   </h3>
 
@@ -1281,7 +1283,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber293">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber320">source</a></span></span>
     </span>
   </h3>
 
@@ -1356,7 +1358,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber150">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber177">source</a></span></span>
     </span>
   </h3>
 
@@ -1443,7 +1445,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber185">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber212">source</a></span></span>
     </span>
   </h3>
 
@@ -1529,7 +1531,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber214">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber241">source</a></span></span>
     </span>
   </h3>
 
@@ -1588,7 +1590,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber79">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber106">source</a></span></span>
     </span>
   </h3>
 
@@ -1695,7 +1697,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber267">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber294">source</a></span></span>
     </span>
   </h3>
 
@@ -1773,7 +1775,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber235">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber262">source</a></span></span>
     </span>
   </h3>
 
@@ -1850,7 +1852,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber350">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber377">source</a></span></span>
     </span>
   </h3>
 
@@ -1927,7 +1929,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber330">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber357">source</a></span></span>
     </span>
   </h3>
 
@@ -2026,7 +2028,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber311">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/Client.js.html#lineNumber338">source</a></span></span>
     </span>
   </h3>
 
