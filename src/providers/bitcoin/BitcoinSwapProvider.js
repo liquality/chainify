@@ -3,6 +3,8 @@ import { addressToPubKeyHash } from './BitcoinUtil'
 import { padHexStart } from '../../crypto'
 
 export default class BitcoinSwapProvider extends Provider {
+  // TODO: have a generate InitSwap and generate RecipSwap
+  //   InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
     let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), 'hex').reverse()
 
