@@ -130,8 +130,9 @@ export default class BitcoinLedgerProvider extends Provider {
   async getBalance (config = { segwit: false }) {
     await this._connectToLedger()
 
-    const { usedAddresses } = await this._getSpendingDetails(config)
-    return usedAddresses.reduce((acc, detail) => acc + detail.value, 0)
+    const usedAddresses = await this.getUsedAddresses(config)
+    const utxosUsedAddresses = await this._getSpendingDetails(usedAddresses, config)
+    return utxosUsedAddresses.reduce((acc, detail) => acc + detail.value, 0)
   }
 
   async getAddresses (config = { segwit: false }) {
