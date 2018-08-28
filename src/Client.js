@@ -413,6 +413,14 @@ export default class Client {
     return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
   }
 
+  /**
+   * Generate redeem swap transaction data
+   * @param {!string} secret - Secret for the swap in hex.
+   * @param {string} [pubKey] - PubKey for the swap in hex.
+   * @param {string} [signature] - Signature for the swap in hex.
+   * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
   async redeemSwap (secret, pubKey = '', signature = '') {
     const provider = this.getProviderForMethod('redeemSwap')
 
@@ -443,6 +451,13 @@ export default class Client {
     return provider.redeemSwap(secret, pubKey, signature)
   }
 
+  /**
+   * Generate refund swap transaction data
+   * @param {string} [pubKey] - PubKey for the swap in hex.
+   * @param {string} [signature] - Signature for the swap in hex.
+   * @return {Promise<string, TypeError>} Resolves with refund swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
   async refundSwap (pubKey = '', signature = '') {
     const provider = this.getProviderForMethod('refundSwap')
 
