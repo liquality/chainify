@@ -1,23 +1,17 @@
 import Provider from '../../Provider'
 import { addressToPubKeyHash } from './BitcoinUtil'
+import { padHexStart } from '../../crypto'
 
 export default class BitcoinSwapProvider extends Provider {
-  _padHexStart (hex, length) {
-    let len = length || hex.length
-    len += len % 2
-
-    return hex.padStart(len, '0')
-  }
-
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    let expirationHex = Buffer.from(this._padHexStart(expiration.toString(16)), 'hex').reverse()
+    let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), 'hex').reverse()
 
     expirationHex = expirationHex.slice(0, Math.min(expirationHex.length, 5))
     expirationHex.writeUInt8(0, expirationHex.length - 1)
 
     const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)
     const refundPubKeyHash = addressToPubKeyHash(refundAddress)
-    const expirationPushDataOpcode = this._padHexStart(expirationHex.length.toString(16))
+    const expirationPushDataOpcode = padHexStart(expirationHex.length.toString(16))
     const expirationHexEncoded = expirationHex.toString('hex')
 
     return [
@@ -43,13 +37,13 @@ export default class BitcoinSwapProvider extends Provider {
     const redeemEncoded = isRedeem ? '51' : '00' // OP_1 : OP_0
     const encodedSecret = isRedeem
       ? [
-        this._padHexStart((secret.length / 2).toString(16)), // OP_PUSHDATA({secretLength})
+        padHexStart((secret.length / 2).toString(16)), // OP_PUSHDATA({secretLength})
         secret
       ]
       : ['00'] // OP_0
 
-    const signaturePushDataOpcode = this._padHexStart((signature.length / 2).toString(16))
-    const pubKeyPushDataOpcode = this._padHexStart((pubKey.length / 2).toString(16))
+    const signaturePushDataOpcode = padHexStart((signature.length / 2).toString(16))
+    const pubKeyPushDataOpcode = padHexStart((pubKey.length / 2).toString(16))
 
     const bytecode = [
       signaturePushDataOpcode,
@@ -63,7 +57,7 @@ export default class BitcoinSwapProvider extends Provider {
     return bytecode.join('')
   }
 
-  redeemSwap (pubKey, signature, secret) {
+  redeemSwap (secret, pubKey, signature) {
     return this._spendSwap(signature, pubKey, true, secret)
   }
 

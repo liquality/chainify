@@ -1,4 +1,5 @@
 import Provider from '../../Provider'
+import { padHexStart } from '../../crypto'
 
 export default class EthereumSwapProvider extends Provider {
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
@@ -6,7 +7,7 @@ export default class EthereumSwapProvider extends Provider {
     const redeemDestinationBase = 66
     const refundDestinationBase = 89
     const expirationHex = expiration.toString(16)
-    const expirationEncoded = expirationHex.length % 2 ? '0' + expirationHex : expirationHex // Pad with 0
+    const expirationEncoded = padHexStart(expirationHex) // Pad with 0
     const expirationSize = expirationEncoded.length / 2
     const expirationPushOpcode = (0x60 - 1 + expirationSize).toString(16)
     const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)
@@ -73,5 +74,13 @@ export default class EthereumSwapProvider extends Provider {
       '73', refundAddressEncoded, // PUSH20 {refundAddressEncoded}
       'ff' // SUICIDE
     ].join('')
+  }
+
+  redeemSwap (secret) {
+    return padHexStart(secret.replace('0x', ''), 64)
+  }
+
+  refundSwap () {
+    return ''
   }
 }
