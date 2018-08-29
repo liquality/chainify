@@ -4,8 +4,9 @@ import axios from 'axios'
 import Transport from '@alias/ledger-transport'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
+import { base58, padHexStart } from '../../crypto'
+import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
 
-import { addressToPubKeyHash } from './BitcoinUtil'
 import networks from '../../networks'
 
 // TODO: Abstract out non signing methods into another provider?
@@ -16,6 +17,7 @@ export default class BitcoinLedgerProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
     super()
     this._ledgerBtc = false
+    this._network = chain.network
     this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
     this._derivationPath = `44'/${this._coinType}'/0'/0/0`
@@ -72,7 +74,10 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getSpendingDetails (addresses, config = { segwit: false }) {
     return Promise.all(addresses.map(async address => {
-      const utxos = await this._getUnspentTransactions(address.address)
+      const utxos = (await this._getUnspentTransactions(address.address)).map(utxo => ({
+        ...utxo,
+        ...address
+      }))
       return {
         ...address,
         utxos,
@@ -177,23 +182,56 @@ export default class BitcoinLedgerProvider extends Provider {
     return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
   }
 
-  async sendTransaction (from, to, value, data) {
+  _generateScript (address) {
+    const type = base58.decode(address).toString('hex').substring(0, 2)
+    const pubKeyHash = addressToPubKeyHash(address)
+
+    if (type === this._network.scriptHash) {
+      return [
+        '76', // OP_DUP
+        'a9', // OP_HASH160
+        '14', // data size to be pushed
+        pubKeyHash, // <PUB_KEY_HASH>
+        '88', // OP_EQUALVERIFY
+        'ac' // OP_CHECKSIG
+      ].join('')
+    } else if (type === this._network.pubKeyHash) {
+      return [
+        'a9', // OP_HASH160
+        '14', // data size to be pushed
+        pubKeyHash, // <PUB_KEY_HASH>
+        '88' // OP_EQUAL
+      ].join('')
+    } else {
+      throw new Error('Not a valid address:', address)
+    }
+  }
+
+  async sendTransaction (to, value, data, from) {
     await this._connectToLedger()
+    let receivingAddress
+    if (to == null) {
+      const scriptPubKey = padHexStart(data)
+      receivingAddress = pubKeyToAddress(scriptPubKey, 'bitcoin', 'scriptHash') // TODO: add network and type here
+    } else {
+      receivingAddress = to
+    }
 
     const { unusedAddresses, usedAddresses } = await this._getAddresses()
     const unusedAddress = unusedAddresses[0]
     const utxosUsedAddresses = await this._getSpendingDetails(usedAddresses)
     const unspentOutputs = [].concat(...utxosUsedAddresses.map(detail => detail.utxos))
-    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, to.length)
+    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, 1)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
-    const fee = this._getFee(unspentOutputsToUse.length, to.length, 3) // TODO: satoshi per byte fee
+    const fee = this._getFee(unspentOutputsToUse.length, 1, 3) // TODO: satoshi per byte fee
     let totalCost = value + fee
     let hasChange = false
 
     if (totalAmount > totalCost) {
-      totalCost -= fee
-      totalCost += this._getFee(unspentOutputsToUse.length, to.length + 1, 3) // TODO: satoshi per byte fee
       hasChange = true
+
+      totalCost -= fee
+      totalCost += this._getFee(unspentOutputsToUse.length, 2, 3) // TODO: satoshi per byte fee
     }
 
     if (totalAmount < totalCost) {
@@ -206,30 +244,13 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendPubKeyHash = addressToPubKeyHash(to)
-    const changePubKeyHash = addressToPubKeyHash(unusedAddress.address)
+    const sendScript = this._generateScript(receivingAddress)
 
-    const sendP2PKHScript = [
-      '76', // OP_DUP
-      'a9', // OP_HASH160
-      '14', // data size to be pushed
-      sendPubKeyHash, // <PUB_KEY_HASH>
-      '88', // OP_EQUALVERIFY
-      'ac' // OP_CHECKSIG
-    ].join('')
+    let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
 
-    const changeP2PKHScript = [
-      '76', // OP_DUP
-      'a9', // OP_HASH160
-      '14', // data size to be pushed
-      changePubKeyHash, // <PUB_KEY_HASH>
-      '88', // OP_EQUALVERIFY
-      'ac' // OP_CHECKSIG
-    ].join('')
-
-    let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, 'hex') }]
     if (hasChange) {
-      outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, 'hex') })
+      const changeScript = this._generateScript(unusedAddress.address)
+      outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
     }
 
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
