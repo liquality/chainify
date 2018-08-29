@@ -131,7 +131,7 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     const { unusedAddresses, usedAddresses } = await this._getAddresses(config)
-    return usedAddresses.concat(unusedAddresses)
+    return usedAddresses.concat(unusedAddresses).map(detail => detail.address)
   }
 
   async getUsedAddresses (config = { segwit: false }) {
