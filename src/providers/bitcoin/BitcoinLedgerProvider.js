@@ -192,12 +192,10 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async sendTransaction (to, value, data, from) {
     await this._connectToLedger()
-    let receivingAddress
+    let receivingAddress = to
     if (to == null) {
       const scriptPubKey = padHexStart(data)
       receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    } else {
-      receivingAddress = to
     }
 
     const { unusedAddresses, usedAddresses } = await this._getAddresses()
@@ -239,6 +237,40 @@ export default class BitcoinLedgerProvider extends Provider {
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
 
     const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
+
+    return this.getMethod('sendRawTransaction')(signedTransaction)
+  }
+
+  async spendTransaction (id, data, to) {
+    // id = {
+    //   txid: '12345678900000',
+    //   n: 2
+    // }
+
+    // data = '12345678900000'
+
+    // to = null
+
+    let receivingAddress = to
+    if (to == null) {
+      const unusedAddreses = await this.unusedAddreses()
+      receivingAddress = unusedAddreses[0]
+    }
+
+    // Imagine we get info about the input here,
+    //  so we get the value of the transaction
+    // const value = 10
+
+    // Imagine we serialize the input here,
+    //  so following the bitcoin encoding, we encode txid and n from id
+    // const serializedInputs = '123450000000'
+
+    const sendScript = this._generateScript(receivingAddress)
+
+    const outputs = [{ amount: this._getAmountBuffer(value), script: Buffer.from(sendScript, 'hex') }]
+
+    // Imagine we serialize the transaction
+    // const signedTransaction = await this.blablabla
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
