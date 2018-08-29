@@ -195,7 +195,7 @@ export default class BitcoinLedgerProvider extends Provider {
     let receivingAddress
     if (to == null) {
       const scriptPubKey = padHexStart(data)
-      receivingAddress = pubKeyToAddress(scriptPubKey, 'bitcoin', 'scriptHash') // TODO: add network and type here
+      receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     } else {
       receivingAddress = to
     }
