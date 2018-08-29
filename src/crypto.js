@@ -52,6 +52,20 @@ function ripemd160 (message) {
   return hashToHex('ripemd160', message)
 }
 
+/**
+ * Pad a hex string with '0'
+ * @param {string} hex - The hex string to pad.
+ * @param {number} [length] - The length of the final string.
+ * @return Returns a padded string with length greater or equal to the given length
+ *  rounded up to the nearest even number.
+ */
+function padHexStart (hex, length) {
+  let len = length || hex.length
+  len += len % 2
+
+  return hex.padStart(len, '0')
+}
+
 export {
   /**
    * Base58 object with decode, decodeUnsafe, and encode functions.
@@ -68,5 +82,6 @@ export {
   sha256,
   ripemd160,
   hash160,
-  ensureBuffer
+  ensureBuffer,
+  padHexStart
 }

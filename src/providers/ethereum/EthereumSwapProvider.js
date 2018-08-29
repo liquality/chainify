@@ -1,4 +1,5 @@
 import Provider from '../../Provider'
+import { padHexStart } from '../../crypto'
 
 export default class EthereumSwapProvider extends Provider {
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
@@ -6,15 +7,12 @@ export default class EthereumSwapProvider extends Provider {
     const redeemDestinationBase = 66
     const refundDestinationBase = 89
     const expirationHex = expiration.toString(16)
-    const expirationEncoded = expirationHex.length % 2 ? '0' + expirationHex : expirationHex // Pad with 0
+    const expirationEncoded = padHexStart(expirationHex) // Pad with 0
     const expirationSize = expirationEncoded.length / 2
     const expirationPushOpcode = (0x60 - 1 + expirationSize).toString(16)
     const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)
     const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)
     const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)
-    const recipientAddressEncoded = recipientAddress.replace('0x', '') // Remove 0x if exists
-    const refundAddressEncoded = refundAddress.replace('0x', '') // Remove 0x if exists
-    const secretHashEncoded = secretHash.replace('0x', '') // Remove 0x if exists
 
     return [
       // Constructor
@@ -45,7 +43,7 @@ export default class EthereumSwapProvider extends Provider {
       'f1', // CALL
 
       // Validate with secretHash
-      '7f', secretHashEncoded, // PUSH32 {secretHashEncoded}
+      '7f', secretHash, // PUSH32 {secretHashEncoded}
       '60', '21', // PUSH1 21
       '51', // MLOAD
       '14', // EQ
@@ -66,12 +64,20 @@ export default class EthereumSwapProvider extends Provider {
       '00', // STOP
 
       '5b', // JUMPDEST
-      '73', recipientAddressEncoded, // PUSH20 {recipientAddressEncoded}
+      '73', recipientAddress, // PUSH20 {recipientAddressEncoded}
       'ff', // SUICIDE
 
       '5b', // JUMPDEST
-      '73', refundAddressEncoded, // PUSH20 {refundAddressEncoded}
+      '73', refundAddress, // PUSH20 {refundAddressEncoded}
       'ff' // SUICIDE
     ].join('')
+  }
+
+  redeemSwap (secret) {
+    return padHexStart(secret, 64)
+  }
+
+  refundSwap () {
+    return ''
   }
 }

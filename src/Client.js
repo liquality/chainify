@@ -412,4 +412,71 @@ export default class Client {
 
     return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
   }
+
+  /**
+   * Generate redeem swap transaction data
+   * @param {!string} secret - Secret for the swap in hex.
+   * @param {string} [pubKey] - PubKey for the swap in hex.
+   * @param {string} [signature] - Signature for the swap in hex.
+   * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async redeemSwap (secret, pubKey = '', signature = '') {
+    const provider = this.getProviderForMethod('redeemSwap')
+
+    if (!isString(secret)) {
+      throw new TypeError('Secret should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(secret))) {
+      throw new TypeError('Secret should be a valid hex string')
+    }
+
+    if (!isString(pubKey)) {
+      throw new TypeError('PubKey should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(pubKey))) {
+      throw new TypeError('PubKey should be a valid hex string')
+    }
+
+    if (!isString(signature)) {
+      throw new TypeError('Signature should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(signature))) {
+      throw new TypeError('Signature should be a valid hex string')
+    }
+
+    return provider.redeemSwap(secret, pubKey, signature)
+  }
+
+  /**
+   * Generate refund swap transaction data
+   * @param {string} [pubKey] - PubKey for the swap in hex.
+   * @param {string} [signature] - Signature for the swap in hex.
+   * @return {Promise<string, TypeError>} Resolves with refund swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async refundSwap (pubKey = '', signature = '') {
+    const provider = this.getProviderForMethod('refundSwap')
+
+    if (!isString(pubKey)) {
+      throw new TypeError('PubKey should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(pubKey))) {
+      throw new TypeError('PubKey should be a valid hex string')
+    }
+
+    if (!isString(signature)) {
+      throw new TypeError('Signature should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(signature))) {
+      throw new TypeError('Signature should be a valid hex string')
+    }
+
+    return provider.refundSwap(pubKey, signature)
+  }
 }
