@@ -1,5 +1,4 @@
 import JsonRpcProvider from '../JsonRpcProvider'
-import { padHexStart } from '../../crypto'
 
 import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
 
@@ -31,9 +30,6 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   async getBalance (addresses) {
     const addrs = addresses.map(ensureEthFormat)
     const promiseBalances = await Promise.all(addrs.map(address => this.rpc('eth_getBalance', address, 'latest')))
-    return promiseBalances
-      .map(balance => balance.replace('0x', ''))
-      .map(padHexStart)
-      .map(balance => parseInt(balance, 16))
+    return promiseBalances.map(balance => parseInt(balance, 16))
   }
 }
