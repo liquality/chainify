@@ -19,6 +19,7 @@ export default class BitcoinLedgerProvider extends Provider {
     this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
     this._derivationPath = `44'/${this._coinType}'/0'/0/0`
+    this._unusedAddressCountdown = 10
   }
 
   async _connectToLedger () {
@@ -40,40 +41,44 @@ export default class BitcoinLedgerProvider extends Provider {
     return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
   }
 
-  async _getSpendingDetails (config = { segwit: false }) {
-    const purpose = config.segwit ? '49' : '44'
-    let unspentOutputs = []
-    let unusedAddress
+  async _getAddresses (config = { segwit: false }) {
+    const pathBase = `${config.segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
+    let usedAddresses = []
+    let unusedAddresses = []
     let addressIndex = 0
-    let addressHasTransactions = true
-    while (addressHasTransactions) {
-      const path = `${purpose}'/${this._coinType}'/0'/0/${addressIndex}`
+    let unusedAddressCountdown = this._unusedAddressCountdown
+    while (unusedAddressCountdown > 0) {
+      const path = pathBase + addressIndex
       const address = {
-        ...(await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)),
+        address: (await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)).bitcoinAddress,
         path
       }
-      const addressDetails = await this._getAddressDetails(address.bitcoinAddress)
-      addressHasTransactions = addressDetails.n_tx > 0
-      if (addressHasTransactions) {
-        const utxos = (await this._getUnspentTransactions(address.bitcoinAddress)).map(utxo => ({
-          ...utxo,
-          address: address.bitcoinAddress,
-          path
-        }))
-        unspentOutputs.push(...utxos)
+      const addressDetails = await this._getAddressDetails(address.address)
+      if (addressDetails.n_tx > 0) {
+        usedAddresses.push(address)
+        unusedAddressCountdown = this._unusedAddressCountdown
       } else {
-        unusedAddress = {
-          address: address.bitcoinAddress,
-          path
-        }
+        unusedAddresses.push(address)
+        --unusedAddressCountdown
       }
       ++addressIndex
     }
 
     return {
-      unusedAddress,
-      unspentOutputs
+      unusedAddresses,
+      usedAddresses
     }
+  }
+
+  async _getSpendingDetails (addresses, config = { segwit: false }) {
+    return Promise.all(addresses.map(async address => {
+      const utxos = await this._getUnspentTransactions(address.address)
+      return {
+        ...address,
+        utxos,
+        value: utxos.reduce((acc, utxo) => acc + utxo.value, 0)
+      }
+    }))
   }
 
   _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation
@@ -125,15 +130,26 @@ export default class BitcoinLedgerProvider extends Provider {
   async getAddresses (config = { segwit: false }) {
     await this._connectToLedger()
 
-    let addresses = []
-    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails(config)
+    const { unusedAddresses, usedAddresses } = await this._getAddresses(config)
+    const addresses = [
+      ...unusedAddresses,
+      ...usedAddresses
+    ]
+    return addresses.map(detail => detail.address)
+  }
 
-    const unspentAddresses = unspentOutputs.reduce((acc, detail) => (
-      acc[acc.length - 1] === detail.address ? acc : acc.concat(detail.address)
-    ), [])
-    addresses.push(...unspentAddresses, unusedAddress.address)
+  async getUsedAddresses (config = { segwit: false }) {
+    await this._connectToLedger()
 
-    return addresses
+    const { usedAddresses } = await this._getAddresses(config)
+    return usedAddresses.map(detail => detail.address)
+  }
+
+  async getUnusedAddresses (config = { segwit: false }) {
+    await this._connectToLedger()
+
+    const { unusedAddresses } = await this._getAddresses(config)
+    return unusedAddresses.map(detail => detail.address)
   }
 
   async signMessage (message) {
@@ -147,7 +163,10 @@ export default class BitcoinLedgerProvider extends Provider {
   async sendTransaction (from, to, value, data) {
     await this._connectToLedger()
 
-    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails()
+    const { unusedAddresses, usedAddresses } = await this._getAddresses()
+    const unusedAddress = unusedAddresses[0]
+    const utxosUsedAddresses = await this._getSpendingDetails(usedAddresses)
+    const unspentOutputs = [].concat(...utxosUsedAddresses.map(detail => detail.utxos))
     const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, to.length)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
     const fee = this._getFee(unspentOutputsToUse.length, to.length, 3) // TODO: satoshi per byte fee
