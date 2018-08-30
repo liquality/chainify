@@ -102,9 +102,9 @@ export default class BitcoinLedgerProvider extends Provider {
       let totalCost = amount + fees
 
       if (numOutputsOffset === 0 && amountAccumulated > totalCost) {
+        numOutputsOffset = 1
         totalCost -= fees
         totalCost += this._getFee(unspentOutputsToUse.length, numOutputs + 1, 3) // TODO: hardcoded satoshi per byte
-        numOutputsOffset = 1
       }
 
       return amountAccumulated < totalCost
@@ -191,7 +191,7 @@ export default class BitcoinLedgerProvider extends Provider {
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
 
-    if (type === this._network.scriptHash) {
+    if (type === this._network.pubKeyHash) {
       return [
         '76', // OP_DUP
         'a9', // OP_HASH160
@@ -200,12 +200,12 @@ export default class BitcoinLedgerProvider extends Provider {
         '88', // OP_EQUALVERIFY
         'ac' // OP_CHECKSIG
       ].join('')
-    } else if (type === this._network.pubKeyHash) {
+    } else if (type === this._network.scriptHash) {
       return [
         'a9', // OP_HASH160
         '14', // data size to be pushed
         pubKeyHash, // <PUB_KEY_HASH>
-        '88' // OP_EQUAL
+        '87' // OP_EQUAL
       ].join('')
     } else {
       throw new Error('Not a valid address:', address)
@@ -232,7 +232,6 @@ export default class BitcoinLedgerProvider extends Provider {
     const fee = this._getFee(unspentOutputsToUse.length, 1, 3) // TODO: satoshi per byte fee
     let totalCost = value + fee
     let hasChange = false
-    console.log(unspentOutputsToUse)
 
     if (totalAmount > totalCost) {
       hasChange = true
@@ -246,9 +245,7 @@ export default class BitcoinLedgerProvider extends Provider {
     }
 
     const ledgerInputs = await this._getLedgerInputs(unspentOutputsToUse)
-    console.log(ledgerInputs)
     const paths = unspentOutputsToUse.map(utxo => utxo.path)
-    console.log(paths)
 
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
@@ -256,7 +253,6 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendScript = this._generateScript(receivingAddress)
 
     let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
-    console.log(outputs)
 
     if (hasChange) {
       const changeScript = this._generateScript(unusedAddress.address)
@@ -264,11 +260,7 @@ export default class BitcoinLedgerProvider extends Provider {
     }
 
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs }).toString('hex')
-    console.log(serializedOutputs)
-
-    await this._connectToLedger()
-    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, undefined, serializedOutputs)
-    console.log(signedTransaction)
+    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
