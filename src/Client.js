@@ -303,10 +303,6 @@ export default class Client {
       if (!addresses.every(isString)) {
         throw new TypeError('All addresses should be strings')
       }
-
-      if (!addresses.every(addr => (/^[A-Fa-f0-9]+$/.test(addr)))) {
-        throw new TypeError('All addresses should be valid hex strings')
-      }
     }
 
     const balance = await provider.getBalance(addresses)

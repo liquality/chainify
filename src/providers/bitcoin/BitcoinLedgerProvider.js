@@ -122,14 +122,19 @@ export default class BitcoinLedgerProvider extends Provider {
   }
 
   _getAmountBuffer (amount) {
+    // let hexAmount = BigNumber(amount).toString(16)
+    // if (hexAmount.length % 2 === 1) { // Pad with 0 if required
+    //   hexAmount = '0' + hexAmount
+    // }
+    // const valueBuffer = Buffer.from(hexAmount, 'hex')
+    // const buffer = Buffer.alloc(8)
+    // valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes
+    // return buffer.reverse() // Amount needs to be little endian
+
     let hexAmount = BigNumber(amount).toString(16)
-    if (hexAmount.length % 2 === 1) { // Pad with 0 if required
-      hexAmount = '0' + hexAmount
-    }
+    hexAmount = padHexStart(hexAmount, 16)
     const valueBuffer = Buffer.from(hexAmount, 'hex')
-    const buffer = Buffer.alloc(8)
-    valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes
-    return buffer.reverse() // Amount needs to be little endian
+    return valueBuffer.reverse()
   }
 
   async _getBalance (addresses, config = { segwit: false }) {
@@ -142,7 +147,7 @@ export default class BitcoinLedgerProvider extends Provider {
     let addrs = addresses
     if (addrs == null) {
       await this._connectToLedger()
-      const usedAddresses = await this.unusedAddress(config)
+      const usedAddresses = await this.getUsedAddresses(config)
       addrs = usedAddresses
     }
 
@@ -183,7 +188,7 @@ export default class BitcoinLedgerProvider extends Provider {
   }
 
   _generateScript (address) {
-    const type = base58.decode(address).toString('hex').substring(0, 2)
+    const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
 
     if (type === this._network.scriptHash) {
@@ -209,6 +214,7 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async sendTransaction (to, value, data, from) {
     await this._connectToLedger()
+
     let receivingAddress
     if (to == null) {
       const scriptPubKey = padHexStart(data)
@@ -226,6 +232,7 @@ export default class BitcoinLedgerProvider extends Provider {
     const fee = this._getFee(unspentOutputsToUse.length, 1, 3) // TODO: satoshi per byte fee
     let totalCost = value + fee
     let hasChange = false
+    console.log(unspentOutputsToUse)
 
     if (totalAmount > totalCost) {
       hasChange = true
@@ -239,7 +246,9 @@ export default class BitcoinLedgerProvider extends Provider {
     }
 
     const ledgerInputs = await this._getLedgerInputs(unspentOutputsToUse)
+    console.log(ledgerInputs)
     const paths = unspentOutputsToUse.map(utxo => utxo.path)
+    console.log(paths)
 
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
@@ -247,15 +256,19 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendScript = this._generateScript(receivingAddress)
 
     let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
+    console.log(outputs)
 
     if (hasChange) {
       const changeScript = this._generateScript(unusedAddress.address)
       outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
     }
 
-    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
+    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs }).toString('hex')
+    console.log(serializedOutputs)
 
-    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
+    await this._connectToLedger()
+    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, undefined, serializedOutputs)
+    console.log(signedTransaction)
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
