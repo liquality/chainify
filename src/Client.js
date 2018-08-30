@@ -285,6 +285,40 @@ export default class Client {
   }
 
   /**
+   * Get the balance of an account given its addresses.
+   * @param {string[]} [addresses] - A list of addresses.
+   * @return {Promise<number, InvalidProviderResponseError>} If addresses is given,
+   *  returns the cummulative balance of the given addresses. Otherwise return the balance
+   *  of the account that the signing provider controls.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getBalance (addresses) {
+    const provider = this.getProviderForMethod('getBalance')
+
+    if (addresses != null) {
+      if (!isArray(addresses)) {
+        throw new TypeError('Addresses should be an array')
+      }
+
+      if (!addresses.every(isString)) {
+        throw new TypeError('All addresses should be strings')
+      }
+
+      if (!addresses.every(addr => (/^[A-Fa-f0-9]+$/.test(addr)))) {
+        throw new TypeError('All addresses should be valid hex strings')
+      }
+    }
+
+    const balance = await provider.getBalance(addresses)
+
+    if (!isNumber(balance)) {
+      throw new InvalidProviderResponseError('Provider returned an invalid response')
+    }
+
+    return balance
+  }
+
+  /**
    * Get addresses/accounts of the user.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
    *  of accounts.
