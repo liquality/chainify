@@ -288,7 +288,7 @@ export default class Client {
    * Get the balance of an account given its addresses.
    * @param {string[]} [addresses] - A list of addresses.
    * @return {Promise<number, InvalidProviderResponseError>} If addresses is given,
-   *  returns the cummulative balance of the given addresses. Otherwise return the balance
+   *  returns the cumulative balance of the given addresses. Otherwise returns the balance
    *  of the account that the signing provider controls.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
