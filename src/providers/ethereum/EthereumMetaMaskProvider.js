@@ -53,7 +53,7 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)
   }
 
-  async sendTransaction (from, to, value, data) {
+  async sendTransaction (to, value, data, from) {
     value = BigNumber(value).toString(16)
 
     const tx = {

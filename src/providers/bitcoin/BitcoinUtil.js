@@ -11,7 +11,7 @@ import networks from '../../networks'
  * @param {!string} pubkey - 65 byte string with prefix, x, y.
  * @return {string} Returns the compressed pubKey of uncompressed pubKey.
  */
-export function compressPubKey (pubKey) {
+function compressPubKey (pubKey) {
   const x = pubKey.substring(2, 66)
   const y = pubKey.substring(66, 130)
   let prefix
@@ -27,7 +27,7 @@ export function compressPubKey (pubKey) {
  * @param {!string} type - pubKeyHash or scriptHash.
  * @return {string} Returns the address of pubKey.
  */
-export function pubKeyToAddress (pubKey, network, type) {
+function pubKeyToAddress (pubKey, network, type) {
   pubKey = ensureBuffer(pubKey)
   const pubKeyHash = hash160(pubKey)
   const addr = this.pubKeyHashToAddress(pubKeyHash, network, type)
@@ -41,7 +41,7 @@ export function pubKeyToAddress (pubKey, network, type) {
  * @param {!string} type - pubKeyHash or scriptHash.
  * @return {string} Returns the address derived from pubKeyHash.
  */
-export function pubKeyHashToAddress (pubKeyHash, network, type) {
+function pubKeyHashToAddress (pubKeyHash, network, type) {
   pubKeyHash = ensureBuffer(pubKeyHash)
   const prefixHash = Buffer.concat([Buffer.from(networks[network][type], 'hex'), pubKeyHash])
   const checksum = Buffer.from(sha256(sha256(prefixHash)).slice(0, 4), 'hex')
@@ -54,6 +54,13 @@ export function pubKeyHashToAddress (pubKeyHash, network, type) {
  * @param {!string} address - bitcoin base58 encoded address.
  * @return {string} Returns the pubKeyHash of bitcoin address.
  */
-export function addressToPubKeyHash (address) {
+function addressToPubKeyHash (address) {
   return base58.decode(address).toString('hex').substring(2, 42)
+}
+
+export {
+  compressPubKey,
+  pubKeyToAddress,
+  pubKeyHashToAddress,
+  addressToPubKeyHash
 }

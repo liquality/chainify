@@ -303,10 +303,6 @@ export default class Client {
       if (!addresses.every(isString)) {
         throw new TypeError('All addresses should be strings')
       }
-
-      if (!addresses.every(addr => (/^[A-Fa-f0-9]+$/.test(addr)))) {
-        throw new TypeError('All addresses should be valid hex strings')
-      }
     }
 
     const balance = await provider.getBalance(addresses)
@@ -388,19 +384,19 @@ export default class Client {
 
   /**
    * Send a transaction to the chain
-   * @param {!string} from - The address identifier for the sender.
-   * @param {!string} to - The address identifier for the receiver.
+   * @param {string} to - The address identifier for the receiver.
    * @param {!number} value - Number representing the amount associated with.
    *  the transaction.
    * @param {!string} [data] - Optional data to send with the transaction.
+   * @param {!string} [from] - Optional address identifier for the sender.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with an identifier for
    *  the broadcasted transaction.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async sendTransaction (from, to, value, data) {
+  async sendTransaction (to, value, data, from) {
     const provider = this.getProviderForMethod('sendTransaction')
 
-    const txHash = await provider.sendTransaction(from, to, value, data)
+    const txHash = await provider.sendTransaction(to, value, data, from)
 
     if (!isString(txHash)) {
       throw new InvalidProviderResponseError('sendTransaction method should return a transaction id string')
