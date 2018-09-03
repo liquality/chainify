@@ -30,7 +30,7 @@ function compressPubKey (pubKey) {
 function pubKeyToAddress (pubKey, network, type) {
   pubKey = ensureBuffer(pubKey)
   const pubKeyHash = hash160(pubKey)
-  const addr = this.pubKeyHashToAddress(pubKeyHash, network, type)
+  const addr = pubKeyHashToAddress(pubKeyHash, network, type)
   return addr
 }
 

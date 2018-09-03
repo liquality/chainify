@@ -57,7 +57,7 @@
       $('#sendScript').click(() => {
         // pay to script:
         // null, value, script
-        bitcoin.sendTransaction(null, $('#scriptValue').val(), parseInt($('#toScript').val())).then(result => {
+        bitcoin.sendTransaction(null, parseInt($('#scriptValue').val()), $('#toScript').val()).then(result => {
           $('#result').text(JSON.stringify(result, null, 2))
         })
       })
