@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 447,
+  "end": 571,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 26,
+      "line": 31,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 447,
+    "end": 571,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 26,
+        "line": 31,
         "column": 0
       }
     },
@@ -31,28 +31,28 @@
       {
         "type": "ExportDefaultDeclaration",
         "start": 0,
-        "end": 446,
+        "end": 570,
         "loc": {
           "start": {
             "line": 1,
             "column": 0
           },
           "end": {
-            "line": 25,
+            "line": 30,
             "column": 1
           }
         },
         "declaration": {
           "type": "ObjectExpression",
           "start": 15,
-          "end": 446,
+          "end": 570,
           "loc": {
             "start": {
               "line": 1,
               "column": 15
             },
             "end": {
-              "line": 25,
+              "line": 30,
               "column": 1
             }
           },
@@ -60,14 +60,14 @@
             {
               "type": "ObjectProperty",
               "start": 19,
-              "end": 139,
+              "end": 160,
               "loc": {
                 "start": {
                   "line": 2,
                   "column": 2
                 },
                 "end": {
-                  "line": 7,
+                  "line": 8,
                   "column": 3
                 }
               },
@@ -94,14 +94,14 @@
               "value": {
                 "type": "ObjectExpression",
                 "start": 28,
-                "end": 139,
+                "end": 160,
                 "loc": {
                   "start": {
                     "line": 2,
                     "column": 11
                   },
                   "end": {
-                    "line": 7,
+                    "line": 8,
                     "column": 3
                   }
                 },
@@ -109,7 +109,7 @@
                   {
                     "type": "ObjectProperty",
                     "start": 34,
-                    "end": 50,
+                    "end": 49,
                     "loc": {
                       "start": {
                         "line": 3,
@@ -117,7 +117,7 @@
                       },
                       "end": {
                         "line": 3,
-                        "column": 20
+                        "column": 19
                       }
                     },
                     "method": false,
@@ -126,7 +126,7 @@
                     "key": {
                       "type": "Identifier",
                       "start": 34,
-                      "end": 44,
+                      "end": 38,
                       "loc": {
                         "start": {
                           "line": 3,
@@ -134,6 +134,61 @@
                         },
                         "end": {
                           "line": 3,
+                          "column": 8
+                        },
+                        "identifierName": "name"
+                      },
+                      "name": "name"
+                    },
+                    "value": {
+                      "type": "StringLiteral",
+                      "start": 40,
+                      "end": 49,
+                      "loc": {
+                        "start": {
+                          "line": 3,
+                          "column": 10
+                        },
+                        "end": {
+                          "line": 3,
+                          "column": 19
+                        }
+                      },
+                      "extra": {
+                        "rawValue": "bitcoin",
+                        "raw": "'bitcoin'"
+                      },
+                      "value": "bitcoin"
+                    }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 55,
+                    "end": 71,
+                    "loc": {
+                      "start": {
+                        "line": 4,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 20
+                      }
+                    },
+                    "method": false,
+                    "shorthand": false,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 55,
+                      "end": 65,
+                      "loc": {
+                        "start": {
+                          "line": 4,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 4,
                           "column": 14
                         },
                         "identifierName": "pubKeyHash"
@@ -142,15 +197,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 46,
-                      "end": 50,
+                      "start": 67,
+                      "end": 71,
                       "loc": {
                         "start": {
-                          "line": 3,
+                          "line": 4,
                           "column": 16
                         },
                         "end": {
-                          "line": 3,
+                          "line": 4,
                           "column": 20
                         }
                       },
@@ -163,15 +218,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 56,
-                    "end": 72,
+                    "start": 77,
+                    "end": 93,
                     "loc": {
                       "start": {
-                        "line": 4,
+                        "line": 5,
                         "column": 4
                       },
                       "end": {
-                        "line": 4,
+                        "line": 5,
                         "column": 20
                       }
                     },
@@ -180,15 +235,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 56,
-                      "end": 66,
+                      "start": 77,
+                      "end": 87,
                       "loc": {
                         "start": {
-                          "line": 4,
+                          "line": 5,
                           "column": 4
                         },
                         "end": {
-                          "line": 4,
+                          "line": 5,
                           "column": 14
                         },
                         "identifierName": "scriptHash"
@@ -197,15 +252,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 68,
-                      "end": 72,
+                      "start": 89,
+                      "end": 93,
                       "loc": {
                         "start": {
-                          "line": 4,
+                          "line": 5,
                           "column": 16
                         },
                         "end": {
-                          "line": 4,
+                          "line": 5,
                           "column": 20
                         }
                       },
@@ -218,15 +273,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 78,
-                    "end": 91,
+                    "start": 99,
+                    "end": 112,
                     "loc": {
                       "start": {
-                        "line": 5,
+                        "line": 6,
                         "column": 4
                       },
                       "end": {
-                        "line": 5,
+                        "line": 6,
                         "column": 17
                       }
                     },
@@ -235,15 +290,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 78,
-                      "end": 86,
+                      "start": 99,
+                      "end": 107,
                       "loc": {
                         "start": {
-                          "line": 5,
+                          "line": 6,
                           "column": 4
                         },
                         "end": {
-                          "line": 5,
+                          "line": 6,
                           "column": 12
                         },
                         "identifierName": "coinType"
@@ -252,15 +307,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 88,
-                      "end": 91,
+                      "start": 109,
+                      "end": 112,
                       "loc": {
                         "start": {
-                          "line": 5,
+                          "line": 6,
                           "column": 14
                         },
                         "end": {
-                          "line": 5,
+                          "line": 6,
                           "column": 17
                         }
                       },
@@ -273,15 +328,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 97,
-                    "end": 135,
+                    "start": 118,
+                    "end": 156,
                     "loc": {
                       "start": {
-                        "line": 6,
+                        "line": 7,
                         "column": 4
                       },
                       "end": {
-                        "line": 6,
+                        "line": 7,
                         "column": 42
                       }
                     },
@@ -290,15 +345,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 97,
-                      "end": 108,
+                      "start": 118,
+                      "end": 129,
                       "loc": {
                         "start": {
-                          "line": 6,
+                          "line": 7,
                           "column": 4
                         },
                         "end": {
-                          "line": 6,
+                          "line": 7,
                           "column": 15
                         },
                         "identifierName": "explorerUrl"
@@ -307,15 +362,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 110,
-                      "end": 135,
+                      "start": 131,
+                      "end": 156,
                       "loc": {
                         "start": {
-                          "line": 6,
+                          "line": 7,
                           "column": 17
                         },
                         "end": {
-                          "line": 6,
+                          "line": 7,
                           "column": 42
                         }
                       },
@@ -331,15 +386,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 143,
-              "end": 279,
+              "start": 164,
+              "end": 329,
               "loc": {
                 "start": {
-                  "line": 8,
+                  "line": 9,
                   "column": 2
                 },
                 "end": {
-                  "line": 13,
+                  "line": 15,
                   "column": 3
                 }
               },
@@ -348,15 +403,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 143,
-                "end": 158,
+                "start": 164,
+                "end": 179,
                 "loc": {
                   "start": {
-                    "line": 8,
+                    "line": 9,
                     "column": 2
                   },
                   "end": {
-                    "line": 8,
+                    "line": 9,
                     "column": 17
                   },
                   "identifierName": "bitcoin_testnet"
@@ -365,30 +420,85 @@
               },
               "value": {
                 "type": "ObjectExpression",
-                "start": 160,
-                "end": 279,
+                "start": 181,
+                "end": 329,
                 "loc": {
                   "start": {
-                    "line": 8,
+                    "line": 9,
                     "column": 19
                   },
                   "end": {
-                    "line": 13,
+                    "line": 15,
                     "column": 3
                   }
                 },
                 "properties": [
                   {
                     "type": "ObjectProperty",
-                    "start": 166,
-                    "end": 182,
+                    "start": 187,
+                    "end": 210,
                     "loc": {
                       "start": {
-                        "line": 9,
+                        "line": 10,
                         "column": 4
                       },
                       "end": {
-                        "line": 9,
+                        "line": 10,
+                        "column": 27
+                      }
+                    },
+                    "method": false,
+                    "shorthand": false,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 187,
+                      "end": 191,
+                      "loc": {
+                        "start": {
+                          "line": 10,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 8
+                        },
+                        "identifierName": "name"
+                      },
+                      "name": "name"
+                    },
+                    "value": {
+                      "type": "StringLiteral",
+                      "start": 193,
+                      "end": 210,
+                      "loc": {
+                        "start": {
+                          "line": 10,
+                          "column": 10
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 27
+                        }
+                      },
+                      "extra": {
+                        "rawValue": "bitcoin_testnet",
+                        "raw": "'bitcoin_testnet'"
+                      },
+                      "value": "bitcoin_testnet"
+                    }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 216,
+                    "end": 232,
+                    "loc": {
+                      "start": {
+                        "line": 11,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 11,
                         "column": 20
                       }
                     },
@@ -397,15 +507,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 166,
-                      "end": 176,
+                      "start": 216,
+                      "end": 226,
                       "loc": {
                         "start": {
-                          "line": 9,
+                          "line": 11,
                           "column": 4
                         },
                         "end": {
-                          "line": 9,
+                          "line": 11,
                           "column": 14
                         },
                         "identifierName": "pubKeyHash"
@@ -414,15 +524,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 178,
-                      "end": 182,
+                      "start": 228,
+                      "end": 232,
                       "loc": {
                         "start": {
-                          "line": 9,
+                          "line": 11,
                           "column": 16
                         },
                         "end": {
-                          "line": 9,
+                          "line": 11,
                           "column": 20
                         }
                       },
@@ -435,15 +545,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 188,
-                    "end": 204,
+                    "start": 238,
+                    "end": 254,
                     "loc": {
                       "start": {
-                        "line": 10,
+                        "line": 12,
                         "column": 4
                       },
                       "end": {
-                        "line": 10,
+                        "line": 12,
                         "column": 20
                       }
                     },
@@ -452,15 +562,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 188,
-                      "end": 198,
+                      "start": 238,
+                      "end": 248,
                       "loc": {
                         "start": {
-                          "line": 10,
+                          "line": 12,
                           "column": 4
                         },
                         "end": {
-                          "line": 10,
+                          "line": 12,
                           "column": 14
                         },
                         "identifierName": "scriptHash"
@@ -469,15 +579,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 200,
-                      "end": 204,
+                      "start": 250,
+                      "end": 254,
                       "loc": {
                         "start": {
-                          "line": 10,
+                          "line": 12,
                           "column": 16
                         },
                         "end": {
-                          "line": 10,
+                          "line": 12,
                           "column": 20
                         }
                       },
@@ -490,15 +600,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 210,
-                    "end": 223,
+                    "start": 260,
+                    "end": 273,
                     "loc": {
                       "start": {
-                        "line": 11,
+                        "line": 13,
                         "column": 4
                       },
                       "end": {
-                        "line": 11,
+                        "line": 13,
                         "column": 17
                       }
                     },
@@ -507,15 +617,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 210,
-                      "end": 218,
+                      "start": 260,
+                      "end": 268,
                       "loc": {
                         "start": {
-                          "line": 11,
+                          "line": 13,
                           "column": 4
                         },
                         "end": {
-                          "line": 11,
+                          "line": 13,
                           "column": 12
                         },
                         "identifierName": "coinType"
@@ -524,15 +634,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 220,
-                      "end": 223,
+                      "start": 270,
+                      "end": 273,
                       "loc": {
                         "start": {
-                          "line": 11,
+                          "line": 13,
                           "column": 14
                         },
                         "end": {
-                          "line": 11,
+                          "line": 13,
                           "column": 17
                         }
                       },
@@ -545,15 +655,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 229,
-                    "end": 275,
+                    "start": 279,
+                    "end": 325,
                     "loc": {
                       "start": {
-                        "line": 12,
+                        "line": 14,
                         "column": 4
                       },
                       "end": {
-                        "line": 12,
+                        "line": 14,
                         "column": 50
                       }
                     },
@@ -562,15 +672,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 229,
-                      "end": 240,
+                      "start": 279,
+                      "end": 290,
                       "loc": {
                         "start": {
-                          "line": 12,
+                          "line": 14,
                           "column": 4
                         },
                         "end": {
-                          "line": 12,
+                          "line": 14,
                           "column": 15
                         },
                         "identifierName": "explorerUrl"
@@ -579,15 +689,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 242,
-                      "end": 275,
+                      "start": 292,
+                      "end": 325,
                       "loc": {
                         "start": {
-                          "line": 12,
+                          "line": 14,
                           "column": 17
                         },
                         "end": {
-                          "line": 12,
+                          "line": 14,
                           "column": 50
                         }
                       },
@@ -603,15 +713,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 283,
-              "end": 360,
+              "start": 333,
+              "end": 432,
               "loc": {
                 "start": {
-                  "line": 14,
+                  "line": 16,
                   "column": 2
                 },
                 "end": {
-                  "line": 18,
+                  "line": 21,
                   "column": 3
                 }
               },
@@ -620,15 +730,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 283,
-                "end": 291,
+                "start": 333,
+                "end": 341,
                 "loc": {
                   "start": {
-                    "line": 14,
+                    "line": 16,
                     "column": 2
                   },
                   "end": {
-                    "line": 14,
+                    "line": 16,
                     "column": 10
                   },
                   "identifierName": "litecoin"
@@ -637,30 +747,30 @@
               },
               "value": {
                 "type": "ObjectExpression",
-                "start": 293,
-                "end": 360,
+                "start": 343,
+                "end": 432,
                 "loc": {
                   "start": {
-                    "line": 14,
+                    "line": 16,
                     "column": 12
                   },
                   "end": {
-                    "line": 18,
+                    "line": 21,
                     "column": 3
                   }
                 },
                 "properties": [
                   {
                     "type": "ObjectProperty",
-                    "start": 299,
-                    "end": 315,
+                    "start": 349,
+                    "end": 365,
                     "loc": {
                       "start": {
-                        "line": 15,
+                        "line": 17,
                         "column": 4
                       },
                       "end": {
-                        "line": 15,
+                        "line": 17,
                         "column": 20
                       }
                     },
@@ -669,15 +779,70 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 299,
-                      "end": 309,
+                      "start": 349,
+                      "end": 353,
                       "loc": {
                         "start": {
-                          "line": 15,
+                          "line": 17,
                           "column": 4
                         },
                         "end": {
-                          "line": 15,
+                          "line": 17,
+                          "column": 8
+                        },
+                        "identifierName": "name"
+                      },
+                      "name": "name"
+                    },
+                    "value": {
+                      "type": "StringLiteral",
+                      "start": 355,
+                      "end": 365,
+                      "loc": {
+                        "start": {
+                          "line": 17,
+                          "column": 10
+                        },
+                        "end": {
+                          "line": 17,
+                          "column": 20
+                        }
+                      },
+                      "extra": {
+                        "rawValue": "litecoin",
+                        "raw": "'litecoin'"
+                      },
+                      "value": "litecoin"
+                    }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 371,
+                    "end": 387,
+                    "loc": {
+                      "start": {
+                        "line": 18,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 18,
+                        "column": 20
+                      }
+                    },
+                    "method": false,
+                    "shorthand": false,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 371,
+                      "end": 381,
+                      "loc": {
+                        "start": {
+                          "line": 18,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 18,
                           "column": 14
                         },
                         "identifierName": "pubKeyHash"
@@ -686,15 +851,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 311,
-                      "end": 315,
+                      "start": 383,
+                      "end": 387,
                       "loc": {
                         "start": {
-                          "line": 15,
+                          "line": 18,
                           "column": 16
                         },
                         "end": {
-                          "line": 15,
+                          "line": 18,
                           "column": 20
                         }
                       },
@@ -707,15 +872,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 321,
-                    "end": 337,
+                    "start": 393,
+                    "end": 409,
                     "loc": {
                       "start": {
-                        "line": 16,
+                        "line": 19,
                         "column": 4
                       },
                       "end": {
-                        "line": 16,
+                        "line": 19,
                         "column": 20
                       }
                     },
@@ -724,15 +889,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 321,
-                      "end": 331,
+                      "start": 393,
+                      "end": 403,
                       "loc": {
                         "start": {
-                          "line": 16,
+                          "line": 19,
                           "column": 4
                         },
                         "end": {
-                          "line": 16,
+                          "line": 19,
                           "column": 14
                         },
                         "identifierName": "scriptHash"
@@ -741,15 +906,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 333,
-                      "end": 337,
+                      "start": 405,
+                      "end": 409,
                       "loc": {
                         "start": {
-                          "line": 16,
+                          "line": 19,
                           "column": 16
                         },
                         "end": {
-                          "line": 16,
+                          "line": 19,
                           "column": 20
                         }
                       },
@@ -762,15 +927,15 @@
                   },
                   {
                     "type": "ObjectProperty",
-                    "start": 343,
-                    "end": 356,
+                    "start": 415,
+                    "end": 428,
                     "loc": {
                       "start": {
-                        "line": 17,
+                        "line": 20,
                         "column": 4
                       },
                       "end": {
-                        "line": 17,
+                        "line": 20,
                         "column": 17
                       }
                     },
@@ -779,15 +944,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 343,
-                      "end": 351,
+                      "start": 415,
+                      "end": 423,
                       "loc": {
                         "start": {
-                          "line": 17,
+                          "line": 20,
                           "column": 4
                         },
                         "end": {
-                          "line": 17,
+                          "line": 20,
                           "column": 12
                         },
                         "identifierName": "coinType"
@@ -796,15 +961,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 353,
-                      "end": 356,
+                      "start": 425,
+                      "end": 428,
                       "loc": {
                         "start": {
-                          "line": 17,
+                          "line": 20,
                           "column": 14
                         },
                         "end": {
-                          "line": 17,
+                          "line": 20,
                           "column": 17
                         }
                       },
@@ -820,15 +985,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 364,
-              "end": 398,
+              "start": 436,
+              "end": 492,
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 22,
                   "column": 2
                 },
                 "end": {
-                  "line": 21,
+                  "line": 25,
                   "column": 3
                 }
               },
@@ -837,15 +1002,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 364,
-                "end": 372,
+                "start": 436,
+                "end": 444,
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 22,
                     "column": 2
                   },
                   "end": {
-                    "line": 19,
+                    "line": 22,
                     "column": 10
                   },
                   "identifierName": "ethereum"
@@ -854,30 +1019,85 @@
               },
               "value": {
                 "type": "ObjectExpression",
-                "start": 374,
-                "end": 398,
+                "start": 446,
+                "end": 492,
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 22,
                     "column": 12
                   },
                   "end": {
-                    "line": 21,
+                    "line": 25,
                     "column": 3
                   }
                 },
                 "properties": [
                   {
                     "type": "ObjectProperty",
-                    "start": 380,
-                    "end": 394,
+                    "start": 452,
+                    "end": 468,
                     "loc": {
                       "start": {
-                        "line": 20,
+                        "line": 23,
                         "column": 4
                       },
                       "end": {
-                        "line": 20,
+                        "line": 23,
+                        "column": 20
+                      }
+                    },
+                    "method": false,
+                    "shorthand": false,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 452,
+                      "end": 456,
+                      "loc": {
+                        "start": {
+                          "line": 23,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 23,
+                          "column": 8
+                        },
+                        "identifierName": "name"
+                      },
+                      "name": "name"
+                    },
+                    "value": {
+                      "type": "StringLiteral",
+                      "start": 458,
+                      "end": 468,
+                      "loc": {
+                        "start": {
+                          "line": 23,
+                          "column": 10
+                        },
+                        "end": {
+                          "line": 23,
+                          "column": 20
+                        }
+                      },
+                      "extra": {
+                        "rawValue": "ethereum",
+                        "raw": "'ethereum'"
+                      },
+                      "value": "ethereum"
+                    }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 474,
+                    "end": 488,
+                    "loc": {
+                      "start": {
+                        "line": 24,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 24,
                         "column": 18
                       }
                     },
@@ -886,15 +1106,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 380,
-                      "end": 388,
+                      "start": 474,
+                      "end": 482,
                       "loc": {
                         "start": {
-                          "line": 20,
+                          "line": 24,
                           "column": 4
                         },
                         "end": {
-                          "line": 20,
+                          "line": 24,
                           "column": 12
                         },
                         "identifierName": "coinType"
@@ -903,15 +1123,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 390,
-                      "end": 394,
+                      "start": 484,
+                      "end": 488,
                       "loc": {
                         "start": {
-                          "line": 20,
+                          "line": 24,
                           "column": 14
                         },
                         "end": {
-                          "line": 20,
+                          "line": 24,
                           "column": 18
                         }
                       },
@@ -927,15 +1147,15 @@
             },
             {
               "type": "ObjectProperty",
-              "start": 402,
-              "end": 444,
+              "start": 496,
+              "end": 568,
               "loc": {
                 "start": {
-                  "line": 22,
+                  "line": 26,
                   "column": 2
                 },
                 "end": {
-                  "line": 24,
+                  "line": 29,
                   "column": 3
                 }
               },
@@ -944,15 +1164,15 @@
               "computed": false,
               "key": {
                 "type": "Identifier",
-                "start": 402,
-                "end": 418,
+                "start": 496,
+                "end": 512,
                 "loc": {
                   "start": {
-                    "line": 22,
+                    "line": 26,
                     "column": 2
                   },
                   "end": {
-                    "line": 22,
+                    "line": 26,
                     "column": 18
                   },
                   "identifierName": "ethereum_classic"
@@ -961,30 +1181,85 @@
               },
               "value": {
                 "type": "ObjectExpression",
-                "start": 420,
-                "end": 444,
+                "start": 514,
+                "end": 568,
                 "loc": {
                   "start": {
-                    "line": 22,
+                    "line": 26,
                     "column": 20
                   },
                   "end": {
-                    "line": 24,
+                    "line": 29,
                     "column": 3
                   }
                 },
                 "properties": [
                   {
                     "type": "ObjectProperty",
-                    "start": 426,
-                    "end": 440,
+                    "start": 520,
+                    "end": 544,
                     "loc": {
                       "start": {
-                        "line": 23,
+                        "line": 27,
                         "column": 4
                       },
                       "end": {
-                        "line": 23,
+                        "line": 27,
+                        "column": 28
+                      }
+                    },
+                    "method": false,
+                    "shorthand": false,
+                    "computed": false,
+                    "key": {
+                      "type": "Identifier",
+                      "start": 520,
+                      "end": 524,
+                      "loc": {
+                        "start": {
+                          "line": 27,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 27,
+                          "column": 8
+                        },
+                        "identifierName": "name"
+                      },
+                      "name": "name"
+                    },
+                    "value": {
+                      "type": "StringLiteral",
+                      "start": 526,
+                      "end": 544,
+                      "loc": {
+                        "start": {
+                          "line": 27,
+                          "column": 10
+                        },
+                        "end": {
+                          "line": 27,
+                          "column": 28
+                        }
+                      },
+                      "extra": {
+                        "rawValue": "ethereum_classic",
+                        "raw": "'ethereum_classic'"
+                      },
+                      "value": "ethereum_classic"
+                    }
+                  },
+                  {
+                    "type": "ObjectProperty",
+                    "start": 550,
+                    "end": 564,
+                    "loc": {
+                      "start": {
+                        "line": 28,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 28,
                         "column": 18
                       }
                     },
@@ -993,15 +1268,15 @@
                     "computed": false,
                     "key": {
                       "type": "Identifier",
-                      "start": 426,
-                      "end": 434,
+                      "start": 550,
+                      "end": 558,
                       "loc": {
                         "start": {
-                          "line": 23,
+                          "line": 28,
                           "column": 4
                         },
                         "end": {
-                          "line": 23,
+                          "line": 28,
                           "column": 12
                         },
                         "identifierName": "coinType"
@@ -1010,15 +1285,15 @@
                     },
                     "value": {
                       "type": "StringLiteral",
-                      "start": 436,
-                      "end": 440,
+                      "start": 560,
+                      "end": 564,
                       "loc": {
                         "start": {
-                          "line": 23,
+                          "line": 28,
                           "column": 14
                         },
                         "end": {
-                          "line": 23,
+                          "line": 28,
                           "column": 18
                         }
                       },
@@ -1212,9 +1487,9 @@
         "postfix": false,
         "binop": null
       },
-      "value": "pubKeyHash",
+      "value": "name",
       "start": 34,
-      "end": 44,
+      "end": 38,
       "loc": {
         "start": {
           "line": 3,
@@ -1222,6 +1497,111 @@
         },
         "end": {
           "line": 3,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 38,
+      "end": 39,
+      "loc": {
+        "start": {
+          "line": 3,
+          "column": 8
+        },
+        "end": {
+          "line": 3,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "bitcoin",
+      "start": 40,
+      "end": 49,
+      "loc": {
+        "start": {
+          "line": 3,
+          "column": 10
+        },
+        "end": {
+          "line": 3,
+          "column": 19
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 49,
+      "end": 50,
+      "loc": {
+        "start": {
+          "line": 3,
+          "column": 19
+        },
+        "end": {
+          "line": 3,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "pubKeyHash",
+      "start": 55,
+      "end": 65,
+      "loc": {
+        "start": {
+          "line": 4,
+          "column": 4
+        },
+        "end": {
+          "line": 4,
           "column": 14
         }
       }
@@ -1239,15 +1619,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 44,
-      "end": 45,
+      "start": 65,
+      "end": 66,
       "loc": {
         "start": {
-          "line": 3,
+          "line": 4,
           "column": 14
         },
         "end": {
-          "line": 3,
+          "line": 4,
           "column": 15
         }
       }
@@ -1266,15 +1646,15 @@
         "updateContext": null
       },
       "value": "00",
-      "start": 46,
-      "end": 50,
+      "start": 67,
+      "end": 71,
       "loc": {
         "start": {
-          "line": 3,
+          "line": 4,
           "column": 16
         },
         "end": {
-          "line": 3,
+          "line": 4,
           "column": 20
         }
       }
@@ -1292,15 +1672,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 50,
-      "end": 51,
+      "start": 71,
+      "end": 72,
       "loc": {
         "start": {
-          "line": 3,
+          "line": 4,
           "column": 20
         },
         "end": {
-          "line": 3,
+          "line": 4,
           "column": 21
         }
       }
@@ -1318,15 +1698,15 @@
         "binop": null
       },
       "value": "scriptHash",
-      "start": 56,
-      "end": 66,
+      "start": 77,
+      "end": 87,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 5,
           "column": 4
         },
         "end": {
-          "line": 4,
+          "line": 5,
           "column": 14
         }
       }
@@ -1344,15 +1724,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 66,
-      "end": 67,
+      "start": 87,
+      "end": 88,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 5,
           "column": 14
         },
         "end": {
-          "line": 4,
+          "line": 5,
           "column": 15
         }
       }
@@ -1371,15 +1751,15 @@
         "updateContext": null
       },
       "value": "05",
-      "start": 68,
-      "end": 72,
+      "start": 89,
+      "end": 93,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 5,
           "column": 16
         },
         "end": {
-          "line": 4,
+          "line": 5,
           "column": 20
         }
       }
@@ -1397,15 +1777,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 72,
-      "end": 73,
+      "start": 93,
+      "end": 94,
       "loc": {
         "start": {
-          "line": 4,
+          "line": 5,
           "column": 20
         },
         "end": {
-          "line": 4,
+          "line": 5,
           "column": 21
         }
       }
@@ -1423,15 +1803,15 @@
         "binop": null
       },
       "value": "coinType",
-      "start": 78,
-      "end": 86,
+      "start": 99,
+      "end": 107,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 4
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 12
         }
       }
@@ -1449,15 +1829,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 86,
-      "end": 87,
+      "start": 107,
+      "end": 108,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 12
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 13
         }
       }
@@ -1476,15 +1856,15 @@
         "updateContext": null
       },
       "value": "0",
-      "start": 88,
-      "end": 91,
+      "start": 109,
+      "end": 112,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 14
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 17
         }
       }
@@ -1502,15 +1882,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 91,
-      "end": 92,
+      "start": 112,
+      "end": 113,
       "loc": {
         "start": {
-          "line": 5,
+          "line": 6,
           "column": 17
         },
         "end": {
-          "line": 5,
+          "line": 6,
           "column": 18
         }
       }
@@ -1528,15 +1908,15 @@
         "binop": null
       },
       "value": "explorerUrl",
-      "start": 97,
-      "end": 108,
+      "start": 118,
+      "end": 129,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 4
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 15
         }
       }
@@ -1554,15 +1934,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 108,
-      "end": 109,
+      "start": 129,
+      "end": 130,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 15
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 16
         }
       }
@@ -1581,15 +1961,15 @@
         "updateContext": null
       },
       "value": "https://blockchain.info",
-      "start": 110,
-      "end": 135,
+      "start": 131,
+      "end": 156,
       "loc": {
         "start": {
-          "line": 6,
+          "line": 7,
           "column": 17
         },
         "end": {
-          "line": 6,
+          "line": 7,
           "column": 42
         }
       }
@@ -1606,15 +1986,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 138,
-      "end": 139,
+      "start": 159,
+      "end": 160,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 2
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 3
         }
       }
@@ -1632,15 +2012,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 139,
-      "end": 140,
+      "start": 160,
+      "end": 161,
       "loc": {
         "start": {
-          "line": 7,
+          "line": 8,
           "column": 3
         },
         "end": {
-          "line": 7,
+          "line": 8,
           "column": 4
         }
       }
@@ -1658,15 +2038,15 @@
         "binop": null
       },
       "value": "bitcoin_testnet",
-      "start": 143,
-      "end": 158,
+      "start": 164,
+      "end": 179,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 2
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 17
         }
       }
@@ -1684,15 +2064,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 158,
-      "end": 159,
+      "start": 179,
+      "end": 180,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 17
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 18
         }
       }
@@ -1709,15 +2089,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 160,
-      "end": 161,
+      "start": 181,
+      "end": 182,
       "loc": {
         "start": {
-          "line": 8,
+          "line": 9,
           "column": 19
         },
         "end": {
-          "line": 8,
+          "line": 9,
           "column": 20
         }
       }
@@ -1734,16 +2114,121 @@
         "postfix": false,
         "binop": null
       },
-      "value": "pubKeyHash",
-      "start": 166,
-      "end": 176,
+      "value": "name",
+      "start": 187,
+      "end": 191,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 10,
           "column": 4
         },
         "end": {
-          "line": 9,
+          "line": 10,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 191,
+      "end": 192,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 8
+        },
+        "end": {
+          "line": 10,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "bitcoin_testnet",
+      "start": 193,
+      "end": 210,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 10
+        },
+        "end": {
+          "line": 10,
+          "column": 27
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 210,
+      "end": 211,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 27
+        },
+        "end": {
+          "line": 10,
+          "column": 28
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "pubKeyHash",
+      "start": 216,
+      "end": 226,
+      "loc": {
+        "start": {
+          "line": 11,
+          "column": 4
+        },
+        "end": {
+          "line": 11,
           "column": 14
         }
       }
@@ -1761,15 +2246,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 176,
-      "end": 177,
+      "start": 226,
+      "end": 227,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 11,
           "column": 14
         },
         "end": {
-          "line": 9,
+          "line": 11,
           "column": 15
         }
       }
@@ -1788,15 +2273,15 @@
         "updateContext": null
       },
       "value": "6F",
-      "start": 178,
-      "end": 182,
+      "start": 228,
+      "end": 232,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 11,
           "column": 16
         },
         "end": {
-          "line": 9,
+          "line": 11,
           "column": 20
         }
       }
@@ -1814,15 +2299,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 182,
-      "end": 183,
+      "start": 232,
+      "end": 233,
       "loc": {
         "start": {
-          "line": 9,
+          "line": 11,
           "column": 20
         },
         "end": {
-          "line": 9,
+          "line": 11,
           "column": 21
         }
       }
@@ -1840,15 +2325,15 @@
         "binop": null
       },
       "value": "scriptHash",
-      "start": 188,
-      "end": 198,
+      "start": 238,
+      "end": 248,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 12,
           "column": 4
         },
         "end": {
-          "line": 10,
+          "line": 12,
           "column": 14
         }
       }
@@ -1866,15 +2351,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 198,
-      "end": 199,
+      "start": 248,
+      "end": 249,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 12,
           "column": 14
         },
         "end": {
-          "line": 10,
+          "line": 12,
           "column": 15
         }
       }
@@ -1893,15 +2378,15 @@
         "updateContext": null
       },
       "value": "C4",
-      "start": 200,
-      "end": 204,
+      "start": 250,
+      "end": 254,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 12,
           "column": 16
         },
         "end": {
-          "line": 10,
+          "line": 12,
           "column": 20
         }
       }
@@ -1919,15 +2404,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 204,
-      "end": 205,
+      "start": 254,
+      "end": 255,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 12,
           "column": 20
         },
         "end": {
-          "line": 10,
+          "line": 12,
           "column": 21
         }
       }
@@ -1945,15 +2430,15 @@
         "binop": null
       },
       "value": "coinType",
-      "start": 210,
-      "end": 218,
+      "start": 260,
+      "end": 268,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 13,
           "column": 4
         },
         "end": {
-          "line": 11,
+          "line": 13,
           "column": 12
         }
       }
@@ -1971,15 +2456,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 218,
-      "end": 219,
+      "start": 268,
+      "end": 269,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 13,
           "column": 12
         },
         "end": {
-          "line": 11,
+          "line": 13,
           "column": 13
         }
       }
@@ -1998,15 +2483,15 @@
         "updateContext": null
       },
       "value": "1",
-      "start": 220,
-      "end": 223,
+      "start": 270,
+      "end": 273,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 13,
           "column": 14
         },
         "end": {
-          "line": 11,
+          "line": 13,
           "column": 17
         }
       }
@@ -2024,15 +2509,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 223,
-      "end": 224,
+      "start": 273,
+      "end": 274,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 13,
           "column": 17
         },
         "end": {
-          "line": 11,
+          "line": 13,
           "column": 18
         }
       }
@@ -2050,15 +2535,15 @@
         "binop": null
       },
       "value": "explorerUrl",
-      "start": 229,
-      "end": 240,
+      "start": 279,
+      "end": 290,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 14,
           "column": 4
         },
         "end": {
-          "line": 12,
+          "line": 14,
           "column": 15
         }
       }
@@ -2076,15 +2561,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 240,
-      "end": 241,
+      "start": 290,
+      "end": 291,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 14,
           "column": 15
         },
         "end": {
-          "line": 12,
+          "line": 14,
           "column": 16
         }
       }
@@ -2103,15 +2588,15 @@
         "updateContext": null
       },
       "value": "https://testnet.blockchain.info",
-      "start": 242,
-      "end": 275,
+      "start": 292,
+      "end": 325,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 14,
           "column": 17
         },
         "end": {
-          "line": 12,
+          "line": 14,
           "column": 50
         }
       }
@@ -2128,15 +2613,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 278,
-      "end": 279,
+      "start": 328,
+      "end": 329,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 15,
           "column": 2
         },
         "end": {
-          "line": 13,
+          "line": 15,
           "column": 3
         }
       }
@@ -2154,15 +2639,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 279,
-      "end": 280,
+      "start": 329,
+      "end": 330,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 15,
           "column": 3
         },
         "end": {
-          "line": 13,
+          "line": 15,
           "column": 4
         }
       }
@@ -2180,15 +2665,15 @@
         "binop": null
       },
       "value": "litecoin",
-      "start": 283,
-      "end": 291,
+      "start": 333,
+      "end": 341,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 16,
           "column": 2
         },
         "end": {
-          "line": 14,
+          "line": 16,
           "column": 10
         }
       }
@@ -2206,15 +2691,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 291,
-      "end": 292,
+      "start": 341,
+      "end": 342,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 16,
           "column": 10
         },
         "end": {
-          "line": 14,
+          "line": 16,
           "column": 11
         }
       }
@@ -2231,15 +2716,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 293,
-      "end": 294,
+      "start": 343,
+      "end": 344,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 16,
           "column": 12
         },
         "end": {
-          "line": 14,
+          "line": 16,
           "column": 13
         }
       }
@@ -2256,16 +2741,121 @@
         "postfix": false,
         "binop": null
       },
-      "value": "pubKeyHash",
-      "start": 299,
-      "end": 309,
+      "value": "name",
+      "start": 349,
+      "end": 353,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 17,
           "column": 4
         },
         "end": {
-          "line": 15,
+          "line": 17,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 353,
+      "end": 354,
+      "loc": {
+        "start": {
+          "line": 17,
+          "column": 8
+        },
+        "end": {
+          "line": 17,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "litecoin",
+      "start": 355,
+      "end": 365,
+      "loc": {
+        "start": {
+          "line": 17,
+          "column": 10
+        },
+        "end": {
+          "line": 17,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 365,
+      "end": 366,
+      "loc": {
+        "start": {
+          "line": 17,
+          "column": 20
+        },
+        "end": {
+          "line": 17,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "pubKeyHash",
+      "start": 371,
+      "end": 381,
+      "loc": {
+        "start": {
+          "line": 18,
+          "column": 4
+        },
+        "end": {
+          "line": 18,
           "column": 14
         }
       }
@@ -2283,15 +2873,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 309,
-      "end": 310,
+      "start": 381,
+      "end": 382,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 14
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 15
         }
       }
@@ -2310,15 +2900,15 @@
         "updateContext": null
       },
       "value": "30",
-      "start": 311,
-      "end": 315,
+      "start": 383,
+      "end": 387,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 16
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 20
         }
       }
@@ -2336,15 +2926,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 315,
-      "end": 316,
+      "start": 387,
+      "end": 388,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 18,
           "column": 20
         },
         "end": {
-          "line": 15,
+          "line": 18,
           "column": 21
         }
       }
@@ -2362,15 +2952,15 @@
         "binop": null
       },
       "value": "scriptHash",
-      "start": 321,
-      "end": 331,
+      "start": 393,
+      "end": 403,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 19,
           "column": 4
         },
         "end": {
-          "line": 16,
+          "line": 19,
           "column": 14
         }
       }
@@ -2388,15 +2978,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 331,
-      "end": 332,
+      "start": 403,
+      "end": 404,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 19,
           "column": 14
         },
         "end": {
-          "line": 16,
+          "line": 19,
           "column": 15
         }
       }
@@ -2415,15 +3005,15 @@
         "updateContext": null
       },
       "value": "32",
-      "start": 333,
-      "end": 337,
+      "start": 405,
+      "end": 409,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 19,
           "column": 16
         },
         "end": {
-          "line": 16,
+          "line": 19,
           "column": 20
         }
       }
@@ -2441,15 +3031,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 337,
-      "end": 338,
+      "start": 409,
+      "end": 410,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 19,
           "column": 20
         },
         "end": {
-          "line": 16,
+          "line": 19,
           "column": 21
         }
       }
@@ -2467,15 +3057,15 @@
         "binop": null
       },
       "value": "coinType",
-      "start": 343,
-      "end": 351,
+      "start": 415,
+      "end": 423,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 4
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 12
         }
       }
@@ -2493,15 +3083,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 351,
-      "end": 352,
+      "start": 423,
+      "end": 424,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 12
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 13
         }
       }
@@ -2520,15 +3110,15 @@
         "updateContext": null
       },
       "value": "2",
-      "start": 353,
-      "end": 356,
+      "start": 425,
+      "end": 428,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 20,
           "column": 14
         },
         "end": {
-          "line": 17,
+          "line": 20,
           "column": 17
         }
       }
@@ -2545,15 +3135,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 359,
-      "end": 360,
+      "start": 431,
+      "end": 432,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 21,
           "column": 2
         },
         "end": {
-          "line": 18,
+          "line": 21,
           "column": 3
         }
       }
@@ -2571,15 +3161,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 360,
-      "end": 361,
+      "start": 432,
+      "end": 433,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 21,
           "column": 3
         },
         "end": {
-          "line": 18,
+          "line": 21,
           "column": 4
         }
       }
@@ -2597,15 +3187,15 @@
         "binop": null
       },
       "value": "ethereum",
-      "start": 364,
-      "end": 372,
+      "start": 436,
+      "end": 444,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 22,
           "column": 2
         },
         "end": {
-          "line": 19,
+          "line": 22,
           "column": 10
         }
       }
@@ -2623,15 +3213,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 372,
-      "end": 373,
+      "start": 444,
+      "end": 445,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 22,
           "column": 10
         },
         "end": {
-          "line": 19,
+          "line": 22,
           "column": 11
         }
       }
@@ -2648,15 +3238,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 374,
-      "end": 375,
+      "start": 446,
+      "end": 447,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 22,
           "column": 12
         },
         "end": {
-          "line": 19,
+          "line": 22,
           "column": 13
         }
       }
@@ -2673,16 +3263,121 @@
         "postfix": false,
         "binop": null
       },
-      "value": "coinType",
-      "start": 380,
-      "end": 388,
+      "value": "name",
+      "start": 452,
+      "end": 456,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 23,
           "column": 4
         },
         "end": {
-          "line": 20,
+          "line": 23,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 456,
+      "end": 457,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 8
+        },
+        "end": {
+          "line": 23,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "ethereum",
+      "start": 458,
+      "end": 468,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 10
+        },
+        "end": {
+          "line": 23,
+          "column": 20
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 468,
+      "end": 469,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 20
+        },
+        "end": {
+          "line": 23,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "coinType",
+      "start": 474,
+      "end": 482,
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 4
+        },
+        "end": {
+          "line": 24,
           "column": 12
         }
       }
@@ -2700,15 +3395,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 388,
-      "end": 389,
+      "start": 482,
+      "end": 483,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 24,
           "column": 12
         },
         "end": {
-          "line": 20,
+          "line": 24,
           "column": 13
         }
       }
@@ -2727,15 +3422,15 @@
         "updateContext": null
       },
       "value": "60",
-      "start": 390,
-      "end": 394,
+      "start": 484,
+      "end": 488,
       "loc": {
         "start": {
-          "line": 20,
+          "line": 24,
           "column": 14
         },
         "end": {
-          "line": 20,
+          "line": 24,
           "column": 18
         }
       }
@@ -2752,15 +3447,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 397,
-      "end": 398,
+      "start": 491,
+      "end": 492,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 25,
           "column": 2
         },
         "end": {
-          "line": 21,
+          "line": 25,
           "column": 3
         }
       }
@@ -2778,15 +3473,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 398,
-      "end": 399,
+      "start": 492,
+      "end": 493,
       "loc": {
         "start": {
-          "line": 21,
+          "line": 25,
           "column": 3
         },
         "end": {
-          "line": 21,
+          "line": 25,
           "column": 4
         }
       }
@@ -2804,15 +3499,15 @@
         "binop": null
       },
       "value": "ethereum_classic",
-      "start": 402,
-      "end": 418,
+      "start": 496,
+      "end": 512,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 26,
           "column": 2
         },
         "end": {
-          "line": 22,
+          "line": 26,
           "column": 18
         }
       }
@@ -2830,15 +3525,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 418,
-      "end": 419,
+      "start": 512,
+      "end": 513,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 26,
           "column": 18
         },
         "end": {
-          "line": 22,
+          "line": 26,
           "column": 19
         }
       }
@@ -2855,15 +3550,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 420,
-      "end": 421,
+      "start": 514,
+      "end": 515,
       "loc": {
         "start": {
-          "line": 22,
+          "line": 26,
           "column": 20
         },
         "end": {
-          "line": 22,
+          "line": 26,
           "column": 21
         }
       }
@@ -2880,16 +3575,121 @@
         "postfix": false,
         "binop": null
       },
-      "value": "coinType",
-      "start": 426,
-      "end": 434,
+      "value": "name",
+      "start": 520,
+      "end": 524,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 27,
           "column": 4
         },
         "end": {
-          "line": 23,
+          "line": 27,
+          "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ":",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 524,
+      "end": 525,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 8
+        },
+        "end": {
+          "line": 27,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "ethereum_classic",
+      "start": 526,
+      "end": 544,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 10
+        },
+        "end": {
+          "line": 27,
+          "column": 28
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 544,
+      "end": 545,
+      "loc": {
+        "start": {
+          "line": 27,
+          "column": 28
+        },
+        "end": {
+          "line": 27,
+          "column": 29
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "coinType",
+      "start": 550,
+      "end": 558,
+      "loc": {
+        "start": {
+          "line": 28,
+          "column": 4
+        },
+        "end": {
+          "line": 28,
           "column": 12
         }
       }
@@ -2907,15 +3707,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 434,
-      "end": 435,
+      "start": 558,
+      "end": 559,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 28,
           "column": 12
         },
         "end": {
-          "line": 23,
+          "line": 28,
           "column": 13
         }
       }
@@ -2934,15 +3734,15 @@
         "updateContext": null
       },
       "value": "61",
-      "start": 436,
-      "end": 440,
+      "start": 560,
+      "end": 564,
       "loc": {
         "start": {
-          "line": 23,
+          "line": 28,
           "column": 14
         },
         "end": {
-          "line": 23,
+          "line": 28,
           "column": 18
         }
       }
@@ -2959,15 +3759,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 443,
-      "end": 444,
+      "start": 567,
+      "end": 568,
       "loc": {
         "start": {
-          "line": 24,
+          "line": 29,
           "column": 2
         },
         "end": {
-          "line": 24,
+          "line": 29,
           "column": 3
         }
       }
@@ -2984,15 +3784,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 445,
-      "end": 446,
+      "start": 569,
+      "end": 570,
       "loc": {
         "start": {
-          "line": 25,
+          "line": 30,
           "column": 0
         },
         "end": {
-          "line": 25,
+          "line": 30,
           "column": 1
         }
       }
@@ -3010,15 +3810,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 447,
-      "end": 447,
+      "start": 571,
+      "end": 571,
       "loc": {
         "start": {
-          "line": 26,
+          "line": 31,
           "column": 0
         },
         "end": {
-          "line": 26,
+          "line": 31,
           "column": 0
         }
       }

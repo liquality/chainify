@@ -31,9 +31,10 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DSNParser">DSNParser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DsnParser">DsnParser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padHexStart">padHexStart</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
@@ -45,6 +46,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/LedgerProvider.js~LedgerProvider.html">LedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
@@ -70,8 +72,9 @@ import axios from &apos;axios&apos;
 import Transport from &apos;@ledgerhq/hw-transport-node-hid&apos;
 import LedgerBtc from &apos;@ledgerhq/hw-app-btc&apos;
 import { BigNumber } from &apos;bignumber.js&apos;
+import { base58, padHexStart } from &apos;../../crypto&apos;
+import { pubKeyToAddress, addressToPubKeyHash } from &apos;./BitcoinUtil&apos;
 
-import { addressToPubKeyHash } from &apos;./BitcoinUtil&apos;
 import networks from &apos;../../networks&apos;
 
 // TODO: Abstract out non signing methods into another provider?
@@ -82,9 +85,11 @@ export default class BitcoinLedgerProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
     super()
     this._ledgerBtc = false
+    this._network = chain.network
     this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
     this._derivationPath = `44&apos;/${this._coinType}&apos;/0&apos;/0/0`
+    this._unusedAddressCountdown = 10
   }
 
   async _connectToLedger () {
@@ -106,40 +111,47 @@ export default class BitcoinLedgerProvider extends Provider {
     return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&amp;cors=true`)).data
   }
 
-  async _getSpendingDetails (config = { segwit: false }) {
-    const purpose = config.segwit ? &apos;49&apos; : &apos;44&apos;
-    let unspentOutputs = []
-    let unusedAddress
+  async _getAddresses (config = { segwit: false }) {
+    const pathBase = `${config.segwit ? &apos;49&apos; : &apos;44&apos;}&apos;/${this._coinType}&apos;/0&apos;/0/`
+    let usedAddresses = []
+    let unusedAddresses = []
     let addressIndex = 0
-    let addressHasTransactions = true
-    while (addressHasTransactions) {
-      const path = `${purpose}&apos;/${this._coinType}&apos;/0&apos;/0/${addressIndex}`
+    let unusedAddressCountdown = this._unusedAddressCountdown
+    while (unusedAddressCountdown &gt; 0) {
+      const path = pathBase + addressIndex
       const address = {
-        ...(await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)),
+        address: (await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)).bitcoinAddress,
         path
       }
-      const addressDetails = await this._getAddressDetails(address.bitcoinAddress)
-      addressHasTransactions = addressDetails.n_tx &gt; 0
-      if (addressHasTransactions) {
-        const utxos = (await this._getUnspentTransactions(address.bitcoinAddress)).map(utxo =&gt; ({
-          ...utxo,
-          address: address.bitcoinAddress,
-          path
-        }))
-        unspentOutputs.push(...utxos)
+      const addressDetails = await this._getAddressDetails(address.address)
+      if (addressDetails.n_tx &gt; 0) {
+        usedAddresses.push(address)
+        unusedAddressCountdown = this._unusedAddressCountdown
       } else {
-        unusedAddress = {
-          address: address.bitcoinAddress,
-          path
-        }
+        unusedAddresses.push(address)
+        --unusedAddressCountdown
       }
       ++addressIndex
     }
 
     return {
-      unusedAddress,
-      unspentOutputs
+      unusedAddresses,
+      usedAddresses
     }
+  }
+
+  async _getSpendingDetails (addresses, config = { segwit: false }) {
+    return Promise.all(addresses.map(async address =&gt; {
+      const utxos = (await this._getUnspentTransactions(address.address)).map(utxo =&gt; ({
+        ...utxo,
+        ...address
+      }))
+      return {
+        ...address,
+        utxos,
+        value: utxos.reduce((acc, utxo) =&gt; acc + utxo.value, 0)
+      }
+    }))
   }
 
   _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation
@@ -158,9 +170,9 @@ export default class BitcoinLedgerProvider extends Provider {
       let totalCost = amount + fees
 
       if (numOutputsOffset === 0 &amp;&amp; amountAccumulated &gt; totalCost) {
+        numOutputsOffset = 1
         totalCost -= fees
         totalCost += this._getFee(unspentOutputsToUse.length, numOutputs + 1, 3) // TODO: hardcoded satoshi per byte
-        numOutputsOffset = 1
       }
 
       return amountAccumulated &lt; totalCost
@@ -178,28 +190,61 @@ export default class BitcoinLedgerProvider extends Provider {
   }
 
   _getAmountBuffer (amount) {
+    // let hexAmount = BigNumber(amount).toString(16)
+    // if (hexAmount.length % 2 === 1) { // Pad with 0 if required
+    //   hexAmount = &apos;0&apos; + hexAmount
+    // }
+    // const valueBuffer = Buffer.from(hexAmount, &apos;hex&apos;)
+    // const buffer = Buffer.alloc(8)
+    // valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes
+    // return buffer.reverse() // Amount needs to be little endian
+
     let hexAmount = BigNumber(amount).toString(16)
-    if (hexAmount.length % 2 === 1) { // Pad with 0 if required
-      hexAmount = &apos;0&apos; + hexAmount
-    }
+    hexAmount = padHexStart(hexAmount, 16)
     const valueBuffer = Buffer.from(hexAmount, &apos;hex&apos;)
-    const buffer = Buffer.alloc(8)
-    valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes
-    return buffer.reverse() // Amount needs to be little endian
+    return valueBuffer.reverse()
+  }
+
+  async _getBalance (addresses, config = { segwit: false }) {
+    const addrs = addresses.map(address =&gt; ({ address }))
+    const spendingDetails = await this._getSpendingDetails(addrs, config)
+    return spendingDetails.reduce((acc, detail) =&gt; acc + detail.value, 0)
+  }
+
+  async getBalance (addresses, config = { segwit: false }) {
+    let addrs = addresses
+    if (addrs == null) {
+      await this._connectToLedger()
+      const usedAddresses = await this.getUsedAddresses(config)
+      addrs = usedAddresses
+    }
+
+    return this._getBalance(addrs, config)
   }
 
   async getAddresses (config = { segwit: false }) {
     await this._connectToLedger()
 
-    let addresses = []
-    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails(config)
+    const { unusedAddresses, usedAddresses } = await this._getAddresses(config)
+    const addresses = [
+      ...unusedAddresses,
+      ...usedAddresses
+    ]
+    return addresses.map(detail =&gt; detail.address)
+  }
 
-    const unspentAddresses = unspentOutputs.reduce((acc, detail) =&gt; (
-      acc[acc.length - 1] === detail.address ? acc : acc.concat(detail.address)
-    ), [])
-    addresses.push(...unspentAddresses, unusedAddress.address)
+  async getUsedAddresses (config = { segwit: false }) {
+    await this._connectToLedger()
 
-    return addresses
+    const { usedAddresses } = await this._getAddresses(config)
+    return usedAddresses.map(detail =&gt; detail.address)
+  }
+
+  async getUnusedAddresses (config = { segwit: false }) {
+    await this._connectToLedger()
+
+    const { unusedAddresses } = await this._getAddresses(config)
+    return unusedAddresses.map(detail =&gt; detail.address)
   }
 
   async signMessage (message) {
@@ -210,20 +255,57 @@ export default class BitcoinLedgerProvider extends Provider {
     return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
   }
 
-  async sendTransaction (from, to, value, data) {
+  _generateScript (address) {
+    const type = base58.decode(address).toString(&apos;hex&apos;).substring(0, 2).toUpperCase()
+    const pubKeyHash = addressToPubKeyHash(address)
+
+    if (type === this._network.pubKeyHash) {
+      return [
+        &apos;76&apos;, // OP_DUP
+        &apos;a9&apos;, // OP_HASH160
+        &apos;14&apos;, // data size to be pushed
+        pubKeyHash, // &lt;PUB_KEY_HASH&gt;
+        &apos;88&apos;, // OP_EQUALVERIFY
+        &apos;ac&apos; // OP_CHECKSIG
+      ].join(&apos;&apos;)
+    } else if (type === this._network.scriptHash) {
+      return [
+        &apos;a9&apos;, // OP_HASH160
+        &apos;14&apos;, // data size to be pushed
+        pubKeyHash, // &lt;PUB_KEY_HASH&gt;
+        &apos;87&apos; // OP_EQUAL
+      ].join(&apos;&apos;)
+    } else {
+      throw new Error(&apos;Not a valid address:&apos;, address)
+    }
+  }
+
+  async sendTransaction (to, value, data, from) {
     await this._connectToLedger()
 
-    const { unusedAddress, unspentOutputs } = await this._getSpendingDetails()
-    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, to.length)
+    let receivingAddress
+    if (to == null) {
+      const scriptPubKey = padHexStart(data)
+      receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, &apos;scriptHash&apos;)
+    } else {
+      receivingAddress = to
+    }
+
+    const { unusedAddresses, usedAddresses } = await this._getAddresses()
+    const unusedAddress = unusedAddresses[0]
+    const utxosUsedAddresses = await this._getSpendingDetails(usedAddresses)
+    const unspentOutputs = [].concat(...utxosUsedAddresses.map(detail =&gt; detail.utxos))
+    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, 1)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) =&gt; acc + utxo.value, 0)
-    const fee = this._getFee(unspentOutputsToUse.length, to.length, 3) // TODO: satoshi per byte fee
+    const fee = this._getFee(unspentOutputsToUse.length, 1, 3) // TODO: satoshi per byte fee
     let totalCost = value + fee
     let hasChange = false
 
     if (totalAmount &gt; totalCost) {
-      totalCost -= fee
-      totalCost += this._getFee(unspentOutputsToUse.length, to.length + 1, 3) // TODO: satoshi per byte fee
       hasChange = true
+
+      totalCost -= fee
+      totalCost += this._getFee(unspentOutputsToUse.length, 2, 3) // TODO: satoshi per byte fee
     }
 
     if (totalAmount &lt; totalCost) {
@@ -236,34 +318,16 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendPubKeyHash = addressToPubKeyHash(to)
-    const changePubKeyHash = addressToPubKeyHash(unusedAddress.address)
+    const sendScript = this._generateScript(receivingAddress)
 
-    const sendP2PKHScript = [
-      &apos;76&apos;, // OP_DUP
-      &apos;a9&apos;, // OP_HASH160
-      &apos;14&apos;, // data size to be pushed
-      sendPubKeyHash, // &lt;PUB_KEY_HASH&gt;
-      &apos;88&apos;, // OP_EQUALVERIFY
-      &apos;ac&apos; // OP_CHECKSIG
-    ].join(&apos;&apos;)
+    let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, &apos;hex&apos;) }]
 
-    const changeP2PKHScript = [
-      &apos;76&apos;, // OP_DUP
-      &apos;a9&apos;, // OP_HASH160
-      &apos;14&apos;, // data size to be pushed
-      changePubKeyHash, // &lt;PUB_KEY_HASH&gt;
-      &apos;88&apos;, // OP_EQUALVERIFY
-      &apos;ac&apos; // OP_CHECKSIG
-    ].join(&apos;&apos;)
-
-    let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendP2PKHScript, &apos;hex&apos;) }]
     if (hasChange) {
-      outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeP2PKHScript, &apos;hex&apos;) })
+      const changeScript = this._generateScript(unusedAddress.address)
+      outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeScript, &apos;hex&apos;) })
     }
 
-    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs })
-
+    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs }).toString(&apos;hex&apos;)
     const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
 
     return this.getMethod(&apos;sendRawTransaction&apos;)(signedTransaction)

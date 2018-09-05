@@ -31,9 +31,10 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DSNParser">DSNParser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DsnParser">DsnParser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padHexStart">padHexStart</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
@@ -45,6 +46,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/LedgerProvider.js~LedgerProvider.html">LedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
@@ -65,6 +67,7 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/providers/ethereum/EthereumSwapProvider.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Provider from &apos;../../Provider&apos;
+import { padHexStart } from &apos;../../crypto&apos;
 
 export default class EthereumSwapProvider extends Provider {
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
@@ -72,15 +75,12 @@ export default class EthereumSwapProvider extends Provider {
     const redeemDestinationBase = 66
     const refundDestinationBase = 89
     const expirationHex = expiration.toString(16)
-    const expirationEncoded = expirationHex.length % 2 ? &apos;0&apos; + expirationHex : expirationHex // Pad with 0
+    const expirationEncoded = padHexStart(expirationHex) // Pad with 0
     const expirationSize = expirationEncoded.length / 2
     const expirationPushOpcode = (0x60 - 1 + expirationSize).toString(16)
     const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)
     const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)
     const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)
-    const recipientAddressEncoded = recipientAddress.replace(&apos;0x&apos;, &apos;&apos;) // Remove 0x if exists
-    const refundAddressEncoded = refundAddress.replace(&apos;0x&apos;, &apos;&apos;) // Remove 0x if exists
-    const secretHashEncoded = secretHash.replace(&apos;0x&apos;, &apos;&apos;) // Remove 0x if exists
 
     return [
       // Constructor
@@ -111,7 +111,7 @@ export default class EthereumSwapProvider extends Provider {
       &apos;f1&apos;, // CALL
 
       // Validate with secretHash
-      &apos;7f&apos;, secretHashEncoded, // PUSH32 {secretHashEncoded}
+      &apos;7f&apos;, secretHash, // PUSH32 {secretHashEncoded}
       &apos;60&apos;, &apos;21&apos;, // PUSH1 21
       &apos;51&apos;, // MLOAD
       &apos;14&apos;, // EQ
@@ -132,13 +132,21 @@ export default class EthereumSwapProvider extends Provider {
       &apos;00&apos;, // STOP
 
       &apos;5b&apos;, // JUMPDEST
-      &apos;73&apos;, recipientAddressEncoded, // PUSH20 {recipientAddressEncoded}
+      &apos;73&apos;, recipientAddress, // PUSH20 {recipientAddressEncoded}
       &apos;ff&apos;, // SUICIDE
 
       &apos;5b&apos;, // JUMPDEST
-      &apos;73&apos;, refundAddressEncoded, // PUSH20 {refundAddressEncoded}
+      &apos;73&apos;, refundAddress, // PUSH20 {refundAddressEncoded}
       &apos;ff&apos; // SUICIDE
     ].join(&apos;&apos;)
+  }
+
+  redeemSwap (secret) {
+    return padHexStart(secret, 64)
+  }
+
+  refundSwap () {
+    return &apos;&apos;
   }
 }
 </code></pre>

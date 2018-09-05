@@ -31,9 +31,10 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DSNParser">DSNParser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DsnParser">DsnParser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padHexStart">padHexStart</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
@@ -45,6 +46,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/LedgerProvider.js~LedgerProvider.html">LedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
@@ -66,39 +68,71 @@
 <div class="content" data-ice="content"><h1 data-ice="title">src/providers/bitcoin/BitcoinSwapProvider.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Provider from &apos;../../Provider&apos;
 import { addressToPubKeyHash } from &apos;./BitcoinUtil&apos;
+import { padHexStart } from &apos;../../crypto&apos;
 
 export default class BitcoinSwapProvider extends Provider {
+  // TODO: have a generate InitSwap and generate RecipSwap
+  //   InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    let expirationHex = expiration.toString(16)
-    if (expirationHex.length % 2 === 1) {
-      expirationHex = &apos;0&apos; + expirationHex
-    }
-    expirationHex = expirationHex.match(/.{2}/g).reverse()
-    expirationHex.length = Math.min(expirationHex.length, 5)
-    expirationHex[expirationHex.length - 1] = &apos;00&apos;
+    let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), &apos;hex&apos;).reverse()
+
+    expirationHex = expirationHex.slice(0, Math.min(expirationHex.length, 5))
+    expirationHex.writeUInt8(0, expirationHex.length - 1)
 
     const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)
     const refundPubKeyHash = addressToPubKeyHash(refundAddress)
-    const expirationPushDataOpcode = expirationHex.length.toString(16).padStart(2, &apos;0&apos;)
-    const expirationHexEncoded = expirationHex.join(&apos;&apos;)
+    const expirationPushDataOpcode = padHexStart(expirationHex.length.toString(16))
+    const expirationHexEncoded = expirationHex.toString(&apos;hex&apos;)
 
     return [
       &apos;76&apos;, &apos;a9&apos;, // OP_DUP OP_HASH160
       &apos;72&apos;, // OP_2SWAP
       &apos;63&apos;, // OP_IF
       &apos;a8&apos;, // OP_SHA256
-      &apos;20&apos;, secretHash, // OP_PUSHDATA20 {secretHash}
+      &apos;20&apos;, secretHash, // OP_PUSHDATA(20) {secretHash}
       &apos;88&apos;, // OP_EQUALVERIFY
-      &apos;14&apos;, recipientPubKeyHash, // OP_PUSHDATA20 {recipientPubKeyHash}
+      &apos;14&apos;, recipientPubKeyHash, // OP_PUSHDATA(20) {recipientPubKeyHash}
       &apos;67&apos;, // OP_ELSE
-      expirationPushDataOpcode, // OP_PUSHDATA{expirationHexLength}
+      expirationPushDataOpcode, // OP_PUSHDATA({expirationHexLength})
       expirationHexEncoded, // {expirationHexEncoded}
       &apos;b1&apos;, // OP_CHECKLOCKTIMEVERIFY
       &apos;6d&apos;, // OP_2DROP
-      &apos;14&apos;, refundPubKeyHash, // OP_PUSHDATA20 {refundPubKeyHash}
+      &apos;14&apos;, refundPubKeyHash, // OP_PUSHDATA(20) {refundPubKeyHash}
       &apos;68&apos;, // OP_ENDIF
       &apos;88&apos;, &apos;ac&apos; // OP_EQUALVERIFY OP_CHECKSIG
     ].join(&apos;&apos;)
+  }
+
+  _spendSwap (signature, pubKey, isRedeem, secret) {
+    const redeemEncoded = isRedeem ? &apos;51&apos; : &apos;00&apos; // OP_1 : OP_0
+    const encodedSecret = isRedeem
+      ? [
+        padHexStart((secret.length / 2).toString(16)), // OP_PUSHDATA({secretLength})
+        secret
+      ]
+      : [&apos;00&apos;] // OP_0
+
+    const signaturePushDataOpcode = padHexStart((signature.length / 2).toString(16))
+    const pubKeyPushDataOpcode = padHexStart((pubKey.length / 2).toString(16))
+
+    const bytecode = [
+      signaturePushDataOpcode,
+      signature,
+      ...encodedSecret,
+      redeemEncoded,
+      pubKeyPushDataOpcode,
+      pubKey
+    ]
+
+    return bytecode.join(&apos;&apos;)
+  }
+
+  redeemSwap (secret, pubKey, signature) {
+    return this._spendSwap(signature, pubKey, true, secret)
+  }
+
+  refundSwap (pubKey, signature) {
+    return this._spendSwap(signature, pubKey, false)
   }
 }
 </code></pre>

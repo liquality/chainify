@@ -31,9 +31,10 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DSNParser">DSNParser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DsnParser">DsnParser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padHexStart">padHexStart</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
@@ -45,6 +46,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/LedgerProvider.js~LedgerProvider.html">LedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
@@ -378,6 +380,36 @@ export default class Client {
   }
 
   /**
+   * Get the balance of an account given its addresses.
+   * @param {string[]} [addresses] - A list of addresses.
+   * @return {Promise&lt;number, InvalidProviderResponseError&gt;} If addresses is given,
+   *  returns the cumulative balance of the given addresses. Otherwise returns the balance
+   *  of the addresses that the signing provider controls.
+   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
+   */
+  async getBalance (addresses) {
+    const provider = this.getProviderForMethod(&apos;getBalance&apos;)
+
+    if (addresses != null) {
+      if (!isArray(addresses)) {
+        throw new TypeError(&apos;Addresses should be an array&apos;)
+      }
+
+      if (!addresses.every(isString)) {
+        throw new TypeError(&apos;All addresses should be strings&apos;)
+      }
+    }
+
+    const balance = await provider.getBalance(addresses)
+
+    if (!isNumber(balance)) {
+      throw new InvalidProviderResponseError(&apos;Provider returned an invalid response&apos;)
+    }
+
+    return balance
+  }
+
+  /**
    * Get addresses/accounts of the user.
    * @return {Promise&lt;string, InvalidProviderResponseError&gt;} Resolves with a list
    *  of accounts.
@@ -396,6 +428,42 @@ export default class Client {
   }
 
   /**
+   * Get used addresses/accounts of the user.
+   * @return {Promise&lt;string, InvalidProviderResponseError&gt;} Resolves with a list
+   *  of accounts.
+   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
+   */
+  async getUsedAddresses (config) {
+    const provider = this.getProviderForMethod(&apos;getUsedAddresses&apos;)
+
+    const usedAddresses = await provider.getUsedAddresses(config)
+
+    if (!isArray(usedAddresses)) {
+      throw new InvalidProviderResponseError(&apos;Provider returned an invalid response&apos;)
+    }
+
+    return usedAddresses
+  }
+
+  /**
+   * Get unused addresses/accounts of the user.
+   * @return {Promise&lt;string, InvalidProviderResponseError&gt;} Resolves with a list
+   *  of accounts.
+   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
+   */
+  async getUnusedAddresses (config) {
+    const provider = this.getProviderForMethod(&apos;getUnusedAddresses&apos;)
+
+    const unusedAddresses = await provider.getUnusedAddresses(config)
+
+    if (!isArray(unusedAddresses)) {
+      throw new InvalidProviderResponseError(&apos;Provider returned an invalid response&apos;)
+    }
+
+    return unusedAddresses
+  }
+
+  /**
    * Sign a message.
    * @param {!string} message - Message to be signed.
    * @param {!string} from - The address from which the message is signed.
@@ -411,19 +479,19 @@ export default class Client {
 
   /**
    * Send a transaction to the chain
-   * @param {!string} from - The address identifier for the sender.
-   * @param {!string} to - The address identifier for the receiver.
+   * @param {string} to - The address identifier for the receiver.
    * @param {!number} value - Number representing the amount associated with.
    *  the transaction.
    * @param {!string} [data] - Optional data to send with the transaction.
+   * @param {!string} [from] - Optional address identifier for the sender.
    * @return {Promise&lt;string, InvalidProviderResponseError&gt;} Resolves with an identifier for
    *  the broadcasted transaction.
    *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
    */
-  async sendTransaction (from, to, value, data) {
+  async sendTransaction (to, value, data, from) {
     const provider = this.getProviderForMethod(&apos;sendTransaction&apos;)
 
-    const txHash = await provider.sendTransaction(from, to, value, data)
+    const txHash = await provider.sendTransaction(to, value, data, from)
 
     if (!isString(txHash)) {
       throw new InvalidProviderResponseError(&apos;sendTransaction method should return a transaction id string&apos;)
@@ -504,6 +572,73 @@ export default class Client {
     }
 
     return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+  /**
+   * Generate redeem swap transaction data
+   * @param {!string} secret - Secret for the swap in hex.
+   * @param {string} [pubKey] - PubKey for the swap in hex.
+   * @param {string} [signature] - Signature for the swap in hex.
+   * @return {Promise&lt;string, TypeError&gt;} Resolves with redeem swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
+   */
+  async redeemSwap (secret, pubKey = &apos;&apos;, signature = &apos;&apos;) {
+    const provider = this.getProviderForMethod(&apos;redeemSwap&apos;)
+
+    if (!isString(secret)) {
+      throw new TypeError(&apos;Secret should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(secret))) {
+      throw new TypeError(&apos;Secret should be a valid hex string&apos;)
+    }
+
+    if (!isString(pubKey)) {
+      throw new TypeError(&apos;PubKey should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(pubKey))) {
+      throw new TypeError(&apos;PubKey should be a valid hex string&apos;)
+    }
+
+    if (!isString(signature)) {
+      throw new TypeError(&apos;Signature should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(signature))) {
+      throw new TypeError(&apos;Signature should be a valid hex string&apos;)
+    }
+
+    return provider.redeemSwap(secret, pubKey, signature)
+  }
+
+  /**
+   * Generate refund swap transaction data
+   * @param {string} [pubKey] - PubKey for the swap in hex.
+   * @param {string} [signature] - Signature for the swap in hex.
+   * @return {Promise&lt;string, TypeError&gt;} Resolves with refund swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider&apos;s response is invalid.
+   */
+  async refundSwap (pubKey = &apos;&apos;, signature = &apos;&apos;) {
+    const provider = this.getProviderForMethod(&apos;refundSwap&apos;)
+
+    if (!isString(pubKey)) {
+      throw new TypeError(&apos;PubKey should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(pubKey))) {
+      throw new TypeError(&apos;PubKey should be a valid hex string&apos;)
+    }
+
+    if (!isString(signature)) {
+      throw new TypeError(&apos;Signature should be a string&apos;)
+    }
+
+    if (!(/^[A-Fa-f0-9]*$/.test(signature))) {
+      throw new TypeError(&apos;Signature should be a valid hex string&apos;)
+    }
+
+    return provider.refundSwap(pubKey, signature)
   }
 }
 </code></pre>

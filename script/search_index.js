@@ -25,8 +25,8 @@ window.esdocSearchIndex = [
   ],
   [
     "chainabstractionlayer/src/dsnparser.js~dsnparser",
-    "function/index.html#static-function-DSNParser",
-    "<span>DSNParser</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/DSNParser.js</span>",
+    "function/index.html#static-function-DsnParser",
+    "<span>DsnParser</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/DsnParser.js</span>",
     "function"
   ],
   [
@@ -75,6 +75,12 @@ window.esdocSearchIndex = [
     "chainabstractionlayer/src/providers/jsonrpcprovider.js~jsonrpcprovider",
     "class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html",
     "<span>JsonRpcProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/JsonRpcProvider.js</span>",
+    "class"
+  ],
+  [
+    "chainabstractionlayer/src/providers/ledgerprovider.js~ledgerprovider",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html",
+    "<span>LedgerProvider</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/providers/LedgerProvider.js</span>",
     "class"
   ],
   [
@@ -153,6 +159,12 @@ window.esdocSearchIndex = [
     "chainabstractionlayer/src/crypto.js~hash160",
     "function/index.html#static-function-hash160",
     "<span>hash160</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
+    "function"
+  ],
+  [
+    "chainabstractionlayer/src/crypto.js~padhexstart",
+    "function/index.html#static-function-padHexStart",
+    "<span>padHexStart</span> <span class=\"search-result-import-path\">chainabstractionlayer/src/crypto.js</span>",
     "function"
   ],
   [
@@ -510,6 +522,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/client.js~client#getbalance",
+    "class/src/Client.js~Client.html#instance-method-getBalance",
+    "src/Client.js~Client#getBalance",
+    "method"
+  ],
+  [
     "src/client.js~client#getblockbyhash",
     "class/src/Client.js~Client.html#instance-method-getBlockByHash",
     "src/Client.js~Client#getBlockByHash",
@@ -543,6 +561,30 @@ window.esdocSearchIndex = [
     "src/client.js~client#gettransactionbyhash",
     "class/src/Client.js~Client.html#instance-method-getTransactionByHash",
     "src/Client.js~Client#getTransactionByHash",
+    "method"
+  ],
+  [
+    "src/client.js~client#getunusedaddresses",
+    "class/src/Client.js~Client.html#instance-method-getUnusedAddresses",
+    "src/Client.js~Client#getUnusedAddresses",
+    "method"
+  ],
+  [
+    "src/client.js~client#getusedaddresses",
+    "class/src/Client.js~Client.html#instance-method-getUsedAddresses",
+    "src/Client.js~Client#getUsedAddresses",
+    "method"
+  ],
+  [
+    "src/client.js~client#redeemswap",
+    "class/src/Client.js~Client.html#instance-method-redeemSwap",
+    "src/Client.js~Client#redeemSwap",
+    "method"
+  ],
+  [
+    "src/client.js~client#refundswap",
+    "class/src/Client.js~Client.html#instance-method-refundSwap",
+    "src/Client.js~Client#refundSwap",
     "method"
   ],
   [
@@ -583,8 +625,8 @@ window.esdocSearchIndex = [
   ],
   [
     "src/dsnparser.js",
-    "file/src/DSNParser.js.html",
-    "src/DSNParser.js",
+    "file/src/DsnParser.js.html",
+    "src/DsnParser.js",
     "file"
   ],
   [
@@ -672,6 +714,66 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/providers/ledgerprovider.js",
+    "file/src/providers/LedgerProvider.js.html",
+    "src/providers/LedgerProvider.js",
+    "file"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#_connecttoledger",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-method-_connectToLedger",
+    "src/providers/LedgerProvider.js~LedgerProvider#_connectToLedger",
+    "method"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#_ledgerbtc",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-member-_ledgerBtc",
+    "src/providers/LedgerProvider.js~LedgerProvider#_ledgerBtc",
+    "member"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#connect",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-method-connect",
+    "src/providers/LedgerProvider.js~LedgerProvider#connect",
+    "method"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#disconnect",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-method-disconnect",
+    "src/providers/LedgerProvider.js~LedgerProvider#disconnect",
+    "method"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#gasda",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-method-gasdA",
+    "src/providers/LedgerProvider.js~LedgerProvider#gasdA",
+    "method"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#isconnected",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-method-isConnected",
+    "src/providers/LedgerProvider.js~LedgerProvider#isConnected",
+    "method"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#onconnected",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-method-onConnected",
+    "src/providers/LedgerProvider.js~LedgerProvider#onConnected",
+    "method"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider#ondisconnected",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#instance-method-onDisconnected",
+    "src/providers/LedgerProvider.js~LedgerProvider#onDisconnected",
+    "method"
+  ],
+  [
+    "src/providers/ledgerprovider.js~ledgerprovider.issupported",
+    "class/src/providers/LedgerProvider.js~LedgerProvider.html#static-method-isSupported",
+    "src/providers/LedgerProvider.js~LedgerProvider.isSupported",
+    "method"
+  ],
+  [
     "src/providers/rpcerror.js",
     "file/src/providers/RpcError.js.html",
     "src/providers/RpcError.js",
@@ -732,15 +834,33 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_generatescript",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_generateScript",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_generateScript",
+    "method"
+  ],
+  [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getaddressdetails",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAddressDetails",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getAddressDetails",
     "method"
   ],
   [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getaddresses",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAddresses",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getAddresses",
+    "method"
+  ],
+  [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getamountbuffer",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAmountBuffer",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getAmountBuffer",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_getbalance",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getBalance",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_getBalance",
     "method"
   ],
   [
@@ -786,6 +906,18 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_network",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_network",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_network",
+    "member"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#_unusedaddresscountdown",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_unusedAddressCountdown",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#_unusedAddressCountdown",
+    "member"
+  ],
+  [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#constructor",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-constructor-constructor",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#constructor",
@@ -795,6 +927,24 @@ window.esdocSearchIndex = [
     "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getaddresses",
     "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getAddresses",
     "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getAddresses",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getbalance",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getBalance",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getBalance",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getunusedaddresses",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getUnusedAddresses",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getUnusedAddresses",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinledgerprovider.js~bitcoinledgerprovider#getusedaddresses",
+    "class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getUsedAddresses",
+    "src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider#getUsedAddresses",
     "method"
   ],
   [
@@ -864,9 +1014,27 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/providers/bitcoin/bitcoinswapprovider.js~bitcoinswapprovider#_spendswap",
+    "class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html#instance-method-_spendSwap",
+    "src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider#_spendSwap",
+    "method"
+  ],
+  [
     "src/providers/bitcoin/bitcoinswapprovider.js~bitcoinswapprovider#generateswap",
     "class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html#instance-method-generateSwap",
     "src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider#generateSwap",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinswapprovider.js~bitcoinswapprovider#redeemswap",
+    "class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html#instance-method-redeemSwap",
+    "src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider#redeemSwap",
+    "method"
+  ],
+  [
+    "src/providers/bitcoin/bitcoinswapprovider.js~bitcoinswapprovider#refundswap",
+    "class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html#instance-method-refundSwap",
+    "src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider#refundSwap",
     "method"
   ],
   [
@@ -1035,6 +1203,18 @@ window.esdocSearchIndex = [
     "src/providers/ethereum/ethereumswapprovider.js~ethereumswapprovider#generateswap",
     "class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html#instance-method-generateSwap",
     "src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider#generateSwap",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumswapprovider.js~ethereumswapprovider#redeemswap",
+    "class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html#instance-method-redeemSwap",
+    "src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider#redeemSwap",
+    "method"
+  ],
+  [
+    "src/providers/ethereum/ethereumswapprovider.js~ethereumswapprovider#refundswap",
+    "class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html#instance-method-refundSwap",
+    "src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider#refundSwap",
     "method"
   ],
   [

@@ -31,9 +31,10 @@
     
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DSNParser">DSNParser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DsnParser">DsnParser</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padHexStart">padHexStart</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
@@ -45,6 +46,7 @@
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/LedgerProvider.js~LedgerProvider.html">LedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
@@ -64,13 +66,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import BitcoinLedgerProvider from &apos;<span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber12">chainabstractionlayer/src/providers/bitcoin/BitcoinLedgerProvider.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import BitcoinLedgerProvider from &apos;<span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber13">chainabstractionlayer/src/providers/bitcoin/BitcoinLedgerProvider.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber12">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber13">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -255,6 +257,62 @@
       
     </td>
   </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_network">_network</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-member-_unusedAddressCountdown">_unusedAddressCountdown</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
 </tbody>
 </table>
 </div>
@@ -304,7 +362,91 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-sendTransaction">sendTransaction</a></span></span><span class="code" data-ice="signature">(from: <span>*</span>, to: <span>*</span>, value: <span>*</span>, data: <span>*</span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getBalance">getBalance</a></span></span><span class="code" data-ice="signature">(addresses: <span>*</span>, config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getUnusedAddresses">getUnusedAddresses</a></span></span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-getUsedAddresses">getUsedAddresses</a></span></span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-sendTransaction">sendTransaction</a></span></span><span class="code" data-ice="signature">(to: <span>*</span>, value: <span>*</span>, data: <span>*</span>, from: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -392,6 +534,34 @@
       <div>
         <p>
           
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_generateScript">_generateScript</a></span></span><span class="code" data-ice="signature">(address: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
           <span data-ice="async">async</span>
           
           <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAddressDetails">_getAddressDetails</a></span></span><span class="code" data-ice="signature">(address: <span>*</span>): <span>*</span></span>
@@ -420,9 +590,65 @@
       <div>
         <p>
           
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAddresses">_getAddresses</a></span></span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): {&quot;unusedAddresses&quot;: <span>*</span>, &quot;usedAddresses&quot;: <span>*</span>}</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
           
           
           <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getAmountBuffer">_getAmountBuffer</a></span></span><span class="code" data-ice="signature">(amount: <span>*</span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">private</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          <span data-ice="async">async</span>
+          
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getBalance">_getBalance</a></span></span><span class="code" data-ice="signature">(addresses: <span>*</span>, config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -506,7 +732,7 @@
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getSpendingDetails">_getSpendingDetails</a></span></span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): {&quot;unusedAddress&quot;: <span>*</span>, &quot;unspentOutputs&quot;: <span>*</span>}</span>
+          <span class="code" data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html#instance-method-_getSpendingDetails">_getSpendingDetails</a></span></span><span class="code" data-ice="signature">(addresses: <span>*</span>, config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
         </p>
       </div>
       <div>
@@ -718,7 +944,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber16">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber17">source</a></span></span>
     </span>
   </h3>
 
@@ -781,7 +1007,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber19">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber21">source</a></span></span>
     </span>
   </h3>
 
@@ -824,7 +1050,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber20">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber22">source</a></span></span>
     </span>
   </h3>
 
@@ -867,7 +1093,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber21">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber23">source</a></span></span>
     </span>
   </h3>
 
@@ -910,7 +1136,93 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber18">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber19">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-_network">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">_network</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber20">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-_unusedAddressCountdown">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">_unusedAddressCountdown</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber24">source</a></span></span>
     </span>
   </h3>
 
@@ -956,7 +1268,229 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber125">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber157">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">config</td>
+      <td data-ice="type" class="code">{&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}</td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {&quot;segwit&quot;:false}</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getBalance">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">getBalance</span><span class="code" data-ice="signature">(addresses: <span>*</span>, config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber146">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">addresses</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">config</td>
+      <td data-ice="type" class="code">{&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}</td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {&quot;segwit&quot;:false}</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getUnusedAddresses">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">getUnusedAddresses</span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber175">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">config</td>
+      <td data-ice="type" class="code">{&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}</td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {&quot;segwit&quot;:false}</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-getUsedAddresses">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">getUsedAddresses</span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber168">source</a></span></span>
     </span>
   </h3>
 
@@ -1024,11 +1558,11 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">sendTransaction</span><span class="code" data-ice="signature">(from: <span>*</span>, to: <span>*</span>, value: <span>*</span>, data: <span>*</span>): <span>*</span></span>
+    <span class="code" data-ice="name">sendTransaction</span><span class="code" data-ice="signature">(to: <span>*</span>, value: <span>*</span>, data: <span>*</span>, from: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber147">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber215">source</a></span></span>
     </span>
   </h3>
 
@@ -1048,12 +1582,6 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">from</td>
-      <td data-ice="type" class="code"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
-    </tr>
-<tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">to</td>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
@@ -1067,6 +1595,12 @@
     </tr>
 <tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">data</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">from</td>
       <td data-ice="type" class="code"><span>*</span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"></td>
@@ -1117,7 +1651,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber139">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber182">source</a></span></span>
     </span>
   </h3>
 
@@ -1190,7 +1724,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber24">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber27">source</a></span></span>
     </span>
   </h3>
 
@@ -1222,18 +1756,18 @@
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-_getAddressDetails">
+  <h3 data-ice="anchor" id="instance-method-_generateScript">
     <span class="access" data-ice="access">private</span>
     
     
     
-    <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">_getAddressDetails</span><span class="code" data-ice="signature">(address: <span>*</span>): <span>*</span></span>
+    
+    <span class="code" data-ice="name">_generateScript</span><span class="code" data-ice="signature">(address: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber31">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber190">source</a></span></span>
     </span>
   </h3>
 
@@ -1293,6 +1827,149 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-_getAddressDetails">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">_getAddressDetails</span><span class="code" data-ice="signature">(address: <span>*</span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber34">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">address</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-_getAddresses">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">_getAddresses</span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): {&quot;unusedAddresses&quot;: <span>*</span>, &quot;usedAddresses&quot;: <span>*</span>}</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber46">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">config</td>
+      <td data-ice="type" class="code">{&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}</td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {&quot;segwit&quot;:false}</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType">{&quot;unusedAddresses&quot;: <span>*</span>, &quot;usedAddresses&quot;: <span>*</span>}</td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-_getAmountBuffer">
     <span class="access" data-ice="access">private</span>
     
@@ -1304,7 +1981,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber114">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber124">source</a></span></span>
     </span>
   </h3>
 
@@ -1364,6 +2041,84 @@
   
 </div>
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-_getBalance">
+    <span class="access" data-ice="access">private</span>
+    
+    
+    
+    <span data-ice="async">async</span>
+    
+    <span class="code" data-ice="name">_getBalance</span><span class="code" data-ice="signature">(addresses: <span>*</span>, config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber140">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">addresses</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">config</td>
+      <td data-ice="type" class="code">{&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}</td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {&quot;segwit&quot;:false}</li></ul></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-_getFee">
     <span class="access" data-ice="access">private</span>
     
@@ -1375,7 +2130,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber79">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber89">source</a></span></span>
     </span>
   </h3>
 
@@ -1458,7 +2213,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber105">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber115">source</a></span></span>
     </span>
   </h3>
 
@@ -1525,11 +2280,11 @@
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">_getSpendingDetails</span><span class="code" data-ice="signature">(config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): {&quot;unusedAddress&quot;: <span>*</span>, &quot;unspentOutputs&quot;: <span>*</span>}</span>
+    <span class="code" data-ice="name">_getSpendingDetails</span><span class="code" data-ice="signature">(addresses: <span>*</span>, config: {&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber43">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber75">source</a></span></span>
     </span>
   </h3>
 
@@ -1549,6 +2304,12 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">addresses</td>
+      <td data-ice="type" class="code"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+<tr data-ice="property" data-depth="0">
       <td data-ice="name" class="code" data-depth="0">config</td>
       <td data-ice="type" class="code">{&quot;segwit&quot;: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>}</td>
       <td data-ice="appendix"><ul><li>optional</li>
@@ -1565,7 +2326,7 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType">{&quot;unusedAddress&quot;: <span>*</span>, &quot;unspentOutputs&quot;: <span>*</span>}</td>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
           
         </tr>
       </tbody>
@@ -1601,7 +2362,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber39">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber42">source</a></span></span>
     </span>
   </h3>
 
@@ -1672,7 +2433,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber83">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber93">source</a></span></span>
     </span>
   </h3>
 
@@ -1755,7 +2516,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber35">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/providers/bitcoin/BitcoinLedgerProvider.js.html#lineNumber38">source</a></span></span>
     </span>
   </h3>
 
