@@ -1,6 +1,6 @@
 import Provider from '../../Provider'
 
-import Transport from '@alias/ledger-transport'
+import Transport from '@ledgerhq/hw-transport-node-hid'
 import LedgerEth from '@ledgerhq/hw-app-eth'
 
 import networks from '../../networks'

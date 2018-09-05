@@ -1,6 +1,8 @@
-import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
+import { get, upperFirst, find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
 import * as Ajv from 'ajv'
 
+import * as providers from './providers'
+import DNSParser from './DsnParser'
 import { Block, Transaction } from './schema'
 import { hash160 } from './crypto'
 import {
@@ -9,13 +11,14 @@ import {
   InvalidProviderResponseError,
   NoProviderError,
   UnimplementedMethodError,
-  UnsupportedMethodError
+  UnsupportedMethodError,
+  ProviderNotFoundError
 } from './errors'
 
 export default class Client {
   /**
    * Client
-   * @param {Provider} [provider] - Data source/provider for the instance
+   * @param {string|Provider} [provider] - Data source/provider for the instance
    * @param {string} [version] - Minimum blockchain node version to support
    */
   constructor (provider, version) {
@@ -40,12 +43,36 @@ export default class Client {
 
   /**
    * Add a provider
-   * @param {!Provider} provider - The provider instance
+   * @param {!string|Provider} provider - The provider instance or RPC connection string
    * @return {Client} Returns instance of Client
    * @throws {InvalidProviderError} When invalid provider is provider
    * @throws {DuplicateProviderError} When same provider is added again
    */
   addProvider (provider) {
+    if (isString(provider)) {
+      const {
+        baseUrl,
+        driverName,
+        auth
+      } = DNSParser(provider)
+
+      const rpcProviderName = `${upperFirst(driverName)}RPCProvider`
+      const pathToProvider = `${driverName}.${rpcProviderName}`
+      const ProviderClass = get(providers, pathToProvider)
+
+      if (!ProviderClass) {
+        throw new ProviderNotFoundError(`${pathToProvider} not found`)
+      }
+
+      const args = [ baseUrl ]
+
+      if (auth) {
+        args.push(auth.username, auth.password)
+      }
+
+      return this.addProvider(new ProviderClass(...args))
+    }
+
     if (!isFunction(provider.setClient)) {
       throw new InvalidProviderError('Provider should have "setClient" method')
     }

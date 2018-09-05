@@ -8,7 +8,7 @@ import networks from '../../networks'
 
 /**
  * Get compressed pubKey from pubKey.
- * @param {!string} pubkey - 65 byte string with prefix, x, y.
+ * @param {!string} pubKey - 65 byte string with prefix, x, y.
  * @return {string} Returns the compressed pubKey of uncompressed pubKey.
  */
 function compressPubKey (pubKey) {
