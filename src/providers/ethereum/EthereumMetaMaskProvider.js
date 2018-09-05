@@ -41,6 +41,13 @@ export default class EthereumMetaMaskProvider extends Provider {
     })
   }
 
+  async getBalance () {
+    const addresses = await this.getAddresses()
+    const address = addresses[0]
+    const balance = await this._toMM('eth_getBalance', `0x${address}`)
+    return parseInt(balance, 16)
+  }
+
   async getAddresses () {
     return this._toMM('eth_accounts')
   }
