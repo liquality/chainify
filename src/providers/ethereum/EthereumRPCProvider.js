@@ -26,4 +26,11 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     txHash = ensureEthFormat(txHash)
     return this.rpc('eth_getTransactionByHash', txHash)
   }
+
+  async getBalance (addresses) {
+    const addrs = addresses.map(ensureEthFormat)
+    const promiseBalances = await Promise.all(addrs.map(address => this.rpc('eth_getBalance', address, 'latest')))
+    return promiseBalances.map(balance => parseInt(balance, 16))
+      .reduce((acc, balance) => acc + balance, 0)
+  }
 }
