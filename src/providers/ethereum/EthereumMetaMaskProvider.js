@@ -53,14 +53,22 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data, from = null) {
+    if (to != null) {
+      to = ensureEthFormat(to)
+    }
+    if (from == null) {
+      const addresses = await this.getAddresses()
+      from = ensureEthFormat(addresses[0])
+    }
     value = BigNumber(value).toString(16)
 
     const tx = {
-      from, to, value, data
+      from: ensureEthFormat(from), to: ensureEthFormat(to), value, data
     }
 
-    return this._toMM('eth_sendTransaction', tx)
+    const txHash = await this._toMM('eth_sendTransaction', tx)
+    return txHash.replace('0x', '')
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
