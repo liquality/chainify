@@ -487,14 +487,6 @@ export default class Client {
       throw new TypeError('Secret hash should be a string')
     }
 
-    if (!(/^[A-Fa-f0-9]+$/.test(recipientAddress))) {
-      throw new TypeError('Recipient address should be a valid hex string')
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(refundAddress))) {
-      throw new TypeError('Refund address should be a valid hex string')
-    }
-
     if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {
       throw new TypeError('Secret hash should be a valid hex string')
     }

@@ -216,10 +216,10 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     let receivingAddress
-    if (to == null) {
+    if (data) {
       const scriptPubKey = padHexStart(data)
       receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    } else {
+    } else if (to) {
       receivingAddress = to
     }
 
