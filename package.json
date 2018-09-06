@@ -38,6 +38,7 @@
     "build:dev:node": "webpack --config ./webpack/webpack.node.config.js",
     "build:dev:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "build:dev": "webpack --config ./webpack/webpack.config.js",
+    "watch": "WEBPACK_WATCH=true webpack --config ./webpack/webpack.config.js",
     "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
     "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
     "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev",

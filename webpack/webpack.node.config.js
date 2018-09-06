@@ -18,5 +18,6 @@ module.exports = {
     rules: [ babelRule({ target: 'node' }) ]
   },
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  plugins: plugins({ target: 'node' })
+  plugins: plugins({ target: 'node' }),
+  watch: process.env.WEBPACK_WATCH === 'true'
 }
