@@ -29,7 +29,18 @@ export function formatEthResponse (obj) {
   return obj
 }
 
-export function ensureEthFormat (hash) {
-  if (!hash.startsWith('0x')) { hash = '0x' + hash }
-  return hash
+/**
+ * Converts a hex string to the ethereum format
+ * @param {*} hash
+ */
+export function ensureHexEthFormat (hash) {
+  return hash.startsWith('0x') ? hash : '0x' + hash
+}
+
+/**
+ * Converts an ethereum hex string to the standard format
+ * @param {*} hash
+ */
+export function ensureHexStandardFormat (hash) {
+  return hash.replace('0x', '')
 }
