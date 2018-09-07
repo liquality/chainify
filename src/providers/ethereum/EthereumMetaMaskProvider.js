@@ -1,7 +1,7 @@
 import Provider from '../../Provider'
 
 import { isFunction } from 'lodash'
-import { formatEthResponse, ensureEthFormat } from './EthereumUtil'
+import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
 import { BigNumber } from 'bignumber.js'
 
 export default class EthereumMetaMaskProvider extends Provider {
@@ -53,14 +53,22 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data, from = null) {
+    if (to != null) {
+      to = ensureHexEthFormat(to)
+    }
+    if (from == null) {
+      const addresses = await this.getAddresses()
+      from = ensureHexEthFormat(addresses[0])
+    }
     value = BigNumber(value).toString(16)
 
     const tx = {
       from, to, value, data
     }
 
-    return this._toMM('eth_sendTransaction', tx)
+    const txHash = await this._toMM('eth_sendTransaction', tx)
+    return ensureHexStandardFormat(txHash)
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
@@ -68,7 +76,7 @@ export default class EthereumMetaMaskProvider extends Provider {
   }
 
   async getTransactionByHash (txHash) {
-    txHash = ensureEthFormat(txHash)
+    txHash = ensureHexEthFormat(txHash)
     return this._toMM('eth_getTransactionByHash', txHash)
   }
 }

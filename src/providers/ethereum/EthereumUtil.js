@@ -1,13 +1,26 @@
 import { Block, Transaction } from '../../schema'
 
-export function formatEthResponse (obj) {
-  if (Array.isArray(obj)) {
-    obj = obj.map((elem) => {
-      if (elem.startsWith('0x')) {
-        elem = elem.replace('0x', '')
-      }
-      return elem
-    })
+/**
+ * Converts a hex string to the ethereum format
+ * @param {*} hash
+ */
+function ensureHexEthFormat (hash) {
+  return hash.startsWith('0x') ? hash : '0x' + hash
+}
+
+/**
+ * Converts an ethereum hex string to the standard format
+ * @param {*} hash
+ */
+function ensureHexStandardFormat (hash) {
+  return hash.replace('0x', '')
+}
+
+function formatEthResponse (obj) {
+  if (typeof obj === 'string' || obj instanceof String) {
+    obj = ensureHexStandardFormat(obj)
+  } else if (Array.isArray(obj)) {
+    obj = obj.map(ensureHexStandardFormat)
   } else {
     for (let key in obj) {
       if (Array.isArray(obj[key])) {
@@ -19,9 +32,7 @@ export function formatEthResponse (obj) {
           Transaction.properties[key].type === 'number')) {
           obj[key] = parseInt(obj[key])
         } else {
-          if (obj[key].startsWith('0x')) {
-            obj[key] = obj[key].replace('0x', '')
-          }
+          obj[key] = ensureHexStandardFormat(obj[key])
         }
       }
     }
@@ -29,7 +40,4 @@ export function formatEthResponse (obj) {
   return obj
 }
 
-export function ensureEthFormat (hash) {
-  if (!hash.startsWith('0x')) { hash = '0x' + hash }
-  return hash
-}
+export {ensureHexEthFormat, ensureHexStandardFormat, formatEthResponse}
