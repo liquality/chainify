@@ -45,6 +45,10 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM('eth_accounts')
   }
 
+  async getUsedAddresses (startingIndex, numAddresses) {
+    return this.getAddresses()
+  }
+
   async signMessage (message) {
     const hex = Buffer.from(message).toString('hex')
     const addresses = await this.getAddresses()
