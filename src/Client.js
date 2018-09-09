@@ -365,10 +365,10 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUsedAddresses (config) {
+  async getUsedAddresses (startingIndex = 0, numAddresses, config) {
     const provider = this.getProviderForMethod('getUsedAddresses')
 
-    const usedAddresses = await provider.getUsedAddresses(config)
+    const usedAddresses = await provider.getUsedAddresses(startingIndex, numAddresses, config)
 
     if (!isArray(usedAddresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')

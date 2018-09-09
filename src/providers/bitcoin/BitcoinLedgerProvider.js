@@ -143,7 +143,7 @@ export default class BitcoinLedgerProvider extends Provider {
     return spendingDetails.reduce((acc, detail) => acc + detail.value, 0)
   }
 
-  async getBalance (addresses, config = { segwit: false }) {
+  async getBalance (addresses, startingIndex, numAddresses, config = { segwit: false }) {
     let addrs = addresses
     if (addrs == null) {
       await this._connectToLedger()
@@ -154,7 +154,7 @@ export default class BitcoinLedgerProvider extends Provider {
     return this._getBalance(addrs, config)
   }
 
-  async getAddresses (config = { segwit: false }) {
+  async getAddresses (startingIndex = 0, numAddresses, config = { segwit: false }) {
     await this._connectToLedger()
 
     const { unusedAddresses, usedAddresses } = await this._getAddresses(config)
@@ -162,21 +162,33 @@ export default class BitcoinLedgerProvider extends Provider {
       ...unusedAddresses,
       ...usedAddresses
     ]
-    return addresses.map(detail => detail.address)
+    let filteredAddresses = addresses.map(detail => detail.address).filter((address, index) => index >= startingIndex)
+    if (numAddresses) {
+      filteredAddresses = filteredAddresses.filter((address, index) => index < numAddresses)
+    }
+    return filteredAddresses
   }
 
-  async getUsedAddresses (config = { segwit: false }) {
+  async getUsedAddresses (startingIndex = 0, numAddresses, config = { segwit: false }) {
     await this._connectToLedger()
 
     const { usedAddresses } = await this._getAddresses(config)
-    return usedAddresses.map(detail => detail.address)
+    let filteredUsedAddresses = usedAddresses.map(detail => detail.address).filter((address, index) => index >= startingIndex)
+    if (numAddresses) {
+      filteredUsedAddresses = filteredUsedAddresses.filter((address, index) => index < numAddresses)
+    }
+    return filteredUsedAddresses
   }
 
-  async getUnusedAddresses (config = { segwit: false }) {
+  async getUnusedAddresses (startingIndex = 0, numAddresses, config = { segwit: false }) {
     await this._connectToLedger()
 
     const { unusedAddresses } = await this._getAddresses(config)
-    return unusedAddresses.map(detail => detail.address)
+    let filteredUnusedAddresses = unusedAddresses.map(detail => detail.address).filter((address, index) => index >= startingIndex)
+    if (numAddresses) {
+      filteredUnusedAddresses = filteredUnusedAddresses.filter((address, index) => index < numAddresses)
+    }
+    return filteredUnusedAddresses
   }
 
   async signMessage (message) {
