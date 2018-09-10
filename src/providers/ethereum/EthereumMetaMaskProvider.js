@@ -68,7 +68,10 @@ export default class EthereumMetaMaskProvider extends Provider {
     value = BigNumber(value).toString(16)
 
     const tx = {
-      from, to, value, data
+      from: ensureHexEthFormat(from),
+      to,
+      value: ensureHexEthFormat(value),
+      data: ensureHexEthFormat(data)
     }
 
     const txHash = await this._toMM('eth_sendTransaction', tx)
