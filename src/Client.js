@@ -342,6 +342,18 @@ export default class Client {
   }
 
   /**
+   * Get network name of current provider
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with network
+   *  name.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  getNetworkName () {
+    const provider = this.getProviderForMethod('getNetworkName')
+
+    return provider.getNetworkName()
+  }
+
+  /**
    * Get addresses/accounts of the user.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
    *  of accounts.
@@ -466,6 +478,20 @@ export default class Client {
   }
 
   /**
+   * Decode Transaction from Hex
+   * @param {!string} rawTransaction - A raw transaction usually in the form of a
+   *  hexadecimal string that represents the serialized transaction.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an
+   *  decoded transaction object.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async decodeRawTransaction (rawTransaction) {
+    const provider = this.getProviderForMethod('decoderawtransaction')
+
+    return provider.decodeRawTransaction(rawTransaction)
+  }
+
+  /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
    * @return {Promise<string, null>} Resolves with a secret.
@@ -509,6 +535,18 @@ export default class Client {
     }
 
     return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+  /**
+   * Generate script hex based on ddress
+   * @param {!string} address - Address for generating Script.
+   * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  generateScript (address) {
+    const provider = this.getProviderForMethod('generateScript')
+
+    return provider.generateScript(address)
   }
 
   /**
@@ -576,5 +614,21 @@ export default class Client {
     }
 
     return provider.refundSwap(pubKey, signature)
+  }
+
+  /**
+   * Check if counterparty transaction has been confirmed
+   * @param {!number} blockNumber - The number of the desired block.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @return {Promise<string, TypeError>} Resolves with txHash of desired swap or false if not found.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async checkBlockSwap (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+    const provider = this.getProviderForMethod('checkBlockSwap')
+
+    return provider.checkBlockSwap(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
   }
 }

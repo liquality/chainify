@@ -1,5 +1,5 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash } from './BitcoinUtil'
+import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
 import { padHexStart } from '../../crypto'
 
 export default class BitcoinSwapProvider extends Provider {
@@ -65,5 +65,31 @@ export default class BitcoinSwapProvider extends Provider {
 
   refundSwap (pubKey, signature) {
     return this._spendSwap(signature, pubKey, false)
+  }
+
+  async checkBlockSwap (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+    const data = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    const scriptPubKey = padHexStart(data)
+    const networkName = this.getMethod('getNetworkName')()
+    const receivingAddress = pubKeyToAddress(scriptPubKey, networkName, 'scriptHash')
+    const sendScript = this.getMethod('generateScript')(receivingAddress)
+
+    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    const transactions = block.transactions
+    const txs = await Promise.all(transactions.map(async transaction => {
+      return this.getMethod('decodeRawTransaction')(transaction)
+    }))
+    const swapTx = txs
+      .map(transaction => transaction._raw.data)
+      .map(transaction => transaction.vout
+        .map(vout => { return { txid: transaction.txid, scriptPubKey: vout.scriptPubKey } }))
+      .reduce((acc, val) => acc.concat(val), [])
+      .find(txKeys => txKeys.scriptPubKey.hex === sendScript)
+    if (swapTx) {
+      const swapTxid = swapTx.txid
+      return swapTxid
+    } else {
+      return false
+    }
   }
 }

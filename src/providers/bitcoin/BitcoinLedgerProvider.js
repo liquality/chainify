@@ -37,7 +37,11 @@ export default class BitcoinLedgerProvider extends Provider {
   }
 
   async _getUnspentTransactions (address) {
-    return (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs
+    try {
+      return (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs
+    } catch (e) {
+      return []
+    }
   }
 
   async _getTransactionHex (transactionHash) {
@@ -71,6 +75,10 @@ export default class BitcoinLedgerProvider extends Provider {
       unusedAddresses,
       usedAddresses
     }
+  }
+
+  getNetworkName () {
+    return this._network.name
   }
 
   async _getSpendingDetails (addresses) {
@@ -206,7 +214,7 @@ export default class BitcoinLedgerProvider extends Provider {
     return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
   }
 
-  _generateScript (address) {
+  generateScript (address) {
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
 
@@ -269,12 +277,12 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendScript = this._generateScript(receivingAddress)
+    const sendScript = this.generateScript(receivingAddress)
 
     let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
 
     if (hasChange) {
-      const changeScript = this._generateScript(unusedAddress.address)
+      const changeScript = this.generateScript(unusedAddress.address)
       outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
     }
 

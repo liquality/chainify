@@ -1,7 +1,7 @@
 import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
-  async _decodeRawTransaction (rawTransaction) {
+  async decodeRawTransaction (rawTransaction) {
     const data = await this.rpc('decoderawtransaction', rawTransaction)
     const { hash: txHash, txid: hash, vout } = data
     const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
@@ -28,7 +28,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     let { tx: transactions } = data
 
     if (includeTx) {
-      const txs = transactions.map(this.getTransactionByHash)
+      const txs = transactions.map(this.getMethod('getRawTransactionByHash'))
       transactions = await Promise.all(txs)
     }
 
@@ -47,21 +47,32 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return this.getBlockByHash(await this.rpc('getblockhash', blockNumber), includeTx)
   }
 
+  async getBlockHeight () {
+    return this.rpc('getblockcount')
+  }
+
   async getTransactionByHash (transactionHash) {
     const rawTx = await this.getRawTransactionByHash(transactionHash)
-    const tx = await this._decodeRawTransaction(rawTx)
-    const data = await this.rpc('gettransaction', transactionHash)
+    const tx = await this.decodeRawTransaction(rawTx)
+    let data
+    try {
+      data = await this.rpc('gettransaction', transactionHash)
 
-    const { confirmations } = data
-    const output = Object.assign({}, tx, { confirmations })
+      const { confirmations } = data
+      const output = Object.assign({}, tx, { confirmations })
 
-    if (confirmations > 0) {
-      const { blockhash: blockHash } = data
-      const { number: blockNumber } = await this.getBlockByHash(blockHash)
-      Object.assign(output, { blockHash, blockNumber })
+      if (confirmations > 0) {
+        const { blockhash: blockHash } = data
+        const { number: blockNumber } = await this.getBlockByHash(blockHash)
+        Object.assign(output, { blockHash, blockNumber })
+      }
+
+      return output
+    } catch (e) {
+      const output = Object.assign({}, tx)
+
+      return output
     }
-
-    return output
   }
 
   async getRawTransactionByHash (transactionHash) {
