@@ -115,7 +115,7 @@ export default class BitcoinLedgerProvider extends Provider {
   async _getLedgerInputs (unspentOutputs) {
     const ledgerInputs = unspentOutputs.map(async utxo => {
       const transactionHex = await this._getTransactionHex(utxo.tx_hash_big_endian)
-      const tx = await this._ledgerBtc.splitTransaction(transactionHex)
+      const tx = await this._ledgerBtc.splitTransaction(transactionHex, true)
       return [tx, utxo.tx_output_n]
     })
     return Promise.all(ledgerInputs)
