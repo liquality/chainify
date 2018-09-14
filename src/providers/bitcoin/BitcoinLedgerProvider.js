@@ -162,7 +162,9 @@ export default class BitcoinLedgerProvider extends Provider {
       ...unusedAddresses,
       ...usedAddresses
     ]
-    let filteredAddresses = addresses.map(detail => detail.address).filter((address, index) => index >= startingIndex)
+    let filteredAddresses = addresses
+      .map(detail => detail.address)
+      .filter((address, index) => index >= startingIndex)
     if (numAddresses) {
       filteredAddresses = filteredAddresses.filter((address, index) => index < numAddresses)
     }
@@ -173,7 +175,9 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     const { usedAddresses } = await this._getAddresses(config)
-    let filteredUsedAddresses = usedAddresses.map(detail => detail.address).filter((address, index) => index >= startingIndex)
+    let filteredUsedAddresses = usedAddresses
+      .map(detail => detail.address)
+      .filter((address, index) => index >= startingIndex)
     if (numAddresses) {
       filteredUsedAddresses = filteredUsedAddresses.filter((address, index) => index < numAddresses)
     }
@@ -184,7 +188,9 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     const { unusedAddresses } = await this._getAddresses(config)
-    let filteredUnusedAddresses = unusedAddresses.map(detail => detail.address).filter((address, index) => index >= startingIndex)
+    let filteredUnusedAddresses = unusedAddresses
+      .map(detail => detail.address)
+      .filter((address, index) => index >= startingIndex)
     if (numAddresses) {
       filteredUnusedAddresses = filteredUnusedAddresses.filter((address, index) => index < numAddresses)
     }
