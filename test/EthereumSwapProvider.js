@@ -30,14 +30,14 @@ describe('Ethereum Swap provider', () => {
 
   describe('Redeem swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.redeemSwap('01020304050607080900'))
+      return expect(lib.getRedeemSwapData('01020304050607080900'))
         .to.equal('0000000000000000000000000000000000000000000001020304050607080900')
     })
   })
 
   describe('Refund swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.refundSwap())
+      return expect(lib.getRefundSwapData())
         .to.equal('')
     })
   })

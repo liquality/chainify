@@ -36,7 +36,9 @@ function formatEthResponse (obj) {
           Transaction.properties[key].type === 'number')) {
           obj[key] = parseInt(obj[key])
         } else {
-          obj[key] = ensureHexStandardFormat(obj[key])
+          if (obj[key]) {
+            obj[key] = ensureHexStandardFormat(obj[key])
+          }
         }
       }
     }

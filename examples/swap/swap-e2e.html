@@ -33,6 +33,12 @@
         <p>expiration: <input type="text" id="btcExpiration" value="1568194353" /></p>
         <p><button id="btcInitiateSwap">Initiate Swap</button></p>
         <p>transaction hash: <textarea id="btcInitiateSwapResult"></textarea></p>
+        <h3>Claim swap:</h3>
+        <p><strong>Wait until initiation transaction has been confirmed!</strong></p>
+        <p>secret: <input type="text" id="btcClaimSecret" /></p>
+        <p>initiationTxHash: <input type="text" id="btcInitiationTxHash" /></p>
+        <p><button id="btcClaimSwap">Claim Swap</button></p>
+        <p>transaction hash: <textarea id="btcClaimSwapResult"></textarea></p>
       </td>
       <td>
         <h3>Generate secret:</h3>
@@ -48,6 +54,12 @@
         <p>expiration: <input type="text" id="ethExpiration" value="1568194353" /></p>
         <p><button id="ethInitiateSwap">Initiate Swap</button></p>
         <p>transaction hash: <textarea id="ethInitiateSwapResult"></textarea></p>
+        <h3>Claim swap:</h3>
+        <p><strong>Wait until initiation transaction has been confirmed!</strong></p>
+        <p>secret: <input type="text" id="ethClaimSecret" /></p>
+        <p>initiationTxHash: <input type="text" id="ethInitiationTxHash" /></p>
+        <p><button id="ethClaimSwap">Claim Swap</button></p>
+        <p>transaction hash: <textarea id="ethClaimSwapResult"></textarea></p>
       </td>
     </tr>
   </table>
@@ -85,11 +97,26 @@
       })
     }
 
+    function claimSwap (client, prefix) {
+      client.claimSwap(
+        $(`#${prefix}InitiationTxHash`).val(),
+        parseInt($(`#${prefix}FundValue`).val()),
+        $(`#${prefix}RecipientAddress`).val(),
+        $(`#${prefix}RefundAddress`).val(),
+        $(`#${prefix}ClaimSecret`).val(),
+        parseInt($(`#${prefix}Expiration`).val())
+      ).then(result => {
+        $(`#${prefix}ClaimSwapResult`).text(result)
+      })
+    }
+
     $('#btcGenerateSecret').click(generateSecret.bind(null, bitcoin, 'btc'))
     $('#btcInitiateSwap').click(initiateSwap.bind(null, bitcoin, 'btc'))
+    $('#btcClaimSwap').click(claimSwap.bind(null, ethereum, 'btc'))
 
     $('#ethGenerateSecret').click(generateSecret.bind(null, ethereum, 'eth'))
     $('#ethInitiateSwap').click(initiateSwap.bind(null, ethereum, 'eth'))
+    $('#ethClaimSwap').click(claimSwap.bind(null, ethereum, 'eth'))
   </script>
 </body>
 

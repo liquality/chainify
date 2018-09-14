@@ -534,34 +534,38 @@ export default class Client {
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async redeemSwap (secret, pubKey = '', signature = '') {
-    const provider = this.getProviderForMethod('redeemSwap')
+  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secret, expiration) {
+    const provider = this.getProviderForMethod('claimSwap')
+
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    if (!isString(recipientAddress)) {
+      throw new TypeError('Recipient address should be a string')
+    }
+
+    if (!isString(recipientAddress)) {
+      throw new TypeError('Recipient address should be a string')
+    }
+
+    if (!isString(refundAddress)) {
+      throw new TypeError('Refund address should be a string')
+    }
 
     if (!isString(secret)) {
-      throw new TypeError('Secret should be a string')
+      throw new TypeError('Secret hash should be a string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(secret))) {
-      throw new TypeError('Secret should be a valid hex string')
+      throw new TypeError('Secret hash should be a valid hex string')
     }
 
-    if (!isString(pubKey)) {
-      throw new TypeError('PubKey should be a string')
+    if (!isNumber(expiration)) {
+      throw new TypeError('Invalid expiration time')
     }
 
-    if (!(/^[A-Fa-f0-9]*$/.test(pubKey))) {
-      throw new TypeError('PubKey should be a valid hex string')
-    }
-
-    if (!isString(signature)) {
-      throw new TypeError('Signature should be a string')
-    }
-
-    if (!(/^[A-Fa-f0-9]*$/.test(signature))) {
-      throw new TypeError('Signature should be a valid hex string')
-    }
-
-    return provider.redeemSwap(secret, pubKey, signature)
+    return provider.claimSwap(initiationTxHash, value, recipientAddress, refundAddress, secret, expiration)
   }
 
   /**
