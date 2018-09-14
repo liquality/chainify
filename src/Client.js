@@ -491,16 +491,17 @@ export default class Client {
   }
 
   /**
-   * Generate swap transaction data
+   * Initiate a swap
+   * @param {!number} value - The amount of native value to lock for the swap.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
-   * @return {Promise<string, TypeError>} Resolves with swap contract bytecode.
+   * @return {Promise<string, TypeError>} Resolves with the transaction ID for the swap.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    const provider = this.getProviderForMethod('generateSwap')
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+    const provider = this.getProviderForMethod('initiateSwap')
 
     if (!isString(recipientAddress)) {
       throw new TypeError('Recipient address should be a string')
@@ -522,7 +523,7 @@ export default class Client {
       throw new TypeError('Invalid expiration time')
     }
 
-    return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    return provider.initiateSwap(value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**

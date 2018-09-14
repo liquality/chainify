@@ -1,10 +1,17 @@
 import Provider from '../../Provider'
 import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
 import { padHexStart } from '../../crypto'
+import { pubKeyToAddress } from './BitcoinUtil'
+import networks from '../../networks'
 
 import networks from '../../networks'
 
 export default class BitcoinSwapProvider extends Provider {
+  constructor (chain = { network: networks.bitcoin }) {
+    super()
+    this._network = chain.network
+  }
+
   // TODO: have a generate InitSwap and generate RecipSwap
   //   InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
 
@@ -41,6 +48,13 @@ export default class BitcoinSwapProvider extends Provider {
       '68', // OP_ENDIF
       '88', 'ac' // OP_EQUALVERIFY OP_CHECKSIG
     ].join('')
+  }
+
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+    const script = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    return this.getMethod('sendTransaction')(p2shAddress, value, script)
   }
 
   _spendSwap (signature, pubKey, isRedeem, secret) {

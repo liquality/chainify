@@ -238,14 +238,6 @@ export default class BitcoinLedgerProvider extends Provider {
   async sendTransaction (to, value, data, from) {
     await this._connectToLedger()
 
-    let receivingAddress
-    if (data) {
-      const scriptPubKey = padHexStart(data)
-      receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    } else if (to) {
-      receivingAddress = to
-    }
-
     const { unusedAddresses, usedAddresses } = await this._getAddresses()
     const unusedAddress = unusedAddresses[0]
     const utxosUsedAddresses = await this._getSpendingDetails(usedAddresses)
@@ -273,7 +265,7 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendScript = this.generateScript(receivingAddress)
+    const sendScript = this._generateScript(to)
 
     let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
 

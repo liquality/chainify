@@ -1,5 +1,6 @@
 import Provider from '../../Provider'
 import { padHexStart } from '../../crypto'
+import { ensureHexStandardFormat } from './EthereumUtil'
 
 export default class EthereumSwapProvider extends Provider {
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
@@ -64,13 +65,18 @@ export default class EthereumSwapProvider extends Provider {
       '00', // STOP
 
       '5b', // JUMPDEST
-      '73', recipientAddress, // PUSH20 {recipientAddressEncoded}
+      '73', ensureHexStandardFormat(recipientAddress), // PUSH20 {recipientAddressEncoded}
       'ff', // SUICIDE
 
       '5b', // JUMPDEST
-      '73', refundAddress, // PUSH20 {refundAddressEncoded}
+      '73', ensureHexStandardFormat(refundAddress), // PUSH20 {refundAddressEncoded}
       'ff' // SUICIDE
     ].join('')
+  }
+
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+    const bytecode = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    return this.getMethod('sendTransaction')(null, value, bytecode)
   }
 
   redeemSwap (secret) {
