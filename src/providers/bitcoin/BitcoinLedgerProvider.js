@@ -45,9 +45,9 @@ export default class BitcoinLedgerProvider extends Provider {
     }
   }
 
-  async _getTransactionHex (transactionHash) {
-    return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
-  }
+  // async _getTransactionHex (transactionHash) {
+  //   return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
+  // }
 
   async _getAddresses () {
     const pathBase = `${this._segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
@@ -61,7 +61,7 @@ export default class BitcoinLedgerProvider extends Provider {
         address: (await this._ledgerBtc.getWalletPublicKey(path, false, this._segwit)).bitcoinAddress,
         path
       }
-      const addressDetails = await this._getAddressDetails(address.address)
+      const addressDetails = await this.getMethod('getAddressDetails')(address.address)
       if (addressDetails.n_tx > 0) {
         usedAddresses.push(address)
         unusedAddressCountdown = this._unusedAddressCountdown
@@ -80,7 +80,7 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getSpendingDetails (addresses) {
     return Promise.all(addresses.map(async address => {
-      const utxos = (await this._getUnspentTransactions(address.address)).map(utxo => ({
+      const utxos = (await this.getMethod('getUnspentTransactions')(address.address)).map(utxo => ({
         ...utxo,
         ...address
       }))
@@ -120,8 +120,8 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getLedgerInputs (unspentOutputs) {
     const ledgerInputs = unspentOutputs.map(async utxo => {
-      const transactionHex = await this._getTransactionHex(utxo.tx_hash_big_endian)
-      const tx = await this._ledgerBtc.splitTransaction(transactionHex, true)
+      const transactionHex = await this.getMethod('getRawTransactionByHash')(utxo.tx_hash_big_endian)
+      const tx = await this._ledgerBtc.splitTransaction(transactionHex)
       return [tx, utxo.tx_output_n]
     })
     return Promise.all(ledgerInputs)
@@ -139,6 +139,7 @@ export default class BitcoinLedgerProvider extends Provider {
 
     let hexAmount = BigNumber(amount).toString(16)
     hexAmount = padHexStart(hexAmount, 16)
+
     const valueBuffer = Buffer.from(hexAmount, 'hex')
     return valueBuffer.reverse()
   }
@@ -277,7 +278,6 @@ export default class BitcoinLedgerProvider extends Provider {
 
     const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
-
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 }
