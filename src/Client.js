@@ -4,7 +4,7 @@ import * as Ajv from 'ajv'
 import * as providers from './providers'
 import DNSParser from './DsnParser'
 import { Block, Transaction } from './schema'
-import { hash160 } from './crypto'
+import { sha256 } from './crypto'
 import {
   DuplicateProviderError,
   InvalidProviderError,
@@ -486,7 +486,7 @@ export default class Client {
    */
   async generateSecret (message) {
     const signedMessage = await this.signMessage(message)
-    const secret = hash160(signedMessage)
+    const secret = sha256(signedMessage)
     return secret
   }
 

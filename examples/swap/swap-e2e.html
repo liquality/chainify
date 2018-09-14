@@ -66,14 +66,14 @@
     ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
     ethereum.addProvider(new providers.ethereum.EthereumSwapProvider())
 
-    function generateSecret(client, prefix) {
+    function generateSecret (client, prefix) {
       client.generateSecret($(`#${prefix}Message`).val()).then(result => {
         $(`#${prefix}GenerateSecretResult`).text(result)
-        $(`#${prefix}GenerateSecretResultHash`).text(crypto.hash160(result))
+        $(`#${prefix}GenerateSecretResultHash`).text(crypto.sha256(result))
       })
     }
 
-    function initiateSwap(client, prefix) {
+    function initiateSwap (client, prefix) {
       client.initiateSwap(
         parseInt($(`#${prefix}FundValue`).val()),
         $(`#${prefix}RecipientAddress`).val(),
