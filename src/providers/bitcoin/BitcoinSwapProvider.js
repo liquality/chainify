@@ -1,9 +1,17 @@
 import Provider from '../../Provider'
 import { addressToPubKeyHash, pubKeyToAddress } from './BitcoinUtil'
 import { padHexStart } from '../../crypto'
+import { pubKeyToAddress } from './BitcoinUtil'
+import networks from '../../networks'
+
 import networks from '../../networks'
 
 export default class BitcoinSwapProvider extends Provider {
+  constructor (chain = { network: networks.bitcoin }) {
+    super()
+    this._network = chain.network
+  }
+
   // TODO: have a generate InitSwap and generate RecipSwap
   //   InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
 

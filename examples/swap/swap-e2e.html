@@ -78,7 +78,7 @@
     ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
     ethereum.addProvider(new providers.ethereum.EthereumSwapProvider())
 
-    function generateSecret (client, prefix) {
+    function generateSecret(client, prefix) {
       client.generateSecret($(`#${prefix}Message`).val()).then(result => {
         $(`#${prefix}GenerateSecretResult`).text(result)
         $(`#${prefix}GenerateSecretResultHash`).text(crypto.sha256(result))
@@ -117,6 +117,9 @@
     $('#ethGenerateSecret').click(generateSecret.bind(null, ethereum, 'eth'))
     $('#ethInitiateSwap').click(initiateSwap.bind(null, ethereum, 'eth'))
     $('#ethClaimSwap').click(claimSwap.bind(null, ethereum, 'eth'))
+
+    $('#ethGenerateSecret').click(generateSecret.bind(null, ethereum, 'eth'))
+    $('#ethInitiateSwap').click(initiateSwap.bind(null, ethereum, 'eth'))
   </script>
 </body>
 
