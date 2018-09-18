@@ -14,10 +14,11 @@ export default class BitcoinLedgerProvider extends Provider {
   /**
    * @param {boolean} testnet True if the testnet network is being used
    */
-  constructor (chain = { network: networks.bitcoin }) {
+  constructor (chain = { network: networks.bitcoin, segwit: false }) {
     super()
     this._ledgerBtc = false
     this._network = chain.network
+    this._segwit = chain.segwit
     this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
     this._derivationPath = `44'/${this._coinType}'/0'/0/0`
@@ -43,8 +44,8 @@ export default class BitcoinLedgerProvider extends Provider {
     return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
   }
 
-  async _getAddresses (config = { segwit: false }) {
-    const pathBase = `${config.segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
+  async _getAddresses () {
+    const pathBase = `${this._segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
     let usedAddresses = []
     let unusedAddresses = []
     let addressIndex = 0
@@ -52,7 +53,7 @@ export default class BitcoinLedgerProvider extends Provider {
     while (unusedAddressCountdown > 0) {
       const path = pathBase + addressIndex
       const address = {
-        address: (await this._ledgerBtc.getWalletPublicKey(path, false, config.segwit)).bitcoinAddress,
+        address: (await this._ledgerBtc.getWalletPublicKey(path, false, this._segwit)).bitcoinAddress,
         path
       }
       const addressDetails = await this._getAddressDetails(address.address)
@@ -72,7 +73,7 @@ export default class BitcoinLedgerProvider extends Provider {
     }
   }
 
-  async _getSpendingDetails (addresses, config = { segwit: false }) {
+  async _getSpendingDetails (addresses) {
     return Promise.all(addresses.map(async address => {
       const utxos = (await this._getUnspentTransactions(address.address)).map(utxo => ({
         ...utxo,
@@ -137,27 +138,27 @@ export default class BitcoinLedgerProvider extends Provider {
     return valueBuffer.reverse()
   }
 
-  async _getBalance (addresses, config = { segwit: false }) {
+  async _getBalance (addresses) {
     const addrs = addresses.map(address => ({ address }))
-    const spendingDetails = await this._getSpendingDetails(addrs, config)
+    const spendingDetails = await this._getSpendingDetails(addrs)
     return spendingDetails.reduce((acc, detail) => acc + detail.value, 0)
   }
 
-  async getBalance (addresses, startingIndex, numAddresses, config = { segwit: false }) {
+  async getBalance (addresses, startingIndex, numAddresses) {
     let addrs = addresses
     if (addrs == null) {
       await this._connectToLedger()
-      const usedAddresses = await this.getUsedAddresses(config)
+      const usedAddresses = await this.getUsedAddresses()
       addrs = usedAddresses
     }
 
-    return this._getBalance(addrs, config)
+    return this._getBalance(addrs)
   }
 
-  async getAddresses (startingIndex = 0, numAddresses, config = { segwit: false }) {
+  async getAddresses (startingIndex = 0, numAddresses) {
     await this._connectToLedger()
 
-    const { unusedAddresses, usedAddresses } = await this._getAddresses(config)
+    const { unusedAddresses, usedAddresses } = await this._getAddresses()
     const addresses = [
       ...unusedAddresses,
       ...usedAddresses
@@ -171,10 +172,10 @@ export default class BitcoinLedgerProvider extends Provider {
     return filteredAddresses
   }
 
-  async getUsedAddresses (startingIndex = 0, numAddresses, config = { segwit: false }) {
+  async getUsedAddresses (startingIndex = 0, numAddresses) {
     await this._connectToLedger()
 
-    const { usedAddresses } = await this._getAddresses(config)
+    const { usedAddresses } = await this._getAddresses()
     let filteredUsedAddresses = usedAddresses
       .map(detail => detail.address)
       .filter((address, index) => index >= startingIndex)
@@ -184,10 +185,10 @@ export default class BitcoinLedgerProvider extends Provider {
     return filteredUsedAddresses
   }
 
-  async getUnusedAddresses (startingIndex = 0, numAddresses, config = { segwit: false }) {
+  async getUnusedAddresses (startingIndex = 0, numAddresses) {
     await this._connectToLedger()
 
-    const { unusedAddresses } = await this._getAddresses(config)
+    const { unusedAddresses } = await this._getAddresses()
     let filteredUnusedAddresses = unusedAddresses
       .map(detail => detail.address)
       .filter((address, index) => index >= startingIndex)
