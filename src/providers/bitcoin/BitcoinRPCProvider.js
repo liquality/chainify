@@ -68,6 +68,12 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return this.rpc('getrawtransaction', transactionHash)
   }
 
+  async isAddressUsed (address) {
+    const getReceivedByAddress = this.rpc('getreceivedbyaddress', address)
+
+    return parseFloat(getReceivedByAddress) > 0
+  }
+
   async sendRawTransaction (rawTransaction) {
     return this.rpc('sendrawtransaction', rawTransaction)
   }

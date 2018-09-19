@@ -347,10 +347,10 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddresses (config) {
+  async getAddresses () {
     const provider = this.getProviderForMethod('getAddresses')
 
-    const addresses = await provider.getAddresses(config)
+    const addresses = await provider.getAddresses()
 
     if (!isArray(addresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
@@ -365,10 +365,10 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUsedAddresses (config) {
+  async getUsedAddresses (startingIndex = 0, numAddresses) {
     const provider = this.getProviderForMethod('getUsedAddresses')
 
-    const usedAddresses = await provider.getUsedAddresses(config)
+    const usedAddresses = await provider.getUsedAddresses(startingIndex, numAddresses)
 
     if (!isArray(usedAddresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
@@ -383,16 +383,29 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUnusedAddresses (config) {
+  async getUnusedAddresses () {
     const provider = this.getProviderForMethod('getUnusedAddresses')
 
-    const unusedAddresses = await provider.getUnusedAddresses(config)
+    const unusedAddresses = await provider.getUnusedAddresses()
 
     if (!isArray(unusedAddresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
     }
 
     return unusedAddresses
+  }
+
+  /**
+   * Determine if address has as least one transaction broadcast.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a boolean.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async isAddressUsed () {
+    const provider = this.getProviderForMethod('isAddressUsed')
+
+    const isAddressUsed = await provider.isAddressUsed()
+
+    return isAddressUsed
   }
 
   /**

@@ -45,6 +45,14 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM('eth_accounts')
   }
 
+  async getUsedAddresses (startingIndex, numAddresses) {
+    return this.getAddresses()
+  }
+
+  async getUnusedAddresses (startingIndex, numAddresses) {
+    return []
+  }
+
   async signMessage (message) {
     const hex = Buffer.from(message).toString('hex')
     const addresses = await this.getAddresses()
@@ -64,7 +72,10 @@ export default class EthereumMetaMaskProvider extends Provider {
     value = BigNumber(value).toString(16)
 
     const tx = {
-      from, to, value, data
+      from: ensureHexEthFormat(from),
+      to,
+      value: ensureHexEthFormat(value),
+      data: ensureHexEthFormat(data)
     }
 
     const txHash = await this._toMM('eth_sendTransaction', tx)
