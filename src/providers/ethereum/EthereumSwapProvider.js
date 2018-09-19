@@ -81,7 +81,7 @@ export default class EthereumSwapProvider extends Provider {
     return ''
   }
 
-  async checkBlockSwap (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
     const block = await this.getMethod('getBlockByNumber')(blockNumber)
     const txids = block.transactions
@@ -89,10 +89,6 @@ export default class EthereumSwapProvider extends Provider {
       return this.getMethod('getTransactionByHash')(txid)
     }))
     const swapTx = transactions.find(transaction => transaction.input === data.toLowerCase())
-    if (swapTx) {
-      return swapTx.hash
-    } else {
-      return false
-    }
+    return swapTx ? swapTx.hash : null
   }
 }

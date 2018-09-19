@@ -77,10 +77,6 @@ export default class BitcoinLedgerProvider extends Provider {
     }
   }
 
-  getNetworkName () {
-    return this._network.name
-  }
-
   async _getSpendingDetails (addresses) {
     return Promise.all(addresses.map(async address => {
       const utxos = (await this._getUnspentTransactions(address.address)).map(utxo => ({

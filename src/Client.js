@@ -342,18 +342,6 @@ export default class Client {
   }
 
   /**
-   * Get network name of current provider
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with network
-   *  name.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  getNetworkName () {
-    const provider = this.getProviderForMethod('getNetworkName')
-
-    return provider.getNetworkName()
-  }
-
-  /**
    * Get addresses/accounts of the user.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
    *  of accounts.
@@ -535,18 +523,6 @@ export default class Client {
     }
 
     return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
-  }
-
-  /**
-   * Generate script hex based on ddress
-   * @param {!string} address - Address for generating Script.
-   * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  generateScript (address) {
-    const provider = this.getProviderForMethod('generateScript')
-
-    return provider.generateScript(address)
   }
 
   /**
