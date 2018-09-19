@@ -33,4 +33,10 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return promiseBalances.map(balance => parseInt(balance, 16))
       .reduce((acc, balance) => acc + balance, 0)
   }
+
+  async isAddressUsed (address) {
+    const transactionCount = this.rpc('getTransactionCount', address)
+
+    return transactionCount > 0
+  }
 }

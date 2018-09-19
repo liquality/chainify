@@ -396,6 +396,19 @@ export default class Client {
   }
 
   /**
+   * Determine if address has as least one transaction broadcast.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a boolean.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async isAddressUsed () {
+    const provider = this.getProviderForMethod('isAddressUsed')
+
+    const isAddressUsed = await provider.isAddressUsed()
+
+    return isAddressUsed
+  }
+
+  /**
    * Sign a message.
    * @param {!string} message - Message to be signed.
    * @param {!string} from - The address from which the message is signed.
