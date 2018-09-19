@@ -80,4 +80,15 @@ export default class EthereumSwapProvider extends Provider {
   refundSwap () {
     return ''
   }
+
+  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+    const data = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    const block = await this.getMethod('getBlockByNumber')(blockNumber)
+    const txids = block.transactions
+    const transactions = await Promise.all(txids.map(async txid => {
+      return this.getMethod('getTransactionByHash')(txid)
+    }))
+    const swapTx = transactions.find(transaction => transaction.input === data.toLowerCase())
+    return swapTx ? swapTx.hash : null
+  }
 }

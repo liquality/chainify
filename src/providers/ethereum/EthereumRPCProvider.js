@@ -22,6 +22,11 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return this.rpc('eth_getBlockByNumber', blockNumber, includeTx)
   }
 
+  async getBlockHeight () {
+    const hexHeight = await this.rpc('eth_blockNumber')
+    return parseInt(hexHeight, '16')
+  }
+
   async getTransactionByHash (txHash) {
     txHash = ensureHexEthFormat(txHash)
     return this.rpc('eth_getTransactionByHash', txHash)

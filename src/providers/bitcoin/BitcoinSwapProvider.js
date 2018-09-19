@@ -1,10 +1,18 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash } from './BitcoinUtil'
+import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
 import { padHexStart } from '../../crypto'
+
+import networks from '../../networks'
 
 export default class BitcoinSwapProvider extends Provider {
   // TODO: have a generate InitSwap and generate RecipSwap
   //   InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
+
+  constructor (chain = { network: networks.bitcoin }) {
+    super()
+    this._network = chain.network
+  }
+
   generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
     let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), 'hex').reverse()
 
@@ -65,5 +73,25 @@ export default class BitcoinSwapProvider extends Provider {
 
   refundSwap (pubKey, signature) {
     return this._spendSwap(signature, pubKey, false)
+  }
+
+  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+    const data = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    const scriptPubKey = padHexStart(data)
+    const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    const sendScript = this.getMethod('generateScript')(receivingAddress)
+
+    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    const transactions = block.transactions
+    const txs = await Promise.all(transactions.map(async transaction => {
+      return this.getMethod('decodeRawTransaction')(transaction)
+    }))
+    const swapTx = txs
+      .map(transaction => transaction._raw.data)
+      .map(transaction => transaction.vout
+        .map(vout => { return { txid: transaction.txid, scriptPubKey: vout.scriptPubKey } }))
+      .reduce((acc, val) => acc.concat(val), [])
+      .find(txKeys => txKeys.scriptPubKey.hex === sendScript)
+    return swapTx ? swapTx.txid : null
   }
 }
