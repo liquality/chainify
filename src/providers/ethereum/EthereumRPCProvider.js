@@ -10,7 +10,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getAddresses () {
-    return this.rpc('eth_accounts')
+    return this.jsonrpc('eth_accounts')
   }
 
   async generateBlock (numberOfBlocks) {
@@ -19,7 +19,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this.rpc('eth_getBlockByNumber', blockNumber, includeTx)
+    return this.jsonrpc('eth_getBlockByNumber', blockNumber, includeTx)
   }
 
   async getBlockHeight () {
@@ -29,7 +29,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
 
   async getTransactionByHash (txHash) {
     txHash = ensureHexEthFormat(txHash)
-    return this.rpc('eth_getTransactionByHash', txHash)
+    return this.jsonrpc('eth_getTransactionByHash', txHash)
   }
 
   async getTransactionReceipt (txHash) {

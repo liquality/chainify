@@ -1,15 +1,13 @@
 import Provider from '../../Provider'
 
-import axios from 'axios'
 import Transport from '@ledgerhq/hw-transport-node-hid'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
-import { addressToPubKeyHash, pubKeyToAddress } from './BitcoinUtil'
+import { addressToPubKeyHash } from './BitcoinUtil'
 
 import networks from '../../networks'
 
-// TODO: Abstract out non signing methods into another provider?
 export default class BitcoinLedgerProvider extends Provider {
   /**
    * @param {boolean} testnet True if the testnet network is being used
@@ -32,59 +30,13 @@ export default class BitcoinLedgerProvider extends Provider {
     }
   }
 
-  async _getAddressDetails (address) {
-    return (await axios.get(`${this._blockChainInfoBaseUrl}/balance?active=${address}&cors=true`)).data[address]
-  }
-
   async _getPubKey () {
     return this._ledgerBtc.getWalletPublicKey(this._derivationPath)
   }
 
-  async _getUnspentTransactions (address) {
-    try {
-      const result = (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs
-      return result.filter(utxo => utxo.confirmations > 0)
-    } catch (e) {
-      return []
-    }
-  }
-
-  async _getTransactionHex (transactionHash) {
-    return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
-  }
-
-  async _getAddresses () {
-    const pathBase = `${this._segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
-    let usedAddresses = []
-    let unusedAddresses = []
-    let addressIndex = 0
-    let unusedAddressCountdown = this._unusedAddressCountdown
-    while (unusedAddressCountdown > 0) {
-      const path = pathBase + addressIndex
-      const address = {
-        address: (await this._ledgerBtc.getWalletPublicKey(path, false, this._segwit)).bitcoinAddress,
-        path
-      }
-      const addressDetails = await this._getAddressDetails(address.address)
-      if (addressDetails.n_tx > 0) {
-        usedAddresses.push(address)
-        unusedAddressCountdown = this._unusedAddressCountdown
-      } else {
-        unusedAddresses.push(address)
-        --unusedAddressCountdown
-      }
-      ++addressIndex
-    }
-
-    return {
-      unusedAddresses,
-      usedAddresses
-    }
-  }
-
   async _getSpendingDetails (addresses) {
     return Promise.all(addresses.map(async address => {
-      const utxos = (await this._getUnspentTransactions(address.address)).map(utxo => ({
+      const utxos = (await this.getMethod('getUnspentTransactions')(address.address)).map(utxo => ({
         ...utxo,
         ...address
       }))
@@ -124,7 +76,7 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getLedgerInputs (unspentOutputs) {
     const ledgerInputs = unspentOutputs.map(async utxo => {
-      const transactionHex = await this._getTransactionHex(utxo.tx_hash_big_endian)
+      const transactionHex = await this.getMethod('getTransactionHex')(utxo.tx_hash_big_endian)
       const tx = await this._ledgerBtc.splitTransaction(transactionHex, true)
       return [tx, utxo.tx_output_n]
     })
@@ -147,73 +99,50 @@ export default class BitcoinLedgerProvider extends Provider {
     return valueBuffer.reverse()
   }
 
-  async _getBalance (addresses) {
-    const addrs = addresses.map(address => ({ address }))
-    const spendingDetails = await this._getSpendingDetails(addrs)
-    return spendingDetails.reduce((acc, detail) => acc + detail.value, 0)
+  async _getAddressFromPath (path, segwit) {
+    return (await this._ledgerBtc.getWalletPublicKey(path, false, segwit)).bitcoinAddress
   }
 
-  async getBalance (addresses, startingIndex, numAddresses) {
-    let addrs = addresses
-    if (addrs == null) {
-      await this._connectToLedger()
-      const usedAddresses = await this.getUsedAddresses()
-      addrs = usedAddresses
-    }
-
-    return this._getBalance(addrs)
-  }
-
-  async getAddresses (startingIndex = 0, numAddresses) {
+  async getAddresses (startingIndex = 0, numAddresses = 5, config = { segwit: false }) {
     await this._connectToLedger()
 
-    const { unusedAddresses, usedAddresses } = await this._getAddresses()
-    const addresses = [
-      ...unusedAddresses,
-      ...usedAddresses
-    ]
-    let filteredAddresses = addresses
-      .map(detail => detail.address)
-      .filter((address, index) => index >= startingIndex)
-    if (numAddresses) {
-      filteredAddresses = filteredAddresses.filter((address, index) => index < numAddresses)
+    const basePath = `${config.segwit ? '49' : '44'}'/${this._coinType}'/0'/0`
+    const finalIndex = startingIndex + numAddresses
+
+    const addresses = []
+    let currentIndex = startingIndex
+
+    while (currentIndex < finalIndex) {
+      const path = `${basePath}/${currentIndex++}`
+      addresses.push(await this._getAddressFromPath(path, config.segwit))
     }
-    return filteredAddresses
+
+    return addresses
   }
 
-  async getUsedAddresses (startingIndex = 0, numAddresses) {
-    await this._connectToLedger()
+  async _getDerivationPathFromAddress (address, config) {
+    let path = false
+    let index = 0
 
-    const { usedAddresses } = await this._getAddresses()
-    let filteredUsedAddresses = usedAddresses
-      .map(detail => detail.address)
-      .filter((address, index) => index >= startingIndex)
-    if (numAddresses) {
-      filteredUsedAddresses = filteredUsedAddresses.filter((address, index) => index < numAddresses)
+    while (!path) {
+      const addr = await this.getAddresses(index, 1)
+      if (addr === address) path = `${config.segwit ? '49' : '44'}'/${this._coinType}'/0'/0/${index}`
+      index++
     }
-    return filteredUsedAddresses
+
+    return path
   }
 
-  async getUnusedAddresses (startingIndex = 0, numAddresses) {
-    await this._connectToLedger()
-
-    const { unusedAddresses } = await this._getAddresses()
-    let filteredUnusedAddresses = unusedAddresses
-      .map(detail => detail.address)
-      .filter((address, index) => index >= startingIndex)
-    if (numAddresses) {
-      filteredUnusedAddresses = filteredUnusedAddresses.filter((address, index) => index < numAddresses)
-    }
-    return filteredUnusedAddresses
-  }
-
-  async signMessage (message) {
+  async signMessage (message, from, derivationPath, config = { segwit: false }) {
     await this._connectToLedger()
 
     const hex = Buffer.from(message).toString('hex')
-    const signObj = await this._ledgerBtc.signMessageNew(this._derivationPath, hex)
-    const v = signObj.v + 27 + 4
-    return Buffer.from(v.toString(16) + signObj.r + signObj.s, 'hex').toString('hex')
+
+    if (!derivationPath) {
+      derivationPath = await this._getDerivationPathFromAddress(from, config)
+    }
+
+    return this._ledgerBtc.signMessageNew(derivationPath, hex)
   }
 
   async _splitTransaction (transactionHex, isSegwitSupported) {

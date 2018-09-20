@@ -132,6 +132,11 @@ export default class Client {
     return provider
   }
 
+  getMethod (method, requestor = this) {
+    const provider = this.getProviderForMethod(method, requestor)
+    return provider[method].bind(provider)
+  }
+
   /**
    * Generate a block
    * @param {!number} numberOfBlocks - Number of blocks to be generated
@@ -141,13 +146,11 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async generateBlock (numberOfBlocks) {
-    const provider = this.getProviderForMethod('generateBlock')
-
     if (!isNumber(numberOfBlocks)) {
       throw new TypeError('First argument should be a number')
     }
 
-    const blockHashes = await provider.generateBlock(numberOfBlocks)
+    const blockHashes = await this.getMethod('generateBlock')(numberOfBlocks)
 
     if (!isArray(blockHashes)) {
       throw new InvalidProviderResponseError('Response should be an array')
@@ -175,8 +178,6 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async getBlockByHash (blockHash, includeTx = false) {
-    const provider = this.getProviderForMethod('getBlockByHash')
-
     if (!isString(blockHash)) {
       throw new TypeError('Block hash should be a string')
     }
@@ -189,7 +190,7 @@ export default class Client {
       throw new TypeError('Second parameter should be boolean')
     }
 
-    const block = await provider.getBlockByHash(blockHash, includeTx)
+    const block = await this.getMethod('getBlockByHash')(blockHash, includeTx)
 
     if (!this.validateBlock(block)) {
       throw new InvalidProviderResponseError('Provider returned an invalid block')
@@ -210,8 +211,6 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async getBlockByNumber (blockNumber, includeTx = false) {
-    const provider = this.getProviderForMethod('getBlockByNumber')
-
     if (!isNumber(blockNumber)) {
       throw new TypeError('Invalid Block number')
     }
@@ -220,7 +219,7 @@ export default class Client {
       throw new TypeError('Second parameter should be boolean')
     }
 
-    const block = await provider.getBlockByNumber(blockNumber, includeTx)
+    const block = await this.getMethod('getBlockByNumber')(blockNumber, includeTx)
 
     const valid = this.validateBlock(block)
 
@@ -239,9 +238,7 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async getBlockHeight () {
-    const provider = this.getProviderForMethod('getBlockHeight')
-
-    const blockHeight = await provider.getBlockHeight()
+    const blockHeight = await this.getMethod('getBlockHeight')()
 
     if (!isNumber(blockHeight)) {
       throw new InvalidProviderResponseError('Provider returned an invalid block height')
@@ -260,8 +257,6 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async getTransactionByHash (txHash) {
-    const provider = this.getProviderForMethod('getTransactionByHash')
-
     if (!isString(txHash)) {
       throw new TypeError('Transaction hash should be a string')
     }
@@ -270,7 +265,7 @@ export default class Client {
       throw new TypeError('Transaction hash should be a valid hex string')
     }
 
-    const transaction = await provider.getTransactionByHash(txHash)
+    const transaction = await this.getMethod('getTransactionByHash')(txHash)
 
     const valid = this.validateTransaction(transaction)
 
@@ -292,8 +287,6 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async getRawTransactionByHash (txHash) {
-    const provider = this.getProviderForMethod('getRawTransactionByHash')
-
     if (!isString(txHash)) {
       throw new TypeError('Transaction hash should be a string')
     }
@@ -302,7 +295,7 @@ export default class Client {
       throw new TypeError('Transaction hash should be a valid hex string')
     }
 
-    const transaction = await provider.getRawTransactionByHash(txHash)
+    const transaction = await this.getMethod('getRawTransactionByHash')(txHash)
 
     if (!this.validateTransaction(transaction)) {
       throw new InvalidProviderResponseError('Provider returned an invalid transaction')
@@ -320,8 +313,6 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async getBalance (addresses) {
-    const provider = this.getProviderForMethod('getBalance')
-
     if (addresses != null) {
       if (!isArray(addresses)) {
         throw new TypeError('Addresses should be an array')
@@ -332,7 +323,7 @@ export default class Client {
       }
     }
 
-    const balance = await provider.getBalance(addresses)
+    const balance = await this.getMethod('getBalance')(addresses)
 
     if (!isNumber(balance)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
@@ -347,10 +338,8 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddresses () {
-    const provider = this.getProviderForMethod('getAddresses')
-
-    const addresses = await provider.getAddresses()
+  async getAddresses (startingIndex, numAddresses, config) {
+    const addresses = await this.getMethod('getAddresses')(startingIndex, numAddresses, config)
 
     if (!isArray(addresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
@@ -360,15 +349,29 @@ export default class Client {
   }
 
   /**
+   * Get addresses/accounts of the user.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
+   *  of accounts.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getAddressTransactionCount (address) {
+    const transactionCount = await this.getMethod('getAddressTransactionCount')(address)
+
+    if (!isNumber(transactionCount)) {
+      throw new InvalidProviderResponseError('Provider returned an invalid response')
+    }
+
+    return transactionCount
+  }
+
+  /**
    * Get used addresses/accounts of the user.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUsedAddresses (startingIndex = 0, numAddresses) {
-    const provider = this.getProviderForMethod('getUsedAddresses')
-
-    const usedAddresses = await provider.getUsedAddresses(startingIndex, numAddresses)
+  async getUsedAddresses (config) {
+    const usedAddresses = await this.getMethod('getUsedAddresses')(config)
 
     if (!isArray(usedAddresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
@@ -383,10 +386,8 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUnusedAddresses () {
-    const provider = this.getProviderForMethod('getUnusedAddresses')
-
-    const unusedAddresses = await provider.getUnusedAddresses()
+  async getUnusedAddresses (config) {
+    const unusedAddresses = await this.getMethod('getUnusedAddresses')(config)
 
     if (!isArray(unusedAddresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
@@ -414,10 +415,8 @@ export default class Client {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string, null>} Resolves with a signed message.
    */
-  async signMessage (message, from) {
-    const provider = this.getProviderForMethod('signMessage')
-
-    const signedMessage = await provider.signMessage(message, from)
+  async signMessage (message, from, derivationPath, config) {
+    const signedMessage = await this.getMethod('signMessage')(message, from, derivationPath, config)
 
     return signedMessage
   }
@@ -434,9 +433,7 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async sendTransaction (to, value, data, from) {
-    const provider = this.getProviderForMethod('sendTransaction')
-
-    const txHash = await provider.sendTransaction(to, value, data, from)
+    const txHash = await this.getMethod('sendTransaction')(to, value, data, from)
 
     if (!isString(txHash)) {
       throw new InvalidProviderResponseError('sendTransaction method should return a transaction id string')
@@ -454,9 +451,7 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async sendRawTransaction (rawTransaction) {
-    const provider = this.getProviderForMethod('sendRawTransaction')
-
-    const txHash = await provider.sendRawTransaction(rawTransaction)
+    const txHash = await this.getMethod('sendRawTransaction')(rawTransaction)
 
     if (!isString(txHash)) {
       throw new InvalidProviderResponseError('sendRawTransaction method should return a transaction id string')

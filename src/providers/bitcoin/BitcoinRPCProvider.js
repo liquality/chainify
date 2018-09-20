@@ -2,7 +2,7 @@ import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
   async decodeRawTransaction (rawTransaction) {
-    const data = await this.rpc('decoderawtransaction', rawTransaction)
+    const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
     const { hash: txHash, txid: hash, vout } = data
     const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
 
@@ -12,11 +12,11 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async generateBlock (numberOfBlocks) {
-    return this.rpc('generate', numberOfBlocks)
+    return this.jsonrpc('generate', numberOfBlocks)
   }
 
   async getBlockByHash (blockHash, includeTx) {
-    const data = await this.rpc('getblock', blockHash)
+    const data = await this.jsonrpc('getblock', blockHash)
     const { hash,
       height: number,
       time: timestamp,
@@ -44,7 +44,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this.getBlockByHash(await this.rpc('getblockhash', blockNumber), includeTx)
+    return this.getBlockByHash(await this.jsonrpc('getblockhash', blockNumber), includeTx)
   }
 
   async getBlockHeight () {
@@ -54,10 +54,8 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   async getTransactionByHash (transactionHash) {
     const rawTx = await this.getRawTransactionByHash(transactionHash)
     const tx = await this.decodeRawTransaction(rawTx)
-    let data
     try {
-      data = await this.rpc('gettransaction', transactionHash)
-
+      const data = await this.jsonrpc('gettransaction', transactionHash)
       const { confirmations } = data
       const output = Object.assign({}, tx, { confirmations })
 
@@ -76,7 +74,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getRawTransactionByHash (transactionHash) {
-    return this.rpc('getrawtransaction', transactionHash)
+    return this.jsonrpc('getrawtransaction', transactionHash)
   }
 
   async isAddressUsed (address) {
@@ -86,6 +84,6 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async sendRawTransaction (rawTransaction) {
-    return this.rpc('sendrawtransaction', rawTransaction)
+    return this.jsonrpc('sendrawtransaction', rawTransaction)
   }
 }

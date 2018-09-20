@@ -1,4 +1,4 @@
-const { Client, Provider } = require('../../../')
+const { Client, Provider } = require('../../')
 
 class X extends Provider {
   signMessage (message, from) {
@@ -18,11 +18,11 @@ class Z extends Provider {
   }
 }
 
-const ethereum = new Client()
-ethereum.addProvider(new X())
+const client = new Client()
+client.addProvider(new X())
   .addProvider(new Y())
   .addProvider(new Z())
 
 ;(async () => {
-  console.log(await ethereum.signMessage('hello world'))
+  console.log(await client.signMessage('hello world'))
 })()

@@ -79,7 +79,6 @@ export default class BitcoinSwapProvider extends Provider {
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
     const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, rawClaimTxInput)
-    debugger
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
 
@@ -153,9 +152,9 @@ export default class BitcoinSwapProvider extends Provider {
     const txs = await Promise.all(transactions.map(async transaction => {
       return this.getMethod('decodeRawTransaction')(transaction)
     }))
-    const swapTx  = txs
+    const swapTx = txs
       .reduce((acc, val) => acc.concat({ hash: val.hash, vin: val._raw.data.vin }), [])
-      .map(val => val.vin.map(vin => { return { hash: val.hash, vin: vin }}))
+      .map(val => val.vin.map(vin => { return { hash: val.hash, vin: vin } }))
       .flat()
       .find(tx => tx.vin.txid === initiationTxHash)
     return swapTx ? swapTx.hash : null
@@ -175,7 +174,7 @@ export default class BitcoinSwapProvider extends Provider {
       inputTxOutput, // INPUT TRANSACTION OUTPUT
       scriptLength,
       script,
-      'ffffffff', // SEQUENCE
+      'ffffffff' // SEQUENCE
     ].join('')
   }
 
@@ -188,7 +187,7 @@ export default class BitcoinSwapProvider extends Provider {
       '00000000',
       scriptLength,
       script,
-      'ffffffff', // SEQUENCE
+      'ffffffff' // SEQUENCE
     ].join('')
   }
 

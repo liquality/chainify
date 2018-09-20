@@ -49,7 +49,7 @@ export default class JsonRpcProvider extends Provider {
     return data.result
   }
 
-  rpc (method, ...params) {
+  jsonrpc (method, ...params) {
     return this._axios.post(
       '/',
       this._prepareRequest(method, params)

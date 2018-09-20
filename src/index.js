@@ -6,6 +6,7 @@ import * as providers from './providers'
 import * as crypto from './crypto'
 import * as errors from './errors'
 import * as schema from './schema'
+import ApiProvider from './providers/ApiProvider'
 
 export {
   Client,
@@ -14,5 +15,6 @@ export {
   providers,
   crypto,
   errors,
-  schema
+  schema,
+  ApiProvider
 }
