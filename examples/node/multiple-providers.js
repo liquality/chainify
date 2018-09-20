@@ -2,19 +2,19 @@ const { Client, Provider } = require('../../')
 
 class X extends Provider {
   signMessage (message, from) {
-    return message + ' X'
+    return 'X'
   }
 }
 
 class Y extends Provider {
   signMessage (message, from) {
-    return this.getMethod('signMessage')(message, from) + ' Y'
+    return 'Y ' + this.getMethod('signMessage')(message, from)
   }
 }
 
 class Z extends Provider {
   signMessage (message, from) {
-    return this.getMethod('signMessage')(message, from) + ' Z'
+    return 'Z ' + this.getMethod('signMessage')(message, from)
   }
 }
 
@@ -24,9 +24,5 @@ client.addProvider(new X())
   .addProvider(new Z())
 
 ;(async () => {
-  try {
-    console.log(await client.signMessage('hello world'))
-  } catch (e) {
-    console.error(e)
-  }
+  console.log(await client.signMessage('hello world'))
 })()

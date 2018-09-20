@@ -79,7 +79,6 @@ export default class BitcoinSwapProvider extends Provider {
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
     const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, rawClaimTxInput)
-
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
 
