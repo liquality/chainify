@@ -5,7 +5,7 @@ import Transport from '@ledgerhq/hw-transport-node-hid'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
-import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
+import { addressToPubKeyHash } from './BitcoinUtil'
 
 import networks from '../../networks'
 
@@ -38,7 +38,8 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getUnspentTransactions (address) {
     try {
-      return (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs
+      const result = (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs
+      return result.filter(utxo => utxo.confirmations > 0)
     } catch (e) {
       return []
     }
@@ -238,14 +239,6 @@ export default class BitcoinLedgerProvider extends Provider {
   async sendTransaction (to, value, data, from) {
     await this._connectToLedger()
 
-    let receivingAddress
-    if (data) {
-      const scriptPubKey = padHexStart(data)
-      receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    } else if (to) {
-      receivingAddress = to
-    }
-
     const { unusedAddresses, usedAddresses } = await this._getAddresses()
     const unusedAddress = unusedAddresses[0]
     const utxosUsedAddresses = await this._getSpendingDetails(usedAddresses)
@@ -273,7 +266,7 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendScript = this.generateScript(receivingAddress)
+    const sendScript = this._generateScript(to)
 
     let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
 

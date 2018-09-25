@@ -4,7 +4,7 @@ import * as Ajv from 'ajv'
 import * as providers from './providers'
 import DNSParser from './DsnParser'
 import { Block, Transaction } from './schema'
-import { hash160 } from './crypto'
+import { sha256 } from './crypto'
 import {
   DuplicateProviderError,
   InvalidProviderError,
@@ -486,21 +486,22 @@ export default class Client {
    */
   async generateSecret (message) {
     const signedMessage = await this.signMessage(message)
-    const secret = hash160(signedMessage)
+    const secret = sha256(signedMessage)
     return secret
   }
 
   /**
-   * Generate swap transaction data
+   * Initiate a swap
+   * @param {!number} value - The amount of native value to lock for the swap.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
-   * @return {Promise<string, TypeError>} Resolves with swap contract bytecode.
+   * @return {Promise<string, TypeError>} Resolves with the transaction ID for the swap.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    const provider = this.getProviderForMethod('generateSwap')
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+    const provider = this.getProviderForMethod('initiateSwap')
 
     if (!isString(recipientAddress)) {
       throw new TypeError('Recipient address should be a string')
@@ -522,7 +523,7 @@ export default class Client {
       throw new TypeError('Invalid expiration time')
     }
 
-    return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    return provider.initiateSwap(value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**
@@ -533,34 +534,38 @@ export default class Client {
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async redeemSwap (secret, pubKey = '', signature = '') {
-    const provider = this.getProviderForMethod('redeemSwap')
+  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secret, expiration) {
+    const provider = this.getProviderForMethod('claimSwap')
+
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    if (!isString(recipientAddress)) {
+      throw new TypeError('Recipient address should be a string')
+    }
+
+    if (!isString(recipientAddress)) {
+      throw new TypeError('Recipient address should be a string')
+    }
+
+    if (!isString(refundAddress)) {
+      throw new TypeError('Refund address should be a string')
+    }
 
     if (!isString(secret)) {
-      throw new TypeError('Secret should be a string')
+      throw new TypeError('Secret hash should be a string')
     }
 
     if (!(/^[A-Fa-f0-9]+$/.test(secret))) {
-      throw new TypeError('Secret should be a valid hex string')
+      throw new TypeError('Secret hash should be a valid hex string')
     }
 
-    if (!isString(pubKey)) {
-      throw new TypeError('PubKey should be a string')
+    if (!isNumber(expiration)) {
+      throw new TypeError('Invalid expiration time')
     }
 
-    if (!(/^[A-Fa-f0-9]*$/.test(pubKey))) {
-      throw new TypeError('PubKey should be a valid hex string')
-    }
-
-    if (!isString(signature)) {
-      throw new TypeError('Signature should be a string')
-    }
-
-    if (!(/^[A-Fa-f0-9]*$/.test(signature))) {
-      throw new TypeError('Signature should be a valid hex string')
-    }
-
-    return provider.redeemSwap(secret, pubKey, signature)
+    return provider.claimSwap(initiationTxHash, value, recipientAddress, refundAddress, secret, expiration)
   }
 
   /**

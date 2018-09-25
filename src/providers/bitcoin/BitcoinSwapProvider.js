@@ -1,7 +1,6 @@
 import Provider from '../../Provider'
-import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
+import { addressToPubKeyHash, pubKeyToAddress } from './BitcoinUtil'
 import { padHexStart } from '../../crypto'
-
 import networks from '../../networks'
 
 export default class BitcoinSwapProvider extends Provider {
@@ -43,6 +42,17 @@ export default class BitcoinSwapProvider extends Provider {
     ].join('')
   }
 
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+    const script = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    return this.getMethod('sendTransaction')(p2shAddress, value, script)
+  }
+
+  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secret, expiration) {
+    throw new Error('Not implemented yet')
+  }
+
   _spendSwap (signature, pubKey, isRedeem, secret) {
     const redeemEncoded = isRedeem ? '51' : '00' // OP_1 : OP_0
     const encodedSecret = isRedeem
@@ -67,11 +77,11 @@ export default class BitcoinSwapProvider extends Provider {
     return bytecode.join('')
   }
 
-  redeemSwap (secret, pubKey, signature) {
+  getRedeemSwapData (secret, pubKey, signature) {
     return this._spendSwap(signature, pubKey, true, secret)
   }
 
-  refundSwap (pubKey, signature) {
+  getRefundSwapData (pubKey, signature) {
     return this._spendSwap(signature, pubKey, false)
   }
 
