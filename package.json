@@ -15,12 +15,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/consensys/chainabstractionlayer.git"
+    "url": "git+ssh://git@github.com/liquality/chainabstractionlayer.git"
   },
   "bugs": {
-    "url": "https://github.com/consensys/chainabstractionlayer/issues"
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
   },
-  "homepage": "https://github.com/consensys/chainabstractionlayer#readme",
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "author": "Liquality <info@liquality.io>",
   "module": "src/index.js",
   "browser": {
