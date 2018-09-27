@@ -1,29 +1,34 @@
+import { forIn } from 'lodash'
+
 import ApiProvider from '../ApiProvider'
 import networks from '../../networks'
 
-export default class BitcoinLedgerProvider extends ApiProvider {
+export default class BitcoinBlockchainAPIProvider extends ApiProvider {
   constructor (chain = { network: networks.bitcoin }) {
     super(chain.network.explorerUrl)
   }
 
-  async getAddressTransactionCount (address) {
+  async isUsedAddress (address) {
+    let txCount = 0
+
     const obj = (await this.apiGet('/balance', { active: address, cors: true }))[address]
 
-    if (obj) return obj.final_balance
+    if (obj) txCount = obj.n_tx
 
-    return 0
+    return txCount !== 0
   }
 
-  async getBalance (address) {
-    const obj = (await this.apiGet('/balance', { active: address, cors: true }))[address]
+  async getBalance (addresses) {
+    addresses = addresses.join('|')
 
-    if (obj) return obj.final_balance
+    let balance = 0
+    const obj = (await this.apiGet('/balance', { active: addresses, cors: true }))
 
-    return 0
-  }
+    forIn(obj, (value, key) => {
+      balance += value.final_balance
+    })
 
-  async getAddressDetails (address) {
-    return (await this.apiGet('/balance', { active: address, cors: true }))[address]
+    return balance
   }
 
   async getUnspentTransactions (address) {

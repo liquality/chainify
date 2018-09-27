@@ -46,7 +46,7 @@ export default class BitcoinSwapProvider extends Provider {
     const script = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    return this.getMethod('sendTransaction')(p2shAddress, value, script)
+    return this.getMethod('createSignedTransaction')(p2shAddress, value, script)
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {

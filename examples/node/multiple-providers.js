@@ -2,19 +2,19 @@ const { Client, Provider } = require('../../')
 
 class X extends Provider {
   signMessage (message, from) {
-    return 'X'
+    return message + ' X'
   }
 }
 
 class Y extends Provider {
   signMessage (message, from) {
-    return 'Y ' + this.getMethod('signMessage')(message, from)
+    return this.getMethod('signMessage')(message, from) + ' Y'
   }
 }
 
 class Z extends Provider {
   signMessage (message, from) {
-    return 'Z ' + this.getMethod('signMessage')(message, from)
+    return this.getMethod('signMessage')(message, from) + ' Z'
   }
 }
 

@@ -1,44 +1,70 @@
 import Provider from '../Provider'
 
-import Transport from '@alias/ledger-transport'
-import LedgerBtc from '@ledgerhq/hw-app-btc'
+import Transport from '@ledgerhq/hw-transport-node-hid'
 
 export default class LedgerProvider extends Provider {
-  static async isSupported () {
+  static isSupported () {
     return Transport.isSupported()
   }
 
-  async connect () {
-    if (!this._ledgerBtc) {
-      const transport = await Transport.create()
-      this._ledgerBtc = new LedgerBtc(transport)
+  constructor (App, baseDerivationPath) {
+    super()
+
+    this._App = App
+    this._baseDerivationPath = baseDerivationPath
+  }
+
+  async createTransport () {
+    if (!LedgerProvider.transport) {
+      LedgerProvider.transport = await Transport.create()
+      LedgerProvider.transport.on('disconnect', () => {
+        this._appInstance = null
+        LedgerProvider.transport = null
+      })
     }
   }
 
-  async disconnect () {
+  async getApp () {
+    await this.createTransport()
 
-  }
-
-  async isConnected () {
-    // return this
-  }
-
-  async onConnected (cb) {
-
-  }
-
-  async onDisconnected (cb) {
-
-  }
-
-  async gasdA (index = 0) {
-    return this._ledgerBtc.getWalletPublicKey(`49'/0'/0'/0/${index}`, false, true)
-  }
-
-  async _connectToLedger () {
-    if (!this._ledgerBtc) {
-      const transport = await Transport.create()
-      this._ledgerBtc = new LedgerBtc(transport)
+    if (!this._appInstance) {
+      this._appInstance = new this._App(LedgerProvider.transport)
     }
+
+    return this._appInstance
+  }
+
+  getDerivationPathFromIndex (index) {
+    return this._baseDerivationPath + index
+  }
+
+  async getDerivationPathFromAddress (address) {
+    let path = false
+    let index = 0
+
+    while (!path) {
+      const addr = await this.getAddresses(index, 1)
+      if (String(addr) === address) path = this.getDerivationPathFromIndex(index)
+      index++
+    }
+
+    return path
+  }
+
+  async getAddressFromIndex (addressIndex) {
+    const path = this.getDerivationPathFromIndex(addressIndex)
+    return this.getAddressFromDerivationPath(path)
+  }
+
+  async getAddresses (startingIndex = 0, numAddresses = 1) {
+    const addresses = []
+    const lastIndex = startingIndex + numAddresses
+
+    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
+      const address = await this.getAddressFromIndex(currentIndex)
+      addresses.push(address)
+    }
+
+    return addresses
   }
 }

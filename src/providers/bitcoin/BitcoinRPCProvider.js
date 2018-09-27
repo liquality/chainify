@@ -1,3 +1,4 @@
+import { flatten } from 'lodash'
 import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
@@ -9,6 +10,26 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }
 
     return output
+  }
+
+  async isUsedAddress (address) {
+    const utxo = await this.getUnspentTransactions(address)
+
+    return utxo.length !== 0
+  }
+
+  async getBalance (addresses) {
+    const _utxos = await Promise.all(addresses.map(address => this.getUnspentTransactions(address)))
+    const utxos = flatten(_utxos)
+    return utxos.reduce((acc, utxo) => acc + (utxo.amount * 1e8), 0)
+  }
+
+  async getUnspentTransactions (address) {
+    return this.jsonrpc('listunspent', 6, 9999999, [ address ])
+  }
+
+  async getTransactionHex (transactionHash) {
+    return (await this.jsonrpc('gettransaction', transactionHash)).hex
   }
 
   async generateBlock (numberOfBlocks) {

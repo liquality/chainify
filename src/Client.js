@@ -132,7 +132,7 @@ export default class Client {
     return provider
   }
 
-  getMethod (method, requestor = this) {
+  getMethod (method, requestor) {
     const provider = this.getProviderForMethod(method, requestor)
     return provider[method].bind(provider)
   }
@@ -306,21 +306,19 @@ export default class Client {
 
   /**
    * Get the balance of an account given its addresses.
-   * @param {string[]} [addresses] - A list of addresses.
+   * @param {string|string[]} [addresses] - An address or a list of addresses.
    * @return {Promise<number, InvalidProviderResponseError>} If addresses is given,
    *  returns the cumulative balance of the given addresses. Otherwise returns the balance
    *  of the addresses that the signing provider controls.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async getBalance (addresses) {
-    if (addresses != null) {
-      if (!isArray(addresses)) {
-        throw new TypeError('Addresses should be an array')
-      }
+    if (!isArray(addresses)) {
+      addresses = [ addresses ]
+    }
 
-      if (!addresses.every(isString)) {
-        throw new TypeError('All addresses should be strings')
-      }
+    if (!addresses.every(isString)) {
+      throw new TypeError('All addresses should be strings')
     }
 
     const balance = await this.getMethod('getBalance')(addresses)
@@ -338,8 +336,8 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddresses (startingIndex, numAddresses, config) {
-    const addresses = await this.getMethod('getAddresses')(startingIndex, numAddresses, config)
+  async getAddresses (startingIndex = 0, numAddresses = 1) {
+    const addresses = await this.getMethod('getAddresses')(startingIndex, numAddresses)
 
     if (!isArray(addresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
@@ -354,14 +352,10 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddressTransactionCount (address) {
-    const transactionCount = await this.getMethod('getAddressTransactionCount')(address)
+  async isUsedAddress (address) {
+    const isUsed = await this.getMethod('isUsedAddress')(address)
 
-    if (!isNumber(transactionCount)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid response')
-    }
-
-    return transactionCount
+    return isUsed
   }
 
   /**
@@ -401,12 +395,8 @@ export default class Client {
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with a boolean.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async isAddressUsed () {
-    const provider = this.getProviderForMethod('isAddressUsed')
-
-    const isAddressUsed = await provider.isAddressUsed()
-
-    return isAddressUsed
+  async isAddressUsed (address) {
+    return this.getMethod('isAddressUsed')(address)
   }
 
   /**
@@ -415,8 +405,8 @@ export default class Client {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string, null>} Resolves with a signed message.
    */
-  async signMessage (message, from, derivationPath, config) {
-    const signedMessage = await this.getMethod('signMessage')(message, from, derivationPath, config)
+  async signMessage (message, from) {
+    const signedMessage = await this.getMethod('signMessage')(message, from)
 
     return signedMessage
   }
@@ -469,20 +459,7 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async decodeRawTransaction (rawTransaction) {
-    const provider = this.getProviderForMethod('decoderawtransaction')
-
-    return provider.decodeRawTransaction(rawTransaction)
-  }
-
-  /**
-   * Generate Swap.
-   * @param {!string} bytecode - Bytecode to be used for swap.
-   * @return {Promise<string, null>} Resolves with swap bytecode.
-   */
-  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
-    const provider = this.getProviderForMethod('generateSwap')
-
-    return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    return this.getMethod('decoderawtransaction')(rawTransaction)
   }
 
   async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
@@ -519,8 +496,15 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
-    const provider = this.getProviderForMethod('initiateSwap')
+    return this.getMethod('initiateSwap')(value, recipientAddress, refundAddress, secretHash, expiration)
+  }
 
+  /**
+   * Generate Swap.
+   * @param {!string} bytecode - Bytecode to be used for swap.
+   * @return {Promise<string, null>} Resolves with swap bytecode.
+   */
+  async generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
     if (!isString(recipientAddress)) {
       throw new TypeError('Recipient address should be a string')
     }
@@ -541,7 +525,7 @@ export default class Client {
       throw new TypeError('Invalid expiration time')
     }
 
-    return provider.initiateSwap(value, recipientAddress, refundAddress, secretHash, expiration)
+    return this.getMethod('generateSwap')(recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**
@@ -559,26 +543,6 @@ export default class Client {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    if (!isString(recipientAddress)) {
-      throw new TypeError('Recipient address should be a string')
-    }
-
-    if (!isString(recipientAddress)) {
-      throw new TypeError('Recipient address should be a string')
-    }
-
-    if (!isString(refundAddress)) {
-      throw new TypeError('Refund address should be a string')
-    }
-
-    if (!isString(secret)) {
-      throw new TypeError('Secret hash should be a string')
-    }
-
-    if (!isNumber(expiration)) {
-      throw new TypeError('Invalid expiration time')
-    }
-
     return provider.claimSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
   }
 
@@ -590,8 +554,6 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async refundSwap (pubKey = '', signature = '') {
-    const provider = this.getProviderForMethod('refundSwap')
-
     if (!isString(pubKey)) {
       throw new TypeError('PubKey should be a string')
     }
@@ -608,7 +570,7 @@ export default class Client {
       throw new TypeError('Signature should be a valid hex string')
     }
 
-    return provider.refundSwap(pubKey, signature)
+    return this.getMethod('refundSwap')(pubKey, signature)
   }
 
   /**
@@ -622,8 +584,6 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async checkBlockSwap (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
-    const provider = this.getProviderForMethod('checkBlockSwap')
-
-    return provider.checkBlockSwap(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
+    return this.getMethod('checkBlockSwap')(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
   }
 }
