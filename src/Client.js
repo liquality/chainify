@@ -353,9 +353,7 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async isUsedAddress (address) {
-    const isUsed = await this.getMethod('isUsedAddress')(address)
-
-    return isUsed
+    return this.getMethod('isUsedAddress')(address)
   }
 
   /**
