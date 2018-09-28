@@ -5,7 +5,7 @@ import Transport from '@ledgerhq/hw-transport-node-hid'
 import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
-import { addressToPubKeyHash } from './BitcoinUtil'
+import { addressToPubKeyHash, pubKeyToAddress } from './BitcoinUtil'
 
 import networks from '../../networks'
 
@@ -34,6 +34,10 @@ export default class BitcoinLedgerProvider extends Provider {
 
   async _getAddressDetails (address) {
     return (await axios.get(`${this._blockChainInfoBaseUrl}/balance?active=${address}&cors=true`)).data[address]
+  }
+
+  async _getPubKey () {
+    return this._ledgerBtc.getWalletPublicKey(this._derivationPath)
   }
 
   async _getUnspentTransactions (address) {
@@ -207,8 +211,27 @@ export default class BitcoinLedgerProvider extends Provider {
     await this._connectToLedger()
 
     const hex = Buffer.from(message).toString('hex')
+    const signObj = await this._ledgerBtc.signMessageNew(this._derivationPath, hex)
+    const v = signObj.v + 27 + 4
+    return Buffer.from(v.toString(16) + signObj.r + signObj.s, 'hex').toString('hex')
+  }
 
-    return this._ledgerBtc.signMessageNew(this._derivationPath, hex)
+  async _splitTransaction (transactionHex, isSegwitSupported) {
+    await this._connectToLedger()
+
+    return this._ledgerBtc.splitTransaction(transactionHex, isSegwitSupported)
+  }
+
+  async _serializeTransactionOutputs (transactionHex) {
+    await this._connectToLedger()
+
+    return this._ledgerBtc.serializeTransactionOutputs(transactionHex)
+  }
+
+  async _signP2SHTransaction (inputs, associatedKeysets, changePath, outputScriptHex) {
+    await this._connectToLedger()
+
+    return this._ledgerBtc.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
   }
 
   generateScript (address) {
@@ -266,7 +289,7 @@ export default class BitcoinLedgerProvider extends Provider {
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendScript = this._generateScript(to)
+    const sendScript = this.generateScript(to)
 
     let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
 

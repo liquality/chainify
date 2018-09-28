@@ -480,6 +480,17 @@ export default class Client {
   }
 
   /**
+   * Generate Swap.
+   * @param {!string} bytecode - Bytecode to be used for swap.
+   * @return {Promise<string, null>} Resolves with swap bytecode.
+   */
+  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
+    const provider = this.getProviderForMethod('generateSwap')
+
+    return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+  /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
    * @return {Promise<string, null>} Resolves with a secret.
@@ -534,7 +545,7 @@ export default class Client {
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     const provider = this.getProviderForMethod('claimSwap')
 
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
@@ -557,15 +568,11 @@ export default class Client {
       throw new TypeError('Secret hash should be a string')
     }
 
-    if (!(/^[A-Fa-f0-9]+$/.test(secret))) {
-      throw new TypeError('Secret hash should be a valid hex string')
-    }
-
     if (!isNumber(expiration)) {
       throw new TypeError('Invalid expiration time')
     }
 
-    return provider.claimSwap(initiationTxHash, value, recipientAddress, refundAddress, secret, expiration)
+    return provider.claimSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
   }
 
   /**
