@@ -79,7 +79,7 @@ export default class EthereumSwapProvider extends Provider {
     return this.getMethod('sendTransaction')(null, value, bytecode)
   }
 
-  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     const data = this.getRedeemSwapData(secret)
     return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, data)
@@ -101,6 +101,17 @@ export default class EthereumSwapProvider extends Provider {
       return this.getMethod('getTransactionByHash')(txid)
     }))
     const swapTx = transactions.find(transaction => transaction.input === data.toLowerCase())
+    return swapTx ? swapTx.hash : null
+  }
+
+  async getSwapConfirmTransaction (blockNumber, initiationTxHash, secretHash) {
+    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    const block = await this.getMethod('getBlockByNumber')(blockNumber)
+    const txids = block.transactions
+    const transactions = await Promise.all(txids.map(async txid => {
+      return this.getMethod('getTransactionByHash')(txid)
+    }))
+    const swapTx = transactions.find(transaction => transaction.to === initiationTransaction.contractAddress)
     return swapTx ? swapTx.hash : null
   }
 }
