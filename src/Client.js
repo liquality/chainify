@@ -490,6 +490,18 @@ export default class Client {
     return provider.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
   }
 
+  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+    const provider = this.getProviderForMethod('getSwapTransaction')
+
+    return provider.getSwapTransaction(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+  async getSwapConfirmTransaction (blockNumber, initiationTxHash, secretHash) {
+    const provider = this.getProviderForMethod('getSwapConfirmTransaction')
+
+    return provider.getSwapConfirmTransaction(blockNumber, initiationTxHash, secretHash)
+  }
+
   /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
