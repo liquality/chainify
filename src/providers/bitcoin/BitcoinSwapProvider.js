@@ -79,6 +79,7 @@ export default class BitcoinSwapProvider extends Provider {
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
     const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, rawClaimTxInput)
+    debugger
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
 
@@ -144,6 +145,20 @@ export default class BitcoinSwapProvider extends Provider {
       .reduce((acc, val) => acc.concat(val), [])
       .find(txKeys => txKeys.scriptPubKey.hex === sendScript)
     return swapTx ? swapTx.txid : null
+  }
+
+  async getSwapConfirmTransaction (blockNumber, initiationTxHash, secretHash) {
+    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    const transactions = block.transactions
+    const txs = await Promise.all(transactions.map(async transaction => {
+      return this.getMethod('decodeRawTransaction')(transaction)
+    }))
+    const swapTx  = txs
+      .reduce((acc, val) => acc.concat({ hash: val.hash, vin: val._raw.data.vin }), [])
+      .map(val => val.vin.map(vin => { return { hash: val.hash, vin: vin }}))
+      .flat()
+      .find(tx => tx.vin.txid === initiationTxHash)
+    return swapTx ? swapTx.hash : null
   }
 
   _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation
