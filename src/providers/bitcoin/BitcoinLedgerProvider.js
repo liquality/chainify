@@ -31,11 +31,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async signMessage (message, from) {
     const app = await this.getApp()
-    let derivationPath = from.derivationPath
-
-    if (!derivationPath) {
-      derivationPath = await this.getDerivationPathFromAddress(from)
-    }
+    const derivationPath = from.derivationPath ||
+      await this.getDerivationPathFromAddress(from)
 
     const hex = Buffer.from(message).toString('hex')
     return app.signMessageNew(derivationPath, hex)
@@ -48,10 +45,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     while (!unusedAddress) {
       const path = this.getDerivationPathFromIndex(addressIndex)
       const address = await this.getAddressFromDerivationPath(path)
-      const isUsed = await this.getMethod('isUsedAddress')(address.address)
+      const isUsed = await this.getMethod('isAddressUsed')(address.address)
+
       if (!isUsed) {
         unusedAddress = address
       }
+
       addressIndex++
     }
 
@@ -202,6 +201,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
 
-    return signedTransaction
+    return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 }

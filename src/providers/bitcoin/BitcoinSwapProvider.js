@@ -46,7 +46,7 @@ export default class BitcoinSwapProvider extends Provider {
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    return this.getMethod('createSignedTransaction')(p2shAddress, value, script)
+    return this.getMethod('sendTransaction')(p2shAddress, value, script)
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
@@ -79,6 +79,7 @@ export default class BitcoinSwapProvider extends Provider {
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
     const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, rawClaimTxInput)
+
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
 
