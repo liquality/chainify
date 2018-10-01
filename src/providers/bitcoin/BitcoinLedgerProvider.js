@@ -47,11 +47,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     while (!unusedAddress) {
       const path = this.getDerivationPathFromIndex(addressIndex)
-      const address = this.getAddressFromDerivationPath(path)
-      const isUsed = this.getMethod('isUsedAddress')(address.address)
+      const address = await this.getAddressFromDerivationPath(path)
+      const isUsed = await this.getMethod('isUsedAddress')(address.address)
       if (!isUsed) {
         unusedAddress = address
       }
+      addressIndex++
     }
 
     return unusedAddress
