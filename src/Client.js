@@ -359,6 +359,16 @@ export default class Client {
   }
 
   /**
+   * Get unused address/account of the user.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
+   *  object.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getUnusedAddress (from = {}) {
+    return this.getMethod('getUnusedAddress')(from)
+  }
+
+  /**
    * Sign a message.
    * @param {!string} message - Message to be signed.
    * @param {!string} from - The address from which the message is signed.
