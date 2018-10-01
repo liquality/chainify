@@ -53,10 +53,10 @@ export default class EthereumMetaMaskProvider extends Provider {
     return []
   }
 
-  async signMessage (message) {
+  async signMessage (message, from) {
+    from = String(from)
+
     const hex = Buffer.from(message).toString('hex')
-    const addresses = await this.getAddresses()
-    const from = addresses[0]
 
     return this._toMM('personal_sign', `0x${hex}`, `0x${from}`)
   }
@@ -65,10 +65,12 @@ export default class EthereumMetaMaskProvider extends Provider {
     if (to != null) {
       to = ensureHexEthFormat(to)
     }
+
     if (from == null) {
       const addresses = await this.getAddresses()
       from = ensureHexEthFormat(addresses[0])
     }
+
     value = BigNumber(value).toString(16)
 
     const tx = {

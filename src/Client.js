@@ -94,7 +94,7 @@ export default class Client {
   /**
    * Check the availability of a method.
    * @param {!string} method - Name of the method to look for in the provider stack
-   * @param {boolean} [requestor=false] - If provided, it returns providers only
+   * @param {boolean|object} [requestor=false] - If provided, it returns providers only
    *  above the requestor in the stack.
    * @return {Provider} Returns a provider instance associated with the requested method
    * @throws {NoProviderError} When no provider is available in the stack.
@@ -132,6 +132,13 @@ export default class Client {
     return provider
   }
 
+  /**
+   * Helper method that returns method from a provider.
+   * @param {!string} method - Name of the method to look for in the provider stack
+   * @param {object} [requestor] - If provided, it returns method from providers only
+   *  above the requestor in the stack.
+   * @return {function} Returns method from provider instance associated with the requested method
+   */
   getMethod (method, requestor) {
     const provider = this.getProviderForMethod(method, requestor)
     return provider[method].bind(provider)
@@ -306,7 +313,7 @@ export default class Client {
 
   /**
    * Get the balance of an account given its addresses.
-   * @param {string|string[]} [addresses] - An address or a list of addresses.
+   * @param {!string|string[]|Address|Address[]} addresses - An address or a list of addresses.
    * @return {Promise<number, InvalidProviderResponseError>} If addresses is given,
    *  returns the cumulative balance of the given addresses. Otherwise returns the balance
    *  of the addresses that the signing provider controls.
@@ -315,10 +322,6 @@ export default class Client {
   async getBalance (addresses) {
     if (!isArray(addresses)) {
       addresses = [ addresses ]
-    }
-
-    if (!addresses.every(isString)) {
-      throw new TypeError('All addresses should be strings')
     }
 
     const balance = await this.getMethod('getBalance')(addresses)
@@ -332,7 +335,7 @@ export default class Client {
 
   /**
    * Get addresses/accounts of the user.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
+   * @return {Promise<Address, InvalidProviderResponseError>} Resolves with a list
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
@@ -347,51 +350,9 @@ export default class Client {
   }
 
   /**
-   * Get addresses/accounts of the user.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
-   *  of accounts.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async isUsedAddress (address) {
-    return this.getMethod('isUsedAddress')(address)
-  }
-
-  /**
-   * Get used addresses/accounts of the user.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
-   *  of accounts.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getUsedAddresses (config) {
-    const usedAddresses = await this.getMethod('getUsedAddresses')(config)
-
-    if (!isArray(usedAddresses)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid response')
-    }
-
-    return usedAddresses
-  }
-
-  /**
-   * Get unused addresses/accounts of the user.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a list
-   *  of accounts.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getUnusedAddresses (config) {
-    const unusedAddresses = await this.getMethod('getUnusedAddresses')(config)
-
-    if (!isArray(unusedAddresses)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid response')
-    }
-
-    return unusedAddresses
-  }
-
-  /**
-   * Determine if address has as least one transaction broadcast.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a boolean.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   * Check if an address has been used or not.
+   * @param {!string|Address} addresses - An address to check for.
+   * @return {Promise<boolean>} Resolves to true if provided address is used
    */
   async isAddressUsed (address) {
     return this.getMethod('isAddressUsed')(address)
@@ -401,37 +362,26 @@ export default class Client {
    * Sign a message.
    * @param {!string} message - Message to be signed.
    * @param {!string} from - The address from which the message is signed.
-   * @return {Promise<string, null>} Resolves with a signed message.
+   * @return {Promise<string>} Resolves with a signed message.
    */
   async signMessage (message, from) {
-    const signedMessage = await this.getMethod('signMessage')(message, from)
-
-    return signedMessage
+    return this.getMethod('signMessage')(message, from)
   }
 
   /**
-   * Send a transaction to the chain
-   * @param {string} to - The address identifier for the receiver.
-   * @param {!number} value - Number representing the amount associated with.
-   *  the transaction.
-   * @param {!string} [data] - Optional data to send with the transaction.
-   * @param {!string} [from] - Optional address identifier for the sender.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an identifier for
-   *  the broadcasted transaction.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   * Create, sign & broadcast a transaction.
+   * @param {!string} to - Recepient address.
+   * @param {!string} value - Value of transaction.
+   * @param {!string} data - Data to be passed to the transaction.
+   * @param {!string} from - The address from which the message is signed.
+   * @return {Promise<string>} Resolves with a signed transaction.
    */
   async sendTransaction (to, value, data, from) {
-    const txHash = await this.getMethod('sendTransaction')(to, value, data, from)
-
-    if (!isString(txHash)) {
-      throw new InvalidProviderResponseError('sendTransaction method should return a transaction id string')
-    }
-
-    return txHash
+    return this.getMethod('sendTransaction')(to, value, data, from)
   }
 
   /**
-   * Broadcast a transaction to the network using it's raw seriealized transaction.
+   * Broadcast a signed transaction to the network.
    * @param {!string} rawTransaction - A raw transaction usually in the form of a
    *  hexadecimal string that represents the serialized transaction.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with an
@@ -452,7 +402,7 @@ export default class Client {
    * Decode Transaction from Hex
    * @param {!string} rawTransaction - A raw transaction usually in the form of a
    *  hexadecimal string that represents the serialized transaction.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an
+   * @return {Promise<string>} Resolves with an
    *  decoded transaction object.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
@@ -460,22 +410,33 @@ export default class Client {
     return this.getMethod('decoderawtransaction')(rawTransaction)
   }
 
+  /**
+   * Find swap transaction from parameters
+   * @param {!string} blockNumber - Block number in which transaction was mined
+   * @param {!string} recipientAddress - Recepient address
+   * @param {!string} refundAddress - Refund address
+   * @param {!string} expiration - Expiration time
+   * @return {Promise<string>} Resolves with a transaction identifier.
+   */
   async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
-    const provider = this.getProviderForMethod('getSwapTransaction')
-
-    return provider.getSwapTransaction(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
+    return this.getMethod('getSwapTransaction')(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
   }
 
+  /**
+   * Find swap confirmation transaction from parameters
+   * @param {!string} blockNumber - Block number in which transaction was mined
+   * @param {!string} initiationTxHash - Swap initiation transaction hash/identifier
+   * @param {!string} secretHash - Secret hash
+   * @return {Promise<string>} Resolves with a transaction identifier.
+   */
   async getSwapConfirmTransaction (blockNumber, initiationTxHash, secretHash) {
-    const provider = this.getProviderForMethod('getSwapConfirmTransaction')
-
-    return provider.getSwapConfirmTransaction(blockNumber, initiationTxHash, secretHash)
+    return this.getMethod('getSwapConfirmTransaction')(blockNumber, initiationTxHash, secretHash)
   }
 
   /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
-   * @return {Promise<string, null>} Resolves with a secret.
+   * @return {Promise<string>} Resolves with secret
    */
   async generateSecret (message) {
     const unusedAddress = await this.getMethod('getUnusedAddress')()
@@ -499,11 +460,11 @@ export default class Client {
   }
 
   /**
-   * Generate Swap.
+   * Create swap script.
    * @param {!string} bytecode - Bytecode to be used for swap.
    * @return {Promise<string, null>} Resolves with swap bytecode.
    */
-  async generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
+  async createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     if (!isString(recipientAddress)) {
       throw new TypeError('Recipient address should be a string')
     }
@@ -524,7 +485,7 @@ export default class Client {
       throw new TypeError('Invalid expiration time')
     }
 
-    return this.getMethod('generateSwap')(recipientAddress, refundAddress, secretHash, expiration)
+    return this.getMethod('createSwapScript')(recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**
@@ -536,13 +497,11 @@ export default class Client {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
-    const provider = this.getProviderForMethod('claimSwap')
-
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    return provider.claimSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
+    return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
   }
 
   /**

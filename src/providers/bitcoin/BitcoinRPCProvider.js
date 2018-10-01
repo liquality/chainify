@@ -12,13 +12,17 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return output
   }
 
-  async isUsedAddress (address) {
+  async isAddressUsed (address) {
+    address = String(address)
     const utxo = await this.getUnspentTransactions(address)
 
     return utxo.length !== 0
   }
 
   async getBalance (addresses) {
+    addresses = addresses
+      .map(address => String(address))
+
     const _utxos = await Promise.all(addresses.map(address => this.getUnspentTransactions(address)))
     const utxos = flatten(_utxos)
     return utxos.reduce((acc, utxo) => acc + (utxo.amount * 1e8), 0)
@@ -38,14 +42,16 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async getBlockByHash (blockHash, includeTx) {
     const data = await this.jsonrpc('getblock', blockHash)
-    const { hash,
+    const {
+      hash,
       height: number,
       time: timestamp,
       difficulty,
       size,
       previousblockhash: parentHash,
       nonce,
-      confirmations } = data
+      confirmations
+    } = data
     let { tx: transactions } = data
 
     if (includeTx) {
@@ -53,7 +59,8 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
       transactions = await Promise.all(txs)
     }
 
-    return { hash,
+    return {
+      hash,
       number,
       timestamp,
       difficulty,
@@ -61,7 +68,8 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
       parentHash,
       nonce,
       transactions,
-      confirmations }
+      confirmations
+    }
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
@@ -96,12 +104,6 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async getRawTransactionByHash (transactionHash) {
     return this.jsonrpc('getrawtransaction', transactionHash)
-  }
-
-  async isAddressUsed (address) {
-    const getReceivedByAddress = this.rpc('getreceivedbyaddress', address)
-
-    return parseFloat(getReceivedByAddress) > 0
   }
 
   async sendRawTransaction (rawTransaction) {

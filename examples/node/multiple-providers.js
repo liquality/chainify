@@ -24,5 +24,9 @@ client.addProvider(new X())
   .addProvider(new Z())
 
 ;(async () => {
-  console.log(await client.signMessage('hello world'))
+  try {
+    console.log(await client.signMessage('hello world'))
+  } catch (e) {
+    console.error(e)
+  }
 })()

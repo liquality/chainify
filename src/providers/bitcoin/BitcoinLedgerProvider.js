@@ -8,26 +8,17 @@ import Address from '../../Address'
 import networks from '../../networks'
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
-  /**
-   * @param {boolean} testnet True if the testnet network is being used
-   */
   constructor (chain = { network: networks.bitcoin, segwit: true }) {
     super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/0/`)
     this._network = chain.network
     this._segwit = chain.segwit
-    this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
-    this._basePath = `${this._segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
-    this._unusedAddressCountdown = 10
   }
 
-  async _getPubKey (from) {
+  async getPubKey (from) {
     const app = await this.getApp()
-    let derivationPath = from.derivationPath
-
-    if (!derivationPath) {
-      derivationPath = await this.getDerivationPathFromAddress(from)
-    }
+    const derivationPath = from.derivationPath ||
+      await this.getDerivationPathFromAddress(from)
 
     return app.getWalletPublicKey(derivationPath)
   }
@@ -40,11 +31,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async signMessage (message, from) {
     const app = await this.getApp()
-    let derivationPath = from.derivationPath
-
-    if (!derivationPath) {
-      derivationPath = await this.getDerivationPathFromAddress(from)
-    }
+    const derivationPath = from.derivationPath ||
+      await this.getDerivationPathFromAddress(from)
 
     const hex = Buffer.from(message).toString('hex')
     return app.signMessageNew(derivationPath, hex)
@@ -57,10 +45,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     while (!unusedAddress) {
       const path = this.getDerivationPathFromIndex(addressIndex)
       const address = await this.getAddressFromDerivationPath(path)
-      const isUsed = await this.getMethod('isUsedAddress')(address.address)
+      const isUsed = await this.getMethod('isAddressUsed')(address.address)
+
       if (!isUsed) {
         unusedAddress = address
       }
+
       addressIndex++
     }
 
@@ -74,25 +64,25 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return valueBuffer.reverse()
   }
 
-  async _splitTransaction (transactionHex, isSegwitSupported) {
+  async splitTransaction (transactionHex, isSegwitSupported) {
     const app = await this.getApp()
 
     return app.splitTransaction(transactionHex, isSegwitSupported)
   }
 
-  async _serializeTransactionOutputs (transactionHex) {
+  async serializeTransactionOutputs (transactionHex) {
     const app = await this.getApp()
 
     return app.serializeTransactionOutputs(transactionHex)
   }
 
-  async _signP2SHTransaction (inputs, associatedKeysets, changePath, outputScriptHex) {
+  async signP2SHTransaction (inputs, associatedKeysets, changePath, outputScriptHex) {
     const app = await this.getApp()
 
     return app.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
   }
 
-  generateScript (address) {
+  createScript (address) {
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
 
@@ -121,13 +111,13 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
 
-  async getUtxosForAmount (amount, feePerByte = 3) {
+  async getUtxosForAmount (amount, feePerByte = 3, maxAddresses = 20) {
+    const utxosToUse = []
     let addressIndex = 0
     let currentAmount = 0
     let numOutputsOffset = 0
-    const utxosToUse = []
 
-    while (currentAmount < amount) {
+    while ((currentAmount < amount) && maxAddresses > 0) {
       const path = this.getDerivationPathFromIndex(addressIndex)
       const address = await this.getAddressFromDerivationPath(path)
       const utxos = await this.getMethod('getUnspentTransactions')(address.address)
@@ -149,6 +139,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       })
 
       addressIndex++
+      maxAddresses--
     }
 
     return utxosToUse
@@ -165,7 +156,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }))
   }
 
-  async createSignedTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data, from) {
     const app = await this.getApp()
 
     if (data) {
@@ -198,18 +189,18 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendScript = this.generateScript(to)
+    const sendScript = this.createScript(to)
 
     let outputs = [{ amount: this.getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
 
     if (hasChange) {
-      const changeScript = this.generateScript(unusedAddress.address)
+      const changeScript = this.createScript(unusedAddress.address)
       outputs.push({ amount: this.getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
     }
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
 
-    return signedTransaction
+    return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 }

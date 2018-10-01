@@ -38,6 +38,9 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBalance (addresses) {
+    addresses = addresses
+      .map(address => String(address))
+
     const addrs = addresses.map(ensureHexEthFormat)
     const promiseBalances = await Promise.all(addrs.map(address => this.rpc('eth_getBalance', address, 'latest')))
     return promiseBalances.map(balance => parseInt(balance, 16))
@@ -45,6 +48,8 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async isAddressUsed (address) {
+    address = String(address)
+
     const transactionCount = this.rpc('getTransactionCount', address)
 
     return transactionCount > 0

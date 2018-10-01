@@ -12,7 +12,7 @@ const lib = new EthereumSwapProvider()
 describe('Ethereum Swap provider', () => {
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.generateSwap('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+      return expect(lib.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
         '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
         '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
         255))
@@ -20,7 +20,7 @@ describe('Ethereum Swap provider', () => {
     })
 
     it('should generate correct bytecode with different expiration length', () => {
-      return expect(lib.generateSwap('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+      return expect(lib.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
         '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
         '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
         6016519))

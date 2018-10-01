@@ -8,7 +8,8 @@ export default class BitcoinBlockchainAPIProvider extends ApiProvider {
     super(chain.network.explorerUrl)
   }
 
-  async isUsedAddress (address) {
+  async isAddressUsed (address) {
+    address = String(address)
     let txCount = 0
 
     const obj = (await this.apiGet('/balance', { active: address, cors: true }))[address]
@@ -19,7 +20,9 @@ export default class BitcoinBlockchainAPIProvider extends ApiProvider {
   }
 
   async getBalance (addresses) {
-    addresses = addresses.join('|')
+    addresses = addresses
+      .map(address => String(address))
+      .join('|')
 
     let balance = 0
     const obj = (await this.apiGet('/balance', { active: addresses, cors: true }))
