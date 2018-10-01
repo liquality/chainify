@@ -1,5 +1,5 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash, compressPubKey, pubKeyToAddress } from './BitcoinUtil'
+import { addressToPubKeyHash, compressPubKey, pubKeyToAddress, reverseBuffer } from './BitcoinUtil'
 import { sha256, padHexStart } from '../../crypto'
 import networks from '../../networks'
 
@@ -73,7 +73,7 @@ export default class BitcoinSwapProvider extends Provider {
       outputScript
     )
 
-    const pubKeyInfo = await this.getMethod('_getPubKey')()
+    const pubKeyInfo = await this.getMethod('_getPubKey')(recipientAddress)
     const pubKey = compressPubKey(pubKeyInfo.publicKey)
     const spendSwap = this._spendSwap(signature[0], pubKey, true, secret)
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
@@ -160,10 +160,6 @@ export default class BitcoinSwapProvider extends Provider {
     return swapTx ? swapTx.hash : null
   }
 
-  _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation
-    return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte
-  }
-
   generateSigTxInput (txHashLE, voutIndex, script) {
     const inputTxOutput = padHexStart(voutIndex.toString(16), 8)
     const scriptLength = padHexStart((script.length / 2).toString(16))
@@ -193,8 +189,8 @@ export default class BitcoinSwapProvider extends Provider {
 
   generateRawTx (initiationTx, voutIndex, address, input) {
     const output = initiationTx.outputs[voutIndex]
-    const value = parseInt(output.amount.toString('hex'), 16)
-    const fee = this.getMethod('_getFee')(1, 1, 3)
+    const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
+    const fee = this.getMethod('calculateFee')(1, 1, 3)
     const amount = value - fee
     const amountLE = Buffer.from(padHexStart(amount.toString(16), 16), 'hex').reverse().toString('hex') // amount in little endian
     const pubKeyHash = addressToPubKeyHash(address)

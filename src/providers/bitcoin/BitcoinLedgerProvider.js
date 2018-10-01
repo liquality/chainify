@@ -21,9 +21,15 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     this._unusedAddressCountdown = 10
   }
 
-  async _getPubKey () {
+  async _getPubKey (from) {
     const app = await this.getApp()
-    return app.getWalletPublicKey(this._derivationPath)
+    let derivationPath = from.derivationPath
+
+    if (!derivationPath) {
+      derivationPath = await this.getDerivationPathFromAddress(from)
+    }
+
+    return app.getWalletPublicKey(derivationPath)
   }
 
   async getAddressFromDerivationPath (path) {
@@ -50,11 +56,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     while (!unusedAddress) {
       const path = this.getDerivationPathFromIndex(addressIndex)
-      const address = this.getAddressFromDerivationPath(path)
-      const isUsed = this.getMethod('isUsedAddress')(address.address)
+      const address = await this.getAddressFromDerivationPath(path)
+      const isUsed = await this.getMethod('isUsedAddress')(address.address)
       if (!isUsed) {
         unusedAddress = address
       }
+      addressIndex++
     }
 
     return unusedAddress
@@ -151,10 +158,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const app = await this.getApp()
 
     return Promise.all(unspentOutputs.map(async utxo => {
-      const hex = await app.getMethod('getTransactionHex')(utxo.tx_hash_big_endian)
+      const hex = await this.getMethod('getTransactionHex')(utxo.txid)
       const tx = app.splitTransaction(hex, true)
 
-      return [ tx, utxo.tx_output_n ]
+      return [ tx, utxo.vout ]
     }))
   }
 
@@ -166,10 +173,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
 
-    const unusedAddress = this.getUnusedAddress(from)
-    const unspentOutputsToUse = this.getUtxosForAmount(value)
+    const unusedAddress = await this.getUnusedAddress(from)
+    const unspentOutputsToUse = await this.getUtxosForAmount(value)
 
-    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
+    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.amount * 1e8, 0)
     const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
     let totalCost = value + fee
     let hasChange = false

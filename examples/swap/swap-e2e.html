@@ -88,13 +88,14 @@
     }
 
     function initiateSwap (client, prefix) {
-      var swapBytecode = client.generateSwap(
+      client.generateSwap(
         $(`#${prefix}RecipientAddress`).val(),
         $(`#${prefix}RefundAddress`).val(),
         $(`#${prefix}SecretHash`).val(),
         parseInt($(`#${prefix}Expiration`).val())
-      )
-      $(`#${prefix}SwapBytecode`).text(swapBytecode)
+      ).then(result => {
+        $(`#${prefix}SwapBytecode`).text(result)
+      })
 
       client.initiateSwap(
         parseInt($(`#${prefix}FundValue`).val()),

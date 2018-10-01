@@ -58,9 +58,21 @@ function addressToPubKeyHash (address) {
   return base58.decode(address).toString('hex').substring(2, 42)
 }
 
+function reverseBuffer (src) {
+  let buffer = Buffer.alloc(src.length)
+
+  for (let i = 0, j = src.length - 1; i <= j; ++i, --j) {
+    buffer[i] = src[j]
+    buffer[j] = src[i]
+  }
+
+  return buffer
+}
+
 export {
   compressPubKey,
   pubKeyToAddress,
   pubKeyHashToAddress,
-  addressToPubKeyHash
+  addressToPubKeyHash,
+  reverseBuffer
 }

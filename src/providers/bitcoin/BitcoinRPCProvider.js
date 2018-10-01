@@ -25,7 +25,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getUnspentTransactions (address) {
-    return this.jsonrpc('listunspent', 6, 9999999, [ address ])
+    return this.jsonrpc('listunspent', 0, 9999999, [ address ])
   }
 
   async getTransactionHex (transactionHash) {

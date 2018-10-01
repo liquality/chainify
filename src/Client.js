@@ -478,7 +478,8 @@ export default class Client {
    * @return {Promise<string, null>} Resolves with a secret.
    */
   async generateSecret (message) {
-    const signedMessage = await this.signMessage(message)
+    const unusedAddress = await this.getMethod('getUnusedAddress')()
+    const signedMessage = await this.signMessage(message, unusedAddress)
     const secret = sha256(signedMessage)
     return secret
   }
