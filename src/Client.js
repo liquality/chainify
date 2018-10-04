@@ -456,6 +456,15 @@ export default class Client {
   }
 
   /**
+   * Get secret from claim transaction hash.
+   * @param {!string} transaction hash - transaction hash of claim.
+   * @return {Promise<string>} Resolves with secret
+   */
+  async getSecret (claimTxHash) {
+    return this.getMethod('getSecret')(claimTxHash)
+  }
+
+  /**
    * Initiate a swap
    * @param {!number} value - The amount of native value to lock for the swap.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.

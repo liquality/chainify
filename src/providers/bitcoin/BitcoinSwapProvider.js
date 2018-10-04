@@ -161,6 +161,15 @@ export default class BitcoinSwapProvider extends Provider {
     return swapTx ? swapTx.hash : null
   }
 
+  async getSecret (claimTxHash) {
+    const claimTxRaw = await this.getMethod('getRawTransactionByHash')(claimTxHash)
+    const claimTx = await this.getMethod('decodeRawTransaction')(claimTxRaw)
+    const script = Buffer.from(claimTx._raw.data.vin[0].scriptSig.hex, 'hex')
+    const sigLength = script[0]
+    const secretLength = script.slice(sigLength + 1)[0]
+    return script.slice(sigLength + 2, sigLength + secretLength + 2).toString('hex')
+  }
+
   generateSigTxInput (txHashLE, voutIndex, script) {
     const inputTxOutput = padHexStart(voutIndex.toString(16), 8)
     const scriptLength = padHexStart((script.length / 2).toString(16))
