@@ -77,7 +77,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockHeight () {
-    return this.rpc('getblockcount')
+    return this.jsonrpc('getblockcount')
   }
 
   async getTransactionByHash (transactionHash) {
