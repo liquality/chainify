@@ -5,5 +5,11 @@ const ethereum = new Client()
 ethereum.addProvider(new EthereumLedgerProvider())
 
 ;(async () => {
-  console.log(await ethereum.signMessage('hello world'))
+  try {
+    const [ address ] = await ethereum.getAddresses(0, 1)
+    console.log(address)
+    console.log(await ethereum.signMessage('hello world', address))
+  } catch (e) {
+    console.log(e)
+  }
 })()

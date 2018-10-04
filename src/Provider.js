@@ -14,7 +14,6 @@ export default class Provider {
    *  in the stack.
    */
   getMethod (method) {
-    const provider = this.client.getProviderForMethod(method, this)
-    return provider[method].bind(provider)
+    return this.client.getMethod(method, this).bind(this)
   }
 }

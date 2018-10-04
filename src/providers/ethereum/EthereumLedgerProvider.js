@@ -1,42 +1,26 @@
-import Provider from '../../Provider'
+import Ethereum from '@ledgerhq/hw-app-eth'
 
-import Transport from '@ledgerhq/hw-transport-node-hid'
-import LedgerEth from '@ledgerhq/hw-app-eth'
-
+import LedgerProvider from '../LedgerProvider'
 import networks from '../../networks'
+import Address from '../../Address'
 
-export default class EthereumLedgerProvider extends Provider {
+export default class EthereumLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.ethereum }) {
-    super()
-    this._ledgerEth = false
-    this._coinType = chain.network.coinType
-    this._derivationPath = `44'/${this._coinType}'/0'/0'/0`
+    super(Ethereum, `44'/${chain.network.coinType}'/0'/0/`)
   }
 
-  async _connectToLedger () {
-    if (!this._ledgerEth) {
-      const transport = await Transport.create()
-      this._ledgerEth = new LedgerEth(transport)
-    }
+  async getAddressFromDerivationPath (path) {
+    const app = await this.getApp()
+    const { address } = await app.getAddress(path)
+    return new Address(address, path)
   }
 
-  async _updateDerivationPath (path) {
-    this._derivationPath = path
-  }
-
-  async getAddresses () {
-    await this._connectToLedger()
-
-    const { address } = await this._ledgerEth.getAddress(this._derivationPath)
-
-    return [ address ]
-  }
-
-  async signMessage (message) {
-    await this._connectToLedger()
+  async signMessage (message, from) {
+    const app = await this.getApp()
+    const derivationPath = from.derivationPath ||
+      await this.getDerivationPathFromAddress(from)
 
     const hex = Buffer.from(message).toString('hex')
-
-    return this._ledgerEth.signPersonalMessage(this._derivationPath, hex)
+    return app.signPersonalMessage(derivationPath, hex)
   }
 }

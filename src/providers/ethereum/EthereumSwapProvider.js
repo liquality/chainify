@@ -3,7 +3,7 @@ import { padHexStart } from '../../crypto'
 import { ensureHexStandardFormat } from './EthereumUtil'
 
 export default class EthereumSwapProvider extends Provider {
-  generateSwap (recipientAddress, refundAddress, secretHash, expiration) {
+  createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     const dataSizeBase = 112
     const redeemDestinationBase = 66
     const refundDestinationBase = 89
@@ -75,7 +75,7 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
-    const bytecode = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     return this.getMethod('sendTransaction')(null, value, bytecode)
   }
 
@@ -94,7 +94,7 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
-    const data = this.generateSwap(recipientAddress, refundAddress, secretHash, expiration)
+    const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const block = await this.getMethod('getBlockByNumber')(blockNumber)
     const txids = block.transactions
     const transactions = await Promise.all(txids.map(async txid => {

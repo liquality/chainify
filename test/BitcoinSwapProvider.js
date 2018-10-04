@@ -12,7 +12,7 @@ const lib = new BitcoinSwapProvider()
 describe('Bitcoin Swap provider', () => {
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.generateSwap('1J7eFp9p48g3U3yCREyhd6LJzhnkywhi5s',
+      return expect(lib.createSwapScript('1J7eFp9p48g3U3yCREyhd6LJzhnkywhi5s',
         '1GZQKjsC97yasxRj1wtYf5rC61AxpR1zmr',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         1532622116403))

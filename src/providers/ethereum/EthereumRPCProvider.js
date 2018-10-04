@@ -10,7 +10,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getAddresses () {
-    return this.rpc('eth_accounts')
+    return this.jsonrpc('eth_accounts')
   }
 
   async generateBlock (numberOfBlocks) {
@@ -19,33 +19,38 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this.rpc('eth_getBlockByNumber', blockNumber, includeTx)
+    return this.jsonrpc('eth_getBlockByNumber', blockNumber, includeTx)
   }
 
   async getBlockHeight () {
-    const hexHeight = await this.rpc('eth_blockNumber')
+    const hexHeight = await this.jsonrpc('eth_blockNumber')
     return parseInt(hexHeight, '16')
   }
 
   async getTransactionByHash (txHash) {
     txHash = ensureHexEthFormat(txHash)
-    return this.rpc('eth_getTransactionByHash', txHash)
+    return this.jsonrpc('eth_getTransactionByHash', txHash)
   }
 
   async getTransactionReceipt (txHash) {
     txHash = ensureHexEthFormat(txHash)
-    return this.rpc('eth_getTransactionReceipt', txHash)
+    return this.jsonrpc('eth_getTransactionReceipt', txHash)
   }
 
   async getBalance (addresses) {
+    addresses = addresses
+      .map(address => String(address))
+
     const addrs = addresses.map(ensureHexEthFormat)
-    const promiseBalances = await Promise.all(addrs.map(address => this.rpc('eth_getBalance', address, 'latest')))
+    const promiseBalances = await Promise.all(addrs.map(address => this.jsonrpc('eth_getBalance', address, 'latest')))
     return promiseBalances.map(balance => parseInt(balance, 16))
       .reduce((acc, balance) => acc + balance, 0)
   }
 
   async isAddressUsed (address) {
-    const transactionCount = this.rpc('getTransactionCount', address)
+    address = String(address)
+
+    const transactionCount = this.jsonrpc('getTransactionCount', address)
 
     return transactionCount > 0
   }

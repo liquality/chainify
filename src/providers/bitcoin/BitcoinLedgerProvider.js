@@ -1,240 +1,88 @@
-import Provider from '../../Provider'
+import LedgerProvider from '../LedgerProvider'
+import Bitcoin from '@ledgerhq/hw-app-btc'
 
-import axios from 'axios'
-import Transport from '@ledgerhq/hw-transport-node-hid'
-import LedgerBtc from '@ledgerhq/hw-app-btc'
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
-import { addressToPubKeyHash, pubKeyToAddress } from './BitcoinUtil'
-
+import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
+import Address from '../../Address'
 import networks from '../../networks'
 
-// TODO: Abstract out non signing methods into another provider?
-export default class BitcoinLedgerProvider extends Provider {
-  /**
-   * @param {boolean} testnet True if the testnet network is being used
-   */
-  constructor (chain = { network: networks.bitcoin, segwit: false }) {
-    super()
-    this._ledgerBtc = false
+export default class BitcoinLedgerProvider extends LedgerProvider {
+  constructor (chain = { network: networks.bitcoin, segwit: true }) {
+    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/0/`)
     this._network = chain.network
     this._segwit = chain.segwit
-    this._blockChainInfoBaseUrl = chain.network.explorerUrl
     this._coinType = chain.network.coinType
-    this._derivationPath = `44'/${this._coinType}'/0'/0/0`
-    this._unusedAddressCountdown = 10
   }
 
-  async _connectToLedger () {
-    if (!this._ledgerBtc) {
-      const transport = await Transport.create()
-      this._ledgerBtc = new LedgerBtc(transport)
-    }
+  async getPubKey (from) {
+    const app = await this.getApp()
+    const derivationPath = from.derivationPath ||
+      await this.getDerivationPathFromAddress(from)
+
+    return app.getWalletPublicKey(derivationPath)
   }
 
-  async _getAddressDetails (address) {
-    return (await axios.get(`${this._blockChainInfoBaseUrl}/balance?active=${address}&cors=true`)).data[address]
+  async getAddressFromDerivationPath (path) {
+    const app = await this.getApp()
+    const { bitcoinAddress } = await app.getWalletPublicKey(path, false, this._segwit)
+    return new Address(bitcoinAddress, path)
   }
 
-  async _getPubKey () {
-    return this._ledgerBtc.getWalletPublicKey(this._derivationPath)
+  async signMessage (message, from) {
+    const app = await this.getApp()
+    const derivationPath = from.derivationPath ||
+      await this.getDerivationPathFromAddress(from)
+
+    const hex = Buffer.from(message).toString('hex')
+    return app.signMessageNew(derivationPath, hex)
   }
 
-  async _getUnspentTransactions (address) {
-    try {
-      const result = (await axios.get(`${this._blockChainInfoBaseUrl}/unspent?active=${address}&cors=true`)).data.unspent_outputs
-      return result.filter(utxo => utxo.confirmations > 0)
-    } catch (e) {
-      return []
-    }
-  }
+  async getUnusedAddress (from = {}) {
+    let addressIndex = from.index || 0
+    let unusedAddress = false
 
-  async _getTransactionHex (transactionHash) {
-    return (await axios.get(`${this._blockChainInfoBaseUrl}/rawtx/${transactionHash}?format=hex&cors=true`)).data
-  }
+    while (!unusedAddress) {
+      const path = this.getDerivationPathFromIndex(addressIndex)
+      const address = await this.getAddressFromDerivationPath(path)
+      const isUsed = await this.getMethod('isAddressUsed')(address.address)
 
-  async _getAddresses () {
-    const pathBase = `${this._segwit ? '49' : '44'}'/${this._coinType}'/0'/0/`
-    let usedAddresses = []
-    let unusedAddresses = []
-    let addressIndex = 0
-    let unusedAddressCountdown = this._unusedAddressCountdown
-    while (unusedAddressCountdown > 0) {
-      const path = pathBase + addressIndex
-      const address = {
-        address: (await this._ledgerBtc.getWalletPublicKey(path, false, this._segwit)).bitcoinAddress,
-        path
-      }
-      const addressDetails = await this._getAddressDetails(address.address)
-      if (addressDetails.n_tx > 0) {
-        usedAddresses.push(address)
-        unusedAddressCountdown = this._unusedAddressCountdown
-      } else {
-        unusedAddresses.push(address)
-        --unusedAddressCountdown
-      }
-      ++addressIndex
-    }
-
-    return {
-      unusedAddresses,
-      usedAddresses
-    }
-  }
-
-  async _getSpendingDetails (addresses) {
-    return Promise.all(addresses.map(async address => {
-      const utxos = (await this._getUnspentTransactions(address.address)).map(utxo => ({
-        ...utxo,
-        ...address
-      }))
-      return {
-        ...address,
-        utxos,
-        value: utxos.reduce((acc, utxo) => acc + utxo.value, 0)
-      }
-    }))
-  }
-
-  _getFee (numInputs, numOutputs, pricePerByte) { // TODO: lazy fee estimation
-    return ((numInputs * 148) + (numOutputs * 34) + 10) * pricePerByte
-  }
-
-  _getUnspentOutputsForAmount (unspentOutputs, amount, numOutputs) {
-    let unspentOutputsToUse = []
-    let amountAccumulated = 0
-    let numOutputsOffset = 0
-    unspentOutputs.every((utxo) => {
-      amountAccumulated += utxo.value
-      unspentOutputsToUse.push(utxo)
-
-      const fees = this._getFee(unspentOutputsToUse.length, numOutputs + numOutputsOffset, 3) // TODO: hardcoded satoshi per byte
-      let totalCost = amount + fees
-
-      if (numOutputsOffset === 0 && amountAccumulated > totalCost) {
-        numOutputsOffset = 1
-        totalCost -= fees
-        totalCost += this._getFee(unspentOutputsToUse.length, numOutputs + 1, 3) // TODO: hardcoded satoshi per byte
+      if (!isUsed) {
+        unusedAddress = address
       }
 
-      return amountAccumulated < totalCost
-    })
-    return unspentOutputsToUse
+      addressIndex++
+    }
+
+    return unusedAddress
   }
 
-  async _getLedgerInputs (unspentOutputs) {
-    const ledgerInputs = unspentOutputs.map(async utxo => {
-      const transactionHex = await this._getTransactionHex(utxo.tx_hash_big_endian)
-      const tx = await this._ledgerBtc.splitTransaction(transactionHex, true)
-      return [tx, utxo.tx_output_n]
-    })
-    return Promise.all(ledgerInputs)
-  }
-
-  _getAmountBuffer (amount) {
-    // let hexAmount = BigNumber(amount).toString(16)
-    // if (hexAmount.length % 2 === 1) { // Pad with 0 if required
-    //   hexAmount = '0' + hexAmount
-    // }
-    // const valueBuffer = Buffer.from(hexAmount, 'hex')
-    // const buffer = Buffer.alloc(8)
-    // valueBuffer.copy(buffer, 8 - valueBuffer.length) // Pad to 8 bytes
-    // return buffer.reverse() // Amount needs to be little endian
-
+  getAmountBuffer (amount) {
     let hexAmount = BigNumber(amount).toString(16)
     hexAmount = padHexStart(hexAmount, 16)
     const valueBuffer = Buffer.from(hexAmount, 'hex')
     return valueBuffer.reverse()
   }
 
-  async _getBalance (addresses) {
-    const addrs = addresses.map(address => ({ address }))
-    const spendingDetails = await this._getSpendingDetails(addrs)
-    return spendingDetails.reduce((acc, detail) => acc + detail.value, 0)
+  async splitTransaction (transactionHex, isSegwitSupported) {
+    const app = await this.getApp()
+
+    return app.splitTransaction(transactionHex, isSegwitSupported)
   }
 
-  async getBalance (addresses, startingIndex, numAddresses) {
-    let addrs = addresses
-    if (addrs == null) {
-      await this._connectToLedger()
-      const usedAddresses = await this.getUsedAddresses()
-      addrs = usedAddresses
-    }
+  async serializeTransactionOutputs (transactionHex) {
+    const app = await this.getApp()
 
-    return this._getBalance(addrs)
+    return app.serializeTransactionOutputs(transactionHex)
   }
 
-  async getAddresses (startingIndex = 0, numAddresses) {
-    await this._connectToLedger()
+  async signP2SHTransaction (inputs, associatedKeysets, changePath, outputScriptHex) {
+    const app = await this.getApp()
 
-    const { unusedAddresses, usedAddresses } = await this._getAddresses()
-    const addresses = [
-      ...unusedAddresses,
-      ...usedAddresses
-    ]
-    let filteredAddresses = addresses
-      .map(detail => detail.address)
-      .filter((address, index) => index >= startingIndex)
-    if (numAddresses) {
-      filteredAddresses = filteredAddresses.filter((address, index) => index < numAddresses)
-    }
-    return filteredAddresses
+    return app.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
   }
 
-  async getUsedAddresses (startingIndex = 0, numAddresses) {
-    await this._connectToLedger()
-
-    const { usedAddresses } = await this._getAddresses()
-    let filteredUsedAddresses = usedAddresses
-      .map(detail => detail.address)
-      .filter((address, index) => index >= startingIndex)
-    if (numAddresses) {
-      filteredUsedAddresses = filteredUsedAddresses.filter((address, index) => index < numAddresses)
-    }
-    return filteredUsedAddresses
-  }
-
-  async getUnusedAddresses (startingIndex = 0, numAddresses) {
-    await this._connectToLedger()
-
-    const { unusedAddresses } = await this._getAddresses()
-    let filteredUnusedAddresses = unusedAddresses
-      .map(detail => detail.address)
-      .filter((address, index) => index >= startingIndex)
-    if (numAddresses) {
-      filteredUnusedAddresses = filteredUnusedAddresses.filter((address, index) => index < numAddresses)
-    }
-    return filteredUnusedAddresses
-  }
-
-  async signMessage (message) {
-    await this._connectToLedger()
-
-    const hex = Buffer.from(message).toString('hex')
-    const signObj = await this._ledgerBtc.signMessageNew(this._derivationPath, hex)
-    const v = signObj.v + 27 + 4
-    return Buffer.from(v.toString(16) + signObj.r + signObj.s, 'hex').toString('hex')
-  }
-
-  async _splitTransaction (transactionHex, isSegwitSupported) {
-    await this._connectToLedger()
-
-    return this._ledgerBtc.splitTransaction(transactionHex, isSegwitSupported)
-  }
-
-  async _serializeTransactionOutputs (transactionHex) {
-    await this._connectToLedger()
-
-    return this._ledgerBtc.serializeTransactionOutputs(transactionHex)
-  }
-
-  async _signP2SHTransaction (inputs, associatedKeysets, changePath, outputScriptHex) {
-    await this._connectToLedger()
-
-    return this._ledgerBtc.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
-  }
-
-  generateScript (address) {
+  createScript (address) {
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
 
@@ -259,16 +107,68 @@ export default class BitcoinLedgerProvider extends Provider {
     }
   }
 
-  async sendTransaction (to, value, data, from) {
-    await this._connectToLedger()
+  calculateFee (numInputs, numOutputs, feePerByte) { // TODO: lazy fee estimation
+    return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
+  }
 
-    const { unusedAddresses, usedAddresses } = await this._getAddresses()
-    const unusedAddress = unusedAddresses[0]
-    const utxosUsedAddresses = await this._getSpendingDetails(usedAddresses)
-    const unspentOutputs = [].concat(...utxosUsedAddresses.map(detail => detail.utxos))
-    const unspentOutputsToUse = this._getUnspentOutputsForAmount(unspentOutputs, value, 1)
-    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.value, 0)
-    const fee = this._getFee(unspentOutputsToUse.length, 1, 3) // TODO: satoshi per byte fee
+  async getUtxosForAmount (amount, feePerByte = 3, maxAddresses = 20) {
+    const utxosToUse = []
+    let addressIndex = 0
+    let currentAmount = 0
+    let numOutputsOffset = 0
+
+    while ((currentAmount < amount) && maxAddresses > 0) {
+      const path = this.getDerivationPathFromIndex(addressIndex)
+      const address = await this.getAddressFromDerivationPath(path)
+      const utxos = await this.getMethod('getUnspentTransactions')(address.address)
+      const utxosValue = utxos.reduce((acc, utxo) => acc + utxo.value, 0)
+
+      utxos.forEach((utxo) => {
+        currentAmount += utxosValue
+        utxo.derivationPath = address.derivationPath
+        utxosToUse.push(utxo)
+
+        const fees = this.calculateFee(utxosToUse.length, numOutputsOffset + 1)
+        let totalCost = amount + fees
+
+        if (numOutputsOffset === 0 && currentAmount > totalCost) {
+          numOutputsOffset = 1
+          totalCost -= fees
+          totalCost += this.calculateFee(utxosToUse.length, 2, feePerByte)
+        }
+      })
+
+      addressIndex++
+      maxAddresses--
+    }
+
+    return utxosToUse
+  }
+
+  async getLedgerInputs (unspentOutputs) {
+    const app = await this.getApp()
+
+    return Promise.all(unspentOutputs.map(async utxo => {
+      const hex = await this.getMethod('getTransactionHex')(utxo.txid)
+      const tx = app.splitTransaction(hex, true)
+
+      return [ tx, utxo.vout ]
+    }))
+  }
+
+  async sendTransaction (to, value, data, from) {
+    const app = await this.getApp()
+
+    if (data) {
+      const scriptPubKey = padHexStart(data)
+      to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    }
+
+    const unusedAddress = await this.getUnusedAddress(from)
+    const unspentOutputsToUse = await this.getUtxosForAmount(value)
+
+    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.amount * 1e8, 0)
+    const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
     let totalCost = value + fee
     let hasChange = false
 
@@ -276,30 +176,30 @@ export default class BitcoinLedgerProvider extends Provider {
       hasChange = true
 
       totalCost -= fee
-      totalCost += this._getFee(unspentOutputsToUse.length, 2, 3) // TODO: satoshi per byte fee
+      totalCost += this.calculateFee(unspentOutputsToUse.length, 2, 3)
     }
 
     if (totalAmount < totalCost) {
       throw new Error('Not enough balance')
     }
 
-    const ledgerInputs = await this._getLedgerInputs(unspentOutputsToUse)
-    const paths = unspentOutputsToUse.map(utxo => utxo.path)
+    const ledgerInputs = await this.getLedgerInputs(unspentOutputsToUse)
+    const paths = unspentOutputsToUse.map(utxo => utxo.derivationPath)
 
     const sendAmount = value
     const changeAmount = totalAmount - totalCost
 
-    const sendScript = this.generateScript(to)
+    const sendScript = this.createScript(to)
 
-    let outputs = [{ amount: this._getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
+    let outputs = [{ amount: this.getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
 
     if (hasChange) {
-      const changeScript = this.generateScript(unusedAddress.address)
-      outputs.push({ amount: this._getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
+      const changeScript = this.createScript(unusedAddress.address)
+      outputs.push({ amount: this.getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
     }
 
-    const serializedOutputs = this._ledgerBtc.serializeTransactionOutputs({ outputs }).toString('hex')
-    const signedTransaction = await this._ledgerBtc.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.path, serializedOutputs)
+    const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
+    const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
