@@ -23,7 +23,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockHeight () {
-    const hexHeight = await this.rpc('eth_blockNumber')
+    const hexHeight = await this.jsonrpc('eth_blockNumber')
     return parseInt(hexHeight, '16')
   }
 
@@ -34,7 +34,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
 
   async getTransactionReceipt (txHash) {
     txHash = ensureHexEthFormat(txHash)
-    return this.rpc('eth_getTransactionReceipt', txHash)
+    return this.jsonrpc('eth_getTransactionReceipt', txHash)
   }
 
   async getBalance (addresses) {
@@ -42,7 +42,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
       .map(address => String(address))
 
     const addrs = addresses.map(ensureHexEthFormat)
-    const promiseBalances = await Promise.all(addrs.map(address => this.rpc('eth_getBalance', address, 'latest')))
+    const promiseBalances = await Promise.all(addrs.map(address => this.jsonrpc('eth_getBalance', address, 'latest')))
     return promiseBalances.map(balance => parseInt(balance, 16))
       .reduce((acc, balance) => acc + balance, 0)
   }
@@ -50,7 +50,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   async isAddressUsed (address) {
     address = String(address)
 
-    const transactionCount = this.rpc('getTransactionCount', address)
+    const transactionCount = this.jsonrpc('getTransactionCount', address)
 
     return transactionCount > 0
   }
