@@ -82,31 +82,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
   }
 
-  createScript (address) {
-    const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
-    const pubKeyHash = addressToPubKeyHash(address)
-
-    if (type === this._network.pubKeyHash) {
-      return [
-        '76', // OP_DUP
-        'a9', // OP_HASH160
-        '14', // data size to be pushed
-        pubKeyHash, // <PUB_KEY_HASH>
-        '88', // OP_EQUALVERIFY
-        'ac' // OP_CHECKSIG
-      ].join('')
-    } else if (type === this._network.scriptHash) {
-      return [
-        'a9', // OP_HASH160
-        '14', // data size to be pushed
-        pubKeyHash, // <PUB_KEY_HASH>
-        '87' // OP_EQUAL
-      ].join('')
-    } else {
-      throw new Error('Not a valid address:', address)
-    }
-  }
-
   calculateFee (numInputs, numOutputs, feePerByte) { // TODO: lazy fee estimation
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }

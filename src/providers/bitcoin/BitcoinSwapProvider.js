@@ -57,21 +57,33 @@ export default class BitcoinSwapProvider extends Provider {
     const sendScript = this.getMethod('createScript')(p2shAddress)
 
     const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
-    const initiationTx = await this.getMethod('splitTransaction')(initiationTxRaw, true)
-    const voutIndex = initiationTx.outputs.findIndex((output) => output.script.toString('hex') === sendScript)
+    const initiationTx = await this.getMethod('decodeRawTransaction')(initiationTxRaw)
+    // const initiationTx = await this.getMethod('splitTransaction')(initiationTxRaw, true)
+    const voutIndex = initiationTx._raw.data.vout.findIndex((vout) => vout.scriptPubKey.hex === sendScript)
+    const vout = initiationTx._raw.data.vout[voutIndex]
+    // const voutIndex = initiationTx.outputs.findIndex((output) => output.script.toString('hex') === sendScript)
 
     const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
-    const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
-    const newTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, newTxInput)
-    const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
-    const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
-    const outputScript = outputScriptObj.toString('hex')
+    const newTx = await this.getMethod('createRawTransaction')(initiationTxHash, voutIndex, recipientAddress, vout.value)
+    // const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
+    // const newTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, newTxInput)
+    
+    debugger
+    // const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
+    // const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
+    // const outputScript = outputScriptObj.toString('hex')
 
-    const signature = await this.getMethod('signP2SHTransaction')(
-      [[initiationTx, 0, script]],
-      [`44'/1'/0'/0/0`],
-      outputScript
-    )
+
+    // const signature = await this.getMethod('signP2SHTransaction')(
+    //   [[initiationTx, 0, script]],
+    //   [`44'/1'/0'/0/0`],
+    //   outputScript
+    // )
+
+    const signedTx = await this.getMethod('signRawTransaction')(newTx)
+    debugger
+    const decodeSignedTx = await this.getMethod('decodeRawTransaction')(signedTx)
+    debugger
 
     const pubKeyInfo = await this.getMethod('getPubKey')(recipientAddress)
     const pubKey = compressPubKey(pubKeyInfo.publicKey)
@@ -198,11 +210,13 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   generateRawTx (initiationTx, voutIndex, address, input) {
-    const output = initiationTx.outputs[voutIndex]
-    const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
+    const vout = initiationTx._raw.data.vout[voutIndex]
+    // const output = initiationTx.outputs[voutIndex]
+    // const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
+    const value = vout.value * 1e8
     const fee = this.getMethod('calculateFee')(1, 1, 3)
     const amount = value - fee
-    const amountLE = Buffer.from(padHexStart(amount.toString(16), 16), 'hex').reverse().toString('hex') // amount in little endian
+    const amountLE = Buffer.fro3m(padHexStart(amount.toString(16), 16), 'hex').reverse().toString('hex') // amount in little endian
     const pubKeyHash = addressToPubKeyHash(address)
 
     return [
