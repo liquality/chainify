@@ -121,7 +121,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       const path = this.getDerivationPathFromIndex(addressIndex)
       const address = await this.getAddressFromDerivationPath(path)
       const utxos = await this.getMethod('getUnspentTransactions')(address.address)
-      const utxosValue = utxos.reduce((acc, utxo) => acc + utxo.value, 0)
+      const utxosValue = utxos.reduce((acc, utxo) => acc + (utxo.amount * 1e8), 0)
 
       utxos.forEach((utxo) => {
         currentAmount += utxosValue
@@ -167,7 +167,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const unusedAddress = await this.getUnusedAddress(from)
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
 
-    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.amount * 1e8, 0)
+    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + BigNumber(utxo.amount).times(1e8).toNumber(), 0)
     const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
     let totalCost = value + fee
     let hasChange = false

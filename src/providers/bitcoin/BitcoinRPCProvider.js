@@ -23,9 +23,13 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     addresses = addresses
       .map(address => String(address))
 
-    const _utxos = await Promise.all(addresses.map(address => this.getUnspentTransactions(address)))
+    const _utxos = await this.getUnspentTransactionsForAddresses(addresses)
     const utxos = flatten(_utxos)
     return utxos.reduce((acc, utxo) => acc + (utxo.amount * 1e8), 0)
+  }
+
+  async getUnspentTransactionsForAddresses (addresses) {
+    return this.jsonrpc('listunspent', 0, 9999999, addresses)
   }
 
   async getUnspentTransactions (address) {

@@ -359,6 +359,16 @@ export default class Client {
   }
 
   /**
+   * Get unused address/account of the user.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
+   *  object.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getUnusedAddress (from = {}) {
+    return this.getMethod('getUnusedAddress')(from)
+  }
+
+  /**
    * Sign a message.
    * @param {!string} message - Message to be signed.
    * @param {!string} from - The address from which the message is signed.
@@ -443,6 +453,15 @@ export default class Client {
     const signedMessage = await this.signMessage(message, unusedAddress)
     const secret = sha256(signedMessage)
     return secret
+  }
+
+  /**
+   * Get secret from claim transaction hash.
+   * @param {!string} transaction hash - transaction hash of claim.
+   * @return {Promise<string>} Resolves with secret
+   */
+  async getSecret (claimTxHash) {
+    return this.getMethod('getSecret')(claimTxHash)
   }
 
   /**
