@@ -13,14 +13,20 @@ Query different blockchains with a single and simple interface.
 ## Installation
 
 ```bash
-npm install chainabstractionlayer
+npm install @liquality/chainabstractionlayer
 ```
+
+> **Error: Cannot find module 'babel-runtime/core-js/get-iterator'**
+>
+> Issues to track: [LedgerHQ/ledgerjs/issues/211](https://github.com/LedgerHQ/ledgerjs/issues/211), [LedgerHQ/ledgerjs/issues/218](https://github.com/LedgerHQ/ledgerjs/issues/218)
+>
+> `npm install babel-runtime`
 
 
 ## Usage
 
 ```javascript
-import { Client, providers } from 'chainabstractionlayer'
+import { Client, providers } from '@liquality/chainabstractionlayer'
 
 const { BitcoinRPCProvider } = providers.bitcoin
 
