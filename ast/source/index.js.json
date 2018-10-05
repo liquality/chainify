@@ -1,28 +1,28 @@
 {
   "type": "File",
   "start": 0,
-  "end": 333,
+  "end": 550,
   "loc": {
     "start": {
       "line": 1,
       "column": 0
     },
     "end": {
-      "line": 19,
+      "line": 26,
       "column": 0
     }
   },
   "program": {
     "type": "Program",
     "start": 0,
-    "end": 333,
+    "end": 550,
     "loc": {
       "start": {
         "line": 1,
         "column": 0
       },
       "end": {
-        "line": 19,
+        "line": 26,
         "column": 0
       }
     },
@@ -512,16 +512,223 @@
         }
       },
       {
-        "type": "ExportNamedDeclaration",
+        "type": "ImportDeclaration",
         "start": 246,
-        "end": 332,
+        "end": 303,
         "loc": {
           "start": {
             "line": 10,
             "column": 0
           },
           "end": {
-            "line": 18,
+            "line": 10,
+            "column": 57
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 253,
+            "end": 268,
+            "loc": {
+              "start": {
+                "line": 10,
+                "column": 7
+              },
+              "end": {
+                "line": 10,
+                "column": 22
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 253,
+              "end": 268,
+              "loc": {
+                "start": {
+                  "line": 10,
+                  "column": 7
+                },
+                "end": {
+                  "line": 10,
+                  "column": 22
+                },
+                "identifierName": "JsonRpcProvider"
+              },
+              "name": "JsonRpcProvider"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 274,
+          "end": 303,
+          "loc": {
+            "start": {
+              "line": 10,
+              "column": 28
+            },
+            "end": {
+              "line": 10,
+              "column": 57
+            }
+          },
+          "extra": {
+            "rawValue": "./providers/JsonRpcProvider",
+            "raw": "'./providers/JsonRpcProvider'"
+          },
+          "value": "./providers/JsonRpcProvider"
+        }
+      },
+      {
+        "type": "ImportDeclaration",
+        "start": 304,
+        "end": 353,
+        "loc": {
+          "start": {
+            "line": 11,
+            "column": 0
+          },
+          "end": {
+            "line": 11,
+            "column": 49
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 311,
+            "end": 322,
+            "loc": {
+              "start": {
+                "line": 11,
+                "column": 7
+              },
+              "end": {
+                "line": 11,
+                "column": 18
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 311,
+              "end": 322,
+              "loc": {
+                "start": {
+                  "line": 11,
+                  "column": 7
+                },
+                "end": {
+                  "line": 11,
+                  "column": 18
+                },
+                "identifierName": "ApiProvider"
+              },
+              "name": "ApiProvider"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 328,
+          "end": 353,
+          "loc": {
+            "start": {
+              "line": 11,
+              "column": 24
+            },
+            "end": {
+              "line": 11,
+              "column": 49
+            }
+          },
+          "extra": {
+            "rawValue": "./providers/ApiProvider",
+            "raw": "'./providers/ApiProvider'"
+          },
+          "value": "./providers/ApiProvider"
+        }
+      },
+      {
+        "type": "ImportDeclaration",
+        "start": 354,
+        "end": 409,
+        "loc": {
+          "start": {
+            "line": 12,
+            "column": 0
+          },
+          "end": {
+            "line": 12,
+            "column": 55
+          }
+        },
+        "specifiers": [
+          {
+            "type": "ImportDefaultSpecifier",
+            "start": 361,
+            "end": 375,
+            "loc": {
+              "start": {
+                "line": 12,
+                "column": 7
+              },
+              "end": {
+                "line": 12,
+                "column": 21
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 361,
+              "end": 375,
+              "loc": {
+                "start": {
+                  "line": 12,
+                  "column": 7
+                },
+                "end": {
+                  "line": 12,
+                  "column": 21
+                },
+                "identifierName": "LedgerProvider"
+              },
+              "name": "LedgerProvider"
+            }
+          }
+        ],
+        "source": {
+          "type": "StringLiteral",
+          "start": 381,
+          "end": 409,
+          "loc": {
+            "start": {
+              "line": 12,
+              "column": 27
+            },
+            "end": {
+              "line": 12,
+              "column": 55
+            }
+          },
+          "extra": {
+            "rawValue": "./providers/LedgerProvider",
+            "raw": "'./providers/LedgerProvider'"
+          },
+          "value": "./providers/LedgerProvider"
+        }
+      },
+      {
+        "type": "ExportNamedDeclaration",
+        "start": 411,
+        "end": 549,
+        "loc": {
+          "start": {
+            "line": 14,
+            "column": 0
+          },
+          "end": {
+            "line": 25,
             "column": 1
           }
         },
@@ -529,29 +736,29 @@
         "specifiers": [
           {
             "type": "ExportSpecifier",
-            "start": 257,
-            "end": 263,
+            "start": 422,
+            "end": 428,
             "loc": {
               "start": {
-                "line": 11,
+                "line": 15,
                 "column": 2
               },
               "end": {
-                "line": 11,
+                "line": 15,
                 "column": 8
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 257,
-              "end": 263,
+              "start": 422,
+              "end": 428,
               "loc": {
                 "start": {
-                  "line": 11,
+                  "line": 15,
                   "column": 2
                 },
                 "end": {
-                  "line": 11,
+                  "line": 15,
                   "column": 8
                 },
                 "identifierName": "Client"
@@ -560,15 +767,15 @@
             },
             "exported": {
               "type": "Identifier",
-              "start": 257,
-              "end": 263,
+              "start": 422,
+              "end": 428,
               "loc": {
                 "start": {
-                  "line": 11,
+                  "line": 15,
                   "column": 2
                 },
                 "end": {
-                  "line": 11,
+                  "line": 15,
                   "column": 8
                 },
                 "identifierName": "Client"
@@ -578,29 +785,29 @@
           },
           {
             "type": "ExportSpecifier",
-            "start": 267,
-            "end": 275,
+            "start": 432,
+            "end": 440,
             "loc": {
               "start": {
-                "line": 12,
+                "line": 16,
                 "column": 2
               },
               "end": {
-                "line": 12,
+                "line": 16,
                 "column": 10
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 267,
-              "end": 275,
+              "start": 432,
+              "end": 440,
               "loc": {
                 "start": {
-                  "line": 12,
+                  "line": 16,
                   "column": 2
                 },
                 "end": {
-                  "line": 12,
+                  "line": 16,
                   "column": 10
                 },
                 "identifierName": "Provider"
@@ -609,15 +816,15 @@
             },
             "exported": {
               "type": "Identifier",
-              "start": 267,
-              "end": 275,
+              "start": 432,
+              "end": 440,
               "loc": {
                 "start": {
-                  "line": 12,
+                  "line": 16,
                   "column": 2
                 },
                 "end": {
-                  "line": 12,
+                  "line": 16,
                   "column": 10
                 },
                 "identifierName": "Provider"
@@ -627,29 +834,29 @@
           },
           {
             "type": "ExportSpecifier",
-            "start": 279,
-            "end": 287,
+            "start": 444,
+            "end": 452,
             "loc": {
               "start": {
-                "line": 13,
+                "line": 17,
                 "column": 2
               },
               "end": {
-                "line": 13,
+                "line": 17,
                 "column": 10
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 279,
-              "end": 287,
+              "start": 444,
+              "end": 452,
               "loc": {
                 "start": {
-                  "line": 13,
+                  "line": 17,
                   "column": 2
                 },
                 "end": {
-                  "line": 13,
+                  "line": 17,
                   "column": 10
                 },
                 "identifierName": "networks"
@@ -658,15 +865,15 @@
             },
             "exported": {
               "type": "Identifier",
-              "start": 279,
-              "end": 287,
+              "start": 444,
+              "end": 452,
               "loc": {
                 "start": {
-                  "line": 13,
+                  "line": 17,
                   "column": 2
                 },
                 "end": {
-                  "line": 13,
+                  "line": 17,
                   "column": 10
                 },
                 "identifierName": "networks"
@@ -676,29 +883,29 @@
           },
           {
             "type": "ExportSpecifier",
-            "start": 291,
-            "end": 300,
+            "start": 456,
+            "end": 465,
             "loc": {
               "start": {
-                "line": 14,
+                "line": 18,
                 "column": 2
               },
               "end": {
-                "line": 14,
+                "line": 18,
                 "column": 11
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 291,
-              "end": 300,
+              "start": 456,
+              "end": 465,
               "loc": {
                 "start": {
-                  "line": 14,
+                  "line": 18,
                   "column": 2
                 },
                 "end": {
-                  "line": 14,
+                  "line": 18,
                   "column": 11
                 },
                 "identifierName": "providers"
@@ -707,15 +914,15 @@
             },
             "exported": {
               "type": "Identifier",
-              "start": 291,
-              "end": 300,
+              "start": 456,
+              "end": 465,
               "loc": {
                 "start": {
-                  "line": 14,
+                  "line": 18,
                   "column": 2
                 },
                 "end": {
-                  "line": 14,
+                  "line": 18,
                   "column": 11
                 },
                 "identifierName": "providers"
@@ -725,29 +932,29 @@
           },
           {
             "type": "ExportSpecifier",
-            "start": 304,
-            "end": 310,
+            "start": 469,
+            "end": 475,
             "loc": {
               "start": {
-                "line": 15,
+                "line": 19,
                 "column": 2
               },
               "end": {
-                "line": 15,
+                "line": 19,
                 "column": 8
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 304,
-              "end": 310,
+              "start": 469,
+              "end": 475,
               "loc": {
                 "start": {
-                  "line": 15,
+                  "line": 19,
                   "column": 2
                 },
                 "end": {
-                  "line": 15,
+                  "line": 19,
                   "column": 8
                 },
                 "identifierName": "crypto"
@@ -756,15 +963,15 @@
             },
             "exported": {
               "type": "Identifier",
-              "start": 304,
-              "end": 310,
+              "start": 469,
+              "end": 475,
               "loc": {
                 "start": {
-                  "line": 15,
+                  "line": 19,
                   "column": 2
                 },
                 "end": {
-                  "line": 15,
+                  "line": 19,
                   "column": 8
                 },
                 "identifierName": "crypto"
@@ -774,29 +981,29 @@
           },
           {
             "type": "ExportSpecifier",
-            "start": 314,
-            "end": 320,
+            "start": 479,
+            "end": 485,
             "loc": {
               "start": {
-                "line": 16,
+                "line": 20,
                 "column": 2
               },
               "end": {
-                "line": 16,
+                "line": 20,
                 "column": 8
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 314,
-              "end": 320,
+              "start": 479,
+              "end": 485,
               "loc": {
                 "start": {
-                  "line": 16,
+                  "line": 20,
                   "column": 2
                 },
                 "end": {
-                  "line": 16,
+                  "line": 20,
                   "column": 8
                 },
                 "identifierName": "errors"
@@ -805,15 +1012,15 @@
             },
             "exported": {
               "type": "Identifier",
-              "start": 314,
-              "end": 320,
+              "start": 479,
+              "end": 485,
               "loc": {
                 "start": {
-                  "line": 16,
+                  "line": 20,
                   "column": 2
                 },
                 "end": {
-                  "line": 16,
+                  "line": 20,
                   "column": 8
                 },
                 "identifierName": "errors"
@@ -823,29 +1030,29 @@
           },
           {
             "type": "ExportSpecifier",
-            "start": 324,
-            "end": 330,
+            "start": 489,
+            "end": 495,
             "loc": {
               "start": {
-                "line": 17,
+                "line": 21,
                 "column": 2
               },
               "end": {
-                "line": 17,
+                "line": 21,
                 "column": 8
               }
             },
             "local": {
               "type": "Identifier",
-              "start": 324,
-              "end": 330,
+              "start": 489,
+              "end": 495,
               "loc": {
                 "start": {
-                  "line": 17,
+                  "line": 21,
                   "column": 2
                 },
                 "end": {
-                  "line": 17,
+                  "line": 21,
                   "column": 8
                 },
                 "identifierName": "schema"
@@ -854,20 +1061,167 @@
             },
             "exported": {
               "type": "Identifier",
-              "start": 324,
-              "end": 330,
+              "start": 489,
+              "end": 495,
               "loc": {
                 "start": {
-                  "line": 17,
+                  "line": 21,
                   "column": 2
                 },
                 "end": {
-                  "line": 17,
+                  "line": 21,
                   "column": 8
                 },
                 "identifierName": "schema"
               },
               "name": "schema"
+            }
+          },
+          {
+            "type": "ExportSpecifier",
+            "start": 499,
+            "end": 514,
+            "loc": {
+              "start": {
+                "line": 22,
+                "column": 2
+              },
+              "end": {
+                "line": 22,
+                "column": 17
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 499,
+              "end": 514,
+              "loc": {
+                "start": {
+                  "line": 22,
+                  "column": 2
+                },
+                "end": {
+                  "line": 22,
+                  "column": 17
+                },
+                "identifierName": "JsonRpcProvider"
+              },
+              "name": "JsonRpcProvider"
+            },
+            "exported": {
+              "type": "Identifier",
+              "start": 499,
+              "end": 514,
+              "loc": {
+                "start": {
+                  "line": 22,
+                  "column": 2
+                },
+                "end": {
+                  "line": 22,
+                  "column": 17
+                },
+                "identifierName": "JsonRpcProvider"
+              },
+              "name": "JsonRpcProvider"
+            }
+          },
+          {
+            "type": "ExportSpecifier",
+            "start": 518,
+            "end": 529,
+            "loc": {
+              "start": {
+                "line": 23,
+                "column": 2
+              },
+              "end": {
+                "line": 23,
+                "column": 13
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 518,
+              "end": 529,
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 2
+                },
+                "end": {
+                  "line": 23,
+                  "column": 13
+                },
+                "identifierName": "ApiProvider"
+              },
+              "name": "ApiProvider"
+            },
+            "exported": {
+              "type": "Identifier",
+              "start": 518,
+              "end": 529,
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 2
+                },
+                "end": {
+                  "line": 23,
+                  "column": 13
+                },
+                "identifierName": "ApiProvider"
+              },
+              "name": "ApiProvider"
+            }
+          },
+          {
+            "type": "ExportSpecifier",
+            "start": 533,
+            "end": 547,
+            "loc": {
+              "start": {
+                "line": 24,
+                "column": 2
+              },
+              "end": {
+                "line": 24,
+                "column": 16
+              }
+            },
+            "local": {
+              "type": "Identifier",
+              "start": 533,
+              "end": 547,
+              "loc": {
+                "start": {
+                  "line": 24,
+                  "column": 2
+                },
+                "end": {
+                  "line": 24,
+                  "column": 16
+                },
+                "identifierName": "LedgerProvider"
+              },
+              "name": "LedgerProvider"
+            },
+            "exported": {
+              "type": "Identifier",
+              "start": 533,
+              "end": 547,
+              "loc": {
+                "start": {
+                  "line": 24,
+                  "column": 2
+                },
+                "end": {
+                  "line": 24,
+                  "column": 16
+                },
+                "identifierName": "LedgerProvider"
+              },
+              "name": "LedgerProvider"
             }
           }
         ],
@@ -1841,6 +2195,327 @@
     },
     {
       "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 246,
+      "end": 252,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 0
+        },
+        "end": {
+          "line": 10,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "JsonRpcProvider",
+      "start": 253,
+      "end": 268,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 7
+        },
+        "end": {
+          "line": 10,
+          "column": 22
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 269,
+      "end": 273,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 23
+        },
+        "end": {
+          "line": 10,
+          "column": 27
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./providers/JsonRpcProvider",
+      "start": 274,
+      "end": 303,
+      "loc": {
+        "start": {
+          "line": 10,
+          "column": 28
+        },
+        "end": {
+          "line": 10,
+          "column": 57
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 304,
+      "end": 310,
+      "loc": {
+        "start": {
+          "line": 11,
+          "column": 0
+        },
+        "end": {
+          "line": 11,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "ApiProvider",
+      "start": 311,
+      "end": 322,
+      "loc": {
+        "start": {
+          "line": 11,
+          "column": 7
+        },
+        "end": {
+          "line": 11,
+          "column": 18
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 323,
+      "end": 327,
+      "loc": {
+        "start": {
+          "line": 11,
+          "column": 19
+        },
+        "end": {
+          "line": 11,
+          "column": 23
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./providers/ApiProvider",
+      "start": 328,
+      "end": 353,
+      "loc": {
+        "start": {
+          "line": 11,
+          "column": 24
+        },
+        "end": {
+          "line": 11,
+          "column": 49
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "import",
+        "keyword": "import",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "import",
+      "start": 354,
+      "end": 360,
+      "loc": {
+        "start": {
+          "line": 12,
+          "column": 0
+        },
+        "end": {
+          "line": 12,
+          "column": 6
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "LedgerProvider",
+      "start": 361,
+      "end": 375,
+      "loc": {
+        "start": {
+          "line": 12,
+          "column": 7
+        },
+        "end": {
+          "line": 12,
+          "column": 21
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "from",
+      "start": 376,
+      "end": 380,
+      "loc": {
+        "start": {
+          "line": 12,
+          "column": 22
+        },
+        "end": {
+          "line": 12,
+          "column": 26
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "string",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "value": "./providers/LedgerProvider",
+      "start": 381,
+      "end": 409,
+      "loc": {
+        "start": {
+          "line": 12,
+          "column": 27
+        },
+        "end": {
+          "line": 12,
+          "column": 55
+        }
+      }
+    },
+    {
+      "type": {
         "label": "export",
         "keyword": "export",
         "beforeExpr": false,
@@ -1854,15 +2529,15 @@
         "updateContext": null
       },
       "value": "export",
-      "start": 246,
-      "end": 252,
+      "start": 411,
+      "end": 417,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 14,
           "column": 0
         },
         "end": {
-          "line": 10,
+          "line": 14,
           "column": 6
         }
       }
@@ -1879,15 +2554,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 253,
-      "end": 254,
+      "start": 418,
+      "end": 419,
       "loc": {
         "start": {
-          "line": 10,
+          "line": 14,
           "column": 7
         },
         "end": {
-          "line": 10,
+          "line": 14,
           "column": 8
         }
       }
@@ -1905,15 +2580,15 @@
         "binop": null
       },
       "value": "Client",
-      "start": 257,
-      "end": 263,
+      "start": 422,
+      "end": 428,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 15,
           "column": 2
         },
         "end": {
-          "line": 11,
+          "line": 15,
           "column": 8
         }
       }
@@ -1931,15 +2606,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 263,
-      "end": 264,
+      "start": 428,
+      "end": 429,
       "loc": {
         "start": {
-          "line": 11,
+          "line": 15,
           "column": 8
         },
         "end": {
-          "line": 11,
+          "line": 15,
           "column": 9
         }
       }
@@ -1957,15 +2632,15 @@
         "binop": null
       },
       "value": "Provider",
-      "start": 267,
-      "end": 275,
+      "start": 432,
+      "end": 440,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 16,
           "column": 2
         },
         "end": {
-          "line": 12,
+          "line": 16,
           "column": 10
         }
       }
@@ -1983,15 +2658,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 275,
-      "end": 276,
+      "start": 440,
+      "end": 441,
       "loc": {
         "start": {
-          "line": 12,
+          "line": 16,
           "column": 10
         },
         "end": {
-          "line": 12,
+          "line": 16,
           "column": 11
         }
       }
@@ -2009,15 +2684,15 @@
         "binop": null
       },
       "value": "networks",
-      "start": 279,
-      "end": 287,
+      "start": 444,
+      "end": 452,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 17,
           "column": 2
         },
         "end": {
-          "line": 13,
+          "line": 17,
           "column": 10
         }
       }
@@ -2035,15 +2710,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 287,
-      "end": 288,
+      "start": 452,
+      "end": 453,
       "loc": {
         "start": {
-          "line": 13,
+          "line": 17,
           "column": 10
         },
         "end": {
-          "line": 13,
+          "line": 17,
           "column": 11
         }
       }
@@ -2061,15 +2736,15 @@
         "binop": null
       },
       "value": "providers",
-      "start": 291,
-      "end": 300,
+      "start": 456,
+      "end": 465,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 18,
           "column": 2
         },
         "end": {
-          "line": 14,
+          "line": 18,
           "column": 11
         }
       }
@@ -2087,15 +2762,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 300,
-      "end": 301,
+      "start": 465,
+      "end": 466,
       "loc": {
         "start": {
-          "line": 14,
+          "line": 18,
           "column": 11
         },
         "end": {
-          "line": 14,
+          "line": 18,
           "column": 12
         }
       }
@@ -2113,15 +2788,15 @@
         "binop": null
       },
       "value": "crypto",
-      "start": 304,
-      "end": 310,
+      "start": 469,
+      "end": 475,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 19,
           "column": 2
         },
         "end": {
-          "line": 15,
+          "line": 19,
           "column": 8
         }
       }
@@ -2139,15 +2814,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 310,
-      "end": 311,
+      "start": 475,
+      "end": 476,
       "loc": {
         "start": {
-          "line": 15,
+          "line": 19,
           "column": 8
         },
         "end": {
-          "line": 15,
+          "line": 19,
           "column": 9
         }
       }
@@ -2165,15 +2840,15 @@
         "binop": null
       },
       "value": "errors",
-      "start": 314,
-      "end": 320,
+      "start": 479,
+      "end": 485,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 20,
           "column": 2
         },
         "end": {
-          "line": 16,
+          "line": 20,
           "column": 8
         }
       }
@@ -2191,15 +2866,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 320,
-      "end": 321,
+      "start": 485,
+      "end": 486,
       "loc": {
         "start": {
-          "line": 16,
+          "line": 20,
           "column": 8
         },
         "end": {
-          "line": 16,
+          "line": 20,
           "column": 9
         }
       }
@@ -2217,16 +2892,172 @@
         "binop": null
       },
       "value": "schema",
-      "start": 324,
-      "end": 330,
+      "start": 489,
+      "end": 495,
       "loc": {
         "start": {
-          "line": 17,
+          "line": 21,
           "column": 2
         },
         "end": {
-          "line": 17,
+          "line": 21,
           "column": 8
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 495,
+      "end": 496,
+      "loc": {
+        "start": {
+          "line": 21,
+          "column": 8
+        },
+        "end": {
+          "line": 21,
+          "column": 9
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "JsonRpcProvider",
+      "start": 499,
+      "end": 514,
+      "loc": {
+        "start": {
+          "line": 22,
+          "column": 2
+        },
+        "end": {
+          "line": 22,
+          "column": 17
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 514,
+      "end": 515,
+      "loc": {
+        "start": {
+          "line": 22,
+          "column": 17
+        },
+        "end": {
+          "line": 22,
+          "column": 18
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "ApiProvider",
+      "start": 518,
+      "end": 529,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 2
+        },
+        "end": {
+          "line": 23,
+          "column": 13
+        }
+      }
+    },
+    {
+      "type": {
+        "label": ",",
+        "beforeExpr": true,
+        "startsExpr": false,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null,
+        "updateContext": null
+      },
+      "start": 529,
+      "end": 530,
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 13
+        },
+        "end": {
+          "line": 23,
+          "column": 14
+        }
+      }
+    },
+    {
+      "type": {
+        "label": "name",
+        "beforeExpr": false,
+        "startsExpr": true,
+        "rightAssociative": false,
+        "isLoop": false,
+        "isAssign": false,
+        "prefix": false,
+        "postfix": false,
+        "binop": null
+      },
+      "value": "LedgerProvider",
+      "start": 533,
+      "end": 547,
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 2
+        },
+        "end": {
+          "line": 24,
+          "column": 16
         }
       }
     },
@@ -2242,15 +3073,15 @@
         "postfix": false,
         "binop": null
       },
-      "start": 331,
-      "end": 332,
+      "start": 548,
+      "end": 549,
       "loc": {
         "start": {
-          "line": 18,
+          "line": 25,
           "column": 0
         },
         "end": {
-          "line": 18,
+          "line": 25,
           "column": 1
         }
       }
@@ -2268,15 +3099,15 @@
         "binop": null,
         "updateContext": null
       },
-      "start": 333,
-      "end": 333,
+      "start": 550,
+      "end": 550,
       "loc": {
         "start": {
-          "line": 19,
+          "line": 26,
           "column": 0
         },
         "end": {
-          "line": 19,
+          "line": 26,
           "column": 0
         }
       }

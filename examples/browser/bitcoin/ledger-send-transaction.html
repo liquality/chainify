@@ -29,7 +29,7 @@
     /* global $, ChainAbstractionLayer */
     const { Client, providers, networks } = ChainAbstractionLayer
     const bitcoin = new Client()
-    bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('https://localhost:18332', 'bitcoin', 'local321'))
     bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
 
     let addresses, balance, newAddresses
@@ -44,7 +44,7 @@
 
       bitcoin.getUnusedAddresses().then(unusedAddrs => {
         newAddresses = unusedAddrs
-        $('#newAddress').text(newAddresses[1])
+        $('#newAddress').text(newAddresses[0])
       })
 
       $('#sendAddr').click(() => {
@@ -57,7 +57,7 @@
       $('#sendScript').click(() => {
         // pay to script:
         // null, value, script
-        bitcoin.sendTransaction(null, $('#scriptValue').val(), parseInt($('#toScript').val())).then(result => {
+        bitcoin.sendTransaction(null, parseInt($('#scriptValue').val()), $('#toScript').val()).then(result => {
           $('#result').text(JSON.stringify(result, null, 2))
         })
       })

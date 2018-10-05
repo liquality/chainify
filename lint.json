@@ -1,1 +1,222 @@
-[]
+[
+  {
+    "name": "Client#isAddressUsed",
+    "filePath": "src/Client.js",
+    "lines": [
+      {
+        "lineNumber": 351,
+        "line": "  /**"
+      },
+      {
+        "lineNumber": 352,
+        "line": "   * Check if an address has been used or not."
+      },
+      {
+        "lineNumber": 353,
+        "line": "   * @param {!string|Address} addresses - An address to check for."
+      },
+      {
+        "lineNumber": 354,
+        "line": "   * @return {Promise<boolean>} Resolves to true if provided address is used"
+      },
+      {
+        "lineNumber": 355,
+        "line": "   */"
+      },
+      {
+        "lineNumber": 356,
+        "line": "  async isAddressUsed (address) {"
+      }
+    ],
+    "codeParams": [
+      "address"
+    ],
+    "docParams": [
+      "addresses"
+    ]
+  },
+  {
+    "name": "Client#getSwapTransaction",
+    "filePath": "src/Client.js",
+    "lines": [
+      {
+        "lineNumber": 422,
+        "line": "  /**"
+      },
+      {
+        "lineNumber": 423,
+        "line": "   * Find swap transaction from parameters"
+      },
+      {
+        "lineNumber": 424,
+        "line": "   * @param {!string} blockNumber - Block number in which transaction was mined"
+      },
+      {
+        "lineNumber": 425,
+        "line": "   * @param {!string} recipientAddress - Recepient address"
+      },
+      {
+        "lineNumber": 426,
+        "line": "   * @param {!string} refundAddress - Refund address"
+      },
+      {
+        "lineNumber": 427,
+        "line": "   * @param {!string} expiration - Expiration time"
+      },
+      {
+        "lineNumber": 428,
+        "line": "   * @return {Promise<string>} Resolves with a transaction identifier."
+      },
+      {
+        "lineNumber": 429,
+        "line": "   */"
+      },
+      {
+        "lineNumber": 430,
+        "line": "  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {"
+      }
+    ],
+    "codeParams": [
+      "blockNumber",
+      "recipientAddress",
+      "refundAddress",
+      "secretHash",
+      "expiration"
+    ],
+    "docParams": [
+      "blockNumber",
+      "recipientAddress",
+      "refundAddress",
+      "expiration"
+    ]
+  },
+  {
+    "name": "Client#getSecret",
+    "filePath": "src/Client.js",
+    "lines": [
+      {
+        "lineNumber": 457,
+        "line": "  /**"
+      },
+      {
+        "lineNumber": 458,
+        "line": "   * Get secret from claim transaction hash."
+      },
+      {
+        "lineNumber": 459,
+        "line": "   * @param {!string} transaction hash - transaction hash of claim."
+      },
+      {
+        "lineNumber": 460,
+        "line": "   * @return {Promise<string>} Resolves with secret"
+      },
+      {
+        "lineNumber": 461,
+        "line": "   */"
+      },
+      {
+        "lineNumber": 462,
+        "line": "  async getSecret (claimTxHash) {"
+      }
+    ],
+    "codeParams": [
+      "claimTxHash"
+    ],
+    "docParams": [
+      "transaction"
+    ]
+  },
+  {
+    "name": "Client#createSwapScript",
+    "filePath": "src/Client.js",
+    "lines": [
+      {
+        "lineNumber": 480,
+        "line": "  /**"
+      },
+      {
+        "lineNumber": 481,
+        "line": "   * Create swap script."
+      },
+      {
+        "lineNumber": 482,
+        "line": "   * @param {!string} bytecode - Bytecode to be used for swap."
+      },
+      {
+        "lineNumber": 483,
+        "line": "   * @return {Promise<string, null>} Resolves with swap bytecode."
+      },
+      {
+        "lineNumber": 484,
+        "line": "   */"
+      },
+      {
+        "lineNumber": 485,
+        "line": "  async createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {"
+      }
+    ],
+    "codeParams": [
+      "recipientAddress",
+      "refundAddress",
+      "secretHash",
+      "expiration"
+    ],
+    "docParams": [
+      "bytecode"
+    ]
+  },
+  {
+    "name": "Client#claimSwap",
+    "filePath": "src/Client.js",
+    "lines": [
+      {
+        "lineNumber": 509,
+        "line": "  /**"
+      },
+      {
+        "lineNumber": 510,
+        "line": "   * Generate redeem swap transaction data"
+      },
+      {
+        "lineNumber": 511,
+        "line": "   * @param {!string} secret - Secret for the swap in hex."
+      },
+      {
+        "lineNumber": 512,
+        "line": "   * @param {string} [pubKey] - PubKey for the swap in hex."
+      },
+      {
+        "lineNumber": 513,
+        "line": "   * @param {string} [signature] - Signature for the swap in hex."
+      },
+      {
+        "lineNumber": 514,
+        "line": "   * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode."
+      },
+      {
+        "lineNumber": 515,
+        "line": "   *  Rejects with InvalidProviderResponseError if provider's response is invalid."
+      },
+      {
+        "lineNumber": 516,
+        "line": "   */"
+      },
+      {
+        "lineNumber": 517,
+        "line": "  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {"
+      }
+    ],
+    "codeParams": [
+      "initiationTxHash",
+      "recipientAddress",
+      "refundAddress",
+      "secret",
+      "expiration"
+    ],
+    "docParams": [
+      "secret",
+      "pubKey",
+      "signature"
+    ]
+  }
+]

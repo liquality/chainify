@@ -1,11 +1,24 @@
 {
-  "coverage": "25.17%",
-  "expectCount": 143,
-  "actualCount": 36,
+  "coverage": "22.91%",
+  "expectCount": 192,
+  "actualCount": 44,
   "files": {
+    "src/Address.js": {
+      "expectCount": 7,
+      "actualCount": 0,
+      "undocumentLines": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        8,
+        12
+      ]
+    },
     "src/Client.js": {
-      "expectCount": 25,
-      "actualCount": 22,
+      "expectCount": 32,
+      "actualCount": 29,
       "undocumentLines": [
         18,
         26,
@@ -49,6 +62,22 @@
         16
       ]
     },
+    "src/providers/ApiProvider.js": {
+      "expectCount": 10,
+      "actualCount": 0,
+      "undocumentLines": [
+        5,
+        7,
+        8,
+        11,
+        23,
+        27,
+        31,
+        41,
+        45,
+        52
+      ]
+    },
     "src/providers/JsonRpcProvider.js": {
       "expectCount": 7,
       "actualCount": 0,
@@ -63,19 +92,21 @@
       ]
     },
     "src/providers/LedgerProvider.js": {
-      "expectCount": 10,
+      "expectCount": 12,
       "actualCount": 0,
       "undocumentLines": [
+        5,
         6,
-        7,
-        11,
+        10,
+        13,
         14,
-        18,
-        22,
-        26,
-        30,
-        34,
-        38
+        17,
+        21,
+        27,
+        37,
+        41,
+        54,
+        59
       ]
     },
     "src/providers/RpcError.js": {
@@ -89,84 +120,103 @@
         33
       ]
     },
-    "src/providers/bitcoin/BitcoinLedgerProvider.js": {
-      "expectCount": 26,
-      "actualCount": 1,
+    "src/providers/bitcoin/BitcoinBlockchainAPIProvider.js": {
+      "expectCount": 6,
+      "actualCount": 0,
       "undocumentLines": [
-        13,
-        19,
-        20,
-        21,
+        6,
+        7,
+        11,
         22,
-        23,
-        24,
-        27,
-        34,
-        38,
-        42,
-        46,
-        75,
-        89,
-        93,
-        115,
-        124,
-        140,
-        146,
-        157,
-        168,
-        175,
-        182,
-        190,
-        215
+        37,
+        41
+      ]
+    },
+    "src/providers/bitcoin/BitcoinLedgerProvider.js": {
+      "expectCount": 18,
+      "actualCount": 0,
+      "undocumentLines": [
+        10,
+        11,
+        13,
+        14,
+        15,
+        18,
+        26,
+        32,
+        41,
+        60,
+        67,
+        73,
+        79,
+        85,
+        110,
+        114,
+        148,
+        159
       ]
     },
     "src/providers/bitcoin/BitcoinRPCProvider.js": {
-      "expectCount": 8,
+      "expectCount": 14,
       "actualCount": 0,
       "undocumentLines": [
-        3,
         4,
-        14,
-        18,
-        46,
-        50,
-        67,
-        71
+        5,
+        15,
+        22,
+        31,
+        35,
+        39,
+        43,
+        47,
+        79,
+        83,
+        87,
+        109,
+        113
       ]
     },
     "src/providers/bitcoin/BitcoinSwapProvider.js": {
-      "expectCount": 5,
+      "expectCount": 16,
       "actualCount": 0,
       "undocumentLines": [
-        5,
-        8,
-        38,
-        62,
-        66
+        6,
+        10,
+        12,
+        15,
+        45,
+        52,
+        86,
+        111,
+        122,
+        126,
+        130,
+        150,
+        164,
+        173,
+        187,
+        200
       ]
     },
     "src/providers/bitcoin/BitcoinUtil.js": {
-      "expectCount": 4,
+      "expectCount": 5,
       "actualCount": 4,
-      "undocumentLines": []
+      "undocumentLines": [
+        61
+      ]
     },
     "src/providers/ethereum/EthereumLedgerProvider.js": {
-      "expectCount": 9,
+      "expectCount": 4,
       "actualCount": 0,
       "undocumentLines": [
+        7,
         8,
-        9,
-        11,
         12,
-        13,
-        16,
-        23,
-        27,
-        35
+        18
       ]
     },
     "src/providers/ethereum/EthereumMetaMaskProvider.js": {
-      "expectCount": 9,
+      "expectCount": 11,
       "actualCount": 0,
       "undocumentLines": [
         7,
@@ -174,14 +224,16 @@
         14,
         17,
         44,
-        48,
-        56,
-        66,
-        70
+        50,
+        54,
+        59,
+        68,
+        91,
+        95
       ]
     },
     "src/providers/ethereum/EthereumRPCProvider.js": {
-      "expectCount": 6,
+      "expectCount": 10,
       "actualCount": 0,
       "undocumentLines": [
         5,
@@ -189,25 +241,33 @@
         12,
         16,
         21,
-        25
+        25,
+        30,
+        35,
+        40,
+        50
       ]
     },
     "src/providers/ethereum/EthereumSwapProvider.js": {
-      "expectCount": 4,
+      "expectCount": 9,
       "actualCount": 0,
       "undocumentLines": [
-        4,
         5,
-        76,
-        80
+        6,
+        77,
+        82,
+        88,
+        92,
+        96,
+        107,
+        118
       ]
     },
     "src/providers/ethereum/EthereumUtil.js": {
-      "expectCount": 2,
-      "actualCount": 0,
+      "expectCount": 3,
+      "actualCount": 2,
       "undocumentLines": [
-        3,
-        32
+        19
       ]
     }
   }
