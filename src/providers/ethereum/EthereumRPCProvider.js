@@ -19,7 +19,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this.jsonrpc('eth_getBlockByNumber', blockNumber, includeTx)
+    return this.jsonrpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
   }
 
   async getBlockHeight () {

@@ -127,7 +127,7 @@ export default class BitcoinSwapProvider extends Provider {
     return this._spendSwap(signature, pubKey, false)
   }
 
-  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+  async findInitiateSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(data)
     const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
@@ -147,7 +147,7 @@ export default class BitcoinSwapProvider extends Provider {
     return swapTx ? swapTx.txid : null
   }
 
-  async getSwapConfirmTransaction (blockNumber, initiationTxHash, secretHash) {
+  async findClaimSwapTransaction (blockNumber, initiationTxHash, secretHash) {
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
     const transactions = block.transactions
     const txs = await Promise.all(transactions.map(async transaction => {

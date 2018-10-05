@@ -428,19 +428,19 @@ export default class Client {
    * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.getMethod('getSwapTransaction')(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
+  async findInitiateSwapTransaction (recipientAddress, refundAddress, secretHash, expiration) {
+    return this.getMethod('findInitiateSwapTransaction')(recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**
-   * Find swap confirmation transaction from parameters
+   * Find swap claim transaction from parameters
    * @param {!string} blockNumber - Block number in which transaction was mined
    * @param {!string} initiationTxHash - Swap initiation transaction hash/identifier
    * @param {!string} secretHash - Secret hash
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async getSwapConfirmTransaction (blockNumber, initiationTxHash, secretHash) {
-    return this.getMethod('getSwapConfirmTransaction')(blockNumber, initiationTxHash, secretHash)
+  async findClaimSwapTransaction (initiationTxHash, secretHash) {
+    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, secretHash)
   }
 
   /**
