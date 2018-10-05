@@ -460,8 +460,8 @@ export default class Client {
    * @param {!string} transaction hash - transaction hash of claim.
    * @return {Promise<string>} Resolves with secret
    */
-  async getSecret (claimTxHash) {
-    return this.getMethod('getSecret')(claimTxHash)
+  async getSwapSecret (claimTxHash) {
+    return this.getMethod('getSwapSecret')(claimTxHash)
   }
 
   /**

@@ -2,9 +2,7 @@ import Provider from '../../Provider'
 import { padHexStart } from '../../crypto'
 import { ensureHexStandardFormat } from './EthereumUtil'
 
-function sleep (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
@@ -124,7 +122,12 @@ export default class EthereumSwapProvider extends Provider {
       }
       await sleep(5000)
     }
-    claimSwapTransaction.secret = claimSwapTransaction.input
+    claimSwapTransaction.secret = this.getSwapSecret(claimSwapTransaction.hash)
     return claimSwapTransaction
+  }
+
+  async getSwapSecret (claimTxHash) {
+    const claimTransaction = await this.getMethod('getTransactionHash')(claimTxHash)
+    return claimTransaction.input
   }
 }

@@ -3,6 +3,8 @@ import { addressToPubKeyHash, compressPubKey, pubKeyToAddress, reverseBuffer } f
 import { sha256, padHexStart } from '../../crypto'
 import networks from '../../networks'
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 export default class BitcoinSwapProvider extends Provider {
   // TODO: have a generate InitSwap and generate RecipSwap
   //   InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
@@ -127,41 +129,64 @@ export default class BitcoinSwapProvider extends Provider {
     return this._spendSwap(signature, pubKey, false)
   }
 
-  async findInitiateSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+  async findInitiateSwapTransaction (recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(data)
     const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     const sendScript = this.getMethod('createScript')(receivingAddress)
 
-    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-    const transactions = block.transactions
-    const txs = await Promise.all(transactions.map(async transaction => {
-      return this.getMethod('decodeRawTransaction')(transaction)
-    }))
-    const swapTx = txs
-      .map(transaction => transaction._raw.data)
-      .map(transaction => transaction.vout
-        .map(vout => { return { txid: transaction.txid, scriptPubKey: vout.scriptPubKey } }))
-      .reduce((acc, val) => acc.concat(val), [])
-      .find(txKeys => txKeys.scriptPubKey.hex === sendScript)
-    return swapTx ? swapTx.txid : null
+    let blockNumber = await this.getMethod('getBlockHeight')()
+    let initiateSwapTransaction = null
+    while (!initiateSwapTransaction) {
+      let block
+      try {
+        block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      } catch (e) { }
+      if (block) {
+        const transactions = block.transactions
+        const txs = await Promise.all(transactions.map(async transaction => {
+          return this.getMethod('decodeRawTransaction')(transaction)
+        }))
+        initiateSwapTransaction = txs
+          .map(transaction => transaction._raw.data)
+          .map(transaction => transaction.vout
+            .map(vout => { return { txid: transaction.txid, scriptPubKey: vout.scriptPubKey } }))
+          .reduce((acc, val) => acc.concat(val), [])
+          .find(txKeys => txKeys.scriptPubKey.hex === sendScript)
+        blockNumber++
+      }
+      await sleep(5000)
+    }
+    return initiateSwapTransaction
   }
 
-  async findClaimSwapTransaction (blockNumber, initiationTxHash, secretHash) {
-    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-    const transactions = block.transactions
-    const txs = await Promise.all(transactions.map(async transaction => {
-      return this.getMethod('decodeRawTransaction')(transaction)
-    }))
-    const swapTx = txs
-      .reduce((acc, val) => acc.concat({ hash: val.hash, vin: val._raw.data.vin }), [])
-      .map(val => val.vin.map(vin => { return { hash: val.hash, vin: vin } }))
-      .flat()
-      .find(tx => tx.vin.txid === initiationTxHash)
-    return swapTx ? swapTx.hash : null
+  async findClaimSwapTransaction (initiationTxHash, secretHash) {
+    let blockNumber = await this.getMethod('getBlockHeight')()
+    let claimSwapTransaction = null
+    while (!claimSwapTransaction) {
+      let block
+      try {
+        block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      } catch (e) { }
+      if (block) {
+        const transactions = block.transactions
+        const txs = await Promise.all(transactions.map(async transaction => {
+          return this.getMethod('decodeRawTransaction')(transaction)
+        }))
+        claimSwapTransaction = txs
+          .reduce((acc, val) => acc.concat({ hash: val.hash, vin: val._raw.data.vin }), [])
+          .map(val => val.vin.map(vin => { return { hash: val.hash, vin: vin } }))
+          .flat()
+          .find(tx => tx.vin.txid === initiationTxHash)
+        blockNumber++
+      }
+      await sleep(5000)
+    }
+    claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
+    return claimSwapTransaction
   }
 
-  async getSecret (claimTxHash) {
+  async getSwapSecret (claimTxHash) {
     const claimTxRaw = await this.getMethod('getRawTransactionByHash')(claimTxHash)
     const claimTx = await this.getMethod('decodeRawTransaction')(claimTxRaw)
     const script = Buffer.from(claimTx._raw.data.vin[0].scriptSig.hex, 'hex')
