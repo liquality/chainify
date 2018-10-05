@@ -114,4 +114,9 @@ export default class EthereumSwapProvider extends Provider {
     const swapTx = transactions.find(transaction => transaction.to === initiationTransaction.contractAddress)
     return swapTx ? swapTx.hash : null
   }
+
+  async getSecret (claimTxHash) {
+    const claimTransaction = await this.getMethod('getTransactionHash')(claimTxHash)
+    return claimTransaction.input
+  }
 }
