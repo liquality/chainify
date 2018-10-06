@@ -38,6 +38,9 @@ bitcoin
   .then(console.log) // Array<BlockHash>
 ```
 
+## Community
+
+[Liquality Gitter](https://gitter.im/liquality/Lobby?source=orgpage)
 
 ### Try ChainAbstractionLayer in Browser
 
