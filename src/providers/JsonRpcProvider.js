@@ -5,12 +5,15 @@ import { get, has } from 'lodash'
 import Provider from '../Provider'
 import RpcError from './RpcError'
 
+import networks from '../networks'
+
 const { parse } = JSONBigInt({ storeAsString: true, strict: true })
 
 export default class JsonRpcProvider extends Provider {
-  constructor (uri, username, password) {
+  constructor (uri, username, password, chain = { network: networks.bitcoin }) {
     super()
 
+    this._network = chain.network
     this._axios = axios.create({
       baseURL: uri,
       responseType: 'text',
