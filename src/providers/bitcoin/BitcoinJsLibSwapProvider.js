@@ -108,7 +108,6 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     txb.addOutput(alice.getAddress(), vout.vSat - txfee)
 
     const txRaw = txb.buildIncomplete()
-    console.log(vout.script.toString('hex'))
     const sigHash = txRaw.hashForSignature(vout.n, vout.script, hashType)
     const redeemScriptSig = bitcoin.script.swap.input.encode(
       alice.sign(sigHash).toScriptSignature(hashType),
@@ -120,7 +119,6 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     const redeem = bitcoin.script.scriptHash.input.encode(
       redeemScriptSig, vout.script)
 
-    console.log(redeem.toString('hex'))
     txRaw.setInputScript(0, redeem)
     return txRaw.toHex()
   }
@@ -161,7 +159,6 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     }
 
     const txHex = txb.build().toHex()
-    console.log(`transaction: ${txHex}`)
 
     return {
       hex: txHex,
