@@ -157,7 +157,10 @@ export default class BitcoinSwapProvider extends Provider {
       }
       await sleep(5000)
     }
-    return initiateSwapTransaction
+
+    return {
+      hash: initiateSwapTransaction.txid // TODO: full transaction object
+    }
   }
 
   async findClaimSwapTransaction (initiationTxHash, secretHash) {
@@ -182,8 +185,11 @@ export default class BitcoinSwapProvider extends Provider {
       }
       await sleep(5000)
     }
-    claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
-    return claimSwapTransaction
+
+    return {
+      hash: claimSwapTransaction.hash, // TODO: full transaction object
+      secret: await this.getSwapSecret(claimSwapTransaction.hash)
+    }
   }
 
   async getSwapSecret (claimTxHash) {
