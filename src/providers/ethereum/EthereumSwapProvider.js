@@ -122,12 +122,12 @@ export default class EthereumSwapProvider extends Provider {
       }
       await sleep(5000)
     }
-    claimSwapTransaction.secret = this.getSwapSecret(claimSwapTransaction.hash)
+    claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
     return claimSwapTransaction
   }
 
   async getSwapSecret (claimTxHash) {
-    const claimTransaction = await this.getMethod('getTransactionHash')(claimTxHash)
+    const claimTransaction = await this.getMethod('getTransactionByHash')(claimTxHash)
     return claimTransaction.input
   }
 }
