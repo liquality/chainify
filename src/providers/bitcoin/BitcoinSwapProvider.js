@@ -69,9 +69,11 @@ export default class BitcoinSwapProvider extends Provider {
     const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
     const outputScript = outputScriptObj.toString('hex')
 
+    const addressPath = await this.getMethod('getDerivationPathFromAddress')(recipientAddress)
+
     const signature = await this.getMethod('signP2SHTransaction')(
       [[initiationTx, 0, script]],
-      [`44'/1'/0'/0/0`],
+      [addressPath],
       outputScript
     )
 
