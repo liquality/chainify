@@ -9,6 +9,7 @@
 
 Query different blockchains with a single and simple interface.
 
+[Introductory Blog Post](https://medium.com/liquality/the-missing-tool-to-cross-chain-development-2ebfe898efa1)
 
 ## Installation
 
