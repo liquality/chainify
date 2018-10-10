@@ -2,6 +2,8 @@ import Provider from '../../Provider'
 import { padHexStart } from '../../crypto'
 import { ensureHexStandardFormat } from './EthereumUtil'
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     const dataSizeBase = 112
@@ -93,30 +95,39 @@ export default class EthereumSwapProvider extends Provider {
     return ''
   }
 
-  async getSwapTransaction (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
+  async findInitiateSwapTransaction (recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    const block = await this.getMethod('getBlockByNumber')(blockNumber)
-    const txids = block.transactions
-    const transactions = await Promise.all(txids.map(async txid => {
-      return this.getMethod('getTransactionByHash')(txid)
-    }))
-    const swapTx = transactions.find(transaction => transaction.input === data.toLowerCase())
-    return swapTx ? swapTx.hash : null
+    let blockNumber = await this.getMethod('getBlockHeight')()
+    let initiateSwapTransaction = null
+    while (!initiateSwapTransaction) {
+      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      if (block) {
+        initiateSwapTransaction = block.transactions.find(transaction => transaction.input === data.toLowerCase())
+        blockNumber++
+      }
+      await sleep(5000)
+    }
+    return initiateSwapTransaction
   }
 
-  async getSwapConfirmTransaction (blockNumber, initiationTxHash, secretHash) {
+  async findClaimSwapTransaction (initiationTxHash, secretHash) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    const block = await this.getMethod('getBlockByNumber')(blockNumber)
-    const txids = block.transactions
-    const transactions = await Promise.all(txids.map(async txid => {
-      return this.getMethod('getTransactionByHash')(txid)
-    }))
-    const swapTx = transactions.find(transaction => transaction.to === initiationTransaction.contractAddress)
-    return swapTx ? swapTx.hash : null
+    let blockNumber = await this.getMethod('getBlockHeight')()
+    let claimSwapTransaction = null
+    while (!claimSwapTransaction) {
+      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      if (block) {
+        claimSwapTransaction = block.transactions.find(transaction => transaction.to === initiationTransaction.contractAddress)
+        blockNumber++
+      }
+      await sleep(5000)
+    }
+    claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
+    return claimSwapTransaction
   }
 
-  async getSecret (claimTxHash) {
-    const claimTransaction = await this.getMethod('getTransactionHash')(claimTxHash)
+  async getSwapSecret (claimTxHash) {
+    const claimTransaction = await this.getMethod('getTransactionByHash')(claimTxHash)
     return claimTransaction.input
   }
 }

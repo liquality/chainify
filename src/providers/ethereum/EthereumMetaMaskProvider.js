@@ -29,7 +29,7 @@ export default class EthereumMetaMaskProvider extends Provider {
             return
           }
 
-          if (!data.result) {
+          if (typeof data.result === 'undefined') {
             reject(new Error('Something went wrong'))
             return
           }
@@ -86,14 +86,5 @@ export default class EthereumMetaMaskProvider extends Provider {
 
     const txHash = await this._toMM('eth_sendTransaction', tx)
     return ensureHexStandardFormat(txHash)
-  }
-
-  async getBlockByNumber (blockNumber, includeTx) {
-    return this._toMM('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
-  }
-
-  async getTransactionByHash (txHash) {
-    txHash = ensureHexEthFormat(txHash)
-    return this._toMM('eth_getTransactionByHash', txHash)
   }
 }

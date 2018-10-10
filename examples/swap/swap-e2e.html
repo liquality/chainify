@@ -34,12 +34,15 @@
         <p><button id="btcInitiateSwap">Initiate Swap</button></p>
         <p>swap bytecode: <textarea id="btcSwapBytecode"></textarea></p>
         <p>transaction hash: <textarea id="btcInitiateSwapResult"></textarea></p>
+        <p style="color: red; display: none;" id="btcFindInitiateSwap">Scanning for initiation tx: <textarea id="btcFindInitiateSwapTransactionResult"></textarea></p>
         <h3>Claim swap:</h3>
         <p><strong>Wait until initiation transaction has been confirmed!</strong></p>
         <p>secret: <input type="text" id="btcClaimSecret" /></p>
         <p>initiationTxHash: <input type="text" id="btcInitiationTxHash" /></p>
         <p><button id="btcClaimSwap">Claim Swap</button></p>
         <p>transaction hash: <textarea id="btcClaimSwapResult"></textarea></p>
+        <p style="color: red; display: none;" id="btcFindClaimSwap">Scanning for claim tx: <textarea id="btcFindClaimSwapTransactionResult"></textarea></p>
+        <p style="color: red; display: none;" id="btcFindClaimSwapSecret">Secret Revealed: <textarea id="btcFindClaimSwapTransactionResultSecret"></textarea></p>
       </td>
       <td>
         <h3>Generate secret:</h3>
@@ -56,12 +59,15 @@
         <p><button id="ethInitiateSwap">Initiate Swap</button></p>
         <p>swap bytecode: <textarea id="ethSwapBytecode"></textarea></p>
         <p>transaction hash: <textarea id="ethInitiateSwapResult"></textarea></p>
+        <p style="color: red; display: none;" id="ethFindInitiateSwap">Scanning for initiation tx: <textarea id="ethFindInitiateSwapTransactionResult"></textarea></p>
         <h3>Claim swap:</h3>
         <p><strong>Wait until initiation transaction has been confirmed!</strong></p>
         <p>secret: <input type="text" id="ethClaimSecret" /></p>
         <p>initiationTxHash: <input type="text" id="ethInitiationTxHash" /></p>
         <p><button id="ethClaimSwap">Claim Swap</button></p>
         <p>transaction hash: <textarea id="ethClaimSwapResult"></textarea></p>
+        <p style="color: red; display: none;" id="ethFindClaimSwap">Scanning for claim tx: <textarea id="ethFindClaimSwapTransactionResult"></textarea></p>
+        <p style="color: red; display: none;" id="ethFindClaimSwapSecret">Secret Revealed: <textarea id="ethFindClaimSwapTransactionResultSecret"></textarea></p>
       </td>
     </tr>
   </table>
@@ -71,7 +77,7 @@
     /* global $, ChainAbstractionLayer, web3 */
     const { Client, providers, networks, crypto } = ChainAbstractionLayer
     const bitcoin = new Client()
-    bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('http://localhost:8000', 'bitcoin', 'local321'))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('https://localhost:18332', 'bitcoin', 'local321'))
     bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
     bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
 
@@ -105,6 +111,16 @@
         parseInt($(`#${prefix}Expiration`).val())
       ).then(result => {
         $(`#${prefix}InitiateSwapResult`).text(result)
+        $(`#${prefix}FindInitiateSwap`).show()
+      })
+
+      client.findInitiateSwapTransaction(
+        $(`#${prefix}RecipientAddress`).val(),
+        $(`#${prefix}RefundAddress`).val(),
+        $(`#${prefix}SecretHash`).val(),
+        parseInt($(`#${prefix}Expiration`).val())
+      ).then(result => {
+        $(`#${prefix}FindInitiateSwapTransactionResult`).text(JSON.stringify(result, null, 2))
       })
     }
 
@@ -117,6 +133,16 @@
         parseInt($(`#${prefix}Expiration`).val())
       ).then(result => {
         $(`#${prefix}ClaimSwapResult`).text(result)
+        $(`#${prefix}FindClaimSwap`).show()
+      })
+
+      client.findClaimSwapTransaction(
+        $(`#${prefix}InitiationTxHash`).val(),
+        $(`#${prefix}SecretHash`).val()
+      ).then(result => {
+        $(`#${prefix}FindClaimSwapTransactionResult`).text(JSON.stringify(result, null, 2))
+        $(`#${prefix}FindClaimSwapTransactionResultSecret`).text(result.secret)
+        $(`#${prefix}FindClaimSwapSecret`).show()
       })
     }
 

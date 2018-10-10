@@ -9,13 +9,13 @@ const lib = new Client()
 describe('Client methods', () => {
   describe('generateBlock', () => {
     it('should throw NoProviderError', () => {
-      return expect(lib.generateBlock()).to.be.rejectedWith(errors.NoProviderError)
+      return expect(lib.generateBlock(1)).to.be.rejectedWith(errors.NoProviderError)
     })
   })
 
   describe('getBlockByNumber', () => {
     it('should throw NoProviderError', async () => {
-      return expect(lib.getBlockByNumber()).to.be.rejectedWith(errors.NoProviderError)
+      return expect(lib.getBlockByNumber(1)).to.be.rejectedWith(errors.NoProviderError)
     })
   })
 
@@ -27,7 +27,7 @@ describe('Client methods', () => {
 
   describe('getTransactionByHash', () => {
     it('should throw NoProviderError', async () => {
-      return expect(lib.getTransactionByHash()).to.be.rejectedWith(errors.NoProviderError)
+      return expect(lib.getTransactionByHash('4545')).to.be.rejectedWith(errors.NoProviderError)
     })
   })
 })
