@@ -1,4 +1,4 @@
-import { get, upperFirst, find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
+import { upperFirst, find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
 import * as Ajv from 'ajv'
 
 import * as providers from './providers'
@@ -58,7 +58,7 @@ export default class Client {
 
       const rpcProviderName = `${upperFirst(driverName)}RPCProvider`
       const pathToProvider = `${driverName}.${rpcProviderName}`
-      const ProviderClass = get(providers, pathToProvider)
+      const ProviderClass = providers[driverName][rpcProviderName]
 
       if (!ProviderClass) {
         throw new ProviderNotFoundError(`${pathToProvider} not found`)
