@@ -14,7 +14,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async isAddressUsed (address) {
     address = String(address)
-    const utxo = await this.getUnspentTransactions(address)
+    const utxo = await this.getReceivedByAddress(address)
 
     return utxo.length !== 0
   }
@@ -34,6 +34,10 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async getUnspentTransactions (address) {
     return this.jsonrpc('listunspent', 0, 9999999, [ address ])
+  }
+
+  async getReceivedByAddress (address) {
+    return this.jsonrpc('getreceivedbyaddress', address)
   }
 
   async getTransactionHex (transactionHash) {
