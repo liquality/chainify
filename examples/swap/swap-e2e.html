@@ -94,52 +94,40 @@
     }
 
     function initiateSwap (client, prefix) {
-      client.createSwapScript(
-        $(`#${prefix}RecipientAddress`).val(),
-        $(`#${prefix}RefundAddress`).val(),
-        $(`#${prefix}SecretHash`).val(),
-        parseInt($(`#${prefix}Expiration`).val())
-      ).then(result => {
+      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+      const refundAddress = $(`#${prefix}RefundAddress`).val()
+      const secretHash = $(`#${prefix}SecretHash`).val()
+      const expiration = parseInt($(`#${prefix}Expiration`).val())
+      const value = parseInt($(`#${prefix}FundValue`).val())
+
+      client.createSwapScript(recipientAddress, refundAddress, secretHash, expiration).then(result => {
         $(`#${prefix}SwapBytecode`).text(result)
       })
 
-      client.initiateSwap(
-        parseInt($(`#${prefix}FundValue`).val()),
-        $(`#${prefix}RecipientAddress`).val(),
-        $(`#${prefix}RefundAddress`).val(),
-        $(`#${prefix}SecretHash`).val(),
-        parseInt($(`#${prefix}Expiration`).val())
-      ).then(result => {
+      client.initiateSwap(value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
         $(`#${prefix}InitiateSwapResult`).text(result)
         $(`#${prefix}FindInitiateSwap`).show()
       })
 
-      client.findInitiateSwapTransaction(
-        $(`#${prefix}RecipientAddress`).val(),
-        $(`#${prefix}RefundAddress`).val(),
-        $(`#${prefix}SecretHash`).val(),
-        parseInt($(`#${prefix}Expiration`).val())
-      ).then(result => {
+      client.findInitiateSwapTransaction(value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
         $(`#${prefix}FindInitiateSwapTransactionResult`).text(JSON.stringify(result, null, 2))
       })
     }
 
     function claimSwap (client, prefix) {
-      client.claimSwap(
-        $(`#${prefix}InitiationTxHash`).val(),
-        $(`#${prefix}RecipientAddress`).val(),
-        $(`#${prefix}RefundAddress`).val(),
-        $(`#${prefix}ClaimSecret`).val(),
-        parseInt($(`#${prefix}Expiration`).val())
-      ).then(result => {
+      const initiationTxHash = $(`#${prefix}InitiationTxHash`).val()
+      const secret = $(`#${prefix}ClaimSecret`).val()
+      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+      const refundAddress = $(`#${prefix}RefundAddress`).val()
+      const secretHash = $(`#${prefix}SecretHash`).val()
+      const expiration = parseInt($(`#${prefix}Expiration`).val())
+
+      client.claimSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration).then(result => {
         $(`#${prefix}ClaimSwapResult`).text(result)
         $(`#${prefix}FindClaimSwap`).show()
       })
 
-      client.findClaimSwapTransaction(
-        $(`#${prefix}InitiationTxHash`).val(),
-        $(`#${prefix}SecretHash`).val()
-      ).then(result => {
+      client.findClaimSwapTransaction(initiationTxHash, secretHash).then(result => {
         $(`#${prefix}FindClaimSwapTransactionResult`).text(JSON.stringify(result, null, 2))
         $(`#${prefix}FindClaimSwapTransactionResultSecret`).text(result.secret)
         $(`#${prefix}FindClaimSwapSecret`).show()

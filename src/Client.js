@@ -422,14 +422,15 @@ export default class Client {
 
   /**
    * Find swap transaction from parameters
+   * @param {!number} value - The amount of native value locked in the swap
    * @param {!string} blockNumber - Block number in which transaction was mined
    * @param {!string} recipientAddress - Recepient address
    * @param {!string} refundAddress - Refund address
    * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async findInitiateSwapTransaction (recipientAddress, refundAddress, secretHash, expiration) {
-    return this.getMethod('findInitiateSwapTransaction')(recipientAddress, refundAddress, secretHash, expiration)
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.getMethod('findInitiateSwapTransaction')(value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**

@@ -95,14 +95,16 @@ export default class EthereumSwapProvider extends Provider {
     return ''
   }
 
-  async findInitiateSwapTransaction (recipientAddress, refundAddress, secretHash, expiration) {
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     let blockNumber = await this.getMethod('getBlockHeight')()
     let initiateSwapTransaction = null
     while (!initiateSwapTransaction) {
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
       if (block) {
-        initiateSwapTransaction = block.transactions.find(transaction => transaction.input === data.toLowerCase())
+        initiateSwapTransaction = block.transactions.find(transaction =>
+          transaction.input === data.toLowerCase() && transaction.value === value
+        )
         blockNumber++
       }
       await sleep(5000)
