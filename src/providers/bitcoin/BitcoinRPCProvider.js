@@ -59,7 +59,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     let { tx: transactions } = data
 
     if (includeTx) {
-      const txs = transactions.map(this.getMethod('getRawTransactionByHash'))
+      const txs = transactions.map(this.getMethod('getTransactionByHash'))
       transactions = await Promise.all(txs)
     }
 
