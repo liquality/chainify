@@ -174,7 +174,7 @@ export default class BitcoinSwapProvider extends Provider {
     }
 
     return {
-      hash: claimSwapTransaction.hash, // TODO: full transaction object
+      ...claimSwapTransaction,
       secret: await this.getSwapSecret(claimSwapTransaction.hash)
     }
   }
