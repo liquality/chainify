@@ -131,12 +131,20 @@ export default class BitcoinSwapProvider extends Provider {
     return this._spendSwap(signature, pubKey, false)
   }
 
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
+  doesTransactionMatchSwapParams (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(data)
     const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     const sendScript = this.getMethod('createScript')(receivingAddress)
+    return Boolean(transaction._raw.data.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === value))
+  }
 
+  async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
+    const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    return this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
     let blockNumber = await this.getMethod('getBlockHeight')()
     let initiateSwapTransaction = null
     while (!initiateSwapTransaction) {
@@ -146,7 +154,7 @@ export default class BitcoinSwapProvider extends Provider {
       } catch (e) { }
       if (block) {
         initiateSwapTransaction = block.transactions.find(tx =>
-          tx._raw.data.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === value)
+          this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
         )
         blockNumber++
       }
