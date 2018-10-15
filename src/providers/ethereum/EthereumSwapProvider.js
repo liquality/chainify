@@ -122,12 +122,12 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   async findClaimSwapTransaction (initiationTxHash, secretHash) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     let blockNumber = await this.getMethod('getBlockHeight')()
     let claimSwapTransaction = null
     while (!claimSwapTransaction) {
+      const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      if (block) {
+      if (block && initiationTransaction) {
         claimSwapTransaction = block.transactions.find(transaction => transaction.to === initiationTransaction.contractAddress)
         blockNumber++
       }
