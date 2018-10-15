@@ -1,6 +1,6 @@
 import Provider from '../../Provider'
 import { padHexStart } from '../../crypto'
-import { ensureHexStandardFormat } from './EthereumUtil'
+import { ensureAddressStandardFormat } from './EthereumUtil'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -67,11 +67,11 @@ export default class EthereumSwapProvider extends Provider {
       '00', // STOP
 
       '5b', // JUMPDEST
-      '73', ensureHexStandardFormat(recipientAddress), // PUSH20 {recipientAddressEncoded}
+      '73', ensureAddressStandardFormat(recipientAddress), // PUSH20 {recipientAddressEncoded}
       'ff', // SUICIDE
 
       '5b', // JUMPDEST
-      '73', ensureHexStandardFormat(refundAddress), // PUSH20 {refundAddressEncoded}
+      '73', ensureAddressStandardFormat(refundAddress), // PUSH20 {refundAddressEncoded}
       'ff' // SUICIDE
     ].join('')
   }
@@ -97,7 +97,7 @@ export default class EthereumSwapProvider extends Provider {
 
   doesTransactionMatchSwapParams (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    return transaction.input === data.toLowerCase() && transaction.value === value
+    return transaction.input === data && transaction.value === value
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {

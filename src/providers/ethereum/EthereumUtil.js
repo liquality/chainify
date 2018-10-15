@@ -16,6 +16,14 @@ function ensureHexStandardFormat (hash) {
   return hash.replace('0x', '')
 }
 
+/**
+ * Converts an ethereum address to the standard format
+ * @param {*} address
+ */
+function ensureAddressStandardFormat (address) {
+  return ensureHexStandardFormat(address).toLowerCase()
+}
+
 function formatEthResponse (obj) {
   if (typeof obj === 'string' || obj instanceof String) {
     obj = ensureHexStandardFormat(obj)
@@ -56,4 +64,4 @@ function normalizeTransactionObject (tx, currentBlock) {
   return tx
 }
 
-export { ensureHexEthFormat, ensureHexStandardFormat, formatEthResponse, normalizeTransactionObject }
+export { ensureHexEthFormat, ensureHexStandardFormat, ensureAddressStandardFormat, formatEthResponse, normalizeTransactionObject }
