@@ -1,6 +1,6 @@
 import JsonRpcProvider from '../JsonRpcProvider'
 
-import { formatEthResponse, ensureHexEthFormat } from './EthereumUtil'
+import { formatEthResponse, ensureHexEthFormat, normalizeTransactionObject } from './EthereumUtil'
 
 export default class EthereumRPCProvider extends JsonRpcProvider {
   _parseResponse (response) {
@@ -19,7 +19,12 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this.jsonrpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
+    const currentBlock = await this.getBlockHeight()
+    const block = await this.jsonrpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
+    if (block) {
+      block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentBlock))
+    }
+    return block
   }
 
   async getBlockHeight () {
@@ -29,7 +34,9 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
 
   async getTransactionByHash (txHash) {
     txHash = ensureHexEthFormat(txHash)
-    return this.jsonrpc('eth_getTransactionByHash', txHash)
+    const currentBlock = await this.getBlockHeight()
+    const tx = await this.jsonrpc('eth_getTransactionByHash', txHash)
+    return normalizeTransactionObject(tx, currentBlock)
   }
 
   async getTransactionReceipt (txHash) {

@@ -509,10 +509,32 @@ export default class Client {
   }
 
   /**
-   * Generate redeem swap transaction data
+   * Verifies that the given initiation transaction matches the given swap params
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!number} value - The amount of native value locked in the swap.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @return {Promise<boolean, TypeError>} Resolves with true if verification has passed.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    return this.getMethod('verifyInitiateSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+  /**
+   * Claim the swap
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
    * @param {!string} secret - Secret for the swap in hex.
-   * @param {string} [pubKey] - PubKey for the swap in hex.
-   * @param {string} [signature] - Signature for the swap in hex.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secret - Secret for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
@@ -549,19 +571,5 @@ export default class Client {
     }
 
     return this.getMethod('refundSwap')(pubKey, signature)
-  }
-
-  /**
-   * Check if counterparty transaction has been confirmed
-   * @param {!number} blockNumber - The number of the desired block.
-   * @param {!string} recipientAddress - Recepient address for the swap in hex.
-   * @param {!string} refundAddress - Refund address for the swap in hex.
-   * @param {!string} secretHash - Secret hash for the swap in hex.
-   * @param {!number} expiration - Expiration time for the swap.
-   * @return {Promise<string, TypeError>} Resolves with txHash of desired swap or false if not found.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async checkBlockSwap (blockNumber, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.getMethod('checkBlockSwap')(blockNumber, recipientAddress, refundAddress, secretHash, expiration)
   }
 }

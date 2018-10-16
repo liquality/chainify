@@ -25,6 +25,11 @@
       "title": "Value",
       "minimum": 0
     },
+    "confirmations": {
+      "type": "number",
+      "title": "Confirmations",
+      "minimum": 0
+    },
     "_raw": {
       "type": "object"
     }
