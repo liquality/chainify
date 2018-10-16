@@ -14,9 +14,9 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async isAddressUsed (address) {
     address = String(address)
-    const utxo = await this.getReceivedByAddress(address)
+    const amountReceived = await this.getReceivedByAddress(address)
 
-    return utxo.length !== 0
+    return amountReceived > 0
   }
 
   async getBalance (addresses) {
