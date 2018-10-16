@@ -145,6 +145,17 @@ export default class Client {
   }
 
   /**
+   * Get address UTXOs
+   * @param {!string|string[]|Address|Address[]} addresses - An address or a list of addresses.
+   * @return {Promise<number, InvalidProviderResponseError>} If addresses is given,
+   *  returns the unspent outputs for the addresses provider
+   */
+  async getAddressUtxos (addresses) {
+    const outputs = await this.getMethod('getAddressUtxos')(addresses)
+    return outputs
+  }
+
+  /**
    * Generate a block
    * @param {!number} numberOfBlocks - Number of blocks to be generated
    * @return {Promise<string[], TypeError|InvalidProviderResponseError>} Resolves
