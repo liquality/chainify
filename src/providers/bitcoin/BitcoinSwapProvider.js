@@ -17,9 +17,6 @@ export default class BitcoinSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), 'hex').reverse()
 
-    expirationHex = expirationHex.slice(0, Math.min(expirationHex.length, 5))
-    expirationHex.writeUInt8(0, expirationHex.length - 1)
-
     const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)
     const refundPubKeyHash = addressToPubKeyHash(refundAddress)
     const expirationPushDataOpcode = padHexStart(expirationHex.length.toString(16))
@@ -52,6 +49,14 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration, true)
+  }
+
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration, false)
+  }
+
+  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, isClaim) {
     const secretHash = sha256(secret)
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
@@ -64,12 +69,12 @@ export default class BitcoinSwapProvider extends Provider {
 
     const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
     const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
-    const newTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, newTxInput)
+    const newTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? recipientAddress : refundAddress, newTxInput)
     const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
     const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
     const outputScript = outputScriptObj.toString('hex')
 
-    const addressPath = await this.getMethod('getDerivationPathFromAddress')(recipientAddress)
+    const addressPath = await this.getMethod('getDerivationPathFromAddress')(isClaim ? recipientAddress : refundAddress)
 
     const signature = await this.getMethod('signP2SHTransaction')(
       [[initiationTx, 0, script]],
@@ -77,19 +82,19 @@ export default class BitcoinSwapProvider extends Provider {
       outputScript
     )
 
-    const pubKeyInfo = await this.getMethod('getPubKey')(recipientAddress)
+    const pubKeyInfo = await this.getMethod('getPubKey')(isClaim ? recipientAddress : refundAddress)
     const pubKey = compressPubKey(pubKeyInfo.publicKey)
-    const spendSwap = this._spendSwap(signature[0], pubKey, true, secret)
+    const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secret)
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
-    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, recipientAddress, rawClaimTxInput)
+    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? redeemAddress : refundAddress, rawClaimTxInput)
 
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
 
-  _spendSwap (signature, pubKey, isRedeem, secret) {
-    const redeemEncoded = isRedeem ? '51' : '00' // OP_1 : OP_0
-    const encodedSecret = isRedeem
+  _spendSwap (signature, pubKey, isClaim, secret) {
+    const redeemEncoded = isClaim ? '51' : '00' // OP_1 : OP_0
+    const encodedSecret = isClaim
       ? [
         padHexStart((secret.length / 2).toString(16)), // OP_PUSHDATA({secretLength})
         secret

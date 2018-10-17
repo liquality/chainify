@@ -44,11 +44,12 @@
           <img style="display:none" id="btcVerifySwapTrue" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACHElEQVRIS+2VPU/bQBjH/5dA6teEDpWqdmThG3RoJip1Z2eq8hm68rL3G9BurHyASnSCod+gC0srkJCIII7t2Djxof/hC+fYJFERG5YenXM6/37PPc/ZEXjmSzwzHy8CVeEvPz++a6yI83ws3//4fHphlv3JJdLw9Y11nP05w6zkSQITnmYpkizB1d+rkuS/BXVwXRpKDjZPFLsimFdPDTDhyW2iMhfiHkU4JPYOPp3sVgSL6mk2lDUfpSMkaQI0oAT9f/0SvCTQ8LW3a7AtG47lVJpmJhCPYsRJrMCiIXB9cV2BlwS9X11JuJQSMpdwbAeu404lXMyjyMyjKEIURwrMGFwOauFlwXF3FwI77Tdt5HmuJJ7rwfM8JeFFeDgMMYyG08zDfvgovNKDXiFxX7tKwPB9H37bV4IgCDAMHuDxIJ4Lrz1FWmL51lTS6XQgIRHcBOrcsSxplC6E1wo4qSUtu3UvkXL69rOpWZotBX9UYEqaq03ClITwyXiyNHyuwJSwJFpivkTL/Jcs+lSI3nF3h6eLMAm5/33zdG8GrOv3UEdjgSngfQPACoDVYmxybvvow1cpIA63fn8zniWQkRcxATAGkBUj56UpILwFwAPAc2kVIkqUqPh28RkTTjCD4BGAsIhbimcFzN4G4AB4ZezCFOhN6Oy1gNmnAOJCxN8lgW46M9Why8axrl/mTnhPmRarnixq8jIHZe6aO75QNCiLJ0zzAAAAAElFTkSuQmCC" />
           <img style="display:none" id="btcVerifySwapFalse" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACT0lEQVRIS8WVS2sTURTHf2N8JMG2iK/W4luhKkpRSqmvb6BfoNCVazcKbsRUN4Li1oVLwS9Qv4GvEKqlKNWitmqTaavNQ6skrUlz5Qxzp8nMnWk3wYHLZOae8/+dxz0TixZfVov1+b8Am+SlbspPo7JcyyY0A3G0YETB5TDIemyMAO3Ydf4scy9eYYJ4NkODzD1+YrSRzAMA7dh5bsCrzPzLdJNAozilEqpYwm+jnQOAWZKqc6A/UPb5dMaBuFGNdA0NQrGIKhRXA0ln2EO5SdOUwbAFqd39fQHI98yo807EVaGAyhc8G9lTcLub8nCjY1gPHMiuvjMBSOxYDyqfp76Q9/Z+jL4xiht7oL1skg5k5+neyFlcGBsPFY8EyKaG7Og9ZYTkx99Giq8JEANp+vaTJ4yAwruJQFP9hpGfChGXhi6/HgstU/H9h0hIKECL1+xZarbtAJRpcIDS5MdQiBGgxas5m2o250X/69Nn53fH0SOBjGTPPwPGHnji2RzVmeyq+NS001DXKdVx+FAQMjW9/kFrP3jAE1j88rXptOjTFWWjnSMHrW3/Pn5/m2EF7uyl7ESvryzJVAxuaRvTFPtLJLANwEZg0ySJm+1YN36i7h+n8sDtb2NAaoLEtW1Y1xdR93qo3AVqQNW91+VcNDqI+GZgK9AGxJ8Rv3qRpUdAzIWLvSw5ULLqz4lfucDSQ1e4Avxx11/Z9wMk+gSQBLa42Yh4I0BXyQGAVNBZEv0yUAYEJM9NAF0yyUQvXTYduf/keJm4GQlIg+Xe+j/9fwC4AyiJR4XmAAAAAElFTkSuQmCC" />
         </p>
-        <h3>Claim swap:</h3>
+        <h3>Redeem swap:</h3>
         <p><strong>Wait until initiation transaction has been confirmed!</strong></p>
         <p>secret: <input type="text" id="btcClaimSecret" /></p>
         <p>initiationTxHash: <input type="text" id="btcInitiationTxHash" /></p>
         <p><button id="btcClaimSwap">Claim Swap</button></p>
+        <p><button id="btcRefundSwap">Refund Swap</button></p>
         <p>transaction hash: <textarea id="btcClaimSwapResult"></textarea></p>
         <p style="color: red; display: none;" id="btcFindClaimSwap">Scanning for claim tx: <textarea id="btcFindClaimSwapTransactionResult"></textarea></p>
         <p style="color: red; display: none;" id="btcFindClaimSwapSecret">Secret Revealed: <textarea id="btcFindClaimSwapTransactionResultSecret"></textarea></p>
@@ -105,12 +106,12 @@
     /* global $, ChainAbstractionLayer, web3 */
     const { Client, providers, networks, crypto } = ChainAbstractionLayer
     const bitcoin = new Client()
-    bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('https://localhost:18332', 'bitcoin', 'local321'))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('http://localhost:8000', 'bitcoin', 'local321'))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
     bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
 
     const ethereum = new Client()
-    ethereum.addProvider(new providers.ethereum.EthereumRPCProvider('https://localhost:8545'))
+    ethereum.addProvider(new providers.ethereum.EthereumRPCProvider('http://localhost:8545'))
     ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
     ethereum.addProvider(new providers.ethereum.EthereumSwapProvider())
 
