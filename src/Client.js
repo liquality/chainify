@@ -530,7 +530,6 @@ export default class Client {
   /**
    * Claim the swap
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
-   * @param {!string} secret - Secret for the swap in hex.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secret - Secret for the swap in hex.
@@ -547,29 +546,20 @@ export default class Client {
   }
 
   /**
-   * Generate refund swap transaction data
-   * @param {string} [pubKey] - PubKey for the swap in hex.
-   * @param {string} [signature] - Signature for the swap in hex.
-   * @return {Promise<string, TypeError>} Resolves with refund swap contract bytecode.
+   * Refund the swap
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async refundSwap (pubKey = '', signature = '') {
-    if (!isString(pubKey)) {
-      throw new TypeError('PubKey should be a string')
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    if (!(/^[A-Fa-f0-9]*$/.test(pubKey))) {
-      throw new TypeError('PubKey should be a valid hex string')
-    }
-
-    if (!isString(signature)) {
-      throw new TypeError('Signature should be a string')
-    }
-
-    if (!(/^[A-Fa-f0-9]*$/.test(signature))) {
-      throw new TypeError('Signature should be a valid hex string')
-    }
-
-    return this.getMethod('refundSwap')(pubKey, signature)
+    return this.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
 }
