@@ -83,16 +83,13 @@ export default class EthereumSwapProvider extends Provider {
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    const data = this.getRedeemSwapData(secret)
+    const data = padHexStart(secret, 64)
     return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, data)
   }
 
-  getRedeemSwapData (secret) {
-    return padHexStart(secret, 64)
-  }
-
-  getRefundSwapData () {
-    return ''
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, '')
   }
 
   doesTransactionMatchSwapParams (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {

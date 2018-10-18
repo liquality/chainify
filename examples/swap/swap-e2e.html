@@ -52,6 +52,11 @@
         <p>transaction hash: <textarea id="btcClaimSwapResult"></textarea></p>
         <p style="color: red; display: none;" id="btcFindClaimSwap">Scanning for claim tx: <textarea id="btcFindClaimSwapTransactionResult"></textarea></p>
         <p style="color: red; display: none;" id="btcFindClaimSwapSecret">Secret Revealed: <textarea id="btcFindClaimSwapTransactionResultSecret"></textarea></p>
+        <h3>Refund swap:</h3>
+        <p><strong>Ensure the expiration time has arrived!</strong></p>
+        <p>initiationTxHash: <input type="text" id="btcRefundInitiationTxHash" /></p>
+        <p><button id="btcRefundSwap">Refund Swap</button></p>
+        <p>transaction hash: <textarea id="btcRefundSwapResult"></textarea></p>
       </td>
       <td>
         <h3>Generate secret:</h3>
@@ -86,6 +91,11 @@
         <p>transaction hash: <textarea id="ethClaimSwapResult"></textarea></p>
         <p style="color: red; display: none;" id="ethFindClaimSwap">Scanning for claim tx: <textarea id="ethFindClaimSwapTransactionResult"></textarea></p>
         <p style="color: red; display: none;" id="ethFindClaimSwapSecret">Secret Revealed: <textarea id="ethFindClaimSwapTransactionResultSecret"></textarea></p>
+        <h3>Refund swap:</h3>
+        <p><strong>Ensure the expiration time has arrived!</strong></p>
+        <p>initiationTxHash: <input type="text" id="ethRefundInitiationTxHash" /></p>
+        <p><button id="ethRefundSwap">Refund Swap</button></p>
+        <p>transaction hash: <textarea id="ethRefundSwapResult"></textarea></p>
       </td>
     </tr>
   </table>
@@ -171,15 +181,29 @@
       })
     }
 
+    function refundSwap (client, prefix) {
+      const initiationTxHash = $(`#${prefix}RefundInitiationTxHash`).val()
+      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+      const refundAddress = $(`#${prefix}RefundAddress`).val()
+      const secretHash = $(`#${prefix}SecretHash`).val()
+      const expiration = parseInt($(`#${prefix}Expiration`).val())
+
+      client.refundSwap(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration).then(result => {
+        $(`#${prefix}RefundSwapResult`).text(result)
+      })
+    }
+
     $('#btcGenerateSecret').click(generateSecret.bind(null, bitcoin, 'btc'))
     $('#btcInitiateSwap').click(initiateSwap.bind(null, bitcoin, 'btc'))
     $('#btcVerifySwap').click(verifySwap.bind(null, bitcoin, 'btc'))
     $('#btcClaimSwap').click(claimSwap.bind(null, bitcoin, 'btc'))
+    $('#btcRefundSwap').click(refundSwap.bind(null, bitcoin, 'btc'))
 
     $('#ethGenerateSecret').click(generateSecret.bind(null, ethereum, 'eth'))
     $('#ethInitiateSwap').click(initiateSwap.bind(null, ethereum, 'eth'))
     $('#ethVerifySwap').click(verifySwap.bind(null, ethereum, 'eth'))
     $('#ethClaimSwap').click(claimSwap.bind(null, ethereum, 'eth'))
+    $('#ethRefundSwap').click(refundSwap.bind(null, ethereum, 'eth'))
   </script>
 </body>
 
