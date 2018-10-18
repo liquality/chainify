@@ -53,12 +53,12 @@ export default class BitcoinSwapProvider extends Provider {
     return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration, true)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration, false)
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, false)
   }
 
-  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, isClaim) {
-    const secretHash = sha256(secret)
+  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secretParam, expiration, isClaim) {
+    const secretHash = isClaim ? sha256(secretParam) : secretParam
     const lockTime = isClaim ? 0 : expiration + 100
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
@@ -87,7 +87,7 @@ export default class BitcoinSwapProvider extends Provider {
 
     const pubKeyInfo = await this.getMethod('getPubKey')(isClaim ? recipientAddress : refundAddress)
     const pubKey = compressPubKey(pubKeyInfo.publicKey)
-    const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secret)
+    const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secretParam)
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
     const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? redeemAddress : refundAddress, rawClaimTxInput, isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8))
