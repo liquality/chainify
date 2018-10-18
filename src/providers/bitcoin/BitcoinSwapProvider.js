@@ -1,5 +1,5 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash, compressPubKey, pubKeyToAddress, reverseBuffer } from './BitcoinUtil'
+import { addressToPubKeyHash, compressPubKey, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { sha256, padHexStart } from '../../crypto'
 import networks from '../../networks'
 
@@ -15,7 +15,8 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), 'hex').reverse()
+    // let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), 'hex').reverse()
+    let expirationHex = scriptNumEncode(expiration)
 
     const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)
     const refundPubKeyHash = addressToPubKeyHash(refundAddress)
@@ -58,6 +59,7 @@ export default class BitcoinSwapProvider extends Provider {
 
   async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, isClaim) {
     const secretHash = sha256(secret)
+    const lockTime = isClaim ? 0 : expiration + 100
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
@@ -69,7 +71,7 @@ export default class BitcoinSwapProvider extends Provider {
 
     const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
     const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
-    const newTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? recipientAddress : refundAddress, newTxInput)
+    const newTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? recipientAddress : refundAddress, newTxInput, isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8))
     const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
     const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
     const outputScript = outputScriptObj.toString('hex')
@@ -77,9 +79,10 @@ export default class BitcoinSwapProvider extends Provider {
     const addressPath = await this.getMethod('getDerivationPathFromAddress')(isClaim ? recipientAddress : refundAddress)
 
     const signature = await this.getMethod('signP2SHTransaction')(
-      [[initiationTx, 0, script]],
+      [[initiationTx, 0, script, 0]],
       [addressPath],
-      outputScript
+      outputScript,
+      lockTime
     )
 
     const pubKeyInfo = await this.getMethod('getPubKey')(isClaim ? recipientAddress : refundAddress)
@@ -87,7 +90,7 @@ export default class BitcoinSwapProvider extends Provider {
     const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secret)
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
-    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? redeemAddress : refundAddress, rawClaimTxInput)
+    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? redeemAddress : refundAddress, rawClaimTxInput, isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8))
 
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
@@ -211,7 +214,7 @@ export default class BitcoinSwapProvider extends Provider {
       inputTxOutput, // INPUT TRANSACTION OUTPUT
       scriptLength,
       script,
-      'ffffffff' // SEQUENCE
+      '00000000' // SEQUENCE
     ].join('')
   }
 
@@ -224,11 +227,11 @@ export default class BitcoinSwapProvider extends Provider {
       '00000000',
       scriptLength,
       script,
-      'ffffffff' // SEQUENCE
+      '00000000' // SEQUENCE
     ].join('')
   }
 
-  generateRawTx (initiationTx, voutIndex, address, input) {
+  generateRawTx (initiationTx, voutIndex, address, input, locktime) {
     const output = initiationTx.outputs[voutIndex]
     const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
     const fee = this.getMethod('calculateFee')(1, 1, 3)
@@ -251,7 +254,7 @@ export default class BitcoinSwapProvider extends Provider {
       '88', // OP_EQUALVERIFY
       'ac', // OP_CHECKSIG
 
-      '00000000' // OUTPUTS
+      locktime // LOCKTIME
     ].join('')
   }
 }
