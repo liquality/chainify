@@ -15,7 +15,6 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    // let expirationHex = Buffer.from(padHexStart(expiration.toString(16)), 'hex').reverse()
     let expirationHex = scriptNumEncode(expiration)
 
     const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)
@@ -60,6 +59,8 @@ export default class BitcoinSwapProvider extends Provider {
   async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secretParam, expiration, isClaim) {
     const secretHash = isClaim ? sha256(secretParam) : secretParam
     const lockTime = isClaim ? 0 : expiration + 100
+    const lockTimeHex = isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
+    const to = isClaim ? recipientAddress : refundAddress
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
@@ -71,12 +72,12 @@ export default class BitcoinSwapProvider extends Provider {
 
     const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
     const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
-    const newTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? recipientAddress : refundAddress, newTxInput, isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8))
+    const newTx = this.generateRawTx(initiationTx, voutIndex, to, newTxInput, lockTimeHex)
     const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
     const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
     const outputScript = outputScriptObj.toString('hex')
 
-    const addressPath = await this.getMethod('getDerivationPathFromAddress')(isClaim ? recipientAddress : refundAddress)
+    const addressPath = await this.getMethod('getDerivationPathFromAddress')(to)
 
     const signature = await this.getMethod('signP2SHTransaction')(
       [[initiationTx, 0, script, 0]],
@@ -90,7 +91,7 @@ export default class BitcoinSwapProvider extends Provider {
     const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secretParam)
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
-    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, isClaim ? redeemAddress : refundAddress, rawClaimTxInput, isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8))
+    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex)
 
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
