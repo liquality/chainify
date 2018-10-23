@@ -55,9 +55,9 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async isAddressUsed (address) {
-    address = String(address)
+    address = ensureHexEthFormat(String(address))
 
-    const transactionCount = this.jsonrpc('eth_getTransactionCount', address)
+    const transactionCount = this.jsonrpc('eth_getTransactionCount', address, 'latest')
 
     return transactionCount > 0
   }
