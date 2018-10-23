@@ -44,7 +44,7 @@ export default class LedgerProvider extends Provider {
 
     while (!path) {
       const addr = await this.getAddresses(index, 1)
-      if (String(addr) === address) path = this.getDerivationPathFromIndex(index)
+      if (String(addr[0]) === address) path = this.getDerivationPathFromIndex(index)
       index++
     }
 
