@@ -2,7 +2,6 @@ import { flatten } from 'lodash'
 import BitcoinRPCProvider from '../bitcoin/BitcoinRPCProvider'
 
 export default class Bitcore extends BitcoinRPCProvider {
-
   async getBalance (addresses) {
     addresses = addresses
       .map(address => String(address))
@@ -13,11 +12,11 @@ export default class Bitcore extends BitcoinRPCProvider {
   }
 
   async getUnspentTransactionsForAddresses (addresses) {
-    return this.jsonrpc('getaddressutxos', { "addresses" : addresses })
+    return this.jsonrpc('getaddressutxos', {'ddresses': addresses})
   }
 
   async getUnspentTransactions (address) {
-    return this.jsonrpc('getaddressutxos', { "addresses" : [ address ] })
+    return this.jsonrpc('getaddressutxos', {'addresses': [address]})
   }
 
   async getAddressUtxos (addresses) {
@@ -25,17 +24,14 @@ export default class Bitcore extends BitcoinRPCProvider {
   }
 
   async getTransactionHex (transactionHash) {
-    return (await this.jsonrpc('getrawtransaction', transactionHash))
+    return this.jsonrpc('getrawtransaction', transactionHash)
   }
 
   async decodeRawTransaction (rawTransaction) {
     const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
     const { hash: txHash, txid: hash, vout } = data
     const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
-
-    console.log("raw tx", data)
     const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }
-
     return output
   }
 
@@ -59,5 +55,4 @@ export default class Bitcore extends BitcoinRPCProvider {
       return output
     }
   }
-
 }
