@@ -125,7 +125,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       }
 
       const utxos = await this.getMethod('getUnspentTransactions')(address.address)
-      const utxosValue = utxos.reduce((acc, utxo) => acc + (utxo.amount * 1e8), 0)
+      const utxosValue = utxos.reduce((acc, utxo) => ('satoshis' in utxo) ? acc + (utxo.satoshis) : acc + (utxo.amount * 1e8), 0)
 
       utxos.forEach((utxo) => {
         currentAmount += utxosValue
