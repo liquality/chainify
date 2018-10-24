@@ -1,15 +1,18 @@
-# Chain Abstraction Layer <img align="right" src="./liquality-logo.png" height="80px" />
+# Chain Abstraction Layer <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
+
 
 [![ChainAbstractionLayer](https://travis-ci.org/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.org/liquality/chainabstractionlayer)
 [![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](./LICENSE.md)
-[![ChainAbstractionLayer](https://img.shields.io/npm/dt/chainabstractionlayer.svg)](https://npmjs.com/package/chainabstractionlayer)
+[![ChainAbstractionLayer](https://img.shields.io/npm/dt/@liquality/chainabstractionlayer.svg)](https://npmjs.com/package/@liquality/chainabstractionlayer)
+[![Gitter](https://img.shields.io/gitter/room/liquality/Lobby.svg)](https://gitter.im/liquality/Lobby?source=orgpage)
+[![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality)
 
 > :warning: This project is under heavy development. Expect bugs & breaking changes.
 
-Query different blockchains with a single and simple interface.
+### :pencil: [Introductory Blog Post: The Missing Tool to Cross-Chain Development](https://medium.com/liquality/the-missing-tool-to-cross-chain-development-2ebfe898efa1)
 
-[Introductory Blog Post](https://medium.com/liquality/the-missing-tool-to-cross-chain-development-2ebfe898efa1)
+Query different blockchains with account management using a single and simple interface.
 
 ## Installation
 
@@ -38,10 +41,6 @@ bitcoin
   .generateBlock(1) // returns Promise
   .then(console.log) // Array<BlockHash>
 ```
-
-## Community
-
-[Liquality Gitter](https://gitter.im/liquality/Lobby?source=orgpage)
 
 ### Try ChainAbstractionLayer in Browser
 
