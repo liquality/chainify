@@ -1,9 +1,10 @@
 language: node_js
 node_js:
-  - "8"
+  - 8
 cache:
   directories:
     - node_modules
 before_script:
+  - sudo apt-get install -yq libusb-1.0-0-dev
   - npm run lint
   - npm run build
