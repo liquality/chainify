@@ -154,8 +154,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return Promise.all(unspentOutputs.map(async utxo => {
       const hex = await this.getMethod('getTransactionHex')(utxo.txid)
       const tx = app.splitTransaction(hex, true)
+      const vout = (vout in utxo)?utxo.vout:utxo.outputIndex
 
-      return [ tx, utxo.vout ]
+      return [ tx, vout ]
     }))
   }
 
@@ -170,8 +171,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const unusedAddress = await this.getUnusedAddress(from)
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
 
-    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + BigNumber(utxo.amount).times(1e8).toNumber(), 0)
+    console.log(unspentOutputsToUse)
+    //const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + BigNumber(utxo.satoshis).toNumber(), 0)
+    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => ('satoshis' in utxo) ? acc + BigNumber(utxo.satoshis).toNumber() : acc + BigNumber(utxo.amount).times(1e8).toNumber(), 0)
+
     const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
+
     let totalCost = value + fee
     let hasChange = false
 
