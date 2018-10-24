@@ -12,7 +12,7 @@ cache:
     - node_modules
 
 before_install:
-  - sudo apt-get install -yq libusb-dev
+  - sudo apt-get install -y libudev-dev
 
 before_script:
   - npm run lint
