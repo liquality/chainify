@@ -1,7 +1,7 @@
 # Chain Abstraction Layer <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
 
 
-[![ChainAbstractionLayer](https://travis-ci.org/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.org/liquality/chainabstractionlayer)
+[![Build Status](https://travis-ci.com/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.com/liquality/chainabstractionlayer)
 [![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](./LICENSE.md)
 [![ChainAbstractionLayer](https://img.shields.io/npm/dt/@liquality/chainabstractionlayer.svg)](https://npmjs.com/package/@liquality/chainabstractionlayer)
