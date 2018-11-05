@@ -11,8 +11,19 @@ export default class Bitcore extends BitcoinRPCProvider {
     return utxos.reduce((acc, utxo) => acc + (utxo.satoshis), 0)
   }
 
+  async isAddressUsed (address) {
+    address = String(address)
+    const data = await this.getAddressBalance(address)
+
+    return data.received !== 0
+  }
+
+  async getAddressBalance (address) {
+    return this.jsonrpc('getaddressbalance', {'addresses': [address]})
+  }
+
   async getUnspentTransactionsForAddresses (addresses) {
-    return this.jsonrpc('getaddressutxos', {'ddresses': addresses})
+    return this.jsonrpc('getaddressutxos', {'addresses': addresses})
   }
 
   async getUnspentTransactions (address) {
