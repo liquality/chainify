@@ -8,11 +8,18 @@ import bech32 from 'bech32'
  * @return {string} Returns Buffer of string.
  */
 function ensureBuffer (message) {
-  if (typeof message === 'string') {
-    message = Buffer.from(message, 'hex')
+  switch (typeof message) {
+    case 'string':
+      message = (parseInt(message, 16).toString(16) === message.toLowerCase()) ? Buffer.from(message, 'hex') : Buffer.from(message)
+      break
+    case 'object':
+      message = Buffer.from(JSON.stringify(message))
+      break
+    default:
+      message = Buffer.from(message)
   }
 
-  return message
+  return Buffer.isBuffer(message) ? message : false
 }
 
 /**
