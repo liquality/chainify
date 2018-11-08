@@ -6,7 +6,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](./LICENSE.md)
 [![ChainAbstractionLayer](https://img.shields.io/npm/dt/@liquality/chainabstractionlayer.svg)](https://npmjs.com/package/@liquality/chainabstractionlayer)
 [![Gitter](https://img.shields.io/gitter/room/liquality/Lobby.svg)](https://gitter.im/liquality/Lobby?source=orgpage)
-[![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality)
+[![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality) [![Greenkeeper badge](https://badges.greenkeeper.io/liquality/chainabstractionlayer.svg)](https://greenkeeper.io/)
 
 > :warning: This project is under heavy development. Expect bugs & breaking changes.
 
