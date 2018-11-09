@@ -43,8 +43,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let unusedAddress = false
 
     while (!unusedAddress) {
-      const path = this.getDerivationPathFromIndex(addressIndex)
-      const address = await this.getAddressFromDerivationPath(path)
+      const address = await this.getAddressFromIndex(addressIndex)
       const isUsed = await this.getMethod('isAddressUsed')(address.address)
 
       if (!isUsed) {
@@ -118,8 +117,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let numOutputsOffset = 0
 
     while ((currentAmount < amount)) {
-      const path = this.getDerivationPathFromIndex(addressIndex)
-      const address = await this.getAddressFromDerivationPath(path)
+      const address = await this.getAddressFromIndex(addressIndex)
       const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
       if (!isAddressUsed) break
 
