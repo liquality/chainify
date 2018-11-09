@@ -12,6 +12,7 @@ export default class LedgerProvider extends Provider {
 
     this._App = App
     this._baseDerivationPath = baseDerivationPath
+    this._addressCache = {}
   }
 
   async createTransport () {
@@ -61,7 +62,12 @@ export default class LedgerProvider extends Provider {
 
   async getAddressFromIndex (addressIndex) {
     const path = this.getDerivationPathFromIndex(addressIndex)
-    return this.getAddressFromDerivationPath(path)
+    if (path in this._addressCache) {
+      return this._addressCache[path]
+    }
+    const address = await this.getAddressFromDerivationPath(path)
+    this._addressCache[path] = address
+    return address
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1) {
