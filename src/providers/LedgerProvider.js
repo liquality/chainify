@@ -42,18 +42,10 @@ export default class LedgerProvider extends Provider {
     let path = false
     let index = 0
 
-    // A maximum number of addresses to lookup after which it is deemed
-    // that the wallet does not contain this address
-    const maxAddresses = 50
-
-    while (!path && index < maxAddresses) {
+    while (!path) {
       const addr = await this.getAddresses(index, 1)
       if (String(addr[0]) === address) path = this.getDerivationPathFromIndex(index)
       index++
-    }
-
-    if (!path) {
-      throw new Error('Ledger: Wallet does not contain address')
     }
 
     return path
