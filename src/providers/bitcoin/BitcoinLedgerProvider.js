@@ -118,8 +118,11 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     while ((currentAmount < amount)) {
       const address = await this.getAddressFromIndex(addressIndex)
-      const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
-      if (!isAddressUsed) break
+
+      if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
+        const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
+        if (!isAddressUsed) break
+      }
 
       const utxos = await this.getMethod('getUnspentTransactions')(address.address)
       const utxosValue = utxos.reduce((acc, utxo) => acc + (utxo.amount * 1e8), 0)
