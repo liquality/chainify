@@ -20,13 +20,6 @@ Query different blockchains with account management using a single and simple in
 npm install @liquality/chainabstractionlayer
 ```
 
-> **Error: Cannot find module 'babel-runtime/core-js/get-iterator'**
->
-> Issues to track: [LedgerHQ/ledgerjs/issues/211](https://github.com/LedgerHQ/ledgerjs/issues/211), [LedgerHQ/ledgerjs/issues/218](https://github.com/LedgerHQ/ledgerjs/issues/218)
->
-> `npm install babel-runtime`
-
-
 ## Usage
 
 ```javascript

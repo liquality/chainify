@@ -1,4 +1,4 @@
-import Ethereum from '@ledgerhq/hw-app-eth'
+import Ethereum from '@liquality/hw-app-eth'
 
 import LedgerProvider from '../LedgerProvider'
 import networks from '../../networks'

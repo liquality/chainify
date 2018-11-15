@@ -24,7 +24,7 @@
   "author": "Liquality <info@liquality.io>",
   "module": "src/index.js",
   "browser": {
-    "@ledgerhq/hw-transport-node-hid": "@ledgerhq/hw-transport-u2f"
+    "@liquality/hw-transport-node-hid": "@liquality/hw-transport-u2f"
   },
   "main": "dist/index.cjs.js",
   "files": [
@@ -51,10 +51,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.56",
-    "@ledgerhq/hw-app-btc": "^4.20.0",
-    "@ledgerhq/hw-app-eth": "^4.19.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.23.0",
-    "@ledgerhq/hw-transport-u2f": "^4.21.0",
+    "@liquality/hw-app-btc": "^4.20.0",
+    "@liquality/hw-app-eth": "^4.19.0",
+    "@liquality/hw-transport-node-hid": "^4.23.0",
+    "@liquality/hw-transport-u2f": "^4.21.0",
     "ajv": "^6.5.2",
     "axios": "^0.18.0",
     "bech32": "^1.1.3",

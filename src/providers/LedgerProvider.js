@@ -1,6 +1,6 @@
 import Provider from '../Provider'
 
-import Transport from '@ledgerhq/hw-transport-node-hid'
+import Transport from '@liquality/hw-transport-node-hid'
 
 export default class LedgerProvider extends Provider {
   static isSupported () {

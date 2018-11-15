@@ -1,5 +1,5 @@
 import LedgerProvider from '../LedgerProvider'
-import Bitcoin from '@ledgerhq/hw-app-btc'
+import Bitcoin from '@liquality/hw-app-btc'
 
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
