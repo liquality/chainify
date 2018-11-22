@@ -47,7 +47,24 @@ export default class BitcoinSwapProvider extends Provider {
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     return this.getMethod('sendTransaction')(p2shAddress, value, script)
   }
-
+/*
+TransactionBuilder.fromRefundScript = function (pkey, redeemScript, address, txid, inputNum, value, network) {
+  var hashType = Transaction.SIGHASH_ALL;
+  var txb = new TransactionBuilder(network)
+  txb.addInput(txid, inputNum)
+  txb.addOutput(pkey.getAddress(), value)
+  var txRaw = txb.buildIncomplete()
+  var signatureHash = txRaw.hashForSignature(0, redeemScript, hashType)
+  console.log("scriptSig",pkey.sign(signatureHash).toScriptSignature(hashType).toString('hex'));
+  var redeemScriptSig = bscript.scriptHash.input.encode([
+      pkey.sign(signatureHash).toScriptSignature(hashType),
+      pkey.getPublicKeyBuffer(),
+      ops.OP_FALSE
+  ], redeemScript);
+  txRaw.setInputScript(0, redeemScriptSig)
+  return txRaw.toHex();
+};
+*/
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration, true)
   }
@@ -68,6 +85,7 @@ export default class BitcoinSwapProvider extends Provider {
 
     const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
     const initiationTx = await this.getMethod('splitTransaction')(initiationTxRaw, true)
+    console.log("initaitve",initiationTx)
     const voutIndex = initiationTx.outputs.findIndex((output) => output.script.toString('hex') === sendScript)
 
     const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
@@ -145,6 +163,7 @@ export default class BitcoinSwapProvider extends Provider {
     const scriptPubKey = padHexStart(data)
     const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     const sendScript = this.getMethod('createScript')(receivingAddress)
+    //return Boolean(transaction._raw.data.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.value === value))
     return Boolean(transaction._raw.data.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === value))
   }
 
@@ -162,14 +181,11 @@ export default class BitcoinSwapProvider extends Provider {
         block = await this.getMethod('getBlockByNumber')(blockNumber, true)
       } catch (e) { }
       if (block) {
-        initiateSwapTransaction = block.transactions.find(tx =>
-          this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
-        )
+        initiateSwapTransaction = block.transactions.find(tx =>  this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration))
         blockNumber++
       }
       await sleep(5000)
     }
-
     return initiateSwapTransaction
   }
 

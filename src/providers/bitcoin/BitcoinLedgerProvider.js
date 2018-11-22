@@ -65,7 +65,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async splitTransaction (transactionHex, isSegwitSupported) {
     const app = await this.getApp()
-
     return app.splitTransaction(transactionHex, isSegwitSupported)
   }
 
@@ -205,7 +204,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
-
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 }

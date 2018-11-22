@@ -116,7 +116,8 @@ export default class Client {
 
     const provider = findLast(
       this._providers,
-      provider => isFunction(provider[method]), indexOfRequestor - 1
+      provider => isFunction(provider[method]),
+      indexOfRequestor - 1
     )
 
     if (provider == null) {
