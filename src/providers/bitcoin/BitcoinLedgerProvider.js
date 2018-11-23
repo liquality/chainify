@@ -65,6 +65,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async splitTransaction (transactionHex, isSegwitSupported) {
     const app = await this.getApp()
+
     return app.splitTransaction(transactionHex, isSegwitSupported)
   }
 
@@ -169,9 +170,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const unusedAddress = await this.getUnusedAddress(from)
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
+
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
     const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
-
     let totalCost = value + fee
     let hasChange = false
 
@@ -203,6 +204,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
+
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 }
