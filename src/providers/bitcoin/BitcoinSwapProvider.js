@@ -162,11 +162,14 @@ export default class BitcoinSwapProvider extends Provider {
         block = await this.getMethod('getBlockByNumber')(blockNumber, true)
       } catch (e) { }
       if (block) {
-        initiateSwapTransaction = block.transactions.find(tx => this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration))
+        initiateSwapTransaction = block.transactions.find(
+          tx => this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
+        )
         blockNumber++
       }
       await sleep(5000)
     }
+
     return initiateSwapTransaction
   }
 
