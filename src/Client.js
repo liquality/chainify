@@ -116,8 +116,7 @@ export default class Client {
 
     const provider = findLast(
       this._providers,
-      provider => isFunction(provider[method]),
-      indexOfRequestor - 1
+      provider => isFunction(provider[method]), indexOfRequestor - 1
     )
 
     if (provider == null) {
@@ -451,8 +450,8 @@ export default class Client {
    * @return {Promise<string>} Resolves with secret
    */
   async generateSecret (message) {
-    const unusedAddress = (await this.getMethod('getAddresses')())[0]
-    const signedMessage = await this.signMessage(message, unusedAddress)
+    const address = (await this.getMethod('getAddresses')())[0]
+    const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
   }
