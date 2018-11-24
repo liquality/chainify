@@ -1,6 +1,7 @@
 import JsonRpcProvider from '../JsonRpcProvider'
+import { BigNumber } from 'bignumber.js'
 
-import { formatEthResponse, ensureHexEthFormat, normalizeTransactionObject } from './EthereumUtil'
+import { formatEthResponse, ensureHexEthFormat, normalizeTransactionObject, ensureHexStandardFormat } from './EthereumUtil'
 
 export default class EthereumRPCProvider extends JsonRpcProvider {
   _parseResponse (response) {
@@ -16,6 +17,39 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   async generateBlock (numberOfBlocks) {
     // Q: throw or silently pass?
     throw new Error('This method isn\'t supported by Ethereum')
+  }
+
+  async getUnusedAddress () {
+    var addresses = await this.getAddresses()
+    return addresses[0]
+  }
+
+  async sendTransaction (to, value, data, from = null) {
+    if (to != null) {
+      to = ensureHexEthFormat(to)
+    }
+
+    if (from == null) {
+      const addresses = await this.getAddresses()
+      from = ensureHexEthFormat(('address' in addresses) ? addresses[0].address : addresses[0])
+    }
+    value = BigNumber(value).toString(16)
+
+    const tx = {
+      from: ensureHexEthFormat(from),
+      to,
+      value: ensureHexEthFormat(value),
+      data: ensureHexEthFormat(data)
+    }
+
+    const txHash = await this.jsonrpc('eth_sendTransaction', tx)
+    return ensureHexStandardFormat(txHash)
+  }
+
+  async signMessage (message, address) {
+    address = '0x' + address
+    message = '0x' + Buffer.from(message).toString('hex')
+    return this.jsonrpc('eth_sign', address, message)
   }
 
   async getBlockByNumber (blockNumber, includeTx) {

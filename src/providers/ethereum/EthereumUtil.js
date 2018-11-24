@@ -13,7 +13,7 @@ function ensureHexEthFormat (hash) {
  * @param {*} hash
  */
 function ensureHexStandardFormat (hash) {
-  return hash.replace('0x', '')
+  return (typeof hash === 'string') ? hash.replace('0x', '') : false
 }
 
 /**

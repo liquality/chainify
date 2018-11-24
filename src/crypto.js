@@ -8,11 +8,17 @@ import bech32 from 'bech32'
  * @return {string} Returns Buffer of string.
  */
 function ensureBuffer (message) {
-  if (typeof message === 'string') {
-    message = Buffer.from(message, 'hex')
-  }
+  if (Buffer.isBuffer(message)) return message
 
-  return message
+  switch (typeof message) {
+    case 'string':
+      message = (message.match(/([0-9]|[a-f])/gim)) ? Buffer.from(message, 'hex') : Buffer.from(message)
+      break
+    case 'object':
+      message = Buffer.from(JSON.stringify(message))
+      break
+  }
+  return Buffer.isBuffer(message) ? message : false
 }
 
 /**
