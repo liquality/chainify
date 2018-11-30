@@ -56,10 +56,12 @@ function formatEthResponse (obj) {
 }
 
 function normalizeTransactionObject (tx, currentBlock) {
-  if (tx.blockNumber === null) {
-    delete tx.blockNumber
-  } else if (!isNaN(tx.blockNumber)) {
-    tx.confirmations = currentBlock - tx.blockNumber + 1
+  if (tx) {
+    if (tx.blockNumber === null) {
+      delete tx.blockNumber
+    } else if (!isNaN(tx.blockNumber)) {
+      tx.confirmations = currentBlock - tx.blockNumber + 1
+    }
   }
   return tx
 }
