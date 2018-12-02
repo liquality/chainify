@@ -562,4 +562,19 @@ export default class Client {
 
     return this.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
+
+  async getWalletNetworkId () {
+    return this.getMethod('getWalletNetworkId')()
+  }
+
+  async getRPCNetworkId () {
+    return this.getMethod('getRPCNetworkId')()
+  }
+
+  async ensureNetworkId () {
+    const walletNetworkId = await this.getMethod('getWalletNetworkId')()
+    const rpcNetworkId = await this.getMethod('getRPCNetworkId')()
+
+    return walletNetworkId === rpcNetworkId
+  }
 }

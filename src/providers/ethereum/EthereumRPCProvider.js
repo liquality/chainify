@@ -95,4 +95,8 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
 
     return transactionCount > 0
   }
+
+  async getRPCNetworkId () {
+    return this.jsonrpc('net_version')
+  }
 }

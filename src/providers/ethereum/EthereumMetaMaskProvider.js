@@ -87,4 +87,8 @@ export default class EthereumMetaMaskProvider extends Provider {
     const txHash = await this._toMM('eth_sendTransaction', tx)
     return ensureHexStandardFormat(txHash)
   }
+
+  async getWalletNetworkId () {
+    return this._toMM('net_version')
+  }
 }
