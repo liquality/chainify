@@ -566,15 +566,4 @@ export default class Client {
   async getWalletNetworkId () {
     return this.getMethod('getWalletNetworkId')()
   }
-
-  async getRPCNetworkId () {
-    return this.getMethod('getRPCNetworkId')()
-  }
-
-  async ensureNetworkId () {
-    const walletNetworkId = await this.getMethod('getWalletNetworkId')()
-    const rpcNetworkId = await this.getMethod('getRPCNetworkId')()
-
-    return walletNetworkId === rpcNetworkId
-  }
 }
