@@ -525,4 +525,8 @@ export default class Client {
 
     return this.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
+
+  async getWalletNetworkId () {
+    return this.getMethod('getWalletNetworkId')()
+  }
 }
