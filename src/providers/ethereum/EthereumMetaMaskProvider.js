@@ -98,6 +98,8 @@ export default class EthereumMetaMaskProvider extends Provider {
   }
 
   async getWalletNetworkId () {
-    return this._toMM('net_version')
+    const networkId = await this._toMM('net_version')
+
+    return parseInt(networkId)
   }
 }
