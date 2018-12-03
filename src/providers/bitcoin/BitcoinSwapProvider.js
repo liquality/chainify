@@ -145,7 +145,7 @@ export default class BitcoinSwapProvider extends Provider {
     const scriptPubKey = padHexStart(data)
     const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     const sendScript = this.getMethod('createScript')(receivingAddress)
-    return Boolean(transaction._raw.data.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === value))
+    return Boolean(transaction._raw.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === value))
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
@@ -183,7 +183,7 @@ export default class BitcoinSwapProvider extends Provider {
       } catch (e) { }
       if (block) {
         claimSwapTransaction = block.transactions.find(tx =>
-          tx._raw.data.vin.find(vin => vin.txid === initiationTxHash)
+          tx._raw.vin.find(vin => vin.txid === initiationTxHash)
         )
         blockNumber++
       }
@@ -197,9 +197,8 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async getSwapSecret (claimTxHash) {
-    const claimTxRaw = await this.getMethod('getRawTransactionByHash')(claimTxHash)
-    const claimTx = await this.getMethod('decodeRawTransaction')(claimTxRaw)
-    const script = Buffer.from(claimTx._raw.data.vin[0].scriptSig.hex, 'hex')
+    const claimTx = await this.getMethod('getTransactionByHash')(claimTxHash)
+    const script = Buffer.from(claimTx._raw.vin[0].scriptSig.hex, 'hex')
     const sigLength = script[0]
     const secretLength = script.slice(sigLength + 1)[0]
     return script.slice(sigLength + 2, sigLength + secretLength + 2).toString('hex')
