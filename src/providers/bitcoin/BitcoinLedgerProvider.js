@@ -161,6 +161,35 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }))
   }
 
+  async getWalletInfo (from = {}) {
+    let addressIndex = from.index || 0
+    let unusedAddress = false
+    let balance = 0
+
+    while (!unusedAddress) {
+      let addresses = await this.getAddresses(addressIndex, 10)
+      const addressList = addresses.map(addr => addr.address)
+
+      const addressDeltas = await this.getMethod('getAddressDeltas')(addressList)
+
+      addressDeltas.forEach((delta) => {
+        const addressIndex = addresses.findIndex(address => address.address === delta.address)
+        if (addresses[addressIndex].balance === undefined) { addresses[addressIndex].balance = 0 }
+        addresses[addressIndex].balance += delta.satoshis
+        balance += delta.satoshis
+      })
+
+      addresses.forEach((address) => {
+        if (address.balance === undefined && !unusedAddress) {
+          unusedAddress = address.address
+        }
+      })
+
+      addressIndex += 10
+    }
+    return { balance, unusedAddress }
+  }
+
   async sendTransaction (to, value, data, from) {
     const app = await this.getApp()
 
