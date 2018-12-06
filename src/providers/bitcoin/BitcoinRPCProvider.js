@@ -4,7 +4,7 @@ import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
   async getFeePerByte (numberOfBlocks = 2) {
-    return this.jsonrpc('estimatesmartfee', numberOfBlocks).then(({ feerate }) => feerate * 1e5)
+    return this.jsonrpc('estimatesmartfee', numberOfBlocks).then(({ feerate }) => (feerate * 1e8) / 1024)
   }
 
   async signMessage (message, address) {
