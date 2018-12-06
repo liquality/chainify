@@ -386,9 +386,9 @@ export default class Client {
   /**
    * Find swap transaction from parameters
    * @param {!number} value - The amount of native value locked in the swap
-   * @param {!string} blockNumber - Block number in which transaction was mined
    * @param {!string} recipientAddress - Recepient address
    * @param {!string} refundAddress - Refund address
+   * @param {!string} secretHash - Secret hash
    * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
@@ -398,13 +398,15 @@ export default class Client {
 
   /**
    * Find swap claim transaction from parameters
-   * @param {!string} blockNumber - Block number in which transaction was mined
    * @param {!string} initiationTxHash - Swap initiation transaction hash/identifier
+   * @param {!string} recipientAddress - Recepient address
+   * @param {!string} refundAddress - Refund address
    * @param {!string} secretHash - Secret hash
+   * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async findClaimSwapTransaction (initiationTxHash, secretHash) {
-    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, secretHash)
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**

@@ -35,4 +35,8 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
   async getAddressUtxos (addresses) {
     return this.jsonrpc('getaddressutxos', { 'addresses': addresses })
   }
+
+  async getAddressTransactions (address, start, end) {
+    return this.jsonrpc('getaddresstxids', { 'addresses': [address], start, end })
+  }
 }

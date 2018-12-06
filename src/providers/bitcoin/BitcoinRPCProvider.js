@@ -1,4 +1,4 @@
-import { flatten } from 'lodash'
+import _ from 'lodash'
 import BigNumber from 'bignumber.js'
 import JsonRpcProvider from '../JsonRpcProvider'
 
@@ -40,7 +40,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
       .map(address => String(address))
 
     const _utxos = await this.getUnspentTransactionsForAddresses(addresses)
-    const utxos = flatten(_utxos)
+    const utxos = _.flatten(_utxos)
     return utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0)
   }
 
@@ -107,6 +107,20 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async getBlockHeight () {
     return this.jsonrpc('getblockcount')
+  }
+
+  async getAddressTransactions (address, start, end) {
+    const transactionIds = []
+    for (const blockNumber of _.range(start, end + 1)) {
+      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      const matchingTransactions = block.transactions.filter(tx =>
+        tx._raw.vout.find(v => v.scriptPubKey.addresses.includes(address) ||
+        tx._raw.vin.find(v => v.address === address)))
+      if (matchingTransactions) {
+        transactionIds.push(...matchingTransactions.map(tx => tx.hash))
+      }
+    }
+    return transactionIds
   }
 
   async getTransactionByHash (transactionHash) {
