@@ -161,13 +161,13 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }))
   }
 
-  async getWalletInfo (from = {}) {
+  async getWalletInfo (numAddressPerCall = 10, from = {}) {
     let addressIndex = from.index || 0
     let unusedAddress = false
     let balance = 0
 
     while (!unusedAddress) {
-      let addresses = await this.getAddresses(addressIndex, 10)
+      let addresses = await this.getAddresses(addressIndex, numAddressPerCall)
       const addressList = addresses.map(addr => addr.address)
 
       const addressDeltas = await this.getMethod('getAddressDeltas')(addressList)
@@ -185,7 +185,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         }
       })
 
-      addressIndex += 10
+      addressIndex += numAddressPerCall
     }
     return { balance, unusedAddress }
   }
