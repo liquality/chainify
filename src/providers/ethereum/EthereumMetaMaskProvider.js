@@ -66,6 +66,13 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM('personal_sign', `0x${hex}`, `0x${address}`)
   }
 
+  async getWalletInfo () {
+    const unusedAddressObj = await this.getUnusedAddress()
+    const unusedAddress = unusedAddressObj.address
+    const balance = await this.getMethod('getBalance')([unusedAddress])
+    return { balance, unusedAddress }
+  }
+
   async sendTransaction (to, value, data, from = null) {
     const networkId = await this.getWalletNetworkId()
 
