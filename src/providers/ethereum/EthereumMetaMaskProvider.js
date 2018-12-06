@@ -70,7 +70,7 @@ export default class EthereumMetaMaskProvider extends Provider {
     const unusedAddressObj = await this.getUnusedAddress()
     const unusedAddress = unusedAddressObj.address
     const balance = await this.getMethod('getBalance')([unusedAddress])
-    return { balance, unusedAddress }
+    return { balance, unusedAddress, usedAddresses: [] }
   }
 
   async sendTransaction (to, value, data, from = null) {
