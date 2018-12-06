@@ -110,14 +110,17 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
 
-  async getUtxosForAmount (amount, feePerByte = 3) {
+  async getUtxosForAmount (amount) {
     const utxosToUse = []
     let addressIndex = 0
     let currentAmount = 0
     let numOutputsOffset = 0
 
     while ((currentAmount < amount)) {
-      const address = await this.getAddressFromIndex(addressIndex)
+      const [ feePerByte, address ] = await Promise.all([
+        this.getMethod('getFeePerByte')(2),
+        this.getAddressFromIndex(addressIndex)
+      ])
 
       if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
         const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
