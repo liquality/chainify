@@ -5,13 +5,14 @@ import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from '
 import { BigNumber } from 'bignumber.js'
 
 export default class EthereumMetaMaskProvider extends Provider {
-  constructor (metamaskProvider) {
+  constructor (metamaskProvider, networkId) {
     super()
     if (!isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
 
     this._metamaskProvider = metamaskProvider
+    this._networkId = parseInt(networkId)
   }
 
   _toMM (method, ...params) {
@@ -65,7 +66,22 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this._toMM('personal_sign', `0x${hex}`, `0x${address}`)
   }
 
+  async getWalletInfo () {
+    const unusedAddressObj = await this.getUnusedAddress()
+    const unusedAddress = unusedAddressObj.address
+    const balance = await this.getMethod('getBalance')([unusedAddress])
+    return { balance, unusedAddress, usedAddresses: [] }
+  }
+
   async sendTransaction (to, value, data, from = null) {
+    const networkId = await this.getWalletNetworkId()
+
+    if (this._networkId) {
+      if (networkId !== this._networkId) {
+        throw new Error('Invalid MetaMask Network')
+      }
+    }
+
     if (to != null) {
       to = ensureHexEthFormat(to)
     }
@@ -86,5 +102,11 @@ export default class EthereumMetaMaskProvider extends Provider {
 
     const txHash = await this._toMM('eth_sendTransaction', tx)
     return ensureHexStandardFormat(txHash)
+  }
+
+  async getWalletNetworkId () {
+    const networkId = await this._toMM('net_version')
+
+    return parseInt(networkId)
   }
 }

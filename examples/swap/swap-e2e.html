@@ -110,7 +110,7 @@
     bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
 
     const ethereum = new Client()
-    ethereum.addProvider(new providers.ethereum.EthereumRPCProvider('https://localhost:8545'))
+    ethereum.addProvider(new providers.ethereum.EthereumRPCProvider('http://localhost:8545'))
     ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
     ethereum.addProvider(new providers.ethereum.EthereumSwapProvider())
 
@@ -174,7 +174,7 @@
         $(`#${prefix}FindClaimSwap`).show()
       })
 
-      client.findClaimSwapTransaction(initiationTxHash, secretHash).then(result => {
+      client.findClaimSwapTransaction(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration).then(result => {
         $(`#${prefix}FindClaimSwapTransactionResult`).text(JSON.stringify(result, null, 2))
         $(`#${prefix}FindClaimSwapTransactionResultSecret`).text(result.secret)
         $(`#${prefix}FindClaimSwapSecret`).show()

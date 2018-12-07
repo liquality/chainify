@@ -1,8 +1,21 @@
-import { flatten } from 'lodash'
+import _ from 'lodash'
 import BigNumber from 'bignumber.js'
 import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
+
+  async decodeRawTransaction (rawTransaction) {
+    const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
+    const { hash: txHash, txid: hash, vout } = data
+    const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
+    const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }
+    return output
+  }
+
+  async getFeePerByte (numberOfBlocks = 2) {
+    return this.jsonrpc('estimatesmartfee', numberOfBlocks).then(({ feerate }) => (feerate * 1e8) / 1024)
+  }
+
   async signMessage (message, address) {
     return new Promise((resolve, reject) => {
       this.jsonrpc('signmessage', address, message).then(result => {
@@ -14,13 +27,6 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   async sendTransaction (address, value, script) {
     value = BigNumber(value).dividedBy(1e8).toNumber()
     return this.jsonrpc('sendtoaddress', address, value)
-  }
-
-  /*
-    Added here for testing purposes
-  */
-  async generate (numBlocks) {
-    return this.jsonrpc('generate', numBlocks)
   }
 
   async dumpPrivKey (address) {
@@ -35,16 +41,6 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return this.jsonrpc('createrawtransaction', transactions, outputs)
   }
 
-  async decodeRawTransaction (rawTransaction) {
-    const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
-    const { hash: txHash, txid: hash, vout } = data
-    const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
-
-    const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }
-
-    return output
-  }
-
   async isAddressUsed (address) {
     address = String(address)
     const amountReceived = await this.getReceivedByAddress(address)
@@ -57,7 +53,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
       .map(address => String(address))
 
     const _utxos = await this.getUnspentTransactionsForAddresses(addresses)
-    const utxos = flatten(_utxos)
+    const utxos = _.flatten(_utxos)
     return utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0)
   }
 
@@ -134,30 +130,44 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return this.getNewAddress()
   }
 
-  async getTransactionByHash (transactionHash) {
-    const rawTx = await this.getRawTransactionByHash(transactionHash)
-    const tx = await this.decodeRawTransaction(rawTx)
-    try {
-      const data = await this.jsonrpc('gettransaction', transactionHash)
-      const { confirmations } = data
-      const output = Object.assign({}, tx, { confirmations })
-
-      if (confirmations > 0) {
-        const { blockhash: blockHash } = data
-        const { number: blockNumber } = await this.getBlockByHash(blockHash)
-        Object.assign(output, { blockHash, blockNumber })
+  async getAddressTransactions (address, start, end) {
+    const transactionIds = []
+    for (const blockNumber of _.range(start, end + 1)) {
+      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      const matchingTransactions = block.transactions.filter(tx =>
+        tx._raw.vout.find(v => v.scriptPubKey.addresses.includes(address) ||
+        tx._raw.vin.find(v => v.address === address)))
+      if (matchingTransactions) {
+        transactionIds.push(...matchingTransactions.map(tx => tx.hash))
       }
-
-      return output
-    } catch (e) {
-      const output = Object.assign({}, tx)
-
-      return output
     }
+    return transactionIds
   }
 
-  async getRawTransactionByHash (transactionHash) {
-    return this.jsonrpc('getrawtransaction', transactionHash)
+  async getTransactionByHash (transactionHash) {
+    const tx = await this.getRawTransactionByHash(transactionHash, true)
+    const value = tx.vout.reduce((p, n) => p + parseInt(n.valueSat), 0)
+    const result = {
+      hash: tx.txid,
+      value,
+      _raw: tx,
+      confirmations: 0
+    }
+
+    if (tx.confirmations > 0) {
+      const block = await this.getBlockByHash(tx.blockhash)
+      Object.assign(result, {
+        blockHash: block.hash,
+        blockNumber: block.number,
+        confirmations: tx.confirmations
+      })
+    }
+
+    return result
+  }
+
+  async getRawTransactionByHash (transactionHash, decode = false) {
+    return this.jsonrpc('getrawtransaction', transactionHash, decode ? 1 : 0)
   }
 
   async sendRawTransaction (rawTransaction) {

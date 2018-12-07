@@ -188,7 +188,7 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     const scriptPubKey = padHexStart(data)
     const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     const sendScript = this.getMethod('createScript')(receivingAddress)
-    return Boolean(transaction._raw.data.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === value))
+    return Boolean(transaction._raw.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === value))
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
@@ -223,7 +223,7 @@ export default class BitcoinJsLibSwapProvider extends Provider {
       } catch (e) { }
       if (block) {
         claimSwapTransaction = block.transactions.find(tx =>
-          tx._raw.data.vin.find(vin => vin.txid === initiationTxHash)
+          tx._raw.vin.find(vin => vin.txid === initiationTxHash)
         )
         blockNumber++
       }

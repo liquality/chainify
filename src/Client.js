@@ -274,38 +274,13 @@ export default class Client {
 
     const transaction = await this.getMethod('getTransactionByHash')(txHash)
 
-    const valid = this.validateTransaction(transaction)
+    if (transaction) {
+      const valid = this.validateTransaction(transaction)
 
-    if (!valid) {
-      const errors = this.validateTransaction.errors
-      throw new InvalidProviderResponseError(`Provider returned an invalid transaction: ${errors[0].dataPath} ${errors[0].message}`)
-    }
-
-    return transaction
-  }
-
-  /**
-   * Get a raw hexadecimal transaction given its hash.
-   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the
-   *  desired transaction.
-   * @return {Promise<string, TypeError|InvalidProviderResponseError>} Resolves with the raw Transaction with
-   *  the same hash as the given output.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getRawTransactionByHash (txHash) {
-    if (!isString(txHash)) {
-      throw new TypeError('Transaction hash should be a string')
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-      throw new TypeError('Transaction hash should be a valid hex string')
-    }
-
-    const transaction = await this.getMethod('getRawTransactionByHash')(txHash)
-
-    if (!this.validateTransaction(transaction)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid transaction')
+      if (!valid) {
+        const errors = this.validateTransaction.errors
+        throw new InvalidProviderResponseError(`Provider returned an invalid transaction: ${errors[0].dataPath} ${errors[0].message}`)
+      }
     }
 
     return transaction
@@ -409,23 +384,11 @@ export default class Client {
   }
 
   /**
-   * Decode Transaction from Hex
-   * @param {!string} rawTransaction - A raw transaction usually in the form of a
-   *  hexadecimal string that represents the serialized transaction.
-   * @return {Promise<string>} Resolves with an
-   *  decoded transaction object.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async decodeRawTransaction (rawTransaction) {
-    return this.getMethod('decoderawtransaction')(rawTransaction)
-  }
-
-  /**
    * Find swap transaction from parameters
    * @param {!number} value - The amount of native value locked in the swap
-   * @param {!string} blockNumber - Block number in which transaction was mined
    * @param {!string} recipientAddress - Recepient address
    * @param {!string} refundAddress - Refund address
+   * @param {!string} secretHash - Secret hash
    * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
@@ -435,13 +398,15 @@ export default class Client {
 
   /**
    * Find swap claim transaction from parameters
-   * @param {!string} blockNumber - Block number in which transaction was mined
    * @param {!string} initiationTxHash - Swap initiation transaction hash/identifier
+   * @param {!string} recipientAddress - Recepient address
+   * @param {!string} refundAddress - Refund address
    * @param {!string} secretHash - Secret hash
+   * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async findClaimSwapTransaction (initiationTxHash, secretHash) {
-    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, secretHash)
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**
@@ -561,5 +526,13 @@ export default class Client {
     }
 
     return this.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+  async getWalletNetworkId () {
+    return this.getMethod('getWalletNetworkId')()
+  }
+
+  async getWalletInfo () {
+    return this.getMethod('getWalletInfo')()
   }
 }
