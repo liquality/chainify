@@ -12,8 +12,15 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async sendTransaction (address, value, script) {
-    value = BigNumber(value).divideBy(1e8).toNumber()
+    value = BigNumber(value).dividedBy(1e8).toNumber()
     return this.jsonrpc('sendtoaddress', address, value)
+  }
+
+  /*
+    Added here for testing purposes
+  */
+  async generate (numBlocks) {
+    return this.jsonrpc('generate', numBlocks)
   }
 
   async dumpPrivKey (address) {
