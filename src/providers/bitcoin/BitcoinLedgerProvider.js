@@ -8,11 +8,12 @@ import Address from '../../Address'
 import networks from '../../networks'
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
-  constructor (chain = { network: networks.bitcoin, segwit: false }) {
+  constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
     super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/0/`)
     this._network = chain.network
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
+    this._numberOfBlockConfirmation = numberOfBlockConfirmation
   }
 
   async getPubKey (from) {
@@ -110,14 +111,17 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
 
-  async getUtxosForAmount (amount, feePerByte = 3) {
+  async getUtxosForAmount (amount) {
     const utxosToUse = []
     let addressIndex = 0
     let currentAmount = 0
     let numOutputsOffset = 0
 
     while ((currentAmount < amount)) {
-      const address = await this.getAddressFromIndex(addressIndex)
+      const [ feePerByte, address ] = await Promise.all([
+        this.getMethod('getFeePerByte')(this._numberOfBlockConfirmation),
+        this.getAddressFromIndex(addressIndex)
+      ])
 
       if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
         const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
