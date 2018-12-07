@@ -529,4 +529,8 @@ export default class Client {
   async getWalletNetworkId () {
     return this.getMethod('getWalletNetworkId')()
   }
+
+  async getWalletInfo () {
+    return this.getMethod('getWalletInfo')()
+  }
 }
