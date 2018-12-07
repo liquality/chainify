@@ -116,8 +116,7 @@ export default class Client {
 
     const provider = findLast(
       this._providers,
-      provider => isFunction(provider[method]),
-      indexOfRequestor - 1
+      provider => isFunction(provider[method]), indexOfRequestor - 1
     )
 
     if (provider == null) {
@@ -143,17 +142,6 @@ export default class Client {
   getMethod (method, requestor) {
     const provider = this.getProviderForMethod(method, requestor)
     return provider[method].bind(provider)
-  }
-
-  /**
-   * Get address UTXOs
-   * @param {!string|string[]|Address|Address[]} addresses - An address or a list of addresses.
-   * @return {Promise<number, InvalidProviderResponseError>} If addresses is given,
-   *  returns the unspent outputs for the addresses provider
-   */
-  async getAddressUtxos (addresses) {
-    const outputs = await this.getMethod('getAddressUtxos')(addresses)
-    return outputs
   }
 
   /**
@@ -462,8 +450,8 @@ export default class Client {
    * @return {Promise<string>} Resolves with secret
    */
   async generateSecret (message) {
-    const unusedAddress = await this.getMethod('getUnusedAddress')()
-    const signedMessage = await this.signMessage(message, unusedAddress)
+    const address = (await this.getMethod('getAddresses')())[0]
+    const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
   }

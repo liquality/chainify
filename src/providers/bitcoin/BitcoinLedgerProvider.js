@@ -65,6 +65,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async splitTransaction (transactionHex, isSegwitSupported) {
     const app = await this.getApp()
+
     return app.splitTransaction(transactionHex, isSegwitSupported)
   }
 
@@ -109,13 +110,14 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
 
-  async getUtxosForAmount (amount, feePerByte = 3, maxAddresses = 20) {
+  async getUtxosForAmount (amount, feePerByte = 3) {
     const utxosToUse = []
     let addressIndex = 0
     let currentAmount = 0
     let numOutputsOffset = 0
     while ((currentAmount < amount)) {
       const address = await this.getAddressFromIndex(addressIndex)
+
       if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
         const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
         if (!isAddressUsed) break
@@ -123,7 +125,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
       const utxos = await this.getMethod('getUnspentTransactions')(address.address)
       utxos.forEach((utxo) => {
-        var utxoVal = ('satoshis' in utxo) ? utxo.satoshis : (utxo.amount * 1e8)
+        const utxoVal = utxo.satoshis
         if (utxoVal > 0) {
           currentAmount += utxoVal
           utxo.derivationPath = address.derivationPath
@@ -168,9 +170,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const unusedAddress = await this.getUnusedAddress(from)
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
-    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => ('satoshis' in utxo) ? acc + BigNumber(utxo.satoshis).toNumber() : acc + BigNumber(utxo.amount).times(1e8).toNumber(), 0)
-    const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
 
+    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
+    const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
     let totalCost = value + fee
     let hasChange = false
 
@@ -202,6 +204,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
+
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 }

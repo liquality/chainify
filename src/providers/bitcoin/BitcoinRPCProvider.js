@@ -1,7 +1,33 @@
 import { flatten } from 'lodash'
+import BigNumber from 'bignumber.js'
 import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
+  async signMessage (message, address) {
+    return new Promise((resolve, reject) => {
+      this.jsonrpc('signmessage', address, message).then(result => {
+        resolve(Buffer.from(result, 'base64'))
+      })
+    })
+  }
+
+  async sendTransaction (address, value, script) {
+    value = BigNumber(value).divideBy(1e8).toNumber()
+    return this.jsonrpc('sendtoaddress', address, value)
+  }
+
+  async dumpPrivKey (address) {
+    return this.jsonrpc('dumpprivkey', address)
+  }
+
+  async signRawTransaction (hexstring, prevtxs, privatekeys, sighashtype) {
+    return this.jsonrpc('signrawtransaction', hexstring, prevtxs, privatekeys)
+  }
+
+  async createRawTransaction (transactions, outputs) {
+    return this.jsonrpc('createrawtransaction', transactions, outputs)
+  }
+
   async decodeRawTransaction (rawTransaction) {
     const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
     const { hash: txHash, txid: hash, vout } = data
@@ -25,15 +51,20 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
     const _utxos = await this.getUnspentTransactionsForAddresses(addresses)
     const utxos = flatten(_utxos)
-    return utxos.reduce((acc, utxo) => acc + (utxo.amount * 1e8), 0)
+    return utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0)
+  }
+
+  async getListUnspent (addresses) {
+    const utxos = await this.jsonrpc('listunspent', 0, 9999999, addresses)
+    return utxos.map(utxo => ({ ...utxo, satoshis: BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
   async getUnspentTransactionsForAddresses (addresses) {
-    return this.jsonrpc('listunspent', 0, 9999999, addresses)
+    return this.getListUnspent(addresses)
   }
 
   async getUnspentTransactions (address) {
-    return this.jsonrpc('listunspent', 0, 9999999, [ address ])
+    return this.getListUnspent([address])
   }
 
   async getReceivedByAddress (address) {
@@ -41,7 +72,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getTransactionHex (transactionHash) {
-    return (await this.jsonrpc('gettransaction', transactionHash)).hex
+    return this.jsonrpc('getrawtransaction', transactionHash)
   }
 
   async generateBlock (numberOfBlocks) {
