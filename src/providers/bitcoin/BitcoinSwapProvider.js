@@ -153,42 +153,42 @@ export default class BitcoinSwapProvider extends Provider {
     return this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
+  async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, predicate) {
+    const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+
     let blockNumber = await this.getMethod('getBlockHeight')()
-    let initiateSwapTransaction = null
-    while (!initiateSwapTransaction) {
+    let swapTransaction = null
+    while (!swapTransaction) {
       let block
       try {
-        block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+        block = await this.getMethod('getBlockByNumber')(blockNumber)
       } catch (e) { }
       if (block) {
-        initiateSwapTransaction = block.transactions.find(tx =>
-          this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
-        )
+        const transactionIds = await this.getMethod('getAddressTransactions')(p2shAddress, blockNumber, blockNumber)
+        const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
+        swapTransaction = transactions.find(predicate)
         blockNumber++
       }
       await sleep(5000)
     }
+
+    return swapTransaction
+  }
+
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
+    const initiateSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+      tx => this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
+    )
 
     return initiateSwapTransaction
   }
 
-  async findClaimSwapTransaction (initiationTxHash, secretHash) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
-    let claimSwapTransaction = null
-    while (!claimSwapTransaction) {
-      let block
-      try {
-        block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      } catch (e) { }
-      if (block) {
-        claimSwapTransaction = block.transactions.find(tx =>
-          tx._raw.vin.find(vin => vin.txid === initiationTxHash)
-        )
-        blockNumber++
-      }
-      await sleep(5000)
-    }
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+      tx => tx._raw.vin.find(vin => vin.txid === initiationTxHash)
+    )
 
     return {
       ...claimSwapTransaction,
