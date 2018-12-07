@@ -549,12 +549,12 @@ export default class Client {
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, wif) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
+    return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration, wif)
   }
 
   /**

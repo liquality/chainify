@@ -115,7 +115,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let currentAmount = 0
     let numOutputsOffset = 0
     while ((currentAmount < amount)) {
-
       const address = await this.getAddressFromIndex(addressIndex)
       if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
         const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
@@ -125,7 +124,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       const utxos = await this.getMethod('getUnspentTransactions')(address.address)
       utxos.forEach((utxo) => {
         var utxoVal = ('satoshis' in utxo) ? utxo.satoshis : (utxo.amount * 1e8)
-        if ( utxoVal > 0 ) {
+        if (utxoVal > 0) {
           currentAmount += utxoVal
           utxo.derivationPath = address.derivationPath
           utxosToUse.push(utxo)
@@ -143,7 +142,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
       addressIndex++
     }
-    
+
     return utxosToUse
   }
 
@@ -169,14 +168,11 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const unusedAddress = await this.getUnusedAddress(from)
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
-    console.log("to use", unspentOutputsToUse)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => ('satoshis' in utxo) ? acc + BigNumber(utxo.satoshis).toNumber() : acc + BigNumber(utxo.amount).times(1e8).toNumber(), 0)
     const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
 
     let totalCost = value + fee
     let hasChange = false
-    console.log("total amount",totalAmount)
-    console.log("total cost",totalCost)
 
     if (totalAmount > totalCost) {
       hasChange = true

@@ -30,6 +30,9 @@ export default class Bitcore extends BitcoinRPCProvider {
     }
   }
 
+  async calculateFee (numInputs, numOutputs, feePerByte) { // TODO: lazy fee estimation
+    return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
+  }
   async getBalance (addresses) {
     addresses = addresses
       .map(address => String(address))
@@ -64,6 +67,9 @@ export default class Bitcore extends BitcoinRPCProvider {
     return this.getNewAddress()
   }
 
+  async generate (blocks) {
+    return this.jsonrpc('generate', blocks)
+  }
   async dumpPrivKey (address) {
     return this.jsonrpc('dumpprivkey', address)
   }
@@ -84,19 +90,19 @@ export default class Bitcore extends BitcoinRPCProvider {
   }
 
   async getAddressBalance (address) {
-    return this.jsonrpc('getaddressbalance', {'addresses': [address]})
+    return this.jsonrpc('getaddressbalance', { 'addresses': [address] })
   }
 
   async getUnspentTransactionsForAddresses (addresses) {
-    return this.jsonrpc('getaddressutxos', {'addresses': addresses})
+    return this.jsonrpc('getaddressutxos', { 'addresses': addresses })
   }
 
   async getUnspentTransactions (address) {
-    return this.jsonrpc('getaddressutxos', {'addresses': [address]})
+    return this.jsonrpc('getaddressutxos', { 'addresses': [address] })
   }
 
   async getAddressUtxos (addresses) {
-    return this.jsonrpc('getaddressutxos', {'addresses': addresses})
+    return this.jsonrpc('getaddressutxos', { 'addresses': addresses })
   }
 
   async getTransactionHex (transactionHash) {

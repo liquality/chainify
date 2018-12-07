@@ -88,6 +88,14 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return this.jsonrpc('getblockcount')
   }
 
+  async getNewAddress (from = {}) {
+    return this.jsonrpc('getnewaddress')
+  }
+
+  async getUnusedAddress (from = {}) {
+    return this.getNewAddress()
+  }
+
   async getTransactionByHash (transactionHash) {
     const rawTx = await this.getRawTransactionByHash(transactionHash)
     const tx = await this.decodeRawTransaction(rawTx)
