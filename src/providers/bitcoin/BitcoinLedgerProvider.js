@@ -8,12 +8,11 @@ import Address from '../../Address'
 import networks from '../../networks'
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
-  constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
+  constructor (chain = { network: networks.bitcoin, segwit: false }) {
     super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/0/`)
     this._network = chain.network
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
-    this._numberOfBlockConfirmation = numberOfBlockConfirmation
   }
 
   async getPubKey (from) {
@@ -111,17 +110,14 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
 
-  async getUtxosForAmount (amount) {
+  async getUtxosForAmount (amount, feePerByte) {
     const utxosToUse = []
     let addressIndex = 0
     let currentAmount = 0
     let numOutputsOffset = 0
 
     while ((currentAmount < amount)) {
-      const [ feePerByte, address ] = await Promise.all([
-        this.getMethod('getFeePerByte')(this._numberOfBlockConfirmation),
-        this.getAddressFromIndex(addressIndex)
-      ])
+      const address = await this.getAddressFromIndex(addressIndex)
 
       if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
         const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
@@ -136,7 +132,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
           utxo.derivationPath = address.derivationPath
           utxosToUse.push(utxo)
 
-          const fees = this.calculateFee(utxosToUse.length, numOutputsOffset + 1)
+          const fees = this.calculateFee(utxosToUse.length, numOutputsOffset + 1, feePerByte)
           let totalCost = amount + fees
 
           if (numOutputsOffset === 0 && currentAmount > totalCost) {
@@ -200,7 +196,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async sendTransaction (to, value, data, from) {
-    const app = await this.getApp()
+    const [ feePerByte, app ] = await Promise.all([
+      this.getMethod('getFeePerByte')(),
+      this.getApp()
+    ])
 
     if (data) {
       const scriptPubKey = padHexStart(data)
@@ -208,10 +207,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }
 
     const unusedAddress = await this.getUnusedAddress(from)
-    const unspentOutputsToUse = await this.getUtxosForAmount(value)
+    const unspentOutputsToUse = await this.getUtxosForAmount(value, feePerByte)
 
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
-    const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
+    const fee = this.calculateFee(unspentOutputsToUse.length, 1, feePerByte)
     let totalCost = value + fee
     let hasChange = false
 
@@ -219,7 +218,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       hasChange = true
 
       totalCost -= fee
-      totalCost += this.calculateFee(unspentOutputsToUse.length, 2, 3)
+      totalCost += this.calculateFee(unspentOutputsToUse.length, 2, feePerByte)
     }
 
     if (totalAmount < totalCost) {
