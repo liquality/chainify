@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
-
   async decodeRawTransaction (rawTransaction) {
     const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
     const { hash: txHash, txid: hash, vout } = data
