@@ -3,13 +3,10 @@ import BigNumber from 'bignumber.js'
 import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
-  constructor (config = {
-    numberOfBlockConfirmation: 1,
-    defaultFeePerByte: 3
-  }) {
-    super()
-    this._numberOfBlockConfirmation = config.numberOfBlockConfirmation
-    this._defaultFeePerByte = config.defaultFeePerByte
+  constructor (uri, username, password, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
+    super(uri, username, password)
+    this._numberOfBlockConfirmation = numberOfBlockConfirmation
+    this._defaultFeePerByte = defaultFeePerByte
   }
 
   async getFeePerByte (numberOfBlocks = this._numberOfBlockConfirmation) {
