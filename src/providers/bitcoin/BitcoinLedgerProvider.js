@@ -117,6 +117,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let currentAmount = 0
     let numOutputsOffset = 0
     while ((currentAmount < amount)) {
+      console.log("Poll")
       const [ feePerByte, address ] = await Promise.all([
         this.getMethod('getFeePerByte')(this._numberOfBlockConfirmation),
         this.getAddressFromIndex(addressIndex)
@@ -205,8 +206,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       const scriptPubKey = padHexStart(data)
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
-
+    console.log("209")
     const unusedAddress = await this.getUnusedAddress(from)
+    console.log("2011")
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
 
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)

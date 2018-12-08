@@ -69,7 +69,7 @@ export default class BitcoinSwapProvider extends Provider {
     const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
     const initiationTx = await this.getMethod('splitTransaction')(initiationTxRaw, true)
     const voutIndex = initiationTx.outputs.findIndex((output) => output.script.toString('hex') === sendScript)
-
+    // Here is where the voutIndex should be 0 for the refund of my tx!!!
     const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
     const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
     const newTx = this.generateRawTx(initiationTx, voutIndex, to, newTxInput, lockTimeHex)
@@ -158,7 +158,9 @@ export default class BitcoinSwapProvider extends Provider {
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
 
-    let blockNumber = await this.getMethod('getBlockHeight')()
+    let blockNumber = await this.getMethod('getBlockHeight')() - 44
+    console.log("Looking at block ", blockNumber)
+
     let swapTransaction = null
     while (!swapTransaction) {
       let block
