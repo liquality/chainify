@@ -324,6 +324,15 @@ export default class Client {
     return addresses
   }
 
+  async getAddressExtendedPubKeys (startingIndex = 0, numAddresses = 1) {
+    const xpubkey = await this.getMethod('getAddressExtendedPubKeys')(startingIndex, numAddresses)
+
+    if (!isArray(xpubkey)) {
+      throw new InvalidProviderResponseError('Provider returned an invalid response')
+    }
+
+    return xpubkey
+  }
   /**
    * Check if an address has been used or not.
    * @param {!string|Address} addresses - An address to check for.
@@ -412,10 +421,11 @@ export default class Client {
   /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
+   * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
    * @return {Promise<string>} Resolves with secret
    */
-  async generateSecret (message) {
-    const address = (await this.getMethod('getAddresses')())[0]
+  async generateSecret (message, address = false) {
+    address = (!address) ? (await this.getMethod('getAddresses')())[0] : address
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret

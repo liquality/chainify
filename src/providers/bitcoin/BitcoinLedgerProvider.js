@@ -3,7 +3,7 @@ import Bitcoin from '@ledgerhq/hw-app-btc'
 
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
-import { pubKeyToAddress, addressToPubKeyHash } from './BitcoinUtil'
+import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, createXPUB, toHexInt, encodeBase58Check } from './BitcoinUtil'
 import Address from '../../Address'
 import networks from '../../networks'
 
@@ -19,9 +19,21 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   async getPubKey (from) {
     const app = await this.getApp()
     const derivationPath = from.derivationPath ||
-      await this.getDerivationPathFromAddress(from)
-
+    await this.getDerivationPathFromAddress(from)
     return app.getWalletPublicKey(derivationPath)
+  }
+
+  async getAddressExtendedPubKey (path) {
+
+    const app = await this.getApp()
+    const nodeData = await app.getWalletPublicKey(path, undefined, this._segwit)
+    var publicKey = compressPubKey(nodeData.publicKey);
+
+    //TODO need to generate these values
+    var xpub = createXPUB(3,3112128142,2147483648,nodeData.chainCode,publicKey,70617039);
+    console.log(3,3112128142,2147483648,nodeData.chainCode,publicKey,70617039)
+    console.log(xpub, encodeBase58Check(xpub))
+    return encodeBase58Check(xpub);
   }
 
   async getAddressFromDerivationPath (path) {

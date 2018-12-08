@@ -70,6 +70,18 @@ export default class LedgerProvider extends Provider {
     return address
   }
 
+  async getAddressExtendedPubKeys (startingIndex = 0, numAddresses = 1) {
+    const xpubkeys = []
+    const lastIndex = startingIndex + numAddresses
+
+    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
+      const xpubkey = await this.getAddressExtendedPubKey(currentIndex)
+      xpubkeys.push(xpubkey)
+    }
+    
+    return xpubkeys
+  }
+
   async getAddresses (startingIndex = 0, numAddresses = 1) {
     const addresses = []
     const lastIndex = startingIndex + numAddresses
