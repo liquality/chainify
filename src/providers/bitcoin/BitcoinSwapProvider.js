@@ -158,7 +158,7 @@ export default class BitcoinSwapProvider extends Provider {
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
 
-    let blockNumber = await this.getMethod('getBlockHeight')() - 44
+    let blockNumber = await this.getMethod('getBlockHeight')()
     console.log("Looking at block ", blockNumber)
 
     let swapTransaction = null
