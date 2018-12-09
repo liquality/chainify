@@ -9,7 +9,7 @@ import networks from '../../networks'
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin, segwit: false }) {
-    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/0/`)
+    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`)
     this._network = chain.network
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
