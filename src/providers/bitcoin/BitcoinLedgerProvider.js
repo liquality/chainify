@@ -110,40 +110,45 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
 
-  async getUtxosForAmount (amount, feePerByte) {
+  async getUtxosForAmount (amount, numAddressPerCall = 10) {
     const utxosToUse = []
     let addressIndex = 0
     let currentAmount = 0
     let numOutputsOffset = 0
 
-    while ((currentAmount < amount)) {
-      const address = await this.getAddressFromIndex(addressIndex)
+    const feePerByte = await this.getMethod('getFeePerByte')(this._numberOfBlockConfirmation)
 
-      if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
-        const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
-        if (!isAddressUsed) break
-      }
+    while (currentAmount < amount) {
+      const addresses = await this.getAddresses(addressIndex, numAddressPerCall)
+      const addressList = addresses.map(addr => addr.address)
 
-      const utxos = await this.getMethod('getUnspentTransactions')(address.address)
+      const utxos = await this.getMethod('getAddressUtxos')(addressList)
+
       utxos.forEach((utxo) => {
-        const utxoVal = utxo.satoshis
-        if (utxoVal > 0) {
-          currentAmount += utxoVal
-          utxo.derivationPath = address.derivationPath
-          utxosToUse.push(utxo)
+        if (currentAmount < amount) {
+          const utxoVal = utxo.satoshis
+          if (utxoVal > 0) {
+            currentAmount += utxoVal
+            addresses.forEach((address) => {
+              if (address.address === utxo.address) {
+                utxo.derivationPath = address.derivationPath
+              }
+            })
+            utxosToUse.push(utxo)
 
-          const fees = this.calculateFee(utxosToUse.length, numOutputsOffset + 1, feePerByte)
-          let totalCost = amount + fees
+            const fees = this.calculateFee(utxosToUse.length, numOutputsOffset + 1)
+            let totalCost = amount + fees
 
-          if (numOutputsOffset === 0 && currentAmount > totalCost) {
-            numOutputsOffset = 1
-            totalCost -= fees
-            totalCost += this.calculateFee(utxosToUse.length, 2, feePerByte)
+            if (numOutputsOffset === 0 && currentAmount > totalCost) {
+              numOutputsOffset = 1
+              totalCost -= fees
+              totalCost += this.calculateFee(utxosToUse.length, 2, feePerByte)
+            }
           }
         }
       })
 
-      addressIndex++
+      addressIndex += numAddressPerCall
     }
 
     return utxosToUse
