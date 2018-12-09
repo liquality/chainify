@@ -424,8 +424,8 @@ export default class Client {
    * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
    * @return {Promise<string>} Resolves with secret
    */
-  async generateSecret (message, address = false) {
-    address = (!address) ? (await this.getMethod('getAddresses')())[0] : address
+  async generateSecret (message) {
+    var address = (await this.getMethod('getAddresses')())[0]
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret

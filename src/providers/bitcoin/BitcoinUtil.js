@@ -5,7 +5,6 @@ import {
   base58
 } from '../../crypto'
 
-import tou8 from 'buffer-to-uint8array'
 import bitcoin from 'bitcoinjs-lib'
 import bs58 from 'bs58'
 

@@ -78,7 +78,7 @@ export default class LedgerProvider extends Provider {
       const xpubkey = await this.getAddressExtendedPubKey(currentIndex)
       xpubkeys.push(xpubkey)
     }
-    
+
     return xpubkeys
   }
 

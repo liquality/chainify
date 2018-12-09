@@ -53,6 +53,10 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
     return data.received !== 0
   }
 
+  async getAddressBalances (addresses) {
+    return this.jsonrpc('getaddressdeltas', { 'addresses': addresses })
+  }
+
   async getAddressBalance (address) {
     return this.jsonrpc('getaddressbalance', { 'addresses': [address] })
   }
