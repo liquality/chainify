@@ -240,6 +240,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 }
 
 */
+
 async getUtxosForAmount (amount, numAddressPerCall = 10) {
     const utxosToUse = []
     let addressIndex = 0
@@ -316,6 +317,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
       return utxosToUse
     }
     */
+
 
   async getLedgerInputs (unspentOutputs) {
     const app = await this.getApp()

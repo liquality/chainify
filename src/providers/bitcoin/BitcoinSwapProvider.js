@@ -158,10 +158,8 @@ export default class BitcoinSwapProvider extends Provider {
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    console.log("Looking for ", p2shAddress)
     let swapTransaction = null
     while (!swapTransaction) {
-      console.log("Looking for ", swapTransaction)
       const p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
       const transactionIds = p2shTransactions.map(tx => tx.txid)
       const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))

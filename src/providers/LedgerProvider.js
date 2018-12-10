@@ -52,7 +52,7 @@ export default class LedgerProvider extends Provider {
 
     while (!path && index < maxAddresses) {
       const addr = await this.getAddresses(index, 1)
-      if (String(addr[0]) === address) path = this.getDerivationPathFromIndex(index, change)
+      if (addr[0].address === address) path = this.getDerivationPathFromIndex(index, change)
       index++
       if (index === maxAddresses && change === false) {
         index = 0
@@ -92,7 +92,7 @@ export default class LedgerProvider extends Provider {
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
     return await this.getAddresses(startingIndex = 0, numAddresses = 1, change = false)
   }
-  
+
   /*
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
     const addresses = []
