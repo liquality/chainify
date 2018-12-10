@@ -150,6 +150,7 @@ function createXPUB(depth, fingerprint, childnum, chaincode, publicKey, network)
 export {
   encodeBase58Check,
   createXPUB,
+  parseHexString,
   toHexInt,
   compressPubKey,
   pubKeyToAddress,
