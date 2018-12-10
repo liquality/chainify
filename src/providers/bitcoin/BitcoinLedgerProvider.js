@@ -14,7 +14,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     this._network = chain.network
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
-    this._numberOfBlockConfirmation = numberOfBlockConfirmation
   }
 
   async getPubKey (from) {
@@ -75,7 +74,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(derivationPath, hex)
   }
 
-  async getUnusedAddressOld (from = {}) {
+  async getUnusedAddress (from = {}) {
     let addressIndex = from.index || 0
     let unusedAddress = false
 
@@ -92,15 +91,14 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     return unusedAddress
   }
-
-  async getUnusedAddress (from = {}) {
+/*
+  async getUnusedAddressNew (from = {}) {
     let addressIndex = from.index || 0
     let unusedAddress = false
     let addresses = []
     let limit = 20
-    var xpubkeys = await this.getAddressExtendedPubKeys("44'/0'/0'")
+    var xpubkeys = await this.getAddressExtendedPubKeys(`44'/0'/0'`)
     const xpubkey = xpubkeys[0]
-    var bitcoinjs = require("bitcoinjs-lib")
     var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks.mainnet);
 
     for (var i = addressIndex; i < (addressIndex + limit); i++) {
@@ -122,6 +120,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return unusedAddress
 
   }
+  */
 
   getAmountBuffer (amount) {
     let hexAmount = BigNumber(amount).toString(16)
@@ -324,17 +323,20 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
   }
 
   async sendTransaction (to, value, data, from) {
-    const app = await this.getApp()
+    const [ feePerByte, app ] = await Promise.all([
+      this.getMethod('getFeePerByte')(),
+      this.getApp()
+    ])
 
     if (data) {
       const scriptPubKey = padHexStart(data)
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
     const unusedAddress = await this.getUnusedAddress(from)
-    const unspentOutputsToUse = await this.getUtxosForAmount(value)
+    const unspentOutputsToUse = await this.getUtxosForAmount(value, feePerByte)
 
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
-    const fee = this.calculateFee(unspentOutputsToUse.length, 1, 3)
+    const fee = this.calculateFee(unspentOutputsToUse.length, 1, feePerByte)
     let totalCost = value + fee
     let hasChange = false
 
@@ -342,7 +344,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
       hasChange = true
 
       totalCost -= fee
-      totalCost += this.calculateFee(unspentOutputsToUse.length, 2, 3)
+      totalCost += this.calculateFee(unspentOutputsToUse.length, 2, feePerByte)
     }
 
     if (totalAmount < totalCost) {

@@ -3,6 +3,12 @@ import BigNumber from 'bignumber.js'
 import JsonRpcProvider from '../JsonRpcProvider'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
+  constructor (uri, username, password, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
+    super(uri, username, password)
+    this._numberOfBlockConfirmation = numberOfBlockConfirmation
+    this._defaultFeePerByte = defaultFeePerByte
+  }
+
   async decodeRawTransaction (rawTransaction) {
     const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
     const { hash: txHash, txid: hash, vout } = data
@@ -11,16 +17,22 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return output
   }
 
-  async getFeePerByte (numberOfBlocks = 2) {
-    return this.jsonrpc('estimatesmartfee', numberOfBlocks).then(({ feerate }) => (feerate * 1e8) / 1024)
+  async getFeePerByte (numberOfBlocks = this._numberOfBlockConfirmation) {
+    try {
+      const { feerate } = await this.jsonrpc('estimatesmartfee', numberOfBlocks)
+
+      if (feerate && feerate > 0) {
+        return (feerate * 1e8) / 1024
+      }
+
+      throw new Error('Invalid estimated fee')
+    } catch (e) {
+      return this._defaultFeePerByte
+    }
   }
 
   async signMessage (message, address) {
-    return new Promise((resolve, reject) => {
-      this.jsonrpc('signmessage', address, message).then(result => {
-        resolve(Buffer.from(result, 'base64'))
-      })
-    })
+    return this.jsonrpc('signmessage', address, message).then(result => Buffer.from(result, 'base64'))
   }
 
   async sendTransaction (address, value, script) {
