@@ -103,16 +103,20 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     var xpubkeys = await this.getAddressExtendedPubKeys(this._derivationPath)
 
     var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks[this._bjsnetwork]);
-
     for (var i = addressIndex; i < (addressIndex + limit); i++) {
-      addresses.push(node.derivePath("0/" + i++).getAddress())
-    }
 
-    const isUsed = await this.getMethod('getAddressBalances')(addresses)
+      var address = {}
+      address.derivationPath = this._baseDerivationPath + "0/" + i,
+      address.address = node.derivePath("0/" + i).getAddress()
+      address.index =  false
+      addresses.push(address)
+    }
+    const addressArr = addresses.map(address => address.address)
+    const isUsed = await this.getMethod('getAddressBalances')(addressArr)
     const dataarr = isUsed.map(address => address.address)
     for (var i = 0 ; i < addresses.length; i++) {
       if (dataarr.indexOf(addresses[i]) < 0) {
-        unusedAddress = {address: addresses[i], derivationPath: this._baseDerivationPath + "0/" + i, index: false}
+        unusedAddress = addresses[i]
         break
       }
     }
@@ -370,10 +374,10 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
     const unusedAddress = await this.getUnusedAddress(from)
+
     //const unspentOutputsToUse = await this.getUtxosForAmount(value, feePerByte)
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
 
-    console.log(unspentOutputsToUse)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
     const fee = this.calculateFee(unspentOutputsToUse.length, 1, feePerByte)
     let totalCost = value + fee
@@ -397,17 +401,13 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     const changeAmount = totalAmount - totalCost
 
     const sendScript = this.createScript(to)
-    console.log("Send script", sendScript)
-    console.log("Send amount", sendAmount)
     let outputs = [{ amount: this.getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
     if (hasChange) {
       const changeScript = this.createScript(unusedAddress.address)
       outputs.push({ amount: this.getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
     }
-
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
-    console.log("signedTransaction", signedTransaction)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
