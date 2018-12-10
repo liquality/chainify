@@ -121,7 +121,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const dataarr = isUsed.map(address => address.address)
     for (var i = 0 ; i < addresses.length; i++) {
       if (dataarr.indexOf(addresses[i].address) < 0) {
-        unusedAddress = addresses[i].address
+        unusedAddress = addresses[i]
         break
       }
     }
