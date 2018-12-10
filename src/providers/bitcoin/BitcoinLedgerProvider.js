@@ -391,10 +391,10 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
 
     var node = bip32.fromBase58(xpubkeys[0], this._network)
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = pubKeyToAddress(node.derivePath("0/" + currentIndex).__Q,this._network.name,'pubKeyHash')
+      const address = pubKeyToAddress(node.derivePath(changeVal + "/" + currentIndex).__Q,this._network.name,'pubKeyHash')
       const path = this._baseDerivationPath + changeVal + "/" + currentIndex
       addresses.push({
-        address: address,
+        address,
         path,
         index: currentIndex
       })
