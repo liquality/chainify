@@ -1,6 +1,7 @@
 import Provider from '../Provider'
 
 import Transport from '@ledgerhq/hw-transport-node-hid'
+import bitcoinjs from 'bitcoinjs-lib'
 
 export default class LedgerProvider extends Provider {
   static isSupported () {
@@ -89,14 +90,22 @@ export default class LedgerProvider extends Provider {
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    return await this.getAddresses(startingIndex = 0, numAddresses = 1, change = false)
+  }
+  
+  /*
+  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
     const addresses = []
     const lastIndex = startingIndex + numAddresses
 
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const address = await this.getAddressFromIndex(currentIndex, change)
+      console.log(address)
       addresses.push(address)
     }
 
     return addresses
   }
+  */
+
 }

@@ -11,7 +11,9 @@ import bitcoinjs from 'bitcoinjs-lib'
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
     super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`)
+    this._derivationPath = `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`
     this._network = chain.network
+    this._bjsnetwork = chain.network.name.replace("bitcoin_","") //for bitcoin js
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
   }
@@ -24,7 +26,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async getAddressExtendedPubKey (path) {
-
     const app = await this.getApp()
     var parts = path.split("/")
     var prevPath = parts[0] + "/" + parts[1];
@@ -74,6 +75,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(derivationPath, hex)
   }
 
+/*
   async getUnusedAddress (from = {}) {
     let addressIndex = from.index || 0
     let unusedAddress = false
@@ -91,15 +93,16 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     return unusedAddress
   }
-/*
-  async getUnusedAddressNew (from = {}) {
+  */
+
+  async getUnusedAddress (from = {}) {
     let addressIndex = from.index || 0
+    let limit = from.limit || 20
     let unusedAddress = false
     let addresses = []
-    let limit = 20
-    var xpubkeys = await this.getAddressExtendedPubKeys(`44'/0'/0'`)
-    const xpubkey = xpubkeys[0]
-    var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks.mainnet);
+    var xpubkeys = await this.getAddressExtendedPubKeys(this._derivationPath)
+
+    var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks[this._bjsnetwork]);
 
     for (var i = addressIndex; i < (addressIndex + limit); i++) {
       addresses.push(node.derivePath("0/" + i++).getAddress())
@@ -109,7 +112,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const dataarr = isUsed.map(address => address.address)
     for (var i = 0 ; i < addresses.length; i++) {
       if (dataarr.indexOf(addresses[i]) < 0) {
-        unusedAddress = addresses[i]
+        unusedAddress = {address: addresses[i], derivationPath: this._baseDerivationPath + "0/" + i, index: false}
         break
       }
     }
@@ -120,7 +123,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return unusedAddress
 
   }
-  */
+
 
   getAmountBuffer (amount) {
     let hexAmount = BigNumber(amount).toString(16)
@@ -150,7 +153,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   createScript (address) {
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
-
     if (type === this._network.pubKeyHash) {
       return [
         '76', // OP_DUP
@@ -176,7 +178,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
 
-/*  async getUtxosForAmount (amount, numAddressPerCall = 10) {
+/*
+  async getUtxosForAmount (amount, numAddressPerCall = 10) {
     console.log("getUtxosForAmount", amount, numAddressPerCall)
     const utxosToUse = []
     let addressIndex = 0
@@ -231,6 +234,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
   return utxosToUse
 }
+
 */
 async getUtxosForAmount (amount, numAddressPerCall = 10) {
     const utxosToUse = []
@@ -241,11 +245,10 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     const feePerByte = await this.getMethod('getFeePerByte')(this._numberOfBlockConfirmation)
 
     while (currentAmount < amount) {
-      const addresses = await this.getAddresses(addressIndex, numAddressPerCall)
+      const addresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
       const addressList = addresses.map(addr => addr.address)
 
       const utxos = await this.getMethod('getAddressUtxos')(addressList)
-
       utxos.forEach((utxo) => {
         if (currentAmount < amount) {
           const utxoVal = utxo.satoshis
@@ -272,9 +275,43 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
 
       addressIndex += numAddressPerCall
     }
-
     return utxosToUse
   }
+
+/*
+  async getUtxosForAmount (amount, feePerByte) {
+      const utxosToUse = []
+      let addressIndex = 0
+      let currentAmount = 0
+      let totalCost = amount
+      let fees = 0
+
+      while ((currentAmount < totalCost)) {
+        const address = await this.getAddressFromIndex(addressIndex)
+
+        if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
+          const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
+          if (!isAddressUsed) break
+        }
+        const utxos = await this.getMethod('getUnspentTransactions')(address.address)
+        for (const utxo of utxos) {
+          const utxoVal = utxo.satoshis
+          if (utxoVal > 0) {
+            currentAmount += utxoVal
+            utxo.derivationPath = address.derivationPath
+            utxosToUse.push(utxo)
+            fees = this.calculateFee(utxosToUse.length, 2, feePerByte)
+            totalCost = amount + fees
+            if (currentAmount > totalCost) break
+          }
+        }
+
+        addressIndex++
+      }
+
+      return utxosToUse
+    }
+    */
 
   async getLedgerInputs (unspentOutputs) {
     const app = await this.getApp()
@@ -333,8 +370,10 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
     const unusedAddress = await this.getUnusedAddress(from)
-    const unspentOutputsToUse = await this.getUtxosForAmount(value, feePerByte)
+    //const unspentOutputsToUse = await this.getUtxosForAmount(value, feePerByte)
+    const unspentOutputsToUse = await this.getUtxosForAmount(value)
 
+    console.log(unspentOutputsToUse)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
     const fee = this.calculateFee(unspentOutputsToUse.length, 1, feePerByte)
     let totalCost = value + fee
@@ -358,9 +397,9 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     const changeAmount = totalAmount - totalCost
 
     const sendScript = this.createScript(to)
-
+    console.log("Send script", sendScript)
+    console.log("Send amount", sendAmount)
     let outputs = [{ amount: this.getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
-
     if (hasChange) {
       const changeScript = this.createScript(unusedAddress.address)
       outputs.push({ amount: this.getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
@@ -368,7 +407,23 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
-
+    console.log("signedTransaction", signedTransaction)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
+
+  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    const addresses = []
+    const lastIndex = startingIndex + numAddresses
+    const changeVal = (change)?'1':'0'
+
+    var xpubkeys = await this.getAddressExtendedPubKeys(this._baseDerivationPath)
+    var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks[this._bjsnetwork]);
+    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
+      const address = node.derivePath(changeVal + "/" + currentIndex).getAddress()
+      addresses.push({address: address, derivationPath: this._baseDerivationPath + changeVal + "/" + currentIndex, index: false})
+    }
+
+    return addresses
+  }
+
 }
