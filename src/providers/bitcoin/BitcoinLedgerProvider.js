@@ -395,7 +395,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
       const path = this._baseDerivationPath + changeVal + "/" + currentIndex
       addresses.push({
         address,
-        path,
+        derivationPath: path,
         index: currentIndex
       })
     }
