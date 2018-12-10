@@ -2,11 +2,13 @@ import LedgerProvider from '../LedgerProvider'
 import Bitcoin from '@ledgerhq/hw-app-btc'
 
 import { BigNumber } from 'bignumber.js'
-import { base58, padHexStart } from '../../crypto'
-import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, createXPUB, toHexInt, encodeBase58Check, parseHexString } from './BitcoinUtil'
+import { base58, padHexStart, sha256, ripemd160 } from '../../crypto'
+import { pubKeyToAddress,pubKeyHashToAddress, addressToPubKeyHash, compressPubKey, createXPUB, toHexInt, encodeBase58Check, parseHexString } from './BitcoinUtil'
 import Address from '../../Address'
 import networks from '../../networks'
-import bitcoinjs from 'bitcoinjs-lib'
+//import bitcoinjs from 'bitcoinjs-lib'
+import bip32 from 'bip32'
+
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
@@ -51,8 +53,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let nodeData = await app.getWalletPublicKey(prevPath, undefined, segwit);
     var publicKey = compressPubKey(nodeData.publicKey);
     publicKey = parseHexString(publicKey);
-    var result = bitcoinjs.crypto.sha256(Buffer.from(publicKey,'hex'));
-    result = bitcoinjs.crypto.ripemd160(result);
+    var result = sha256(Buffer.from(publicKey,'hex'));
+    result = ripemd160(result);
     var fingerprint =
       ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]) >>>
       0;
@@ -102,15 +104,18 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let addresses = []
     var xpubkeys = await this.getAddressExtendedPubKeys(this._derivationPath)
 
-    var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks[this._bjsnetwork]);
-    for (var i = addressIndex; i < (addressIndex + limit); i++) {
+    //bip32.fromBase58('xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi')
 
+    var node = bip32.fromBase58(xpubkeys[0],this._network)//, bitcoinjs.networks[this._bjsnetwork]);
+    for (var i = addressIndex; i < (addressIndex + limit); i++) {
       var address = {}
       address.derivationPath = this._baseDerivationPath + "0/" + i,
-      address.address = node.derivePath("0/" + i).getAddress()
+      address.address = pubKeyToAddress(node.derivePath("0/" + i).__Q,this._network.name,'pubKeyHash')
       address.index =  i
+      //console.log()
       addresses.push(address)
     }
+
     const addressArr = addresses.map(address => address.address)
     const isUsed = await this.getMethod('getAddressBalances')(addressArr)
     const dataarr = isUsed.map(address => address.address)
@@ -417,11 +422,11 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     const addresses = []
     const lastIndex = startingIndex + numAddresses
     const changeVal = (change)?'1':'0'
-
     var xpubkeys = await this.getAddressExtendedPubKeys(this._baseDerivationPath)
-    var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks[this._bjsnetwork]);
+
+    var node = bip32.fromBase58(xpubkeys[0], this._network)//, bitcoinjs.networks[this._bjsnetwork]);
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = node.derivePath(changeVal + "/" + currentIndex).getAddress()
+      const address = pubKeyToAddress(node.derivePath("0/" + currentIndex).__Q,this._network.name,'pubKeyHash')
       addresses.push({address: address, derivationPath: this._baseDerivationPath + changeVal + "/" + currentIndex, index: currentIndex})
     }
 

@@ -5,9 +5,10 @@ export default {
     scriptHash: '05',
     coinType: '0',
     explorerUrl: 'https://blockchain.info',
+    wif: 0x80,
     bip32: {
-        private: 76066276,
-        public: 76067358
+      public: 0x0488b21e,
+      private: 0x0488ade4
     }
   },
   bitcoin_testnet: {
@@ -16,9 +17,10 @@ export default {
     scriptHash: 'C4',
     coinType: '1',
     explorerUrl: 'https://testnet.blockchain.info',
+    wif: 0xef,
     bip32: {
-        private: 70615956,
-        public: 70617039
+      public: 0x043587cf,
+      private: 0x04358394
     }
   },
   litecoin: {
