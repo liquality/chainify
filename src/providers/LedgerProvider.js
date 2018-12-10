@@ -93,8 +93,8 @@ export default class LedgerProvider extends Provider {
     return await this.getAddresses(startingIndex = 0, numAddresses = 1, change = false)
   }
 
-  /*
-  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+  /*async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    console.log("dsa")
     const addresses = []
     const lastIndex = startingIndex + numAddresses
 
@@ -105,7 +105,7 @@ export default class LedgerProvider extends Provider {
     }
 
     return addresses
-  }
-  */
+  }*/
+
 
 }

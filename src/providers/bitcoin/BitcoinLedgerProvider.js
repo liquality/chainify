@@ -108,15 +108,15 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       var address = {}
       address.derivationPath = this._baseDerivationPath + "0/" + i,
       address.address = node.derivePath("0/" + i).getAddress()
-      address.index =  false
+      address.index =  i
       addresses.push(address)
     }
     const addressArr = addresses.map(address => address.address)
     const isUsed = await this.getMethod('getAddressBalances')(addressArr)
     const dataarr = isUsed.map(address => address.address)
     for (var i = 0 ; i < addresses.length; i++) {
-      if (dataarr.indexOf(addresses[i]) < 0) {
-        unusedAddress = addresses[i]
+      if (dataarr.indexOf(addresses[i].address) < 0) {
+        unusedAddress = addresses[i].address
         break
       }
     }
@@ -422,7 +422,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     var node = bitcoinjs.HDNode.fromBase58(xpubkeys[0], bitcoinjs.networks[this._bjsnetwork]);
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const address = node.derivePath(changeVal + "/" + currentIndex).getAddress()
-      addresses.push({address: address, derivationPath: this._baseDerivationPath + changeVal + "/" + currentIndex, index: false})
+      addresses.push({address: address, derivationPath: this._baseDerivationPath + changeVal + "/" + currentIndex, index: currentIndex})
     }
 
     return addresses
