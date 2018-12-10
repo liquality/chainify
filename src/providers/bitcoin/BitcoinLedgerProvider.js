@@ -97,42 +97,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
   */
 
-  async getUnusedAddress (from = {}) {
-    let addressIndex = from.index || 0
-    let limit = from.limit || 20
-    let unusedAddress = false
-    let addresses = []
-    var xpubkeys = await this.getAddressExtendedPubKeys(this._derivationPath)
-
-    //bip32.fromBase58('xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi')
-
-    var node = bip32.fromBase58(xpubkeys[0],this._network)//, bitcoinjs.networks[this._bjsnetwork]);
-    for (var i = addressIndex; i < (addressIndex + limit); i++) {
-      var address = {}
-      address.derivationPath = this._baseDerivationPath + "0/" + i,
-      address.address = pubKeyToAddress(node.derivePath("0/" + i).__Q,this._network.name,'pubKeyHash')
-      address.index =  i
-      //console.log()
-      addresses.push(address)
-    }
-
-    const addressArr = addresses.map(address => address.address)
-    const isUsed = await this.getMethod('getAddressBalances')(addressArr)
-    const dataarr = isUsed.map(address => address.address)
-    for (var i = 0 ; i < addresses.length; i++) {
-      if (dataarr.indexOf(addresses[i].address) < 0) {
-        unusedAddress = addresses[i]
-        break
-      }
-    }
-
-    if (!unusedAddress) {
-      return this.getUnusedAddress({index: addressIndex + limit})
-    }
-    return unusedAddress
-
-  }
-
 
   getAmountBuffer (amount) {
     let hexAmount = BigNumber(amount).toString(16)
@@ -418,19 +382,52 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
-  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+
+  async getLedgerAddresses(startingIndex, numAddresses, change = false) {
     const addresses = []
     const lastIndex = startingIndex + numAddresses
-    const changeVal = (change)?'1':'0'
+    const changeVal = change ? '1' : '0'
     var xpubkeys = await this.getAddressExtendedPubKeys(this._baseDerivationPath)
 
-    var node = bip32.fromBase58(xpubkeys[0], this._network)//, bitcoinjs.networks[this._bjsnetwork]);
+    var node = bip32.fromBase58(xpubkeys[0], this._network)
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const address = pubKeyToAddress(node.derivePath("0/" + currentIndex).__Q,this._network.name,'pubKeyHash')
-      addresses.push({address: address, derivationPath: this._baseDerivationPath + changeVal + "/" + currentIndex, index: currentIndex})
+      const path = this._baseDerivationPath + changeVal + "/" + currentIndex
+      addresses.push({
+        address: address,
+        path,
+        index: currentIndex
+      })
     }
 
     return addresses
   }
+
+  async getUnusedAddress (change) {
+    const addressesPerCall = 20
+    let unusedAddress = null
+    let addressesIndex = 0
+    while (!unusedAddress) {
+      let addresses = await this.getLedgerAddresses(addressesIndex, addressesPerCall, change)
+      const addressArr = addresses.map(address => address.address)
+      const isUsed = await this.getMethod('getAddressBalances')(addressArr)
+      const dataarr = isUsed.map(address => address.address)
+      for (var i = 0; i < addresses.length; i++) {
+        if (dataarr.indexOf(addresses[i].address) < 0) {
+          unusedAddress = addresses[i]
+          break
+        }
+      }
+      addressesIndex += addressesPerCall
+    }
+    return unusedAddress
+  }
+
+
+  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    return this.getLedgerAddresses(startingIndex, numAddresses, change)
+  }
+
+
 
 }
