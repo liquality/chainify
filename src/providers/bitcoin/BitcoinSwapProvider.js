@@ -73,7 +73,7 @@ export default class BitcoinSwapProvider extends Provider {
     // Here is where the voutIndex should be 0 for the refund of my tx!!!
     const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
     const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
-    const newTx = this.generateRawTx(initiationTx, voutIndex, to, newTxInput, lockTimeHex, feePerByte)
+    const newTx = await this.generateRawTx(initiationTx, voutIndex, to, newTxInput, lockTimeHex, feePerByte)
     const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
     const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
     const outputScript = outputScriptObj.toString('hex')
@@ -92,7 +92,7 @@ export default class BitcoinSwapProvider extends Provider {
     const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secretParam)
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
-    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex, feePerByte)
+    const rawClaimTx = await this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex, feePerByte)
 
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
@@ -223,11 +223,12 @@ export default class BitcoinSwapProvider extends Provider {
     ].join('')
   }
 
-  generateRawTx (initiationTx, voutIndex, address, input, locktime, feePerByte) {
+  async generateRawTx (initiationTx, voutIndex, address, input, locktime, feePerByte) {
     const output = initiationTx.outputs[voutIndex]
     const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
+    const { relayfee } = await this.getMethod('jsonrpc')('getinfo')
     const fee = this.getMethod('calculateFee')(1, 1, feePerByte)
-    const amount = value - fee
+    const amount = value - Math.max(fee, relayfee)
     const amountLE = Buffer.from(padHexStart(amount.toString(16), 16), 'hex').reverse().toString('hex') // amount in little endian
     const pubKeyHash = addressToPubKeyHash(address)
 
