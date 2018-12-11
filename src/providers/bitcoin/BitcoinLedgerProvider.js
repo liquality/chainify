@@ -99,7 +99,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
 
   getAmountBuffer (amount) {
-    let hexAmount = BigNumber(amount).toString(16)
+    let hexAmount = BigNumber(Math.round(amount)).toString(16)
     hexAmount = padHexStart(hexAmount, 16)
     const valueBuffer = Buffer.from(hexAmount, 'hex')
     return valueBuffer.reverse()
@@ -403,7 +403,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     return addresses
   }
 
-  async getUnusedAddress (change) {
+  async getUnusedAddress (change = false) {
     const addressesPerCall = 20
     let unusedAddress = null
     let addressesIndex = 0
