@@ -314,9 +314,8 @@ export default class Client {
    *  of accounts.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddresses (startingIndex = 0, numAddresses = 1) {
-    const addresses = await this.getMethod('getAddresses')(startingIndex, numAddresses)
-
+   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    const addresses = await this.getMethod('getAddresses')(startingIndex, numAddresses, change)
     if (!isArray(addresses)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
     }
@@ -324,6 +323,15 @@ export default class Client {
     return addresses
   }
 
+  async getAddressExtendedPubKeys (startingIndex = 0, numAddresses = 1) {
+    const xpubkey = await this.getMethod('getAddressExtendedPubKeys')(startingIndex, numAddresses)
+
+    if (!isArray(xpubkey)) {
+      throw new InvalidProviderResponseError('Provider returned an invalid response')
+    }
+
+    return xpubkey
+  }
   /**
    * Check if an address has been used or not.
    * @param {!string|Address} addresses - An address to check for.
@@ -339,8 +347,8 @@ export default class Client {
    *  object.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUnusedAddress (from = {}) {
-    return this.getMethod('getUnusedAddress')(from)
+  async getUnusedAddress (change) {
+    return this.getMethod('getUnusedAddress')(change)
   }
 
   /**
@@ -412,6 +420,7 @@ export default class Client {
   /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
+   * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
    * @return {Promise<string>} Resolves with secret
    */
   async generateSecret (message) {
@@ -502,12 +511,12 @@ export default class Client {
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, wif) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
+    return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration, wif)
   }
 
   /**

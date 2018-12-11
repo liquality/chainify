@@ -9,12 +9,20 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     this._defaultFeePerByte = defaultFeePerByte
   }
 
+  async decodeRawTransaction (rawTransaction) {
+    const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
+    const { hash: txHash, txid: hash, vout } = data
+    const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
+    const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }
+    return output
+  }
+
   async getFeePerByte (numberOfBlocks = this._numberOfBlockConfirmation) {
     try {
       const { feerate } = await this.jsonrpc('estimatesmartfee', numberOfBlocks)
 
       if (feerate && feerate > 0) {
-        return (feerate * 1e8) / 1024
+        return Math.ceil((feerate * 1e8) / 1024)
       }
 
       throw new Error('Invalid estimated fee')
@@ -28,7 +36,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async sendTransaction (address, value, script) {
-    value = BigNumber(value).divideBy(1e8).toNumber()
+    value = BigNumber(value).dividedBy(1e8).toNumber()
     return this.jsonrpc('sendtoaddress', address, value)
   }
 
@@ -123,6 +131,14 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async getBlockHeight () {
     return this.jsonrpc('getblockcount')
+  }
+
+  async getNewAddress (from = {}) {
+    return this.jsonrpc('getnewaddress')
+  }
+
+  async getUnusedAddress (from = {}) {
+    return this.getNewAddress()
   }
 
   async getAddressTransactions (address, start, end) {

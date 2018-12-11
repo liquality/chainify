@@ -6,7 +6,7 @@ import Address from '../../Address'
 
 export default class EthereumLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.ethereum }) {
-    super(Ethereum, `44'/${chain.network.coinType}'/0'/0/`)
+    super(Ethereum, `44'/${chain.network.coinType}'/0'/`)
   }
 
   async getAddressFromDerivationPath (path) {
