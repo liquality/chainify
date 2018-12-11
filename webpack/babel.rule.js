@@ -12,8 +12,9 @@ module.exports = (config = { target: 'web' }) => {
     targets.node = '8'
   }
 
-  const conf = {
+  return {
     test: /\.js$/,
+    exclude: /node_modules/,
     loader: 'babel-loader?cacheDirectory=true',
     options: {
       plugins,
@@ -28,10 +29,4 @@ module.exports = (config = { target: 'web' }) => {
       ]
     }
   }
-
-  if (process.env.NODE_ENV !== 'production') {
-    conf.exclude = /node_modules/
-  }
-
-  return conf
 }
