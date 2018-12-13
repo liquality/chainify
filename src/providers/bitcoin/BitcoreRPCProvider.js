@@ -73,6 +73,10 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
     return this.jsonrpc('getaddressutxos', { 'addresses': addresses })
   }
 
+  async getAddressMempool (addresses) {
+    return this.jsonrpc('getaddressmempool', { 'addresses': addresses })
+  }
+
   async getAddresses (startingIndex = 0, numAddresses = 1) {
     const addresses = []
     const lastIndex = startingIndex + numAddresses
