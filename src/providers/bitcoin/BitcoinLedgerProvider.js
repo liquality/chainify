@@ -249,7 +249,13 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
         addrList = addrList.concat(nonChangeAddresses)
       }
 
-      const utxos = await this.getMethod('getAddressUtxos')(addrList.map(a => a.address))
+      let utxos = await this.getMethod('getAddressUtxos')(addrList.map(a => a.address))
+      let utxosMempool = await this.getMethod('getAddressMempool')(addrList.map(a => a.address))
+      utxos = utxos.filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+      utxosMempool = utxosMempool.filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+      utxosMempool = utxosMempool.filter(utxo => utxo.prevtxid === undefined)
+      utxosMempool = utxosMempool.map(utxo => {utxo.outputIndex = utxo.index; return utxo;})
+      utxos = utxos.concat(utxosMempool)
 
       for (const utxo of utxos) {
         const utxoVal = utxo.satoshis
@@ -366,7 +372,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
       const scriptPubKey = padHexStart(data)
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
-    const unusedAddress = await this.getUnusedAddress(from)
+    const unusedAddress = await this.getUnusedAddress(true)
     // const unspentOutputsToUse = await this.getUtxosForAmount(value, feePerByte)
     const unspentOutputsToUse = await this.getUtxosForAmount(value)
     const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
@@ -427,7 +433,9 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     while (!unusedAddress) {
       let addresses = await this.getLedgerAddresses(addressesIndex, addressesPerCall, change)
       const addressArr = addresses.map(address => address.address)
-      const isUsed = await this.getMethod('getAddressBalances')(addressArr)
+      let isUsed = await this.getMethod('getAddressBalances')(addressArr)
+      const isUsedMempool = await this.getMethod('getAddressMempool')(addressArr)
+      isUsed = isUsed.concat(isUsedMempool)
       const dataarr = isUsed.map(address => address.address)
       for (var i = 0; i < addresses.length; i++) {
         if (dataarr.indexOf(addresses[i].address) < 0) {

@@ -154,13 +154,17 @@ export default class BitcoinSwapProvider extends Provider {
     return this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
-  async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, predicate) {
+  async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, includeMempool, predicate) {
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     let swapTransaction = null
     while (!swapTransaction) {
-      const p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
+      let p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
+      if (includeMempool) {
+        const p2shMempoolTransactions = await this.getMethod('getAddressMempool')([p2shAddress])
+        p2shTransactions.concat(p2shMempoolTransactions)
+      }
       const transactionIds = p2shTransactions.map(tx => tx.txid)
       const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
       swapTransaction = transactions.find(predicate)
@@ -169,16 +173,16 @@ export default class BitcoinSwapProvider extends Provider {
     return swapTransaction
   }
 
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    const initiateSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, includeMempool = false) {
+    const initiateSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, includeMempool,
       tx => this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
     )
 
     return initiateSwapTransaction
   }
 
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, includeMempool = false) {
+    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, includeMempool,
       tx => tx._raw.vin.find(vin => vin.txid === initiationTxHash)
     )
 
