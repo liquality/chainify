@@ -12,8 +12,7 @@ bitcoin.addProvider(new BitcoinLedgerProvider({ network: networks.bitcoin_testne
   try {
     let d = Date.now()
     try {
-      console.log(await bitcoin.getMethod('getUnusedAddress')({index:0}))
-
+      console.log(await bitcoin.getMethod('getUnusedAddress')())
       console.log('Time taken', `${(Date.now() - d) / 1000}s`)
     } catch (e) {
       console.error(e)
