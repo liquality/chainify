@@ -400,8 +400,8 @@ export default class Client {
    * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, includeMempool) {
-    return this.getMethod('findInitiateSwapTransaction')(value, recipientAddress, refundAddress, secretHash, expiration, includeMempool)
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.getMethod('findInitiateSwapTransaction')(value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**
@@ -413,8 +413,8 @@ export default class Client {
    * @param {!string} expiration - Expiration time
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, includeMempool) {
-    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, includeMempool)
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   /**
