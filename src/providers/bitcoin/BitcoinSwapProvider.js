@@ -160,7 +160,9 @@ export default class BitcoinSwapProvider extends Provider {
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     let swapTransaction = null
     while (!swapTransaction) {
-      const p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
+      let p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
+      const p2shMempoolTransactions = await this.getMethod('getAddressMempool')([p2shAddress])
+      p2shTransactions = p2shTransactions.concat(p2shMempoolTransactions)
       const transactionIds = p2shTransactions.map(tx => tx.txid)
       const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
       swapTransaction = transactions.find(predicate)
