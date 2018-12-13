@@ -254,7 +254,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
       utxos = utxos.filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
       utxosMempool = utxosMempool.filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
       utxosMempool = utxosMempool.filter(utxo => utxo.prevtxid === undefined)
-      utxosMempool = utxosMempool.map(utxo => {utxo.outputIndex = utxo.index; return utxo;})
+      utxosMempool = utxosMempool.map(utxo => { utxo.outputIndex = utxo.index; return utxo })
       utxos = utxos.concat(utxosMempool)
 
       for (const utxo of utxos) {

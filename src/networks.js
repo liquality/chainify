@@ -29,8 +29,8 @@ export default {
     scriptHash: '32',
     coinType: '2',
     bip32: {
-        private: 0x019d9cfe,
-        public: 0x019da462
+      private: 0x019d9cfe,
+      public: 0x019da462
     }
   },
   ethereum: {

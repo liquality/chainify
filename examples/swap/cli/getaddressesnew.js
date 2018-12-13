@@ -6,8 +6,6 @@ const { BitcoinLedgerProvider, BitcoreRPCProvider } = providers.bitcoin
 const bitcoin = new Client()
 bitcoin.addProvider(new BitcoreRPCProvider('http://localhost:18332', 'bitcoin', 'local321'))
 bitcoin.addProvider(new BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
-//bitcoin.addProvider(new BitcoreRPCProvider('https://bitcoin.liquality.io/', 'liquality', 'liquality123'))
-// bitcoin.addProvider(new BitcoreRPCProvider('https://bitcoin.liquality.io/', 'liquality', 'liquality123'))
 
 ;(async () => {
   try {
@@ -21,11 +19,11 @@ bitcoin.addProvider(new BitcoinLedgerProvider({ network: networks.bitcoin_testne
       console.log(xpubkeys[0])
       var bjs = require("bitcoinjs-lib")
       var node = bjs.HDNode.fromBase58(xpubkeys[0], bjs.networks.testnet);
-      for ( var i = 0; i < 30; i++ ) { 
-        console.log(node.derivePath("0/" + i).getAddress()); 
+      for ( var i = 0; i < 30; i++ ) {
+        console.log(node.derivePath("0/" + i).getAddress());
       }
       */
-      
+
       console.log('Time taken', `${(Date.now() - d) / 1000}s`)
     } catch (e) {
       console.error(e)
