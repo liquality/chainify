@@ -105,9 +105,9 @@
     /* global $, ChainAbstractionLayer, web3 */
     const { Client, providers, networks, crypto } = ChainAbstractionLayer
     const bitcoin = new Client()
-    bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('https://localhost:18332', 'bitcoin', 'local321'))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
+    bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('https://bitcoin.liquality.io', 'liquality', 'liquality123'))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin, segwit: false }))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin }))
 
     const ethereum = new Client()
     ethereum.addProvider(new providers.ethereum.EthereumRPCProvider('http://localhost:8545'))

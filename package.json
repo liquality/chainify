@@ -65,9 +65,11 @@
     "bs58": "^4.0.1",
     "buffer-to-uint8array": "^1.1.0",
     "crypto-hashing": "^1.0.0",
+    "cryptocompare": "^0.7.0",
     "dsn-parser": "^1.0.1",
     "json-bigint": "^0.3.0",
     "lodash": "^4.0.0",
+    "node-fetch": "^2.3.0",
     "standard-error": "^1.1.0"
   },
   "devDependencies": {

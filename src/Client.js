@@ -548,4 +548,8 @@ export default class Client {
   async getAddressMempool (addresses) {
     return this.getMethod('getAddressMempool')(addresses)
   }
+
+  async getFeePerByte () {
+    return this.getMethod('getFeePerByte')()
+  }
 }
