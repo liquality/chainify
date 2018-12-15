@@ -68,7 +68,9 @@
     "dsn-parser": "^1.0.1",
     "json-bigint": "^0.3.0",
     "lodash": "^4.0.0",
-    "standard-error": "^1.1.0"
+    "standard-error": "^1.1.0",
+    "walletconnect": "^0.7.28",
+    "walletconnect-qrcode-modal": "^0.7.28"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.54",

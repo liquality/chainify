@@ -1,0 +1,24 @@
+https://liquality.io/swap/#ccy1=btc&ccy1v=0.0001&ccy1Addr=n4Yskt2B5CbJJuZqPg3rqhocRoomsWwm2d&ccy1CounterPartyAddr=mpdynoXN3CrjgjNnk71E9oZNCfrDXUaBHX&ccy2=eth&ccy2v=0.0001&ccy2Addr=cf8e7573894cb97d2589efdaf04cf65b8ad94cd9&ccy2CounterPartyAddr=627306090abab3a6e1400e9345bc60c78a8bef57&ccy3v=1&bFundHash=54094c51c6ef8f82d671517559a77093ddd2cca875d8d9fd0b594ec7ff0b6bea&secretHash=2bd2cc6971012f511d4d3d5b9fcf142e628c4cc1f3015e7d0c1dc67c33357f42&expiration=1544838619&isPartyB=true
+
+https://liquality.io/swap/#ccy1=btc&ccy1v=0.0001&ccy1Addr=n4Yskt2B5CbJJuZqPg3rqhocRoomsWwm2d&ccy1CounterPartyAddr=mpdynoXN3CrjgjNnk71E9oZNCfrDXUaBHX&ccy2=eth&ccy2v=0.0001&ccy2Addr=cf8e7573894cb97d2589efdaf04cf65b8ad94cd9&ccy2CounterPartyAddr=627306090abab3a6e1400e9345bc60c78a8bef57&ccy3v=1&bFundHash=54094c51c6ef8f82d671517559a77093ddd2cca875d8d9fd0b594ec7ff0b6bea&secretHash=2bd2cc6971012f511d4d3d5b9fcf142e628c4cc1f3015e7d0c1dc67c33357f42&expiration=1544838619&isPartyB=true
+
+
+https://liquality.io/swap/#ccy1=btc&ccy1v=0.0001&ccy1Addr=n4Yskt2B5CbJJuZqPg3rqhocRoomsWwm2d&ccy1CounterPartyAddr=mpdynoXN3CrjgjNnk71E9oZNCfrDXUaBHX&ccy2=eth&ccy2v=0.0001&ccy2Addr=cf8e7573894cb97d2589efdaf04cf65b8ad94cd9&ccy2CounterPartyAddr=627306090abab3a6e1400e9345bc60c78a8bef57&ccy3v=1&bFundHash=f3d5e962477470a92cd1a967d44711d4ff8afb1b929d784c2048248dfffe5393&secretHash=2bd2cc6971012f511d4d3d5b9fcf142e628c4cc1f3015e7d0c1dc67c33357f42&expiration=1544841910&isPartyB=true
+
+
+`${assets.a.value}${assets.a.currency}${assets.b.value}${assets.b.currency}${wallets.a.addresses[0]}${counterParty[assets.a.currency].address}${wallets.b.addresses[0]}${counterParty[assets.b.currency].address}`
+
+
+0.0001btc0.0001ethn4Yskt2B5CbJJuZqPg3rqhocRoomsWwm2dcf8e7573894cb97d2589efdaf04cf65b8ad94cd9
+
+
+assets.a.value = 0.0001
+assets.a.currency = btc
+assets.b.vlue = 0.0001
+assets.b.currency = eth
+wallets.a.addresses = mpdynoXN3CrjgjNnk71E9oZNCfrDXUaBHX 
+counterParty[assets.a.currency].address  = n4Yskt2B5CbJJuZqPg3rqhocRoomsWwm2d
+wallets.b.addresses[0] = 627306090abab3a6e1400e9345bc60c78a8bef57
+counterParty[assets.b.currency].address  = cf8e7573894cb97d2589efdaf04cf65b8ad94cd9
+0.0001btc0.0001ethmpdynoXN3CrjgjNnk71E9oZNCfrDXUaBHXn4Yskt2B5CbJJuZqPg3rqhocRoomsWwm2d627306090abab3a6e1400e9345bc60c78a8bef57cf8e7573894cb97d2589efdaf04cf65b8ad94cd9
+
