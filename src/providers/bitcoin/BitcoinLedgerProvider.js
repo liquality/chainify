@@ -146,7 +146,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   /*
-async getUtxosForAmount (amount, numAddressPerCall = 10) {
+  async getUtxosForAmount (amount, numAddressPerCall = 10) {
     console.log('getUtxosForAmount', amount, numAddressPerCall)
     const utxosToUse = []
     let addressIndex = 0
@@ -196,30 +196,32 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
           }
         }
       })
-    addressIndex += numAddressPerCall
-  }
-  return utxosToUse
-}
-*/
-
-  async getUtxosForAmount (amount, numAddressPerCall = 10) {
-    const utxosToUse = []
-    const foundUnusedAddrMap = {
-      change: false,
-      nonChange: false
+      addressIndex += numAddressPerCall
     }
+    return utxosToUse
+  }
+  */
+
+  async getUtxosForAmount (amount, numAddressPerCall = 20) {
+    const addressGap = 20
+    const utxosToUse = []
     let totalCost = amount
     let addressIndex = 0
     let currentAmount = 0
+    let changeAddresses = []
+    let plainChangeAddresses = []
+    let nonChangeAddresses = []
+    let uacMap = {
+      change: 0,
+      nonChange: 0
+    }
 
-    const cAddr = (await this.getUnusedAddress(true)).address
-    const ncAddr = (await this.getUnusedAddress(false)).address
-    const feePerByte = await this.getMethod('getFeePerByte')()
+    const feePerByte = this.getMethod('getFeePerByte')()
 
     while (currentAmount < totalCost) {
       let addrList = []
 
-      if (foundUnusedAddrMap.change && foundUnusedAddrMap.nonChange) {
+      if (uacMap.change >= addressGap && uacMap.nonChange >= addressGap) {
         if (currentAmount < totalCost) {
           // TODO: Better error
           throw new Error('Not Enough Balance')
@@ -227,34 +229,45 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
         break
       }
 
-      if (!foundUnusedAddrMap.change) {
+      if (uacMap.change < addressGap) {
         // Scanning for change addr
-        const changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
-        const idxChangeAddr = changeAddresses.findIndex(a => a.address === cAddr)
-        if (idxChangeAddr !== -1) {
-          changeAddresses.length = idxChangeAddr
-          foundUnusedAddrMap.change = true
-        }
+        changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
+        plainChangeAddresses = changeAddresses.map(a => a.address)
         addrList = addrList.concat(changeAddresses)
       }
 
-      if (!foundUnusedAddrMap.nonChange) {
+      if (uacMap.nonChange < addressGap) {
         // Scanning for non change addr
-        const nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
-        const idxNcAddr = nonChangeAddresses.findIndex(a => a.address === ncAddr)
-        if (idxNcAddr !== -1) {
-          nonChangeAddresses.length = idxNcAddr
-          foundUnusedAddrMap.nonChange = true
-        }
+        nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
         addrList = addrList.concat(nonChangeAddresses)
       }
 
-      let utxos = await this.getMethod('getAddressUtxos')(addrList.map(a => a.address))
-      let utxosMempool = await this.getMethod('getAddressMempool')(addrList.map(a => a.address))
-      utxos = utxos.filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
-      utxosMempool = utxosMempool.filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
-      utxosMempool = utxosMempool.filter(utxo => utxo.prevtxid === undefined)
-      utxosMempool = utxosMempool.map(utxo => { utxo.outputIndex = utxo.index; return utxo })
+      const stringAddresses = addrList.map(a => a.address)
+      let [ confirmedAdd, utxosMempool, utxos ] = await Promise.all([
+        this.getMethod('getAddressBalances')(stringAddresses),
+        this.getMethod('getAddressMempool')(stringAddresses),
+        this.getMethod('getAddressUtxos')(stringAddresses)
+      ])
+      const usedAddresses = confirmedAdd.concat(utxosMempool).map(address => address.address)
+      for (let i = 0; i < stringAddresses.length; i++) {
+        const address = stringAddresses[i]
+        const isUsed = usedAddresses.indexOf(address) !== -1
+        const isChangeAddress = plainChangeAddresses.indexOf(address) !== -1
+        const key = isChangeAddress ? 'change' : 'nonChange'
+
+        if (isUsed) {
+          uacMap[key] = 0
+        } else {
+          uacMap[key]++
+        }
+      }
+
+      utxos = utxos
+        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+      utxosMempool = utxosMempool
+        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+        .filter(utxo => utxo.prevtxid === undefined)
+        .map(utxo => { utxo.outputIndex = utxo.index; return utxo })
       utxos = utxos.concat(utxosMempool)
 
       for (const utxo of utxos) {
@@ -263,17 +276,12 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
           currentAmount += utxoVal
           addrList.forEach(address => {
             if (address.address === utxo.address) {
-              // TODO: use obj
               utxo.derivationPath = address.derivationPath
             }
           })
-          // utxo.derivationPath = address.derivationPath
           utxosToUse.push(utxo)
-          let fees = this.calculateFee(utxosToUse.length, 2, feePerByte)
-          totalCost = amount + fees
-          if (currentAmount > totalCost) {
-            break
-          }
+          totalCost = amount + this.calculateFee(utxosToUse.length, 2, await feePerByte)
+          if (currentAmount > totalCost) break
         }
       }
 
@@ -426,8 +434,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     return addresses
   }
 
-  async getUnusedAddress (change = false) {
-    const addressesPerCall = 20
+  async getUnusedAddress (change = false, addressesPerCall = 20) {
     let unusedAddress = null
     let addressesIndex = 0
     while (!unusedAddress) {
