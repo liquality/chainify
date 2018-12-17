@@ -342,6 +342,16 @@ export default class Client {
   }
 
   /**
+   * Get used address/account of the user.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
+   *  object.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getUsedAddress (change) {
+    return this.getMethod('getUsedAddress')(change)
+  }
+
+  /**
    * Get unused address/account of the user.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
    *  object.
