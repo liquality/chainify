@@ -31,7 +31,7 @@ let x
     console.log(await bitcoin.getMethod('getUtxosForAmount')(1e8 / 1000, 100))
     time(x)
     x = time()
-    const usedAddresses = await bitcoin.getMethod('getUsedAddress')(100)
+    const usedAddresses = await bitcoin.getMethod('getUsedAddresses')(100)
     console.log(await bitcoin.getMethod('getBalance')(usedAddresses))
     time(x)
   } catch (e) {

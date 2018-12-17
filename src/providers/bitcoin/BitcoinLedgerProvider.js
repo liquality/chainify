@@ -439,7 +439,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return addresses
   }
 
-  async getUsedAddress (numAddressPerCall = 100) {
+  async getUsedAddresses (numAddressPerCall = 100) {
     const addressGap = 20
     const usedAddress = []
     let addressIndex = 0
@@ -475,14 +475,14 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         this.getMethod('getAddressMempool')(stringAddresses)
       ])
       const usedAddresses = confirmedAdd.concat(utxosMempool).map(address => address.address)
-      for (let i = 0; i < stringAddresses.length; i++) {
+      for (let i = 0; i < addrList.length; i++) {
         const address = stringAddresses[i]
         const isUsed = usedAddresses.indexOf(address) !== -1
         const isChangeAddress = plainChangeAddresses.indexOf(address) !== -1
         const key = isChangeAddress ? 'change' : 'nonChange'
 
         if (isUsed) {
-          usedAddress.push(address)
+          usedAddress.push(addrList[i])
           uacMap[key] = 0
         } else {
           uacMap[key]++

@@ -52,11 +52,6 @@ export default class EthereumMetaMaskProvider extends Provider {
     return this.getAddresses()
   }
 
-  async getUsedAddress () {
-    const addresses = await this.getAddresses()
-    return addresses[0]
-  }
-
   async getUnusedAddress () {
     const addresses = await this.getAddresses()
     return addresses[0]
