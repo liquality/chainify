@@ -212,8 +212,8 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     let addressIndex = 0
     let currentAmount = 0
 
-    const cAddr = (await this.getUnusedAddress(true)).address
-    const ncAddr = (await this.getUnusedAddress(false)).address
+    const cAddr = (await this.getUnusedAddress(true, numAddressPerCall)).address
+    const ncAddr = (await this.getUnusedAddress(false, numAddressPerCall)).address
     const feePerByte = await this.getMethod('getFeePerByte')()
 
     while (currentAmount < totalCost) {
@@ -426,8 +426,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
     return addresses
   }
 
-  async getUnusedAddress (change = false) {
-    const addressesPerCall = 20
+  async getUnusedAddress (change = false, addressesPerCall = 20) {
     let unusedAddress = null
     let addressesIndex = 0
     while (!unusedAddress) {
