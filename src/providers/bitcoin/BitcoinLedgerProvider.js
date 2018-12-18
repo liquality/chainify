@@ -222,7 +222,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let changeAddresses = []
     let plainChangeAddresses = []
     let nonChangeAddresses = []
-    let uacMap = {
+    let addressCountMap = {
       change: 0,
       nonChange: 0
     }
@@ -233,7 +233,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     while (currentAmount < totalCost) {
       let addrList = []
 
-      if (uacMap.change >= addressGap && uacMap.nonChange >= addressGap) {
+      if (addressCountMap.change >= addressGap && addressCountMap.nonChange >= addressGap) {
         if (currentAmount < totalCost) {
           // TODO: Better error
           throw new Error('Not Enough Balance')
@@ -241,7 +241,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         break
       }
 
-      if (uacMap.change < addressGap) {
+      if (addressCountMap.change < addressGap) {
         // Scanning for change addr
         changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
         plainChangeAddresses = changeAddresses.map(a => a.address)
@@ -250,7 +250,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         plainChangeAddresses = []
       }
 
-      if (uacMap.nonChange < addressGap) {
+      if (addressCountMap.nonChange < addressGap) {
         // Scanning for non change addr
         nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
         addrList = addrList.concat(nonChangeAddresses)
@@ -270,9 +270,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         const key = isChangeAddress ? 'change' : 'nonChange'
 
         if (isUsed) {
-          uacMap[key] = 0
+          addressCountMap[key] = 0
         } else {
-          uacMap[key]++
+          addressCountMap[key]++
         }
       }
 
@@ -457,7 +457,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   async _getUsedUnusedAddresses (numAddressPerCall = 100, addressType) {
     const addressGap = 20
     const usedAddresses = []
-    const uacMap = { change: 0, nonChange: 0 }
+    const addressCountMap = { change: 0, nonChange: 0 }
     let unusedAddresses = []
     let addressIndex = 0
     let changeAddresses = []
@@ -465,13 +465,13 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let nonChangeAddresses = []
 
     /* eslint-disable no-unmodified-loop-condition */
-    while ((addressType === 2 && (uacMap.change < addressGap || uacMap.nonChange < addressGap)) ||
-           (addressType === 0 && uacMap.nonChange < addressGap) ||
-           (addressType === 1 && uacMap.change < addressGap)) {
+    while ((addressType === 2 && (addressCountMap.change < addressGap || addressCountMap.nonChange < addressGap)) ||
+           (addressType === 0 && addressCountMap.nonChange < addressGap) ||
+           (addressType === 1 && addressCountMap.change < addressGap)) {
       /* eslint-enable no-unmodified-loop-condition */
       let addrList = []
 
-      if ((addressType === 2 || addressType === 1) && uacMap.change < addressGap) {
+      if ((addressType === 2 || addressType === 1) && addressCountMap.change < addressGap) {
         // Scanning for change addr
         changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
         plainChangeAddresses = changeAddresses.map(a => a.address)
@@ -480,7 +480,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         plainChangeAddresses = []
       }
 
-      if ((addressType === 2 || addressType === 0) && uacMap.nonChange < addressGap) {
+      if ((addressType === 2 || addressType === 0) && addressCountMap.nonChange < addressGap) {
         // Scanning for non change addr
         nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
         addrList = addrList.concat(nonChangeAddresses)
@@ -500,10 +500,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
         if (isUsed) {
           usedAddresses.push(addrList[i])
-          uacMap[key] = 0
+          addressCountMap[key] = 0
           unusedAddresses = []
         } else {
-          uacMap[key]++
+          addressCountMap[key]++
           unusedAddresses.push(addrList[i])
         }
       }
