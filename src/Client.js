@@ -342,6 +342,16 @@ export default class Client {
   }
 
   /**
+   * Get used addresses/accounts of the user.
+   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
+   *  object.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async getUsedAddresses (numAddressPerCall) {
+    return this.getMethod('getUsedAddresses')(numAddressPerCall)
+  }
+
+  /**
    * Get unused address/account of the user.
    * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
    *  object.
