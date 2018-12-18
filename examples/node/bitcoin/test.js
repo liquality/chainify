@@ -32,7 +32,9 @@ let x
     time(x)
     x = time()
     const usedAddresses = await bitcoin.getMethod('getUsedAddresses')(100)
-    console.log(await bitcoin.getMethod('getBalance')(usedAddresses))
+    time(x)
+    x = time()
+    console.log(await bitcoin.getMethod('getBalance')(usedAddresses.map(a => a.address)))
     time(x)
   } catch (e) {
     console.log(e)
