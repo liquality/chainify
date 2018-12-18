@@ -18,5 +18,5 @@ module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   plugins: plugins({ target: 'web' }),
   watch: process.env.WEBPACK_WATCH === 'true',
-  node: { Buffer: false }
+  node: { Buffer: process.env.NODE_ENV !== 'production' }
 }

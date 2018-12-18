@@ -16,6 +16,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     this._bjsnetwork = chain.network.name.replace('bitcoin_', '') // for bitcoin js
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
+    this._extendedPubKeyCache = {}
   }
 
   async getPubKey (from) {
@@ -25,7 +26,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.getWalletPublicKey(derivationPath)
   }
 
-  async getAddressExtendedPubKey (path) {
+  async _getAddressExtendedPubKey (path) {
     const app = await this.getApp()
     var parts = path.split('/')
     var prevPath = parts[0] + '/' + parts[1]
@@ -57,6 +58,16 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]) >>>
       0
     return finalize(fingerprint)
+  }
+
+  async getAddressExtendedPubKey (path) {
+    if (path in this._extendedPubKeyCache) {
+      return this._extendedPubKeyCache[path]
+    }
+
+    const extendedPubKey = this._getAddressExtendedPubKey(path)
+    this._extendedPubKeyCache[path] = extendedPubKey
+    return extendedPubKey
   }
 
   async getAddressFromDerivationPath (path) {
