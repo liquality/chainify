@@ -202,7 +202,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
 }
 */
 
-  async getUtxosForAmount (amount, numAddressPerCall = 10) {
+  async getUtxosForAmount (amount, numAddressPerCall = 100) {
     const utxosToUse = []
     const foundUnusedAddrMap = {
       change: false,
@@ -427,7 +427,7 @@ async getUtxosForAmount (amount, numAddressPerCall = 10) {
   }
 
   async getUnusedAddress (change = false) {
-    const addressesPerCall = 20
+    const addressesPerCall = 100
     let unusedAddress = null
     let addressesIndex = 0
     while (!unusedAddress) {
