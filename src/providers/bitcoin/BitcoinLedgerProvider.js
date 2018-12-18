@@ -450,22 +450,28 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return addresses
   }
 
-  async getUsedAddresses (numAddressPerCall = 100) {
+  // addressType
+  // nonChange: 0
+  // change: 1
+  // both: 2
+  async _getUsedUnusedAddresses (numAddressPerCall = 100, addressType) {
     const addressGap = 20
-    const usedAddress = []
+    const usedAddresses = []
+    const uacMap = { change: 0, nonChange: 0 }
+    let unusedAddresses = []
     let addressIndex = 0
     let changeAddresses = []
     let plainChangeAddresses = []
     let nonChangeAddresses = []
-    let uacMap = {
-      change: 0,
-      nonChange: 0
-    }
 
-    while (uacMap.change < addressGap || uacMap.nonChange < addressGap) {
+    /* eslint-disable no-unmodified-loop-condition */
+    while ((addressType === 2 && (uacMap.change < addressGap || uacMap.nonChange < addressGap)) ||
+           (addressType === 0 && uacMap.nonChange < addressGap) ||
+           (addressType === 1 && uacMap.change < addressGap)) {
+      /* eslint-enable no-unmodified-loop-condition */
       let addrList = []
 
-      if (uacMap.change < addressGap) {
+      if ((addressType === 2 || addressType === 1) && uacMap.change < addressGap) {
         // Scanning for change addr
         changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
         plainChangeAddresses = changeAddresses.map(a => a.address)
@@ -474,59 +480,52 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         plainChangeAddresses = []
       }
 
-      if (uacMap.nonChange < addressGap) {
+      if ((addressType === 2 || addressType === 0) && uacMap.nonChange < addressGap) {
         // Scanning for non change addr
         nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
         addrList = addrList.concat(nonChangeAddresses)
       }
 
       const stringAddresses = addrList.map(a => a.address)
-      let [ confirmedAdd, utxosMempool ] = await Promise.all([
+      const [ confirmedAdd, utxosMempool ] = await Promise.all([
         this.getMethod('getAddressBalances')(stringAddresses),
         this.getMethod('getAddressMempool')(stringAddresses)
       ])
-      const usedAddresses = confirmedAdd.concat(utxosMempool).map(address => address.address)
+      const totalUsedAddresses = confirmedAdd.concat(utxosMempool).map(address => address.address)
       for (let i = 0; i < addrList.length; i++) {
         const address = stringAddresses[i]
-        const isUsed = usedAddresses.indexOf(address) !== -1
+        const isUsed = totalUsedAddresses.indexOf(address) !== -1
         const isChangeAddress = plainChangeAddresses.indexOf(address) !== -1
         const key = isChangeAddress ? 'change' : 'nonChange'
 
         if (isUsed) {
-          usedAddress.push(addrList[i])
+          usedAddresses.push(addrList[i])
           uacMap[key] = 0
+          unusedAddresses = []
         } else {
           uacMap[key]++
+          unusedAddresses.push(addrList[i])
         }
       }
 
       addressIndex += numAddressPerCall
     }
 
-    return usedAddress
+    return {
+      usedAddresses,
+      unusedAddresses
+    }
   }
 
-  async getUnusedAddress (change = false, addressesPerCall = 100) {
-    let unusedAddress = null
-    let addressesIndex = 0
-    while (!unusedAddress) {
-      const addresses = await this.getLedgerAddresses(addressesIndex, addressesPerCall, change)
-      const addressArr = addresses.map(address => address.address)
-      const [ isUsed, isUsedMempool ] = await Promise.all([
-        this.getMethod('getAddressBalances')(addressArr),
-        this.getMethod('getAddressMempool')(addressArr)
-      ])
-      const addrs = isUsed.concat(isUsedMempool)
-      const dataarr = addrs.map(address => address.address)
-      for (var i = 0; i < addresses.length; i++) {
-        if (dataarr.indexOf(addresses[i].address) < 0) {
-          unusedAddress = addresses[i]
-          break
-        }
-      }
-      addressesIndex += addressesPerCall
-    }
-    return unusedAddress
+  async getUsedAddresses (numAddressPerCall = 100) {
+    return this._getUsedUnusedAddresses(numAddressPerCall, 2)
+      .then(({ usedAddresses }) => usedAddresses)
+  }
+
+  async getUnusedAddress (change = false, numAddressPerCall = 100) {
+    const addressType = change ? 1 : 0
+    return this._getUsedUnusedAddresses(numAddressPerCall, addressType)
+      .then(({ unusedAddresses }) => unusedAddresses[0])
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
