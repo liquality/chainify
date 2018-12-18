@@ -133,11 +133,11 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return this.jsonrpc('getblockcount')
   }
 
-  async getNewAddress (from = {}) {
+  async getNewAddress () {
     return this.jsonrpc('getnewaddress')
   }
 
-  async getUnusedAddress (from = {}) {
+  async getUnusedAddress () {
     return this.getNewAddress()
   }
 

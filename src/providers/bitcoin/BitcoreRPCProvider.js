@@ -42,7 +42,7 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
     return this.jsonrpc('getnewaddress')
   }
 
-  async getUnusedAddress (from = {}) {
+  async getUnusedAddress () {
     return this.getNewAddress()
   }
 
