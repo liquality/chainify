@@ -22,10 +22,7 @@ let x
 ;(async () => {
   try {
     x = time()
-    console.log(await bitcoin.getMethod('getUnusedAddress')(true, 100))
-    time(x)
-    x = time()
-    console.log(await bitcoin.getMethod('getUnusedAddress')(false, 100))
+    console.log((await bitcoin.getMethod('getUnusedAddress')(false, 100)).address)
     time(x)
     x = time()
     console.log(await bitcoin.getMethod('getUtxosForAmount')(1e8 / 1000, 100))
@@ -33,6 +30,7 @@ let x
     x = time()
     const usedAddresses = await bitcoin.getMethod('getUsedAddresses')(100)
     time(x)
+    console.log(usedAddresses.map(x => x.address))
     x = time()
     console.log(await bitcoin.getMethod('getBalance')(usedAddresses.map(a => a.address)))
     time(x)

@@ -357,8 +357,8 @@ export default class Client {
    *  object.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUnusedAddress (change) {
-    return this.getMethod('getUnusedAddress')(change)
+  async getUnusedAddress (change, numAddressPerCall) {
+    return this.getMethod('getUnusedAddress')(change, numAddressPerCall)
   }
 
   /**
