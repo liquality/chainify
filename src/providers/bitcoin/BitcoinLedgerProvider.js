@@ -202,7 +202,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
   */
 
-  async getUtxosForAmount (amount, numAddressPerCall = 20) {
+  async getUtxosForAmount (amount, numAddressPerCall = 100) {
     const addressGap = 20
     const utxosToUse = []
     let totalCost = amount
@@ -216,7 +216,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       nonChange: 0
     }
 
-    const feePerByte = this.getMethod('getFeePerByte')()
+    const feePerBytePromise = this.getMethod('getFeePerByte')()
+    let feePerByte = false
 
     while (currentAmount < totalCost) {
       let addrList = []
@@ -234,6 +235,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
         plainChangeAddresses = changeAddresses.map(a => a.address)
         addrList = addrList.concat(changeAddresses)
+      } else {
+        plainChangeAddresses = []
       }
 
       if (uacMap.nonChange < addressGap) {
@@ -270,6 +273,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         .map(utxo => { utxo.outputIndex = utxo.index; return utxo })
       utxos = utxos.concat(utxosMempool)
 
+      if (feePerByte === false) feePerByte = await feePerBytePromise
+
       for (const utxo of utxos) {
         const utxoVal = utxo.satoshis
         if (utxoVal > 0) {
@@ -280,7 +285,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
             }
           })
           utxosToUse.push(utxo)
-          totalCost = amount + this.calculateFee(utxosToUse.length, 2, await feePerByte)
+          totalCost = amount + this.calculateFee(utxosToUse.length, 2, feePerByte)
           if (currentAmount > totalCost) break
         }
       }
@@ -434,16 +439,74 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return addresses
   }
 
-  async getUnusedAddress (change = false, addressesPerCall = 20) {
+  async getUsedAddresses (numAddressPerCall = 100) {
+    const addressGap = 20
+    const usedAddress = []
+    let addressIndex = 0
+    let changeAddresses = []
+    let plainChangeAddresses = []
+    let nonChangeAddresses = []
+    let uacMap = {
+      change: 0,
+      nonChange: 0
+    }
+
+    while (uacMap.change < addressGap || uacMap.nonChange < addressGap) {
+      let addrList = []
+
+      if (uacMap.change < addressGap) {
+        // Scanning for change addr
+        changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
+        plainChangeAddresses = changeAddresses.map(a => a.address)
+        addrList = addrList.concat(changeAddresses)
+      } else {
+        plainChangeAddresses = []
+      }
+
+      if (uacMap.nonChange < addressGap) {
+        // Scanning for non change addr
+        nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
+        addrList = addrList.concat(nonChangeAddresses)
+      }
+
+      const stringAddresses = addrList.map(a => a.address)
+      let [ confirmedAdd, utxosMempool ] = await Promise.all([
+        this.getMethod('getAddressBalances')(stringAddresses),
+        this.getMethod('getAddressMempool')(stringAddresses)
+      ])
+      const usedAddresses = confirmedAdd.concat(utxosMempool).map(address => address.address)
+      for (let i = 0; i < addrList.length; i++) {
+        const address = stringAddresses[i]
+        const isUsed = usedAddresses.indexOf(address) !== -1
+        const isChangeAddress = plainChangeAddresses.indexOf(address) !== -1
+        const key = isChangeAddress ? 'change' : 'nonChange'
+
+        if (isUsed) {
+          usedAddress.push(addrList[i])
+          uacMap[key] = 0
+        } else {
+          uacMap[key]++
+        }
+      }
+
+      addressIndex += numAddressPerCall
+    }
+
+    return usedAddress
+  }
+
+  async getUnusedAddress (change = false, addressesPerCall = 100) {
     let unusedAddress = null
     let addressesIndex = 0
     while (!unusedAddress) {
-      let addresses = await this.getLedgerAddresses(addressesIndex, addressesPerCall, change)
+      const addresses = await this.getLedgerAddresses(addressesIndex, addressesPerCall, change)
       const addressArr = addresses.map(address => address.address)
-      let isUsed = await this.getMethod('getAddressBalances')(addressArr)
-      const isUsedMempool = await this.getMethod('getAddressMempool')(addressArr)
-      isUsed = isUsed.concat(isUsedMempool)
-      const dataarr = isUsed.map(address => address.address)
+      const [ isUsed, isUsedMempool ] = await Promise.all([
+        this.getMethod('getAddressBalances')(addressArr),
+        this.getMethod('getAddressMempool')(addressArr)
+      ])
+      const addrs = isUsed.concat(isUsedMempool)
+      const dataarr = addrs.map(address => address.address)
       for (var i = 0; i < addresses.length; i++) {
         if (dataarr.indexOf(addresses[i].address) < 0) {
           unusedAddress = addresses[i]
