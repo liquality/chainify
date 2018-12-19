@@ -1,19 +1,32 @@
 dist: trusty
-
 sudo: required
-
 language: node_js
-
 node_js:
-  - 8
-
+- 8
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 before_install:
-  - sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev
-
+- sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev
 before_script:
-  - npm run lint
-  - npm run build
+- npm run lint
+- npm run build
+deploy:
+- provider: npm
+  skip_cleanup: true
+  email: info@liquality.io
+  api_key:
+    secure: QV8QJrPI/dtnmKtq5sXYlyEPBM4twXa46QK1loqOuv3KEuX8TUuS+3GbiBaS03Hshh4iVYg0rInVpH2cxjPDmj1XslhnmGRh8fGT7wKOf8c2iuJmLbxi/myfT8t9NGcU/l8wukvKEWFb6LwjCGA7HAMi9ij/EaSh/aNt5MJvmD+3Bb4WfzIsjNtzxsOWeZOWWHE6k+yLdfUglrlftYh3viKCRy4Eyp1I/ARETRB9QxebJeA/9aQWOoyGKZOs2aCD1R/Mog14l8iBnfkcS/MKM5I6gU/ONfkFmfeogc5x+6uoRx0nWMuDihVOXkX1uxQ4LgVxi1F9P1OGDkVbVE1GBUYaotTC6gCYi3048T1LYO/fM0kl5pLM+hKWWD0zKJHBXKhxlu+8kXWPARyNtzVBmmohaNyegl1tI5osbiXYYmiJ0EjwGzwp8uWImPosBvGRUGXyZAv3d5n0+Ak/WSSuI6AKgEb14ZOLvmuP1UtFSN+q9hNps/T5iMyUOL/HsZSnifWkozJjjT+LO6WdtCvSEaP7TH9hnZcQVwTaMQHg3zp2ZPm41U0DpoT5a6WBkHS07L+mui0uJ/g65iZDrHcXsIgOzNyDE228CBy+VVPrUUh1BxEtcmmTqlxJ97RYcRqDq0uDQOKogMnxF9ES2uzaTQHIzIH0omGwjDFLtpUWTs8=
+  on:
+    tags: true
+    repo: liquality/chainabstractionlayer
+    branch: master
+- provider: npm
+  skip_cleanup: true
+  email: info@liquality.io
+  api_key:
+    secure: QV8QJrPI/dtnmKtq5sXYlyEPBM4twXa46QK1loqOuv3KEuX8TUuS+3GbiBaS03Hshh4iVYg0rInVpH2cxjPDmj1XslhnmGRh8fGT7wKOf8c2iuJmLbxi/myfT8t9NGcU/l8wukvKEWFb6LwjCGA7HAMi9ij/EaSh/aNt5MJvmD+3Bb4WfzIsjNtzxsOWeZOWWHE6k+yLdfUglrlftYh3viKCRy4Eyp1I/ARETRB9QxebJeA/9aQWOoyGKZOs2aCD1R/Mog14l8iBnfkcS/MKM5I6gU/ONfkFmfeogc5x+6uoRx0nWMuDihVOXkX1uxQ4LgVxi1F9P1OGDkVbVE1GBUYaotTC6gCYi3048T1LYO/fM0kl5pLM+hKWWD0zKJHBXKhxlu+8kXWPARyNtzVBmmohaNyegl1tI5osbiXYYmiJ0EjwGzwp8uWImPosBvGRUGXyZAv3d5n0+Ak/WSSuI6AKgEb14ZOLvmuP1UtFSN+q9hNps/T5iMyUOL/HsZSnifWkozJjjT+LO6WdtCvSEaP7TH9hnZcQVwTaMQHg3zp2ZPm41U0DpoT5a6WBkHS07L+mui0uJ/g65iZDrHcXsIgOzNyDE228CBy+VVPrUUh1BxEtcmmTqlxJ97RYcRqDq0uDQOKogMnxF9ES2uzaTQHIzIH0omGwjDFLtpUWTs8=
+  on:
+    tag: dev
+    repo: liquality/chainabstractionlayer
+    branch: dev
