@@ -1,6 +1,6 @@
 {
   "name": "@liquality/chainabstractionlayer",
-  "version": "0.1.21-next.0",
+  "version": "0.1.21-next.1",
   "keywords": [
     "blockchain",
     "bitcoin",
@@ -47,8 +47,7 @@
     "build:docs": "esdoc",
     "prepare:docs": "run-s build build:docs copy:*",
     "push:docs": "gh-pages -d docs/ -m \"Auto-generated commit for documentation\"",
-    "publish:docs": "run-s prepare:docs push:docs",
-    "install": "([ ! -d dist ] && [ ! -f .already_installed ] && touch .already_installed && npm install . && npm run build) || true"
+    "publish:docs": "run-s prepare:docs push:docs"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.56",
