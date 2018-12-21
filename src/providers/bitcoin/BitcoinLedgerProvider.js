@@ -427,7 +427,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       outputs.push({ amount: this.getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
     }
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
-    const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
+    const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs, 0, 1, true)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
