@@ -5,14 +5,14 @@ import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from '
 import { BigNumber } from 'bignumber.js'
 
 export default class EthereumMetaMaskProvider extends Provider {
-  constructor (metamaskProvider, networkId) {
+  constructor (metamaskProvider, network) {
     super()
     if (!isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
 
     this._metamaskProvider = metamaskProvider
-    this._networkId = parseInt(networkId)
+    this._network = network
   }
 
   _toMM (method, ...params) {
@@ -75,9 +75,8 @@ export default class EthereumMetaMaskProvider extends Provider {
 
   async sendTransaction (to, value, data, from = null) {
     const networkId = await this.getWalletNetworkId()
-
-    if (this._networkId) {
-      if (networkId !== this._networkId) {
+    if (this._network) {
+      if (networkId !== this._network.networkId) {
         throw new Error('Invalid MetaMask Network')
       }
     }
