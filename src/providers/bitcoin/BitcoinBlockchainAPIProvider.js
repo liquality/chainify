@@ -1,7 +1,7 @@
 import { forIn } from 'lodash'
 
 import ApiProvider from '../ApiProvider'
-import networks from '../../networks'
+import networks from './networks'
 
 export default class BitcoinBlockchainAPIProvider extends ApiProvider {
   constructor (chain = { network: networks.bitcoin }) {

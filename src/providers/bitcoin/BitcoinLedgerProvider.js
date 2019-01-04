@@ -5,7 +5,7 @@ import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart, sha256, ripemd160 } from '../../crypto'
 import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, createXPUB, encodeBase58Check, parseHexString } from './BitcoinUtil'
 import Address from '../../Address'
-import networks from '../../networks'
+import networks from './networks'
 import bip32 from 'bip32'
 
 export default class BitcoinLedgerProvider extends LedgerProvider {

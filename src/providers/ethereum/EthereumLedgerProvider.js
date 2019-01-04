@@ -1,11 +1,11 @@
 import Ethereum from '@ledgerhq/hw-app-eth'
 
 import LedgerProvider from '../LedgerProvider'
-import networks from '../../networks'
+import networks from './networks'
 import Address from '../../Address'
 
 export default class EthereumLedgerProvider extends LedgerProvider {
-  constructor (chain = { network: networks.ethereum }) {
+  constructor (chain = { network: networks.mainnet }) {
     super(Ethereum, `44'/${chain.network.coinType}'/0'/`)
   }
 

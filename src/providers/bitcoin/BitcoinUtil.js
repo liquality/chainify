@@ -9,7 +9,7 @@ import bitcoin from 'bitcoinjs-lib'
 import bs58 from 'bs58'
 
 import padStart from 'lodash/padStart'
-import networks from '../../networks'
+import networks from './networks'
 
 /**
  * Get compressed pubKey from pubKey.

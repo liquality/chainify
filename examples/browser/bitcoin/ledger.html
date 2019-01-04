@@ -11,7 +11,8 @@
   <p><code>For errors and logs, check console</code></p>
   <script>
   /* global $, ChainAbstractionLayer */
-  const { Client, providers, networks } = ChainAbstractionLayer
+  const { Client, providers } = ChainAbstractionLayer
+  const networks = providers.bitcoin.networks
   const bitcoin = new Client()
   bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
   bitcoin.getAddresses().then(addresses => {
