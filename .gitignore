@@ -4,4 +4,3 @@ node_modules/
 dist/
 docs/
 yarn.lock
-.already_installed
