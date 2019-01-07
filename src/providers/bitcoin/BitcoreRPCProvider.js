@@ -1,7 +1,7 @@
 import BitcoinRPCProvider from './BitcoinRPCProvider'
 import { base58 } from '../../crypto'
 import { addressToPubKeyHash } from '../bitcoin/BitcoinUtil'
-import networks from '../../networks'
+import networks from './networks'
 
 /**
  * BitcoreRPCProvider overrides the BitcoinRPCProvider to use the address index

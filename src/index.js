@@ -1,6 +1,5 @@
 import Client from './Client'
 import Provider from './Provider'
-import networks from './networks'
 
 import * as providers from './providers'
 import * as crypto from './crypto'
@@ -14,7 +13,6 @@ import LedgerProvider from './providers/LedgerProvider'
 export {
   Client,
   Provider,
-  networks,
   providers,
   crypto,
   errors,

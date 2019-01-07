@@ -5,6 +5,7 @@ import BitcoinBlockchainAPIProvider from './BitcoinBlockchainAPIProvider'
 import BitcoinSwapProvider from './BitcoinSwapProvider'
 import BitcoinJsLibSwapProvider from './BitcoinJsLibSwapProvider.js'
 import * as BitcoinUtil from './BitcoinUtil'
+import networks from './networks'
 
 export {
   BitcoinRPCProvider,
@@ -13,5 +14,6 @@ export {
   BitcoinBlockchainAPIProvider,
   BitcoinSwapProvider,
   BitcoinJsLibSwapProvider,
-  BitcoinUtil
+  BitcoinUtil,
+  networks
 }

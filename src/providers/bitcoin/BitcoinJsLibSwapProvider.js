@@ -1,7 +1,7 @@
 import Provider from '../../Provider'
 import { addressToPubKeyHash, compressPubKey, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { sha256, padHexStart } from '../../crypto'
-import networks from '../../networks'
+import networks from './networks'
 import bitcoin from 'bitcoinjs-lib'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))

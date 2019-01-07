@@ -9,7 +9,8 @@ export default {
     bip32: {
       public: 0x0488b21e,
       private: 0x0488ade4
-    }
+    },
+    isTestnet: false
   },
   bitcoin_testnet: {
     name: 'bitcoin_testnet',
@@ -21,24 +22,7 @@ export default {
     bip32: {
       public: 0x043587cf,
       private: 0x04358394
-    }
-  },
-  litecoin: {
-    name: 'litecoin',
-    pubKeyHash: '30',
-    scriptHash: '32',
-    coinType: '2',
-    bip32: {
-      private: 0x019d9cfe,
-      public: 0x019da462
-    }
-  },
-  ethereum: {
-    name: 'ethereum',
-    coinType: '60'
-  },
-  ethereum_classic: {
-    name: 'ethereum_classic',
-    coinType: '61'
+    },
+    isTestnet: true
   }
 }
