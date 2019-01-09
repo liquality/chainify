@@ -5,7 +5,7 @@ const chaiAsPromised = require('chai-as-promised')
 chai.use(chaiAsPromised)
 const { expect } = chai
 
-const { providers: { bitcoin: { BitcoinSwapProvider } } } = require('../')
+const { providers: { bitcoin: { BitcoinSwapProvider } } } = require('../../')
 
 const lib = new BitcoinSwapProvider()
 

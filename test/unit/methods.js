@@ -2,7 +2,7 @@
 
 const { expect } = require('chai').use(require('chai-as-promised'))
 
-const { Client, errors } = require('../')
+const { Client, errors } = require('../../')
 
 const lib = new Client()
 

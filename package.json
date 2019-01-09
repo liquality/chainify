@@ -112,7 +112,7 @@
     "sourceMap": false
   },
   "options": {
-    "mocha": "--require @babel/register --require @babel/polyfill --timeout 20000 --recursive --require should"
+    "mocha": "test/unit --require @babel/register --require @babel/polyfill --timeout 20000 --recursive --require should"
   },
   "pre-commit": [
     "lint",
