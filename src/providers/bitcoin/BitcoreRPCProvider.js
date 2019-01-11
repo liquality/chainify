@@ -38,14 +38,6 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
   }
   /* These methods need to be removed, but are required for now - END */
 
-  async getNewAddress (from = {}) {
-    return this.jsonrpc('getnewaddress')
-  }
-
-  async getUnusedAddress () {
-    return this.getNewAddress()
-  }
-
   async isAddressUsed (address) {
     address = String(address)
     const data = await this.getAddressBalance(address)
