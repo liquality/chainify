@@ -138,7 +138,10 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getUnusedAddress () {
-    return this.getNewAddress()
+    const newAddress = await this.getNewAddress()
+    return {
+      address: newAddress
+    }
   }
 
   async getAddressTransactions (address, start, end) {
