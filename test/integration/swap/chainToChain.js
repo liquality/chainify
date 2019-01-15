@@ -9,6 +9,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 
 async function testSwap (chain1Id, chain1, chain2Id, chain2) {
+  console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
   const secret = await chain1.generateSecret('test')
   const secretHash = crypto.sha256(secret)
 
