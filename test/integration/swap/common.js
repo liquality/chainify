@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import MetaMaskConnector from 'node-metamask'
-import { Client, providers, crypto } from '../../../'
+import { Client, providers, crypto } from '../../../src'
 import config from './config'
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })

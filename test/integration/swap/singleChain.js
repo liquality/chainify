@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { crypto } from '../../../'
+import { crypto } from '../../../src'
 import { chains, metaMaskConnector, initiateAndVerify, claimAndVerify, getSwapParams } from './common'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
