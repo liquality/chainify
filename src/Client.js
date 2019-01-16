@@ -1,5 +1,5 @@
 import { upperFirst, find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
-import * as Ajv from 'ajv'
+import Ajv from 'ajv'
 
 import * as providers from './providers'
 import DNSParser from './DsnParser'

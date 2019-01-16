@@ -5,6 +5,7 @@ import * as providers from './providers'
 import * as crypto from './crypto'
 import * as errors from './errors'
 import * as schema from './schema'
+import DNSParser from './DsnParser'
 
 import JsonRpcProvider from './providers/JsonRpcProvider'
 import ApiProvider from './providers/ApiProvider'
@@ -19,5 +20,6 @@ export {
   schema,
   JsonRpcProvider,
   ApiProvider,
-  LedgerProvider
+  LedgerProvider,
+  DNSParser
 }

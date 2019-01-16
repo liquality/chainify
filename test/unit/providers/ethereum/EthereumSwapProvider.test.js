@@ -1,15 +1,16 @@
 /* eslint-env mocha */
 
-const chai = require('chai')
-const chaiAsPromised = require('chai-as-promised')
-chai.use(chaiAsPromised)
-const { expect } = chai
+const { expect } = require('chai').use(require('chai-as-promised'))
 
-const { providers: { ethereum: { EthereumSwapProvider } } } = require('../../')
-
-const lib = new EthereumSwapProvider()
+const { providers: { ethereum: { EthereumSwapProvider } } } = require('../../../../src')
 
 describe('Ethereum Swap provider', () => {
+  let lib
+
+  beforeEach(() => {
+    lib = new EthereumSwapProvider()
+  })
+
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
       return expect(lib.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',

@@ -14,11 +14,6 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return this.jsonrpc('eth_accounts')
   }
 
-  async generateBlock (numberOfBlocks) {
-    // Q: throw or silently pass?
-    throw new Error('This method isn\'t supported by Ethereum')
-  }
-
   async getUnusedAddress () {
     var addresses = await this.getAddresses()
     return addresses[0]
@@ -38,9 +33,10 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     const tx = {
       from: ensureHexEthFormat(from),
       to,
-      value: ensureHexEthFormat(value),
-      data: ensureHexEthFormat(data)
+      value: ensureHexEthFormat(value)
     }
+
+    if (data) tx.data = ensureHexEthFormat(data)
 
     const txHash = await this.jsonrpc('eth_sendTransaction', tx)
     return ensureHexStandardFormat(txHash)
@@ -91,7 +87,8 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   async isAddressUsed (address) {
     address = ensureHexEthFormat(String(address))
 
-    const transactionCount = this.jsonrpc('eth_getTransactionCount', address, 'latest')
+    let transactionCount = await this.jsonrpc('eth_getTransactionCount', address, 'latest')
+    transactionCount = parseInt(transactionCount, '16')
 
     return transactionCount > 0
   }
