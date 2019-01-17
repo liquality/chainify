@@ -5,7 +5,6 @@ import networks from './networks'
 import bitcoin from 'bitcoinjs-lib'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-const regtest = bitcoin.networks.testnet
 
 export default class BitcoinJsLibSwapProvider extends Provider {
   // TODO: have a generate InitSwap and generate RecipSwap
@@ -14,6 +13,7 @@ export default class BitcoinJsLibSwapProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
     super()
     this._network = chain.network
+    this._bitcoinJsNetwork = this._network.isTestnet ? bitcoin.networks.testnet : bitcoin.networks.bitcoin
   }
 
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
@@ -50,8 +50,9 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     return this.getMethod('sendTransaction')(p2shAddress, value, script)
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, wif) {
-    const wallet = bitcoin.ECPair.fromWIF(wif, regtest)
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+    const wif = await this.getMethod('dumpPrivKey')(recipientAddress)
+    const wallet = bitcoin.ECPair.fromWIF(wif, this._bitcoinJsNetwork)
     const secretHash = sha256(secret)
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
@@ -68,17 +69,17 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     vout.txid = initiationTxHash
     vout.vSat = vout.value * 1e8
     vout.script = Buffer.from(script, 'hex')
-    const walletRedeem = this.spendSwap(recipientAddress, wallet, secret, true, txfee, vout, regtest, expiration)
+    const walletRedeem = this.spendSwap(recipientAddress, wallet, secret, true, txfee, vout, this._bitcoinJsNetwork, expiration)
     return this.getMethod('sendRawTransaction')(walletRedeem)
   }
 
-  spendSwap (address, wallet, secret, isRedeem, txfee, vout, network, lockTime) {
+  spendSwap (address, wallet, secret, isRedeem, txfee, vout, network, expiration) {
     network = network || bitcoin.networks.bitcoin
     const hashType = bitcoin.Transaction.SIGHASH_ALL
 
     const txb = new bitcoin.TransactionBuilder(network)
 
-    if (lockTime) txb.setLockTime(lockTime)
+    if (!isRedeem) txb.setLockTime(expiration)
 
     txb.addInput(vout.txid, vout.n, 0)
     txb.addOutput(address, vout.vSat - txfee)

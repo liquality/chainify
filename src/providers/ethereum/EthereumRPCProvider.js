@@ -21,7 +21,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
 
   async getUnusedAddress () {
     var addresses = await this.getAddresses()
-    return addresses[0]
+    return { address: addresses[0] }
   }
 
   async sendTransaction (to, value, data, from = null) {
