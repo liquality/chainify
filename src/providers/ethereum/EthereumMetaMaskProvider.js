@@ -1,8 +1,8 @@
-import Provider from '../../Provider'
-
 import { isFunction } from 'lodash'
-import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
 import { BigNumber } from 'bignumber.js'
+import Provider from '../../Provider'
+import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
+import { WalletError } from '../../errors'
 
 export default class EthereumMetaMaskProvider extends Provider {
   constructor (metamaskProvider, network) {
@@ -21,17 +21,17 @@ export default class EthereumMetaMaskProvider extends Provider {
         ._metamaskProvider
         .sendAsync({ method, params }, (err, data) => {
           if (err) {
-            reject(err)
+            reject(new WalletError(err.toString(), err))
             return
           }
 
           if (!data) {
-            reject(new Error('Something went wrong'))
+            reject(new WalletError('Metamask response was empty'))
             return
           }
 
           if (typeof data.result === 'undefined') {
-            reject(new Error('Something went wrong'))
+            reject(new WalletError('Metamask response was empty'))
             return
           }
 
