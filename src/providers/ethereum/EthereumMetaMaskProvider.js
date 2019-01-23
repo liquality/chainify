@@ -44,7 +44,9 @@ export default class EthereumMetaMaskProvider extends Provider {
 
   async getAddresses () {
     const addresses = await this._toMM('eth_accounts')
-
+    if (addresses.length === 0) {
+      throw new WalletError('Metamask: No addresses available from wallet')
+    }
     return addresses.map((address) => { return { address: address } })
   }
 
