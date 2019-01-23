@@ -20,8 +20,9 @@ export default class EthereumMetaMaskProvider extends Provider {
       this
         ._metamaskProvider
         .sendAsync({ method, params }, (err, data) => {
-          if (err) {
-            reject(new WalletError(err.toString(), err))
+          const error = err || data.error
+          if (error) {
+            reject(new WalletError(error.toString(), error))
             return
           }
 
