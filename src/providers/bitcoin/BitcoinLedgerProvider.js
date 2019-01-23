@@ -65,7 +65,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       return this._extendedPubKeyCache[path]
     }
 
-    const extendedPubKey = this._getAddressExtendedPubKey(path)
+    const extendedPubKey = await this._getAddressExtendedPubKey(path)
     this._extendedPubKeyCache[path] = extendedPubKey
     return extendedPubKey
   }
