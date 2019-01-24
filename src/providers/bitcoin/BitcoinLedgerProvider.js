@@ -34,13 +34,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return walletPublicKey
   }
 
-  async getPubKey (from) {
-    const app = await this.getApp()
-    const derivationPath = from.derivationPath ||
-    await this.getDerivationPathFromAddress(from)
-    return app.getWalletPublicKey(derivationPath)
-  }
-
   async getAddressFromDerivationPath (path) {
     const app = await this.getApp()
     const { bitcoinAddress } = await app.getWalletPublicKey(path, false, this._segwit)
@@ -49,11 +42,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async signMessage (message, from) {
     const app = await this.getApp()
-    const derivationPath = from.derivationPath ||
-    await this.getDerivationPathFromAddress(from)
-
+    const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signMessageNew(derivationPath, hex)
+    return app.signMessageNew(address.derivationPath, hex)
   }
 
   // async getUnusedAddress (from = {}) {
@@ -415,10 +406,13 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const lastIndex = startingIndex + numAddresses
     const changeVal = change ? '1' : '0'
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = pubKeyToAddress(node.derivePath(changeVal + '/' + currentIndex).__Q, this._network.name, 'pubKeyHash')
-      const path = this._baseDerivationPath + changeVal + '/' + currentIndex
+      const subPath = changeVal + '/' + currentIndex
+      const publicKey = node.derivePath(subPath).publicKey
+      const address = pubKeyToAddress(publicKey, this._network.name, 'pubKeyHash')
+      const path = this._baseDerivationPath + subPath
       addresses.push({
         address,
+        publicKey: publicKey.toString('hex'),
         derivationPath: path,
         index: currentIndex
       })

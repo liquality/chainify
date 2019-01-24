@@ -1,5 +1,5 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash, compressPubKey, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
+import { addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { sha256, padHexStart } from '../../crypto'
 import networks from './networks'
 import bitcoin from 'bitcoinjs-lib'
@@ -102,42 +102,7 @@ export default class BitcoinJsLibSwapProvider extends Provider {
   }
 
   async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, false)
-  }
-
-  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secretParam, expiration, isClaim) {
-    const secretHash = isClaim ? sha256(secretParam) : secretParam
-    const lockTime = isClaim ? 0 : expiration + 100
-    const lockTimeHex = isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
-    const to = isClaim ? recipientAddress : refundAddress
-    const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    const scriptPubKey = padHexStart(script)
-    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    const sendScript = this.getMethod('createScript')(p2shAddress)
-    const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
-    const initiationTx = await this.getMethod('splitTransaction')(initiationTxRaw, true)
-    const voutIndex = initiationTx.outputs.findIndex((output) => output.script.toString('hex') === sendScript)
-    const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
-    const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
-    const newTx = this.generateRawTx(initiationTx, voutIndex, to, newTxInput, lockTimeHex)
-    const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
-    const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
-    const outputScript = outputScriptObj.toString('hex')
-    const addressPath = await this.getMethod('getDerivationPathFromAddress')(to)
-    const signature = await this.getMethod('signP2SHTransaction')(
-      [[initiationTx, 0, script, 0]],
-      [addressPath],
-      outputScript,
-      lockTime
-    )
-    const pubKeyInfo = await this.getMethod('getPubKey')(isClaim ? recipientAddress : refundAddress)
-    const pubKey = compressPubKey(pubKeyInfo.publicKey)
-    const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secretParam)
-    const spendSwapInput = this._spendSwapInput(spendSwap, script)
-    const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
-    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex)
-
-    return this.getMethod('sendRawTransaction')(rawClaimTx)
+    throw new Error('BitcoinJsLibSwapProvider: Refunding not implemented')
   }
 
   _spendSwap (signature, pubKey, isClaim, secret) {
