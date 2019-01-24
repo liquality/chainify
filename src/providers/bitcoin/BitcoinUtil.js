@@ -5,10 +5,6 @@ import {
   base58
 } from '../../crypto'
 
-import bitcoin from 'bitcoinjs-lib'
-import bs58 from 'bs58'
-
-import padStart from 'lodash/padStart'
 import networks from './networks'
 
 /**
@@ -103,24 +99,6 @@ function scriptNumEncode (number) {
   return buffer
 }
 
-function parseHexString (str) {
-  var result = []
-  while (str.length >= 2) {
-    result.push(parseInt(str.substring(0, 2), 16))
-    str = str.substring(2, str.length)
-  }
-  return result
-}
-
-function encodeBase58Check (vchIn) {
-  vchIn = parseHexString(vchIn.toString())
-  var chksum = bitcoin.crypto.sha256(Buffer.from(vchIn, 'hex'))
-  chksum = bitcoin.crypto.sha256(chksum)
-  chksum = chksum.slice(0, 4)
-  var hash = vchIn.concat(Array.from(chksum))
-  return bs58.encode(hash)
-}
-
 function toHexDigit (number) {
   var digits = '0123456789abcdef'
   return digits.charAt(number >> 4) + digits.charAt(number & 0x0f)
@@ -135,20 +113,7 @@ function toHexInt (number) {
   )
 }
 
-function createXPUB (depth, fingerprint, childnum, chaincode, publicKey, network) {
-  var xpub = toHexInt(network)
-  xpub = xpub + padStart(depth.toString(16), 2, '0')
-  xpub = xpub + padStart(fingerprint.toString(16), 8, '0')
-  xpub = xpub + padStart(childnum.toString(16), 8, '0')
-  xpub = xpub + chaincode
-  xpub = xpub + publicKey
-  return xpub
-}
-
 export {
-  encodeBase58Check,
-  createXPUB,
-  parseHexString,
   toHexInt,
   compressPubKey,
   pubKeyToAddress,

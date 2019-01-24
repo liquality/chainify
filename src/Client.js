@@ -323,15 +323,6 @@ export default class Client {
     return addresses
   }
 
-  async getAddressExtendedPubKeys (startingIndex = 0, numAddresses = 1) {
-    const xpubkey = await this.getMethod('getAddressExtendedPubKeys')(startingIndex, numAddresses)
-
-    if (!isArray(xpubkey)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid response')
-    }
-
-    return xpubkey
-  }
   /**
    * Check if an address has been used or not.
    * @param {!string|Address} addresses - An address to check for.
