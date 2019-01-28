@@ -12,6 +12,8 @@ export default class JsonRpcProvider extends Provider {
   constructor (uri, username, password) {
     super()
 
+    this._uri = uri
+
     this._axios = axios.create({
       baseURL: uri,
       responseType: 'text',
@@ -57,7 +59,8 @@ export default class JsonRpcProvider extends Provider {
     )
       .then(this._parseResponse)
       .catch(e => {
-        throw new NodeError(e.message, e)
+        const { name, message, ...errorNoNameNoMessage } = e
+        throw new NodeError(`${this._uri} - ${e.toString()}`, errorNoNameNoMessage)
       })
   }
 }
