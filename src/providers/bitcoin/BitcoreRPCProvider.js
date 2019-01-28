@@ -75,7 +75,7 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
 
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const address = await this.getNewAddress()
-      addresses.push(address)
+      addresses.push({ address })
     }
 
     return addresses
