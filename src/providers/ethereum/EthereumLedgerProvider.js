@@ -17,10 +17,8 @@ export default class EthereumLedgerProvider extends LedgerProvider {
 
   async signMessage (message, from) {
     const app = await this.getApp()
-    const derivationPath = from.derivationPath ||
-      await this.getDerivationPathFromAddress(from)
-
+    const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signPersonalMessage(derivationPath, hex)
+    return app.signPersonalMessage(address.derivationPath, hex)
   }
 }

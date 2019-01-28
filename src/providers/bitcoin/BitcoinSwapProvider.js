@@ -1,5 +1,5 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash, compressPubKey, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
+import { addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { BigNumber } from 'bignumber.js'
 import { sha256, padHexStart } from '../../crypto'
 import networks from './networks'
@@ -79,18 +79,16 @@ export default class BitcoinSwapProvider extends Provider {
     const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
     const outputScript = outputScriptObj.toString('hex')
 
-    const addressPath = await this.getMethod('getDerivationPathFromAddress')(to)
+    const walletAddress = await this.getMethod('getWalletAddress')(to)
 
     const signature = await this.getMethod('signP2SHTransaction')(
       [[initiationTx, 0, script, 0]],
-      [addressPath],
+      [walletAddress.derivationPath],
       outputScript,
       lockTime
     )
 
-    const pubKeyInfo = await this.getMethod('getPubKey')(isClaim ? recipientAddress : refundAddress)
-    const pubKey = compressPubKey(pubKeyInfo.publicKey)
-    const spendSwap = this._spendSwap(signature[0], pubKey, isClaim, secretParam)
+    const spendSwap = this._spendSwap(signature[0], walletAddress.publicKey, isClaim, secretParam)
     const spendSwapInput = this._spendSwapInput(spendSwap, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendSwapInput)
     const rawClaimTx = await this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex, feePerByte)

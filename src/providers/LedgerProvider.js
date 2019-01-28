@@ -41,7 +41,7 @@ export default class LedgerProvider extends Provider {
     return this._baseDerivationPath + changePath + index
   }
 
-  async getDerivationPathFromAddress (address) {
+  async getWalletAddress (address) {
     let index = 0
     let change = false
 
@@ -54,7 +54,7 @@ export default class LedgerProvider extends Provider {
       const addrs = await this.getAddresses(index, addressesPerCall)
       const addr = addrs.find(addr => addr.address === address)
       if (addr) {
-        return addr.derivationPath
+        return addr
       }
       index += addressesPerCall
       if (index === maxAddresses && change === false) {
@@ -74,18 +74,6 @@ export default class LedgerProvider extends Provider {
     const address = await this.getAddressFromDerivationPath(path)
     this._addressCache[path] = address
     return address
-  }
-
-  async getAddressExtendedPubKeys (startingIndex = 0, numAddresses = 1) {
-    const xpubkeys = []
-    const lastIndex = startingIndex + numAddresses
-
-    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const xpubkey = await this.getAddressExtendedPubKey(currentIndex)
-      xpubkeys.push(xpubkey)
-    }
-
-    return xpubkeys
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {

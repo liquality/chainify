@@ -2,8 +2,8 @@ import LedgerProvider from '../LedgerProvider'
 import Bitcoin from '@ledgerhq/hw-app-btc'
 
 import { BigNumber } from 'bignumber.js'
-import { base58, padHexStart, sha256, ripemd160 } from '../../crypto'
-import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, createXPUB, encodeBase58Check, parseHexString } from './BitcoinUtil'
+import { base58, padHexStart } from '../../crypto'
+import { pubKeyToAddress, addressToPubKeyHash, compressPubKey } from './BitcoinUtil'
 import Address from '../../Address'
 import networks from './networks'
 import bip32 from 'bip32'
@@ -16,58 +16,22 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     this._bjsnetwork = chain.network.name.replace('bitcoin_', '') // for bitcoin js
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
-    this._extendedPubKeyCache = {}
+    this._walletPublicKeyCache = {}
   }
 
-  async getPubKey (from) {
+  async _getWalletPublicKey (path) {
     const app = await this.getApp()
-    const derivationPath = from.derivationPath ||
-    await this.getDerivationPathFromAddress(from)
-    return app.getWalletPublicKey(derivationPath)
+    return app.getWalletPublicKey(path, undefined, this._segwit)
   }
 
-  async _getAddressExtendedPubKey (path) {
-    const app = await this.getApp()
-    var parts = path.split('/')
-    var prevPath = parts[0] + '/' + parts[1]
-    var account = parseInt(parts[2])
-    var segwit = this._segwit
-    var network = this._network.bip32.public
-    const finalize = async fingerprint => {
-      // var path = prevPath + '/' + account
-      let nodeData = await app.getWalletPublicKey(path, undefined, segwit)
-      var publicKey = compressPubKey(nodeData.publicKey)
-      var childnum = (0x80000000 | account) >>> 0
-      var xpub = createXPUB(
-        3,
-        fingerprint,
-        childnum,
-        nodeData.chainCode,
-        publicKey,
-        network
-      )
-      return encodeBase58Check(xpub)
+  async getWalletPublicKey (path) {
+    if (path in this._walletPublicKeyCache) {
+      return this._walletPublicKeyCache[path]
     }
 
-    let nodeData = await app.getWalletPublicKey(prevPath, undefined, segwit)
-    var publicKey = compressPubKey(nodeData.publicKey)
-    publicKey = parseHexString(publicKey)
-    var result = sha256(Buffer.from(publicKey, 'hex'))
-    result = ripemd160(result)
-    var fingerprint =
-      ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]) >>>
-      0
-    return finalize(fingerprint)
-  }
-
-  async getAddressExtendedPubKey (path) {
-    if (path in this._extendedPubKeyCache) {
-      return this._extendedPubKeyCache[path]
-    }
-
-    const extendedPubKey = this._getAddressExtendedPubKey(path)
-    this._extendedPubKeyCache[path] = extendedPubKey
-    return extendedPubKey
+    const walletPublicKey = this._getWalletPublicKey(path)
+    this._walletPublicKeyCache[path] = walletPublicKey
+    return walletPublicKey
   }
 
   async getAddressFromDerivationPath (path) {
@@ -78,11 +42,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async signMessage (message, from) {
     const app = await this.getApp()
-    const derivationPath = from.derivationPath ||
-    await this.getDerivationPathFromAddress(from)
-
+    const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signMessageNew(derivationPath, hex)
+    return app.signMessageNew(address.derivationPath, hex)
   }
 
   // async getUnusedAddress (from = {}) {
@@ -432,16 +394,25 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async getLedgerAddresses (startingIndex, numAddresses, change = false) {
+    const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
+    const compressedPubKey = compressPubKey(walletPubKey.publicKey)
+    const node = bip32.fromPublicKey(
+      Buffer.from(compressedPubKey, 'hex'),
+      Buffer.from(walletPubKey.chainCode, 'hex'),
+      this._network
+    )
+
     const addresses = []
     const lastIndex = startingIndex + numAddresses
     const changeVal = change ? '1' : '0'
-    const xpubkeys = await this.getAddressExtendedPubKeys(this._baseDerivationPath)
-    const node = bip32.fromBase58(xpubkeys[0], this._network)
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = pubKeyToAddress(node.derivePath(changeVal + '/' + currentIndex).__Q, this._network.name, 'pubKeyHash')
-      const path = this._baseDerivationPath + changeVal + '/' + currentIndex
+      const subPath = changeVal + '/' + currentIndex
+      const publicKey = node.derivePath(subPath).publicKey
+      const address = pubKeyToAddress(publicKey, this._network.name, 'pubKeyHash')
+      const path = this._baseDerivationPath + subPath
       addresses.push({
         address,
+        publicKey: publicKey.toString('hex'),
         derivationPath: path,
         index: currentIndex
       })
