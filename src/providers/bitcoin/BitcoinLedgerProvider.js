@@ -29,7 +29,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       return this._walletPublicKeyCache[path]
     }
 
-    const walletPublicKey = this._getWalletPublicKey(path)
+    const walletPublicKey = await this._getWalletPublicKey(path)
     this._walletPublicKeyCache[path] = walletPublicKey
     return walletPublicKey
   }

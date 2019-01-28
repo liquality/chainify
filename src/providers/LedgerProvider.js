@@ -1,7 +1,6 @@
-import Provider from '../Provider'
-
 import Transport from '@ledgerhq/hw-transport-node-hid'
-// import bitcoinjs from 'bitcoinjs-lib'
+import Provider from '../Provider'
+import { WalletError } from '../errors'
 
 export default class LedgerProvider extends Provider {
   static isSupported () {
@@ -26,11 +25,33 @@ export default class LedgerProvider extends Provider {
     }
   }
 
+  errorProxy (target, func) {
+    if (Object.getOwnPropertyNames(target).includes(func)) {
+      const method = target[func]
+      return async (...args) => {
+        try {
+          const result = await method.bind(target)(...args)
+          return result
+        } catch (e) {
+          const { name, ...errorNoName } = e
+          throw new WalletError(e.toString(), errorNoName)
+        }
+      }
+    } else {
+      return target[func]
+    }
+  }
+
   async getApp () {
-    await this.createTransport()
+    try {
+      await this.createTransport()
+    } catch (e) {
+      const { name, ...errorNoName } = e
+      throw new WalletError(e.toString(), errorNoName)
+    }
 
     if (!this._appInstance) {
-      this._appInstance = new this._App(LedgerProvider.transport)
+      this._appInstance = new Proxy(new this._App(LedgerProvider.transport), { get: this.errorProxy })
     }
 
     return this._appInstance
