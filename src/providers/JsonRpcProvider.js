@@ -4,6 +4,7 @@ import { get, has } from 'lodash'
 
 import Provider from '../Provider'
 import RpcError from './RpcError'
+import { NodeError } from '../errors'
 
 const { parse } = JSONBigInt({ storeAsString: true, strict: true })
 
@@ -53,6 +54,10 @@ export default class JsonRpcProvider extends Provider {
     return this._axios.post(
       '/',
       this._prepareRequest(method, params)
-    ).then(this._parseResponse)
+    )
+      .then(this._parseResponse)
+      .catch(e => {
+        throw new NodeError(e.message, e)
+      })
   }
 }
