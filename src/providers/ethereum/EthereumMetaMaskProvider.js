@@ -1,13 +1,14 @@
-import { isFunction } from 'lodash'
+import _ from 'lodash'
 import { BigNumber } from 'bignumber.js'
-import Provider from '../../Provider'
+import WalletProvider from '../WalletProvider'
 import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
 import { WalletError } from '../../errors'
+import networks from './networks'
 
-export default class EthereumMetaMaskProvider extends Provider {
+export default class EthereumMetaMaskProvider extends WalletProvider {
   constructor (metamaskProvider, network) {
-    super()
-    if (!isFunction(metamaskProvider.sendAsync)) {
+    super(network)
+    if (!_.isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
 
@@ -110,5 +111,14 @@ export default class EthereumMetaMaskProvider extends Provider {
     const networkId = await this._toMM('net_version')
 
     return parseInt(networkId)
+  }
+
+  async getConnectedNetwork () {
+    const networkId = await this.getWalletNetworkId()
+    const network = _.findKey(networks, network => network.networkId === networkId)
+    if (networkId && !network) {
+      return { name: 'unknown', networkId }
+    }
+    return networks[network]
   }
 }

@@ -1,8 +1,8 @@
 import Transport from '@ledgerhq/hw-transport-node-hid'
-import Provider from '../Provider'
+import WalletProvider from './WalletProvider'
 import { WalletError } from '../errors'
 
-export default class LedgerProvider extends Provider {
+export default class LedgerProvider extends WalletProvider {
   static isSupported () {
     return Transport.isSupported()
   }
@@ -26,8 +26,8 @@ export default class LedgerProvider extends Provider {
   }
 
   errorProxy (target, func) {
-    if (Object.getOwnPropertyNames(target).includes(func)) {
-      const method = target[func]
+    const method = target[func]
+    if (Object.getOwnPropertyNames(target).includes(func) && typeof method === 'function') {
       return async (...args) => {
         try {
           const result = await method.bind(target)(...args)
@@ -38,7 +38,7 @@ export default class LedgerProvider extends Provider {
         }
       }
     } else {
-      return target[func]
+      return method
     }
   }
 
@@ -55,6 +55,11 @@ export default class LedgerProvider extends Provider {
     }
 
     return this._appInstance
+  }
+
+  async getConnectedNetwork () {
+    // Ledger apps do not provide connected network. It is separated in firmware.
+    return this._network
   }
 
   getDerivationPathFromIndex (index, change = false) {

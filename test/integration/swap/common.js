@@ -15,9 +15,10 @@ const bitcoinWithNode = new Client()
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoreRPCProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinJsLibSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
 
+const ethereumNetworks = providers.ethereum.networks
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
-ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider()))
+ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
 
 const ethereumWithNode = new Client()
