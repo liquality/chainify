@@ -7,11 +7,12 @@ export default class LedgerProvider extends WalletProvider {
     return Transport.isSupported()
   }
 
-  constructor (App, baseDerivationPath) {
-    super()
+  constructor (App, baseDerivationPath, network) {
+    super(network)
 
     this._App = App
     this._baseDerivationPath = baseDerivationPath
+    this._network = network
     this._addressCache = {}
   }
 

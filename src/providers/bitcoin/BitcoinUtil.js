@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 import {
   ensureBuffer,
   hash160,
@@ -112,6 +114,17 @@ function toHexInt (number) {
     toHexDigit(number & 0xff)
   )
 }
+/**
+ * Get a network object from an address
+ * @param {string} address The bitcoin address
+ * @return {Network}
+ */
+function getAddressNetwork (address) {
+  const prefix = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
+  const networkKey = _.findKey(networks,
+    network => [network.pubKeyHash, network.scriptHash].includes(prefix))
+  return networks[networkKey]
+}
 
 export {
   toHexInt,
@@ -120,5 +133,6 @@ export {
   pubKeyHashToAddress,
   addressToPubKeyHash,
   reverseBuffer,
-  scriptNumEncode
+  scriptNumEncode,
+  getAddressNetwork
 }

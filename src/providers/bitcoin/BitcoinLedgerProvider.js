@@ -3,14 +3,14 @@ import Bitcoin from '@ledgerhq/hw-app-btc'
 
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
-import { pubKeyToAddress, addressToPubKeyHash, compressPubKey } from './BitcoinUtil'
+import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, getAddressNetwork } from './BitcoinUtil'
 import Address from '../../Address'
 import networks from './networks'
 import bip32 from 'bip32'
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
-    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`)
+    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`, chain.network)
     this._derivationPath = `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`
     this._network = chain.network
     this._bjsnetwork = chain.network.name.replace('bitcoin_', '') // for bitcoin js
@@ -501,5 +501,11 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
     return this.getLedgerAddresses(startingIndex, numAddresses, change)
+  }
+
+  async getConnectedNetwork () {
+    const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
+    const network = getAddressNetwork(walletPubKey.bitcoinAddress)
+    return network
   }
 }
