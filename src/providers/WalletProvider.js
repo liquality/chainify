@@ -11,7 +11,8 @@ export default class WalletProvider extends Provider {
         'constructor',
         '_networkMatchProxy',
         'getConnectedNetwork',
-        'assertNetworkMatch'
+        'assertNetworkMatch',
+        'isWalletAvailable'
       ].includes(method))
     return network ? new Proxy(this, { get: this._networkMatchProxy.bind(this) }) : this
   }
@@ -33,6 +34,10 @@ export default class WalletProvider extends Provider {
     if (!_.isEqual(connectedNetwork, this._network)) {
       throw new WalletError(`Network mismatch. Configured network '${this._network.name}' does not match connected network '${connectedNetwork.name}'`)
     }
+  }
+
+  isWalletAvailable () {
+    throw new Error('isWalletAvailable not implemented.')
   }
 
   getAddresses () {

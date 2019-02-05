@@ -7,12 +7,15 @@ export default class LedgerProvider extends WalletProvider {
     return Transport.isSupported()
   }
 
-  constructor (App, baseDerivationPath, network) {
+  constructor (App, baseDerivationPath, network, ledgerScrambleKey) {
     super(network)
 
     this._App = App
     this._baseDerivationPath = baseDerivationPath
     this._network = network
+    // The ledger scramble key is required to be set on the ledger transport
+    // if communicating with the device using `transport.send` for the first time
+    this._ledgerScrambleKey = ledgerScrambleKey
     this._addressCache = {}
   }
 
@@ -56,6 +59,24 @@ export default class LedgerProvider extends WalletProvider {
     }
 
     return this._appInstance
+  }
+
+  async isWalletAvailable () {
+    const app = await this.getApp()
+    if (!app.transport.scrambleKey) { // scramble key required before calls
+      app.transport.setScrambleKey(this._ledgerScrambleKey)
+    }
+    const exchangeTimeout = app.transport.exchangeTimeout
+    app.transport.setExchangeTimeout(2000)
+    try {
+      // https://ledgerhq.github.io/btchip-doc/bitcoin-technical-beta.html#_get_random
+      await LedgerProvider.transport.send(0xe0, 0xc0, 0x00, 0x00)
+    } catch (e) {
+      return false
+    } finally {
+      app.transport.setExchangeTimeout(exchangeTimeout)
+    }
+    return true
   }
 
   async getConnectedNetwork () {
