@@ -37,7 +37,7 @@ async function getSwapParams (chain) {
   const recipientAddress = unusedAddress.address
   const refundAddress = unusedAddress.address
   const expiration = parseInt(Date.now() / 1000) + parseInt(Math.random() * 1000000)
-  const value = 10000
+  const value = config[chain.name].value
 
   console.log('\x1b[2m', `Swap Params for ${chain.id}`, '\x1b[0m')
   console.log('\x1b[2m', 'Recipient Address:', recipientAddress, '\x1b[0m')
