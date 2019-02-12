@@ -1,3 +1,4 @@
+import '@babel/polyfill' // TODO: remove this when ledgerjs supports babel 7: https://github.com/LedgerHQ/ledgerjs/issues/218
 import Client from './Client'
 import Provider from './Provider'
 
