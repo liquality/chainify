@@ -229,8 +229,8 @@ export default class BitcoinSwapProvider extends Provider {
     const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
     const { relayfee } = await this.getMethod('jsonrpc')('getinfo')
     const calculatedFee = this.getMethod('calculateFee')(1, 1, feePerByte)
-    const fee = Math.max(calculatedFee, BigNumber(relayfee).times(1e8).toNumber())
-    const amount = value - fee
+    const fee = BigNumber.max(calculatedFee, BigNumber(relayfee).times(1e8).toNumber())
+    const amount = BigNumber(value).minus(fee).toNumber()
 
     if (amount < 0) {
       throw new Error('Not enough value in transaction to pay fee.')
