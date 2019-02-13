@@ -16,7 +16,7 @@ describe('Bitcoin Swap provider', () => {
         'n3F7jE262SfYXBRTvi54HyyYmWnrWisRV9',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         1468194353))
-        .to.equal('638214a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a914ee53fca8c7e918379b8dacc21747ed123e89e0dd670431de8257b17576a914ee53fca8c7e918379b8dacc21747ed123e89e0dd6888ac')
+        .to.equal('63a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a914ee53fca8c7e918379b8dacc21747ed123e89e0dd670431de8257b17576a914ee53fca8c7e918379b8dacc21747ed123e89e0dd6888ac')
     })
   })
 
