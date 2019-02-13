@@ -12,11 +12,11 @@ const lib = new BitcoinSwapProvider()
 describe('Bitcoin Swap provider', () => {
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.createSwapScript('1J7eFp9p48g3U3yCREyhd6LJzhnkywhi5s',
-        '1GZQKjsC97yasxRj1wtYf5rC61AxpR1zmr',
+      return expect(lib.createSwapScript('n3F7jE262SfYXBRTvi54HyyYmWnrWisRV9',
+        'n3F7jE262SfYXBRTvi54HyyYmWnrWisRV9',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-        1532622116403))
-        .to.equal('76a97263a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8814bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb6705339665d700b16d14aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6888ac')
+        1468194353))
+        .to.equal('63a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a914ee53fca8c7e918379b8dacc21747ed123e89e0dd670431de8257b17576a914ee53fca8c7e918379b8dacc21747ed123e89e0dd6888ac')
     })
   })
 

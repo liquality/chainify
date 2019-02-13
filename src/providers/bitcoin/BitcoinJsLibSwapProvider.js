@@ -25,18 +25,20 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     const expirationHexEncoded = expirationHex.toString('hex')
 
     return [
-      '76', 'a9', // OP_DUP OP_HASH160
-      '72', // OP_2SWAP
       '63', // OP_IF
       'a8', // OP_SHA256
       '20', secretHash, // OP_PUSHDATA(20) {secretHash}
       '88', // OP_EQUALVERIFY
+      '76', // OP_DUP
+      'a9', // OP_HASH160
       '14', recipientPubKeyHash, // OP_PUSHDATA(20) {recipientPubKeyHash}
       '67', // OP_ELSE
       expirationPushDataOpcode, // OP_PUSHDATA({expirationHexLength})
       expirationHexEncoded, // {expirationHexEncoded}
       'b1', // OP_CHECKLOCKTIMEVERIFY
-      '6d', // OP_2DROP
+      '75', // OP_DROP
+      '76', // OP_DUP
+      'a9', // OP_HASH160
       '14', refundPubKeyHash, // OP_PUSHDATA(20) {refundPubKeyHash}
       '68', // OP_ENDIF
       '88', 'ac' // OP_EQUALVERIFY OP_CHECKSIG
