@@ -438,10 +438,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const xpubkeys = await this.getAddressExtendedPubKeys(this._baseDerivationPath)
     const node = bip32.fromBase58(xpubkeys[0], this._network)
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = pubKeyToAddress(node.derivePath(changeVal + '/' + currentIndex).__Q, this._network.name, 'pubKeyHash')
+      const pubkey = node.derivePath(changeVal + '/' + currentIndex).__Q
+      const address = pubKeyToAddress(pubkey, this._network.name, 'pubKeyHash')
       const path = this._baseDerivationPath + changeVal + '/' + currentIndex
       addresses.push({
         address,
+        pubkey,
         derivationPath: path,
         index: currentIndex
       })
