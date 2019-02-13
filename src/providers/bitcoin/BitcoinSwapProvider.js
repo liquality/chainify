@@ -25,6 +25,8 @@ export default class BitcoinSwapProvider extends Provider {
 
     return [
       '63', // OP_IF
+      '82', // OP_SIZE
+      '14', // size of secret allowed
       'a8', // OP_SHA256
       '20', secretHash, // OP_PUSHDATA(20) {secretHash}
       '88', // OP_EQUALVERIFY
