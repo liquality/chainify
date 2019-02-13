@@ -3,6 +3,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { crypto } from '../../../src'
 import { chains, metaMaskConnector, initiateAndVerify, claimAndVerify, getSwapParams } from './common'
+import config from './config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
@@ -20,21 +21,27 @@ async function testSingle (chain) {
 }
 
 describe('Swap Single Chain Flow', function () {
-  this.timeout(120000)
+  this.timeout(config.timeout)
 
   it('Bitcoin - Ledger', async () => {
     await testSingle(chains.bitcoinWithLedger)
   })
 
   it('Bitcoin - Node', async () => {
-    const interval = setInterval(() => {
-      chains.bitcoinWithNode.client.generateBlock(1)
-    }, 1000)
+    let interval
+
+    if (config.bitcoin.mineBlocks) {
+      interval = setInterval(() => {
+        chains.bitcoinWithNode.client.generateBlock(1)
+      }, 1000)
+    }
+
     await testSingle(chains.bitcoinWithNode)
-    clearInterval(interval)
+
+    if (config.bitcoin.mineBlocks) clearInterval(interval)
   })
 
-  it.only('Ethereum - MetaMask', async () => {
+  it('Ethereum - MetaMask', async () => {
     console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
     await metaMaskConnector.start()
     await testSingle(chains.ethereumWithMetaMask)

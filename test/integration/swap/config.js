@@ -6,7 +6,8 @@ export default {
       password: 'local321'
     },
     network: 'bitcoin_testnet',
-    value: 10000
+    value: 10000,
+    mineBlocks: true
   },
   ethereum: {
     rpc: {
@@ -16,5 +17,6 @@ export default {
     metaMaskConnector: {
       port: 3333
     }
-  }
+  },
+  timeout: 120000 // No timeout
 }

@@ -3,6 +3,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { crypto } from '../../../src'
 import { chains, metaMaskConnector, initiateAndVerify, claimAndVerify, getSwapParams } from './common'
+import config from './config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
@@ -24,7 +25,7 @@ async function testSwap (chain1, chain2) {
 }
 
 describe('Swap Chain to Chain', function () {
-  this.timeout(120000)
+  this.timeout(config.timeout)
 
   describe('Ledger to MetaMask', function () {
     let interval
@@ -32,14 +33,16 @@ describe('Swap Chain to Chain', function () {
     before(async () => {
       console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
       await metaMaskConnector.start()
-      interval = setInterval(() => {
-        chains.bitcoinWithNode.client.generateBlock(1)
-      }, 1000)
+      if (config.bitcoin.mineBlocks) {
+        interval = setInterval(() => {
+          chains.bitcoinWithNode.client.generateBlock(1)
+        }, 1000)
+      }
     })
 
     after(async () => {
       await metaMaskConnector.stop()
-      clearInterval(interval)
+      if (config.bitcoin.mineBlocks) clearInterval(interval)
     })
 
     it('BTC (Ledger) - ETH (MetaMask)', async () => {
@@ -52,17 +55,19 @@ describe('Swap Chain to Chain', function () {
   })
 
   describe('Node to Node', function () {
-    let interval
+    if (config.bitcoin.mineBlocks) {
+      let interval
 
-    before(async () => {
-      interval = setInterval(() => {
-        chains.bitcoinWithNode.client.generateBlock(1)
-      }, 1000)
-    })
+      before(async () => {
+        interval = setInterval(() => {
+          chains.bitcoinWithNode.client.generateBlock(1)
+        }, 1000)
+      })
 
-    after(async () => {
-      clearInterval(interval)
-    })
+      after(async () => {
+        clearInterval(interval)
+      })
+    }
 
     it('BTC (Node) - ETH (Node)', async () => {
       await testSwap(chains.bitcoinWithNode, chains.ethereumWithNode)
