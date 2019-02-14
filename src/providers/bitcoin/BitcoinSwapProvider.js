@@ -134,14 +134,6 @@ export default class BitcoinSwapProvider extends Provider {
     return bytecode.join('')
   }
 
-  getRedeemSwapData (secret, pubKey, signature) {
-    return this._spendSwap(signature, pubKey, true, secret)
-  }
-
-  getRefundSwapData (pubKey, signature) {
-    return this._spendSwap(signature, pubKey, false)
-  }
-
   doesTransactionMatchSwapParams (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(data)
