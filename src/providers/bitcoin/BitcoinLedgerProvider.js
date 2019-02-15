@@ -443,7 +443,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       const path = this._baseDerivationPath + changeVal + '/' + currentIndex
       addresses.push({
         address,
-        pubkey,
+        pubkey: pubkey.toString('hex'),
         derivationPath: path,
         index: currentIndex
       })
