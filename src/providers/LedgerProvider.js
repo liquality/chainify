@@ -84,11 +84,6 @@ export default class LedgerProvider extends WalletProvider {
     return this._network
   }
 
-  getDerivationPathFromIndex (index, change = false) {
-    const changePath = change ? '1/' : '0/'
-    return this._baseDerivationPath + changePath + index
-  }
-
   async getWalletAddress (address) {
     let index = 0
     let change = false
@@ -114,31 +109,7 @@ export default class LedgerProvider extends WalletProvider {
     throw new Error('Ledger: Wallet does not contain address')
   }
 
-  async getAddressFromIndex (addressIndex, change = false) {
-    const path = this.getDerivationPathFromIndex(addressIndex, change)
-    if (path in this._addressCache) {
-      return this._addressCache[path]
-    }
-    const address = await this.getAddressFromDerivationPath(path)
-    this._addressCache[path] = address
-    return address
-  }
-
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
     return this.getAddresses(startingIndex, numAddresses, change)
   }
-
-  // async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
-  //   console.log("dsa")
-  //   const addresses = []
-  //   const lastIndex = startingIndex + numAddresses
-  //
-  //   for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-  //     const address = await this.getAddressFromIndex(currentIndex, change)
-  //     console.log(address)
-  //     addresses.push(address)
-  //   }
-  //
-  //   return addresses
-  // }
 }
