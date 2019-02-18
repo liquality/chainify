@@ -8,7 +8,6 @@ import * as errors from './errors'
 import * as schema from './schema'
 
 import JsonRpcProvider from './providers/JsonRpcProvider'
-import ApiProvider from './providers/ApiProvider'
 import LedgerProvider from './providers/LedgerProvider'
 
 export {
@@ -19,6 +18,5 @@ export {
   errors,
   schema,
   JsonRpcProvider,
-  ApiProvider,
   LedgerProvider
 }
