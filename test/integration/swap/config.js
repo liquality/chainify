@@ -6,14 +6,14 @@ export default {
       password: 'local321'
     },
     network: 'bitcoin_testnet',
-    value: 10000,
+    value: 1000000,
     mineBlocks: true
   },
   ethereum: {
     rpc: {
       host: 'http://localhost:8545'
     },
-    value: 100000000000000,
+    value: 10000000000000000,
     metaMaskConnector: {
       port: 3333
     }
