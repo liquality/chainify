@@ -64,7 +64,7 @@ export default class EthereumSwapProvider extends Provider {
       '60', refundDestinationEncoded, // PUSH1 {refundDestinationEncoded}
       '57',
 
-      '00', // STOP
+      'fe', // INVALID
 
       '5b', // JUMPDEST
       '73', ensureAddressStandardFormat(recipientAddress), // PUSH20 {recipientAddressEncoded}
