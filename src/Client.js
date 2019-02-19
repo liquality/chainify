@@ -395,7 +395,7 @@ export default class Client {
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
    * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
-   * @return {Promise<string>} Resolves with secret
+   * @return {Promise<string>} Resolves with a 32 byte secret
    */
   async generateSecret (message) {
     const address = (await this.getMethod('getAddresses')())[0].address
@@ -480,7 +480,7 @@ export default class Client {
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.
    * @param {!string} refundAddress - Refund address for the swap in hex.
-   * @param {!string} secret - Secret for the swap in hex.
+   * @param {!string} secret - 32 byte secret for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
@@ -488,6 +488,10 @@ export default class Client {
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    if (!(/[A-Fa-f0-9]{64}/.test(secret))) {
+      throw new TypeError('Secret should be a 32 byte hex string')
     }
 
     return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
