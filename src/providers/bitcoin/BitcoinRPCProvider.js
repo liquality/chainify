@@ -11,9 +11,9 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
   async decodeRawTransaction (rawTransaction) {
     const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
-    const { hash: txHash, txid: hash, vout } = data
+    const { txid: hash, vout } = data
     const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
-    const output = { hash, value, _raw: { hex: rawTransaction, data, txHash } }
+    const output = { hash, value, _raw: { hex: rawTransaction, data } }
     return output
   }
 
@@ -31,13 +31,13 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     }
   }
 
-  async signMessage (message, address) {
-    return this.jsonrpc('signmessage', address, message).then(result => Buffer.from(result, 'base64'))
+  async signMessage (message, from) {
+    return this.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
   }
 
-  async sendTransaction (address, value, script) {
+  async sendTransaction (to, value) {
     value = BigNumber(value).dividedBy(1e8).toNumber()
-    return this.jsonrpc('sendtoaddress', address, value)
+    return this.jsonrpc('sendtoaddress', to, value)
   }
 
   async dumpPrivKey (address) {

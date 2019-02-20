@@ -1,143 +1,103 @@
 /* eslint-env mocha */
+require('chai').config.truncateThreshold = 0
+const { expect } = require('chai')
 
-const { expect } = require('chai').use(require('chai-as-promised'))
-
-const { Client, providers: { ethereum: { EthereumRPCProvider } } } = require('../../../../')
+const { Client, providers: { bitcoin: { BitcoinRPCProvider } } } = require('../../../../src')
 const mockJsonRpc = require('../../../mock/mockJsonRpc')
-const ethereumRpc = require('../../../mock/ethereum/rpc')
+const bitcoinRpc = require('../../../mock/bitcoin/rpc')
 
-describe('Ethereum RPC provider', () => {
+describe('Bitcoin RPC provider', () => {
   let client
   let provider
 
   beforeEach(() => {
     client = new Client()
-    provider = new EthereumRPCProvider('http://localhost:8545')
+    provider = new BitcoinRPCProvider('http://localhost:18332', 'bitcoin', 'local321')
     client.addProvider(provider)
 
-    mockJsonRpc('http://localhost:8545', ethereumRpc, 100)
+    mockJsonRpc('http://localhost:18332', bitcoinRpc, 100)
   })
 
-  describe('getAddresses', () => {
-    it('should return an array of addresses without 0x', () => {
-      expect(client.getAddresses()).to.eventually.deep.equal([
-        '322d4959c911520645c0638204b42ce0689236e9',
-        '635d7d148054b9471d79084b80b864a166956139',
-        'a17fe13ab28477f17fc7f1ec99a4385c95a5356b',
-        'd09f520de3fc24ee94fc4fb19f062c4d0cdec6c0',
-        'fc0853855e11ccb2120434ed97e76f44b55b869e',
-        'a1bc9766cf6b9f3d7d072430a9de2bdfa94af20b',
-        '786a4faf6ccd016131c66b1cc74dfb8f5f71fa71',
-        '99a2d52e6626998218801a0cf6ddbdf63b6865cd',
-        '47125b17d8f12188d40797631413f9b58fbada80',
-        'fd5becf2adec096ef511dbab5a48807ae5854116'
-      ])
-    })
-  })
-
-  describe('getUnusedAddress', () => {
-    it('should return first address without 0x', () => {
-      expect(client.getUnusedAddress()).to.eventually.equal('322d4959c911520645c0638204b42ce0689236e9')
-    })
-  })
-
-  describe('sendTransaction', () => {
-    it('should return a txid without 0x', () => {
-      expect(client.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)).to.eventually.match(/^[A-Fa-f0-9]+$/)
+  describe('getFeePerByte', () => {
+    it('should return default value 3 sat per byte', async () => {
+      const fee = await provider.getFeePerByte()
+      expect(fee).to.equal(3)
     })
   })
 
   describe('signMessage', () => {
-    it('should return an address without 0x', () => {
-      expect(client.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)).to.eventually.match(/^[A-Fa-f0-9]+$/)
+    it('should return signature', async () => {
+      const sig = await provider.signMessage('liquality', 'mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi')
+      expect(sig).to.equal('205bfd8bb8ccc907e3c5e832eccef1df619d52ea8785045ee9cb7b069e8785e7185d8a8d395666f1c441a7423325c1e4abfd4b9f33e851c60f99f8deb0165e3ef3')
     })
   })
 
-  describe('getBlockHeight', () => {
-    it('should return block height', () => {
-      expect(client.getBlockHeight()).to.eventually.equal(11)
+  describe('sendTransaction', () => {
+    it('should return transaction hash', async () => {
+      const tx = await provider.sendTransaction('mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi', 1000)
+      expect(tx).to.equal('7a16d66f0e5abe24f6f9680da0e9dabf877577209180b9fb43c55d001ddf208b')
     })
   })
 
-  describe('getBlockByNumber', () => {
-    it('should return a complete block', () => {
-      expect(client.getBlockByNumber(1, true)).to.eventually.deep.equal({
-        number: 1,
-        hash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-        parentHash: 'f119e45bfae9893ce759772e11a427d67427ceacf2bc04d11d406e4d7ad511da',
-        mixHash: '0000000000000000000000000000000000000000000000000000000000000000',
-        nonce: 0,
-        sha3Uncles: '1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
-        logsBloom: '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-        transactionsRoot: '56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-        stateRoot: 'f9220de8a2b967110e042de4097ffb126ba09e7acc614c0f8cb963531ae301d7',
-        receiptsRoot: '56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-        miner: '0000000000000000000000000000000000000000',
-        difficulty: '0',
-        totalDifficulty: '0',
-        extraData: '',
-        size: 1000,
-        gasLimit: '6691b7',
-        gasUsed: '5208',
-        timestamp: 1547632949,
-        transactions: [
-          {
-            hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
-            nonce: 0,
-            blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-            blockNumber: 1,
-            transactionIndex: '00',
-            from: '322d4959c911520645c0638204b42ce0689236e9',
-            to: '635d7d148054b9471d79084b80b864a166956139',
-            value: 10000,
-            gas: '015f90',
-            gasPrice: '04a817c800',
-            input: '0',
-            confirmations: 11
+  describe('decodeRawTransaction', () => {
+    it('should return default value 3 sat per byte', async () => {
+      const tx = await provider.decodeRawTransaction('01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000')
+
+      expect(tx).to.deep.equal({
+        'hash': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
+        'value': 50,
+        '_raw': {
+          'hex': '01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000',
+          'data': {
+            'txid': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
+            'size': 99,
+            'version': 1,
+            'locktime': 0,
+            'vin': [
+              {
+                'coinbase': '01660101',
+                'sequence': 4294967295
+              }
+            ],
+            'vout': [
+              {
+                'value': 50.0000384,
+                'valueSat': 5000003840,
+                'n': 0,
+                'scriptPubKey': {
+                  'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
+                  'hex': '2103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac',
+                  'reqSigs': 1,
+                  'type': 'pubkey',
+                  'addresses': [
+                    'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'
+                  ]
+                }
+              }
+            ]
           }
+        }
+      })
+    })
+  })
+
+  describe('getBlockByHash', () => {
+    it('should return default value 3 sat per byte', async () => {
+      const block = await provider.getBlockByHash('191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254')
+      expect(block).to.deep.equal({
+        hash: '191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254',
+        number: 102,
+        timestamp: 1544536091,
+        difficulty: '4.656542373906925e-10',
+        size: 371,
+        parentHash: '432e14437b326efe9ea90031729eb0713d19445b077ab442a98e6a48dde0da44',
+        nonce: 1,
+        transactions: [
+          'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
+          '2f1d2ab7742e401a1e6de9ad4bd38957d8eb73085ab97961eec22528f0d126ce'
         ],
-        uncles: [] })
-    })
-  })
-
-  describe('getTransactionByHash', () => {
-    it('should return block height', () => {
-      expect(client.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd'))
-        .to
-        .eventually
-        .deep
-        .equal({
-          hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
-          nonce: 0,
-          blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-          blockNumber: 1,
-          transactionIndex: '00',
-          from: '322d4959c911520645c0638204b42ce0689236e9',
-          to: '635d7d148054b9471d79084b80b864a166956139',
-          value: 10000,
-          gas: '015f90',
-          gasPrice: '04a817c800',
-          input: '0',
-          confirmations: 11
-        })
-    })
-  })
-
-  describe('getBalance', () => {
-    it('should return correct balance', () => {
-      expect(client.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ]))
-        .to
-        .eventually
-        .equal(99995379999999890000)
-    })
-  })
-
-  describe('isAddressUsed', () => {
-    it('should return true for a used address', () => {
-      expect(client.isAddressUsed('322d4959c911520645c0638204b42ce0689236e9'))
-        .to
-        .eventually
-        .equal(true)
+        confirmations: 3
+      })
     })
   })
 })

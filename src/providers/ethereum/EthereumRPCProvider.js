@@ -44,10 +44,10 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return ensureHexStandardFormat(txHash)
   }
 
-  async signMessage (message, address) {
-    address = '0x' + address
-    message = '0x' + Buffer.from(message).toString('hex')
-    return this.jsonrpc('eth_sign', address, message)
+  async signMessage (message, from) {
+    from = ensureHexEthFormat(from)
+    message = ensureHexEthFormat(Buffer.from(message).toString('hex'))
+    return this.jsonrpc('eth_sign', from, message)
   }
 
   async getBlockByNumber (blockNumber, includeTx) {

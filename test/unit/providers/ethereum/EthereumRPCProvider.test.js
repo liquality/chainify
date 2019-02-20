@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
-const { expect } = require('chai').use(require('chai-as-promised'))
+require('chai').config.truncateThreshold = 0
+const { expect } = require('chai')
 
 const { Client, providers: { ethereum: { EthereumRPCProvider } } } = require('../../../../src')
 const mockJsonRpc = require('../../../mock/mockJsonRpc')
@@ -19,49 +20,48 @@ describe('Ethereum RPC provider', () => {
   })
 
   describe('getAddresses', () => {
-    it('should return an array of addresses without 0x', () => {
-      expect(client.getAddresses()).to.eventually.deep.equal([
-        '322d4959c911520645c0638204b42ce0689236e9',
-        '635d7d148054b9471d79084b80b864a166956139',
-        'a17fe13ab28477f17fc7f1ec99a4385c95a5356b',
-        'd09f520de3fc24ee94fc4fb19f062c4d0cdec6c0',
-        'fc0853855e11ccb2120434ed97e76f44b55b869e',
-        'a1bc9766cf6b9f3d7d072430a9de2bdfa94af20b',
-        '786a4faf6ccd016131c66b1cc74dfb8f5f71fa71',
-        '99a2d52e6626998218801a0cf6ddbdf63b6865cd',
-        '47125b17d8f12188d40797631413f9b58fbada80',
-        'fd5becf2adec096ef511dbab5a48807ae5854116'
+    it('should return an array of addresses without 0x', async () => {
+      const addresses = await client.getAddresses()
+      expect(addresses).to.deep.equal([
+        { address: '322d4959c911520645c0638204b42ce0689236e9' },
+        { address: '635d7d148054b9471d79084b80b864a166956139' },
+        { address: 'a17fe13ab28477f17fc7f1ec99a4385c95a5356b' },
+        { address: 'd09f520de3fc24ee94fc4fb19f062c4d0cdec6c0' },
+        { address: 'fc0853855e11ccb2120434ed97e76f44b55b869e' },
+        { address: 'a1bc9766cf6b9f3d7d072430a9de2bdfa94af20b' },
+        { address: '786a4faf6ccd016131c66b1cc74dfb8f5f71fa71' },
+        { address: '99a2d52e6626998218801a0cf6ddbdf63b6865cd' },
+        { address: '47125b17d8f12188d40797631413f9b58fbada80' },
+        { address: 'fd5becf2adec096ef511dbab5a48807ae5854116' }
       ])
     })
   })
 
   describe('getUnusedAddress', () => {
-    it('should return first address without 0x', () => {
-      expect(client.getUnusedAddress()).to.eventually.equal('322d4959c911520645c0638204b42ce0689236e9')
+    it('should return first address without 0x', async () => {
+      const unusedAddress = await client.getUnusedAddress()
+      expect(unusedAddress).to.deep.equal({ address: '322d4959c911520645c0638204b42ce0689236e9' })
     })
   })
 
   describe('sendTransaction', () => {
-    it('should return a txid without 0x', () => {
-      expect(client.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)).to.eventually.match(/^[A-Fa-f0-9]+$/)
-    })
-  })
-
-  describe('signMessage', () => {
-    it('should return an address without 0x', () => {
-      expect(client.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)).to.eventually.match(/^[A-Fa-f0-9]+$/)
+    it('should return a txid without 0x', async () => {
+      const tx = await client.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)
+      expect(tx).to.match(/^[A-Fa-f0-9]+$/)
     })
   })
 
   describe('getBlockHeight', () => {
-    it('should return block height', () => {
-      expect(client.getBlockHeight()).to.eventually.equal(11)
+    it('should return block height', async () => {
+      const height = await client.getBlockHeight()
+      expect(height).to.equal(11)
     })
   })
 
   describe('getBlockByNumber', () => {
-    it('should return a complete block', () => {
-      expect(client.getBlockByNumber(1, true)).to.eventually.deep.equal({
+    it('should return a complete block', async () => {
+      const block = await client.getBlockByNumber(1, true)
+      expect(block).to.deep.equal({
         number: 1,
         hash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
         parentHash: 'f119e45bfae9893ce759772e11a427d67427ceacf2bc04d11d406e4d7ad511da',
@@ -73,7 +73,7 @@ describe('Ethereum RPC provider', () => {
         stateRoot: 'f9220de8a2b967110e042de4097ffb126ba09e7acc614c0f8cb963531ae301d7',
         receiptsRoot: '56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
         miner: '0000000000000000000000000000000000000000',
-        difficulty: '0',
+        difficulty: 0,
         totalDifficulty: '0',
         extraData: '',
         size: 1000,
@@ -101,10 +101,10 @@ describe('Ethereum RPC provider', () => {
   })
 
   describe('getTransactionByHash', () => {
-    it('should return block height', () => {
-      expect(client.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd'))
+    it('should return block height', async () => {
+      const tx = await client.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd')
+      expect(tx)
         .to
-        .eventually
         .deep
         .equal({
           hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
@@ -124,29 +124,38 @@ describe('Ethereum RPC provider', () => {
   })
 
   describe('getBalance', () => {
-    it('should return correct balance', () => {
-      expect(client.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ]))
+    it('should return correct balance', async () => {
+      const balance = await client.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ])
+      expect(balance)
         .to
-        .eventually
         .equal(99995379999999890000)
     })
   })
 
   describe('isAddressUsed', () => {
-    it('should return true for a used address', () => {
-      expect(client.isAddressUsed('322d4959c911520645c0638204b42ce0689236e9'))
+    it('should return true for a used address', async () => {
+      const isUsed = await client.isAddressUsed('322d4959c911520645c0638204b42ce0689236e9')
+      expect(isUsed)
         .to
-        .eventually
         .equal(true)
+    })
+  })
+
+  describe('signMessage', () => {
+    it('should return a signature', async () => {
+      const sig = await client.signMessage('liquality', '322d4959c911520645c0638204b42ce0689236e9')
+      expect(sig)
+        .to
+        .equal('0f1f169ed203e0a8e053e060e0ba1a7da87cc37f4aa84c9329ba2a63974d0f5b5414b024d80e805418a6f315fd8185e74daaca63fc871c5568e9b18d2f899e4701')
     })
   })
 
   describe('Non-client methods', () => {
     describe('getTransactionReceipt', () => {
-      it('should return transaction receipt for provided transaction', () => {
-        expect(provider.getTransactionReceipt('836a5e038d599454d576493f55c8000d4cce30460437b9e23718154e8f0e4298'))
+      it('should return transaction receipt for provided transaction', async () => {
+        const receipt = await provider.getTransactionReceipt('836a5e038d599454d576493f55c8000d4cce30460437b9e23718154e8f0e4298')
+        expect(receipt)
           .to
-          .eventually
           .deep
           .equal({
             transactionHash: '836a5e038d599454d576493f55c8000d4cce30460437b9e23718154e8f0e4298',
