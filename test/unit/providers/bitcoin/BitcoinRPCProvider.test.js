@@ -40,7 +40,7 @@ describe('Bitcoin RPC provider', () => {
   })
 
   describe('decodeRawTransaction', () => {
-    it('should return default value 3 sat per byte', async () => {
+    it('should return decoded transaction', async () => {
       const tx = await provider.decodeRawTransaction('01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000')
 
       expect(tx).to.deep.equal({
@@ -82,7 +82,7 @@ describe('Bitcoin RPC provider', () => {
   })
 
   describe('getBlockByHash', () => {
-    it('should return default value 3 sat per byte', async () => {
+    it('should return a block', async () => {
       const block = await provider.getBlockByHash('191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254')
       expect(block).to.deep.equal({
         hash: '191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254',
