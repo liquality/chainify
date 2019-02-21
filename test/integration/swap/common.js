@@ -1,7 +1,10 @@
-import { expect } from 'chai'
+import chai, { expect } from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
 import { Client, providers, crypto } from '../../../src'
 import config from './config'
+
+chai.use(chaiAsPromised)
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 
@@ -74,9 +77,22 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
     chain.client.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration),
     chain.client.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
   ])
-  expect(claimTx.hash).to.equal(claimTxId)
   console.log(`${chain.id} Claimed ${claimTxId}`)
   return claimTx.secret
 }
 
-export { chains, metaMaskConnector, initiateAndVerify, claimAndVerify, getSwapParams }
+async function refund (chain, initiationTxId, secretHash, swapParams) {
+  console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  const refundTxId = await chain.client.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
+  console.log(`${chain.id} Refunded ${refundTxId}`)
+  return refundTxId
+}
+
+async function expectBalance (chain, address, func, comparison) {
+  const balanceBefore = await chain.client.getBalance([address])
+  await func()
+  const balanceAfter = await chain.client.getBalance([address])
+  comparison(balanceBefore, balanceAfter)
+}
+
+export { chains, metaMaskConnector, initiateAndVerify, claimAndVerify, refund, getSwapParams, expectBalance }
