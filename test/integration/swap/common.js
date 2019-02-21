@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
-import { Client, providers, crypto } from '../../../src'
+import { Client, Provider, providers, crypto } from '../../../src'
 import config from './config'
 
 chai.use(chaiAsPromised)
@@ -18,15 +18,27 @@ const bitcoinWithNode = new Client()
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoreRPCProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinJsLibSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
 
+// TODO: required for BITCOIN too?
+class RandomEthereumAddressProvider extends Provider {
+  getUnusedAddress () { // Mock unique address
+    const randomString = parseInt(Math.random() * 1000000000000).toString()
+    const randomHash = crypto.sha256(randomString)
+    const address = randomHash.substr(0, 40)
+    return { address }
+  }
+}
+
 const ethereumNetworks = providers.ethereum.networks
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
+ethereumWithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithNode = new Client()
 ethereumWithNode.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
 ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
+ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
 
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger },
@@ -36,9 +48,8 @@ const chains = {
 }
 
 async function getSwapParams (chain) {
-  const unusedAddress = await chain.client.getUnusedAddress()
-  const recipientAddress = unusedAddress.address
-  const refundAddress = unusedAddress.address
+  const recipientAddress = (await chain.client.getUnusedAddress()).address
+  const refundAddress = (await chain.client.getUnusedAddress()).address
   const expiration = parseInt(Date.now() / 1000) + parseInt(Math.random() * 1000000)
   const value = config[chain.name].value
 

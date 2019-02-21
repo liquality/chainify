@@ -79,16 +79,16 @@ function testSingle (chain) {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = parseInt(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    await expectBalance(chain, swapParams.refundAddress,
+    await expectBalance(chain, swapParams.recipientAddress,
       async () => claimAndVerify(chain, initiationTxId, secret, swapParams),
       (before, after) => expect(after).to.be.greaterThan(before))
     await expectBalance(chain, swapParams.refundAddress,
       async () => refund(chain, initiationTxId, secretHash, swapParams),
-      (before, after) => expect(after).to.be.at.most(before))
+      (before, after) => expect(after).to.be.equal(before))
     await sleep(20000)
     await expectBalance(chain, swapParams.refundAddress,
       async () => refund(chain, initiationTxId, secretHash, swapParams),
-      (before, after) => expect(after).to.be.at.most(before))
+      (before, after) => expect(after).to.be.equal(before))
   })
 
   it('Refund available after expiration', async () => {
