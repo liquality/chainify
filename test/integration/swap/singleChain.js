@@ -20,10 +20,10 @@ function testSingle (chain) {
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const balanceBeforeClaim = await chain.client.getBalance([swapParams.recipientAddress])
-    const revealedSecret = await claimAndVerify(chain, initiationTxId, secret, swapParams)
-    const balanceAfterClaim = await chain.client.getBalance([swapParams.recipientAddress])
-    expect(balanceAfterClaim).to.greaterThan(balanceBeforeClaim)
+    let revealedSecret
+    await expectBalance(chain, swapParams.recipientAddress,
+      async () => { revealedSecret = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
+      (before, after) => expect(after).to.be.greaterThan(before))
     expect(revealedSecret).to.equal(secret)
   })
 
@@ -64,11 +64,12 @@ function testSingle (chain) {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = parseInt(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const balanceBeforeRefund = await chain.client.getBalance([swapParams.refundAddress])
-    await sleep(20000)
-    await refund(chain, initiationTxId, secretHash, swapParams)
-    const balanceAfterRefund = await chain.client.getBalance([swapParams.refundAddress])
-    expect(balanceAfterRefund).to.greaterThan(balanceBeforeRefund)
+    await expectBalance(chain, swapParams.refundAddress,
+      async () => {
+        await sleep(20000)
+        await refund(chain, initiationTxId, secretHash, swapParams)
+      },
+      (before, after) => expect(after).to.be.greaterThan(before))
   })
 
   it('Refund fails after claim', async () => {
