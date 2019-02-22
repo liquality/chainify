@@ -19,7 +19,8 @@ async function testSwap (chain1, chain2) {
 
   const chain1InitiationTxId = await initiateAndVerify(chain1, secretHash, chain1SwapParams)
   const chain2InitiationTxId = await initiateAndVerify(chain2, secretHash, chain2SwapParams)
-  const revealedSecret = await claimAndVerify(chain1, chain1InitiationTxId, secret, chain1SwapParams)
+  const claimTx = await claimAndVerify(chain1, chain1InitiationTxId, secret, chain1SwapParams)
+  const revealedSecret = claimTx.secret
   expect(revealedSecret).to.equal(secret)
   await claimAndVerify(chain2, chain2InitiationTxId, revealedSecret, chain2SwapParams)
 }

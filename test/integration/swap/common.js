@@ -89,7 +89,7 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
     chain.client.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
   ])
   console.log(`${chain.id} Claimed ${claimTxId}`)
-  return claimTx.secret
+  return claimTx
 }
 
 async function refund (chain, initiationTxId, secretHash, swapParams) {

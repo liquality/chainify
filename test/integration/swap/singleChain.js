@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
+import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
@@ -14,16 +15,23 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 
 function testSingle (chain) {
+  it('Generated secrets are different', async () => {
+    const secret1 = await chain.client.generateSecret('secret1')
+    const secret2 = await chain.client.generateSecret('secret2')
+    expect(secret1).to.not.equal(secret2)
+  })
+
   it('Initiate and claim - happy route', async () => {
     console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
     const secret = await chain.client.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    let revealedSecret
+    let claimTx
     await expectBalance(chain, swapParams.recipientAddress,
-      async () => { revealedSecret = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
+      async () => { claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
       (before, after) => expect(after).to.be.greaterThan(before))
+    const revealedSecret = claimTx.secret
     expect(revealedSecret).to.equal(secret)
   })
 
@@ -37,7 +45,8 @@ function testSingle (chain) {
     const emptySecret = ''
     await expect(claimAndVerify(chain, initiationTxId, wrongSecret, swapParams)).to.be.rejected
     await expect(claimAndVerify(chain, initiationTxId, emptySecret, swapParams)).to.be.rejected
-    const revealedSecret = await claimAndVerify(chain, initiationTxId, secret, swapParams)
+    const claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams)
+    const revealedSecret = claimTx.secret
     expect(revealedSecret).to.equal(secret)
   })
 
@@ -104,6 +113,68 @@ function testSingle (chain) {
   })
 }
 
+function testEthereumBalance (chain) {
+  it('Claim', async () => {
+    const secret = _.repeat('ff', 32)
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await expectBalance(chain, swapParams.recipientAddress,
+      async () => { await claimAndVerify(chain, initiationTxId, secret, swapParams) },
+      (before, after) => {
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).toNumber()
+        expect(after).to.be.equal(expectedBalance)
+      })
+  })
+
+  it('Refund', async () => {
+    const secret = _.repeat('ff', 32)
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    swapParams.expiration = parseInt(Date.now() / 1000) + 20
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await sleep(30000)
+    await expectBalance(chain, swapParams.refundAddress,
+      async () => refund(chain, initiationTxId, secretHash, swapParams),
+      (before, after) => {
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).toNumber()
+        expect(after).to.be.equal(expectedBalance)
+      })
+  })
+}
+
+function testBitcoinBalance (chain) {
+  it('Claim', async () => {
+    const secret = _.repeat('ff', 32)
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    const fee = await chain.client.getMethod('calculateFee')(1, 1, 3)
+    await expectBalance(chain, swapParams.recipientAddress,
+      async () => { await claimAndVerify(chain, initiationTxId, secret, swapParams) },
+      (before, after) => {
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).minus(BigNumber(fee)).toNumber()
+        expect(after).to.be.equal(expectedBalance)
+      })
+  })
+
+  it('Refund', async () => {
+    const secret = _.repeat('ff', 32)
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    swapParams.expiration = parseInt(Date.now() / 1000) + 20
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await sleep(30000)
+    const fee = await chain.client.getMethod('calculateFee')(1, 1, 3)
+    await expectBalance(chain, swapParams.refundAddress,
+      async () => refund(chain, initiationTxId, secretHash, swapParams),
+      (before, after) => {
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).minus(BigNumber(fee)).toNumber()
+        expect(after).to.be.equal(expectedBalance)
+      })
+  })
+}
+
 describe('Swap Single Chain Flow', function () {
   this.timeout(config.timeout)
 
@@ -111,21 +182,18 @@ describe('Swap Single Chain Flow', function () {
     testSingle(chains.bitcoinWithLedger)
   })
 
-  describe('Bitcoin - Node', () => {
-    let interval
+  describe.only('Bitcoin - Node', () => {
     if (config.bitcoin.mineBlocks) {
+      let interval
       before(async () => {
         interval = setInterval(() => {
           chains.bitcoinWithNode.client.generateBlock(1)
         }, 1000)
       })
+      after(() => clearInterval(interval))
     }
 
     testSingle(chains.bitcoinWithNode)
-
-    if (config.bitcoin.mineBlocks) {
-      after(() => clearInterval(interval))
-    }
   })
 
   describe('Ethereum - MetaMask', () => {
@@ -137,7 +205,39 @@ describe('Swap Single Chain Flow', function () {
     after(async () => metaMaskConnector.stop())
   })
 
-  describe.only('Ethereum - Node', () => {
+  describe('Ethereum - Node', () => {
     testSingle(chains.ethereumWithNode)
+  })
+
+  describe('Ethereum - Balance', () => {
+    describe('MetaMask', () => {
+      before(async () => {
+        console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
+        await metaMaskConnector.start()
+      })
+      testEthereumBalance(chains.ethereumWithMetaMask)
+      after(async () => metaMaskConnector.stop())
+    })
+    describe('Node', () => {
+      testEthereumBalance(chains.ethereumWithNode)
+    })
+  })
+
+  describe('Bitcoin - Balance', () => {
+    if (config.bitcoin.mineBlocks) {
+      let interval
+      before(async () => {
+        interval = setInterval(() => {
+          chains.bitcoinWithNode.client.generateBlock(1)
+        }, 1000)
+      })
+      after(() => clearInterval(interval))
+    }
+    describe('Ledger', () => {
+      testBitcoinBalance(chains.bitcoinWithLedger)
+    })
+    describe('Node', () => {
+      testBitcoinBalance(chains.bitcoinWithNode)
+    })
   })
 })
