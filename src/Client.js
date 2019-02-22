@@ -558,4 +558,20 @@ export default class Client {
   async getAddressMempool (addresses) {
     return this.getMethod('getAddressMempool')(addresses)
   }
+
+  async createRefundableCollateralScript (borrowerPubKey, lenderPubKey, lenderSecretHash, loanExpiration, biddingExpiration) {
+    return this.getMethod('createRefundableCollateralScript')(borrowerPubKey, lenderPubKey, lenderSecretHash, loanExpiration, biddingExpiration)
+  }
+
+  async createSeizableCollateralScript (borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('createSeizableCollateralScript')(borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async lockCollateral (refundableValue, seizableValue, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('lockCollateral')(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async refundCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecret, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('refundCollateral')(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecret, loanExpiration, biddingExpiration, seizureExpiration)
+  }
 }

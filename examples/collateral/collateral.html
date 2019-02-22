@@ -1,0 +1,143 @@
+<html>
+
+ <head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="../../../dist/index.umd.js"></script>
+</head>
+
+ <body>
+  <style>
+    textarea {
+      width: 100%;
+      height: 60px;
+    }
+  </style>
+  <h1>Collateral functionality</h1>
+  <table width="100%">
+    <thead>
+      <td><strong>Bitcoin</strong></td>
+      <td><strong>Ethereum</strong></td>
+    </thead>
+    <tr>
+      <td>
+        <h3>Generate secret:</h3>
+        <p>Collateral params: <input type="text" id="btcMessage" value="<loan_currency>/<loan_value>/<interest_value>/<liquidation_penalty_value>/<collateral_currency>/<seizable_collateral_value>/<refundable_collateral_value>/<creation_timestamp>/<index>" /></p>
+        <p><button id="btcGenerateSecret">Generate Secret</button></p>
+        <p>secret: <textarea id="btcGenerateSecretResult"></textarea></p>
+        <p>secretHash: <textarea id="btcGenerateSecretResultHash"></textarea></p>
+        <h3>Lock Collateral:</h3>
+        <p>refundableValue: <input type="text" id="btcRefundableValue" value="100000" /></p>
+        <p>seizableValue: <input type="text" id="btcSeizableValue" value="100000" /></p>
+        <p>borrowerPubKey: <input type="text" id="btcBorrowerPubKey" /></p>
+        <p>lenderPubKey: <input type="text" id="btcLenderPubKey" /></p>
+        <p>borrowerSecretHash: <input type="text" id="btcBorrowerSecretHash" /></p>
+        <p>lenderSecretHash: <input type="text" id="btcLenderSecretHash" /></p>
+        <p>loanExpiration: <input type="text" id="btcLoanExpiration" value="1568194353" /></p>
+        <p>biddingExpiration: <input type="text" id="btcBiddingExpiration" value="1568194353" /></p>
+        <p>seizureExpiration: <input type="text" id="btcSeizureExpiration" value="1568194353" /></p>
+        <p><button id="btcLockCollateral">Lock Collateral</button></p>
+        <p>refundable bytecode: <textarea id="btcRefundableBytecode"></textarea></p>
+        <p>seizable bytecode: <textarea id="btcSeizableBytecode"></textarea></p>
+        <p>refundable hash: <textarea id="btcLockRefundableCollateralResult"></textarea></p>
+        <p>seizable hash: <textarea id="btcLockSeizableCollateralResult"></textarea></p>
+        <p><button id="btcRefundCollateral">Refund Collateral</button></p>
+        <p>lender secret: <input type="text" id="btcLenderSecret" /></p>
+        <p>refund refundable hash: <textarea id="btcRefundRefundableCollateralResult"></textarea></p>
+        <p>refund seizable hash: <textarea id="btcRefundSeizableCollateralResult"></textarea></p>
+      </td>
+    </tr>
+  </table>
+  <p><code>For errors and logs, check console</code></p>
+
+   <script>
+    /* global $, ChainAbstractionLayer, web3 */
+    const { Client, providers, networks, crypto } = ChainAbstractionLayer
+    const bitcoin = new Client()
+    bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('http://localhost:8000', 'bitcoin', 'local321'))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinCollateralProvider({ network: networks.bitcoin_testnet }))
+     function generateSecret (client, prefix) {
+      client.generateSecret($(`#${prefix}Message`).val()).then(result => {
+        $(`#${prefix}GenerateSecretResult`).text(result)
+        $(`#${prefix}GenerateSecretResultHash`).text(crypto.sha256(result))
+      })
+    }
+     function lockCollateral (client, prefix) {
+      const refundableValue = parseInt($(`#${prefix}RefundableValue`).val())
+      const seizableValue = parseInt($(`#${prefix}SeizableValue`).val())
+      const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
+      const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
+      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
+      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
+      const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
+      const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
+       client.createRefundableCollateralScript(borrowerPubKey, lenderPubKey, lenderSecretHash, loanExpiration, biddingExpiration).then(result => {
+        $(`#${prefix}RefundableBytecode`).text(result)
+      })
+      client.createSeizableCollateralScript(borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+        $(`#${prefix}SeizableBytecode`).text(result)
+      })
+       client.lockCollateral(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+        console.log('test')
+         console.log(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+         console.log(result)
+        $(`#${prefix}LockRefundableCollateralResult`).text(result.refundableResult)
+        $(`#${prefix}LockSeizableCollateralResult`).text(result.seizableResult)
+      })
+    }
+    function refundCollateral (client, prefix) {
+      const refundableValue = parseInt($(`#${prefix}RefundableValue`).val())
+      const seizableValue = parseInt($(`#${prefix}SeizableValue`).val())
+      const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
+      const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
+      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
+      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
+      const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
+      const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
+      const refundableTxHash = $(`#${prefix}LockRefundableCollateralResult`).val()
+      const seizableTxHash = $(`#${prefix}LockSeizableCollateralResult`).val()
+      const lenderSecret = $(`#${prefix}LenderSecret`).val()
+
+      client.refundCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecret, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+        $(`#${prefix}RefundRefundableCollateralResult`).text(result.refundableResult)
+        $(`#${prefix}RefundSeizableCollateralResult`).text(result.seizableResult)
+      })
+    }
+    function claimSwap (client, prefix) {
+      const initiationTxHash = $(`#${prefix}InitiationTxHash`).val()
+      const secret = $(`#${prefix}ClaimSecret`).val()
+      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+      const refundAddress = $(`#${prefix}RefundAddress`).val()
+      const secretHash = $(`#${prefix}SecretHash`).val()
+      const expiration = parseInt($(`#${prefix}Expiration`).val())
+       client.claimSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration).then(result => {
+        $(`#${prefix}ClaimSwapResult`).text(result)
+        $(`#${prefix}FindClaimSwap`).show()
+      })
+       client.findClaimSwapTransaction(initiationTxHash, secretHash).then(result => {
+        $(`#${prefix}FindClaimSwapTransactionResult`).text(JSON.stringify(result, null, 2))
+        $(`#${prefix}FindClaimSwapTransactionResultSecret`).text(result.secret)
+        $(`#${prefix}FindClaimSwapSecret`).show()
+      })
+    }
+     function refundSwap (client, prefix) {
+      const initiationTxHash = $(`#${prefix}RefundInitiationTxHash`).val()
+      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+      const refundAddress = $(`#${prefix}RefundAddress`).val()
+      const secretHash = $(`#${prefix}SecretHash`).val()
+      const expiration = parseInt($(`#${prefix}Expiration`).val())
+       client.refundSwap(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration).then(result => {
+        $(`#${prefix}RefundSwapResult`).text(result)
+      })
+    }
+
+    $('#btcGenerateSecret').click(generateSecret.bind(null, bitcoin, 'btc'))
+    $('#btcLockCollateral').click(lockCollateral.bind(null, bitcoin, 'btc'))
+    $('#btcRefundCollateral').click(refundCollateral.bind(null, bitcoin, 'btc'))
+   </script>
+</body>
+
+ </html>
