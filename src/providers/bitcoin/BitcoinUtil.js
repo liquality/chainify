@@ -17,9 +17,9 @@ import networks from './networks'
 function compressPubKey (pubKey) {
   const x = pubKey.substring(2, 66)
   const y = pubKey.substring(66, 130)
-  let prefix
   const even = parseInt(y.substring(62, 64), 16) % 2 === 0
-  even ? prefix = '02' : prefix = '03'
+  const prefix = even ? '02' : '03'
+
   return prefix + x
 }
 
@@ -82,12 +82,12 @@ function scriptNumSize (i) {
 }
 
 function scriptNumEncode (number) {
-  var value = Math.abs(number)
-  var size = scriptNumSize(value)
-  var buffer = Buffer.allocUnsafe(size)
-  var negative = number < 0
+  let value = Math.abs(number)
+  let size = scriptNumSize(value)
+  let buffer = Buffer.allocUnsafe(size)
+  let negative = number < 0
 
-  for (var i = 0; i < size; ++i) {
+  for (let i = 0; i < size; ++i) {
     buffer.writeUInt8(value & 0xff, i)
     value >>= 8
   }
@@ -102,7 +102,7 @@ function scriptNumEncode (number) {
 }
 
 function toHexDigit (number) {
-  var digits = '0123456789abcdef'
+  const digits = '0123456789abcdef'
   return digits.charAt(number >> 4) + digits.charAt(number & 0x0f)
 }
 

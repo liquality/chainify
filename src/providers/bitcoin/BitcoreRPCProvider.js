@@ -36,8 +36,8 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
       throw new Error('Not a valid address:', address)
     }
   }
-  /* These methods need to be removed, but are required for now - END */
 
+  /* These methods need to be removed, but are required for now - END */
   async isAddressUsed (address) {
     address = String(address)
     const data = await this.getAddressBalance(address)
@@ -81,9 +81,9 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
     return addresses
   }
 
-  async getAddressTransactions (address, start, end) {
-    return this.jsonrpc('getaddresstxids', { 'addresses': [address], start, end })
-  }
+  // async getAddressTransactions (address, start, end) {
+  //   return this.jsonrpc('getaddresstxids', { 'addresses': [address], start, end })
+  // }
 
   async getAddressDeltas (addresses) {
     return this.jsonrpc('getaddressdeltas', { 'addresses': addresses })

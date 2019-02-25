@@ -51,10 +51,10 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    const currentBlock = await this.getBlockHeight()
+    const currentHeight = await this.getBlockHeight()
     const block = await this.jsonrpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
     if (block) {
-      block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentBlock))
+      block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentHeight))
     }
     return block
   }

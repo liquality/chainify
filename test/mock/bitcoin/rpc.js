@@ -16,7 +16,7 @@ module.exports = {
       params: ['191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254'],
       result: {
         'hash': '191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254',
-        'confirmations': 3,
+        'confirmations': 13,
         'size': 371,
         'height': 102,
         'version': 536870912,
@@ -37,6 +37,10 @@ module.exports = {
     }
   ],
   'getrawtransaction': [
+    {
+      params: ['cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4', 0],
+      result: '01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000'
+    },
     {
       params: ['cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4', 1],
       result: {
@@ -69,7 +73,7 @@ module.exports = {
         ],
         'blockhash': '191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254',
         'height': 102,
-        'confirmations': 3,
+        'confirmations': 13,
         'time': 1544536091,
         'blocktime': 1544536091
       }
@@ -130,7 +134,7 @@ module.exports = {
         ],
         'blockhash': '191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254',
         'height': 102,
-        'confirmations': 3,
+        'confirmations': 13,
         'time': 1544536091,
         'blocktime': 1544536091
       }
@@ -179,6 +183,57 @@ module.exports = {
     {
       params: ['mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi', 0.00001],
       result: '7a16d66f0e5abe24f6f9680da0e9dabf877577209180b9fb43c55d001ddf208b'
+    }
+  ],
+  'getreceivedbyaddress': [
+    {
+      params: ['n187i8H1sA5RcFPESf2sgzufirnKcxBfhg'],
+      result: 0
+    },
+    {
+      params: ['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'],
+      result: 0.6
+    },
+    {
+      params: ['n3UEcXH2m85Ph47nPE3pmCkA2yZ8kVm8PJ'],
+      result: 0
+    }
+  ],
+  'listunspent': [
+    {
+      params: [ 0, 9999999, [ 'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc' ] ],
+      result: [
+        {
+          txid: '467dec8ca158d0939e27e49e86dddf996020e707e1c68a68e6990a6770833474',
+          vout: 0,
+          address: 'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc',
+          scriptPubKey: '76a9146054827fc57f5656f5401f172c55d4f981b643ed88ac',
+          amount: 0.1,
+          confirmations: 10,
+          spendable: true
+        },
+        {
+          txid: 'b62aecea21d3e1c0c65b1dc46dd97bcbb3977b65589f19bff1748c10b6af717c',
+          vout: 0,
+          address: 'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc',
+          scriptPubKey: '76a9146054827fc57f5656f5401f172c55d4f981b643ed88ac',
+          amount: 0.1,
+          confirmations: 10,
+          spendable: true
+        }
+      ]
+    }
+  ],
+  'getnewaddress': [
+    {
+      params: [],
+      result: 'n3UEcXH2m85Ph47nPE3pmCkA2yZ8kVm8PJ'
+    }
+  ],
+  'getblockcount': [
+    {
+      params: [],
+      result: 114
     }
   ]
 }

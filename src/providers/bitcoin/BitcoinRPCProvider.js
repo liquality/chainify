@@ -144,19 +144,19 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     }
   }
 
-  async getAddressTransactions (address, start, end) {
-    const transactionIds = []
-    for (const blockNumber of _.range(start, end + 1)) {
-      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      const matchingTransactions = block.transactions.filter(tx =>
-        tx._raw.vout.find(v => v.scriptPubKey.addresses.includes(address) ||
-        tx._raw.vin.find(v => v.address === address)))
-      if (matchingTransactions) {
-        transactionIds.push(...matchingTransactions.map(tx => tx.hash))
-      }
-    }
-    return transactionIds
-  }
+  // async getAddressTransactions (address, start, end) {
+  //   const transactionIds = []
+  //   for (const blockNumber of _.range(start, end + 1)) {
+  //     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+  //     const matchingTransactions = block.transactions.filter(tx =>
+  //       tx._raw.vout.find(v => v.scriptPubKey.addresses.includes(address) ||
+  //       tx._raw.vin.find(v => v.address === address)))
+  //     if (matchingTransactions) {
+  //       transactionIds.push(...matchingTransactions.map(tx => tx.hash))
+  //     }
+  //   }
+  //   return transactionIds
+  // }
 
   async getTransactionByHash (transactionHash) {
     const tx = await this.getRawTransactionByHash(transactionHash, true)
