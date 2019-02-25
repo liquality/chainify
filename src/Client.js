@@ -574,4 +574,16 @@ export default class Client {
   async refundCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecret, loanExpiration, biddingExpiration, seizureExpiration) {
     return this.getMethod('refundCollateral')(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecret, loanExpiration, biddingExpiration, seizureExpiration)
   }
+
+  async seizeCollateral (seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecret, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('seizeCollateral')(seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecret, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async refundRefundableCollateral (refundableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('refundRefundableCollateral')(refundableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async refundSeizableCollateral (seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('refundSeizableCollateral')(seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+  }
 }
