@@ -1,7 +1,7 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
-const { Client, providers, networks } = require('../../../')
-const { BitcoinLedgerProvider, BitcoreRPCProvider } = providers.bitcoin
+const { Client, providers } = require('../../../')
+const { BitcoinLedgerProvider, BitcoreRPCProvider, networks } = providers.bitcoin
 
 const bitcoin = new Client()
 bitcoin.addProvider(new BitcoreRPCProvider('http://localhost:18332', 'bitcoin', 'local321'))

@@ -2,106 +2,43 @@ import LedgerProvider from '../LedgerProvider'
 import Bitcoin from '@ledgerhq/hw-app-btc'
 
 import { BigNumber } from 'bignumber.js'
-import { base58, padHexStart, sha256, ripemd160 } from '../../crypto'
-import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, createXPUB, encodeBase58Check, parseHexString } from './BitcoinUtil'
-import Address from '../../Address'
-import networks from '../../networks'
+import { base58, padHexStart } from '../../crypto'
+import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, getAddressNetwork } from './BitcoinUtil'
+import networks from './networks'
 import bip32 from 'bip32'
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
-    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`)
+    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`, chain.network, 'BTC')
     this._derivationPath = `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`
     this._network = chain.network
     this._bjsnetwork = chain.network.name.replace('bitcoin_', '') // for bitcoin js
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
-    this._extendedPubKeyCache = {}
+    this._walletPublicKeyCache = {}
   }
 
-  async getPubKey (from) {
+  async _getWalletPublicKey (path) {
     const app = await this.getApp()
-    const derivationPath = from.derivationPath ||
-    await this.getDerivationPathFromAddress(from)
-    return app.getWalletPublicKey(derivationPath)
+    return app.getWalletPublicKey(path, undefined, this._segwit)
   }
 
-  async _getAddressExtendedPubKey (path) {
-    const app = await this.getApp()
-    var parts = path.split('/')
-    var prevPath = parts[0] + '/' + parts[1]
-    var account = parseInt(parts[2])
-    var segwit = this._segwit
-    var network = this._network.bip32.public
-    const finalize = async fingerprint => {
-      // var path = prevPath + '/' + account
-      let nodeData = await app.getWalletPublicKey(path, undefined, segwit)
-      var publicKey = compressPubKey(nodeData.publicKey)
-      var childnum = (0x80000000 | account) >>> 0
-      var xpub = createXPUB(
-        3,
-        fingerprint,
-        childnum,
-        nodeData.chainCode,
-        publicKey,
-        network
-      )
-      return encodeBase58Check(xpub)
+  async getWalletPublicKey (path) {
+    if (path in this._walletPublicKeyCache) {
+      return this._walletPublicKeyCache[path]
     }
 
-    let nodeData = await app.getWalletPublicKey(prevPath, undefined, segwit)
-    var publicKey = compressPubKey(nodeData.publicKey)
-    publicKey = parseHexString(publicKey)
-    var result = sha256(Buffer.from(publicKey, 'hex'))
-    result = ripemd160(result)
-    var fingerprint =
-      ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]) >>>
-      0
-    return finalize(fingerprint)
-  }
-
-  async getAddressExtendedPubKey (path) {
-    if (path in this._extendedPubKeyCache) {
-      return this._extendedPubKeyCache[path]
-    }
-
-    const extendedPubKey = this._getAddressExtendedPubKey(path)
-    this._extendedPubKeyCache[path] = extendedPubKey
-    return extendedPubKey
-  }
-
-  async getAddressFromDerivationPath (path) {
-    const app = await this.getApp()
-    const { bitcoinAddress } = await app.getWalletPublicKey(path, false, this._segwit)
-    return new Address(bitcoinAddress, path)
+    const walletPublicKey = await this._getWalletPublicKey(path)
+    this._walletPublicKeyCache[path] = walletPublicKey
+    return walletPublicKey
   }
 
   async signMessage (message, from) {
     const app = await this.getApp()
-    const derivationPath = from.derivationPath ||
-    await this.getDerivationPathFromAddress(from)
-
+    const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signMessageNew(derivationPath, hex)
+    return app.signMessageNew(address.derivationPath, hex)
   }
-
-  // async getUnusedAddress (from = {}) {
-  //   let addressIndex = from.index || 0
-  //   let unusedAddress = false
-  //
-  //   while (!unusedAddress) {
-  //     const address = await this.getAddressFromIndex(addressIndex)
-  //     const isUsed = await this.getMethod('isAddressUsed')(address.address)
-  //
-  //     if (!isUsed) {
-  //       unusedAddress = address
-  //     }
-  //
-  //     addressIndex++
-  //   }
-  //
-  //   return unusedAddress
-  // }
 
   getAmountBuffer (amount) {
     let hexAmount = BigNumber(Math.round(amount)).toString(16)
@@ -155,63 +92,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   calculateFee (numInputs, numOutputs, feePerByte) { // TODO: lazy fee estimation
     return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
   }
-
-  /*
-  async getUtxosForAmount (amount, numAddressPerCall = 10) {
-    console.log('getUtxosForAmount', amount, numAddressPerCall)
-    const utxosToUse = []
-    let addressIndex = 0
-    let currentAmount = 0
-    let numOutputsOffset = 0
-
-    const feePerByte = await this.getMethod('getFeePerByte')(this._numberOfBlockConfirmation)
-
-    while (currentAmount < amount) {
-      console.log('getUtxosForAmount', currentAmount, amount)
-
-      //const addresses = await this.getAddresses(addressIndex, numAddressPerCall)
-      const addresses = await this.getAddressExtendedPubKeys(addressIndex)
-      var bjs = require('bitcoinjs-lib')
-      var node = bjs.HDNode.fromBase58(xpubkeys[0], bjs.networks.mainnet);
-      for ( var i = 0; i < 200; i++ ) {
-        console.log('addy', node.derivePath('0/' + i).getAddress());
-        console.log('change', node.derivePath('1/' + i).getAddress());
-      }
-
-      const addressList = addresses.map(addr => addr.address)
-      //console.log('getUtxosForAmount', addresses, addressList)
-
-      const utxos = await this.getMethod('getAddressUtxos')(addressList)
-      console.log('Address UTXOs', utxos, addressList)
-
-      utxos.forEach((utxo) => {
-        if (currentAmount < amount) {
-          const utxoVal = utxo.satoshis
-          if (utxoVal > 0) {
-            currentAmount += utxoVal
-            addresses.forEach((address) => {
-              if (address.address === utxo.address) {
-                utxo.derivationPath = address.derivationPath
-              }
-            })
-            utxosToUse.push(utxo)
-
-            const fees = this.calculateFee(utxosToUse.length, numOutputsOffset + 1)
-            let totalCost = amount + fees
-
-            if (numOutputsOffset === 0 && currentAmount > totalCost) {
-              numOutputsOffset = 1
-              totalCost -= fees
-              totalCost += this.calculateFee(utxosToUse.length, 2, feePerByte)
-            }
-          }
-        }
-      })
-      addressIndex += numAddressPerCall
-    }
-    return utxosToUse
-  }
-  */
 
   async getUtxosForAmount (amount, numAddressPerCall = 100) {
     const addressGap = 20
@@ -307,39 +187,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return utxosToUse
   }
 
-  // async getUtxosForAmount (amount, feePerByte) {
-  //   const utxosToUse = []
-  //   let addressIndex = 0
-  //   let currentAmount = 0
-  //   let totalCost = amount
-  //   let fees = 0
-  //
-  //   while ((currentAmount < totalCost)) {
-  //     const address = await this.getAddressFromIndex(addressIndex)
-  //
-  //     if (addressIndex >= 20) { // Skip checking whether address is unused for first 20
-  //       const isAddressUsed = await this.getMethod('isAddressUsed')(address.address)
-  //       if (!isAddressUsed) break
-  //     }
-  //     const utxos = await this.getMethod('getUnspentTransactions')(address.address)
-  //     for (const utxo of utxos) {
-  //       const utxoVal = utxo.satoshis
-  //       if (utxoVal > 0) {
-  //         currentAmount += utxoVal
-  //         utxo.derivationPath = address.derivationPath
-  //         utxosToUse.push(utxo)
-  //         fees = this.calculateFee(utxosToUse.length, 2, feePerByte)
-  //         totalCost = amount + fees
-  //         if (currentAmount > totalCost) break
-  //       }
-  //     }
-  //
-  //     addressIndex++
-  //   }
-  //
-  //   return utxosToUse
-  // }
-
   async getLedgerInputs (unspentOutputs) {
     const app = await this.getApp()
 
@@ -432,16 +279,25 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async getLedgerAddresses (startingIndex, numAddresses, change = false) {
+    const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
+    const compressedPubKey = compressPubKey(walletPubKey.publicKey)
+    const node = bip32.fromPublicKey(
+      Buffer.from(compressedPubKey, 'hex'),
+      Buffer.from(walletPubKey.chainCode, 'hex'),
+      this._network
+    )
+
     const addresses = []
     const lastIndex = startingIndex + numAddresses
     const changeVal = change ? '1' : '0'
-    const xpubkeys = await this.getAddressExtendedPubKeys(this._baseDerivationPath)
-    const node = bip32.fromBase58(xpubkeys[0], this._network)
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = pubKeyToAddress(node.derivePath(changeVal + '/' + currentIndex).__Q, this._network.name, 'pubKeyHash')
-      const path = this._baseDerivationPath + changeVal + '/' + currentIndex
+      const subPath = changeVal + '/' + currentIndex
+      const publicKey = node.derivePath(subPath).publicKey
+      const address = pubKeyToAddress(publicKey, this._network.name, 'pubKeyHash')
+      const path = this._baseDerivationPath + subPath
       addresses.push({
         address,
+        publicKey: publicKey.toString('hex'),
         derivationPath: path,
         index: currentIndex
       })
@@ -530,5 +386,11 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
     return this.getLedgerAddresses(startingIndex, numAddresses, change)
+  }
+
+  async getConnectedNetwork () {
+    const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
+    const network = getAddressNetwork(walletPubKey.bitcoinAddress)
+    return network
   }
 }

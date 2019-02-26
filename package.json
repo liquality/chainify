@@ -1,6 +1,6 @@
 {
   "name": "@liquality/chainabstractionlayer",
-  "version": "0.1.20",
+  "version": "0.1.21-next.10",
   "keywords": [
     "blockchain",
     "bitcoin",
@@ -34,7 +34,8 @@
   "scripts": {
     "cover": "nyc --reporter=html --reporter=text npm test",
     "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",
-    "test": "cross-env NODE_ENV=test mocha $npm_package_options_mocha",
+    "test": "cross-env NODE_ENV=test mocha test/unit $npm_package_options_mocha",
+    "test:swap": "cross-env NODE_ENV=test mocha test/integration/swap $npm_package_options_mocha",
     "build:dev:node": "webpack --config ./webpack/webpack.node.config.js",
     "build:dev:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "build:dev": "webpack --config ./webpack/webpack.config.js",
@@ -47,21 +48,20 @@
     "build:docs": "esdoc",
     "prepare:docs": "run-s build build:docs copy:*",
     "push:docs": "gh-pages -d docs/ -m \"Auto-generated commit for documentation\"",
-    "publish:docs": "run-s prepare:docs push:docs",
-    "install": "([ ! -d dist ] && [ ! -f .already_installed ] && touch .already_installed && npm install . && npm run build) || true"
+    "publish:docs": "run-s prepare:docs push:docs"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.56",
-    "@ledgerhq/hw-app-btc": "^4.20.0",
-    "@ledgerhq/hw-app-eth": "^4.19.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.23.0",
-    "@ledgerhq/hw-transport-u2f": "^4.21.0",
+    "@ledgerhq/hw-app-btc": "^4.35.0",
+    "@ledgerhq/hw-app-eth": "^4.36.0",
+    "@ledgerhq/hw-transport-node-hid": "^4.35.0",
+    "@ledgerhq/hw-transport-u2f": "^4.35.0",
     "ajv": "^6.5.2",
     "axios": "^0.18.0",
     "bech32": "^1.1.3",
     "bip32": "^1.0.2",
     "bip65": "^1.0.3",
-    "bitcoinjs-lib": "https://github.com/mattBlackDesign/bitcoinjs-lib",
+    "bitcoinjs-lib": "https://github.com/h4v0kr/bitcoinjs-lib",
     "bs58": "^4.0.1",
     "buffer-to-uint8array": "^1.1.0",
     "crypto-hashing": "^1.0.0",
@@ -92,6 +92,7 @@
     "lodash-webpack-plugin": "^0.11.5",
     "mocha": "^5.2.0",
     "nock": "^10.0.2",
+    "node-metamask": "^1.1.1",
     "npm-run-all": "^4.1.3",
     "nyc": "^13.1.0",
     "pre-commit": "^1.2.2",
@@ -129,5 +130,8 @@
       "dist/**",
       "docs/**"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

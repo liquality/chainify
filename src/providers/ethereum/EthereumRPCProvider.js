@@ -11,7 +11,8 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getAddresses () {
-    return this.jsonrpc('eth_accounts')
+    const addresses = await this.jsonrpc('eth_accounts')
+    return addresses.map(address => ({ address }))
   }
 
   async generateBlock (numberOfBlocks) {
@@ -31,7 +32,8 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
 
     if (from == null) {
       const addresses = await this.getAddresses()
-      from = ensureHexEthFormat(('address' in addresses) ? addresses[0].address : addresses[0])
+      const address = addresses[0].address
+      from = ensureHexEthFormat(address)
     }
     value = BigNumber(value).toString(16)
 

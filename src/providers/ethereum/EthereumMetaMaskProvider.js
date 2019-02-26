@@ -1,18 +1,24 @@
-import Provider from '../../Provider'
-
-import { isFunction } from 'lodash'
-import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
+import _ from 'lodash'
 import { BigNumber } from 'bignumber.js'
+import WalletProvider from '../WalletProvider'
+import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
+import { WalletError } from '../../errors'
+import networks from './networks'
 
-export default class EthereumMetaMaskProvider extends Provider {
-  constructor (metamaskProvider, networkId) {
-    super()
-    if (!isFunction(metamaskProvider.sendAsync)) {
+export default class EthereumMetaMaskProvider extends WalletProvider {
+  constructor (metamaskProvider, network) {
+    super(network)
+    if (!_.isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
 
     this._metamaskProvider = metamaskProvider
-    this._networkId = parseInt(networkId)
+    this._network = network
+  }
+
+  async isWalletAvailable () {
+    const addresses = await this._toMM('eth_accounts')
+    return addresses.length > 0
   }
 
   _toMM (method, ...params) {
@@ -20,18 +26,19 @@ export default class EthereumMetaMaskProvider extends Provider {
       this
         ._metamaskProvider
         .sendAsync({ method, params }, (err, data) => {
-          if (err) {
-            reject(err)
+          const error = err || data.error
+          if (error) {
+            reject(new WalletError(error.toString(), error))
             return
           }
 
           if (!data) {
-            reject(new Error('Something went wrong'))
+            reject(new WalletError('Metamask response was empty'))
             return
           }
 
           if (typeof data.result === 'undefined') {
-            reject(new Error('Something went wrong'))
+            reject(new WalletError('Metamask response was empty'))
             return
           }
 
@@ -44,7 +51,9 @@ export default class EthereumMetaMaskProvider extends Provider {
 
   async getAddresses () {
     const addresses = await this._toMM('eth_accounts')
-
+    if (addresses.length === 0) {
+      throw new WalletError('Metamask: No addresses available from wallet')
+    }
     return addresses.map((address) => { return { address: address } })
   }
 
@@ -75,9 +84,8 @@ export default class EthereumMetaMaskProvider extends Provider {
 
   async sendTransaction (to, value, data, from = null) {
     const networkId = await this.getWalletNetworkId()
-
-    if (this._networkId) {
-      if (networkId !== this._networkId) {
+    if (this._network) {
+      if (networkId !== this._network.networkId) {
         throw new Error('Invalid MetaMask Network')
       }
     }
@@ -108,5 +116,14 @@ export default class EthereumMetaMaskProvider extends Provider {
     const networkId = await this._toMM('net_version')
 
     return parseInt(networkId)
+  }
+
+  async getConnectedNetwork () {
+    const networkId = await this.getWalletNetworkId()
+    const network = _.findKey(networks, network => network.networkId === networkId)
+    if (networkId && !network) {
+      return { name: 'unknown', networkId }
+    }
+    return networks[network]
   }
 }

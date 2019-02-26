@@ -21,7 +21,7 @@
       "minimum": 0
     },
     "difficulty": {
-      "type": "string",
+      "type": "number",
       "title": "Difficulty",
       "minLength": 1
     },

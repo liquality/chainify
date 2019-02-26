@@ -1,13 +1,14 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
-const { Client, providers, networks, crypto } = require('../../../dist/index.cjs.js')
+const { Client, providers, crypto } = require('../../../dist/index.cjs.js')
+const networks = providers.bitcoin.networks
 const chains = {}
 
 chains.bitcoin = new Client()
-chains.bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('https://btc-testnet.leep.it/', 'bitcoin', 'local321'))
-chains.bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
-chains.bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
-// chains.bitcoin.addProvider(new providers.bitcoin.BitcoinJsLibSwapProvider({ network: networks.bitcoin }))
+chains.bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('http://localhost:18332', 'bitcoin', 'local321'))
+// chains.bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
+// chains.bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
+chains.bitcoin.addProvider(new providers.bitcoin.BitcoinJsLibSwapProvider({ network: networks.bitcoin_testnet }))
 async function doSwap () {
   chains.bitcoin.generateSecret('test').then(secret => {
     chains.bitcoin.getUnusedAddress().then(address => {

@@ -1,5 +1,6 @@
 var ChainAbstractionLayer = require('../../../dist/index.cjs.js')
-const { Client, providers, networks, crypto } = ChainAbstractionLayer
+const { Client, providers, crypto } = ChainAbstractionLayer
+const networks = providers.bitcoin.networks
 
 var chains = {}
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0

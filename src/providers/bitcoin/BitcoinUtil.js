@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 import {
   ensureBuffer,
   hash160,
@@ -5,11 +7,7 @@ import {
   base58
 } from '../../crypto'
 
-import bitcoin from 'bitcoinjs-lib'
-import bs58 from 'bs58'
-
-import padStart from 'lodash/padStart'
-import networks from '../../networks'
+import networks from './networks'
 
 /**
  * Get compressed pubKey from pubKey.
@@ -103,24 +101,6 @@ function scriptNumEncode (number) {
   return buffer
 }
 
-function parseHexString (str) {
-  var result = []
-  while (str.length >= 2) {
-    result.push(parseInt(str.substring(0, 2), 16))
-    str = str.substring(2, str.length)
-  }
-  return result
-}
-
-function encodeBase58Check (vchIn) {
-  vchIn = parseHexString(vchIn.toString())
-  var chksum = bitcoin.crypto.sha256(Buffer.from(vchIn, 'hex'))
-  chksum = bitcoin.crypto.sha256(chksum)
-  chksum = chksum.slice(0, 4)
-  var hash = vchIn.concat(Array.from(chksum))
-  return bs58.encode(hash)
-}
-
 function toHexDigit (number) {
   var digits = '0123456789abcdef'
   return digits.charAt(number >> 4) + digits.charAt(number & 0x0f)
@@ -134,26 +114,25 @@ function toHexInt (number) {
     toHexDigit(number & 0xff)
   )
 }
-
-function createXPUB (depth, fingerprint, childnum, chaincode, publicKey, network) {
-  var xpub = toHexInt(network)
-  xpub = xpub + padStart(depth.toString(16), 2, '0')
-  xpub = xpub + padStart(fingerprint.toString(16), 8, '0')
-  xpub = xpub + padStart(childnum.toString(16), 8, '0')
-  xpub = xpub + chaincode
-  xpub = xpub + publicKey
-  return xpub
+/**
+ * Get a network object from an address
+ * @param {string} address The bitcoin address
+ * @return {Network}
+ */
+function getAddressNetwork (address) {
+  const prefix = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
+  const networkKey = _.findKey(networks,
+    network => [network.pubKeyHash, network.scriptHash].includes(prefix))
+  return networks[networkKey]
 }
 
 export {
-  encodeBase58Check,
-  createXPUB,
-  parseHexString,
   toHexInt,
   compressPubKey,
   pubKeyToAddress,
   pubKeyHashToAddress,
   addressToPubKeyHash,
   reverseBuffer,
-  scriptNumEncode
+  scriptNumEncode,
+  getAddressNetwork
 }
