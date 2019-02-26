@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
@@ -5,6 +6,8 @@ import { Client, Provider, providers, crypto } from '../../../src'
 import config from './config'
 
 chai.use(chaiAsPromised)
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 
@@ -102,8 +105,40 @@ async function refund (chain, initiationTxId, secretHash, swapParams) {
 async function expectBalance (chain, address, func, comparison) {
   const balanceBefore = await chain.client.getBalance([address])
   await func()
+  await sleep(5000) // Await block time
   const balanceAfter = await chain.client.getBalance([address])
   comparison(balanceBefore, balanceAfter)
 }
 
-export { chains, metaMaskConnector, initiateAndVerify, claimAndVerify, refund, getSwapParams, expectBalance }
+function mineBitcoinBlocks () {
+  if (config.bitcoin.mineBlocks) {
+    let interval
+    before(async () => {
+      interval = setInterval(() => {
+        chains.bitcoinWithNode.client.generateBlock(1)
+      }, 1000)
+    })
+    after(() => clearInterval(interval))
+  }
+}
+
+function connectMetaMask () {
+  before(async () => {
+    console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
+    await metaMaskConnector.start()
+  })
+  after(async () => metaMaskConnector.stop())
+}
+
+export {
+  chains,
+  metaMaskConnector,
+  initiateAndVerify,
+  claimAndVerify,
+  refund,
+  getSwapParams,
+  expectBalance,
+  sleep,
+  mineBitcoinBlocks,
+  connectMetaMask
+}

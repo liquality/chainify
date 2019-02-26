@@ -2,7 +2,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { crypto } from '../../../src'
-import { chains, metaMaskConnector, initiateAndVerify, claimAndVerify, getSwapParams } from './common'
+import { chains, initiateAndVerify, claimAndVerify, getSwapParams, mineBitcoinBlocks, connectMetaMask } from './common'
 import config from './config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -29,22 +29,8 @@ describe('Swap Chain to Chain', function () {
   this.timeout(config.timeout)
 
   describe('Ledger to MetaMask', function () {
-    let interval
-
-    before(async () => {
-      console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
-      await metaMaskConnector.start()
-      if (config.bitcoin.mineBlocks) {
-        interval = setInterval(() => {
-          chains.bitcoinWithNode.client.generateBlock(1)
-        }, 1000)
-      }
-    })
-
-    after(async () => {
-      await metaMaskConnector.stop()
-      if (config.bitcoin.mineBlocks) clearInterval(interval)
-    })
+    mineBitcoinBlocks()
+    connectMetaMask()
 
     it('BTC (Ledger) - ETH (MetaMask)', async () => {
       await testSwap(chains.bitcoinWithLedger, chains.ethereumWithMetaMask)
@@ -56,19 +42,7 @@ describe('Swap Chain to Chain', function () {
   })
 
   describe('Node to Node', function () {
-    if (config.bitcoin.mineBlocks) {
-      let interval
-
-      before(async () => {
-        interval = setInterval(() => {
-          chains.bitcoinWithNode.client.generateBlock(1)
-        }, 1000)
-      })
-
-      after(async () => {
-        clearInterval(interval)
-      })
-    }
+    mineBitcoinBlocks()
 
     it('BTC (Node) - ETH (Node)', async () => {
       await testSwap(chains.bitcoinWithNode, chains.ethereumWithNode)
