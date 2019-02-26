@@ -192,21 +192,22 @@ export default class BitcoinCollateralProvider extends Provider {
   }
 
   async _refundCollateral (initiationTxHash, script, borrowerPubKey, lenderPubKey, borrowerSecretParam, lenderSecretParam, loanExpiration, biddingExpiration, seizureExpiration, seizable, period) {
-    var borrowerSecretHash = borrowerSecretParam
-    var lenderSecretHash = lenderSecretParam
-    var secret
-    var requiresSecret = false
+    let secret, lockTime
+
+    let borrowerSecretHash = borrowerSecretParam
+    let lenderSecretHash = lenderSecretParam
+    
+    let requiresSecret = false
     if (period === 'loanPeriod') {
       lenderSecretHash = sha256(lenderSecretParam)
       secret = lenderSecretParam
       requiresSecret = true
     } else if (period === 'seizurePeriod' && seizable === true) {
-      borrowerSecretHash = sha256(borrowerSecretParam)
+      borrowerSecretHash = sha256(borrowerSecretParam)x
       secret = borrowerSecretParam
       requiresSecret = true
     }
 
-    var lockTime
     if (period === 'loanPeriod') {
       lockTime = 0
     } else if (period === 'biddingPeriod') {
@@ -218,12 +219,8 @@ export default class BitcoinCollateralProvider extends Provider {
     }
     const lockTimeHex = padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
 
-    var to
-    if (period === 'seizurePeriod' && requiresSecret) {
-      to = pubKeyToAddress(lenderPubKey, this._network.name, 'pubKeyHash')
-    } else {
-      to = pubKeyToAddress(borrowerPubKey, this._network.name, 'pubKeyHash')
-    }
+    const pubKey = (period === 'seizurePeriod' && requiresSecret) ? lenderPubKey : borrowerPubKey
+    const to = pubKeyToAddress(pubKey, this._network.name, 'pubKeyHash')
 
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
@@ -248,13 +245,6 @@ export default class BitcoinCollateralProvider extends Provider {
       outputScript,
       lockTime
     )
-
-    var pubKey
-    if (period === 'seizurePeriod' && requiresSecret) {
-      pubKey = lenderPubKey
-    } else {
-      pubKey = borrowerPubKey
-    }
 
     const spendCollateral = this._spendCollateral(signature[0], pubKey, secret, requiresSecret, period)
     const spendCollateralInput = this._spendCollateralInput(spendCollateral, script)
@@ -313,7 +303,6 @@ export default class BitcoinCollateralProvider extends Provider {
     const spendCollateralInput = this._spendCollateralInput(spendCollateral, script)
     const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendCollateralInput)
     const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex)
-    debugger
 
     return this.getMethod('sendRawTransaction')(rawClaimTx)
   }
@@ -326,15 +315,13 @@ export default class BitcoinCollateralProvider extends Provider {
     const lenderSignatureEncoded = lenderSignature + '01'
     const lenderSignaturePushDataOpcode = padHexStart((lenderSignatureEncoded.length / 2).toString(16))
 
-    debugger
-
     const bytecode = [
-    '00',
-    borrowerSignaturePushDataOpcode,
-    borrowerSignatureEncoded,
-    lenderSignaturePushDataOpcode,
-    lenderSignatureEncoded,
-    ...ifBranch
+      '00',
+      borrowerSignaturePushDataOpcode,
+      borrowerSignatureEncoded,
+      lenderSignaturePushDataOpcode,
+      lenderSignatureEncoded,
+      ...ifBranch
     ]
 
     return bytecode.join('')
@@ -366,12 +353,12 @@ export default class BitcoinCollateralProvider extends Provider {
     const pubKeyPushDataOpcode = padHexStart((pubKey.length / 2).toString(16))
 
     const bytecode = [
-    signaturePushDataOpcode,
-    signatureEncoded,
-    pubKeyPushDataOpcode,
-    pubKey,
-    ...encodedSecret,
-    ...ifBranch
+      signaturePushDataOpcode,
+      signatureEncoded,
+      pubKeyPushDataOpcode,
+      pubKey,
+      ...encodedSecret,
+      ...ifBranch
     ]
 
     return bytecode.join('')
