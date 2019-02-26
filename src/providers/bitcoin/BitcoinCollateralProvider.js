@@ -169,6 +169,28 @@ export default class BitcoinCollateralProvider extends Provider {
     return this._refundCollateral(seizableTxHash, seizableScript, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration, true, 'refundPeriod')
   }
 
+  async multisigSignCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration, isBorrower, to) {
+    const refundableScript = this.createRefundableCollateralScript(borrowerPubKey, lenderPubKey, lenderSecretHash, loanExpiration, biddingExpiration)
+    const seizableScript = this.createSeizableCollateralScript(borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+
+    const from = isBorrower ? pubKeyToAddress(borrowerPubKey, this._network.name, 'pubKeyHash') : pubKeyToAddress(lenderPubKey, this._network.name, 'pubKeyHash')
+
+    const refundableSignature = await this._multisigSignCollateral(refundableTxHash, refundableScript, loanExpiration, to, from)
+    const seizableSignature = await this._multisigSignCollateral(seizableTxHash, seizableScript, loanExpiration, to, from)
+
+    return { refundableSignature, seizableSignature }
+  }
+
+  async multisigSendCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to) {
+    const refundableScript = this.createRefundableCollateralScript(borrowerPubKey, lenderPubKey, lenderSecretHash, loanExpiration, biddingExpiration)
+    const seizableScript = this.createSeizableCollateralScript(borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+
+    const refundableResult = await this._multisigSendCollateral(refundableTxHash, refundableScript, loanExpiration, borrowerSignatures.refundableSignature, lenderSignatures.refundableSignature, to)
+    const seizableResult = await this._multisigSendCollateral(seizableTxHash, seizableScript, loanExpiration, borrowerSignatures.seizableSignature, lenderSignatures.seizableSignature, to)
+
+    return { refundableResult, seizableResult }
+  }
+
   async _refundCollateral (initiationTxHash, script, borrowerPubKey, lenderPubKey, borrowerSecretParam, lenderSecretParam, loanExpiration, biddingExpiration, seizureExpiration, seizable, period) {
     var borrowerSecretHash = borrowerSecretParam
     var lenderSecretHash = lenderSecretParam
@@ -240,6 +262,82 @@ export default class BitcoinCollateralProvider extends Provider {
     const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex)
 
     return this.getMethod('sendRawTransaction')(rawClaimTx)
+  }
+
+  async _multisigSignCollateral (initiationTxHash, script, loanExpiration, to, from) {
+    const lockTime = loanExpiration + 100
+    const lockTimeHex = padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
+
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    const sendScript = this.getMethod('createScript')(p2shAddress)
+
+    const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
+    const initiationTx = await this.getMethod('splitTransaction')(initiationTxRaw, true)
+    const voutIndex = initiationTx.outputs.findIndex((output) => output.script.toString('hex') === sendScript)
+
+    const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
+    const newTxInput = this.generateSigTxInput(txHashLE, voutIndex, script)
+    const newTx = this.generateRawTx(initiationTx, voutIndex, to, newTxInput, lockTimeHex)
+    const splitNewTx = await this.getMethod('splitTransaction')(newTx, true)
+    const outputScriptObj = await this.getMethod('serializeTransactionOutputs')(splitNewTx)
+    const outputScript = outputScriptObj.toString('hex')
+
+    const addressPath = await this.getMethod('getDerivationPathFromAddress')(from)
+
+    const signature = await this.getMethod('signP2SHTransaction')(
+      [[initiationTx, 0, script, 0]],
+      [addressPath],
+      outputScript,
+      lockTime
+    )
+
+    return signature[0]
+  }
+
+  async _multisigSendCollateral (initiationTxHash, script, loanExpiration, borrowerSignature, lenderSignature, to) {
+    const lockTime = loanExpiration + 100
+    const lockTimeHex = padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
+
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    const sendScript = this.getMethod('createScript')(p2shAddress)
+
+    const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
+    const initiationTx = await this.getMethod('splitTransaction')(initiationTxRaw, true)
+    const voutIndex = initiationTx.outputs.findIndex((output) => output.script.toString('hex') === sendScript)
+
+    const txHashLE = Buffer.from(initiationTxHash, 'hex').reverse().toString('hex') // TX HASH IN LITTLE ENDIAN
+
+    const spendCollateral = this._spendMultisigCollateral(borrowerSignature, lenderSignature)
+    const spendCollateralInput = this._spendCollateralInput(spendCollateral, script)
+    const rawClaimTxInput = this.generateRawTxInput(txHashLE, spendCollateralInput)
+    const rawClaimTx = this.generateRawTx(initiationTx, voutIndex, to, rawClaimTxInput, lockTimeHex)
+    debugger
+
+    return this.getMethod('sendRawTransaction')(rawClaimTx)
+  }
+
+  _spendMultisigCollateral (borrowerSignature, lenderSignature) {
+    const ifBranch = ['51', '00']
+
+    const borrowerSignatureEncoded = borrowerSignature + '01'
+    const borrowerSignaturePushDataOpcode = padHexStart((borrowerSignatureEncoded.length / 2).toString(16))
+    const lenderSignatureEncoded = lenderSignature + '01'
+    const lenderSignaturePushDataOpcode = padHexStart((lenderSignatureEncoded.length / 2).toString(16))
+
+    debugger
+
+    const bytecode = [
+    '00',
+    borrowerSignaturePushDataOpcode,
+    borrowerSignatureEncoded,
+    lenderSignaturePushDataOpcode,
+    lenderSignatureEncoded,
+    ...ifBranch
+    ]
+
+    return bytecode.join('')
   }
 
   _spendCollateral (signature, pubKey, secret, requiresSecret, period) {

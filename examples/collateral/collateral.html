@@ -51,6 +51,18 @@
         <p>refund refundable hash: <textarea id="btcClaimRefundableCollateralResult"></textarea></p>
         <p><button id="btcRefundSeizableCollateral">Refund Seizable Collateral</button></p>
         <p>refund seizable hash: <textarea id="btcClaimSeizableCollateralResult"></textarea></p>
+        <p><button id="btcBorrowerSignMultisig">Borrower Sign Multisig</button></p>
+        <p>borrower multisig output address: <input type="text" id="btcBorrowerMultisigOutputAddress" /></p>
+        <p>borrower multisig refundable signature: <textarea id="btcBorrowerSignMultisigRefundableResult"></textarea></p>
+        <p>borrower multisig seizable signature: <textarea id="btcBorrowerSignMultisigSeizableResult"></textarea></p>
+        <p><button id="btcLenderSignMultisig">Lender Sign Multisig</button></p>
+        <p>lender multisig output address: <input type="text" id="btcLenderMultisigOutputAddress" /></p>
+        <p>lender multisig refundable signature: <textarea id="btcLenderSignMultisigRefundableResult"></textarea></p>
+        <p>lender multisig seizable signature: <textarea id="btcLenderSignMultisigSeizableResult"></textarea></p>
+        <p><button id="btcMultisigSendCollateral">Multisig Send Collateral</button></p>
+        <p>multisig output address: <input type="text" id="btcMultisigOutputAddress" /></p>
+        <p>multisig refundable hash: <textarea id="btcMultisigRefundableResult"></textarea></p>
+        <p>multisig seizable hash: <textarea id="btcMultisigSeizableResult"></textarea></p>
       </td>
     </tr>
   </table>
@@ -164,6 +176,58 @@
         $(`#${prefix}ClaimSeizableCollateralResult`).text(result)
       })
     }
+    function multisigSignCollateral (client, prefix, isBorrower) {
+      const refundableValue = parseInt($(`#${prefix}RefundableValue`).val())
+      const seizableValue = parseInt($(`#${prefix}SeizableValue`).val())
+      const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
+      const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
+      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
+      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
+      const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
+      const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
+      const refundableTxHash = $(`#${prefix}LockRefundableCollateralResult`).val()
+      const seizableTxHash = $(`#${prefix}LockSeizableCollateralResult`).val()
+      const to = isBorrower ? $(`#${prefix}BorrowerMultisigOutputAddress`).val() : $(`#${prefix}LenderMultisigOutputAddress`).val()
+
+      client.multisigSignCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration, isBorrower, to).then(result => {
+        if (isBorrower) {
+          $(`#${prefix}BorrowerSignMultisigRefundableResult`).text(result.refundableSignature)
+          $(`#${prefix}BorrowerSignMultisigSeizableResult`).text(result.seizableSignature)
+        } else {
+          $(`#${prefix}LenderSignMultisigRefundableResult`).text(result.refundableSignature)
+          $(`#${prefix}LenderSignMultisigSeizableResult`).text(result.seizableSignature)
+        }
+      })
+    }
+
+    function multisigSendCollateral (client, prefix) {
+      const refundableValue = parseInt($(`#${prefix}RefundableValue`).val())
+      const seizableValue = parseInt($(`#${prefix}SeizableValue`).val())
+      const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
+      const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
+      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
+      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
+      const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
+      const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
+      const refundableTxHash = $(`#${prefix}LockRefundableCollateralResult`).val()
+      const seizableTxHash = $(`#${prefix}LockSeizableCollateralResult`).val()
+      const to = $(`#${prefix}MultisigOutputAddress`).val()
+      const borrowerSignatures = {
+        refundableSignature: $(`#${prefix}BorrowerSignMultisigRefundableResult`).val(),
+        seizableSignature: $(`#${prefix}BorrowerSignMultisigSeizableResult`).val()
+      }
+      const lenderSignatures = {
+        refundableSignature: $(`#${prefix}LenderSignMultisigRefundableResult`).val(),
+        seizableSignature: $(`#${prefix}LenderSignMultisigSeizableResult`).val()
+      }
+
+      client.multisigSendCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to).then(result => {
+        $(`#${prefix}MultisigRefundableResult`).text(result.refundableResult)
+        $(`#${prefix}MultisigSeizableResult`).text(result.seizableResult)
+      })
+    }
 
     $('#btcGenerateSecret').click(generateSecret.bind(null, bitcoin, 'btc'))
     $('#btcLockCollateral').click(lockCollateral.bind(null, bitcoin, 'btc'))
@@ -171,6 +235,9 @@
     $('#btcSeizeCollateral').click(seizeCollateral.bind(null, bitcoin, 'btc'))
     $('#btcRefundRefundableCollateral').click(refundRefundableCollateral.bind(null, bitcoin, 'btc'))
     $('#btcRefundSeizableCollateral').click(refundSeizableCollateral.bind(null, bitcoin, 'btc'))
+    $('#btcBorrowerSignMultisig').click(multisigSignCollateral.bind(null, bitcoin, 'btc', true))
+    $('#btcLenderSignMultisig').click(multisigSignCollateral.bind(null, bitcoin, 'btc', false))
+    $('#btcMultisigSendCollateral').click(multisigSendCollateral.bind(null, bitcoin, 'btc'))
    </script>
 </body>
 
