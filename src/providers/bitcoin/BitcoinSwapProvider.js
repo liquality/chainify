@@ -24,20 +24,18 @@ export default class BitcoinSwapProvider extends Provider {
     const expirationHexEncoded = expirationHex.toString('hex')
 
     return [
+      '76', 'a9', // OP_DUP OP_HASH160
+      '72', // OP_2SWAP
       '63', // OP_IF
       'a8', // OP_SHA256
       '20', secretHash, // OP_PUSHDATA(20) {secretHash}
       '88', // OP_EQUALVERIFY
-      '76', // OP_DUP
-      'a9', // OP_HASH160
       '14', recipientPubKeyHash, // OP_PUSHDATA(20) {recipientPubKeyHash}
       '67', // OP_ELSE
       expirationPushDataOpcode, // OP_PUSHDATA({expirationHexLength})
       expirationHexEncoded, // {expirationHexEncoded}
       'b1', // OP_CHECKLOCKTIMEVERIFY
-      '75', // OP_DROP
-      '76', // OP_DUP
-      'a9', // OP_HASH160
+      '6d', // OP_2DROP
       '14', refundPubKeyHash, // OP_PUSHDATA(20) {refundPubKeyHash}
       '68', // OP_ENDIF
       '88', 'ac' // OP_EQUALVERIFY OP_CHECKSIG
@@ -62,7 +60,7 @@ export default class BitcoinSwapProvider extends Provider {
   async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secretParam, expiration, isClaim) {
     const feePerByte = await this.getMethod('getFeePerByte')()
     const secretHash = isClaim ? sha256(secretParam) : secretParam
-    const lockTime = isClaim ? 0 : expiration + 100
+    const lockTime = isClaim ? 0 : expiration
     const lockTimeHex = isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
     const to = isClaim ? recipientAddress : refundAddress
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
@@ -132,6 +130,14 @@ export default class BitcoinSwapProvider extends Provider {
     ]
 
     return bytecode.join('')
+  }
+
+  getRedeemSwapData (secret, pubKey, signature) {
+    return this._spendSwap(signature, pubKey, true, secret)
+  }
+
+  getRefundSwapData (pubKey, signature) {
+    return this._spendSwap(signature, pubKey, false)
   }
 
   doesTransactionMatchSwapParams (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
