@@ -62,7 +62,7 @@ export default class BitcoinSwapProvider extends Provider {
   async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secretParam, expiration, isClaim) {
     const feePerByte = await this.getMethod('getFeePerByte')()
     const secretHash = isClaim ? sha256(secretParam) : secretParam
-    const lockTime = isClaim ? 0 : expiration + 100
+    const lockTime = isClaim ? 0 : expiration
     const lockTimeHex = isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
     const to = isClaim ? recipientAddress : refundAddress
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
