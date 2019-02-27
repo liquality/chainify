@@ -1,7 +1,7 @@
 import Provider from '../../Provider'
 import { addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { hash160, sha256, padHexStart } from '../../crypto'
-import networks from '../../networks'
+import networks from './networks'
 
 export default class BitcoinCollateralProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
