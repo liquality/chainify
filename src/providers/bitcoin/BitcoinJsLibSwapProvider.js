@@ -26,6 +26,10 @@ export default class BitcoinJsLibSwapProvider extends Provider {
 
     return [
       '63', // OP_IF
+      '82', // OP_SIZE
+      '01', // OP_PUSHDATA(1)
+      '20', // Hex 32
+      '88', // OP_EQUALVERIFY
       'a8', // OP_SHA256
       '20', secretHash, // OP_PUSHDATA(20) {secretHash}
       '88', // OP_EQUALVERIFY
@@ -137,22 +141,27 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     return initiateSwapTransaction
   }
 
-  async findClaimSwapTransaction (initiationTxHash, secretHash) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
-    let claimSwapTransaction = null
-    while (!claimSwapTransaction) {
-      let block
-      try {
-        block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      } catch (e) { }
-      if (block) {
-        claimSwapTransaction = block.transactions.find(tx =>
-          tx._raw.vin.find(vin => vin.txid === initiationTxHash)
-        )
-        blockNumber++
-      }
+  async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, predicate) {
+    const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    let swapTransaction = null
+    while (!swapTransaction) {
+      let p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
+      const p2shMempoolTransactions = await this.getMethod('getAddressMempool')([p2shAddress])
+      p2shTransactions = p2shTransactions.concat(p2shMempoolTransactions)
+      const transactionIds = p2shTransactions.map(tx => tx.txid)
+      const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
+      swapTransaction = transactions.find(predicate)
       await sleep(5000)
     }
+    return swapTransaction
+  }
+
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+      tx => tx._raw.vin.find(vin => vin.txid === initiationTxHash)
+    )
 
     return {
       ...claimSwapTransaction,
@@ -161,11 +170,11 @@ export default class BitcoinJsLibSwapProvider extends Provider {
   }
 
   async getSwapSecret (claimTxHash) {
-    const claimTxRaw = await this.getMethod('getRawTransactionByHash')(claimTxHash)
-    const claimTx = await this.getMethod('decodeRawTransaction')(claimTxRaw)
-    const script = Buffer.from(claimTx._raw.data.vin[0].scriptSig.hex, 'hex')
+    const claimTx = await this.getMethod('getTransactionByHash')(claimTxHash)
+    const script = Buffer.from(claimTx._raw.vin[0].scriptSig.hex, 'hex')
     const sigLength = script[0]
-    const secretLength = script.slice(sigLength + 1)[0]
-    return script.slice(sigLength + 2, sigLength + secretLength + 2).toString('hex')
+    const pubKeyLen = script.slice(sigLength + 1)[0]
+    const secretLength = script.slice(sigLength + pubKeyLen + 2)[0]
+    return script.slice(sigLength + pubKeyLen + 3, sigLength + pubKeyLen + secretLength + 3).toString('hex')
   }
 }

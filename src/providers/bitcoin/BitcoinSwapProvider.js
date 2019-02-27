@@ -25,6 +25,10 @@ export default class BitcoinSwapProvider extends Provider {
 
     return [
       '63', // OP_IF
+      '82', // OP_SIZE
+      '01', // OP_PUSHDATA(1)
+      '20', // Hex 32
+      '88', // OP_EQUALVERIFY
       'a8', // OP_SHA256
       '20', secretHash, // OP_PUSHDATA(20) {secretHash}
       '88', // OP_EQUALVERIFY
@@ -187,8 +191,9 @@ export default class BitcoinSwapProvider extends Provider {
     const claimTx = await this.getMethod('getTransactionByHash')(claimTxHash)
     const script = Buffer.from(claimTx._raw.vin[0].scriptSig.hex, 'hex')
     const sigLength = script[0]
-    const secretLength = script.slice(sigLength + 1)[0]
-    return script.slice(sigLength + 2, sigLength + secretLength + 2).toString('hex')
+    const pubKeyLen = script.slice(sigLength + 1)[0]
+    const secretLength = script.slice(sigLength + pubKeyLen + 2)[0]
+    return script.slice(sigLength + pubKeyLen + 3, sigLength + pubKeyLen + secretLength + 3).toString('hex')
   }
 
   generateSigTxInput (txHashLE, voutIndex, script) {
