@@ -3,8 +3,6 @@ import { addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } 
 import { hash160, sha256, padHexStart } from '../../crypto'
 import networks from '../../networks'
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
 export default class BitcoinCollateralProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
     super()
@@ -18,7 +16,6 @@ export default class BitcoinCollateralProvider extends Provider {
     const borrowerPubKeyHash = hash160(borrowerPubKey)
     const borrowerPubKeyPushDataOpcode = padHexStart((borrowerPubKey.length / 2).toString(16))
 
-    const lenderPubKeyHash = hash160(lenderPubKey)
     const lenderPubKeyPushDataOpcode = padHexStart((lenderPubKey.length / 2).toString(16))
 
     const loanExpirationPushDataOpcode = padHexStart(loanExpirationHex.length.toString(16))
@@ -28,33 +25,33 @@ export default class BitcoinCollateralProvider extends Provider {
 
     return [
       '63', // OP_IF
-        'a8', // OP_SHA256
-        '20', lenderSecretHash, // OP_PUSHDATA(32) {lenderSecretHash}
-        '88', // OP_EQUALVERIFY
-        '76', 'a9', // OP_DUP OP_HASH160
-        '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
-        '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
+      'a8', // OP_SHA256
+      '20', lenderSecretHash, // OP_PUSHDATA(32) {lenderSecretHash}
+      '88', // OP_EQUALVERIFY
+      '76', 'a9', // OP_DUP OP_HASH160
+      '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
+      '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
       '67', // OP_ELSE
-        '63', // OP_IF
-          loanExpirationPushDataOpcode, // OP_PUSHDATA({loanExpirationHexLength})
-          loanExpirationHexEncoded, // {loanExpirationHexEncoded}
-          'b1', // OP_CHECKLOCKTIMEVERIFY
-          '75', // OP_DROP
-          '52', // PUSH #2
-          borrowerPubKeyPushDataOpcode, borrowerPubKey, // OP_PUSHDATA({alicePubKeyLength}) {alicePubKey}
-          lenderPubKeyPushDataOpcode, lenderPubKey, // OP_PUSHDATA({bobPubKeyLength}) {bobPubKey}
-          '52', // PUSH #2
-          'ae', // CHECKMULTISIG
-        '67', // OP_ELSE
-          biddingExpirationPushDataOpcode, // OP_PUSHDATA({biddingExpirationHexLength})
-          biddingExpirationHexEncoded, // {biddingExpirationHexEncoded}
-          'b1', // OP_CHECKLOCKTIMEVERIFY
-          '75', // OP_DROP
-          '76', 'a9', // OP_DUP OP_HASH160
-          '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
-          '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
-        '68', // OP_ENDIF
+      '63', // OP_IF
+      loanExpirationPushDataOpcode, // OP_PUSHDATA({loanExpirationHexLength})
+      loanExpirationHexEncoded, // {loanExpirationHexEncoded}
+      'b1', // OP_CHECKLOCKTIMEVERIFY
+      '75', // OP_DROP
+      '52', // PUSH #2
+      borrowerPubKeyPushDataOpcode, borrowerPubKey, // OP_PUSHDATA({alicePubKeyLength}) {alicePubKey}
+      lenderPubKeyPushDataOpcode, lenderPubKey, // OP_PUSHDATA({bobPubKeyLength}) {bobPubKey}
+      '52', // PUSH #2
+      'ae', // CHECKMULTISIG
+      '67', // OP_ELSE
+      biddingExpirationPushDataOpcode, // OP_PUSHDATA({biddingExpirationHexLength})
+      biddingExpirationHexEncoded, // {biddingExpirationHexEncoded}
+      'b1', // OP_CHECKLOCKTIMEVERIFY
+      '75', // OP_DROP
+      '76', 'a9', // OP_DUP OP_HASH160
+      '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
+      '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
       '68', // OP_ENDIF
+      '68' // OP_ENDIF
     ].join('')
   }
 
@@ -78,46 +75,46 @@ export default class BitcoinCollateralProvider extends Provider {
 
     return [
       '63', // OP_IF
-        'a8', // OP_SHA256
-        '20', lenderSecretHash, // OP_PUSHDATA(32) {lenderSecretHash}
-        '88', // OP_EQUALVERIFY
-        '76', 'a9', // OP_DUP OP_HASH160
-        '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
-        '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
+      'a8', // OP_SHA256
+      '20', lenderSecretHash, // OP_PUSHDATA(32) {lenderSecretHash}
+      '88', // OP_EQUALVERIFY
+      '76', 'a9', // OP_DUP OP_HASH160
+      '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
+      '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
       '67', // OP_ELSE
-        '63', // OP_IF
-          loanExpirationPushDataOpcode, // OP_PUSHDATA({loanExpirationHexLength})
-          loanExpirationHexEncoded, // {loanExpirationHexEncoded}
-          'b1', // OP_CHECKLOCKTIMEVERIFY
-          '75', // OP_DROP
-          '52', // PUSH #2
-          borrowerPubKeyPushDataOpcode, borrowerPubKey, // OP_PUSHDATA({alicePubKeyLength}) {alicePubKey}
-          lenderPubKeyPushDataOpcode, lenderPubKey, // OP_PUSHDATA({bobPubKeyLength}) {bobPubKey}
-          '52', // PUSH #2
-          'ae', // CHECKMULTISIG
-        '67', // OP_ELSE
-          '63', // OP_IF
-            biddingExpirationPushDataOpcode, // OP_PUSHDATA({expirationHexLength})
-            biddingExpirationHexEncoded, // {expirationHexEncoded}
-            'b1', // OP_CHECKLOCKTIMEVERIFY
-            '75', // OP_DROP
-            'a8', // OP_SHA256
-            '20', borrowerSecretHash, // OP_PUSHDATA(32) {borrowerSecretHash}
-            '88', // OP_EQUALVERIFY
-            '76', 'a9', // OP_DUP OP_HASH160
-            '14', lenderPubKeyHash, // OP_PUSHDATA(20) {lenderPubKeyHash}
-            '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
-          '67', // OP_ELSE
-            seizureExpirationPushDataOpcode, // OP_PUSHDATA({seizureExpirationHexLength})
-            seizureExpirationHexEncoded, // {seizureExpirationHexEncoded}
-            'b1', // OP_CHECKLOCKTIMEVERIFY
-            '75', // OP_DROP
-            '76', 'a9', // OP_DUP OP_HASH160
-            '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
-            '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
-          '68', // OP_ENDIF
-        '68', // OP_ENDIF
+      '63', // OP_IF
+      loanExpirationPushDataOpcode, // OP_PUSHDATA({loanExpirationHexLength})
+      loanExpirationHexEncoded, // {loanExpirationHexEncoded}
+      'b1', // OP_CHECKLOCKTIMEVERIFY
+      '75', // OP_DROP
+      '52', // PUSH #2
+      borrowerPubKeyPushDataOpcode, borrowerPubKey, // OP_PUSHDATA({alicePubKeyLength}) {alicePubKey}
+      lenderPubKeyPushDataOpcode, lenderPubKey, // OP_PUSHDATA({bobPubKeyLength}) {bobPubKey}
+      '52', // PUSH #2
+      'ae', // CHECKMULTISIG
+      '67', // OP_ELSE
+      '63', // OP_IF
+      biddingExpirationPushDataOpcode, // OP_PUSHDATA({expirationHexLength})
+      biddingExpirationHexEncoded, // {expirationHexEncoded}
+      'b1', // OP_CHECKLOCKTIMEVERIFY
+      '75', // OP_DROP
+      'a8', // OP_SHA256
+      '20', borrowerSecretHash, // OP_PUSHDATA(32) {borrowerSecretHash}
+      '88', // OP_EQUALVERIFY
+      '76', 'a9', // OP_DUP OP_HASH160
+      '14', lenderPubKeyHash, // OP_PUSHDATA(20) {lenderPubKeyHash}
+      '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
+      '67', // OP_ELSE
+      seizureExpirationPushDataOpcode, // OP_PUSHDATA({seizureExpirationHexLength})
+      seizureExpirationHexEncoded, // {seizureExpirationHexEncoded}
+      'b1', // OP_CHECKLOCKTIMEVERIFY
+      '75', // OP_DROP
+      '76', 'a9', // OP_DUP OP_HASH160
+      '14', borrowerPubKeyHash, // OP_PUSHDATA(20) {alicePubKeyHash}
+      '88', 'ac', // OP_EQUALVERIFY OP_CHECKSIG
       '68', // OP_ENDIF
+      '68', // OP_ENDIF
+      '68' // OP_ENDIF
     ].join('')
   }
 
@@ -193,17 +190,11 @@ export default class BitcoinCollateralProvider extends Provider {
 
   async _refundCollateral (initiationTxHash, script, borrowerPubKey, lenderPubKey, borrowerSecretParam, lenderSecretParam, loanExpiration, biddingExpiration, seizureExpiration, seizable, period) {
     let secret, lockTime
-
-    let borrowerSecretHash = borrowerSecretParam
-    let lenderSecretHash = lenderSecretParam
-    
     let requiresSecret = false
     if (period === 'loanPeriod') {
-      lenderSecretHash = sha256(lenderSecretParam)
       secret = lenderSecretParam
       requiresSecret = true
     } else if (period === 'seizurePeriod' && seizable === true) {
-      borrowerSecretHash = sha256(borrowerSecretParam)x
       secret = borrowerSecretParam
       requiresSecret = true
     }
@@ -380,13 +371,13 @@ export default class BitcoinCollateralProvider extends Provider {
     const scriptLength = Buffer.from(padHexStart((script.length / 2).toString(16)), 'hex').reverse().toString('hex')
 
     return [
-    '01', // NUM INPUTS
-    txHashLE,
-    inputTxOutput, // INPUT TRANSACTION OUTPUT
-    scriptLength.length > 2 ? 'fd' : '',
-    scriptLength,
-    script,
-    '00000000' // SEQUENCE
+      '01', // NUM INPUTS
+      txHashLE,
+      inputTxOutput, // INPUT TRANSACTION OUTPUT
+      scriptLength.length > 2 ? 'fd' : '',
+      scriptLength,
+      script,
+      '00000000' // SEQUENCE
     ].join('')
   }
 
@@ -394,13 +385,13 @@ export default class BitcoinCollateralProvider extends Provider {
     const scriptLength = Buffer.from(padHexStart((script.length / 2).toString(16)), 'hex').reverse().toString('hex')
 
     return [
-    '01', // NUM INPUTS
-    txHashLE,
-    '00000000',
-    scriptLength.length > 2 ? 'fd' : '',
-    scriptLength,
-    script,
-    '00000000' // SEQUENCE
+      '01', // NUM INPUTS
+      txHashLE,
+      '00000000',
+      scriptLength.length > 2 ? 'fd' : '',
+      scriptLength,
+      script,
+      '00000000' // SEQUENCE
     ].join('')
   }
 
@@ -427,7 +418,7 @@ export default class BitcoinCollateralProvider extends Provider {
       '88', // OP_EQUALVERIFY
       'ac', // OP_CHECKSIG
 
-       locktime // LOCKTIME
+      locktime // LOCKTIME
     ].join('')
   }
 }
