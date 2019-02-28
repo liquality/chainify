@@ -109,7 +109,7 @@ export default class BitcoinSwapProvider extends Provider {
         padHexStart((secret.length / 2).toString(16)), // OP_PUSHDATA({secretLength})
         secret
       ]
-      : ['00'] // OP_0
+      : [] // OP_0
 
     const signatureEncoded = signature + '01'
     const signaturePushDataOpcode = padHexStart((signatureEncoded.length / 2).toString(16))
@@ -118,10 +118,10 @@ export default class BitcoinSwapProvider extends Provider {
     const bytecode = [
       signaturePushDataOpcode,
       signatureEncoded,
-      ...encodedSecret,
-      redeemEncoded,
       pubKeyPushDataOpcode,
-      pubKey
+      pubKey,
+      ...encodedSecret,
+      redeemEncoded
     ]
 
     return bytecode.join('')
