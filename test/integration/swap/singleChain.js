@@ -170,7 +170,7 @@ function testBitcoinBalance (chain) {
 describe('Swap Single Chain Flow', function () {
   this.timeout(config.timeout)
 
-  describe.only('Bitcoin - Ledger', () => {
+  describe('Bitcoin - Ledger', () => {
     mineBitcoinBlocks()
     testSingle(chains.bitcoinWithLedger)
   })

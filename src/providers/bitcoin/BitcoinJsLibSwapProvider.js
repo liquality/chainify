@@ -57,10 +57,18 @@ export default class BitcoinJsLibSwapProvider extends Provider {
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
-    const wif = await this.getMethod('dumpPrivKey')(recipientAddress)
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret)
+  }
+
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, false, undefined, secretHash)
+  }
+
+  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isRedeem, secret, secretHash) {
+    const address = isRedeem ? recipientAddress : refundAddress
+    const wif = await this.getMethod('dumpPrivKey')(address)
     const wallet = bitcoin.ECPair.fromWIF(wif, this._bitcoinJsNetwork)
-    const secretHash = sha256(secret)
-    const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
+    const script = this.createSwapScript(recipientAddress, refundAddress, secretHash || sha256(secret), expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     const sendScript = this.getMethod('createScript')(p2shAddress)
@@ -71,11 +79,10 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     let vout = initiationTx._raw.data.vout[voutIndex]
     const txfee = await this.getMethod('calculateFee')(1, 1, 3)
 
-    secret = Buffer.from(secret, 'hex')
     vout.txid = initiationTxHash
     vout.vSat = vout.value * 1e8
     vout.script = Buffer.from(script, 'hex')
-    const walletRedeem = this.spendSwap(recipientAddress, wallet, secret, true, txfee, vout, this._bitcoinJsNetwork, expiration)
+    const walletRedeem = this.spendSwap(address, wallet, secret, isRedeem, txfee, vout, this._bitcoinJsNetwork, expiration)
     return this.getMethod('sendRawTransaction')(walletRedeem)
   }
 
@@ -97,7 +104,7 @@ export default class BitcoinJsLibSwapProvider extends Provider {
       wallet.sign(sigHash).toScriptSignature(hashType),
       wallet.getPublicKeyBuffer(),
       isRedeem,
-      secret
+      isRedeem ? Buffer.from(secret, 'hex') : undefined
     )
 
     const redeem = bitcoin.script.scriptHash.input.encode(
@@ -105,10 +112,6 @@ export default class BitcoinJsLibSwapProvider extends Provider {
 
     txRaw.setInputScript(0, redeem)
     return txRaw.toHex()
-  }
-
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    throw new Error('BitcoinJsLibSwapProvider: Refunding not implemented')
   }
 
   doesTransactionMatchSwapParams (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
