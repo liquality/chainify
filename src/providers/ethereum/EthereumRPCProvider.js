@@ -15,11 +15,6 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return addresses.map(address => ({ address }))
   }
 
-  async generateBlock (numberOfBlocks) {
-    // Q: throw or silently pass?
-    throw new Error('This method isn\'t supported by Ethereum')
-  }
-
   async getUnusedAddress () {
     var addresses = await this.getAddresses()
     return addresses[0]
@@ -40,25 +35,26 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     const tx = {
       from: ensureHexEthFormat(from),
       to,
-      value: ensureHexEthFormat(value),
-      data: ensureHexEthFormat(data)
+      value: ensureHexEthFormat(value)
     }
+
+    if (data) tx.data = ensureHexEthFormat(data)
 
     const txHash = await this.jsonrpc('eth_sendTransaction', tx)
     return ensureHexStandardFormat(txHash)
   }
 
-  async signMessage (message, address) {
-    address = '0x' + address
-    message = '0x' + Buffer.from(message).toString('hex')
-    return this.jsonrpc('eth_sign', address, message)
+  async signMessage (message, from) {
+    from = ensureHexEthFormat(from)
+    message = ensureHexEthFormat(Buffer.from(message).toString('hex'))
+    return this.jsonrpc('eth_sign', from, message)
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    const currentBlock = await this.getBlockHeight()
+    const currentHeight = await this.getBlockHeight()
     const block = await this.jsonrpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
     if (block) {
-      block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentBlock))
+      block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentHeight))
     }
     return block
   }
@@ -93,7 +89,8 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   async isAddressUsed (address) {
     address = ensureHexEthFormat(String(address))
 
-    const transactionCount = this.jsonrpc('eth_getTransactionCount', address, 'latest')
+    let transactionCount = await this.jsonrpc('eth_getTransactionCount', address, 'latest')
+    transactionCount = parseInt(transactionCount, '16')
 
     return transactionCount > 0
   }
