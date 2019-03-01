@@ -25,6 +25,10 @@ export default class BitcoinSwapProvider extends Provider {
 
     return [
       '63', // OP_IF
+      '82', // OP_SIZE
+      '01', // OP_PUSHDATA(1)
+      '20', // Hex 32
+      '88', // OP_EQUALVERIFY
       'a8', // OP_SHA256
       '20', secretHash, // OP_PUSHDATA(20) {secretHash}
       '88', // OP_EQUALVERIFY
@@ -62,7 +66,7 @@ export default class BitcoinSwapProvider extends Provider {
   async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, secretParam, expiration, isClaim) {
     const feePerByte = await this.getMethod('getFeePerByte')()
     const secretHash = isClaim ? sha256(secretParam) : secretParam
-    const lockTime = isClaim ? 0 : expiration + 100
+    const lockTime = isClaim ? 0 : expiration
     const lockTimeHex = isClaim ? padHexStart('0', 8) : padHexStart(scriptNumEncode(lockTime).toString('hex'), 8)
     const to = isClaim ? recipientAddress : refundAddress
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
@@ -105,7 +109,7 @@ export default class BitcoinSwapProvider extends Provider {
         padHexStart((secret.length / 2).toString(16)), // OP_PUSHDATA({secretLength})
         secret
       ]
-      : ['00'] // OP_0
+      : [] // OP_0
 
     const signatureEncoded = signature + '01'
     const signaturePushDataOpcode = padHexStart((signatureEncoded.length / 2).toString(16))
@@ -114,10 +118,10 @@ export default class BitcoinSwapProvider extends Provider {
     const bytecode = [
       signaturePushDataOpcode,
       signatureEncoded,
-      ...encodedSecret,
-      redeemEncoded,
       pubKeyPushDataOpcode,
-      pubKey
+      pubKey,
+      ...encodedSecret,
+      redeemEncoded
     ]
 
     return bytecode.join('')
@@ -187,8 +191,9 @@ export default class BitcoinSwapProvider extends Provider {
     const claimTx = await this.getMethod('getTransactionByHash')(claimTxHash)
     const script = Buffer.from(claimTx._raw.vin[0].scriptSig.hex, 'hex')
     const sigLength = script[0]
-    const secretLength = script.slice(sigLength + 1)[0]
-    return script.slice(sigLength + 2, sigLength + secretLength + 2).toString('hex')
+    const pubKeyLen = script.slice(sigLength + 1)[0]
+    const secretLength = script.slice(sigLength + pubKeyLen + 2)[0]
+    return script.slice(sigLength + pubKeyLen + 3, sigLength + pubKeyLen + secretLength + 3).toString('hex')
   }
 
   generateSigTxInput (txHashLE, voutIndex, script) {
