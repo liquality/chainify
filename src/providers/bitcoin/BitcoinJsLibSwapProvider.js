@@ -1,5 +1,5 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash, pubKeyToAddress, scriptNumEncode } from './BitcoinUtil'
+import { calculateFee, addressToPubKeyHash, pubKeyToAddress, scriptNumEncode } from './BitcoinUtil'
 import { sha256, padHexStart } from '../../crypto'
 import networks from './networks'
 import bitcoin from 'bitcoinjs-lib'
@@ -77,7 +77,7 @@ export default class BitcoinJsLibSwapProvider extends Provider {
     const initiationTx = await this.getMethod('decodeRawTransaction')(initiationTxRaw)
     const voutIndex = initiationTx._raw.data.vout.findIndex((vout) => vout.scriptPubKey.hex === sendScript)
     let vout = initiationTx._raw.data.vout[voutIndex]
-    const txfee = await this.getMethod('calculateFee')(1, 1, 3)
+    const txfee = calculateFee(1, 1, 3)
 
     vout.txid = initiationTxHash
     vout.vSat = vout.value * 1e8

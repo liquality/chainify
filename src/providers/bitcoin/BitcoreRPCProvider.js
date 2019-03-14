@@ -8,11 +8,6 @@ import networks from './networks'
  * for retrieving address utxos
  */
 export default class BitcoreRPCProvider extends BitcoinRPCProvider {
-  /* These methods need to be removed, but are required for now */
-  calculateFee (numInputs, numOutputs, feePerByte) { // TODO: lazy fee estimation
-    return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
-  }
-
   createScript (address) {
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)

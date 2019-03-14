@@ -5,6 +5,13 @@ const { expect } = require('chai').use(require('chai-as-promised'))
 const BitcoinUtil = require('../../../../src/providers/bitcoin/BitcoinUtil')
 
 describe('Bitcoin Util', () => {
+  describe('calculateFee', () => {
+    it('should return correct fees', () => {
+      expect(BitcoinUtil.calculateFee(1, 1, 3)).to.equal(576)
+      expect(BitcoinUtil.calculateFee(2, 1, 3)).to.equal(1020)
+    })
+  })
+
   describe('compressPubKey', () => {
     it('should return compressed public key', () => {
       expect(BitcoinUtil.compressPubKey('0493fc49dfd662510bc4d91b4f689d1732ebe4e2d7a67eebc37f76c8d6ec283ef098574ba8b41581532c09f38e47d1790dad1a09417ddbde95af5a1314f3f08c37')).to.equal('0393fc49dfd662510bc4d91b4f689d1732ebe4e2d7a67eebc37f76c8d6ec283ef0')
