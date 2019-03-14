@@ -43,11 +43,18 @@ ethereumWithNode.addProvider(new providers.ethereum.EthereumRPCProvider(config.e
 ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
 
+const ethereumWithLedger = new Client()
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
+ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
+
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger },
   bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
-  ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode }
+  ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
+  ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger }
 }
 
 async function getSwapParams (chain) {

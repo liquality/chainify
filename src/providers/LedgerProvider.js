@@ -108,8 +108,4 @@ export default class LedgerProvider extends WalletProvider {
 
     throw new Error('Ledger: Wallet does not contain address')
   }
-
-  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
-    return this.getAddresses(startingIndex, numAddresses, change)
-  }
 }
