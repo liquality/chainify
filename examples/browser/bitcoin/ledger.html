@@ -16,7 +16,7 @@
   const bitcoin = new Client()
   bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
   bitcoin.getAddresses().then(addresses => {
-    const from = addresses[0]
+    const from = addresses[0].address
     $('#address').text(from)
 
     $('#sign').click(() => {
