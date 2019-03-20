@@ -7,6 +7,19 @@ export default class LedgerProvider extends WalletProvider {
     return Transport.isSupported()
   }
 
+  async claimLedgerInterface () {
+    if (this._webUsbDevice) {
+      if (this._webUsbDevice.configuration.interfaces[2].claimed) return
+      await this._webUsbDevice.claimInterface(2)
+    }
+  }
+
+  async releaseLedgerInterface () {
+    if (this._webUsbDevice) {
+      await this._webUsbDevice.releaseInterface(2)
+    }
+  }
+
   constructor (App, baseDerivationPath, network, ledgerScrambleKey) {
     super(network)
 
@@ -24,8 +37,15 @@ export default class LedgerProvider extends WalletProvider {
       LedgerProvider.transport = await Transport.create()
       LedgerProvider.transport.on('disconnect', () => {
         this._appInstance = null
+        this._webUsbDevice = null
         LedgerProvider.transport = null
       })
+
+      if (Transport.isWebUSBTransport) {
+        this._webUsbDevice = LedgerProvider.transport.device
+      }
+    } else {
+      await this.claimLedgerInterface()
     }
   }
 
@@ -35,6 +55,7 @@ export default class LedgerProvider extends WalletProvider {
       return async (...args) => {
         try {
           const result = await method.bind(target)(...args)
+          await this.releaseLedgerInterface()
           return result
         } catch (e) {
           const { name, ...errorNoName } = e
@@ -55,7 +76,7 @@ export default class LedgerProvider extends WalletProvider {
     }
 
     if (!this._appInstance) {
-      this._appInstance = new Proxy(new this._App(LedgerProvider.transport), { get: this.errorProxy })
+      this._appInstance = new Proxy(new this._App(LedgerProvider.transport), { get: this.errorProxy.bind(this) })
     }
 
     return this._appInstance
