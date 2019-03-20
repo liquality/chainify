@@ -7,10 +7,18 @@ export default class LedgerProvider extends WalletProvider {
     return Transport.isSupported()
   }
 
-  async claimLedgerInterface () {
+  async claimLedgerInterface (attempt = 1, maxAttempts = 3) {
     if (this._webUsbDevice) {
       if (this._webUsbDevice.configuration.interfaces[2].claimed) return
-      await this._webUsbDevice.claimInterface(2)
+      try {
+        await this._webUsbDevice.claimInterface(2)
+      } catch (e) {
+        if (maxAttempts <= attempt) {
+          await this.claimLedgerInterface(attempt++)
+        } else {
+          throw e
+        }
+      }
     }
   }
 
