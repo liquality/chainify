@@ -24,7 +24,7 @@
   "author": "Liquality <info@liquality.io>",
   "module": "src/index.js",
   "browser": {
-    "@ledgerhq/hw-transport-node-hid": "@ledgerhq/hw-transport-u2f"
+    "@ledgerhq/hw-transport-node-hid": "@ledgerhq/hw-transport-webusb"
   },
   "main": "dist/index.cjs.js",
   "files": [
@@ -56,6 +56,7 @@
     "@ledgerhq/hw-app-eth": "^4.36.0",
     "@ledgerhq/hw-transport-node-hid": "^4.35.0",
     "@ledgerhq/hw-transport-u2f": "^4.35.0",
+    "@ledgerhq/hw-transport-webusb": "^4.46.0",
     "ajv": "^6.5.2",
     "axios": "^0.18.0",
     "bech32": "^1.1.3",
