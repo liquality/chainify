@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.56",
-    "@ledgerhq/hw-app-btc": "^4.35.0",
+    "@ledgerhq/hw-app-btc": "^4.46.0",
     "@ledgerhq/hw-app-eth": "^4.36.0",
     "@ledgerhq/hw-transport-node-hid": "^4.35.0",
     "@ledgerhq/hw-transport-u2f": "^4.35.0",
