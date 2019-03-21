@@ -23,8 +23,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async _getWalletPublicKey (path) {
-    const app = await this.getApp()
-    return app.getWalletPublicKey(path, undefined, this._segwit)
+    return this.app.getWalletPublicKey(path, undefined, this._segwit)
   }
 
   async getWalletPublicKey (path) {
@@ -38,10 +37,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async signMessage (message, from) {
-    const app = await this.getApp()
     const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signMessageNew(address.derivationPath, hex)
+    return this.app.signMessageNew(address.derivationPath, hex)
   }
 
   getAmountBuffer (amount) {
@@ -52,21 +50,15 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async splitTransaction (transactionHex, isSegwitSupported) {
-    const app = await this.getApp()
-
-    return app.splitTransaction(transactionHex, isSegwitSupported)
+    return this.app.splitTransaction(transactionHex, isSegwitSupported)
   }
 
   async serializeTransactionOutputs (transactionHex) {
-    const app = await this.getApp()
-
-    return app.serializeTransactionOutputs(transactionHex)
+    return this.app.serializeTransactionOutputs(transactionHex)
   }
 
   async signP2SHTransaction (inputs, associatedKeysets, changePath, outputScriptHex) {
-    const app = await this.getApp()
-
-    return app.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
+    return this.app.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
   }
 
   createScript (address) {
@@ -194,11 +186,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async getLedgerInputs (unspentOutputs) {
-    const app = await this.getApp()
-
     return Promise.all(unspentOutputs.map(async utxo => {
       const hex = await this.getMethod('getTransactionHex')(utxo.txid)
-      const tx = app.splitTransaction(hex, true)
+      const tx = await this.app.splitTransaction(hex, true)
       const vout = ('vout' in utxo) ? utxo.vout : utxo.outputIndex
 
       return [ tx, vout ]
@@ -240,8 +230,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async sendTransaction (to, value, data, from) {
-    const app = await this.getApp()
-
     if (data) {
       const scriptPubKey = padHexStart(data)
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
@@ -261,8 +249,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       outputs.push({ amount: this.getAmountBuffer(change), script: Buffer.from(changeScript, 'hex') })
     }
 
-    const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
-    const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
+    const serializedOutputs = await this.app.serializeTransactionOutputs({ outputs }).toString('hex')
+    const signedTransaction = await this.app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 

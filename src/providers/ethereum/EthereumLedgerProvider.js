@@ -9,9 +9,8 @@ export default class EthereumLedgerProvider extends LedgerProvider {
   }
 
   async signMessage (message, from) {
-    const app = await this.getApp()
     const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signPersonalMessage(address.derivationPath, hex)
+    return this.app.signPersonalMessage(address.derivationPath, hex)
   }
 }
