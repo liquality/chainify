@@ -74,7 +74,7 @@
 
    <script>
     /* global $, ChainAbstractionLayer */
-    const { Client, providers, networks, crypto } = ChainAbstractionLayer
+    const { Client, providers, crypto } = ChainAbstractionLayer
     const bitcoin = new Client()
     const bitcoinNetworks = providers.bitcoin.networks
     bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('http://localhost:8000', 'bitcoin', 'local321'))
