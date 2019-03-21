@@ -30,8 +30,10 @@
         <p>seizableValue: <input type="text" id="btcSeizableValue" value="100000" /></p>
         <p>borrowerPubKey: <input type="text" id="btcBorrowerPubKey" /></p>
         <p>lenderPubKey: <input type="text" id="btcLenderPubKey" /></p>
-        <p>borrowerSecretHash: <input type="text" id="btcBorrowerSecretHash" /></p>
-        <p>lenderSecretHash: <input type="text" id="btcLenderSecretHash" /></p>
+        <p>secretHashA1: <input type="text" id="btcSecretHashA1" /></p>
+        <p>secretHashA2: <input type="text" id="btcSecretHashA2" /></p>
+        <p>secretHashB2: <input type="text" id="btcSecretHashB2" /></p>
+        <p>secretHashB3: <input type="text" id="btcSecretHashB3" /></p>
         <p>loanExpiration: <input type="text" id="btcLoanExpiration" value="1568194353" /></p>
         <p>biddingExpiration: <input type="text" id="btcBiddingExpiration" value="1568194353" /></p>
         <p>seizureExpiration: <input type="text" id="btcSeizureExpiration" value="1568194353" /></p>
@@ -41,11 +43,11 @@
         <p>refundable hash: <textarea id="btcLockRefundableCollateralResult"></textarea></p>
         <p>seizable hash: <textarea id="btcLockSeizableCollateralResult"></textarea></p>
         <p><button id="btcRefundCollateral">Refund Collateral</button></p>
-        <p>lender secret: <input type="text" id="btcLenderSecret" /></p>
+        <p>secretB2: <input type="text" id="btcSecretB2" /></p>
         <p>refund refundable hash: <textarea id="btcRefundRefundableCollateralResult"></textarea></p>
         <p>refund seizable hash: <textarea id="btcRefundSeizableCollateralResult"></textarea></p>
         <p><button id="btcSeizeCollateral">Seize Collateral</button></p>
-        <p>borrower secret: <input type="text" id="btcBorrowerSecret" /></p>
+        <p>secretA1: <input type="text" id="btcSecretA1" /></p>
         <p>refund seizable hash: <textarea id="btcSeizeSeizableCollateralResult"></textarea></p>
         <p><button id="btcRefundRefundableCollateral">Refund Refundable Collateral</button></p>
         <p>refund refundable hash: <textarea id="btcClaimRefundableCollateralResult"></textarea></p>
@@ -59,6 +61,8 @@
         <p>lender multisig output address: <input type="text" id="btcLenderMultisigOutputAddress" /></p>
         <p>lender multisig refundable signature: <textarea id="btcLenderSignMultisigRefundableResult"></textarea></p>
         <p>lender multisig seizable signature: <textarea id="btcLenderSignMultisigSeizableResult"></textarea></p>
+        <p>secretA2: <input type="text" id="btcSecretA2" /></p>
+        <p>secretB3: <input type="text" id="btcSecretB3" /></p>
         <p><button id="btcMultisigSendCollateral">Multisig Send Collateral</button></p>
         <p>multisig output address: <input type="text" id="btcMultisigOutputAddress" /></p>
         <p>multisig refundable hash: <textarea id="btcMultisigRefundableResult"></textarea></p>
@@ -72,9 +76,10 @@
     /* global $, ChainAbstractionLayer */
     const { Client, providers, networks, crypto } = ChainAbstractionLayer
     const bitcoin = new Client()
+    const bitcoinNetworks = providers.bitcoin.networks
     bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('http://localhost:8000', 'bitcoin', 'local321'))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinCollateralProvider({ network: networks.bitcoin_testnet }))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks.bitcoin_testnet, segwit: false }))
+    bitcoin.addProvider(new providers.bitcoin.BitcoinCollateralProvider({ network: bitcoinNetworks.bitcoin_testnet }))
     function generateSecret (client, prefix) {
       client.generateSecret($(`#${prefix}Message`).val()).then(result => {
         $(`#${prefix}GenerateSecretResult`).text(result)
@@ -86,18 +91,20 @@
       const seizableValue = parseInt($(`#${prefix}SeizableValue`).val())
       const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
       const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
-      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
-      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const secretHashA1 = $(`#${prefix}SecretHashA1`).val()
+      const secretHashA2 = $(`#${prefix}SecretHashA2`).val()
+      const secretHashB2 = $(`#${prefix}SecretHashB2`).val()
+      const secretHashB3 = $(`#${prefix}SecretHashB3`).val()
       const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
       const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
       const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
-      client.createRefundableCollateralScript(borrowerPubKey, lenderPubKey, lenderSecretHash, loanExpiration, biddingExpiration).then(result => {
+      client.createRefundableCollateralScript(borrowerPubKey, lenderPubKey, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration).then(result => {
         $(`#${prefix}RefundableBytecode`).text(result)
       })
-      client.createSeizableCollateralScript(borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+      client.createSeizableCollateralScript(borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
         $(`#${prefix}SeizableBytecode`).text(result)
       })
-      client.lockCollateral(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+      client.lockCollateral(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
         $(`#${prefix}LockRefundableCollateralResult`).text(result.refundableResult)
         $(`#${prefix}LockSeizableCollateralResult`).text(result.seizableResult)
       })
@@ -105,15 +112,17 @@
     function refundCollateral (client, prefix) {
       const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
       const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
-      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
+      const secretHashA1 = $(`#${prefix}SecretHashA1`).val()
+      const secretHashA2 = $(`#${prefix}SecretHashA2`).val()
+      const secretB2 = $(`#${prefix}SecretB2`).val()
+      const secretHashB3 = $(`#${prefix}SecretHashB3`).val()
       const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
       const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
       const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
       const refundableTxHash = $(`#${prefix}LockRefundableCollateralResult`).val()
       const seizableTxHash = $(`#${prefix}LockSeizableCollateralResult`).val()
-      const lenderSecret = $(`#${prefix}LenderSecret`).val()
 
-      client.refundCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecret, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+      client.refundCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
         $(`#${prefix}RefundRefundableCollateralResult`).text(result.refundableResult)
         $(`#${prefix}RefundSeizableCollateralResult`).text(result.seizableResult)
       })
@@ -121,50 +130,59 @@
     function seizeCollateral (client, prefix) {
       const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
       const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
-      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const secretA1 = $(`#${prefix}SecretA1`).val()
+      const secretHashA2 = $(`#${prefix}SecretHashA2`).val()
+      const secretHashB2 = $(`#${prefix}SecretHashB2`).val()
+      const secretHashB3 = $(`#${prefix}SecretHashB3`).val()
       const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
       const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
       const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
       const seizableTxHash = $(`#${prefix}LockSeizableCollateralResult`).val()
-      const borrowerSecret = $(`#${prefix}BorrowerSecret`).val()
 
-      client.seizeCollateral(seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecret, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+      client.seizeCollateral(seizableTxHash, borrowerPubKey, lenderPubKey, secretA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
         $(`#${prefix}SeizeSeizableCollateralResult`).text(result)
       })
     }
     function refundRefundableCollateral (client, prefix) {
       const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
       const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
-      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
-      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const secretHashA1 = $(`#${prefix}SecretHashA1`).val()
+      const secretHashA2 = $(`#${prefix}SecretHashA2`).val()
+      const secretHashB2 = $(`#${prefix}SecretHashB2`).val()
+      const secretHashB3 = $(`#${prefix}SecretHashB3`).val()
       const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
       const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
       const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
       const refundableTxHash = $(`#${prefix}LockRefundableCollateralResult`).val()
 
-      client.refundRefundableCollateral(refundableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+      client.refundRefundableCollateral(refundableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
         $(`#${prefix}ClaimRefundableCollateralResult`).text(result)
       })
     }
     function refundSeizableCollateral (client, prefix) {
       const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
       const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
-      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
-      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const secretHashA1 = $(`#${prefix}SecretHashA1`).val()
+      const secretHashA2 = $(`#${prefix}SecretHashA2`).val()
+      const secretHashB2 = $(`#${prefix}SecretHashB2`).val()
+      const secretHashB3 = $(`#${prefix}SecretHashB3`).val()
+
       const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
       const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
       const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
       const seizableTxHash = $(`#${prefix}LockSeizableCollateralResult`).val()
 
-      client.refundSeizableCollateral(seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
+      client.refundSeizableCollateral(seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration).then(result => {
         $(`#${prefix}ClaimSeizableCollateralResult`).text(result)
       })
     }
     function multisigSignCollateral (client, prefix, isBorrower) {
       const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
       const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
-      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
-      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const secretHashA1 = $(`#${prefix}SecretHashA1`).val()
+      const secretHashA2 = $(`#${prefix}SecretHashA2`).val()
+      const secretHashB2 = $(`#${prefix}SecretHashB2`).val()
+      const secretHashB3 = $(`#${prefix}SecretHashB3`).val()
       const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
       const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
       const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
@@ -172,7 +190,7 @@
       const seizableTxHash = $(`#${prefix}LockSeizableCollateralResult`).val()
       const to = isBorrower ? $(`#${prefix}BorrowerMultisigOutputAddress`).val() : $(`#${prefix}LenderMultisigOutputAddress`).val()
 
-      client.multisigSignCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration, isBorrower, to).then(result => {
+      client.multisigSignCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration, isBorrower, to).then(result => {
         if (isBorrower) {
           $(`#${prefix}BorrowerSignMultisigRefundableResult`).text(result.refundableSignature)
           $(`#${prefix}BorrowerSignMultisigSeizableResult`).text(result.seizableSignature)
@@ -186,8 +204,10 @@
     function multisigSendCollateral (client, prefix) {
       const borrowerPubKey = $(`#${prefix}BorrowerPubKey`).val()
       const lenderPubKey = $(`#${prefix}LenderPubKey`).val()
-      const borrowerSecretHash = $(`#${prefix}BorrowerSecretHash`).val()
-      const lenderSecretHash = $(`#${prefix}LenderSecretHash`).val()
+      const secretHashA1 = $(`#${prefix}SecretHashA1`).val()
+      const secretA2 = $(`#${prefix}SecretA2`).val()
+      const secretHashB2 = $(`#${prefix}SecretHashB2`).val()
+      const secretB3 = $(`#${prefix}SecretB3`).val()
       const loanExpiration = parseInt($(`#${prefix}LoanExpiration`).val())
       const biddingExpiration = parseInt($(`#${prefix}BiddingExpiration`).val())
       const seizureExpiration = parseInt($(`#${prefix}SeizureExpiration`).val())
@@ -203,7 +223,7 @@
         seizableSignature: $(`#${prefix}LenderSignMultisigSeizableResult`).val()
       }
 
-      client.multisigSendCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to).then(result => {
+      client.multisigSendCollateral(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretA2, secretHashB2, secretB3, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to).then(result => {
         $(`#${prefix}MultisigRefundableResult`).text(result.refundableResult)
         $(`#${prefix}MultisigSeizableResult`).text(result.seizableResult)
       })
