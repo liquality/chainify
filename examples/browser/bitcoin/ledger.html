@@ -16,16 +16,18 @@ const { Client, providers } = ChainAbstractionLayer
 const networks = providers.bitcoin.networks
 const bitcoin = new Client()
 bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
-$('#init').click(() => {
-  bitcoin.getAddresses().then(addresses => {
-    const from = addresses[0].address
-    $('#address').text(from)
+$('#init').click(async () => {
+  const addresses = await bitcoin.getAddresses()
+  const from = addresses[0].address
+  $('#address').text(from)
 
-    $('#sign').click(() => {
-      bitcoin.signMessage($('#message').val(), from).then(result => {
-        $('#result').text(JSON.stringify(result, null, 2))
-      })
-    })
+  $('#sign').click(async () => {
+    try {
+      const result = await bitcoin.signMessage($('#message').val(), from)
+      $('#result').text(JSON.stringify(result, null, 2))
+    } catch (e) {
+      console.error(e)
+    }
   })
 })
 </script>
