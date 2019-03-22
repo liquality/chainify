@@ -55,15 +55,22 @@ function formatEthResponse (obj) {
   return obj
 }
 
-function normalizeTransactionObject (tx, currentBlock) {
+function normalizeTransactionObject (tx, currentHeight) {
   if (tx) {
     if (tx.blockNumber === null) {
       delete tx.blockNumber
     } else if (!isNaN(tx.blockNumber)) {
-      tx.confirmations = currentBlock - tx.blockNumber + 1
+      tx.confirmations = currentHeight - tx.blockNumber + 1
     }
   }
+
   return tx
 }
 
-export { ensureHexEthFormat, ensureHexStandardFormat, ensureAddressStandardFormat, formatEthResponse, normalizeTransactionObject }
+export {
+  ensureHexEthFormat,
+  ensureHexStandardFormat,
+  ensureAddressStandardFormat,
+  formatEthResponse,
+  normalizeTransactionObject
+}

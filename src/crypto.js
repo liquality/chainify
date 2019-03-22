@@ -2,6 +2,14 @@ import cryptoHash from 'crypto-hashing'
 import base58 from 'bs58'
 import bech32 from 'bech32'
 
+function isHex (hex) {
+  if (!hex.match(/([0-9]|[a-f])/gim)) return false
+
+  const buf = Buffer.from(hex, 'hex').toString('hex')
+
+  return buf === hex.toLowerCase()
+}
+
 /**
  * Ensure message is in buffer format.
  * @param {string} message - any string.
@@ -12,12 +20,13 @@ function ensureBuffer (message) {
 
   switch (typeof message) {
     case 'string':
-      message = (message.match(/([0-9]|[a-f])/gim)) ? Buffer.from(message, 'hex') : Buffer.from(message)
+      message = isHex(message) ? Buffer.from(message, 'hex') : Buffer.from(message)
       break
     case 'object':
       message = Buffer.from(JSON.stringify(message))
       break
   }
+
   return Buffer.isBuffer(message) ? message : false
 }
 
@@ -89,5 +98,7 @@ export {
   ripemd160,
   hash160,
   ensureBuffer,
-  padHexStart
+  padHexStart,
+
+  isHex
 }

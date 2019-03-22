@@ -4,12 +4,15 @@ import { get, has } from 'lodash'
 
 import Provider from '../Provider'
 import RpcError from './RpcError'
+import { NodeError } from '../errors'
 
 const { parse } = JSONBigInt({ storeAsString: true, strict: true })
 
 export default class JsonRpcProvider extends Provider {
   constructor (uri, username, password) {
     super()
+
+    this._uri = uri
 
     this._axios = axios.create({
       baseURL: uri,
@@ -51,8 +54,13 @@ export default class JsonRpcProvider extends Provider {
 
   jsonrpc (method, ...params) {
     return this._axios.post(
-      '/',
+      '',
       this._prepareRequest(method, params)
-    ).then(this._parseResponse)
+    )
+      .then(this._parseResponse)
+      .catch(e => {
+        const { name, message, ...errorNoNameNoMessage } = e
+        throw new NodeError(`${this._uri} - ${e.toString()}`, errorNoNameNoMessage)
+      })
   }
 }

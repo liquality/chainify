@@ -1,8 +1,6 @@
-import { upperFirst, find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
-import * as Ajv from 'ajv'
+import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
+import Ajv from 'ajv'
 
-import * as providers from './providers'
-import DNSParser from './DsnParser'
 import { Block, Transaction } from './schema'
 import { sha256 } from './crypto'
 import {
@@ -11,14 +9,13 @@ import {
   InvalidProviderResponseError,
   NoProviderError,
   UnimplementedMethodError,
-  UnsupportedMethodError,
-  ProviderNotFoundError
+  UnsupportedMethodError
 } from './errors'
 
 export default class Client {
   /**
    * Client
-   * @param {string|Provider} [provider] - Data source/provider for the instance
+   * @param {Provider} [provider] - Data source/provider for the instance
    * @param {string} [version] - Minimum blockchain node version to support
    */
   constructor (provider, version) {
@@ -43,36 +40,12 @@ export default class Client {
 
   /**
    * Add a provider
-   * @param {!string|Provider} provider - The provider instance or RPC connection string
+   * @param {!Provider} provider - The provider instance or RPC connection string
    * @return {Client} Returns instance of Client
    * @throws {InvalidProviderError} When invalid provider is provider
    * @throws {DuplicateProviderError} When same provider is added again
    */
   addProvider (provider) {
-    if (isString(provider)) {
-      const {
-        baseUrl,
-        driverName,
-        auth
-      } = DNSParser(provider)
-
-      const rpcProviderName = `${upperFirst(driverName)}RPCProvider`
-      const pathToProvider = `${driverName}.${rpcProviderName}`
-      const ProviderClass = providers[driverName][rpcProviderName]
-
-      if (!ProviderClass) {
-        throw new ProviderNotFoundError(`${pathToProvider} not found`)
-      }
-
-      const args = [ baseUrl ]
-
-      if (auth) {
-        args.push(auth.username, auth.password)
-      }
-
-      return this.addProvider(new ProviderClass(...args))
-    }
-
     if (!isFunction(provider.setClient)) {
       throw new InvalidProviderError('Provider should have "setClient" method')
     }
@@ -323,15 +296,6 @@ export default class Client {
     return addresses
   }
 
-  async getAddressExtendedPubKeys (startingIndex = 0, numAddresses = 1) {
-    const xpubkey = await this.getMethod('getAddressExtendedPubKeys')(startingIndex, numAddresses)
-
-    if (!isArray(xpubkey)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid response')
-    }
-
-    return xpubkey
-  }
   /**
    * Check if an address has been used or not.
    * @param {!string|Address} addresses - An address to check for.
@@ -431,10 +395,10 @@ export default class Client {
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
    * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
-   * @return {Promise<string>} Resolves with secret
+   * @return {Promise<string>} Resolves with a 32 byte secret
    */
   async generateSecret (message) {
-    const address = (await this.getMethod('getAddresses')())[0]
+    const address = (await this.getMethod('getAddresses')())[0].address
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
@@ -516,17 +480,21 @@ export default class Client {
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.
    * @param {!string} refundAddress - Refund address for the swap in hex.
-   * @param {!string} secret - Secret for the swap in hex.
+   * @param {!string} secret - 32 byte secret for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, wif) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration, wif)
+    if (!(/[A-Fa-f0-9]{64}/.test(secret))) {
+      throw new TypeError('Secret should be a 32 byte hex string')
+    }
+
+    return this.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
   }
 
   /**
@@ -547,6 +515,10 @@ export default class Client {
     return this.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
 
+  async isWalletAvailable () {
+    return this.getMethod('isWalletAvailable')()
+  }
+
   async getWalletNetworkId () {
     return this.getMethod('getWalletNetworkId')()
   }
@@ -557,5 +529,41 @@ export default class Client {
 
   async getAddressMempool (addresses) {
     return this.getMethod('getAddressMempool')(addresses)
+  }
+
+  async createRefundableCollateralScript (borrowerPubKey, lenderPubKey, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration) {
+    return this.getMethod('createRefundableCollateralScript')(borrowerPubKey, lenderPubKey, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration)
+  }
+
+  async createSeizableCollateralScript (borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('createSeizableCollateralScript')(borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async lockCollateral (refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('lockCollateral')(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async refundCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('refundCollateral')(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async seizeCollateral (seizableTxHash, borrowerPubKey, lenderPubKey, secretA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('seizeCollateral')(seizableTxHash, borrowerPubKey, lenderPubKey, secretA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async refundRefundableCollateral (refundableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('refundRefundableCollateral')(refundableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async refundSeizableCollateral (seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('refundSeizableCollateral')(seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async multisigSignCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration, isBorrower, to) {
+    return this.getMethod('multisigSignCollateral')(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration, isBorrower, to)
+  }
+
+  async multisigSendCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretA2, secretHashB2, secretB3, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to) {
+    return this.getMethod('multisigSendCollateral')(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretA2, secretHashB2, secretB3, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to)
   }
 }

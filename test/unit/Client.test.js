@@ -1,12 +1,16 @@
-/* global describe, it */
+/* global describe, it, beforeEach */
 
 const { expect } = require('chai').use(require('chai-as-promised'))
 
-const { Client, errors } = require('../')
+const { Client, errors } = require('../../src')
 
-const lib = new Client()
+describe('Client methods without providers', () => {
+  let lib
 
-describe('Client methods', () => {
+  beforeEach(() => {
+    lib = new Client()
+  })
+
   describe('generateBlock', () => {
     it('should throw NoProviderError', () => {
       return expect(lib.generateBlock(1)).to.be.rejectedWith(errors.NoProviderError)

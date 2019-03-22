@@ -1,18 +1,13 @@
 import BitcoinRPCProvider from './BitcoinRPCProvider'
 import { base58 } from '../../crypto'
 import { addressToPubKeyHash } from '../bitcoin/BitcoinUtil'
-import networks from '../../networks'
+import networks from './networks'
 
 /**
  * BitcoreRPCProvider overrides the BitcoinRPCProvider to use the address index
  * for retrieving address utxos
  */
 export default class BitcoreRPCProvider extends BitcoinRPCProvider {
-  /* These methods need to be removed, but are required for now */
-  calculateFee (numInputs, numOutputs, feePerByte) { // TODO: lazy fee estimation
-    return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
-  }
-
   createScript (address) {
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
@@ -36,16 +31,8 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
       throw new Error('Not a valid address:', address)
     }
   }
+
   /* These methods need to be removed, but are required for now - END */
-
-  async getNewAddress (from = {}) {
-    return this.jsonrpc('getnewaddress')
-  }
-
-  async getUnusedAddress () {
-    return this.getNewAddress()
-  }
-
   async isAddressUsed (address) {
     address = String(address)
     const data = await this.getAddressBalance(address)
@@ -83,15 +70,15 @@ export default class BitcoreRPCProvider extends BitcoinRPCProvider {
 
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const address = await this.getNewAddress()
-      addresses.push(address)
+      addresses.push({ address })
     }
 
     return addresses
   }
 
-  async getAddressTransactions (address, start, end) {
-    return this.jsonrpc('getaddresstxids', { 'addresses': [address], start, end })
-  }
+  // async getAddressTransactions (address, start, end) {
+  //   return this.jsonrpc('getaddresstxids', { 'addresses': [address], start, end })
+  // }
 
   async getAddressDeltas (addresses) {
     return this.jsonrpc('getaddressdeltas', { 'addresses': addresses })
