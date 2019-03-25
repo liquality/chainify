@@ -1,6 +1,6 @@
 {
   "name": "@liquality/chainabstractionlayer",
-  "version": "0.1.23-next.1",
+  "version": "0.1.23-next.2",
   "keywords": [
     "blockchain",
     "bitcoin",
@@ -51,6 +51,7 @@
     "publish:docs": "run-s prepare:docs push:docs"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.4.0",
     "@babel/runtime": "^7.4.0",
     "@ledgerhq/hw-app-btc": "^4.46.0",
     "@ledgerhq/hw-app-eth": "^4.46.0",
@@ -75,7 +76,6 @@
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/plugin-transform-runtime": "^7.4.0",
-    "@babel/polyfill": "^7.4.0",
     "@babel/preset-env": "^7.4.1",
     "@babel/register": "^7.4.0",
     "babel-loader": "^8.0.5",
