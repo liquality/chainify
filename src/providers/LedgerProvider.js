@@ -13,7 +13,7 @@ export default class LedgerProvider extends WalletProvider {
       try {
         LedgerProvider.transport = await Transport.open(this._webUsbDevice)
       } catch (e) {
-        if (maxAttempts <= attempt) {
+        if (maxAttempts >= attempt) {
           await this.claimLedgerInterface(attempt++)
         } else {
           throw e
