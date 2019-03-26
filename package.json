@@ -36,6 +36,7 @@
     "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",
     "test": "cross-env NODE_ENV=test nyc mocha test/unit $npm_package_options_mocha",
     "test:swap": "cross-env NODE_ENV=test mocha test/integration/swap $npm_package_options_mocha",
+    "test:erc20": "cross-env NODE_ENV=test mocha test/integration/erc20 $npm_package_options_mocha",
     "build:dev:node": "webpack --config ./webpack/webpack.node.config.js",
     "build:dev:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "build:dev": "webpack --config ./webpack/webpack.config.js",
