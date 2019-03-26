@@ -14,6 +14,7 @@ export default class EthereumMetaMaskProvider extends WalletProvider {
 
     this._metamaskProvider = metamaskProvider
     this._network = network
+    this.jsonrpc = this._toMM
   }
 
   async isWalletAvailable () {
