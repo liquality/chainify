@@ -7,27 +7,6 @@ export default class LedgerProvider extends WalletProvider {
     return Transport.isSupported()
   }
 
-  async claimLedgerInterface (attempt = 1, maxAttempts = 3) {
-    if (this._webUsbDevice) {
-      if (this._webUsbDevice.configuration.interfaces[2].claimed) return
-      try {
-        LedgerProvider.transport = await Transport.open(this._webUsbDevice)
-      } catch (e) {
-        if (maxAttempts >= attempt) {
-          await this.claimLedgerInterface(attempt++)
-        } else {
-          throw e
-        }
-      }
-    }
-  }
-
-  async releaseLedgerInterface () {
-    if (this._webUsbDevice) {
-      await LedgerProvider.transport.close()
-    }
-  }
-
   constructor (App, baseDerivationPath, network, ledgerScrambleKey) {
     super(network)
 
@@ -45,15 +24,8 @@ export default class LedgerProvider extends WalletProvider {
       LedgerProvider.transport = await Transport.create()
       LedgerProvider.transport.on('disconnect', () => {
         this._appInstance = null
-        this._webUsbDevice = null
         LedgerProvider.transport = null
       })
-
-      if (Transport.isWebUSBTransport) {
-        this._webUsbDevice = LedgerProvider.transport.device
-      }
-    } else {
-      await this.claimLedgerInterface()
     }
   }
 
@@ -63,7 +35,6 @@ export default class LedgerProvider extends WalletProvider {
       return async (...args) => {
         try {
           const result = await method.bind(target)(...args)
-          await this.releaseLedgerInterface()
           return result
         } catch (e) {
           const { name, ...errorNoName } = e
@@ -84,7 +55,7 @@ export default class LedgerProvider extends WalletProvider {
     }
 
     if (!this._appInstance) {
-      this._appInstance = new Proxy(new this._App(LedgerProvider.transport), { get: this.errorProxy.bind(this) })
+      this._appInstance = new Proxy(new this._App(LedgerProvider.transport), { get: this.errorProxy })
     }
 
     return this._appInstance
