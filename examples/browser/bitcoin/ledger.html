@@ -5,18 +5,20 @@
 </head>
 <body>
   <h1>CAL + Ledger: Sign a message (Bitcoin)</h1>
+  <button id="init">Initate</button>
   <p>From: <span id="address"></span></p>
   <p>Message: <input type="text" id="message"/> <button id="sign">Sign</button></p>
   <p>Result: <span id="result"></span></p>
   <p><code>For errors and logs, check console</code></p>
-  <script>
-  /* global $, ChainAbstractionLayer */
-  const { Client, providers } = ChainAbstractionLayer
-  const networks = providers.bitcoin.networks
-  const bitcoin = new Client()
-  bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
+<script>
+/* global $, ChainAbstractionLayer */
+const { Client, providers } = ChainAbstractionLayer
+const networks = providers.bitcoin.networks
+const bitcoin = new Client()
+bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
+$('#init').click(() => {
   bitcoin.getAddresses().then(addresses => {
-    const from = addresses[0]
+    const from = addresses[0].address
     $('#address').text(from)
 
     $('#sign').click(() => {
@@ -25,6 +27,7 @@
       })
     })
   })
-  </script>
+})
+</script>
 </body>
 </html>

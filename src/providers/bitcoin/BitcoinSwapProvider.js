@@ -1,5 +1,5 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
+import { calculateFee, addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { BigNumber } from 'bignumber.js'
 import { sha256, padHexStart } from '../../crypto'
 import networks from './networks'
@@ -227,7 +227,7 @@ export default class BitcoinSwapProvider extends Provider {
     const output = initiationTx.outputs[voutIndex]
     const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
     const { relayfee } = await this.getMethod('jsonrpc')('getinfo')
-    const calculatedFee = this.getMethod('calculateFee')(1, 1, feePerByte)
+    const calculatedFee = calculateFee(1, 1, feePerByte)
     const fee = BigNumber.max(calculatedFee, BigNumber(relayfee).times(1e8).toNumber())
     const amount = BigNumber(value).minus(fee).toNumber()
 

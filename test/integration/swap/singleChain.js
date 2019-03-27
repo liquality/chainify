@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
-import { crypto } from '../../../src'
+import { crypto, providers } from '../../../src'
 import { chains, initiateAndVerify, claimAndVerify, refund, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, connectMetaMask } from './common'
 import config from './config'
 
@@ -12,6 +12,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 chai.use(chaiAsPromised)
 
+const { calculateFee } = providers.bitcoin.BitcoinUtil
 const mockSecret = _.repeat('ff', 32)
 
 function testSingle (chain) {
@@ -142,7 +143,7 @@ function testBitcoinBalance (chain) {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const fee = await chain.client.getMethod('calculateFee')(1, 1, 3)
+    const fee = calculateFee(1, 1, 3)
     await expectBalance(chain, swapParams.recipientAddress,
       async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
       (before, after) => {
@@ -156,7 +157,7 @@ function testBitcoinBalance (chain) {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = parseInt(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const fee = await chain.client.getMethod('calculateFee')(1, 1, 3)
+    const fee = calculateFee(1, 1, 3)
     await sleep(20000)
     await expectBalance(chain, swapParams.refundAddress,
       async () => refund(chain, initiationTxId, secretHash, swapParams),

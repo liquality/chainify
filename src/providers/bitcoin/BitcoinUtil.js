@@ -9,6 +9,10 @@ import {
 
 import networks from './networks'
 
+function calculateFee (numInputs, numOutputs, feePerByte) {
+  return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
+}
+
 /**
  * Get compressed pubKey from pubKey.
  * @param {!string} pubKey - 65 byte string with prefix, x, y.
@@ -127,6 +131,7 @@ function getAddressNetwork (address) {
 }
 
 export {
+  calculateFee,
   toHexInt,
   compressPubKey,
   pubKeyToAddress,

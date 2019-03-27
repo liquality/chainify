@@ -1,9 +1,9 @@
 import BaseError from 'standard-error'
 
 function createError (name) {
-  class NewError extends BaseError {}
-  NewError.prototype.name = name
-  return NewError
+  class CALError extends BaseError {}
+  CALError.prototype.name = name
+  return CALError
 }
 
 export const StandardError = createError('StandardError')

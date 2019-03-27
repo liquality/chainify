@@ -1,11 +1,15 @@
 import LedgerProvider from '../LedgerProvider'
 import Bitcoin from '@ledgerhq/hw-app-btc'
 
+import { find } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 import { base58, padHexStart } from '../../crypto'
 import { pubKeyToAddress, addressToPubKeyHash, compressPubKey, getAddressNetwork } from './BitcoinUtil'
 import networks from './networks'
 import bip32 from 'bip32'
+import coinselect from 'coinselect'
+
+const ADDRESS_GAP = 20
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
@@ -89,16 +93,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }
   }
 
-  calculateFee (numInputs, numOutputs, feePerByte) { // TODO: lazy fee estimation
-    return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
-  }
-
-  async getUtxosForAmount (amount, numAddressPerCall = 100) {
-    const addressGap = 20
-    const utxosToUse = []
-    let totalCost = amount
+  async getInputsForAmount (amount, numAddressPerCall = 100) {
+    let globalUtxoSet = []
     let addressIndex = 0
-    let currentAmount = 0
     let changeAddresses = []
     let plainChangeAddresses = []
     let nonChangeAddresses = []
@@ -110,18 +107,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const feePerBytePromise = this.getMethod('getFeePerByte')()
     let feePerByte = false
 
-    while (currentAmount < totalCost) {
+    while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
       let addrList = []
 
-      if (addressCountMap.change >= addressGap && addressCountMap.nonChange >= addressGap) {
-        if (currentAmount < totalCost) {
-          // TODO: Better error
-          throw new Error('Not Enough Balance')
-        }
-        break
-      }
-
-      if (addressCountMap.change < addressGap) {
+      if (addressCountMap.change < ADDRESS_GAP) {
         // Scanning for change addr
         changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
         plainChangeAddresses = changeAddresses.map(a => a.address)
@@ -130,7 +119,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         plainChangeAddresses = []
       }
 
-      if (addressCountMap.nonChange < addressGap) {
+      if (addressCountMap.nonChange < ADDRESS_GAP) {
         // Scanning for non change addr
         nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
         addrList = addrList.concat(nonChangeAddresses)
@@ -142,7 +131,49 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         this.getMethod('getAddressMempool')(stringAddresses),
         this.getMethod('getAddressUtxos')(stringAddresses)
       ])
+
       const usedAddresses = confirmedAdd.concat(utxosMempool).map(address => address.address)
+      utxos = utxos
+        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+
+      utxosMempool = utxosMempool
+        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+        .filter(utxo => utxo.prevtxid === undefined)
+        .map(utxo => {
+          utxo.outputIndex = utxo.index
+          return utxo
+        })
+
+      utxos = utxos
+        .concat(utxosMempool)
+        .map(utxo => {
+          const addr = find(addrList, addr => addr.address === utxo.address)
+
+          utxo.value = utxo.satoshis
+          utxo.derivationPath = addr.derivationPath
+
+          return utxo
+        })
+
+      globalUtxoSet = globalUtxoSet.concat(utxos)
+      if (feePerByte === false) feePerByte = await feePerBytePromise
+
+      const { inputs, outputs, fee } = coinselect(globalUtxoSet, [{ id: 'main', value: amount }], feePerByte)
+
+      if (inputs && outputs) {
+        let change = outputs.filter(output => output.id !== 'main')
+
+        if (change) {
+          change = change[0].value
+        }
+
+        return {
+          inputs,
+          change,
+          fee
+        }
+      }
+
       for (let i = 0; i < stringAddresses.length; i++) {
         const address = stringAddresses[i]
         const isUsed = usedAddresses.indexOf(address) !== -1
@@ -156,35 +187,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         }
       }
 
-      utxos = utxos
-        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
-      utxosMempool = utxosMempool
-        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
-        .filter(utxo => utxo.prevtxid === undefined)
-        .map(utxo => { utxo.outputIndex = utxo.index; return utxo })
-      utxos = utxos.concat(utxosMempool)
-
-      if (feePerByte === false) feePerByte = await feePerBytePromise
-
-      for (const utxo of utxos) {
-        const utxoVal = utxo.satoshis
-        if (utxoVal > 0) {
-          currentAmount += utxoVal
-          addrList.forEach(address => {
-            if (address.address === utxo.address) {
-              utxo.derivationPath = address.derivationPath
-            }
-          })
-          utxosToUse.push(utxo)
-          totalCost = amount + this.calculateFee(utxosToUse.length, 2, feePerByte)
-          if (currentAmount > totalCost) break
-        }
-      }
-
       addressIndex += numAddressPerCall
     }
 
-    return utxosToUse
+    throw new Error('Not enough balance')
   }
 
   async getLedgerInputs (unspentOutputs) {
@@ -234,45 +240,27 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async sendTransaction (to, value, data, from) {
-    const [ feePerByte, app ] = await Promise.all([
-      this.getMethod('getFeePerByte')(),
-      this.getApp()
-    ])
+    const app = await this.getApp()
 
     if (data) {
       const scriptPubKey = padHexStart(data)
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
+
     const unusedAddress = await this.getUnusedAddress(true)
-    // const unspentOutputsToUse = await this.getUtxosForAmount(value, feePerByte)
-    const unspentOutputsToUse = await this.getUtxosForAmount(value)
-    const totalAmount = unspentOutputsToUse.reduce((acc, utxo) => acc + utxo.satoshis, 0)
-    const fee = this.calculateFee(unspentOutputsToUse.length, 1, feePerByte)
-    let totalCost = value + fee
-    let hasChange = false
+    const { inputs, change } = await this.getInputsForAmount(value)
 
-    if (totalAmount > totalCost) {
-      hasChange = true
+    const ledgerInputs = await this.getLedgerInputs(inputs)
+    const paths = inputs.map(utxo => utxo.derivationPath)
 
-      totalCost -= fee
-      totalCost += this.calculateFee(unspentOutputsToUse.length, 2, feePerByte)
-    }
-
-    if (totalAmount < totalCost) {
-      throw new Error('Not enough balance')
-    }
-
-    const ledgerInputs = await this.getLedgerInputs(unspentOutputsToUse)
-    const paths = unspentOutputsToUse.map(utxo => utxo.derivationPath)
-
-    const sendAmount = value
-    const changeAmount = totalAmount - totalCost
     const sendScript = this.createScript(to)
-    let outputs = [{ amount: this.getAmountBuffer(sendAmount), script: Buffer.from(sendScript, 'hex') }]
-    if (hasChange) {
+    const outputs = [{ amount: this.getAmountBuffer(value), script: Buffer.from(sendScript, 'hex') }]
+
+    if (change) {
       const changeScript = this.createScript(unusedAddress.address)
-      outputs.push({ amount: this.getAmountBuffer(changeAmount), script: Buffer.from(changeScript, 'hex') })
+      outputs.push({ amount: this.getAmountBuffer(change), script: Buffer.from(changeScript, 'hex') })
     }
+
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
     return this.getMethod('sendRawTransaction')(signedTransaction)
@@ -311,7 +299,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   // change: 1
   // both: 2
   async _getUsedUnusedAddresses (numAddressPerCall = 100, addressType) {
-    const addressGap = 20
     const usedAddresses = []
     const addressCountMap = { change: 0, nonChange: 0 }
     let unusedAddresses = []
@@ -321,13 +308,13 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     let nonChangeAddresses = []
 
     /* eslint-disable no-unmodified-loop-condition */
-    while ((addressType === 2 && (addressCountMap.change < addressGap || addressCountMap.nonChange < addressGap)) ||
-           (addressType === 0 && addressCountMap.nonChange < addressGap) ||
-           (addressType === 1 && addressCountMap.change < addressGap)) {
+    while ((addressType === 2 && (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP)) ||
+           (addressType === 0 && addressCountMap.nonChange < ADDRESS_GAP) ||
+           (addressType === 1 && addressCountMap.change < ADDRESS_GAP)) {
       /* eslint-enable no-unmodified-loop-condition */
       let addrList = []
 
-      if ((addressType === 2 || addressType === 1) && addressCountMap.change < addressGap) {
+      if ((addressType === 2 || addressType === 1) && addressCountMap.change < ADDRESS_GAP) {
         // Scanning for change addr
         changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
         plainChangeAddresses = changeAddresses.map(a => a.address)
@@ -336,7 +323,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         plainChangeAddresses = []
       }
 
-      if ((addressType === 2 || addressType === 0) && addressCountMap.nonChange < addressGap) {
+      if ((addressType === 2 || addressType === 0) && addressCountMap.nonChange < ADDRESS_GAP) {
         // Scanning for non change addr
         nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
         addrList = addrList.concat(nonChangeAddresses)

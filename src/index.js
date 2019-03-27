@@ -10,6 +10,8 @@ import * as schema from './schema'
 import JsonRpcProvider from './providers/JsonRpcProvider'
 import LedgerProvider from './providers/LedgerProvider'
 
+import { version } from '../package.json'
+
 export {
   Client,
   Provider,
@@ -18,5 +20,6 @@ export {
   errors,
   schema,
   JsonRpcProvider,
-  LedgerProvider
+  LedgerProvider,
+  version
 }
