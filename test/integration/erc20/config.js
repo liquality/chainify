@@ -5,7 +5,7 @@ export default {
     }
   },
   token: {
-    address: '0x3770624fb25838Acb679686F56C471D51Ac94431'
+    address: '0x35bfb954343a1cc5627a529b16248ba0ce683976'
   },
   metaMaskConnector: {
     port: 3333
