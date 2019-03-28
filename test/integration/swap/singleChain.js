@@ -190,7 +190,14 @@ describe('Swap Single Chain Flow', function () {
     testSingle(chains.ethereumWithNode)
   })
 
+  describe('Ethereum - Ledger', () => {
+    testSingle(chains.ethereumWithLedger)
+  })
+
   describe('Ethereum - Balance', () => {
+    describe('Ledger', () => {
+      testEthereumBalance(chains.ethereumWithLedger)
+    })
     describe('MetaMask', () => {
       connectMetaMask()
       testEthereumBalance(chains.ethereumWithMetaMask)
