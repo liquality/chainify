@@ -3,7 +3,7 @@
 // import chaiAsPromised from 'chai-as-promised'
 // import _ from 'lodash'
 import { expect } from 'chai'
-import { Client, providers } from '../../../src'
+import { Client, providers, crypto } from '../../../src'
 import config from './config'
 import MetaMaskConnector from 'node-metamask'
 
@@ -22,22 +22,34 @@ function deployERC20Contract (client) {
 }
 */
 
-connectMetaMask()
-
 const ethereumNetworks = providers.ethereum.networks
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[null]))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumERC20Provider(config.token.address))
+ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
 
 const ethereumWithNode = new Client()
 ethereumWithNode.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
 ethereumWithNode.addProvider(new providers.ethereum.EthereumERC20Provider(config.token.address))
+ethereumWithNode.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
 
 const testClient = ethereumWithMetaMask
+connectMetaMask()
 
 describe('ERC20 Basic functionality', function () {
   this.timeout(300000000)
+
+  describe.only('Basic ERC20 transfer', function () {
+    it('Transfer', async () => {
+      var secretHash = crypto.sha256('lol')
+      var recipientAddress = 'fceda7c1484aa5e6a103e1ad24075dc4b0873cf0'
+      var refundAddress = 'fceda7c1484aa5e6a103e1ad24075dc4b0873cf0'
+      var expiration = 1568194353
+      await testClient.initiateSwap(10, recipientAddress, refundAddress, secretHash, expiration)
+    })
+  })
+
   describe('Basic ERC20 transfer', function () {
     it('Transfer', async () => {
       // deployERC20Contract(testClient)
