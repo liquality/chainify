@@ -103,8 +103,8 @@ export default class EthereumSwapProvider extends Provider {
     return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
   }
 
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
     let initiateSwapTransaction = null
     while (!initiateSwapTransaction) {
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
@@ -119,8 +119,8 @@ export default class EthereumSwapProvider extends Provider {
     return initiateSwapTransaction
   }
 
-  async findClaimSwapTransaction (initiationTxHash) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
     let claimSwapTransaction = null
     while (!claimSwapTransaction) {
       const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
