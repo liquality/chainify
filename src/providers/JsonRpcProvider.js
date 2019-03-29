@@ -32,7 +32,7 @@ export default class JsonRpcProvider extends Provider {
   }
 
   _parseResponse ({ data, status, statusText, headers }) {
-    if (typeof data === 'string' && headers['content-type'] !== 'application/json' && status !== 200) {
+    if (headers['content-type'] !== 'application/json') {
       throw new RpcError(status, statusText, { data })
     }
 
