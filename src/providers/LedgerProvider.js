@@ -1,4 +1,4 @@
-import Transport from '@ledgerhq/hw-transport-node-hid'
+import Transport from "@ledgerhq/hw-transport-u2f";
 import WalletProvider from './WalletProvider'
 import { WalletError } from '../errors'
 
