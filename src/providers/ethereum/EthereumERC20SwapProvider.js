@@ -1,6 +1,6 @@
 import Provider from '../../Provider'
 // import { padHexStart } from '../../crypto'
-// import { ensureAddressStandardFormat } from './EthereumUtil'
+import { ensureAddressStandardFormat } from './EthereumUtil'
 import solc from 'solc'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -17,21 +17,21 @@ export default class EthereumERC20SwapProvider extends Provider {
     
     contract HTLC {
             
-            address payable recipient = 0xc633C8d9e80a5E10bB939812b548b821554c49A6;
-            address payable receiver = 0x06560D4340EAE1d64310144Fe957231843071c63;
-            ERC20 token = ERC20(0x13078b88dB1D63Bc7390Ec47642cE8A41CcC126e);
-            bytes32 hashedSecret = "0x01";
+            address payable recipientAddress = address(0x00` + ensureAddressStandardFormat(recipientAddress) + `);
+            address payable refundAddress = address(0x00` + ensureAddressStandardFormat(refundAddress) + `);
+            ERC20 token = ERC20(0x00` + ensureAddressStandardFormat(this.getMethod('erc20')()) + `);
+            bytes32 hashedSecret = 0x` + secretHash + `;
             
             function claim(bytes32 secret) public {
-                require(keccak256(abi.encodePacked(secret)) == hashedSecret);
-                token.transfer(recipient, token.balanceOf(address(this)));
-                selfdestruct(recipient);
+                require(sha256(abi.encodePacked(secret)) == hashedSecret);
+                token.transfer(recipientAddress, token.balanceOf(address(this)));
+                selfdestruct(recipientAddress);
             }
     
             function refund () public {
-                require(now > 1);
-                token.transfer(receiver, token.balanceOf(address(this)));
-                selfdestruct(receiver);
+                require(now > ` + expiration + `);
+                token.transfer(refundAddress, token.balanceOf(address(this)));
+                selfdestruct(refundAddress);
             }
     }
     `
@@ -50,7 +50,6 @@ export default class EthereumERC20SwapProvider extends Provider {
         }
       }
     }
-
     const code = JSON.parse(solc.compile(JSON.stringify(input)))
     return code.contracts['htlc.sol']['HTLC'].evm.bytecode.object
   }
@@ -58,20 +57,20 @@ export default class EthereumERC20SwapProvider extends Provider {
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
     const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     await this.getMethod('sendTransaction')(null, 0, bytecode)
-    console.log('Will find')
-    let tx = await this.findContractDeployTransaction(recipientAddress, refundAddress, secretHash, expiration)
+    const tx = await this.findContractDeployTransaction(value, recipientAddress, refundAddress, secretHash, expiration)
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(tx.hash)
-    return this.getMethod('erc20Transfer')(initiationTransactionReceipt.contractAddress, value)
+    await this.getMethod('erc20Transfer')(initiationTransactionReceipt.contractAddress, value)
+    return tx.hash
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, secret)
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, '0xbd66528a' + secret)
   }
 
   async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, '')
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, '0x590e1ae3')
   }
 
   doesTransactionMatchSwapParams (transaction, recipientAddress, refundAddress, secretHash, expiration) {
@@ -79,21 +78,23 @@ export default class EthereumERC20SwapProvider extends Provider {
     return transaction.input === data
   }
 
+  async doesBalanceMatchValue (contractAddress, value) {
+    const balance = await this.getMethod('erc20Balance')([contractAddress])
+    return balance === value
+  }
+
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    const transactionMatchesSwapParams = this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
+    const transactionMatchesSwapParams = this.doesTransactionMatchSwapParams(initiationTransaction, recipientAddress, refundAddress, secretHash, expiration)
     return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
   }
 
-  async findContractDeployTransaction (recipientAddress, refundAddress, secretHash, expiration) {
-    console.log('find it')
+  async findContractDeployTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
     let blockNumber = await this.getMethod('getBlockHeight')()
     let initiateSwapTransaction = null
-    console.log(blockNumber)
     while (!initiateSwapTransaction) {
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      console.log(block)
       if (block) {
         initiateSwapTransaction = block.transactions.find(transaction =>
           this.doesTransactionMatchSwapParams(transaction, recipientAddress, refundAddress, secretHash, expiration)
@@ -102,23 +103,24 @@ export default class EthereumERC20SwapProvider extends Provider {
       }
       await sleep(5000)
     }
-    let contractBalance = 0
-    while (contractBalance === 1) {
-      contractBalance = 2
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiateSwapTransaction.hash)
+    let contractBalanceMatchesValue = false
+    while (!contractBalanceMatchesValue) {
+      contractBalanceMatchesValue = this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
       await sleep(5000)
     }
     return initiateSwapTransaction
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    let tx = await this.findContractDeployTransaction(recipientAddress, refundAddress, secretHash, expiration)
+    let tx = await this.findContractDeployTransaction(value, recipientAddress, refundAddress, secretHash, expiration)
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(tx.hash)
-    let contractBalance = 0
-    while (contractBalance === 0) {
-      contractBalance = await this.getMethod('erc20Balance')(initiationTransactionReceipt.contractAddress)
+    let contractBalanceMatchesValue = false
+    while (!contractBalanceMatchesValue) {
+      contractBalanceMatchesValue = this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
       await sleep(5000)
     }
-    return initiationTransactionReceipt
+    return tx
   }
 
   async findClaimSwapTransaction (initiationTxHash) {
@@ -143,6 +145,6 @@ export default class EthereumERC20SwapProvider extends Provider {
 
   async getSwapSecret (claimTxHash) {
     const claimTransaction = await this.getMethod('getTransactionByHash')(claimTxHash)
-    return claimTransaction.input
+    return claimTransaction.input.substring(8)
   }
 }

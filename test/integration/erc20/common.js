@@ -37,16 +37,46 @@ ethereumWithNode.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
 const testClient = ethereumWithMetaMask
 connectMetaMask()
 
+const chain = {
+  client: testClient
+}
+
+async function initiateAndVerify (chain, secretHash, swapParams) {
+  console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  const initiationParams = [swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration]
+  const [ initiationTx, initiationTxId ] = await Promise.all([
+    chain.client.findInitiateSwapTransaction(...initiationParams),
+    chain.client.initiateSwap(...initiationParams)
+  ])
+  expect(initiationTx.hash).to.equal(initiationTxId)
+  const isVerified = await chain.client.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
+  expect(isVerified).to.equal(true)
+  console.log(`${chain.id} Initiated ${initiationTxId}`)
+  return initiationTxId
+}
+
 describe('ERC20 Basic functionality', function () {
   this.timeout(300000000)
 
   describe.only('Basic ERC20 transfer', function () {
     it('Transfer', async () => {
-      var secretHash = crypto.sha256('lol')
-      var recipientAddress = 'fceda7c1484aa5e6a103e1ad24075dc4b0873cf0'
-      var refundAddress = 'fceda7c1484aa5e6a103e1ad24075dc4b0873cf0'
+      const swapParams = {
+        value: 42,
+        recipientAddress: '0xc633C8d9e80a5E10bB939812b548b821554c49A6',
+        refundAddress: '0xc633C8d9e80a5E10bB939812b548b821554c49A6',
+        secretHash: crypto.sha256('1e8604b5c657db8456b5a235c26b93b905e0c3f4e1f45100f672d15f92bac38a'),
+        expiration: 1000
+      }
+      await initiateAndVerify(chain, swapParams.secretHash, swapParams)
+    })
+  })
+  describe('Basic ERC20 transfer', function () {
+    it('Transfer', async () => {
+      var secretHash = crypto.sha256('1e8604b5c657db8456b5a235c26b93b905e0c3f4e1f45100f672d15f92bac38a')
+      var recipientAddress = '0xc633C8d9e80a5E10bB939812b548b821554c49A6'
+      var refundAddress = '0xc633C8d9e80a5E10bB939812b548b821554c49A6'
       var expiration = 1568194353
-      await testClient.initiateSwap(10, recipientAddress, refundAddress, secretHash, expiration)
+      await testClient.initiateSwap(1, recipientAddress, refundAddress, secretHash, expiration)
     })
   })
 

@@ -22,16 +22,24 @@ export default class EthereumERC20Provider extends Provider {
     return this.getMethod('sendTransaction')(ensureHexEthFormat(this._contractAddress), 0, txBytecode)
   }
 
+  erc20 () {
+    return this._contractAddress
+  }
+
   // TODO Should check for BigNumber
   // TODO What out for metamask provider
   async erc20Balance (addresses) {
-    const functionSignature = '70a08231'
+    const functionSignature = '0x70a08231'
     addresses = addresses
       .map(address => String(address))
     const addrs = addresses.map(ensureHexEthFormat)
     const promiseBalances = await Promise.all(addrs.map(address => this.getMethod('jsonrpc')('eth_call', { data: functionSignature + padHexStart(ensureAddressStandardFormat(address), 64), to: ensureHexEthFormat(this._contractAddress) }, 'latest')))
     return promiseBalances.map(balance => parseInt(balance, 16))
       .reduce((acc, balance) => acc + balance, 0)
+  }
+
+  async getBalance (addresses) {
+    return this.erc20Balance(addresses)
   }
 
   doesTransactionMatchesErc20Transfer (transaction, to, value) {
