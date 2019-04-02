@@ -1,3 +1,5 @@
+/* global window */
+
 import _ from 'lodash'
 import { BigNumber } from 'bignumber.js'
 import WalletProvider from '../WalletProvider'
@@ -21,7 +23,10 @@ export default class EthereumMetaMaskProvider extends WalletProvider {
     return addresses.length > 0
   }
 
-  _toMM (method, ...params) {
+  async _toMM (method, ...params) {
+    if (global.window) {
+      await global.window.ethereum.enable() // Ensure access to MetaMask is granted
+    }
     return new Promise((resolve, reject) => {
       this
         ._metamaskProvider

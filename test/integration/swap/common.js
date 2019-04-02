@@ -56,13 +56,20 @@ erc20WithNode.addProvider(new providers.ethereum.EthereumERC20Provider('We dont 
 erc20WithNode.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
 erc20WithNode.addProvider(new RandomEthereumAddressProvider())
 
+const ethereumWithLedger = new Client()
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
+ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
+
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger },
   bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   erc20WithMetaMask: { id: 'ERC20 MetaMask', name: 'ethereum', client: erc20WithMetaMask },
-  erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode }
+  erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
+  ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger }
 }
 
 async function getSwapParams (chain) {

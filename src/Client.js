@@ -372,10 +372,11 @@ export default class Client {
    * @param {!string} refundAddress - Refund address
    * @param {!string} secretHash - Secret hash
    * @param {!string} expiration - Expiration time
+   * @param {number} [startBlock] - The block number to start finding from (Optional)
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.getMethod('findInitiateSwapTransaction')(value, recipientAddress, refundAddress, secretHash, expiration)
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock = null) {
+    return this.getMethod('findInitiateSwapTransaction')(value, recipientAddress, refundAddress, secretHash, expiration, startBlock)
   }
 
   /**
@@ -385,10 +386,11 @@ export default class Client {
    * @param {!string} refundAddress - Refund address
    * @param {!string} secretHash - Secret hash
    * @param {!string} expiration - Expiration time
+   * @param {number} [startBlock] - The block number to start finding from (Optional)
    * @return {Promise<string>} Resolves with a transaction identifier.
    */
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock = null) {
+    return this.getMethod('findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock)
   }
 
   /**

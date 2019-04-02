@@ -196,12 +196,19 @@ describe('Swap Single Chain Flow', function () {
     testSingle(chains.erc20WithMetaMask)
   })
 
-  describe.only('ERC20 - Node', async () => {
+  describe('ERC20 - Node', async () => {
     deployERC20Token(chains.erc20WithNode.client)
     testSingle(chains.erc20WithNode)
   })
 
+  describe('Ethereum - Ledger', () => {
+    testSingle(chains.ethereumWithLedger)
+  })
+
   describe('Ethereum - Balance', () => {
+    describe('Ledger', () => {
+      testEthereumBalance(chains.ethereumWithLedger)
+    })
     describe('MetaMask', () => {
       connectMetaMask()
       testEthereumBalance(chains.ethereumWithMetaMask)
