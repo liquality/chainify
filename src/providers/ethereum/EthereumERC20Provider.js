@@ -22,12 +22,12 @@ export default class EthereumERC20Provider extends Provider {
     return this.getMethod('sendTransaction')(ensureHexEthFormat(this._contractAddress), 0, txBytecode)
   }
 
+  // TODO temporary way to expose contract address to other providers
   erc20 () {
     return this._contractAddress
   }
 
   // TODO Should check for BigNumber
-  // TODO What out for metamask provider
   async erc20Balance (addresses) {
     const functionSignature = '0x70a08231'
     addresses = addresses
@@ -42,10 +42,12 @@ export default class EthereumERC20Provider extends Provider {
     return this.erc20Balance(addresses)
   }
 
+  // TODO not used anymore (was only there for tests)
   doesTransactionMatchesErc20Transfer (transaction, to, value) {
     return transaction.input === this.generateErc20Transfer(to, value)
   }
 
+  // TODO not used anymore (was only there for tests)
   async findErc20Transfer (from, to, value) {
     let blockNumber = await this.getMethod('getBlockHeight')()
     let erc20TransferTransaction = null

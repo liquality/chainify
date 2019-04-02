@@ -5,6 +5,7 @@ import solc from 'solc'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
+// TODO Get contract address from constructor
 export default class EthereumERC20SwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     const contractCode = `
@@ -60,6 +61,11 @@ export default class EthereumERC20SwapProvider extends Provider {
     const tx = await this.findContractDeployTransaction(value, recipientAddress, refundAddress, secretHash, expiration)
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(tx.hash)
     await this.getMethod('erc20Transfer')(initiationTransactionReceipt.contractAddress, value)
+    let contractBalanceMatchesValue = false
+    while (!contractBalanceMatchesValue) {
+      contractBalanceMatchesValue = await this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
+      await sleep(5000)
+    }
     return tx.hash
   }
 
@@ -103,12 +109,6 @@ export default class EthereumERC20SwapProvider extends Provider {
       }
       await sleep(5000)
     }
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiateSwapTransaction.hash)
-    let contractBalanceMatchesValue = false
-    while (!contractBalanceMatchesValue) {
-      contractBalanceMatchesValue = this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
-      await sleep(5000)
-    }
     return initiateSwapTransaction
   }
 
@@ -117,7 +117,7 @@ export default class EthereumERC20SwapProvider extends Provider {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(tx.hash)
     let contractBalanceMatchesValue = false
     while (!contractBalanceMatchesValue) {
-      contractBalanceMatchesValue = this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
+      contractBalanceMatchesValue = await this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
       await sleep(5000)
     }
     return tx
