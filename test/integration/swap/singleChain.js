@@ -5,7 +5,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import { crypto, providers } from '../../../src'
-import { chains, initiateAndVerify, claimAndVerify, refund, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, connectMetaMask } from './common'
+import { chains, initiateAndVerify, claimAndVerify, refund, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask } from './common'
 import config from './config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -188,6 +188,16 @@ describe('Swap Single Chain Flow', function () {
 
   describe('Ethereum - Node', () => {
     testSingle(chains.ethereumWithNode)
+  })
+
+  describe.only('ERC20 - MetaMask', () => {
+    connectMetaMask(chains.erc20WithMetaMask.client)
+    deployERC20Token(chains.erc20WithMetaMask.client)
+    testSingle(chains.erc20WithMetaMask)
+  })
+
+  describe('ERC20 - Node', async () => {
+    testSingle(chains.erc20WithNode)
   })
 
   describe('Ethereum - Balance', () => {

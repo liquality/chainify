@@ -27,6 +27,10 @@ export default class EthereumERC20Provider extends Provider {
     return this._contractAddress
   }
 
+  setErc20 (contractAddress) {
+    this._contractAddress = contractAddress
+  }
+
   // TODO Should check for BigNumber
   async erc20Balance (addresses) {
     const functionSignature = '0x70a08231'

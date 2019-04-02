@@ -71,7 +71,6 @@
     "dsn-parser": "^1.0.1",
     "json-bigint": "^0.3.0",
     "lodash": "^4.17.11",
-    "solc": "^0.5.7",
     "standard-error": "^1.1.0"
   },
   "devDependencies": {

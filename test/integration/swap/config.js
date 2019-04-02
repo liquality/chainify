@@ -11,7 +11,8 @@ export default {
   },
   ethereum: {
     rpc: {
-      host: 'http://localhost:8545'
+      host: 'https://rinkeby.infura.io/v3/3bbb5ebeb45e4b2b9a35261f272fb611'
+      // host: 'http://localhost:8545'
     },
     value: 10000000000000000,
     metaMaskConnector: {
