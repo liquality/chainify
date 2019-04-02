@@ -139,9 +139,6 @@ function mineBitcoinBlocks () {
 
 function connectMetaMask (client) {
   before(async () => {
-    console.log('hdhhdhdhdhdhdhd')
-  })
-  before(async () => {
     console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
     await metaMaskConnector.start()
   })

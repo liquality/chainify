@@ -190,13 +190,14 @@ describe('Swap Single Chain Flow', function () {
     testSingle(chains.ethereumWithNode)
   })
 
-  describe.only('ERC20 - MetaMask', () => {
+  describe('ERC20 - MetaMask', () => {
     connectMetaMask(chains.erc20WithMetaMask.client)
     deployERC20Token(chains.erc20WithMetaMask.client)
     testSingle(chains.erc20WithMetaMask)
   })
 
-  describe('ERC20 - Node', async () => {
+  describe.only('ERC20 - Node', async () => {
+    deployERC20Token(chains.erc20WithNode.client)
     testSingle(chains.erc20WithNode)
   })
 
