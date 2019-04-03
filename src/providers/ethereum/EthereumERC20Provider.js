@@ -2,8 +2,6 @@ import Provider from '../../Provider'
 import { padHexStart } from '../../crypto'
 import { ensureAddressStandardFormat, ensureHexEthFormat } from './EthereumUtil'
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
 export default class EthereumERC20Provider extends Provider {
   constructor (contractAddress) {
     super()
@@ -22,17 +20,11 @@ export default class EthereumERC20Provider extends Provider {
     return this.getMethod('sendTransaction')(ensureHexEthFormat(this._contractAddress), 0, txBytecode)
   }
 
-  // TODO temporary way to expose contract address to other providers
-  erc20 () {
+  getContractAddress () {
     return this._contractAddress
   }
 
-  setErc20 (contractAddress) {
-    this._contractAddress = contractAddress
-  }
-
-  // TODO Should check for BigNumber
-  async erc20Balance (addresses) {
+  async getBalance (addresses) {
     const functionSignature = '0x70a08231'
     addresses = addresses
       .map(address => String(address))
@@ -40,37 +32,5 @@ export default class EthereumERC20Provider extends Provider {
     const promiseBalances = await Promise.all(addrs.map(address => this.getMethod('jsonrpc')('eth_call', { data: functionSignature + padHexStart(ensureAddressStandardFormat(address), 64), to: ensureHexEthFormat(this._contractAddress) }, 'latest')))
     return promiseBalances.map(balance => parseInt(balance, 16))
       .reduce((acc, balance) => acc + balance, 0)
-  }
-
-  async getBalance (addresses) {
-    return this.erc20Balance(addresses)
-  }
-
-  // TODO not used anymore (was only there for tests)
-  doesTransactionMatchesErc20Transfer (transaction, to, value) {
-    return transaction.input === this.generateErc20Transfer(to, value)
-  }
-
-  // TODO not used anymore (was only there for tests)
-  async findErc20Transfer (from, to, value) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
-    let erc20TransferTransaction = null
-    while (!erc20TransferTransaction) {
-      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      if (block) {
-        erc20TransferTransaction = block.transactions.find(transaction =>
-          this.doesTransactionMatchesErc20Transfer(transaction, to, value)
-        )
-        if (erc20TransferTransaction != null) {
-          const transactionReceipt = await this.getMethod('getTransactionReceipt')(erc20TransferTransaction.hash)
-          if (transactionReceipt.status !== '1') {
-            erc20TransferTransaction = null
-          }
-        }
-        blockNumber++
-      }
-      await sleep(5000)
-    }
-    return erc20TransferTransaction
   }
 }

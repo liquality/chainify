@@ -44,11 +44,6 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return ensureHexStandardFormat(txHash)
   }
 
-  async sendRawTransaction (hash) {
-    const txHash = await this.jsonrpc('eth_sendRawTransaction', hash)
-    return txHash
-  }
-
   async signMessage (message, from) {
     from = ensureHexEthFormat(from)
     message = ensureHexEthFormat(Buffer.from(message).toString('hex'))
@@ -79,16 +74,6 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   async getTransactionReceipt (txHash) {
     txHash = ensureHexEthFormat(txHash)
     return this.jsonrpc('eth_getTransactionReceipt', txHash)
-  }
-
-  async getTransactionCount (address) {
-    const count = await this.jsonrpc('eth_getTransactionCount', ensureHexEthFormat(address))
-    return parseInt(count, '16')
-  }
-
-  async getGasPrice () {
-    const gasPrice = await this.jsonrpc('eth_gasPrice')
-    return parseInt(gasPrice, '16')
   }
 
   async getBalance (addresses) {

@@ -3,11 +3,11 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
 import { Client, Provider, providers, crypto } from '../../../src'
+import { sleep } from '../../../src/GlobalUtils'
+import { findLast } from 'lodash'
 import config from './config'
 
 chai.use(chaiAsPromised)
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 
@@ -43,6 +43,12 @@ ethereumWithNode.addProvider(new providers.ethereum.EthereumRPCProvider(config.e
 ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
 
+const ethereumWithLedger = new Client()
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
+ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
+
 const erc20WithMetaMask = new Client()
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
@@ -56,20 +62,22 @@ erc20WithNode.addProvider(new providers.ethereum.EthereumERC20Provider('We dont 
 erc20WithNode.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
 erc20WithNode.addProvider(new RandomEthereumAddressProvider())
 
-const ethereumWithLedger = new Client()
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
+const erc20WithLedger = new Client()
+erc20WithLedger.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
+erc20WithLedger.addProvider(new providers.ethereum.EthereumERC20Provider('We dont have an addres yet'))
+erc20WithLedger.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
+erc20WithLedger.addProvider(new RandomEthereumAddressProvider())
 
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger },
   bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
+  ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
   erc20WithMetaMask: { id: 'ERC20 MetaMask', name: 'ethereum', client: erc20WithMetaMask },
   erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
-  ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger }
+  erc20WithLedger: { id: 'Erc20 Ledger', name: 'ethereum', client: erc20WithLedger }
 }
 
 async function getSwapParams (chain) {
@@ -144,7 +152,7 @@ function mineBitcoinBlocks () {
   }
 }
 
-function connectMetaMask (client) {
+function connectMetaMask () {
   before(async () => {
     console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
     await metaMaskConnector.start()
@@ -154,14 +162,18 @@ function connectMetaMask (client) {
 
 function deployERC20Token (client) {
   before(async () => {
-    console.log('\x1b[36m', 'Deploy the ERC20 token', '\x1b[0m')
+    console.log('\x1b[36m', 'Deploying the ERC20 token contract', '\x1b[0m')
     const bytecode = '608060405234801561001057600080fd5b5060408051678ac7230489e800008152905133916000917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a3336000908152602081905260409020678ac7230489e80000905561055b8061007a6000396000f3fe608060405260043610610087577c0100000000000000000000000000000000000000000000000000000000600035046306fdde03811461008c578063095ea7b31461011657806323b872dd14610163578063313ce567146101a657806370a08231146101d157806395d89b4114610216578063a9059cbb1461022b578063dd62ed3e14610264575b600080fd5b34801561009857600080fd5b506100a161029f565b6040805160208082528351818301528351919283929083019185019080838360005b838110156100db5781810151838201526020016100c3565b50505050905090810190601f1680156101085780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b34801561012257600080fd5b5061014f6004803603604081101561013957600080fd5b50600160a060020a0381351690602001356102d6565b604080519115158252519081900360200190f35b34801561016f57600080fd5b5061014f6004803603606081101561018657600080fd5b50600160a060020a0381358116916020810135909116906040013561033c565b3480156101b257600080fd5b506101bb6103ab565b6040805160ff9092168252519081900360200190f35b3480156101dd57600080fd5b50610204600480360360208110156101f457600080fd5b5035600160a060020a03166103b0565b60408051918252519081900360200190f35b34801561022257600080fd5b506100a16103c2565b34801561023757600080fd5b5061014f6004803603604081101561024e57600080fd5b50600160a060020a0381351690602001356103f9565b34801561027057600080fd5b506102046004803603604081101561028757600080fd5b50600160a060020a038135811691602001351661040f565b60408051808201909152600a81527f546f6b656e205465737400000000000000000000000000000000000000000000602082015281565b336000818152600160209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b600160a060020a038316600090815260016020908152604080832033845290915281205482111561036c57600080fd5b600160a060020a03841660009081526001602090815260408083203384529091529020805483900390556103a184848461042c565b5060019392505050565b601281565b60006020819052908152604090205481565b60408051808201909152600481527f5357415000000000000000000000000000000000000000000000000000000000602082015281565b600061040633848461042c565b50600192915050565b600160209081526000928352604080842090915290825290205481565b600160a060020a038216151561044157600080fd5b600160a060020a03831660009081526020819052604090205481111561046657600080fd5b600160a060020a038216600090815260208190526040902054818101101561048d57600080fd5b600160a060020a03808316600081815260208181526040808320805495891680855282852080548981039091559486905281548801909155815187815291519390950194927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a3600160a060020a0380841660009081526020819052604080822054928716825290205401811461052957fe5b5050505056fea165627a7a72305820db460d87e53e94fdd939b99d2a07ceb235e8a2ce62f7d320cd34a12c1c613a860029'
     let txHash = await client.getMethod('sendTransaction')(null, 0, bytecode)
     let initiationTransactionReceipt = null
     while (initiationTransactionReceipt === null) {
       initiationTransactionReceipt = await client.getMethod('getTransactionReceipt')(txHash)
     }
-    client.getMethod('setErc20')(initiationTransactionReceipt.contractAddress)
+    const erc20Provider = findLast(
+      client._providers,
+      provider => provider instanceof providers.ethereum.EthereumERC20Provider, client._providers.lenght
+    )
+    erc20Provider._contractAddress = initiationTransactionReceipt.contractAddress
   })
 }
 

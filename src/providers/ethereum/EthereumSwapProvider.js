@@ -1,8 +1,7 @@
 import Provider from '../../Provider'
 import { padHexStart } from '../../crypto'
+import { sleep } from '../../GlobalUtils'
 import { ensureAddressStandardFormat } from './EthereumUtil'
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
