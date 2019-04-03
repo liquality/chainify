@@ -2,9 +2,8 @@ import Provider from '../../Provider'
 import { calculateFee, addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { BigNumber } from 'bignumber.js'
 import { sha256, padHexStart } from '../../crypto'
+import { sleep } from '../../GlobalUtils'
 import networks from './networks'
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export default class BitcoinSwapProvider extends Provider {
   // TODO: have a generate InitSwap and generate RecipSwap
