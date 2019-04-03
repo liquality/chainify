@@ -41,16 +41,19 @@ export default class EthereumERC20SwapProvider extends Provider {
 
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
     const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    await this.getMethod('sendTransaction')(null, 0, bytecode)
-    const tx = await this.findContractDeployTransaction(value, recipientAddress, refundAddress, secretHash, expiration)
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(tx.hash)
+    const txHash = await this.getMethod('sendTransaction')(null, 0, bytecode)
+    let initiationTransactionReceipt = null
+    while (initiationTransactionReceipt === null) {
+      initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(txHash)
+      await sleep(5000)
+    }
     await this.getMethod('erc20Transfer')(initiationTransactionReceipt.contractAddress, value)
     let contractBalanceMatchesValue = false
     while (!contractBalanceMatchesValue) {
       contractBalanceMatchesValue = await this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
       await sleep(5000)
     }
-    return tx.hash
+    return txHash
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
