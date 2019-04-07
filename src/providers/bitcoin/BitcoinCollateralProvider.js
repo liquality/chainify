@@ -1,7 +1,9 @@
 import Provider from '../../Provider'
-import { addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
+import { calculateFee, addressToPubKeyHash, pubKeyToAddress, reverseBuffer, scriptNumEncode } from './BitcoinUtil'
 import { hash160, sha256, padHexStart } from '../../crypto'
 import networks from './networks'
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export default class BitcoinCollateralProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
@@ -231,6 +233,82 @@ export default class BitcoinCollateralProvider extends Provider {
     return { refundableResult, seizableResult }
   }
 
+  doesTransactionMatchRefundableCollateralParams (transaction, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    const data = this.createRefundableCollateralScript(borrowerPubKey, lenderPubKey, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration)
+    const scriptPubKey = padHexStart(data)
+    const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    const sendScript = this.getMethod('createScript')(receivingAddress)
+    return Boolean(transaction._raw.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === refundableValue))
+  }
+
+  doesTransactionMatchSeizableCollateralParams (transaction, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    const data = this.createSeizableCollateralScript(borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+    const scriptPubKey = padHexStart(data)
+    const receivingAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    const sendScript = this.getMethod('createScript')(receivingAddress)
+    return Boolean(transaction._raw.vout.find(vout => vout.scriptPubKey.hex === sendScript && vout.valueSat === seizableValue))
+  }
+
+  async verifyLockRefundableCollateralTransaction (initiationTxHash, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    return this.doesTransactionMatchRefundableCollateralParams(initiationTransaction, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async verifyLockSeizableCollateralTransaction (initiationTxHash, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    return this.doesTransactionMatchSeizableCollateralParams(initiationTransaction, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async findRefundableCollateralTransaction (borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration, predicate) {
+    const script = this.createRefundableCollateralScript(borrowerPubKey, lenderPubKey, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration)
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    let refundableCollateralTransaction = null
+    while (!refundableCollateralTransaction) {
+      let p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
+      const p2shMempoolTransactions = await this.getMethod('getAddressMempool')([p2shAddress])
+      p2shTransactions = p2shTransactions.concat(p2shMempoolTransactions)
+      const transactionIds = p2shTransactions.map(tx => tx.txid)
+      const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
+      refundableCollateralTransaction = transactions.find(predicate)
+      await sleep(5000)
+    }
+    return refundableCollateralTransaction
+  }
+
+  async findSeizableCollateralTransaction (borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration, predicate) {
+    const script = this.createSeizableCollateralScript(borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+    const scriptPubKey = padHexStart(script)
+    const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    let seizableCollateralTransaction = null
+    while (!seizableCollateralTransaction) {
+      let p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
+      const p2shMempoolTransactions = await this.getMethod('getAddressMempool')([p2shAddress])
+      p2shTransactions = p2shTransactions.concat(p2shMempoolTransactions)
+      const transactionIds = p2shTransactions.map(tx => tx.txid)
+      const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
+      seizableCollateralTransaction = transactions.find(predicate)
+      await sleep(5000)
+    }
+    return seizableCollateralTransaction
+  }
+
+  async findLockRefundableCollateralTransaction (refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    const lockRefundableCollateralTransaction = await this.findRefundableCollateralTransaction(borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration,
+      tx => this.doesTransactionMatchRefundableCollateralParams(tx, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+    )
+
+    return lockRefundableCollateralTransaction
+  }
+
+  async findLockSeizableCollateralTransaction (refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    const lockSeizableCollateralTransaction = await this.findSeizableCollateralTransaction(borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration,
+      tx => this.doesTransactionMatchSeizableCollateralParams(tx, refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+    )
+
+    return lockSeizableCollateralTransaction
+  }
+
   async _refundCollateral (initiationTxHash, script, borrowerPubKey, lenderPubKey, borrowerSecretParam, lenderSecretParam, loanExpiration, biddingExpiration, seizureExpiration, seizable, period) {
     let secret, lockTime
     let requiresSecret = false
@@ -452,7 +530,7 @@ export default class BitcoinCollateralProvider extends Provider {
   generateRawTx (initiationTx, voutIndex, address, input, locktime) {
     const output = initiationTx.outputs[voutIndex]
     const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
-    const fee = this.getMethod('calculateFee')(1, 1, 3)
+    const fee = calculateFee(1, 1, 3)
     const amount = value - fee
     const amountLE = Buffer.from(padHexStart(amount.toString(16), 16), 'hex').reverse().toString('hex') // amount in little endian
     const pubKeyHash = addressToPubKeyHash(address)

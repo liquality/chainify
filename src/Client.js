@@ -568,4 +568,12 @@ export default class Client {
   async multisigSendCollateral (refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretA2, secretHashB2, secretB3, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to) {
     return this.getMethod('multisigSendCollateral')(refundableTxHash, seizableTxHash, borrowerPubKey, lenderPubKey, secretHashA1, secretA2, secretHashB2, secretB3, loanExpiration, biddingExpiration, seizureExpiration, borrowerSignatures, lenderSignatures, to)
   }
+
+  async findLockRefundableCollateralTransaction (refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('findLockRefundableCollateralTransaction')(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
+
+  async findLockSeizableCollateralTransaction (refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.getMethod('findLockSeizableCollateralTransaction')(refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration)
+  }
 }
