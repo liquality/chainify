@@ -1,5 +1,6 @@
 import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
 import Ajv from 'ajv'
+import BigNumber from 'bignumber.js'
 
 import { Block, Transaction } from './schema'
 import { sha256 } from './crypto'
@@ -404,6 +405,24 @@ export default class Client {
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
+  }
+
+  /**
+   * Generate secrets.
+   * @param {!string} message - Message to be used for generating secret.
+   * @param {!string} address - can pass address for async claim and refunds to get deterministic secrets
+   * @return {Promise<string>} Resolves with a 32 byte secret
+   */
+  async generateSecrets (message, num = 1) {
+    const address = (await this.getMethod('getAddresses')())[0].address
+    const signedMessage = await this.signMessage(message, address)
+    let secrets = []
+
+    for (let i = 0; i < num; i++) {
+      secrets.push(sha256(BigNumber(signedMessage, 16).plus(i).toString(16)))
+    }
+
+    return secrets
   }
 
   /**
