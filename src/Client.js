@@ -529,6 +529,10 @@ export default class Client {
     return this.getMethod('getWalletInfo')()
   }
 
+  async getConnectedNetwork () {
+    return this.getMethod('getConnectedNetwork')()
+  }
+
   async getAddressMempool (addresses) {
     return this.getMethod('getAddressMempool')(addresses)
   }
