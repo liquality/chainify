@@ -97,8 +97,8 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
 
     const addrs = addresses.map(ensureHexEthFormat)
     const promiseBalances = await Promise.all(addrs.map(address => this.jsonrpc('eth_getBalance', address, 'latest')))
-    return promiseBalances.map(balance => parseInt(balance, 16))
-      .reduce((acc, balance) => acc + balance, 0)
+    return promiseBalances.map(balance => new BigNumber(balance, 16))
+      .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
   async isAddressUsed (address) {
