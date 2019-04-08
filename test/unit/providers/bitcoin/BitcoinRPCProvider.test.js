@@ -1,10 +1,12 @@
 /* eslint-env mocha */
-require('chai').config.truncateThreshold = 0
-const { expect } = require('chai')
+import BigNumber from 'bignumber.js'
+import chai, { expect } from 'chai'
 
 const { Client, providers: { bitcoin: { BitcoinRPCProvider } } } = require('../../../../src')
 const mockJsonRpc = require('../../../mock/mockJsonRpc')
 const bitcoinRpc = require('../../../mock/bitcoin/rpc')
+
+chai.config.truncateThreshold = 0
 
 describe('Bitcoin RPC provider', () => {
   let client
@@ -123,7 +125,7 @@ describe('Bitcoin RPC provider', () => {
   describe('getBalance', () => {
     it('should return correct balance in sats', async () => {
       const balance = await provider.getBalance(['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'])
-      expect(balance).to.equal(20000000)
+      expect(balance).to.be.bignumber.equal(new BigNumber(20000000))
     })
   })
 

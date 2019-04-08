@@ -65,7 +65,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
 
     const _utxos = await this.getUnspentTransactionsForAddresses(addresses)
     const utxos = _.flatten(_utxos)
-    return utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0)
+    return utxos.map(balance => new BigNumber(balance.satoshis)).reduce((acc, utxo) => acc.plus(utxo), new BigNumber(0))
   }
 
   async getListUnspent (addresses) {
