@@ -3,7 +3,7 @@
 import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 
-require('chai').config.truncateThreshold = 0
+chai.config.truncateThreshold = 0
 
 const { Client, providers: { ethereum: { EthereumRPCProvider } } } = require('../../../../src')
 const mockJsonRpc = require('../../../mock/mockJsonRpc')
