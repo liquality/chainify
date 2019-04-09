@@ -1,6 +1,9 @@
 import Transport from '@ledgerhq/hw-transport-node-hid'
 import WalletProvider from './WalletProvider'
 import { WalletError } from '../errors'
+import Debug from '../Debug'
+
+const debug = Debug('ledger')
 
 export default class LedgerProvider extends WalletProvider {
   static isSupported () {
@@ -21,8 +24,11 @@ export default class LedgerProvider extends WalletProvider {
 
   async createTransport () {
     if (!LedgerProvider.transport) {
+      debug('creating ledger transport')
       LedgerProvider.transport = await Transport.create()
+      debug('ledger transport created')
       LedgerProvider.transport.on('disconnect', () => {
+        debug('ledger disconnected')
         this._appInstance = null
         LedgerProvider.transport = null
       })
@@ -33,8 +39,13 @@ export default class LedgerProvider extends WalletProvider {
     const method = target[func]
     if (Object.getOwnPropertyNames(target).includes(func) && typeof method === 'function') {
       return async (...args) => {
+        debug(`calling "${func}" on ledger object`, args)
+
         try {
           const result = await method.bind(target)(...args)
+
+          debug(`result from "${func}" on ledger object`, result)
+
           return result
         } catch (e) {
           const { name, ...errorNoName } = e
@@ -96,9 +107,8 @@ export default class LedgerProvider extends WalletProvider {
     while (index < maxAddresses) {
       const addrs = await this.getAddresses(index, addressesPerCall)
       const addr = addrs.find(addr => addr.address === address)
-      if (addr) {
-        return addr
-      }
+      if (addr) return addr
+
       index += addressesPerCall
       if (index === maxAddresses && change === false) {
         index = 0

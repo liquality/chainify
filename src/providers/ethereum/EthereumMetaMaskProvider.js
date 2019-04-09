@@ -2,60 +2,19 @@
 
 import _ from 'lodash'
 import { BigNumber } from 'bignumber.js'
-import WalletProvider from '../WalletProvider'
-import { formatEthResponse, ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
+import MetaMaskProvider from '../MetaMaskProvider'
+import { ensureHexEthFormat, ensureHexStandardFormat } from './EthereumUtil'
 import { WalletError } from '../../errors'
 import networks from './networks'
 
-export default class EthereumMetaMaskProvider extends WalletProvider {
-  constructor (metamaskProvider, network) {
-    super(network)
-    if (!_.isFunction(metamaskProvider.sendAsync)) {
-      throw new Error('Invalid MetaMask Provider')
-    }
-
-    this._metamaskProvider = metamaskProvider
-    this._network = network
-  }
-
+export default class EthereumMetaMaskProvider extends MetaMaskProvider {
   async isWalletAvailable () {
-    const addresses = await this._toMM('eth_accounts')
+    const addresses = await this.metamask('eth_accounts')
     return addresses.length > 0
   }
 
-  async _toMM (method, ...params) {
-    if (global.window) {
-      await global.window.ethereum.enable() // Ensure access to MetaMask is granted
-    }
-    return new Promise((resolve, reject) => {
-      this
-        ._metamaskProvider
-        .sendAsync({ method, params }, (err, data) => {
-          const error = err || data.error
-          if (error) {
-            reject(new WalletError(error.toString(), error))
-            return
-          }
-
-          if (!data) {
-            reject(new WalletError('Metamask response was empty'))
-            return
-          }
-
-          if (typeof data.result === 'undefined') {
-            reject(new WalletError('Metamask response was empty'))
-            return
-          }
-
-          const formattedResult = formatEthResponse(data.result)
-
-          resolve(formattedResult)
-        })
-    })
-  }
-
   async getAddresses () {
-    const addresses = await this._toMM('eth_accounts')
+    const addresses = await this.metamask('eth_accounts')
     if (addresses.length === 0) {
       throw new WalletError('Metamask: No addresses available from wallet')
     }
@@ -77,7 +36,7 @@ export default class EthereumMetaMaskProvider extends WalletProvider {
     const addresses = await this.getAddresses()
     const address = addresses[0].address
 
-    return this._toMM('personal_sign', `0x${hex}`, `0x${address}`)
+    return this.metamask('personal_sign', `0x${hex}`, `0x${address}`)
   }
 
   async getWalletInfo () {
@@ -113,12 +72,12 @@ export default class EthereumMetaMaskProvider extends WalletProvider {
       data: ensureHexEthFormat(data)
     }
 
-    const txHash = await this._toMM('eth_sendTransaction', tx)
+    const txHash = await this.metamask('eth_sendTransaction', tx)
     return ensureHexStandardFormat(txHash)
   }
 
   async getWalletNetworkId () {
-    const networkId = await this._toMM('net_version')
+    const networkId = await this.metamask('net_version')
 
     return parseInt(networkId)
   }

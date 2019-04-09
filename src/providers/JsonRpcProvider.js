@@ -5,6 +5,9 @@ import { get, has } from 'lodash'
 import Provider from '../Provider'
 import RpcError from './RpcError'
 import { NodeError } from '../errors'
+import Debug from '../Debug'
+
+const debug = Debug('jsonrpc')
 
 const { parse } = JSONBigInt({ storeAsString: true, strict: true })
 
@@ -28,7 +31,9 @@ export default class JsonRpcProvider extends Provider {
 
   _prepareRequest (method, params) {
     const id = Date.now()
-    return { id, method, params }
+    const req = { id, method, params }
+    debug('jsonrpc request', req)
+    return req
   }
 
   _parseResponse ({ data, status, statusText, headers }) {
@@ -37,7 +42,7 @@ export default class JsonRpcProvider extends Provider {
     }
 
     data = parse(data)
-
+    debug('parsed jsonrpc response', data)
     if (data.error != null) {
       throw new RpcError(
         get(data, 'error.code', -32603),

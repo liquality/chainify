@@ -1,5 +1,6 @@
 import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
 import Ajv from 'ajv'
+import debug from 'debug'
 
 import { Block, Transaction } from './schema'
 import { sha256 } from './crypto'
@@ -13,6 +14,10 @@ import {
 } from './errors'
 
 export default class Client {
+  static debug (namespace = '*') {
+    debug.enable(namespace)
+  }
+
   /**
    * Client
    * @param {Provider} [provider] - Data source/provider for the instance

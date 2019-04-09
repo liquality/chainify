@@ -33,6 +33,10 @@ npm install @liquality/chainabstractionlayer
 ```javascript
 import { Client, providers } from '@liquality/chainabstractionlayer'
 
+Client.debug('liquality*') // to enable debugging for all liquality modules using "debug" package
+// or
+// Client.debug('*') to enable debugging for everything
+
 const { BitcoinRPCProvider } = providers.bitcoin
 
 const bitcoin = new Client()
