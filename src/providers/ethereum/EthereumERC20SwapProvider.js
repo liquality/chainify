@@ -2,6 +2,7 @@ import Provider from '../../Provider'
 import { padHexStart } from '../../crypto'
 import { sleep } from '../../GlobalUtils'
 import { ensureAddressStandardFormat } from './EthereumUtil'
+import { BigNumber } from 'bignumber.js'
 
 export default class EthereumERC20SwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
@@ -66,7 +67,7 @@ export default class EthereumERC20SwapProvider extends Provider {
 
   async doesBalanceMatchValue (contractAddress, value) {
     const balance = await this.getMethod('getBalance')([contractAddress])
-    return balance === value
+    return balance.isEqualTo(new BigNumber(value))
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {

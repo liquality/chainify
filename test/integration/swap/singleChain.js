@@ -11,6 +11,7 @@ import config from './config'
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 chai.use(chaiAsPromised)
+chai.use(require('chai-bignumber')())
 
 const { calculateFee } = providers.bitcoin.BitcoinUtil
 const mockSecret = _.repeat('ff', 32)
@@ -31,7 +32,7 @@ function testSingle (chain) {
     let claimTx
     await expectBalance(chain, swapParams.recipientAddress,
       async () => { claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
-      (before, after) => expect(after).to.be.greaterThan(before))
+      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
     const revealedSecret = claimTx.secret
     expect(revealedSecret).to.equal(secret)
   })
@@ -75,7 +76,7 @@ function testSingle (chain) {
         await sleep(20000)
         await refund(chain, initiationTxId, secretHash, swapParams)
       },
-      (before, after) => expect(after).to.be.greaterThan(before))
+      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
   })
 
   it('Refund fails after claim', async () => {
@@ -85,18 +86,18 @@ function testSingle (chain) {
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expectBalance(chain, swapParams.recipientAddress,
       async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
-      (before, after) => expect(after).to.be.greaterThan(before))
+      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
         try { await refund(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
       },
-      (before, after) => expect(after).to.be.equal(before))
+      (before, after) => expect(after).to.be.bignumber.equal(before))
     await sleep(20000)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
         try { await refund(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
       },
-      (before, after) => expect(after).to.be.equal(before))
+      (before, after) => expect(after).to.be.bignumber.equal(before))
   })
 
   it('Refund available after expiration', async () => {
@@ -118,8 +119,8 @@ function testEthereumBalance (chain) {
     await expectBalance(chain, swapParams.recipientAddress,
       async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
       (before, after) => {
-        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).toNumber()
-        expect(after).to.be.equal(expectedBalance)
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value))
+        expect(after.toString()).to.be.bignumber.equal(expectedBalance)
       })
   })
 
@@ -132,8 +133,8 @@ function testEthereumBalance (chain) {
     await expectBalance(chain, swapParams.refundAddress,
       async () => refund(chain, initiationTxId, secretHash, swapParams),
       (before, after) => {
-        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).toNumber()
-        expect(after).to.be.equal(expectedBalance)
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value))
+        expect(after).to.be.bignumber.equal(expectedBalance)
       })
   })
 }
@@ -147,8 +148,8 @@ function testBitcoinBalance (chain) {
     await expectBalance(chain, swapParams.recipientAddress,
       async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
       (before, after) => {
-        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).minus(BigNumber(fee)).toNumber()
-        expect(after).to.be.equal(expectedBalance)
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).minus(BigNumber(fee))
+        expect(after).to.be.bignumber.equal(expectedBalance)
       })
   })
 
@@ -162,8 +163,8 @@ function testBitcoinBalance (chain) {
     await expectBalance(chain, swapParams.refundAddress,
       async () => refund(chain, initiationTxId, secretHash, swapParams),
       (before, after) => {
-        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).minus(BigNumber(fee)).toNumber()
-        expect(after).to.be.equal(expectedBalance)
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).minus(BigNumber(fee))
+        expect(after).to.be.bignumber.equal(expectedBalance)
       })
   })
 }
