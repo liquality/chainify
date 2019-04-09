@@ -415,15 +415,17 @@ export default class Client {
    */
   async generateSecrets (message, num = 1) {
     const address = (await this.getMethod('getAddresses')())[0].address
-    const signedMessage = await this.signMessage(message, address)
+    let secretMessage = await this.signMessage(message, address)
     let secrets = []
 
     for (let i = 0; i < num; i++) {
-      secrets.push(sha256(BigNumber(signedMessage, 16).plus(i).toString(16)))
+      secretMessage = sha256(Buffer.from(secretMessage, 'hex').reverse().toString('hex'))
+      secrets.push(sha256(secretMessage))
     }
 
     return secrets
   }
+
 
   /**
    * Get secret from claim transaction hash.
