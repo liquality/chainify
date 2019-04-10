@@ -67,7 +67,7 @@ export default class EthereumSwapProvider extends Provider {
 
       '5b', // JUMPDEST
       '73', ensureAddressStandardFormat(recipientAddress), // PUSH20 {recipientAddressEncoded}
-      'ff', // SUICIDE
+      'ff', // SELF-DESTRUCT
 
       '5b', // JUMPDEST
       '73', ensureAddressStandardFormat(refundAddress), // PUSH20 {refundAddressEncoded}
