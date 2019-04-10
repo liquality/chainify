@@ -1,15 +1,23 @@
 import debug from 'debug'
 debug.useColors = () => false
 
+function isBrowser () {
+  return typeof process === 'undefined' ||
+         process.type === 'renderer' ||
+         process.browser === true ||
+         process.__nwjs
+}
+
 export default (namespace, type = 'log') => {
   namespace = `liquality:cal:${namespace}`
   const obj = debug(namespace)
 
   obj.log = (...args) => {
     const arr = args[0].split(' ')
-    const time = arr.shift()
-    arr.shift() // remove namespace
-    args[0] = arr.join(' ')
+    const arg0 = arr[isBrowser() ? 1 : 2]
+
+    args.shift()
+    args = [ arg0, ...args ]
 
     let stack = false
 
@@ -31,13 +39,14 @@ export default (namespace, type = 'log') => {
 
     console.history.push({
       type,
-      time,
+      time: new Date().toISOString(),
       namespace,
       args,
       stack
     })
 
-    console[type].apply(console, args)
+    /* eslint-disable-next-line no-useless-call */
+    console[type].apply(console, [ namespace, ...args ])
   }
 
   return obj
