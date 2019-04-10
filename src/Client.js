@@ -1,6 +1,7 @@
 import { find, findLast, findLastIndex, isArray, isBoolean, isFunction, isNumber, isString } from 'lodash'
 import Ajv from 'ajv'
 import debug from 'debug'
+import { BigNumber } from 'bignumber.js'
 
 import { Block, Transaction } from './schema'
 import { sha256 } from './crypto'
@@ -279,7 +280,7 @@ export default class Client {
 
     const balance = await this.getMethod('getBalance')(addresses)
 
-    if (!isNumber(balance)) {
+    if (!BigNumber.isBigNumber(balance)) {
       throw new InvalidProviderResponseError('Provider returned an invalid response')
     }
 
@@ -532,6 +533,10 @@ export default class Client {
 
   async getWalletInfo () {
     return this.getMethod('getWalletInfo')()
+  }
+
+  async getConnectedNetwork () {
+    return this.getMethod('getConnectedNetwork')()
   }
 
   async getAddressMempool (addresses) {
