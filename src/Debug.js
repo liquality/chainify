@@ -1,5 +1,5 @@
 import debug from 'debug'
-debug.inspectOpts.colors = false
+debug.useColors = () => false
 
 export default (namespace, type = 'log') => {
   namespace = `liquality:cal:${namespace}`
