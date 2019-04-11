@@ -101,6 +101,11 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
+  async estimateGas (transaction) {
+    const estimatedGas = await this.jsonrpc('eth_estimateGas', transaction)
+    return parseInt(estimatedGas, '16')
+  }
+
   async isAddressUsed (address) {
     address = ensureHexEthFormat(String(address))
 
