@@ -3,7 +3,7 @@
 const { expect } = require('chai')
 
 const dbg = require('debug')
-const { Client, Debug } = require('../../src')
+const { Debug } = require('../../src')
 
 describe('debug library', () => {
   it('should not add logs to the console.history if disabled', () => {
@@ -13,11 +13,11 @@ describe('debug library', () => {
   })
 
   it('should add logs to the console.history if enabled', () => {
-    Client.debug('liquality:cal*')
+    dbg.enable('liquality:cal*')
 
     const debug = Debug('test')
     debug('test')
-    expect(console.history.length).to.equal(1)
+    expect(console.history.length).to.equal(2)
 
     dbg.disable()
   })

@@ -1,53 +1,39 @@
 import debug from 'debug'
-debug.useColors = () => false
+import { version } from '../package.json'
 
-function isBrowser () {
-  return typeof process === 'undefined' ||
-         process.type === 'renderer' ||
-         process.browser === true ||
-         process.__nwjs
-}
-
-export default (namespace, type = 'log') => {
-  namespace = `liquality:cal:${namespace}`
-  const obj = debug(namespace)
-
-  obj.log = (...args) => {
-    const arr = args[0].split(' ')
-    const arg0 = arr[isBrowser() ? 1 : 2]
-
-    args.shift()
-    args = [ arg0, ...args ]
-
-    let stack = false
-
-    try {
-      throw Error('')
-    } catch (error) {
-      stack = error.stack.split('\n')
-
-      stack.shift()
-      stack.shift()
-      stack.shift()
-
-      stack = stack.map(trace => trace.trim())
-    }
-
-    if (!console.history) {
-      console.history = []
-    }
-
-    console.history.push({
-      type,
-      time: new Date().toISOString(),
-      namespace,
-      args,
-      stack
-    })
-
-    /* eslint-disable-next-line no-useless-call */
-    console[type].apply(console, [ namespace, ...args ])
+debug._formatArgs = debug.formatArgs
+debug.formatArgs = function (args) {
+  const log = {
+    args: args.concat([]),
+    namespace: this.namespace,
+    diff: debug.humanize(this.diff),
+    time: new Date().toISOString()
   }
 
-  return obj
+  try {
+    throw Error('')
+  } catch (error) {
+    log.stack = error.stack.split('\n')
+
+    log.stack.shift()
+    log.stack.shift()
+    log.stack.shift()
+
+    log.stack = log.stack.map(trace => trace.trim())
+  }
+
+  if (!console.history) {
+    console.history = [
+      `@liquality/chainabstractionlayer v${version}`
+    ]
+  }
+
+  console.history.push(log)
+
+  debug._formatArgs.call(this, args)
+}
+
+export default (namespace) => {
+  namespace = `liquality:cal:${namespace}`
+  return debug(namespace)
 }

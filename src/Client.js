@@ -16,7 +16,10 @@ import {
 
 export default class Client {
   static debug (namespace = '*') {
-    debug.enable(namespace)
+    // if DEBUG is not set
+    if (!debug.load()) {
+      debug.enable(namespace)
+    }
   }
 
   /**
