@@ -47,18 +47,25 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const from = address.address
     const path = address.derivationPath
 
-    const nonce = await this.getMethod('getTransactionCount')(ensureHexStandardFormat(from))
-    const gasLimit = 300000 // TODO: Implement gas estimation - this is safe for now
-    const gasPrice = await this.getMethod('getGasPrice')()
-    const txData = {
-      nonce: nonce,
-      gasLimit: gasLimit,
-      gasPrice: gasPrice,
+    let txData = {
       to: to ? ensureHexEthFormat(to) : undefined,
       from: ensureHexEthFormat(from),
       value: BigNumber(value).toNumber(),
       data: data ? ensureHexEthFormat(data) : undefined,
       chainId: this._network.chainId
+    }
+
+    const [nonce, gasPrice, gasLimit] = await Promise.all([
+      this.getMethod('getTransactionCount')(ensureHexStandardFormat(from)),
+      this.getMethod('getGasPrice')(),
+      this.getMethod('estimateGas')(txData)
+    ])
+
+    txData = {
+      ...txData,
+      nonce,
+      gasPrice,
+      gasLimit
     }
 
     const tx = new EthereumJsTx(txData)
