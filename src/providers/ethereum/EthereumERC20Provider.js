@@ -32,8 +32,9 @@ export default class EthereumERC20Provider extends Provider {
     addresses = addresses
       .map(address => String(address))
     const addrs = addresses.map(ensureHexEthFormat)
-    const promiseBalances = await Promise.all(addrs.map(address => this.getMethod('jsonrpc')('eth_call', { data: functionSignature + padHexStart(ensureAddressStandardFormat(address), 64), to: ensureHexEthFormat(this._contractAddress) }, 'latest')))
-    return promiseBalances.map(balance => new BigNumber(balance, 16))
-      .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
+    const balances = (await Promise.all(addrs.map(address => this.getMethod('jsonrpc')('eth_call', { data: functionSignature + padHexStart(ensureAddressStandardFormat(address), 64), to: ensureHexEthFormat(this._contractAddress) }, 'latest'))))
+      .map(balance => parseInt(balance, 16))
+      .reduce((acc, balance) => acc + balance, 0)
+    return isNaN(balances) ? 0 : balances
   }
 }
