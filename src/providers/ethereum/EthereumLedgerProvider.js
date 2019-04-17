@@ -36,6 +36,11 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     return addresses[0]
   }
 
+  async isWalletAvailable () {
+    const addresses = await this.getAddresses()
+    return addresses.length > 0
+  }
+
   async getUsedAddresses () {
     return this.getAddresses()
   }

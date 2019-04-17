@@ -20,6 +20,16 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return addresses[0]
   }
 
+  async getUsedAddresses () {
+    var addresses = await this.getAddresses()
+    return [addresses[0]]
+  }
+
+  async isWalletAvailable () {
+    const addresses = await this.jsonrpc('eth_accounts')
+    return addresses.length > 0
+  }
+
   async sendTransaction (to, value, data, from = null) {
     if (to != null) {
       to = ensureHexEthFormat(to)
