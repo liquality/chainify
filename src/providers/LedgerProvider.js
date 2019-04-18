@@ -23,20 +23,21 @@ export default class LedgerProvider extends WalletProvider {
   }
 
   async createTransport () {
-    if (!LedgerProvider.transport) {
+    if (!this._transport) {
       debug('creating ledger transport')
-      LedgerProvider.transport = await Transport.create()
+      this._transport = await Transport.create()
       debug('ledger transport created')
-      LedgerProvider.transport.on('disconnect', () => {
+      this._transport.on('disconnect', () => {
         debug('ledger disconnected')
         this._appInstance = null
-        LedgerProvider.transport = null
+        this._transport = null
       })
     }
   }
 
   errorProxy (target, func) {
     const method = target[func]
+    const ctx = this
     if (Object.getOwnPropertyNames(target).includes(func) && typeof method === 'function') {
       return async (...args) => {
         debug(`calling "${func}" on ledger object`, args)
@@ -49,6 +50,7 @@ export default class LedgerProvider extends WalletProvider {
           return result
         } catch (e) {
           const { name, ...errorNoName } = e
+          ctx._transport = null
           throw new WalletError(e.toString(), errorNoName)
         }
       }
@@ -64,11 +66,9 @@ export default class LedgerProvider extends WalletProvider {
       const { name, ...errorNoName } = e
       throw new WalletError(e.toString(), errorNoName)
     }
-
     if (!this._appInstance) {
-      this._appInstance = new Proxy(new this._App(LedgerProvider.transport), { get: this.errorProxy })
+      this._appInstance = new Proxy(new this._App(this._transport), { get: this.errorProxy.bind(this) })
     }
-
     return this._appInstance
   }
 
@@ -81,7 +81,7 @@ export default class LedgerProvider extends WalletProvider {
     app.transport.setExchangeTimeout(2000)
     try {
       // https://ledgerhq.github.io/btchip-doc/bitcoin-technical-beta.html#_get_random
-      await LedgerProvider.transport.send(0xe0, 0xc0, 0x00, 0x00)
+      await this._transport.send(0xe0, 0xc0, 0x00, 0x00)
     } catch (e) {
       return false
     } finally {
