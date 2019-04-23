@@ -47,11 +47,10 @@ export default class LedgerProvider extends WalletProvider {
           debug(`result from "${func}" on ledger object`, result)
           return result
         } catch (e) {
-          // const { name, ...errorNoName } = e
+          const { name, ...errorNoName } = e
           ctx._transport = null
           ctx._appInstance = null
-          // throw new WalletError(e.toString(), errorNoName)
-          return null
+          throw new WalletError(e.toString(), errorNoName)
         }
       }
     } else {

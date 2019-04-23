@@ -152,6 +152,10 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
         ret.push({ address: address[0] })
       }
     }
+    const emptyaddresses = await this.jsonrpc('listreceivedbyaddress', 0, true)
+    for (const address of emptyaddresses) {
+      ret.push({ address: address.address })
+    }
     return ret
   }
 
