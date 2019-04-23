@@ -44,14 +44,14 @@ export default class LedgerProvider extends WalletProvider {
 
         try {
           const result = await method.bind(target)(...args)
-
           debug(`result from "${func}" on ledger object`, result)
-
           return result
         } catch (e) {
-          const { name, ...errorNoName } = e
+          // const { name, ...errorNoName } = e
           ctx._transport = null
-          throw new WalletError(e.toString(), errorNoName)
+          ctx._appInstance = null
+          // throw new WalletError(e.toString(), errorNoName)
+          return null
         }
       }
     } else {
