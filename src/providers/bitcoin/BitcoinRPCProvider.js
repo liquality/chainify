@@ -144,6 +144,26 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     }
   }
 
+  async getUsedAddresses () {
+    const addresses = await this.jsonrpc('listaddressgroupings')
+    let ret = []
+    for (const group of addresses) {
+      for (const address of group) {
+        ret.push({ address: address[0] })
+      }
+    }
+    const emptyaddresses = await this.jsonrpc('listreceivedbyaddress', 0, true)
+    for (const address of emptyaddresses) {
+      ret.push({ address: address.address })
+    }
+    return ret
+  }
+
+  async isWalletAvailable () {
+    const newAddress = await this.getNewAddress()
+    return (newAddress !== null)
+  }
+
   // async getAddressTransactions (address, start, end) {
   //   const transactionIds = []
   //   for (const blockNumber of _.range(start, end + 1)) {
