@@ -1,6 +1,9 @@
-.nyc_output
-coverage
-node_modules/
-dist/
-docs/
-yarn.lock
+**/node_modules
+**/dist
+
+**/.nyc_output
+**/coverage
+
+**/yarn.lock
+
+**/doc

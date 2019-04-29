@@ -1,16 +1,19 @@
 const path = require('path')
 
+const cwd = process.cwd()
+const pkg = require(path.join(cwd, 'package.json'))
 const babelRule = require('./babel.rule.js')
 const plugins = require('./plugins.js')
 
 module.exports = {
   target: 'web',
-  entry: './src/index.js',
+  entry: './lib/index.js',
   output: {
-    path: path.resolve(__dirname, '..', 'dist'),
+    path: path.resolve(cwd, 'dist'),
     filename: 'index.umd.js',
-    library: 'ChainAbstractionLayer',
-    libraryTarget: 'umd'
+    library: pkg.umdName || (function () { throw new Error(`Add "umdName" property to ${pkg.name}'s package.json`) })(),
+    libraryTarget: 'umd',
+    libraryExport: pkg.umdExport ? pkg.umdExport : undefined
   },
   module: {
     rules: [ babelRule({ target: 'web' }) ]

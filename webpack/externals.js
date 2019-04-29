@@ -1,4 +1,6 @@
-const pkg = require('../package.json')
+const path = require('path')
+const cwd = process.cwd()
+const pkg = require(path.join(cwd, 'package.json'))
 
 module.exports = (config = { target: 'web' }) => {
   const externals = {}

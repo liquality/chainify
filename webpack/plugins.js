@@ -1,3 +1,4 @@
+const cwd = process.cwd()
 const path = require('path')
 const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
@@ -20,13 +21,15 @@ module.exports = (config = { target: 'web' }) => {
     )
 
     if (config.target === 'web') {
+      const base = path.join(__dirname, '..', 'doc', 'bundle', path.basename(cwd))
+
       plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'static',
-          reportFilename: path.resolve(__dirname, '..', 'docs', 'bundle', 'index.html'),
+          reportFilename: path.join(base, 'index.html'),
           openAnalyzer: false,
           generateStatsFile: true,
-          statsFilename: path.resolve(__dirname, '..', 'docs', 'bundle', 'stats.json')
+          statsFilename: path.join(base, 'stats.json')
         })
       )
     }
