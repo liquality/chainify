@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 
-const { expect } = require('chai').use(require('chai-as-promised'))
+import { expect } from 'chai'
 
-const EthereumUtil = require('../../../../src/providers/ethereum/EthereumUtil')
+import * as EthereumUtil from '../../lib'
 
 describe('Ethereum Util', () => {
   describe('ensureHexEthFormat', () => {

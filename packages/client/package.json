@@ -18,7 +18,7 @@
     "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
     "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
     "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev",
-    "test": "cross-env NODE_ENV=test nyc mocha test/unit --require @babel/register --require @babel/polyfill --timeout 20000 --recursive --require should"
+    "test": "cross-env NODE_ENV=test mocha test/unit --require ../../babel.mocha.js --timeout 20000 --recursive"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",

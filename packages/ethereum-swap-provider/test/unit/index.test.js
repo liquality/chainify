@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 
-const { expect } = require('chai').use(require('chai-as-promised'))
+import EthereumSwapProvider from '../../lib'
 
-const { providers: { ethereum: { EthereumSwapProvider } } } = require('../../../../src')
+const { expect } = require('chai').use(require('chai-as-promised'))
 
 describe('Ethereum Swap provider', () => {
   let provider

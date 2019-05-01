@@ -3,13 +3,14 @@
 import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 
-chai.config.truncateThreshold = 0
+import Client from '../../../client/lib'
+import EthereumRPCProvider from '../../lib'
 
-const { Client, providers: { ethereum: { EthereumRPCProvider } } } = require('../../../../src')
-const mockJsonRpc = require('../../../mock/mockJsonRpc')
-const ethereumRpc = require('../../../mock/ethereum/rpc')
+const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
+const ethereumRpc = require('../../../../test/mock/ethereum/rpc')
 
 chai.use(require('chai-bignumber')())
+chai.config.truncateThreshold = 0
 
 describe('Ethereum RPC provider', () => {
   let client

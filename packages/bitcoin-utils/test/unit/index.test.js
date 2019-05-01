@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 
-const { expect } = require('chai').use(require('chai-as-promised'))
+import { expect } from 'chai'
 
-const BitcoinUtil = require('../../../../src/providers/bitcoin/BitcoinUtil')
+import * as BitcoinUtil from '../../lib'
 
 describe('Bitcoin Util', () => {
   describe('calculateFee', () => {

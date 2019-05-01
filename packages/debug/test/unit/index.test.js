@@ -1,9 +1,10 @@
-/* global describe, it */
+/* eslint-env mocha */
 
-const { expect } = require('chai')
+import { expect } from 'chai'
+
+import Debug from '../../lib'
 
 const dbg = require('debug')
-const { Debug } = require('../../src')
 
 describe('debug library', () => {
   it('should not add logs to the console.history if disabled', () => {

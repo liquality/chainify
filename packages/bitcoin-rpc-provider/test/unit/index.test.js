@@ -1,11 +1,15 @@
 /* eslint-env mocha */
+
 import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 
-const { Client, providers: { bitcoin: { BitcoinRPCProvider } } } = require('../../../../src')
-const mockJsonRpc = require('../../../mock/mockJsonRpc')
-const bitcoinRpc = require('../../../mock/bitcoin/rpc')
+import Client from '../../../client/lib'
+import BitcoinRPCProvider from '../../lib'
 
+const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
+const bitcoinRpc = require('../../../../test/mock/bitcoin/rpc')
+
+chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Bitcoin RPC provider', () => {

@@ -10,6 +10,7 @@
     "babel-loader": "^8.0.5",
     "babel-plugin-istanbul": "^5.1.2",
     "babel-plugin-lodash": "^3.3.4",
+    "bignumber.js": "^8.1.1",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
     "copy": "^0.3.2",
@@ -45,7 +46,7 @@
       "markdown"
     ],
     "ignore": [
-      "dist/**",
+      "**/packages/**/dist/**",
       "docs/**"
     ]
   },
@@ -55,11 +56,38 @@
     "build": "lerna run build",
     "watch": "lerna run watch --parallel",
     "bootstrap": "lerna bootstrap",
-    "test": "cross-env NODE_ENV=test nyc mocha packages/client/test/unit $npm_package_options_mocha"
+    "test": "cross-env NODE_ENV=test nyc lerna --no-bail run test"
   },
   "options": {
-    "mocha": "--require babel.hook.js --require @babel/polyfill --timeout 20000 --recursive --require should",
     "standard": "\"**/*.js\" \"**/*.html\" \"**/*.md\"",
     "coverage": "--reporter=text-lcov"
-  }
+  },
+  "nyc": {
+    "include": [
+      "packages/**/lib/**"
+    ],
+    "exclude": [
+      "**/bin/**",
+      "**/coverage/**",
+      "**/dist/**",
+      "**/html/assets/**",
+      "**/test/**"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "all": true,
+    "require": [
+      "@babel/register",
+      "@babel/polyfill"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
+  "pre-commit": [
+    "lint",
+    "build",
+    "test"
+  ]
 }

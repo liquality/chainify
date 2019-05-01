@@ -1,39 +1,37 @@
-/* global describe, it, beforeEach */
+/* eslint-env mocha */
+
+import Client from '../../lib'
 
 const { expect } = require('chai').use(require('chai-as-promised'))
 
-const Client = require('../../lib')
-
-console.log(Client)
-
 describe('Client methods without providers', () => {
-  let lib
+  let client
 
   beforeEach(() => {
-    lib = new Client()
+    client = new Client()
   })
 
   describe('generateBlock', () => {
-    it('should throw NoProviderError', () => {
-      // return expect(lib.generateBlock(1)).to.be.rejectedWith(errors.NoProviderError)
+    it('should throw NoProviderError', async () => {
+      return expect(client.chain.generateBlock(1)).to.be.rejectedWith(/No provider provided/)
     })
   })
 
   describe('getBlockByNumber', () => {
     it('should throw NoProviderError', async () => {
-      // return expect(lib.getBlockByNumber(1)).to.be.rejectedWith(errors.NoProviderError)
+      return expect(client.chain.getBlockByNumber(1)).to.be.rejectedWith(/No provider provided/)
     })
   })
 
   describe('getBlockHeight', () => {
     it('should throw NoProviderError', async () => {
-      // return expect(lib.getBlockHeight()).to.be.rejectedWith(errors.NoProviderError)
+      return expect(client.chain.getBlockHeight()).to.be.rejectedWith(/No provider provided/)
     })
   })
 
   describe('getTransactionByHash', () => {
     it('should throw NoProviderError', async () => {
-      // return expect(lib.getTransactionByHash('4545')).to.be.rejectedWith(errors.NoProviderError)
+      return expect(client.chain.getTransactionByHash('4545')).to.be.rejectedWith(/No provider provided/)
     })
   })
 })

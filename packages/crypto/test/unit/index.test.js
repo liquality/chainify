@@ -1,8 +1,8 @@
-/* global describe, it */
+/* eslint-env mocha */
+
+import * as crypto from '../../lib'
 
 const { expect } = require('chai').use(require('chai-as-promised'))
-
-const { crypto } = require('../../src')
 
 describe('Crypto library', () => {
   describe('ensureBuffer', () => {
