@@ -57,13 +57,12 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const path = address.derivationPath
 
     let txData = {
-      to: to ? ensureHexEthFormat(to) : undefined,
+      to: to ? ensureHexEthFormat(to) : null,
       from: ensureHexEthFormat(from),
-      value: BigNumber(value).toNumber(),
+      value: ensureHexEthFormat(BigNumber(value).toString(16)),
       data: data ? ensureHexEthFormat(data) : undefined,
-      chainId: this._network.chainId
+      chainId: ensureHexEthFormat(BigNumber(this._network.chainId).toString(16))
     }
-
     const [nonce, gasPrice, gasLimit] = await Promise.all([
       this.getMethod('getTransactionCount')(ensureHexStandardFormat(from)),
       this.getMethod('getGasPrice')(),
@@ -74,9 +73,9 @@ export default class EthereumLedgerProvider extends LedgerProvider {
       ...txData,
       nonce,
       gasPrice,
-      gasLimit
+      gasLimit,
+      v: txData.chainId
     }
-
     const tx = new EthereumJsTx(txData)
     const serializedTx = tx.serialize().toString('hex')
     const txSig = await app.signTransaction(path, serializedTx)
@@ -86,7 +85,6 @@ export default class EthereumLedgerProvider extends LedgerProvider {
       r: ensureHexEthFormat(txSig.r),
       s: ensureHexEthFormat(txSig.s)
     }
-
     const signedTx = new EthereumJsTx(signedTxData)
     const signedSerializedTx = signedTx.serialize().toString('hex')
     const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
