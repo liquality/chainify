@@ -8,7 +8,7 @@ import { ensureAddressStandardFormat } from '@liquality/ethereum-utils'
 const SOL_CLAIM_FUNCTION = '0xbd66528a' // claim(bytes32)
 const SOL_REFUND_FUNCTION = '0x590e1ae3' // refund()
 
-export default class EthereumERC20SwapProvider extends Provider {
+export default class EthereumErc20SwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     const recipient = ensureAddressStandardFormat(recipientAddress)
     const refund = ensureAddressStandardFormat(refundAddress)

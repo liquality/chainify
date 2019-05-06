@@ -23,8 +23,31 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/crypto
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/crypto@0.0.0/dist/crypto.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/crypto@0.0.0/dist/crypto.min.js.map -->
+<!-- available as window.Crypto -->
+```
+
+
+## Usage
+
+```js
+import {
+  base58,
+  bech32,
+  sha256,
+  ripemd160,
+  hash160,
+  ensureBuffer,
+  padHexStart,
+  isHex
+} from '@liquality/crypto'
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

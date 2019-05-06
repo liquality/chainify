@@ -23,8 +23,15 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/schema
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/schema@0.0.0/dist/schema.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/schema@0.0.0/dist/schema.min.js.map -->
+<!-- available as window.Schema -->
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

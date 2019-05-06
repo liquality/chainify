@@ -23,8 +23,29 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/bitcoin-ledger-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-ledger-provider@0.0.0/dist/bitcoin-ledger-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-ledger-provider@0.0.0/dist/bitcoin-ledger-provider.min.js.map -->
+<!-- available as window.BitcoinLedgerProvider -->
+```
+
+
+## Usage
+
+```js
+import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
+import BitcoinNetworks from '@liquality/bitcoin-network'
+
+const ledger = new BitcoinLedgerProvider({
+  network: BitcoinNetworks.bitcoin_testnet
+})
+
+await ledger.getAddresses(0, 1)
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

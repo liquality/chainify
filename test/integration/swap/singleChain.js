@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
-import { crypto, providers } from '../../../src'
+import { crypto, providers } from '../../../packages/bundle/lib'
 import { chains, initiateAndVerify, claimAndVerify, refund, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask } from './common'
 import config from './config'
 
@@ -13,19 +13,19 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-const { calculateFee } = providers.bitcoin.BitcoinUtil
+const { calculateFee } = providers.bitcoin.BitcoinUtils
 const mockSecret = _.repeat('ff', 32)
 
 function testSingle (chain) {
   it('Generated secrets are different', async () => {
-    const secret1 = await chain.client.generateSecret('secret1')
-    const secret2 = await chain.client.generateSecret('secret2')
+    const secret1 = await chain.client.swap.generateSecret('secret1')
+    const secret2 = await chain.client.swap.generateSecret('secret2')
     expect(secret1).to.not.equal(secret2)
   })
 
   it('Initiate and claim - happy route', async () => {
     console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
-    const secret = await chain.client.generateSecret('secret')
+    const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)

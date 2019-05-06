@@ -1,7 +1,7 @@
 <html>
 <head>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="../../../dist/index.umd.js"></script>
+  <script src="../../../packages/bundle/dist/bundle.min.js"></script>
 </head>
 <body>
   <h1>CAL + Ledger: Send transaction (Bitcoin)</h1>
@@ -26,43 +26,43 @@
   <p><code>For errors and logs, check console</code></p>
 
   <script>
-    /* global $, ChainAbstractionLayer */
-    const { Client, providers } = ChainAbstractionLayer
-    const networks = providers.bitcoin.networks
-    const bitcoin = new Client()
-    bitcoin.addProvider(new providers.bitcoin.BitcoinRPCProvider('https://localhost:18332', 'bitcoin', 'local321'))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
+/* global $, Bundle */
+const { Client, providers } = Bundle
+const networks = providers.bitcoin.networks
+const bitcoin = new Client()
+bitcoin.addProvider(new providers.bitcoin.BitcoinRpcProvider('https://localhost:18332', 'bitcoin', 'local321'))
+bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
 
-    let addresses, balance, newAddresses
-    bitcoin.getUsedAddresses().then(usedAddrs => {
-      addresses = usedAddrs
-      $('#address').text(addresses.join(', '))
+let addresses, balance, newAddress
+bitcoin.wallet.getUsedAddresses().then(usedAddrs => {
+  addresses = usedAddrs
+  $('#address').text(addresses.join(', '))
 
-      bitcoin.getBalance(addresses).then(blnce => {
-        balance = blnce
-        $('#balance').text(balance)
-      })
+  bitcoin.chain.getBalance(addresses).then(blnce => {
+    balance = blnce
+    $('#balance').text(balance)
+  })
 
-      bitcoin.getUnusedAddresses().then(unusedAddrs => {
-        newAddresses = unusedAddrs
-        $('#newAddress').text(newAddresses[0])
-      })
+  bitcoin.wallet.getUnusedAddress().then(unusedAddrs => {
+    newAddress = unusedAddrs
+    $('#newAddress').text(newAddress)
+  })
 
-      $('#sendAddr').click(() => {
-        // pay to address:
-        // to, value
-        bitcoin.sendTransaction($('#toAddress').val(), parseInt($('#addrValue').val())).then(result => {
-          $('#result').text(JSON.stringify(result, null, 2))
-        })
-      })
-      $('#sendScript').click(() => {
-        // pay to script:
-        // null, value, script
-        bitcoin.sendTransaction(null, parseInt($('#scriptValue').val()), $('#toScript').val()).then(result => {
-          $('#result').text(JSON.stringify(result, null, 2))
-        })
-      })
+  $('#sendAddr').click(() => {
+    // pay to address:
+    // to, value
+    bitcoin.chain.sendTransaction($('#toAddress').val(), parseInt($('#addrValue').val())).then(result => {
+      $('#result').text(JSON.stringify(result, null, 2))
     })
+  })
+  $('#sendScript').click(() => {
+    // pay to script:
+    // null, value, script
+    bitcoin.chain.sendTransaction(null, parseInt($('#scriptValue').val()), $('#toScript').val()).then(result => {
+      $('#result').text(JSON.stringify(result, null, 2))
+    })
+  })
+})
   </script>
 </body>
 </html>

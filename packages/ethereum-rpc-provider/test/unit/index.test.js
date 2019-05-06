@@ -26,7 +26,7 @@ describe('Ethereum RPC provider', () => {
 
   describe('getAddresses', () => {
     it('should return an array of addresses without 0x', async () => {
-      const addresses = await client.getAddresses()
+      const addresses = await client.wallet.getAddresses()
       expect(addresses).to.deep.equal([
         { address: '322d4959c911520645c0638204b42ce0689236e9' },
         { address: '635d7d148054b9471d79084b80b864a166956139' },
@@ -44,28 +44,28 @@ describe('Ethereum RPC provider', () => {
 
   describe('getUnusedAddress', () => {
     it('should return first address without 0x', async () => {
-      const unusedAddress = await client.getUnusedAddress()
+      const unusedAddress = await client.wallet.getUnusedAddress()
       expect(unusedAddress).to.deep.equal({ address: '322d4959c911520645c0638204b42ce0689236e9' })
     })
   })
 
   describe('sendTransaction', () => {
     it('should return a txid without 0x', async () => {
-      const tx = await client.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)
+      const tx = await client.chain.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)
       expect(tx).to.match(/^[A-Fa-f0-9]+$/)
     })
   })
 
   describe('getBlockHeight', () => {
     it('should return block height', async () => {
-      const height = await client.getBlockHeight()
+      const height = await client.chain.getBlockHeight()
       expect(height).to.equal(11)
     })
   })
 
   describe('getBlockByNumber', () => {
     it('should return a complete block', async () => {
-      const block = await client.getBlockByNumber(1, true)
+      const block = await client.chain.getBlockByNumber(1, true)
       expect(block).to.deep.equal({
         number: 1,
         hash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
@@ -107,7 +107,7 @@ describe('Ethereum RPC provider', () => {
 
   describe('getTransactionByHash', () => {
     it('should return block height', async () => {
-      const tx = await client.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd')
+      const tx = await client.chain.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd')
       expect(tx)
         .to
         .deep
@@ -130,7 +130,7 @@ describe('Ethereum RPC provider', () => {
 
   describe('getBalance', () => {
     it('should return correct balance', async () => {
-      const balance = await client.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ])
+      const balance = await client.chain.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ])
       expect(balance)
         .to.be.bignumber
         .equal(new BigNumber(99995379999999890000))
@@ -139,7 +139,7 @@ describe('Ethereum RPC provider', () => {
 
   describe('isAddressUsed', () => {
     it('should return true for a used address', async () => {
-      const isUsed = await client.isAddressUsed('322d4959c911520645c0638204b42ce0689236e9')
+      const isUsed = await client.chain.isAddressUsed('322d4959c911520645c0638204b42ce0689236e9')
       expect(isUsed)
         .to
         .equal(true)
@@ -148,7 +148,7 @@ describe('Ethereum RPC provider', () => {
 
   describe('signMessage', () => {
     it('should return a signature', async () => {
-      const sig = await client.signMessage('liquality', '322d4959c911520645c0638204b42ce0689236e9')
+      const sig = await client.wallet.signMessage('liquality', '322d4959c911520645c0638204b42ce0689236e9')
       expect(sig)
         .to
         .equal('0f1f169ed203e0a8e053e060e0ba1a7da87cc37f4aa84c9329ba2a63974d0f5b5414b024d80e805418a6f315fd8185e74daaca63fc871c5568e9b18d2f899e4701')

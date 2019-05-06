@@ -7,6 +7,7 @@ const plugins = require('./plugins.js')
 const externals = require('./externals.js')
 
 module.exports = {
+  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
   target: 'node',
   entry: './lib/index.js',
   externals: externals({ target: 'node' }),

@@ -9,7 +9,7 @@ module.exports = (config = { target: 'web' }) => {
       plugins.push('lodash')
     }
   } else {
-    targets.node = '8'
+    targets.node = 'current'
   }
 
   return {

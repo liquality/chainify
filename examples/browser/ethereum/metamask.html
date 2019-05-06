@@ -1,7 +1,7 @@
 <html>
 <head>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="../../../dist/index.umd.js"></script>
+  <script src="../../../packages/bundle/dist/bundle.min.js"></script>
 </head>
 <body>
   <h1>CAL + MetaMask: Sign a message (Ethereum)</h1>
@@ -10,20 +10,20 @@
   <p>Result: <span id="result"></span></p>
   <p><code>For errors and logs, check console</code></p>
   <script>
-  /* global $, web3, ChainAbstractionLayer */
-  const { Client, providers } = ChainAbstractionLayer
-  const ethereum = new Client()
-  ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
-  ethereum.getAddresses().then(addresses => {
-    const from = addresses[0]
-    $('#address').text(from)
+/* global $, web3, Bundle */
+const { Client, providers } = Bundle
+const ethereum = new Client()
+ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
+ethereum.wallet.getAddresses().then(addresses => {
+  const from = addresses[0]
+  $('#address').text(from)
 
-    $('#sign').click(() => {
-      ethereum.signMessage($('#message').val(), from).then(result => {
-        $('#result').text(JSON.stringify(result))
-      })
+  $('#sign').click(() => {
+    ethereum.wallet.signMessage($('#message').val(), from).then(result => {
+      $('#result').text(JSON.stringify(result))
     })
   })
+})
   </script>
 </body>
 </html>

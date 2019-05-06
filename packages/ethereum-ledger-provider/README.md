@@ -23,8 +23,29 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/ethereum-ledger-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-ledger-provider@0.0.0/dist/ethereum-ledger-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-ledger-provider@0.0.0/dist/ethereum-ledger-provider.min.js.map -->
+<!-- available as window.EthereumLedgerProvider -->
+```
+
+
+## Usage
+
+```js
+import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
+import EthereumNetworks from '@liquality/ethereum-network'
+
+const ledger = new EthereumLedgerProvider({
+  network: EthereumNetworks.rinkeby
+})
+
+await ledger.getAddresses(0, 1)
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

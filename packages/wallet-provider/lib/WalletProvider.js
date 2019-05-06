@@ -49,8 +49,8 @@ export default class WalletProvider extends Provider {
     throw new Error('getUsedAddresses not implemented.')
   }
 
-  getUnusedAddresses () {
-    throw new Error('getUnusedAddresses not implemented.')
+  getUnusedAddress () {
+    throw new Error('getUnusedAddress not implemented.')
   }
 
   signMessage () {

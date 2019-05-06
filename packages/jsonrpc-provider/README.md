@@ -23,8 +23,26 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/jsonrpc-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/jsonrpc-provider@0.0.0/dist/jsonrpc-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/jsonrpc-provider@0.0.0/dist/jsonrpc-provider.min.js.map -->
+<!-- available as window.JsonRpcProvider -->
+```
+
+
+## Usage
+
+```js
+import JsonRpcProvider from '@liquality/jsonrpc-provider'
+
+const jsonrpc = new JsonRpcProvider('https://jsonrpc.com', 'username', 'password')
+
+await jsonrpc.jsonrpc('sendtoaddress', 'xxx')
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

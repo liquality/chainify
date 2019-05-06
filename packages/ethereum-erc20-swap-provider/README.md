@@ -23,8 +23,15 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/ethereum-erc20-swap-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-erc20-swap-provider@0.0.0/dist/ethereum-erc20-swap-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-erc20-swap-provider@0.0.0/dist/ethereum-erc20-swap-provider.min.js.map -->
+<!-- available as window.EthereumERC20SwapProvider -->
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

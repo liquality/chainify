@@ -23,8 +23,26 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/bitcoin-rpc-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-rpc-provider@0.0.0/dist/bitcoin-rpc-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-rpc-provider@0.0.0/dist/bitcoin-rpc-provider.min.js.map -->
+<!-- available as window.BitcoinRpcProvider -->
+```
+
+
+## Usage
+
+```js
+import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
+
+const jsonrpc = new BitcoinRpcProvider('https://bitcoin.local', 'username', 'password')
+
+await jsonrpc.jsonrpc('sendtoaddress', 'xxx')
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

@@ -23,8 +23,15 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/ledger-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ledger-provider@0.0.0/dist/ledger-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ledger-provider@0.0.0/dist/ledger-provider.min.js.map -->
+<!-- available as window.LedgerProvider -->
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

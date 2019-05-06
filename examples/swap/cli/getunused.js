@@ -1,12 +1,12 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
-const { Client, providers } = require('../../../')
-const { BitcoinLedgerProvider, BitcoreRPCProvider, networks } = providers.bitcoin
+const { Client, providers } = require('../../../packages/bundle')
+const { BitcoinLedgerProvider, BitcoreRpcProvider, networks } = providers.bitcoin
 
 const bitcoin = new Client()
-bitcoin.addProvider(new BitcoreRPCProvider('http://localhost:18332', 'bitcoin', 'local321'))
+bitcoin.addProvider(new BitcoreRpcProvider('http://localhost:18332', 'bitcoin', 'local321'))
 bitcoin.addProvider(new BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
-// bitcoin.addProvider(new BitcoreRPCProvider('https://bitcoin.liquality.io/', 'liquality', 'liquality123'))
+// bitcoin.addProvider(new BitcoreRpcProvider('https://bitcoin.liquality.io/', 'liquality', 'liquality123'))
 
 ;(async () => {
   try {

@@ -53,10 +53,11 @@
   "scripts": {
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
     "lint": "standard $npm_package_options_standard",
-    "build": "lerna run build",
+    "build": "lerna run build --stream",
     "watch": "lerna run watch --parallel",
     "bootstrap": "lerna bootstrap",
-    "test": "cross-env NODE_ENV=test nyc lerna --no-bail run test"
+    "test": "cross-env NODE_ENV=test nyc lerna --no-bail run test",
+    "test:swap": "cross-env NODE_ENV=test mocha test/integration/swap --require ./babel.mocha.js --timeout 20000 --recursive"
   },
   "options": {
     "standard": "\"**/*.js\" \"**/*.html\" \"**/*.md\"",

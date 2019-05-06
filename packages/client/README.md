@@ -23,8 +23,63 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/client
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/client@0.0.0/dist/client.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/client@0.0.0/dist/client.min.js.map -->
+<!-- available as window.Client -->
+```
+
+
+## Usage
+
+```js
+import Client from '@liquality/client'
+import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
+import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
+
+import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
+import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
+
+import BitcoinNetworks from '@liquality/bitcoin-networks'
+import EthereumNetworks from '@liquality/ethereum-networks'
+
+const bitcoin = new Client()
+const ethereum = new Client()
+
+bitcoin.addProvider(new BitcoinRpcProvider(
+  'https://liquality.io/bitcointestnetrpc/', 'bitcoin', 'local321'
+))
+ethereum.addProvider(new EthereumRpcProvider(
+  'https://rinkeby.infura.io/v3/xxx'
+))
+
+bitcoin.addProvider(new BitcoinLedgerProvider(
+  { network: BitcoinNetworks.bitcoin_testnet }
+))
+ethereum.addProvider(new EthereumLedgerProvider(
+  { network: EthereumNetworks.rinkeby }
+))
+
+// Fetch addresses from Ledger wallet using a single-unified API
+const [ bitcoinAddress ] = await bitcoin.wallet.getAddresses(0, 1)
+const [ ethereumAddress ] = await ethereum.wallet.getAddresses(0, 1)
+
+// Sign a message
+const signedMessageBitcoin = await bitcoin.wallet.signMessage(
+  'The Times 3 January 2009 Chancellor on brink of second bailout for banks', bitcoinAddress.address
+)
+const signedMessageEthereum = await ethereum.wallet.signMessage(
+  'The Times 3 January 2009 Chancellor on brink of second bailout for banks', ethereumAddress.address
+)
+
+// Send a transaction
+await bitcoin.chain.sendTransaction(<to>, 1000)
+await ethereum.chain.sendTransaction(<to>, 1000)
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

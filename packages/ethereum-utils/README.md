@@ -23,8 +23,28 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/ethereum-utils
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-utils@0.0.0/dist/ethereum-utils.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-utils@0.0.0/dist/ethereum-utils.min.js.map -->
+<!-- available as window.EthereumUtils -->
+```
+
+
+## Usage
+
+```js
+import {
+  ensureHexEthFormat,
+  ensureHexStandardFormat,
+  ensureAddressStandardFormat,
+  formatEthResponse,
+  normalizeTransactionObject
+} from '@liquality/ethereum-utils'
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

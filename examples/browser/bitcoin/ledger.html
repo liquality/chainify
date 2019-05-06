@@ -1,7 +1,7 @@
 <html>
 <head>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="../../../dist/index.umd.js"></script>
+  <script src="../../../packages/bundle/dist/bundle.min.js"></script>
 </head>
 <body>
   <h1>CAL + Ledger: Sign a message (Bitcoin)</h1>
@@ -11,18 +11,18 @@
   <p>Result: <span id="result"></span></p>
   <p><code>For errors and logs, check console</code></p>
 <script>
-/* global $, ChainAbstractionLayer */
-const { Client, providers } = ChainAbstractionLayer
+/* global $, Bundle */
+const { Client, providers } = Bundle
 const networks = providers.bitcoin.networks
 const bitcoin = new Client()
 bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
 $('#init').click(() => {
-  bitcoin.getAddresses().then(addresses => {
+  bitcoin.wallet.getAddresses().then(addresses => {
     const from = addresses[0].address
     $('#address').text(from)
 
     $('#sign').click(() => {
-      bitcoin.signMessage($('#message').val(), from).then(result => {
+      bitcoin.wallet.signMessage($('#message').val(), from).then(result => {
         $('#result').text(JSON.stringify(result, null, 2))
       })
     })

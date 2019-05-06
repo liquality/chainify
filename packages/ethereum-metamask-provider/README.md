@@ -23,8 +23,15 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/ethereum-metamask-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-metamask-provider@0.0.0/dist/ethereum-metamask-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-metamask-provider@0.0.0/dist/ethereum-metamask-provider.min.js.map -->
+<!-- available as window.EthereumMetaMaskProvider -->
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

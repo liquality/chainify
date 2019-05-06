@@ -10,7 +10,7 @@ import {
 const SOL_TRANSFER_FUNCTION = '0xa9059cbb' // transfer(address,uint256)
 const SOL_BALACE_OF_FUNCTION = '0x70a08231' // balanceOf(address)
 
-export default class EthereumERC20Provider extends Provider {
+export default class EthereumErc20Provider extends Provider {
   constructor (contractAddress) {
     super()
     this._contractAddress = ensureAddressStandardFormat(contractAddress)

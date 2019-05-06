@@ -22,16 +22,18 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.3",
+    "@babel/runtime-corejs3": "^7.4.4",
     "@ledgerhq/hw-app-btc": "^4.46.0",
-    "@liquality/ledger-provider": "^0.0.0",
     "@liquality/bitcoin-networks": "^0.0.0",
     "@liquality/bitcoin-utils": "^0.0.0",
     "@liquality/crypto": "^0.0.0",
+    "@liquality/ledger-provider": "^0.0.0",
     "bignumber.js": "^8.1.1",
-    "lodash": "^4.17.11",
     "bip32": "^1.0.2",
-    "coinselect": "^3.1.11"
+    "coinselect": "^3.1.11",
+    "lodash": "^4.17.11"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

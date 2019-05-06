@@ -7,3 +7,7 @@
 **/yarn.lock
 
 **/doc
+
+**/readme-example.js
+
+/test.html

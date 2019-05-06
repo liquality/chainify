@@ -1,9 +1,9 @@
-const { Client, providers } = require('../../../')
-const { EthereumRPCProvider } = providers.ethereum
+const { Client, providers } = require('../../../packages/bundle')
+const { EthereumRpcProvider } = providers.ethereum
 
 const ethereum = new Client()
-ethereum.addProvider(new EthereumRPCProvider('http://localhost:8545'))
+ethereum.addProvider(new EthereumRpcProvider('http://localhost:8545'))
 
 ;(async () => {
-  console.log(await ethereum.getAddresses())
+  console.log(await ethereum.wallet.getAddresses())
 })()

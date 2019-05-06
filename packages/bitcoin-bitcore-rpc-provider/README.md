@@ -23,8 +23,15 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/bitcoin-bitcore-rpc-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcore-rpc-provider@0.0.0/dist/bitcoin-bitcore-rpc-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcore-rpc-provider@0.0.0/dist/bitcoin-bitcore-rpc-provider.min.js.map -->
+<!-- available as window.BitcoinBitcoreRpcProvider -->
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

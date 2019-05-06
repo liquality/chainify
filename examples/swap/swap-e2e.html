@@ -2,7 +2,7 @@
 
 <head>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="../../../dist/index.umd.js"></script>
+  <script src="../../packages/bundle/dist/bundle.min.js"></script>
 </head>
 
 <body>
@@ -102,109 +102,109 @@
   <p><code>For errors and logs, check console</code></p>
 
   <script>
-    /* global $, ChainAbstractionLayer, web3 */
-    const { Client, providers, crypto } = ChainAbstractionLayer
-    const bitcoinNetworks = providers.bitcoin.networks
-    const bitcoin = new Client()
-    bitcoin.addProvider(new providers.bitcoin.BitcoreRPCProvider('https://localhost:18332', 'bitcoin', 'local321'))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks.bitcoin_testnet, segwit: false }))
-    bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks.bitcoin_testnet }))
+/* global $, Bundle, web3 */
+const { Client, providers, crypto } = Bundle
+const bitcoinNetworks = providers.bitcoin.networks
+const bitcoin = new Client()
+bitcoin.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider('https://localhost:18332', 'bitcoin', 'local321'))
+bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks.bitcoin_testnet, segwit: false }))
+bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks.bitcoin_testnet }))
 
-    const ethereum = new Client()
-    ethereum.addProvider(new providers.ethereum.EthereumRPCProvider('http://localhost:8545'))
-    ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
-    ethereum.addProvider(new providers.ethereum.EthereumSwapProvider())
+const ethereum = new Client()
+ethereum.addProvider(new providers.ethereum.EthereumRpcProvider('http://localhost:8545'))
+ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
+ethereum.addProvider(new providers.ethereum.EthereumSwapProvider())
 
-    function generateSecret (client, prefix) {
-      client.generateSecret($(`#${prefix}Message`).val()).then(result => {
-        $(`#${prefix}GenerateSecretResult`).text(result)
-        $(`#${prefix}GenerateSecretResultHash`).text(crypto.sha256(result))
-      })
+function generateSecret (client, prefix) {
+  client.swap.generateSecret($(`#${prefix}Message`).val()).then(result => {
+    $(`#${prefix}GenerateSecretResult`).text(result)
+    $(`#${prefix}GenerateSecretResultHash`).text(crypto.sha256(result))
+  })
+}
+
+function initiateSwap (client, prefix) {
+  const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+  const refundAddress = $(`#${prefix}RefundAddress`).val()
+  const secretHash = $(`#${prefix}SecretHash`).val()
+  const expiration = parseInt($(`#${prefix}Expiration`).val())
+  const value = parseInt($(`#${prefix}FundValue`).val())
+
+  client.swap.createSwapScript(recipientAddress, refundAddress, secretHash, expiration).then(result => {
+    $(`#${prefix}SwapBytecode`).text(result)
+  })
+
+  client.swap.initiateSwap(value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
+    $(`#${prefix}InitiateSwapResult`).text(result)
+    $(`#${prefix}FindInitiateSwap`).show()
+  })
+
+  client.swap.findInitiateSwapTransaction(value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
+    $(`#${prefix}FindInitiateSwapTransactionResult`).text(JSON.stringify(result, null, 2))
+  })
+}
+
+function verifySwap (client, prefix) {
+  const initiationTxHash = $(`#${prefix}InitiationTxHashVerify`).val()
+  const value = parseInt($(`#${prefix}FundValue`).val())
+  const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+  const refundAddress = $(`#${prefix}RefundAddress`).val()
+  const secretHash = $(`#${prefix}SecretHash`).val()
+  const expiration = parseInt($(`#${prefix}Expiration`).val())
+
+  client.swap.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
+    if (result) {
+      $(`#${prefix}VerifySwapTrue`).show()
+      $(`#${prefix}VerifySwapFalse`).hide()
+    } else {
+      $(`#${prefix}VerifySwapFalse`).show()
+      $(`#${prefix}VerifySwapTrue`).hide()
     }
+  })
+}
 
-    function initiateSwap (client, prefix) {
-      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
-      const refundAddress = $(`#${prefix}RefundAddress`).val()
-      const secretHash = $(`#${prefix}SecretHash`).val()
-      const expiration = parseInt($(`#${prefix}Expiration`).val())
-      const value = parseInt($(`#${prefix}FundValue`).val())
+function claimSwap (client, prefix) {
+  const initiationTxHash = $(`#${prefix}InitiationTxHash`).val()
+  const secret = $(`#${prefix}ClaimSecret`).val()
+  const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+  const refundAddress = $(`#${prefix}RefundAddress`).val()
+  const secretHash = $(`#${prefix}SecretHash`).val()
+  const expiration = parseInt($(`#${prefix}Expiration`).val())
 
-      client.createSwapScript(recipientAddress, refundAddress, secretHash, expiration).then(result => {
-        $(`#${prefix}SwapBytecode`).text(result)
-      })
+  client.swap.claimSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration).then(result => {
+    $(`#${prefix}ClaimSwapResult`).text(result)
+    $(`#${prefix}FindClaimSwap`).show()
+  })
 
-      client.initiateSwap(value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
-        $(`#${prefix}InitiateSwapResult`).text(result)
-        $(`#${prefix}FindInitiateSwap`).show()
-      })
+  client.swap.findClaimSwapTransaction(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration).then(result => {
+    $(`#${prefix}FindClaimSwapTransactionResult`).text(JSON.stringify(result, null, 2))
+    $(`#${prefix}FindClaimSwapTransactionResultSecret`).text(result.secret)
+    $(`#${prefix}FindClaimSwapSecret`).show()
+  })
+}
 
-      client.findInitiateSwapTransaction(value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
-        $(`#${prefix}FindInitiateSwapTransactionResult`).text(JSON.stringify(result, null, 2))
-      })
-    }
+function refundSwap (client, prefix) {
+  const initiationTxHash = $(`#${prefix}RefundInitiationTxHash`).val()
+  const recipientAddress = $(`#${prefix}RecipientAddress`).val()
+  const refundAddress = $(`#${prefix}RefundAddress`).val()
+  const secretHash = $(`#${prefix}SecretHash`).val()
+  const expiration = parseInt($(`#${prefix}Expiration`).val())
 
-    function verifySwap (client, prefix) {
-      const initiationTxHash = $(`#${prefix}InitiationTxHashVerify`).val()
-      const value = parseInt($(`#${prefix}FundValue`).val())
-      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
-      const refundAddress = $(`#${prefix}RefundAddress`).val()
-      const secretHash = $(`#${prefix}SecretHash`).val()
-      const expiration = parseInt($(`#${prefix}Expiration`).val())
+  client.swap.refundSwap(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration).then(result => {
+    $(`#${prefix}RefundSwapResult`).text(result)
+  })
+}
 
-      client.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration).then(result => {
-        if (result) {
-          $(`#${prefix}VerifySwapTrue`).show()
-          $(`#${prefix}VerifySwapFalse`).hide()
-        } else {
-          $(`#${prefix}VerifySwapFalse`).show()
-          $(`#${prefix}VerifySwapTrue`).hide()
-        }
-      })
-    }
+$('#btcGenerateSecret').click(generateSecret.bind(null, bitcoin, 'btc'))
+$('#btcInitiateSwap').click(initiateSwap.bind(null, bitcoin, 'btc'))
+$('#btcVerifySwap').click(verifySwap.bind(null, bitcoin, 'btc'))
+$('#btcClaimSwap').click(claimSwap.bind(null, bitcoin, 'btc'))
+$('#btcRefundSwap').click(refundSwap.bind(null, bitcoin, 'btc'))
 
-    function claimSwap (client, prefix) {
-      const initiationTxHash = $(`#${prefix}InitiationTxHash`).val()
-      const secret = $(`#${prefix}ClaimSecret`).val()
-      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
-      const refundAddress = $(`#${prefix}RefundAddress`).val()
-      const secretHash = $(`#${prefix}SecretHash`).val()
-      const expiration = parseInt($(`#${prefix}Expiration`).val())
-
-      client.claimSwap(initiationTxHash, recipientAddress, refundAddress, secret, expiration).then(result => {
-        $(`#${prefix}ClaimSwapResult`).text(result)
-        $(`#${prefix}FindClaimSwap`).show()
-      })
-
-      client.findClaimSwapTransaction(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration).then(result => {
-        $(`#${prefix}FindClaimSwapTransactionResult`).text(JSON.stringify(result, null, 2))
-        $(`#${prefix}FindClaimSwapTransactionResultSecret`).text(result.secret)
-        $(`#${prefix}FindClaimSwapSecret`).show()
-      })
-    }
-
-    function refundSwap (client, prefix) {
-      const initiationTxHash = $(`#${prefix}RefundInitiationTxHash`).val()
-      const recipientAddress = $(`#${prefix}RecipientAddress`).val()
-      const refundAddress = $(`#${prefix}RefundAddress`).val()
-      const secretHash = $(`#${prefix}SecretHash`).val()
-      const expiration = parseInt($(`#${prefix}Expiration`).val())
-
-      client.refundSwap(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration).then(result => {
-        $(`#${prefix}RefundSwapResult`).text(result)
-      })
-    }
-
-    $('#btcGenerateSecret').click(generateSecret.bind(null, bitcoin, 'btc'))
-    $('#btcInitiateSwap').click(initiateSwap.bind(null, bitcoin, 'btc'))
-    $('#btcVerifySwap').click(verifySwap.bind(null, bitcoin, 'btc'))
-    $('#btcClaimSwap').click(claimSwap.bind(null, bitcoin, 'btc'))
-    $('#btcRefundSwap').click(refundSwap.bind(null, bitcoin, 'btc'))
-
-    $('#ethGenerateSecret').click(generateSecret.bind(null, ethereum, 'eth'))
-    $('#ethInitiateSwap').click(initiateSwap.bind(null, ethereum, 'eth'))
-    $('#ethVerifySwap').click(verifySwap.bind(null, ethereum, 'eth'))
-    $('#ethClaimSwap').click(claimSwap.bind(null, ethereum, 'eth'))
-    $('#ethRefundSwap').click(refundSwap.bind(null, ethereum, 'eth'))
+$('#ethGenerateSecret').click(generateSecret.bind(null, ethereum, 'eth'))
+$('#ethInitiateSwap').click(initiateSwap.bind(null, ethereum, 'eth'))
+$('#ethVerifySwap').click(verifySwap.bind(null, ethereum, 'eth'))
+$('#ethClaimSwap').click(claimSwap.bind(null, ethereum, 'eth'))
+$('#ethRefundSwap').click(refundSwap.bind(null, ethereum, 'eth'))
   </script>
 </body>
 

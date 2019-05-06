@@ -5,7 +5,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/liquality/chainabstractionlayer/badge.svg?branch=master)](https://coveralls.io/github/liquality/chainabstractionlayer?branch=master)
 [![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](./LICENSE.md)
-[![ChainAbstractionLayer](https://img.shields.io/npm/dt/@liquality/chainabstractionlayer.svg)](https://npmjs.com/package/@liquality/chainabstractionlayer)
 [![Gitter](https://img.shields.io/gitter/room/liquality/Lobby.svg)](https://gitter.im/liquality/Lobby?source=orgpage)
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality) [![Greenkeeper badge](https://badges.greenkeeper.io/liquality/chainabstractionlayer.svg)](https://greenkeeper.io/)
 
@@ -15,87 +14,101 @@
 
 Query different blockchains with account management using a single and simple interface.
 
-## Installation
+## Packages
 
-```bash
-npm install @liquality/chainabstractionlayer
-```
-
-> **Error: Cannot find module 'babel-runtime/core-js/get-iterator'**
->
-> Issues to track: [LedgerHQ/ledgerjs/issues/211](https://github.com/LedgerHQ/ledgerjs/issues/211), [LedgerHQ/ledgerjs/issues/218](https://github.com/LedgerHQ/ledgerjs/issues/218)
->
-> `npm install babel-runtime`
+|Package|Version|
+|---|---|
+|[@liquality/bitcoin-bitcoinjs-lib-swap-provider](./packages/bitcoin-bitcoinjs-lib-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-bitcoinjs-lib-swap-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcoinjs-lib-swap-provider)|
+|[@liquality/bitcoin-bitcore-rpc-provider](./packages/bitcoin-bitcore-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-bitcore-rpc-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcore-rpc-provider)|
+|[@liquality/bitcoin-collateral-provider](./packages/bitcoin-collateral-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-collateral-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-collateral-provider)|
+|[@liquality/bitcoin-ledger-provider](./packages/bitcoin-ledger-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-ledger-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-ledger-provider)|
+|[@liquality/bitcoin-networks](./packages/bitcoin-networks)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-networks.svg)](https://npmjs.com/package/@liquality/bitcoin-networks)|
+|[@liquality/bitcoin-rpc-provider](./packages/bitcoin-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-rpc-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-rpc-provider)|
+|[@liquality/bitcoin-swap-provider](./packages/bitcoin-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-swap-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-swap-provider)|
+|[@liquality/bitcoin-utils](./packages/bitcoin-utils)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-utils.svg)](https://npmjs.com/package/@liquality/bitcoin-utils)|
+|[@liquality/bundle](./packages/bundle)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bundle.svg)](https://npmjs.com/package/@liquality/bundle)|
+|[@liquality/client](./packages/client)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/client.svg)](https://npmjs.com/package/@liquality/client)|
+|[@liquality/crypto](./packages/crypto)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/crypto.svg)](https://npmjs.com/package/@liquality/crypto)|
+|[@liquality/debug](./packages/debug)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/debug.svg)](https://npmjs.com/package/@liquality/debug)|
+|[@liquality/errors](./packages/errors)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/errors.svg)](https://npmjs.com/package/@liquality/errors)|
+|[@liquality/ethereum-erc20-provider](./packages/ethereum-erc20-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-erc20-provider.svg)](https://npmjs.com/package/@liquality/ethereum-erc20-provider)|
+|[@liquality/ethereum-erc20-swap-provider](./packages/ethereum-erc20-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-erc20-swap-provider.svg)](https://npmjs.com/package/@liquality/ethereum-erc20-swap-provider)|
+|[@liquality/ethereum-ledger-provider](./packages/ethereum-ledger-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-ledger-provider.svg)](https://npmjs.com/package/@liquality/ethereum-ledger-provider)|
+|[@liquality/ethereum-metamask-provider](./packages/ethereum-metamask-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-metamask-provider.svg)](https://npmjs.com/package/@liquality/ethereum-metamask-provider)|
+|[@liquality/ethereum-networks](./packages/ethereum-networks)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-networks.svg)](https://npmjs.com/package/@liquality/ethereum-networks)|
+|[@liquality/ethereum-rpc-provider](./packages/ethereum-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-rpc-provider.svg)](https://npmjs.com/package/@liquality/ethereum-rpc-provider)|
+|[@liquality/ethereum-swap-provider](./packages/ethereum-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-swap-provider.svg)](https://npmjs.com/package/@liquality/ethereum-swap-provider)|
+|[@liquality/ethereum-utils](./packages/ethereum-utils)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-utils.svg)](https://npmjs.com/package/@liquality/ethereum-utils)|
+|[@liquality/jsonrpc-provider](./packages/jsonrpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/jsonrpc-provider.svg)](https://npmjs.com/package/@liquality/jsonrpc-provider)|
+|[@liquality/ledger-provider](./packages/ledger-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ledger-provider.svg)](https://npmjs.com/package/@liquality/ledger-provider)|
+|[@liquality/metamask-provider](./packages/metamask-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/metamask-provider.svg)](https://npmjs.com/package/@liquality/metamask-provider)|
+|[@liquality/provider](./packages/provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/provider.svg)](https://npmjs.com/package/@liquality/provider)|
+|[@liquality/schema](./packages/schema)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/schema.svg)](https://npmjs.com/package/@liquality/schema)|
+|[@liquality/utils](./packages/utils)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/utils.svg)](https://npmjs.com/package/@liquality/utils)|
+|[@liquality/wallet-provider](./packages/wallet-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/wallet-provider.svg)](https://npmjs.com/package/@liquality/wallet-provider)|
 
 
 ## Usage
 
 ```javascript
-import { Client, providers } from '@liquality/chainabstractionlayer'
+import Client from '@liquality/client'
+import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
+import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
 
-Client.debug('liquality*') // to enable debugging for all liquality modules using "debug" package
-// or
-// Client.debug('*') to enable debugging for everything
+import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
+import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
 
-const { BitcoinRPCProvider } = providers.bitcoin
+import BitcoinNetworks from '@liquality/bitcoin-networks'
+import EthereumNetworks from '@liquality/ethereum-networks'
 
 const bitcoin = new Client()
-bitcoin.addProvider(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
+const ethereum = new Client()
 
-bitcoin
-  .generateBlock(1) // returns Promise
-  .then(console.log) // Array<BlockHash>
+bitcoin.addProvider(new BitcoinRpcProvider(
+  'https://liquality.io/bitcointestnetrpc/', 'bitcoin', 'local321'
+))
+ethereum.addProvider(new EthereumRpcProvider(
+  'https://rinkeby.infura.io/v3/xxx'
+))
+
+bitcoin.addProvider(new BitcoinLedgerProvider(
+  { network: BitcoinNetworks.bitcoin_testnet }
+))
+ethereum.addProvider(new EthereumLedgerProvider(
+  { network: EthereumNetworks.rinkeby }
+))
+
+// Fetch addresses from Ledger wallet using a single-unified API
+const [ bitcoinAddress ] = await bitcoin.wallet.getAddresses(0, 1)
+const [ ethereumAddress ] = await ethereum.wallet.getAddresses(0, 1)
+
+// Sign a message
+const signedMessageBitcoin = await bitcoin.wallet.signMessage(
+  'The Times 3 January 2009 Chancellor on brink of second bailout for banks', bitcoinAddress
+)
+const signedMessageEthereum = await ethereum.wallet.signMessage(
+  'The Times 3 January 2009 Chancellor on brink of second bailout for banks', ethereumAddress
+)
+
+// Send a transaction
+await bitcoin.chain.sendTransaction(<to>, 1000)
+await ethereum.chain.sendTransaction(<to>, 1000)
 ```
 
-### Try ChainAbstractionLayer in Browser
 
-<table>
-  <thead>
-    <tr>
-      <th>Chain</th>
-      <th>Wallet Provider</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td rowspan=2>Ethereum</td>
-      <td>Ledger</td>
-      <td>
-        <a href="./examples/browser/ethereum/ledger.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/ethereum/ledger.html">Demo</a>
-      </td>
-    </tr>
-    <tr>
-      <td>MetaMask</td>
-      <td>
-        <a href="./examples/browser/ethereum/metamask.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/ethereum/metamask.html">Demo</a>
-      </td>
-    </tr>
-    <tr>
-      <td>Bitcoin</td>
-      <td>Ledger</td>
-      <td>
-        <a href="./examples/browser/bitcoin/ledger.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html">Demo</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-## Documentation
-
-The documentation is being generated by [esdoc](https://www.npmjs.com/package/esdoc). Github Page hosted documentation is available at [liquality.github.io/chainabstractionlayer](https://liquality.github.io/chainabstractionlayer/)
-
-If you want to build documentation locally;
+## Development
 
 ```bash
-npm run build:docs
+npm install
+npm run bootstrap
+npm run watch
+```
+
+
+## Production
+
+```bash
+npm run build
 ```
 
 

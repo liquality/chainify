@@ -23,8 +23,26 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/ethereum-rpc-provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-rpc-provider@0.0.0/dist/ethereum-rpc-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-rpc-provider@0.0.0/dist/ethereum-rpc-provider.min.js.map -->
+<!-- available as window.EthereumRPCProvider -->
+```
+
+
+## Usage
+
+```js
+import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
+
+const jsonrpc = new EthereumRpcProvider('https://ethereum.local')
+
+await jsonrpc.jsonrpc('eth_sendTransaction', ...)
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-

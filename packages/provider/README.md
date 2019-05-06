@@ -23,8 +23,26 @@ Query different blockchains with account management using a single and simple in
 npm i @liquality/provider
 ```
 
+or
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquality/provider@0.0.0/dist/provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/provider@0.0.0/dist/provider.min.js.map -->
+<!-- available as window.Provider -->
+```
+
+
+## Usage
+
+```js
+import Provider from '@liquality/provider'
+
+class MyCustomProvider extends Provider {
+  // ...
+}
+```
+
 
 ## License
 
 [MIT](../../LICENSE.md)
-
