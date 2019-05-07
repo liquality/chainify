@@ -45,5 +45,8 @@
   },
   "bugs": {
     "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
