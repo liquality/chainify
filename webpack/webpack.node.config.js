@@ -15,6 +15,7 @@ if (pkg.dependencies['@babel/polyfill']) {
 entry.push('./lib/index.js')
 
 module.exports = {
+  stats: process.env.CI === 'true' ? undefined : 'minimal',
   devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
   target: 'node',
   entry,

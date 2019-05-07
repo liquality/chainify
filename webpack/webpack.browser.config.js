@@ -6,6 +6,7 @@ const babelRule = require('./babel.rule.js')
 const plugins = require('./plugins.js')
 
 module.exports = {
+  stats: process.env.CI === 'true' ? undefined : 'minimal',
   devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
   target: 'web',
   entry: './lib/index.js',
