@@ -14,8 +14,8 @@ describe('Secret generation', function () {
   describe('Secrets with same message differ on different wallets', () => {
     it('Nodes', async () => {
       const message = 'message'
-      const ethSecret = await chains.ethereumWithNode.client.generateSecret(message)
-      const btcSecret = await chains.bitcoinWithNode.client.generateSecret(message)
+      const ethSecret = await chains.ethereumWithNode.client.swap.generateSecret(message)
+      const btcSecret = await chains.bitcoinWithNode.client.swap.generateSecret(message)
       expect(ethSecret).to.not.be.equal(btcSecret)
     })
 
@@ -23,8 +23,8 @@ describe('Secret generation', function () {
       console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
       await metaMaskConnector.start()
       const message = 'message'
-      const ethSecret = await chains.ethereumWithMetaMask.client.generateSecret(message)
-      const btcSecret = await chains.bitcoinWithLedger.client.generateSecret(message)
+      const ethSecret = await chains.ethereumWithMetaMask.client.swap.generateSecret(message)
+      const btcSecret = await chains.bitcoinWithLedger.client.swap.generateSecret(message)
       expect(ethSecret).to.not.be.equal(btcSecret)
       return metaMaskConnector.stop()
     })

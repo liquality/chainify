@@ -1,147 +1,95 @@
 {
-  "name": "@liquality/chainabstractionlayer",
-  "version": "v0.1.23-next.8",
-  "keywords": [
-    "blockchain",
-    "bitcoin",
-    "ethereum",
-    "client",
-    "abstraction",
-    "rpc",
-    "wallet",
-    "ledger",
-    "metamask"
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/liquality/chainabstractionlayer.git"
-  },
-  "bugs": {
-    "url": "https://github.com/liquality/chainabstractionlayer/issues"
-  },
-  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
-  "author": "Liquality <info@liquality.io>",
-  "module": "src/index.js",
-  "browser": {
-    "@ledgerhq/hw-transport-node-hid": "./src/providers/LedgerWebTransport.js"
-  },
-  "main": "dist/index.cjs.js",
-  "files": [
-    "dist/index.umd.js",
-    "src/**/*"
-  ],
-  "scripts": {
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "lint": "standard \"**/*.js\" \"**/*.html\" \"**/*.md\"",
-    "test": "cross-env NODE_ENV=test nyc mocha test/unit $npm_package_options_mocha",
-    "test:swap": "cross-env NODE_ENV=test mocha test/integration/swap $npm_package_options_mocha",
-    "build:dev:node": "webpack --config ./webpack/webpack.node.config.js",
-    "build:dev:browser": "webpack --config ./webpack/webpack.browser.config.js",
-    "build:dev": "webpack --config ./webpack/webpack.config.js",
-    "watch": "WEBPACK_WATCH=true webpack --config ./webpack/webpack.config.js",
-    "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
-    "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
-    "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev",
-    "copy:browser-examples-to-docs": "copy \"examples/browser/**/*\" docs/examples/browser",
-    "copy:browser-build-to-docs": "copy \"dist/index.umd.js\" docs/",
-    "build:docs": "esdoc",
-    "prepare:docs": "run-s build build:docs copy:*",
-    "push:docs": "gh-pages -d docs/ -m \"Auto-generated commit for documentation\"",
-    "publish:docs": "run-s prepare:docs push:docs"
-  },
-  "dependencies": {
-    "@babel/polyfill": "^7.4.0",
-    "@babel/runtime": "^7.4.0",
-    "@ledgerhq/hw-app-btc": "^4.46.0",
-    "@ledgerhq/hw-app-eth": "^4.46.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.46.0",
-    "@ledgerhq/hw-transport-u2f": "^4.46.0",
-    "@ledgerhq/hw-transport-webusb": "^4.46.0",
-    "ajv": "^6.5.2",
-    "axios": "^0.18.0",
-    "bech32": "^1.1.3",
-    "bip32": "^1.0.2",
-    "bip65": "^1.0.3",
-    "bitcoinjs-lib": "https://github.com/h4v0kr/bitcoinjs-lib",
-    "bs58": "^4.0.1",
-    "buffer-to-uint8array": "^1.1.0",
-    "coinselect": "^3.1.11",
-    "crypto-hashing": "^1.0.0",
-    "debug": "^4.1.1",
-    "dsn-parser": "^1.0.1",
-    "ethereumjs-tx": "^1.3.7",
-    "json-bigint": "^0.3.0",
-    "lodash": "^4.17.11",
-    "standard-error": "^1.1.0"
-  },
+  "name": "root",
+  "private": true,
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@babel/plugin-transform-runtime": "^7.4.0",
-    "@babel/preset-env": "^7.4.1",
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.4.3",
     "@babel/register": "^7.4.0",
     "babel-loader": "^8.0.5",
-    "babel-plugin-istanbul": "^5.1.1",
+    "babel-plugin-istanbul": "^5.1.2",
     "babel-plugin-lodash": "^3.3.4",
+    "bignumber.js": "^8.1.1",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
     "copy": "^0.3.2",
-    "coveralls": "^3.0.2",
+    "coveralls": "^3.0.3",
     "cross-env": "^5.2.0",
     "esdoc": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint-plugin-html": "^5.0.3",
-    "eslint-plugin-markdown": "^1.0.0-beta.6",
+    "eslint-plugin-markdown": "^1.0.0",
     "gh-pages": "^2.0.1",
+    "lerna": "^3.13.3",
     "lodash-webpack-plugin": "^0.11.5",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "mocha-lcov-reporter": "^1.3.0",
     "nock": "^10.0.6",
     "node-metamask": "^1.1.2",
-    "npm-run-all": "^4.1.3",
-    "nyc": "^13.1.0",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^14.0.0",
     "pre-commit": "^1.2.2",
-    "should": "^13.2.1",
+    "should": "^13.2.3",
     "standard": "^12.0.1",
-    "webpack": "^4.16.1",
-    "webpack-bundle-analyzer": "^3.0.3",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^4.30.0",
+    "webpack-bundle-analyzer": "^3.3.2",
+    "webpack-cli": "^3.3.1"
   },
   "engines": {
-    "node": ">=8"
+    "node": "~8.12.0"
   },
-  "nyc": {
-    "include": [
-      "src/"
-    ],
-    "reporter": [
-      "lcov",
-      "text"
-    ],
-    "instrument": false,
-    "report-dir": "./coverage",
-    "sourceMap": false
-  },
-  "options": {
-    "mocha": "--require @babel/register --require @babel/polyfill --timeout 20000 --recursive --require should"
-  },
-  "pre-commit": [
-    "lint",
-    "build",
-    "test"
-  ],
   "standard": {
     "plugins": [
       "html",
       "markdown"
     ],
     "ignore": [
-      "dist/**",
+      "**/packages/**/dist/**",
       "docs/**"
     ]
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "scripts": {
+    "coverage": "nyc report $npm_package_options_coverage | coveralls",
+    "lint": "standard $npm_package_options_standard",
+    "build": "lerna run build --stream",
+    "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
+    "watch": "lerna run watch --parallel",
+    "bootstrap": "lerna bootstrap",
+    "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
+    "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha"
+  },
+  "options": {
+    "coverage": "--reporter=text-lcov",
+    "mocha": "--require ./babel.test.js --timeout 20000 --recursive",
+    "standard": "\"**/*.js\" \"**/*.html\" \"**/*.md\""
+  },
+  "nyc": {
+    "include": [
+      "packages/**/lib/**"
+    ],
+    "exclude": [
+      "**/bin/**",
+      "**/coverage/**",
+      "**/dist/**",
+      "**/html/assets/**",
+      "**/test/**"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "all": true,
+    "require": [
+      "./babel.test.js"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
+  "pre-commit": [
+    "lint",
+    "build",
+    "test"
+  ]
 }

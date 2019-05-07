@@ -1,4 +1,4 @@
-const { Client, Provider } = require('../../')
+const { Client, Provider } = require('../../packages/bundle')
 
 class X extends Provider {
   signMessage (message, from) {

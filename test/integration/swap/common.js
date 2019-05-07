@@ -2,8 +2,8 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
-import { Client, Provider, providers, crypto } from '../../../src'
-import { sleep } from '../../../src/GlobalUtils'
+import { Client, Provider, providers, crypto } from '../../../packages/bundle/lib'
+import { sleep } from '../../../packages/utils'
 import { findLast } from 'lodash'
 import config from './config'
 
@@ -13,13 +13,13 @@ const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMask
 
 const bitcoinNetworks = providers.bitcoin.networks
 const bitcoinWithLedger = new Client()
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoreRPCProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
 bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks[config.bitcoin.network], segwit: false }))
 bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
 
 const bitcoinWithNode = new Client()
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoreRPCProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinJsLibSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinBitcoinJsLibSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
 
 // TODO: required for BITCOIN too?
 class RandomEthereumAddressProvider extends Provider {
@@ -33,40 +33,40 @@ class RandomEthereumAddressProvider extends Provider {
 
 const ethereumNetworks = providers.ethereum.networks
 const ethereumWithMetaMask = new Client()
-ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithNode = new Client()
-ethereumWithNode.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+ethereumWithNode.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithLedger = new Client()
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithMetaMask = new Client()
-erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
-erc20WithMetaMask.addProvider(new providers.ethereum.EthereumERC20Provider('We dont have an addres yet'))
-erc20WithMetaMask.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
+erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
+erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 erc20WithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithNode = new Client()
-erc20WithNode.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
-erc20WithNode.addProvider(new providers.ethereum.EthereumERC20Provider('We dont have an addres yet'))
-erc20WithNode.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
+erc20WithNode.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
+erc20WithNode.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
+erc20WithNode.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 erc20WithNode.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithLedger = new Client()
-erc20WithLedger.addProvider(new providers.ethereum.EthereumRPCProvider(config.ethereum.rpc.host))
+erc20WithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
-erc20WithLedger.addProvider(new providers.ethereum.EthereumERC20Provider('We dont have an addres yet'))
-erc20WithLedger.addProvider(new providers.ethereum.EthereumERC20SwapProvider())
+erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
+erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 erc20WithLedger.addProvider(new RandomEthereumAddressProvider())
 
 const chains = {
@@ -81,8 +81,8 @@ const chains = {
 }
 
 async function getSwapParams (chain) {
-  const recipientAddress = (await chain.client.getUnusedAddress()).address
-  const refundAddress = (await chain.client.getUnusedAddress()).address
+  const recipientAddress = (await chain.client.wallet.getUnusedAddress()).address
+  const refundAddress = (await chain.client.wallet.getUnusedAddress()).address
   const expiration = parseInt(Date.now() / 1000) + parseInt(Math.random() * 1000000)
   const value = config[chain.name].value
 
@@ -104,11 +104,11 @@ async function initiateAndVerify (chain, secretHash, swapParams) {
   console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const initiationParams = [swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration]
   const [initiationTx, initiationTxId] = await Promise.all([
-    chain.client.findInitiateSwapTransaction(...initiationParams),
-    chain.client.initiateSwap(...initiationParams)
+    chain.client.swap.findInitiateSwapTransaction(...initiationParams),
+    chain.client.swap.initiateSwap(...initiationParams)
   ])
   expect(initiationTx.hash).to.equal(initiationTxId)
-  const isVerified = await chain.client.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
+  const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
   expect(isVerified).to.equal(true)
   console.log(`${chain.id} Initiated ${initiationTxId}`)
   return initiationTxId
@@ -118,8 +118,8 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
   console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const secretHash = crypto.sha256(secret)
   const [claimTx, claimTxId] = await Promise.all([
-    chain.client.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration),
-    chain.client.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
+    chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration),
+    chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
   ])
   console.log(`${chain.id} Claimed ${claimTxId}`)
   return claimTx
@@ -127,16 +127,16 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
 
 async function refund (chain, initiationTxId, secretHash, swapParams) {
   console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
-  const refundTxId = await chain.client.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
+  const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
   console.log(`${chain.id} Refunded ${refundTxId}`)
   return refundTxId
 }
 
 async function expectBalance (chain, address, func, comparison) {
-  const balanceBefore = await chain.client.getBalance([address])
+  const balanceBefore = await chain.client.chain.getBalance([address])
   await func()
   await sleep(5000) // Await block time
-  const balanceAfter = await chain.client.getBalance([address])
+  const balanceAfter = await chain.client.chain.getBalance([address])
   comparison(balanceBefore, balanceAfter)
 }
 
@@ -145,7 +145,7 @@ function mineBitcoinBlocks () {
     let interval
     before(async () => {
       interval = setInterval(() => {
-        chains.bitcoinWithNode.client.generateBlock(1)
+        chains.bitcoinWithNode.client.chain.generateBlock(1)
       }, 1000)
     })
     after(() => clearInterval(interval))
@@ -171,7 +171,7 @@ function deployERC20Token (client) {
     }
     const erc20Provider = findLast(
       client._providers,
-      provider => provider instanceof providers.ethereum.EthereumERC20Provider, client._providers.lenght
+      provider => provider instanceof providers.ethereum.EthereumErc20Provider, client._providers.length
     )
     erc20Provider._contractAddress = initiationTransactionReceipt.contractAddress
   })

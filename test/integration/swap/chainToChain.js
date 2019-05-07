@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { crypto } from '../../../src'
+import { crypto } from '../../../packages/bundle/lib'
 import { chains, initiateAndVerify, claimAndVerify, getSwapParams, mineBitcoinBlocks, connectMetaMask } from './common'
 import config from './config'
 
@@ -11,7 +11,7 @@ chai.use(chaiAsPromised)
 
 async function testSwap (chain1, chain2) {
   console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
-  const secret = await chain1.client.generateSecret('test')
+  const secret = await chain1.client.swap.generateSecret('test')
   const secretHash = crypto.sha256(secret)
 
   const chain1SwapParams = await getSwapParams(chain1)

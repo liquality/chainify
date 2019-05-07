@@ -9,7 +9,7 @@ module.exports = (config = { target: 'web' }) => {
       plugins.push('lodash')
     }
   } else {
-    targets.node = '8'
+    targets.node = 'current'
   }
 
   return {
@@ -21,7 +21,7 @@ module.exports = (config = { target: 'web' }) => {
       presets: [
         [
           '@babel/preset-env', {
-            debug: true,
+            debug: process.env.CI === 'true',
             modules: false,
             targets
           }

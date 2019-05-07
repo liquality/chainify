@@ -1,0 +1,65 @@
+{
+  "name": "@liquality/bundle",
+  "umdName": "Bundle",
+  "version": "0.2.0",
+  "description": "",
+  "module": "lib/index.js",
+  "main": "dist/index.cjs.js",
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build:dev:node": "webpack --config ../../webpack/webpack.node.config.js",
+    "build:dev:browser": "webpack --config ../../webpack/webpack.browser.config.js",
+    "build:dev": "webpack --config ../../webpack/webpack.config.js",
+    "watch": "WEBPACK_WATCH=true webpack --config ../../webpack/webpack.config.js",
+    "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
+    "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
+    "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "@babel/runtime": "^7.4.3",
+    "@liquality/bitcoin-bitcoinjs-lib-swap-provider": "^0.2.0",
+    "@liquality/bitcoin-bitcore-rpc-provider": "^0.2.0",
+    "@liquality/bitcoin-collateral-provider": "^0.2.0",
+    "@liquality/bitcoin-ledger-provider": "^0.2.0",
+    "@liquality/bitcoin-networks": "^0.2.0",
+    "@liquality/bitcoin-rpc-provider": "^0.2.0",
+    "@liquality/bitcoin-swap-provider": "^0.2.0",
+    "@liquality/bitcoin-utils": "^0.2.0",
+    "@liquality/client": "^0.2.0",
+    "@liquality/crypto": "^0.2.0",
+    "@liquality/debug": "^0.2.0",
+    "@liquality/errors": "^0.2.0",
+    "@liquality/ethereum-erc20-provider": "^0.2.0",
+    "@liquality/ethereum-erc20-swap-provider": "^0.2.0",
+    "@liquality/ethereum-ledger-provider": "^0.2.0",
+    "@liquality/ethereum-metamask-provider": "^0.2.0",
+    "@liquality/ethereum-networks": "^0.2.0",
+    "@liquality/ethereum-rpc-provider": "^0.2.0",
+    "@liquality/ethereum-swap-provider": "^0.2.0",
+    "@liquality/ethereum-utils": "^0.2.0",
+    "@liquality/jsonrpc-provider": "^0.2.0",
+    "@liquality/ledger-provider": "^0.2.0",
+    "@liquality/metamask-provider": "^0.2.0",
+    "@liquality/provider": "^0.2.0",
+    "@liquality/schema": "^0.2.0",
+    "@liquality/utils": "^0.2.0",
+    "@liquality/wallet-provider": "^0.2.0"
+  },
+  "engines": {
+    "node": "~8.12.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  }
+}

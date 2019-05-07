@@ -1,10 +1,10 @@
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
-const { Client, providers } = require('../../../')
-const { BitcoinLedgerProvider, BitcoreRPCProvider, networks } = providers.bitcoin
+const { Client, providers } = require('../../../packages/bundle')
+const { BitcoinLedgerProvider, BitcoreRpcProvider, networks } = providers.bitcoin
 
 const bitcoin = new Client()
-bitcoin.addProvider(new BitcoreRPCProvider('http://localhost:18332', 'bitcoin', 'local321'))
+bitcoin.addProvider(new BitcoreRpcProvider('http://localhost:18332', 'bitcoin', 'local321'))
 bitcoin.addProvider(new BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
 
 ;(async () => {
@@ -12,7 +12,7 @@ bitcoin.addProvider(new BitcoinLedgerProvider({ network: networks.bitcoin_testne
     // console.log(address)
     let d = Date.now()
     try {
-      const addresses = await bitcoin.getAddresses(0, 50)
+      const addresses = await bitcoin.swap.getAddresses(0, 50)
       console.log(addresses)
       /*
       var xpubkeys = await bitcoin.getAddressExtendedPubKeys("49'/1'/0'")

@@ -1,0 +1,46 @@
+{
+  "name": "@liquality/ledger-provider",
+  "umdName": "LedgerProvider",
+  "umdExport": "default",
+  "version": "0.2.0",
+  "description": "",
+  "module": "lib/index.js",
+  "main": "dist/index.cjs.js",
+  "browser": {
+    "@ledgerhq/hw-transport-node-hid": "@ledgerhq/hw-transport-webusb"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build:dev:node": "webpack --config ../../webpack/webpack.node.config.js",
+    "build:dev:browser": "webpack --config ../../webpack/webpack.browser.config.js",
+    "build:dev": "webpack --config ../../webpack/webpack.config.js",
+    "watch": "WEBPACK_WATCH=true webpack --config ../../webpack/webpack.config.js",
+    "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
+    "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
+    "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.4.3",
+    "@ledgerhq/hw-transport-node-hid": "^4.46.0",
+    "@ledgerhq/hw-transport-webusb": "^4.46.0",
+    "@liquality/debug": "^0.2.0",
+    "@liquality/errors": "^0.2.0",
+    "@liquality/wallet-provider": "^0.2.0"
+  },
+  "engines": {
+    "node": "~8.12.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  }
+}
