@@ -67,7 +67,6 @@ export default class EthereumLedgerProvider extends LedgerProvider {
       data: data ? ensureHexEthFormat(data) : undefined,
       chainId: ensureHexEthFormat(BigNumber(this._network.chainId).toString(16))
     }
-
     const [nonce, gasPrice, gasLimit] = await Promise.all([
       this.getMethod('getTransactionCount')(ensureHexStandardFormat(from)),
       this.getMethod('getGasPrice')(),
