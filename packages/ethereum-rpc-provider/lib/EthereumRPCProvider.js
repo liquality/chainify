@@ -60,7 +60,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async sendRawTransaction (hash) {
-    const txHash = await this.jsonrpc('eth_sendRawTransaction', hash)
+    const txHash = await this.jsonrpc('eth_sendRawTransaction', ensureHexEthFormat(hash))
     return txHash
   }
 
@@ -97,7 +97,7 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
   }
 
   async getTransactionCount (address) {
-    const count = await this.jsonrpc('eth_getTransactionCount', ensureHexEthFormat(address))
+    const count = await this.jsonrpc('eth_getTransactionCount', ensureHexEthFormat(address), 'latest')
     return parseInt(count, '16')
   }
 
