@@ -26,30 +26,9 @@ npm i @liquality/bundle
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/bundle@0.0.0/dist/bundle.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bundle@0.0.0/dist/bundle.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bundle@0.2.0/dist/bundle.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bundle@0.2.0/dist/bundle.min.js.map -->
 <!-- available as window.Bundle -->
-```
-
-
-## Usage
-
-```js
-import { Client, providers } from '@liquality/bundle'
-
-// Enable debugging for all liquality modules using "debug" package
-// Client.debug('liquality*')
-// or
-// Client.debug('*') to enable debugging for all modules
-
-const { BitcoinRpcProvider } = providers.bitcoin
-
-const bitcoin = new Client()
-bitcoin.addProvider(new BitcoinRpcProvider('http://localhost:8080', 'bitcoin', 'local321'))
-
-bitcoin
-  .generateBlock(1) // returns Promise
-  .then(console.log) // Array<BlockHash>
 ```
 
 

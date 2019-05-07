@@ -26,8 +26,8 @@ npm i @liquality/bitcoin-swap-provider
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-swap-provider@0.0.0/dist/bitcoin-swap-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-swap-provider@0.0.0/dist/bitcoin-swap-provider.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-swap-provider@0.2.0/dist/bitcoin-swap-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-swap-provider@0.2.0/dist/bitcoin-swap-provider.min.js.map -->
 <!-- available as window.BitcoinSwapProvider -->
 ```
 

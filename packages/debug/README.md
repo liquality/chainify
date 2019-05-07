@@ -26,8 +26,8 @@ npm i @liquality/debug
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/debug@0.0.0/dist/debug.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/debug@0.0.0/dist/debug.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/debug@0.2.0/dist/debug.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/debug@0.2.0/dist/debug.min.js.map -->
 <!-- available as window.Debug -->
 ```
 

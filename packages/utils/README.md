@@ -26,8 +26,8 @@ npm i @liquality/utils
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/utils@0.0.0/dist/utils.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/utils@0.0.0/dist/utils.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/utils@0.2.0/dist/utils.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/utils@0.2.0/dist/utils.min.js.map -->
 <!-- available as window.Utils -->
 ```
 
