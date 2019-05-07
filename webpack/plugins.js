@@ -20,8 +20,9 @@ module.exports = (config = { target: 'web' }) => {
       })
     )
 
-    if (config.target === 'web') {
-      const base = path.join(__dirname, '..', 'doc', 'bundle', path.basename(cwd))
+    if (process.env.BUILD_PKG_STATS === 'true' &&
+        config.target === 'web') {
+      const base = path.join(__dirname, '..', 'doc', 'pkg-stats', path.basename(cwd))
 
       plugins.push(
         new BundleAnalyzerPlugin({

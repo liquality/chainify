@@ -54,6 +54,7 @@
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
     "lint": "standard $npm_package_options_standard",
     "build": "lerna run build --stream",
+    "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
     "watch": "lerna run watch --parallel",
     "bootstrap": "lerna bootstrap",
     "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
