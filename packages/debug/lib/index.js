@@ -1,7 +1,10 @@
 import debug from 'debug'
 import { version } from '../package.json'
 
-debug._formatArgs = debug.formatArgs
+if (!debug._formatArgs) {
+  debug._formatArgs = debug.formatArgs
+}
+
 debug.formatArgs = function (args) {
   const log = {
     args: args.concat([]),

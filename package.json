@@ -56,12 +56,13 @@
     "build": "lerna run build --stream",
     "watch": "lerna run watch --parallel",
     "bootstrap": "lerna bootstrap",
-    "test": "cross-env NODE_ENV=test nyc lerna --no-bail run test",
-    "test:swap": "cross-env NODE_ENV=test mocha test/integration/swap --require ./babel.mocha.js --timeout 20000 --recursive"
+    "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
+    "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha"
   },
   "options": {
-    "standard": "\"**/*.js\" \"**/*.html\" \"**/*.md\"",
-    "coverage": "--reporter=text-lcov"
+    "coverage": "--reporter=text-lcov",
+    "mocha": "--require ./babel.test.js --timeout 20000 --recursive",
+    "standard": "\"**/*.js\" \"**/*.html\" \"**/*.md\""
   },
   "nyc": {
     "include": [
@@ -80,8 +81,7 @@
     ],
     "all": true,
     "require": [
-      "@babel/register",
-      "@babel/polyfill"
+      "./babel.test.js"
     ],
     "sourceMap": false,
     "instrument": false

@@ -1,6 +1,5 @@
 require('@babel/register')({
-  rootMode: 'upward',
-  ignore: ['node_modules']
+  cache: true
 })
 
 require('@babel/polyfill')

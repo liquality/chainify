@@ -17,8 +17,7 @@
     "watch": "WEBPACK_WATCH=true webpack --config ../../webpack/webpack.config.js",
     "build:node": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:node",
     "build:browser": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev:browser",
-    "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev",
-    "test": "cross-env NODE_ENV=test mocha test/unit --require ../../babel.mocha.js --timeout 20000 --recursive"
+    "build": "cross-env NODE_ENV=production BABEL_ENV=production npm run build:dev"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
