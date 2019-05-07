@@ -1,7 +1,7 @@
 {
   "name": "@liquality/bitcoin-utils",
   "umdName": "BitcoinUtils",
-  "version": "0.0.0",
+  "version": "0.2.0",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -22,8 +22,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/crypto": "^0.0.0",
-    "@liquality/bitcoin-networks": "^0.0.0",
+    "@liquality/bitcoin-networks": "^0.2.0",
+    "@liquality/crypto": "^0.2.0",
     "lodash": "^4.17.11"
   },
   "engines": {
