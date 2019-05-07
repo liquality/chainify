@@ -6,10 +6,18 @@ const babelRule = require('./babel.rule.js')
 const plugins = require('./plugins.js')
 const externals = require('./externals.js')
 
+const entry = []
+
+if (pkg.dependencies['@babel/polyfill']) {
+  entry.push('@babel/polyfill/noConflict')
+}
+
+entry.push('./lib/index.js')
+
 module.exports = {
   devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
   target: 'node',
-  entry: './lib/index.js',
+  entry,
   externals: externals({ target: 'node' }),
   output: {
     path: path.resolve(cwd, 'dist'),

@@ -28,6 +28,9 @@
     "@liquality/utils": "^0.0.0",
     "@liquality/ethereum-utils": "^0.0.0"
   },
+  "engines": {
+    "node": "~8.12.0"
+  },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
     "type": "git",
