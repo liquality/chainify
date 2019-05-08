@@ -2,6 +2,7 @@ import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
 import { base58 } from '@liquality/crypto'
 import { addressToPubKeyHash } from '@liquality/bitcoin-utils'
 import networks from '@liquality/bitcoin-networks'
+import { addressToString } from '@liquality/utils'
 
 /**
  * BitcoinBitcoreRpcProvider overrides the BitcoinRpcProvider to use the address index
@@ -9,6 +10,7 @@ import networks from '@liquality/bitcoin-networks'
  */
 export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
   createScript (address) {
+    address = addressToString(address)
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
     if (type === networks.bitcoin_testnet.pubKeyHash) {
@@ -34,33 +36,39 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
 
   /* These methods need to be removed, but are required for now - END */
   async isAddressUsed (address) {
-    address = String(address)
+    address = addressToString(address)
     const data = await this.getAddressBalance(address)
 
     return data.received !== 0
   }
 
   async getAddressBalances (addresses) {
+    addresses = addresses.map(addressToString)
     return this.jsonrpc('getaddressdeltas', { 'addresses': addresses })
   }
 
   async getAddressBalance (address) {
+    address = addressToString(address)
     return this.jsonrpc('getaddressbalance', { 'addresses': [address] })
   }
 
   async getUnspentTransactionsForAddresses (addresses) {
+    addresses = addresses.map(addressToString)
     return this.jsonrpc('getaddressutxos', { 'addresses': addresses })
   }
 
   async getUnspentTransactions (address) {
+    address = addressToString(address)
     return this.jsonrpc('getaddressutxos', { 'addresses': [address] })
   }
 
   async getAddressUtxos (addresses) {
+    addresses = addresses.map(addressToString)
     return this.jsonrpc('getaddressutxos', { 'addresses': addresses })
   }
 
   async getAddressMempool (addresses) {
+    addresses = addresses.map(addressToString)
     return this.jsonrpc('getaddressmempool', { 'addresses': addresses })
   }
 
@@ -81,6 +89,7 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
   // }
 
   async getAddressDeltas (addresses) {
+    addresses = addresses.map(addressToString)
     return this.jsonrpc('getaddressdeltas', { 'addresses': addresses })
   }
 }

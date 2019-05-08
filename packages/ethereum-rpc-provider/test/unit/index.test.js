@@ -27,7 +27,8 @@ describe('Ethereum RPC provider', () => {
   describe('getAddresses', () => {
     it('should return an array of addresses without 0x', async () => {
       const addresses = await client.wallet.getAddresses()
-      expect(addresses).to.deep.equal([
+      console.log(addresses)
+      expect(addresses.map(a => a.toObject())).to.deep.equal([
         { address: '322d4959c911520645c0638204b42ce0689236e9' },
         { address: '635d7d148054b9471d79084b80b864a166956139' },
         { address: 'a17fe13ab28477f17fc7f1ec99a4385c95a5356b' },
@@ -45,7 +46,7 @@ describe('Ethereum RPC provider', () => {
   describe('getUnusedAddress', () => {
     it('should return first address without 0x', async () => {
       const unusedAddress = await client.wallet.getUnusedAddress()
-      expect(unusedAddress).to.deep.equal({ address: '322d4959c911520645c0638204b42ce0689236e9' })
+      expect(unusedAddress.toObject()).to.deep.equal({ address: '322d4959c911520645c0638204b42ce0689236e9' })
     })
   })
 

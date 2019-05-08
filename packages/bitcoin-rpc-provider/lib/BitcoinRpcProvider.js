@@ -1,7 +1,8 @@
-import { flatten } from 'lodash'
+import { isArray, flatten } from 'lodash'
 import BigNumber from 'bignumber.js'
 
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
+import { Address, addressToString } from '@liquality/utils'
 
 export default class BitcoinRPCProvider extends JsonRpcProvider {
   constructor (uri, username, password, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
@@ -33,15 +34,18 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async signMessage (message, from) {
+    from = addressToString(from)
     return this.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
   }
 
   async sendTransaction (to, value) {
+    to = addressToString(to)
     value = BigNumber(value).dividedBy(1e8).toNumber()
     return this.jsonrpc('sendtoaddress', to, value)
   }
 
   async dumpPrivKey (address) {
+    address = addressToString(address)
     return this.jsonrpc('dumpprivkey', address)
   }
 
@@ -54,22 +58,25 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async isAddressUsed (address) {
-    address = String(address)
     const amountReceived = await this.getReceivedByAddress(address)
 
     return amountReceived > 0
   }
 
   async getBalance (addresses) {
-    addresses = addresses
-      .map(address => String(address))
+    if (!isArray(addresses)) {
+      addresses = [ addresses ]
+    }
 
     const _utxos = await this.getUnspentTransactionsForAddresses(addresses)
     const utxos = flatten(_utxos)
-    return utxos.map(balance => new BigNumber(balance.satoshis)).reduce((acc, utxo) => acc.plus(utxo), new BigNumber(0))
+
+    return utxos
+      .reduce((acc, utxo) => acc.plus(utxo.satoshis), new BigNumber(0))
   }
 
   async getListUnspent (addresses) {
+    addresses = addresses.map(addressToString)
     const utxos = await this.jsonrpc('listunspent', 0, 9999999, addresses)
     return utxos.map(utxo => ({ ...utxo, satoshis: BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
@@ -83,6 +90,7 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getReceivedByAddress (address) {
+    address = addressToString(address)
     return this.jsonrpc('getreceivedbyaddress', address)
   }
 
@@ -135,34 +143,41 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
   }
 
   async getNewAddress () {
-    return this.jsonrpc('getnewaddress')
+    const newAddress = await this.jsonrpc('getnewaddress')
+
+    if (!newAddress) return null
+
+    return new Address({
+      address: newAddress
+    })
   }
 
   async getUnusedAddress () {
-    const newAddress = await this.getNewAddress()
-    return {
-      address: newAddress
-    }
+    return this.getNewAddress()
   }
 
   async getUsedAddresses () {
     const addresses = await this.jsonrpc('listaddressgroupings')
-    let ret = []
+    const ret = []
+
     for (const group of addresses) {
       for (const address of group) {
-        ret.push({ address: address[0] })
+        ret.push(new Address({ address: address[0] }))
       }
     }
+
     const emptyaddresses = await this.jsonrpc('listreceivedbyaddress', 0, true)
+
     for (const address of emptyaddresses) {
-      ret.push({ address: address.address })
+      ret.push(new Address({ address: address.address }))
     }
+
     return ret
   }
 
   async isWalletAvailable () {
     const newAddress = await this.getNewAddress()
-    return (newAddress !== null)
+    return !!newAddress
   }
 
   // async getAddressTransactions (address, start, end) {

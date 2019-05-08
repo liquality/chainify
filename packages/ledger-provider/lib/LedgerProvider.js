@@ -106,7 +106,7 @@ export default class LedgerProvider extends WalletProvider {
 
     while (index < maxAddresses) {
       const addrs = await this.getAddresses(index, addressesPerCall)
-      const addr = addrs.find(addr => addr.address === address)
+      const addr = addrs.find(addr => addr.equals(address))
       if (addr) return addr
 
       index += addressesPerCall

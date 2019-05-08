@@ -1,7 +1,7 @@
 import bitcoin from 'bitcoinjs-lib'
 
 import Provider from '@liquality/provider'
-import { sleep } from '@liquality/utils'
+import { addressToString, sleep } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
 import {
   calculateFee,
@@ -25,6 +25,9 @@ export default class BitcoinBitcoinJsLibSwapProvider extends Provider {
   }
 
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
+    recipientAddress = addressToString(recipientAddress)
+    refundAddress = addressToString(refundAddress)
+
     let expirationHex = scriptNumEncode(expiration)
 
     const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)
@@ -95,6 +98,8 @@ export default class BitcoinBitcoinJsLibSwapProvider extends Provider {
   }
 
   spendSwap (address, wallet, secret, isRedeem, txfee, vout, network, expiration) {
+    address = addressToString(address)
+
     network = network || bitcoin.networks.bitcoin
     const hashType = bitcoin.Transaction.SIGHASH_ALL
 

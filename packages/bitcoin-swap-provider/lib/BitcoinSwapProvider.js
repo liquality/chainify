@@ -9,7 +9,7 @@ import {
   scriptNumEncode
 } from '@liquality/bitcoin-utils'
 import { sha256, padHexStart } from '@liquality/crypto'
-import { sleep } from '@liquality/utils'
+import { addressToString, sleep } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
 
 export default class BitcoinSwapProvider extends Provider {
@@ -22,6 +22,9 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
+    recipientAddress = addressToString(recipientAddress)
+    refundAddress = addressToString(refundAddress)
+
     let expirationHex = scriptNumEncode(expiration)
 
     const recipientPubKeyHash = addressToPubKeyHash(recipientAddress)
@@ -161,7 +164,8 @@ export default class BitcoinSwapProvider extends Provider {
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    let swapTransaction = null
+    let swapTransaction = false
+
     while (!swapTransaction) {
       let p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
       const p2shMempoolTransactions = await this.getMethod('getAddressMempool')([p2shAddress])
@@ -171,11 +175,16 @@ export default class BitcoinSwapProvider extends Provider {
       swapTransaction = transactions.find(predicate)
       await sleep(5000)
     }
+
     return swapTransaction
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    const initiateSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+    const initiateSwapTransaction = await this.findSwapTransaction(
+      recipientAddress,
+      refundAddress,
+      secretHash,
+      expiration,
       tx => this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
     )
 
@@ -183,7 +192,11 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+    const claimSwapTransaction = await this.findSwapTransaction(
+      recipientAddress,
+      refundAddress,
+      secretHash,
+      expiration,
       tx => tx._raw.vin.find(vin => vin.txid === initiationTxHash)
     )
 
@@ -234,15 +247,17 @@ export default class BitcoinSwapProvider extends Provider {
     const value = parseInt(reverseBuffer(output.amount).toString('hex'), 16)
     const { relayfee } = await this.getMethod('jsonrpc')('getinfo')
     const calculatedFee = calculateFee(1, 1, feePerByte)
-    const fee = BigNumber.max(calculatedFee, BigNumber(relayfee).times(1e8).toNumber())
+    const fee = BigNumber.max(calculatedFee, BigNumber(relayfee).times(1e8))
     const amount = BigNumber(value).minus(fee).toNumber()
 
     if (amount < 0) {
       throw new Error('Not enough value in transaction to pay fee.')
     }
 
-    const amountLE = Buffer.from(padHexStart(amount.toString(16), 16), 'hex').reverse().toString('hex') // amount in little endian
-    const pubKeyHash = addressToPubKeyHash(address)
+    const amountLE = Buffer
+      .from(padHexStart(amount.toString(16), 16), 'hex')
+      .reverse().toString('hex') // amount in little endian
+    const pubKeyHash = addressToPubKeyHash(addressToString(address))
 
     return [
       '01000000', // VERSION
