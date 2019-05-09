@@ -1,3 +1,5 @@
+import '@babel/polyfill/noConflict'
+
 import Transport from '@ledgerhq/hw-transport-node-hid'
 
 import WalletProvider from '@liquality/wallet-provider'

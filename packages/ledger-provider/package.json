@@ -21,6 +21,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.3",
     "@ledgerhq/hw-transport-node-hid": "^4.46.0",
     "@ledgerhq/hw-transport-webusb": "^4.46.0",
