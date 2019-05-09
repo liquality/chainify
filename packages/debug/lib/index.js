@@ -1,8 +1,10 @@
 import debug from 'debug'
 import { version } from '../package.json'
 
-if (!debug._formatArgs) {
-  debug._formatArgs = debug.formatArgs
+const FORMAT_ARGS_BACKUP_KEY = '__formatArgs'
+
+if (!debug[FORMAT_ARGS_BACKUP_KEY]) {
+  debug[FORMAT_ARGS_BACKUP_KEY] = debug.formatArgs
 }
 
 debug.formatArgs = function (args) {
@@ -27,16 +29,20 @@ debug.formatArgs = function (args) {
 
   if (!console.history) {
     console.history = [
-      `@liquality/chainabstractionlayer v${version}`
+      `@liquality/debug v${version}`
     ]
   }
 
   console.history.push(log)
 
-  debug._formatArgs.call(this, args)
+  debug[FORMAT_ARGS_BACKUP_KEY].call(this, args)
 }
 
-export default (namespace) => {
+const Debug = (namespace) => {
   namespace = `liquality:cal:${namespace}`
   return debug(namespace)
 }
+
+Debug.version = version
+
+export default Debug

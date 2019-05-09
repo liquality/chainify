@@ -28,7 +28,7 @@ or
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-rpc-provider@0.2.0/dist/ethereum-rpc-provider.min.js"></script>
 <!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-rpc-provider@0.2.0/dist/ethereum-rpc-provider.min.js.map -->
-<!-- available as window.EthereumRPCProvider -->
+<!-- available as window.EthereumRpcProvider -->
 ```
 
 

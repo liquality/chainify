@@ -28,7 +28,7 @@ or
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-erc20-provider@0.2.0/dist/ethereum-erc20-provider.min.js"></script>
 <!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-erc20-provider@0.2.0/dist/ethereum-erc20-provider.min.js.map -->
-<!-- available as window.EthereumERC20Provider -->
+<!-- available as window.EthereumErc20Provider -->
 ```
 
 

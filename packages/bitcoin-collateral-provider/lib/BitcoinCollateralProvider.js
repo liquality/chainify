@@ -13,6 +13,8 @@ import {
   padHexStart
 } from '@liquality/crypto'
 
+import { version } from '../package.json'
+
 export default class BitcoinCollateralProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
     super()
@@ -483,3 +485,5 @@ export default class BitcoinCollateralProvider extends Provider {
     ].join('')
   }
 }
+
+BitcoinCollateralProvider.version = version

@@ -9,6 +9,8 @@ import {
 
 import networks from '@liquality/bitcoin-networks'
 
+import { version } from '../package.json'
+
 function calculateFee (numInputs, numOutputs, feePerByte) {
   return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
 }
@@ -139,5 +141,7 @@ export {
   addressToPubKeyHash,
   reverseBuffer,
   scriptNumEncode,
-  getAddressNetwork
+  getAddressNetwork,
+
+  version
 }

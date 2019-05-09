@@ -53,12 +53,15 @@
   "scripts": {
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
     "lint": "standard $npm_package_options_standard",
-    "build": "lerna run build --stream",
-    "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
-    "watch": "lerna run watch --parallel",
-    "bootstrap": "lerna bootstrap",
+    "bootstrap": "lerna bootstrap --force-local",
     "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
-    "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha"
+    "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha",
+    "watch": "cross-env WEBPACK_WATCH=true lerna run build --parallel",
+    "build:node": "cross-env NODE_ENV=production lerna run build:node --stream",
+    "build:browser": "cross-env NODE_ENV=production lerna run build:browser --stream",
+    "build:dev": "lerna run build --stream",
+    "build": "cross-env NODE_ENV=production npm run build:dev",
+    "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build"
   },
   "options": {
     "coverage": "--reporter=text-lcov",

@@ -1,8 +1,12 @@
+import '@babel/polyfill/noConflict'
+
 import Transport from '@ledgerhq/hw-transport-node-hid'
 
 import WalletProvider from '@liquality/wallet-provider'
 import { WalletError } from '@liquality/errors'
 import Debug from '@liquality/debug'
+
+import { version } from '../package.json'
 
 const debug = Debug('ledger')
 
@@ -106,7 +110,7 @@ export default class LedgerProvider extends WalletProvider {
 
     while (index < maxAddresses) {
       const addrs = await this.getAddresses(index, addressesPerCall)
-      const addr = addrs.find(addr => addr.address === address)
+      const addr = addrs.find(addr => addr.equals(address))
       if (addr) return addr
 
       index += addressesPerCall
@@ -119,3 +123,5 @@ export default class LedgerProvider extends WalletProvider {
     throw new Error('Ledger: Wallet does not contain address')
   }
 }
+
+LedgerProvider.version = version

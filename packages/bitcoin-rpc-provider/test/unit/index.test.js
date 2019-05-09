@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 
 import Client from '../../../client/lib'
-import BitcoinRPCProvider from '../../lib'
+import BitcoinRpcProvider from '../../lib'
 
 const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
 const bitcoinRpc = require('../../../../test/mock/bitcoin/rpc')
@@ -18,7 +18,7 @@ describe('Bitcoin RPC provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    provider = new BitcoinRPCProvider('http://localhost:18332', 'bitcoin', 'local321')
+    provider = new BitcoinRpcProvider('http://localhost:18332', 'bitcoin', 'local321')
     client.addProvider(provider)
 
     mockJsonRpc('http://localhost:18332', bitcoinRpc, 100)

@@ -1,3 +1,4 @@
+import { isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
 import Provider from '@liquality/provider'
@@ -6,6 +7,9 @@ import {
   ensureAddressStandardFormat,
   ensureHexEthFormat
 } from '@liquality/ethereum-utils'
+import { addressToString } from '@liquality/utils'
+
+import { version } from '../package.json'
 
 const SOL_TRANSFER_FUNCTION = '0xa9059cbb' // transfer(address,uint256)
 const SOL_BALACE_OF_FUNCTION = '0x70a08231' // balanceOf(address)
@@ -32,14 +36,29 @@ export default class EthereumErc20Provider extends Provider {
   }
 
   async getBalance (addresses) {
+    if (!isArray(addresses)) {
+      addresses = [ addresses ]
+    }
+
     addresses = addresses
-      .map(address => String(address))
-    const addrs = addresses.map(ensureHexEthFormat)
-    const promiseBalances = await Promise.all(addrs.map(address => this.getMethod('jsonrpc')('eth_call', {
-      data: SOL_BALACE_OF_FUNCTION + padHexStart(ensureAddressStandardFormat(address), 64),
-      to: ensureHexEthFormat(this._contractAddress)
-    }, 'latest')))
-    return promiseBalances.map(balance => new BigNumber(balance, 16))
+      .map(addressToString)
+      .map(ensureHexEthFormat)
+
+    const promiseBalances = await Promise.all(
+      addresses.map(address => this.getMethod('jsonrpc')(
+        'eth_call',
+        {
+          data: SOL_BALACE_OF_FUNCTION + padHexStart(ensureAddressStandardFormat(address), 64),
+          to: ensureHexEthFormat(this._contractAddress)
+        },
+        'latest')
+      )
+    )
+
+    return promiseBalances
+      .map(balance => new BigNumber(balance, 16))
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 }
+
+EthereumErc20Provider.version = version

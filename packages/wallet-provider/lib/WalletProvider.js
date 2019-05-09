@@ -3,6 +3,8 @@ import { isEqual } from 'lodash'
 import Provider from '@liquality/provider'
 import { WalletError } from '@liquality/errors'
 
+import { version } from '../package.json'
+
 export default class WalletProvider extends Provider {
   constructor (network) {
     super()
@@ -61,3 +63,5 @@ export default class WalletProvider extends Provider {
     throw new Error('getConnectedNetwork not implemented.')
   }
 }
+
+WalletProvider.version = version

@@ -1,3 +1,5 @@
+import { version } from '../package.json'
+
 export default {
   bitcoin: {
     name: 'bitcoin',
@@ -24,5 +26,7 @@ export default {
       private: 0x04358394
     },
     isTestnet: true
-  }
+  },
+
+  version
 }

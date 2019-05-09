@@ -6,6 +6,8 @@ import Provider from '@liquality/provider'
 import Debug from '@liquality/debug'
 import { NodeError, RpcError } from '@liquality/errors'
 
+import { version } from '../package.json'
+
 const debug = Debug('jsonrpc')
 
 const { parse } = JSONBigInt({ storeAsString: true, strict: true })
@@ -68,3 +70,5 @@ export default class JsonRpcProvider extends Provider {
       })
   }
 }
+
+JsonRpcProvider.version = version

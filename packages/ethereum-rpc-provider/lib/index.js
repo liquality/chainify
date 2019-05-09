@@ -1,3 +1,3 @@
-import EthereumRPCProvider from './EthereumRPCProvider'
+import EthereumRpcProvider from './EthereumRpcProvider'
 
-export default EthereumRPCProvider
+export default EthereumRpcProvider

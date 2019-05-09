@@ -1,10 +1,15 @@
 import Provider from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
-import { sleep } from '@liquality/utils'
+import { sleep, addressToString } from '@liquality/utils'
 import { ensureAddressStandardFormat } from '@liquality/ethereum-utils'
+
+import { version } from '../package.json'
 
 export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
+    recipientAddress = ensureAddressStandardFormat(addressToString(recipientAddress))
+    refundAddress = ensureAddressStandardFormat(addressToString(refundAddress))
+
     const dataSizeBase = 112
     const redeemDestinationBase = 66
     const refundDestinationBase = 89
@@ -66,11 +71,11 @@ export default class EthereumSwapProvider extends Provider {
       'fe', // INVALID
 
       '5b', // JUMPDEST
-      '73', ensureAddressStandardFormat(recipientAddress), // PUSH20 {recipientAddressEncoded}
+      '73', recipientAddress, // PUSH20 {recipientAddressEncoded}
       'ff', // SELF-DESTRUCT
 
       '5b', // JUMPDEST
-      '73', ensureAddressStandardFormat(refundAddress), // PUSH20 {refundAddressEncoded}
+      '73', refundAddress, // PUSH20 {refundAddressEncoded}
       'ff' // SELF-DESTRUCT
     ].join('')
   }
@@ -98,43 +103,72 @@ export default class EthereumSwapProvider extends Provider {
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    const transactionMatchesSwapParams = this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
+    const transactionMatchesSwapParams = this.doesTransactionMatchSwapParams(
+      initiationTransaction,
+      value,
+      recipientAddress,
+      refundAddress,
+      secretHash,
+      expiration
+    )
+
     return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
-    let initiateSwapTransaction = null
+    let initiateSwapTransaction = false
+
     while (!initiateSwapTransaction) {
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+
       if (block) {
         initiateSwapTransaction = block.transactions.find(transaction =>
-          this.doesTransactionMatchSwapParams(transaction, value, recipientAddress, refundAddress, secretHash, expiration)
+          this.doesTransactionMatchSwapParams(
+            transaction,
+            value,
+            recipientAddress,
+            refundAddress,
+            secretHash,
+            expiration
+          )
         )
+
         blockNumber++
       }
+
       await sleep(5000)
     }
+
     return initiateSwapTransaction
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
-    let claimSwapTransaction = null
+    let claimSwapTransaction = false
+
     while (!claimSwapTransaction) {
       const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+
       if (block && initiationTransaction) {
-        const transaction = block.transactions.find(transaction => transaction.to === initiationTransaction.contractAddress)
+        const transaction = block.transactions.find(
+          transaction => transaction.to === initiationTransaction.contractAddress
+        )
+
         if (transaction) {
           const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
           if (transactionReceipt.status === '1') claimSwapTransaction = transaction
         }
+
         blockNumber++
       }
+
       await sleep(5000)
     }
+
     claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
+
     return claimSwapTransaction
   }
 
@@ -143,3 +177,5 @@ export default class EthereumSwapProvider extends Provider {
     return claimTransaction.input
   }
 }
+
+EthereumSwapProvider.version = version

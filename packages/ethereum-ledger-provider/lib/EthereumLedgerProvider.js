@@ -1,3 +1,5 @@
+import '@babel/polyfill/noConflict'
+
 import { BigNumber } from 'bignumber.js'
 import EthereumJsTx from 'ethereumjs-tx'
 
@@ -9,6 +11,9 @@ import {
   ensureHexEthFormat,
   ensureHexStandardFormat
 } from '@liquality/ethereum-utils'
+import { Address, addressToString } from '@liquality/utils'
+
+import { version } from '../package.json'
 
 export default class EthereumLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.mainnet }) {
@@ -27,11 +32,11 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const path = this._baseDerivationPath + '0/0'
     const address = await app.getAddress(path)
     return [
-      {
+      new Address({
         address: address.address,
         derivationPath: path,
         publicKey: address.publicKey
-      }
+      })
     ]
   }
 
@@ -45,7 +50,7 @@ export default class EthereumLedgerProvider extends LedgerProvider {
       const addresses = await this.getAddresses()
       return addresses.length > 0
     } catch (e) {
-      return (false)
+      return false
     }
   }
 
@@ -57,29 +62,28 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const app = await this.getApp()
     const addresses = await this.getAddresses()
     const address = addresses[0]
-    const from = address.address
+    const from = addressToString(address)
     const path = address.derivationPath
 
-    let txData = {
+    const txData = {
       to: to ? ensureHexEthFormat(to) : null,
       from: ensureHexEthFormat(from),
       value: ensureHexEthFormat(BigNumber(value).toString(16)),
       data: data ? ensureHexEthFormat(data) : undefined,
       chainId: ensureHexEthFormat(BigNumber(this._network.chainId).toString(16))
     }
-    const [nonce, gasPrice, gasLimit] = await Promise.all([
+
+    txData.v = txData.chainId
+
+    const [ nonce, gasPrice, gasLimit ] = await Promise.all([
       this.getMethod('getTransactionCount')(ensureHexStandardFormat(from)),
       this.getMethod('getGasPrice')(),
       this.getMethod('estimateGas')(txData)
     ])
 
-    txData = {
-      ...txData,
-      nonce,
-      gasPrice,
-      gasLimit,
-      v: txData.chainId
-    }
+    txData.nonce = nonce
+    txData.gasPrice = gasPrice
+    txData.gasLimit = gasLimit
 
     const tx = new EthereumJsTx(txData)
     const serializedTx = tx.serialize().toString('hex')
@@ -94,6 +98,9 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const signedTx = new EthereumJsTx(signedTxData)
     const signedSerializedTx = signedTx.serialize().toString('hex')
     const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
+
     return txHash
   }
 }
+
+EthereumLedgerProvider.version = version
