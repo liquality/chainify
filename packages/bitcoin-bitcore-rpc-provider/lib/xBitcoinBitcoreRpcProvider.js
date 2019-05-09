@@ -4,6 +4,8 @@ import { addressToPubKeyHash } from '@liquality/bitcoin-utils'
 import networks from '@liquality/bitcoin-networks'
 import { addressToString } from '@liquality/utils'
 
+import { version } from '../package.json'
+
 /**
  * BitcoinBitcoreRpcProvider overrides the BitcoinRpcProvider to use the address index
  * for retrieving address utxos
@@ -93,3 +95,5 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
     return this.jsonrpc('getaddressdeltas', { 'addresses': addresses })
   }
 }
+
+BitcoinBitcoreRpcProvider.version = version

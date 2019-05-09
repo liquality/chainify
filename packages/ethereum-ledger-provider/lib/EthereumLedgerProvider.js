@@ -13,6 +13,8 @@ import {
 } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
 
+import { version } from '../package.json'
+
 export default class EthereumLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.mainnet }) {
     super(Ethereum, `44'/${chain.network.coinType}'/0'/`, chain.network, 'w0w') // srs!
@@ -100,3 +102,5 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     return txHash
   }
 }
+
+EthereumLedgerProvider.version = version

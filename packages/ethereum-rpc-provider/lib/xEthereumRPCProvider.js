@@ -10,7 +10,9 @@ import {
 } from '@liquality/ethereum-utils'
 import { addressToString, Address } from '@liquality/utils'
 
-export default class EthereumRPCProvider extends JsonRpcProvider {
+import { version } from '../package.json'
+
+export default class EthereumRpcProvider extends JsonRpcProvider {
   _parseResponse (response) {
     const data = super._parseResponse(response)
 
@@ -158,3 +160,5 @@ export default class EthereumRPCProvider extends JsonRpcProvider {
     return transactionCount > 0
   }
 }
+
+EthereumRpcProvider.version = version

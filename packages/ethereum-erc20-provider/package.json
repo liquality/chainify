@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-erc20-provider",
-  "umdName": "EthereumERC20Provider",
+  "umdName": "EthereumErc20Provider",
   "umdExport": "default",
   "version": "0.2.0",
   "description": "",

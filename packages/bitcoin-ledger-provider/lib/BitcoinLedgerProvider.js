@@ -20,6 +20,8 @@ import {
 import networks from '@liquality/bitcoin-networks'
 import { Address, addressToString } from '@liquality/utils'
 
+import { version } from '../package.json'
+
 const ADDRESS_GAP = 20
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
@@ -387,3 +389,5 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return network
   }
 }
+
+BitcoinLedgerProvider.version = version

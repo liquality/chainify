@@ -1,3 +1,3 @@
-import EthereumERC20SwapProvider from './EthereumERC20SwapProvider'
+import EthereumErc20SwapProvider from './EthereumErc20SwapProvider'
 
-export default EthereumERC20SwapProvider
+export default EthereumErc20SwapProvider

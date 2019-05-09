@@ -1,3 +1,3 @@
-import EthereumERC20Provider from './EthereumERC20Provider'
+import EthereumErc20Provider from './EthereumErc20Provider'
 
-export default EthereumERC20Provider
+export default EthereumErc20Provider

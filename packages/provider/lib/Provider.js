@@ -1,3 +1,5 @@
+import { version } from '../package.json'
+
 export default class Provider {
   /**
    * Set client to a provider instance.
@@ -17,3 +19,5 @@ export default class Provider {
     return this.client.getMethod(method, this).bind(this)
   }
 }
+
+Provider.version = version

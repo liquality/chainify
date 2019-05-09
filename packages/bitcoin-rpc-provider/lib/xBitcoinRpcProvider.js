@@ -4,7 +4,9 @@ import BigNumber from 'bignumber.js'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { Address, addressToString } from '@liquality/utils'
 
-export default class BitcoinRPCProvider extends JsonRpcProvider {
+import { version } from '../package.json'
+
+export default class BitcoinRpcProvider extends JsonRpcProvider {
   constructor (uri, username, password, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
     super(uri, username, password)
     this._numberOfBlockConfirmation = numberOfBlockConfirmation
@@ -224,3 +226,5 @@ export default class BitcoinRPCProvider extends JsonRpcProvider {
     return this.jsonrpc('sendrawtransaction', rawTransaction)
   }
 }
+
+BitcoinRpcProvider.version = version

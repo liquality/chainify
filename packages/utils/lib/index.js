@@ -1,3 +1,5 @@
+import { version } from '../package.json'
+
 function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -79,5 +81,7 @@ function addressToString (any) {
 export {
   Address,
   addressToString,
-  sleep
+  sleep,
+
+  version
 }

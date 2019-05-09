@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-erc20-swap-provider",
-  "umdName": "EthereumERC20SwapProvider",
+  "umdName": "EthereumErc20SwapProvider",
   "umdExport": "default",
   "version": "0.2.0",
   "description": "",

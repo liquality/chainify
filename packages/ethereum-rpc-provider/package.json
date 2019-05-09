@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-rpc-provider",
-  "umdName": "EthereumRPCProvider",
+  "umdName": "EthereumRpcProvider",
   "umdExport": "default",
   "version": "0.2.0",
   "description": "",

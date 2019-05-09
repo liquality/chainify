@@ -12,6 +12,8 @@ import { sha256, padHexStart } from '@liquality/crypto'
 import { addressToString, sleep } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
 
+import { version } from '../package.json'
+
 export default class BitcoinSwapProvider extends Provider {
   // TODO: have a generate InitSwap and generate RecipSwap
   // InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
@@ -278,3 +280,5 @@ export default class BitcoinSwapProvider extends Provider {
     ].join('')
   }
 }
+
+BitcoinSwapProvider.version = version

@@ -3,6 +3,8 @@ import { padHexStart } from '@liquality/crypto'
 import { sleep, addressToString } from '@liquality/utils'
 import { ensureAddressStandardFormat } from '@liquality/ethereum-utils'
 
+import { version } from '../package.json'
+
 export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     recipientAddress = ensureAddressStandardFormat(addressToString(recipientAddress))
@@ -175,3 +177,5 @@ export default class EthereumSwapProvider extends Provider {
     return claimTransaction.input
   }
 }
+
+EthereumSwapProvider.version = version

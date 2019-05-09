@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 
 import Client from '../../../client/lib'
-import EthereumRPCProvider from '../../lib'
+import EthereumRpcProvider from '../../lib'
 
 const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
 const ethereumRpc = require('../../../../test/mock/ethereum/rpc')
@@ -18,7 +18,7 @@ describe('Ethereum RPC provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    provider = new EthereumRPCProvider('http://localhost:8545')
+    provider = new EthereumRpcProvider('http://localhost:8545')
     client.addProvider(provider)
 
     mockJsonRpc('http://localhost:8545', ethereumRpc, 100)

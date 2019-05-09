@@ -3,6 +3,8 @@ import { padHexStart } from '@liquality/crypto'
 import { addressToString, sleep } from '@liquality/utils'
 import { ensureAddressStandardFormat } from '@liquality/ethereum-utils'
 
+import { version } from '../package.json'
+
 const SOL_CLAIM_FUNCTION = '0xbd66528a' // claim(bytes32)
 const SOL_REFUND_FUNCTION = '0x590e1ae3' // refund()
 
@@ -155,3 +157,5 @@ export default class EthereumErc20SwapProvider extends Provider {
     return claimTransaction.input.substring(8)
   }
 }
+
+EthereumErc20SwapProvider.version = version

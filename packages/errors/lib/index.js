@@ -1,6 +1,8 @@
 import { STATUS_CODES } from 'http'
 import BaseError from 'standard-error'
 
+import { version as v } from '../package.json'
+
 function createError (name) {
   class CALError extends BaseError {}
   CALError.prototype.name = name
@@ -53,3 +55,5 @@ export class RpcError extends StandardError {
 }
 
 RpcError.prototype.name = 'RpcError'
+
+export const version = v

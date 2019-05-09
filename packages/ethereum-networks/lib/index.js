@@ -1,3 +1,5 @@
+import { version } from '../package.json'
+
 export default {
   mainnet: {
     name: 'mainnet',
@@ -33,5 +35,7 @@ export default {
     networkId: 42,
     chainId: 42,
     isTestnet: true
-  }
+  },
+
+  version
 }

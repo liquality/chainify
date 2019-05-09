@@ -14,6 +14,8 @@ import Wallet from './Wallet'
 import Swap from './Swap'
 import Collateral from './Collateral'
 
+import { version } from '../package.json'
+
 export default class Client {
   static debug (namespace = '*') {
     // if localStorage.DEBUG (browser)
@@ -158,3 +160,5 @@ export default class Client {
     return this._collateral
   }
 }
+
+Client.version = version

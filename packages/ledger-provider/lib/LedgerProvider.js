@@ -6,6 +6,8 @@ import WalletProvider from '@liquality/wallet-provider'
 import { WalletError } from '@liquality/errors'
 import Debug from '@liquality/debug'
 
+import { version } from '../package.json'
+
 const debug = Debug('ledger')
 
 export default class LedgerProvider extends WalletProvider {
@@ -121,3 +123,5 @@ export default class LedgerProvider extends WalletProvider {
     throw new Error('Ledger: Wallet does not contain address')
   }
 }
+
+LedgerProvider.version = version

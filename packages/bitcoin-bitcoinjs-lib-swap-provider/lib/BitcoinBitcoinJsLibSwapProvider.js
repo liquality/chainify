@@ -14,6 +14,8 @@ import {
   padHexStart
 } from '@liquality/crypto'
 
+import { version } from '../package.json'
+
 export default class BitcoinBitcoinJsLibSwapProvider extends Provider {
   // TODO: have a generate InitSwap and generate RecipSwap
   // InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
@@ -194,3 +196,5 @@ export default class BitcoinBitcoinJsLibSwapProvider extends Provider {
     return script.slice(sigLength + pubKeyLen + 3, sigLength + pubKeyLen + secretLength + 3).toString('hex')
   }
 }
+
+BitcoinBitcoinJsLibSwapProvider.version = version

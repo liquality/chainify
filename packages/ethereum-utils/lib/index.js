@@ -1,5 +1,7 @@
 import { Block, Transaction } from '@liquality/schema'
 
+import { version } from '../package.json'
+
 /**
  * Converts a hex string to the ethereum format
  * @param {*} hash
@@ -72,5 +74,7 @@ export {
   ensureHexStandardFormat,
   ensureAddressStandardFormat,
   formatEthResponse,
-  normalizeTransactionObject
+  normalizeTransactionObject,
+
+  version
 }

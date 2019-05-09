@@ -5,6 +5,8 @@ import { formatEthResponse } from '@liquality/ethereum-utils'
 import { WalletError } from '@liquality/errors'
 import Debug from '@liquality/debug'
 
+import { version } from '../package.json'
+
 const debug = Debug('metamask')
 
 export default class MetaMaskProvider extends WalletProvider {
@@ -53,3 +55,5 @@ export default class MetaMaskProvider extends WalletProvider {
     })
   }
 }
+
+MetaMaskProvider.version = version

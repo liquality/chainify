@@ -12,6 +12,8 @@ import {
 } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
 
+import { version } from '../package.json'
+
 export default class EthereumMetaMaskProvider extends MetaMaskProvider {
   async isWalletAvailable () {
     const addresses = await this.metamask('eth_accounts')
@@ -109,3 +111,5 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     return networks[network]
   }
 }
+
+EthereumMetaMaskProvider.version = version
