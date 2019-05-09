@@ -23,6 +23,9 @@ import { Address, addressToString } from '@liquality/utils'
 import { version } from '../package.json'
 
 const ADDRESS_GAP = 20
+const NONCHANGE_ADDRESS = 0
+const CHANGE_ADDRESS = 1
+const NONCHANGE_OR_CHANGE_ADDRESS = 2
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
@@ -271,7 +274,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
-    const signedTransaction = await app.createPaymentTransactionNew(ledgerInputs, paths, unusedAddress.derivationPath, serializedOutputs)
+    const signedTransaction = await app.createPaymentTransactionNew(
+      ledgerInputs,
+      paths,
+      unusedAddress.derivationPath,
+      serializedOutputs
+    )
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
@@ -305,26 +313,29 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return addresses
   }
 
-  // addressType
-  // nonChange: 0
-  // change: 1
-  // both: 2
   async _getUsedUnusedAddresses (numAddressPerCall = 100, addressType) {
     const usedAddresses = []
     const addressCountMap = { change: 0, nonChange: 0 }
-    let unusedAddresses = []
+    const unusedAddressMap = { change: null, nonChange: null }
+
+    let addrList
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
 
     /* eslint-disable no-unmodified-loop-condition */
-    while ((addressType === 2 && (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP)) ||
-           (addressType === 0 && addressCountMap.nonChange < ADDRESS_GAP) ||
-           (addressType === 1 && addressCountMap.change < ADDRESS_GAP)) {
+    while (
+      (addressType === NONCHANGE_OR_CHANGE_ADDRESS && (
+        addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP)
+      ) ||
+      (addressType === NONCHANGE_ADDRESS && addressCountMap.nonChange < ADDRESS_GAP) ||
+      (addressType === CHANGE_ADDRESS && addressCountMap.change < ADDRESS_GAP)
+    ) {
       /* eslint-enable no-unmodified-loop-condition */
-      let addrList = []
+      addrList = []
 
-      if ((addressType === 2 || addressType === 1) && addressCountMap.change < ADDRESS_GAP) {
+      if ((addressType === NONCHANGE_OR_CHANGE_ADDRESS || addressType === CHANGE_ADDRESS) &&
+           addressCountMap.change < ADDRESS_GAP) {
         // Scanning for change addr
         changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
         addrList = addrList.concat(changeAddresses)
@@ -332,7 +343,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         changeAddresses = []
       }
 
-      if ((addressType === 2 || addressType === 0) && addressCountMap.nonChange < ADDRESS_GAP) {
+      if ((addressType === NONCHANGE_OR_CHANGE_ADDRESS || addressType === NONCHANGE_ADDRESS) &&
+           addressCountMap.nonChange < ADDRESS_GAP) {
         // Scanning for non change addr
         nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
         addrList = addrList.concat(nonChangeAddresses)
@@ -352,31 +364,43 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         if (isUsed) {
           usedAddresses.push(address)
           addressCountMap[key] = 0
-          unusedAddresses = []
+          unusedAddressMap[key] = null
         } else {
           addressCountMap[key]++
-          unusedAddresses.push(address)
+
+          if (!unusedAddressMap[key]) {
+            unusedAddressMap[key] = address
+          }
         }
       }
 
       addressIndex += numAddressPerCall
     }
 
+    let firstUnusedAddress
+    const indexNonChange = unusedAddressMap.nonChange ? unusedAddressMap.nonChange.index : Infinity
+    const indexChange = unusedAddressMap.change ? unusedAddressMap.change.index : Infinity
+
+    if (indexNonChange <= indexChange) firstUnusedAddress = unusedAddressMap.nonChange
+    else firstUnusedAddress = unusedAddressMap.change
+
     return {
       usedAddresses,
-      unusedAddresses
+      unusedAddress: unusedAddressMap,
+      firstUnusedAddress
     }
   }
 
   async getUsedAddresses (numAddressPerCall = 100) {
-    return this._getUsedUnusedAddresses(numAddressPerCall, 2)
+    return this._getUsedUnusedAddresses(numAddressPerCall, NONCHANGE_OR_CHANGE_ADDRESS)
       .then(({ usedAddresses }) => usedAddresses)
   }
 
   async getUnusedAddress (change = false, numAddressPerCall = 100) {
-    const addressType = change ? 1 : 0
+    const addressType = change ? CHANGE_ADDRESS : NONCHANGE_ADDRESS
+    const key = change ? 'change' : 'nonChange'
     return this._getUsedUnusedAddresses(numAddressPerCall, addressType)
-      .then(({ unusedAddresses }) => unusedAddresses[0])
+      .then(({ unusedAddress }) => unusedAddress[key])
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
@@ -391,3 +415,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 }
 
 BitcoinLedgerProvider.version = version
+BitcoinLedgerProvider.addressType = {
+  NONCHANGE_ADDRESS,
+  CHANGE_ADDRESS,
+  NONCHANGE_OR_CHANGE_ADDRESS
+}
