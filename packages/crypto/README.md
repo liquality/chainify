@@ -26,8 +26,8 @@ npm i @liquality/crypto
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/crypto@0.2.0/dist/crypto.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/crypto@0.2.0/dist/crypto.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/crypto@0.2.2/dist/crypto.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/crypto@0.2.2/dist/crypto.min.js.map -->
 <!-- available as window.Crypto -->
 ```
 

@@ -26,8 +26,8 @@ npm i @liquality/ethereum-utils
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-utils@0.2.0/dist/ethereum-utils.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-utils@0.2.0/dist/ethereum-utils.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-utils@0.2.2/dist/ethereum-utils.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-utils@0.2.2/dist/ethereum-utils.min.js.map -->
 <!-- available as window.EthereumUtils -->
 ```
 

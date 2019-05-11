@@ -26,8 +26,8 @@ npm i @liquality/client
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/client@0.2.0/dist/client.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/client@0.2.0/dist/client.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/client@0.2.2/dist/client.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/client@0.2.2/dist/client.min.js.map -->
 <!-- available as window.Client -->
 ```
 

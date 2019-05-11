@@ -26,8 +26,8 @@ npm i @liquality/bitcoin-networks
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-networks@0.2.0/dist/bitcoin-networks.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-networks@0.2.0/dist/bitcoin-networks.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-networks@0.2.2/dist/bitcoin-networks.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-networks@0.2.2/dist/bitcoin-networks.min.js.map -->
 <!-- available as window.BitcoinNetworks -->
 ```
 

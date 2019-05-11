@@ -26,8 +26,8 @@ npm i @liquality/bitcoin-bitcore-rpc-provider
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcore-rpc-provider@0.2.0/dist/bitcoin-bitcore-rpc-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcore-rpc-provider@0.2.0/dist/bitcoin-bitcore-rpc-provider.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcore-rpc-provider@0.2.2/dist/bitcoin-bitcore-rpc-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcore-rpc-provider@0.2.2/dist/bitcoin-bitcore-rpc-provider.min.js.map -->
 <!-- available as window.BitcoinBitcoreRpcProvider -->
 ```
 

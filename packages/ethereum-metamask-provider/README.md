@@ -26,8 +26,8 @@ npm i @liquality/ethereum-metamask-provider
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-metamask-provider@0.2.0/dist/ethereum-metamask-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-metamask-provider@0.2.0/dist/ethereum-metamask-provider.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-metamask-provider@0.2.2/dist/ethereum-metamask-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-metamask-provider@0.2.2/dist/ethereum-metamask-provider.min.js.map -->
 <!-- available as window.EthereumMetaMaskProvider -->
 ```
 
