@@ -62,7 +62,9 @@
     "build:dev": "lerna run build --stream",
     "build": "cross-env NODE_ENV=production npm run build:dev",
     "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
-    "newversion": "lerna version --no-push --no-git-tag-version && lerna clean --yes && lerna bootstrap"
+    "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && lerna bootstrap",
+    "publish:all": "lerna publish from-package",
+    "prepublishOnly": "npm run build"
   },
   "options": {
     "coverage": "--reporter=text-lcov",
