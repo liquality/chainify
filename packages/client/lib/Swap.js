@@ -42,7 +42,7 @@ export default class Swap {
    * @return {Promise<string>} Resolves with a 32 byte secret
    */
   async generateSecret (message) {
-    const address = (await this.client.getMethod('getAddresses')())[0].address
+    const address = (await this.client.getMethod('getAddresses')())[0]
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
