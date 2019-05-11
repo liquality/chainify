@@ -43,7 +43,7 @@ export default class Swap {
    */
   async generateSecret (message) {
     const address = (await this.client.getMethod('getAddresses')())[0]
-    const signedMessage = await this.signMessage(message, address)
+    const signedMessage = await this.client.getMethod('signMessage')(message, address)
     const secret = sha256(signedMessage)
     return secret
   }
