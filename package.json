@@ -64,7 +64,7 @@
     "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
     "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && lerna bootstrap",
     "publish:all": "lerna publish from-package",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "run-s lint build test"
   },
   "options": {
     "coverage": "--reporter=text-lcov",
