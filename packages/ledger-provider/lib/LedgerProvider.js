@@ -1,18 +1,21 @@
 import '@babel/polyfill/noConflict'
 
-import Transport from '@ledgerhq/hw-transport-node-hid'
-
 import WalletProvider from '@liquality/wallet-provider'
 import { WalletError } from '@liquality/errors'
 import Debug from '@liquality/debug'
 
+import getTransport from './LedgerNodeTransport'
 import { version } from '../package.json'
 
 const debug = Debug('ledger')
 
 export default class LedgerProvider extends WalletProvider {
-  static isSupported () {
-    return Transport.isSupported()
+  static getTransport (config = { useWebBle: false }) {
+    return getTransport(config)
+  }
+
+  static isSupported (config) {
+    return getTransport(config).isSupported()
   }
 
   constructor (App, baseDerivationPath, network, ledgerScrambleKey) {
@@ -27,11 +30,22 @@ export default class LedgerProvider extends WalletProvider {
     this._addressCache = {}
   }
 
+  useWebBle () {
+    this._useWebBle = true
+    return this
+  }
+
   async createTransport () {
     if (!this._transport) {
       debug('creating ledger transport')
+      debug('useWebBle', this._useWebBle)
+      const Transport = LedgerProvider.getTransport({
+        useWebBle: this._useWebBle
+      })
+
       this._transport = await Transport.create()
       debug('ledger transport created')
+
       this._transport.on('disconnect', () => {
         debug('ledger disconnected')
         this._appInstance = null
