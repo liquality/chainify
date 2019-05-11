@@ -61,7 +61,8 @@
     "build:browser": "cross-env NODE_ENV=production lerna run build:browser --stream",
     "build:dev": "lerna run build --stream",
     "build": "cross-env NODE_ENV=production npm run build:dev",
-    "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build"
+    "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
+    "newversion": "lerna version --no-push --no-git-tag-version && lerna clean --yes && lerna bootstrap"
   },
   "options": {
     "coverage": "--reporter=text-lcov",
