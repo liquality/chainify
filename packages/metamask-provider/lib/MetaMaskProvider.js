@@ -12,6 +12,7 @@ const debug = Debug('metamask')
 export default class MetaMaskProvider extends WalletProvider {
   constructor (metamaskProvider, network) {
     super(network)
+
     if (!isFunction(metamaskProvider.sendAsync)) {
       throw new Error('Invalid MetaMask Provider')
     }
