@@ -26,8 +26,8 @@ npm i @liquality/bundle
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/bundle@0.2.2/dist/bundle.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bundle@0.2.2/dist/bundle.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bundle@0.2.3/dist/bundle.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bundle@0.2.3/dist/bundle.min.js.map -->
 <!-- available as window.Bundle -->
 ```
 

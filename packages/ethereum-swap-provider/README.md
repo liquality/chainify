@@ -26,8 +26,8 @@ npm i @liquality/ethereum-swap-provider
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-swap-provider@0.2.2/dist/ethereum-swap-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-swap-provider@0.2.2/dist/ethereum-swap-provider.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-swap-provider@0.2.3/dist/ethereum-swap-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-swap-provider@0.2.3/dist/ethereum-swap-provider.min.js.map -->
 <!-- available as window.EthereumSwapProvider -->
 ```
 

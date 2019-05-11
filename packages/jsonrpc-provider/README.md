@@ -26,8 +26,8 @@ npm i @liquality/jsonrpc-provider
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/jsonrpc-provider@0.2.2/dist/jsonrpc-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/jsonrpc-provider@0.2.2/dist/jsonrpc-provider.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/jsonrpc-provider@0.2.3/dist/jsonrpc-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/jsonrpc-provider@0.2.3/dist/jsonrpc-provider.min.js.map -->
 <!-- available as window.JsonRpcProvider -->
 ```
 

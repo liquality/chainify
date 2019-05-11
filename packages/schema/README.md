@@ -26,8 +26,8 @@ npm i @liquality/schema
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/schema@0.2.2/dist/schema.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/schema@0.2.2/dist/schema.min.js.map -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/schema@0.2.3/dist/schema.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/schema@0.2.3/dist/schema.min.js.map -->
 <!-- available as window.Schema -->
 ```
 
