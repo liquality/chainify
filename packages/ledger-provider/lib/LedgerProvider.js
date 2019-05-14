@@ -85,7 +85,8 @@ export default class LedgerProvider extends WalletProvider {
       throw new WalletError(e.toString(), errorNoName)
     }
     if (!this._appInstance) {
-      this._appInstance = new Proxy(new this._App(this._transport), { get: this.errorProxy.bind(this) })
+      this._appInstance = new this._App(this._transport)
+      this._appInstance.transport = new Proxy(this._appInstance.transport, { get: this.errorProxy.bind(this) })
     }
     return this._appInstance
   }
@@ -99,7 +100,7 @@ export default class LedgerProvider extends WalletProvider {
     app.transport.setExchangeTimeout(2000)
     try {
       // https://ledgerhq.github.io/btchip-doc/bitcoin-technical-beta.html#_get_random
-      await this._transport.send(0xe0, 0xc0, 0x00, 0x00)
+      await this.transport.send(0xe0, 0xc0, 0x00, 0x00)
     } catch (e) {
       return false
     } finally {
