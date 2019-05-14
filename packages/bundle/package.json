@@ -17,7 +17,6 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-bitcoinjs-lib-swap-provider": "^0.2.3",
     "@liquality/bitcoin-bitcore-rpc-provider": "^0.2.3",
