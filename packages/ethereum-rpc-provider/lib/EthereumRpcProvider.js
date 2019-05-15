@@ -4,9 +4,9 @@ import { BigNumber } from 'bignumber.js'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import {
   formatEthResponse,
-  ensureHexEthFormat,
+  ensure0x,
   normalizeTransactionObject,
-  ensureHexStandardFormat
+  remove0x
 } from '@liquality/ethereum-utils'
 import { addressToString, Address } from '@liquality/utils'
 
@@ -43,42 +43,34 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     return addresses.length > 0
   }
 
-  async sendTransaction (to, value, data, from = null) {
-    if (to != null) {
-      to = addressToString(to)
-    }
-
-    if (from == null) {
+  async sendTransaction (to, value, data, from) {
+    if (!from) {
       const addresses = await this.getAddresses()
-      from = addressToString(addresses[0])
-    } else {
-      from = addressToString(from)
+      from = addresses[0]
     }
-
-    value = BigNumber(value).toString(16)
 
     const tx = {
-      from: ensureHexEthFormat(from),
-      to: ensureHexEthFormat(to),
-      value: ensureHexEthFormat(value)
+      from: ensure0x(addressToString(from)),
+      value: ensure0x(BigNumber(value).toString(16))
     }
 
-    if (data) tx.data = ensureHexEthFormat(data)
+    if (to) tx.to = ensure0x(addressToString(to))
+    if (data) tx.data = ensure0x(data)
 
     const txHash = await this.jsonrpc('eth_sendTransaction', tx)
 
-    return ensureHexStandardFormat(txHash)
+    return remove0x(txHash)
   }
 
   async sendRawTransaction (hash) {
-    const txHash = await this.jsonrpc('eth_sendRawTransaction', ensureHexEthFormat(hash))
+    const txHash = await this.jsonrpc('eth_sendRawTransaction', ensure0x(hash))
 
     return txHash
   }
 
   async signMessage (message, from) {
-    from = ensureHexEthFormat(addressToString(from))
-    message = ensureHexEthFormat(Buffer.from(message).toString('hex'))
+    from = ensure0x(addressToString(from))
+    message = ensure0x(Buffer.from(message).toString('hex'))
 
     return this.jsonrpc('eth_sign', from, message)
   }
@@ -101,7 +93,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionByHash (txHash) {
-    txHash = ensureHexEthFormat(txHash)
+    txHash = ensure0x(txHash)
 
     const currentBlock = await this.getBlockHeight()
     const tx = await this.jsonrpc('eth_getTransactionByHash', txHash)
@@ -110,12 +102,12 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionReceipt (txHash) {
-    txHash = ensureHexEthFormat(txHash)
+    txHash = ensure0x(txHash)
     return this.jsonrpc('eth_getTransactionReceipt', txHash)
   }
 
   async getTransactionCount (address) {
-    address = ensureHexEthFormat(addressToString(address))
+    address = ensure0x(addressToString(address))
 
     const count = await this.jsonrpc('eth_getTransactionCount', address, 'latest')
 
@@ -134,7 +126,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
     addresses = addresses
       .map(addressToString)
-      .map(ensureHexEthFormat)
+      .map(ensure0x)
 
     const promiseBalances = await Promise.all(addresses.map(
       address => this.jsonrpc('eth_getBalance', address, 'latest')
@@ -152,7 +144,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async isAddressUsed (address) {
-    address = ensureHexEthFormat(addressToString(address))
+    address = ensure0x(addressToString(address))
 
     let transactionCount = await this.jsonrpc('eth_getTransactionCount', address, 'latest')
     transactionCount = parseInt(transactionCount, '16')

@@ -5,33 +5,33 @@ import { expect } from 'chai'
 import * as EthereumUtil from '../../lib'
 
 describe('Ethereum Util', () => {
-  describe('ensureHexEthFormat', () => {
+  describe('ensure0x', () => {
     it('should return hex with 0x prefix', () => {
-      expect(EthereumUtil.ensureHexEthFormat('abcd')).to.equal('0xabcd')
+      expect(EthereumUtil.ensure0x('abcd')).to.equal('0xabcd')
     })
 
     it('should return same hex if already prefixed with-0x', () => {
-      expect(EthereumUtil.ensureHexEthFormat('0xabcd')).to.equal('0xabcd')
+      expect(EthereumUtil.ensure0x('0xabcd')).to.equal('0xabcd')
     })
   })
 
-  describe('ensureHexStandardFormat', () => {
+  describe('remove0x', () => {
     it('should return hex without 0x prefix', () => {
-      expect(EthereumUtil.ensureHexStandardFormat('0xabcd')).to.equal('abcd')
+      expect(EthereumUtil.remove0x('0xabcd')).to.equal('abcd')
     })
 
     it('should return same hex if not prefixed with-0x', () => {
-      expect(EthereumUtil.ensureHexStandardFormat('abcd')).to.equal('abcd')
+      expect(EthereumUtil.remove0x('abcd')).to.equal('abcd')
     })
   })
 
-  describe('ensureAddressStandardFormat', () => {
+  describe('toLowerCaseWithout0x', () => {
     it('should return address without 0x prefix', () => {
-      expect(EthereumUtil.ensureAddressStandardFormat('0xf1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')).to.equal('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')
+      expect(EthereumUtil.toLowerCaseWithout0x('0xf1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')).to.equal('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')
     })
 
     it('should return same address if not prefixed with-0x', () => {
-      expect(EthereumUtil.ensureAddressStandardFormat('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')).to.equal('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')
+      expect(EthereumUtil.toLowerCaseWithout0x('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')).to.equal('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')
     })
   })
 

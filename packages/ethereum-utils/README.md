@@ -36,9 +36,9 @@ or
 
 ```js
 import {
-  ensureHexEthFormat,
-  ensureHexStandardFormat,
-  ensureAddressStandardFormat,
+  ensure0x,
+  remove0x,
+  toLowerCaseWithout0x,
   formatEthResponse,
   normalizeTransactionObject
 } from '@liquality/ethereum-utils'

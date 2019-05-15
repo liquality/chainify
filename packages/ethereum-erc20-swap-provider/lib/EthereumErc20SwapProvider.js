@@ -1,7 +1,7 @@
 import Provider from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
 import { addressToString, sleep } from '@liquality/utils'
-import { ensureAddressStandardFormat } from '@liquality/ethereum-utils'
+import { toLowerCaseWithout0x } from '@liquality/ethereum-utils'
 
 import { version } from '../package.json'
 
@@ -10,10 +10,10 @@ const SOL_REFUND_FUNCTION = '0x590e1ae3' // refund()
 
 export default class EthereumErc20SwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    recipientAddress = ensureAddressStandardFormat(addressToString(recipientAddress))
-    refundAddress = ensureAddressStandardFormat(addressToString(refundAddress))
+    recipientAddress = toLowerCaseWithout0x(addressToString(recipientAddress))
+    refundAddress = toLowerCaseWithout0x(addressToString(refundAddress))
 
-    const tokenAddress = ensureAddressStandardFormat(this.getMethod('getContractAddress')())
+    const tokenAddress = toLowerCaseWithout0x(this.getMethod('getContractAddress')())
     const expirationEncoded = padHexStart(expiration.toString(16), 64)
     const bytecode = [
       '608060405260008054600160a060020a031990811673',
@@ -42,7 +42,7 @@ export default class EthereumErc20SwapProvider extends Provider {
       await sleep(5000)
     }
 
-    await this.getMethod('erc20Transfer')(initiationTransactionReceipt.contractAddress, value)
+    await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value)
     return txHash
   }
 

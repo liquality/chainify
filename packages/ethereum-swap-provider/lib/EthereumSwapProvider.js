@@ -1,14 +1,14 @@
 import Provider from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
 import { sleep, addressToString } from '@liquality/utils'
-import { ensureAddressStandardFormat } from '@liquality/ethereum-utils'
+import { toLowerCaseWithout0x } from '@liquality/ethereum-utils'
 
 import { version } from '../package.json'
 
 export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    recipientAddress = ensureAddressStandardFormat(addressToString(recipientAddress))
-    refundAddress = ensureAddressStandardFormat(addressToString(refundAddress))
+    recipientAddress = toLowerCaseWithout0x(addressToString(recipientAddress))
+    refundAddress = toLowerCaseWithout0x(addressToString(refundAddress))
 
     const dataSizeBase = 112
     const redeemDestinationBase = 66
