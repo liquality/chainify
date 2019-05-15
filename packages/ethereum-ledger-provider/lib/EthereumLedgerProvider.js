@@ -1,11 +1,9 @@
-import '@babel/polyfill/noConflict'
-
 import { BigNumber } from 'bignumber.js'
 import EthereumJsTx from 'ethereumjs-tx'
 
+import LedgerProvider from '@liquality/ledger-provider'
 import Ethereum from '@ledgerhq/hw-app-eth'
 
-import LedgerProvider from '@liquality/ledger-provider'
 import networks from '@liquality/ethereum-networks'
 import {
   ensureHexEthFormat,

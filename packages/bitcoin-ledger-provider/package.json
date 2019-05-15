@@ -18,7 +18,6 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.3",
     "@ledgerhq/hw-app-btc": "^4.46.0",
     "@liquality/bitcoin-networks": "^0.2.3",
