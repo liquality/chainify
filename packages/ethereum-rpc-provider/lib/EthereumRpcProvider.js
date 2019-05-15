@@ -59,7 +59,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
     const tx = {
       from: ensureHexEthFormat(from),
-      to: ensureHexEthFormat(to),
+      to: to ? ensureHexEthFormat(to) : null,
       value: ensureHexEthFormat(value)
     }
 
