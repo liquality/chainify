@@ -7,10 +7,13 @@ import {
   WalletError
 } from '@liquality/errors'
 import {
-  ensureHexEthFormat,
-  ensureHexStandardFormat
+  ensure0x,
+  remove0x
 } from '@liquality/ethereum-utils'
-import { Address, addressToString } from '@liquality/utils'
+import {
+  Address,
+  addressToString
+} from '@liquality/utils'
 
 import { version } from '../package.json'
 
@@ -45,7 +48,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     const addresses = await this.getAddresses()
     const address = addressToString(addresses[0])
 
-    return this.metamask('personal_sign', ensureHexEthFormat(hex), ensureHexEthFormat(address))
+    return this.metamask('personal_sign', ensure0x(hex), ensure0x(address))
   }
 
   async getWalletInfo () {
@@ -59,7 +62,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     }
   }
 
-  async sendTransaction (to, value, data, from = null) {
+  async sendTransaction (to, value, data, from) {
     const networkId = await this.getWalletNetworkId()
 
     if (this._network) {
@@ -68,27 +71,22 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
       }
     }
 
-    if (to != null) {
-      to = ensureHexEthFormat(addressToString(to))
-    }
-
-    if (from == null) {
+    if (!from) {
       const addresses = await this.getAddresses()
-      from = ensureHexEthFormat(addressToString(addresses[0]))
+      from = addressToString(addresses[0])
     }
-
-    value = BigNumber(value).toString(16)
 
     const tx = {
-      from: ensureHexEthFormat(from),
-      to,
-      value: ensureHexEthFormat(value),
-      data: ensureHexEthFormat(data)
+      from: ensure0x(from),
+      value: ensure0x(BigNumber(value).toString(16))
     }
+
+    if (to) tx.to = ensure0x(addressToString(to))
+    if (data) tx.data = ensure0x(data)
 
     const txHash = await this.metamask('eth_sendTransaction', tx)
 
-    return ensureHexStandardFormat(txHash)
+    return remove0x(txHash)
   }
 
   async getWalletNetworkId () {

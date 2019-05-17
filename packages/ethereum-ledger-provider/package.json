@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@ledgerhq/hw-app-eth": "^4.46.0",
+    "@ledgerhq/hw-app-eth": "^4.56.0",
     "@liquality/ethereum-networks": "^0.2.3",
     "@liquality/ethereum-utils": "^0.2.3",
     "@liquality/ledger-provider": "^0.2.3",
