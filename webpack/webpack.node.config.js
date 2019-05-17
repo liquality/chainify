@@ -6,9 +6,13 @@ const babelRule = require('./babel.rule.js')
 const plugins = require('./plugins.js')
 const externals = require('./externals.js')
 
+const isProdEnv = process.env.NODE_ENV === 'production'
+const isWatchEnv = process.env.WEBPACK_WATCH === 'true'
+const isCIEnv = process.env.CI === 'true'
+
 module.exports = {
-  stats: process.env.CI === 'true' ? undefined : 'minimal',
-  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
+  stats: isCIEnv ? undefined : 'minimal',
+  devtool: isProdEnv ? 'source-map' : 'eval',
   target: 'node',
   entry: './lib/index.js',
   externals: externals({ target: 'node' }),
@@ -21,7 +25,7 @@ module.exports = {
   module: {
     rules: [ babelRule({ target: 'node' }) ]
   },
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  mode: isProdEnv ? 'production' : 'development',
   plugins: plugins({ target: 'node' }),
-  watch: process.env.WEBPACK_WATCH === 'true'
+  watch: isWatchEnv
 }

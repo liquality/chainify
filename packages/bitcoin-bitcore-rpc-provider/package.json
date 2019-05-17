@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-bitcore-rpc-provider",
   "umdName": "BitcoinBitcoreRpcProvider",
   "umdExport": "default",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.2.4",
-    "@liquality/bitcoin-rpc-provider": "^0.2.4",
-    "@liquality/bitcoin-utils": "^0.2.4",
-    "@liquality/crypto": "^0.2.4",
-    "@liquality/utils": "^0.2.4"
+    "@liquality/bitcoin-networks": "^0.2.5",
+    "@liquality/bitcoin-rpc-provider": "^0.2.5",
+    "@liquality/bitcoin-utils": "^0.2.5",
+    "@liquality/crypto": "^0.2.5",
+    "@liquality/utils": "^0.2.5"
   },
   "engines": {
     "node": "~8.12.0"
