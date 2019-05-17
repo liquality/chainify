@@ -4,8 +4,8 @@ import { BigNumber } from 'bignumber.js'
 import Provider from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
 import {
-  toLowerCaseWithout0x,
-  ensure0x
+  ensure0x,
+  remove0x
 } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
 
@@ -17,17 +17,20 @@ const SOL_BALACE_OF_FUNCTION = '0x70a08231' // balanceOf(address)
 export default class EthereumErc20Provider extends Provider {
   constructor (contractAddress) {
     super()
-    this._contractAddress = toLowerCaseWithout0x(contractAddress)
+    this._contractAddress = remove0x(contractAddress)
   }
 
   generateErc20Transfer (to, value) {
-    to = toLowerCaseWithout0x(to)
     value = BigNumber(value).toString(16)
 
-    const encodedAddress = padHexStart(to, 64)
+    const encodedAddress = padHexStart(remove0x(to), 64)
     const encodedValue = padHexStart(value, 64)
 
-    return SOL_TRANSFER_FUNCTION.substring(2) + encodedAddress + encodedValue
+    return [
+      remove0x(SOL_TRANSFER_FUNCTION),
+      encodedAddress,
+      encodedValue
+    ].join('').toLowerCase()
   }
 
   sendTransaction (to, value, data, from) {
@@ -58,8 +61,11 @@ export default class EthereumErc20Provider extends Provider {
       addresses.map(address => this.getMethod('jsonrpc')(
         'eth_call',
         {
-          data: SOL_BALACE_OF_FUNCTION + padHexStart(toLowerCaseWithout0x(address), 64),
-          to: ensure0x(this._contractAddress)
+          data: [
+            SOL_BALACE_OF_FUNCTION,
+            padHexStart(remove0x(address), 64)
+          ].join('').toLowerCase(),
+          to: ensure0x(this._contractAddress).toLowerCase()
         },
         'latest'
       ))

@@ -20,23 +20,15 @@ function remove0x (hash) {
   return (typeof hash === 'string') ? hash.replace(/^0x/, '') : hash
 }
 
-/**
- * Converts an ethereum address to the standard format
- * @param {*} address
- */
-function toLowerCaseWithout0x (address) {
-  return remove0x(address).toLowerCase()
-}
-
 function formatEthResponse (obj) {
   if (typeof obj === 'string' || obj instanceof String) {
-    // obj = remove0x(obj)
+    obj = remove0x(obj)
   } else if (Array.isArray(obj) && typeof obj[0] === 'object') {
     for (let i = 0; i < obj.length; i++) {
       obj[i] = formatEthResponse(obj[i])
     }
   } else if (Array.isArray(obj)) {
-    // obj = obj.map(remove0x)
+    obj = obj.map(remove0x)
   } else {
     for (let key in obj) {
       if (obj[key] === null) continue
@@ -50,7 +42,7 @@ function formatEthResponse (obj) {
           obj[key] = parseInt(obj[key])
         } else {
           if (obj[key]) {
-            // obj[key] = remove0x(obj[key])
+            obj[key] = remove0x(obj[key])
           }
         }
       }
@@ -74,7 +66,6 @@ function normalizeTransactionObject (tx, currentHeight) {
 export {
   ensure0x,
   remove0x,
-  toLowerCaseWithout0x,
   formatEthResponse,
   normalizeTransactionObject,
 

@@ -25,16 +25,6 @@ describe('Ethereum Util', () => {
     })
   })
 
-  describe('toLowerCaseWithout0x', () => {
-    it('should return address without 0x prefix', () => {
-      expect(EthereumUtil.toLowerCaseWithout0x('0xf1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')).to.equal('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')
-    })
-
-    it('should return same address if not prefixed with-0x', () => {
-      expect(EthereumUtil.toLowerCaseWithout0x('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')).to.equal('f1ffb11d20fd92a2ad9b32d2f75e9dc890b8dad19d074d8237dd60242bf13a53')
-    })
-  })
-
   describe('normalizeTransactionObject', () => {
     it('should remove blockNumber key if it is null', () => {
       expect(EthereumUtil.normalizeTransactionObject({
