@@ -2,7 +2,7 @@
   "name": "@atomicloans/ethereum-erc20-provider",
   "umdName": "EthereumErc20Provider",
   "umdExport": "default",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -18,10 +18,10 @@
   "author": "AtomicLoans <info@atomicloans.io>",
   "license": "MIT",
   "dependencies": {
-    "@atomicloans/crypto": "^0.2.26",
-    "@atomicloans/ethereum-utils": "^0.2.26",
-    "@atomicloans/provider": "^0.2.26",
-    "@atomicloans/utils": "^0.2.26",
+    "@atomicloans/crypto": "^0.2.27",
+    "@atomicloans/ethereum-utils": "^0.2.27",
+    "@atomicloans/provider": "^0.2.27",
+    "@atomicloans/utils": "^0.2.27",
     "@babel/runtime": "^7.4.3",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.11"
