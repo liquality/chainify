@@ -2,7 +2,7 @@
   "name": "@atomicloans/ethereum-networks",
   "umdName": "EthereumNetworks",
   "umdExport": "default",
-  "version": "0.2.25",
+  "version": "0.2.26",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",

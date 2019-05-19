@@ -2,7 +2,7 @@
   "name": "@atomicloans/ledger-provider",
   "umdName": "LedgerProvider",
   "umdExport": "default",
-  "version": "0.2.25",
+  "version": "0.2.26",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -21,15 +21,15 @@
   "author": "AtomicLoans <info@atomicloans.io>",
   "license": "MIT",
   "dependencies": {
+    "@atomicloans/debug": "^0.2.26",
+    "@atomicloans/errors": "^0.2.26",
+    "@atomicloans/provider": "^0.2.26",
+    "@atomicloans/wallet-provider": "^0.2.26",
     "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.3",
     "@ledgerhq/hw-transport-node-hid": "^4.56.0",
     "@ledgerhq/hw-transport-web-ble": "^4.57.0",
-    "@ledgerhq/hw-transport-webusb": "^4.57.0",
-    "@atomicloans/debug": "^0.2.25",
-    "@atomicloans/errors": "^0.2.25",
-    "@atomicloans/provider": "^0.2.25",
-    "@atomicloans/wallet-provider": "^0.2.25"
+    "@ledgerhq/hw-transport-webusb": "^4.57.0"
   },
   "engines": {
     "node": "~8.12.0"

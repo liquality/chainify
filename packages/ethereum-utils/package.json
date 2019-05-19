@@ -1,7 +1,7 @@
 {
   "name": "@atomicloans/ethereum-utils",
   "umdName": "EthereumUtils",
-  "version": "0.2.8",
+  "version": "0.2.26",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -17,10 +17,10 @@
   "author": "AtomicLoans <info@atomicloans.io>",
   "license": "MIT",
   "dependencies": {
+    "@atomicloans/crypto": "^0.2.26",
+    "@atomicloans/errors": "^0.2.26",
+    "@atomicloans/schema": "^0.2.26",
     "@babel/runtime": "^7.4.3",
-    "@atomicloans/crypto": "^0.2.25",
-    "@atomicloans/errors": "^0.2.25",
-    "@atomicloans/schema": "^0.2.25",
     "eip55": "^1.0.3"
   },
   "engines": {
