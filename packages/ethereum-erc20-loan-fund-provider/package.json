@@ -1,7 +1,8 @@
 {
-  "name": "@atomicloans/bitcoin-utils",
-  "umdName": "BitcoinUtils",
-  "version": "0.2.6",
+  "name": "@atomicloans/ethereum-erc20-loan-fund-provider",
+  "umdName": "EthereumERC20LoanFundProvider",
+  "umdExport": "default",
+  "version": "0.2.7",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -17,11 +18,12 @@
   "author": "AtomicLoans <info@atomicloans.io>",
   "license": "MIT",
   "dependencies": {
-    "@atomicloans/bitcoin-networks": "^0.2.7",
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.2.6",
     "@liquality/crypto": "^0.2.6",
-    "lodash": "^4.17.11"
+    "@atomicloans/ethereum-utils": "^0.2.6",
+    "@liquality/provider": "^0.2.6",
+    "@liquality/utils": "^0.2.6",
+    "bignumber.js": "^8.1.1"
   },
   "engines": {
     "node": "~8.12.0"

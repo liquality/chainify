@@ -3,6 +3,7 @@ import { base58 } from '@liquality/crypto'
 import { addressToPubKeyHash } from '@liquality/bitcoin-utils'
 import networks from '@liquality/bitcoin-networks'
 import { addressToString } from '@liquality/utils'
+import { BigNumber } from 'bignumber.js'
 
 import { version } from '../package.json'
 
@@ -72,6 +73,15 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
   async getAddressMempool (addresses) {
     addresses = addresses.map(addressToString)
     return this.jsonrpc('getaddressmempool', { 'addresses': addresses })
+  }
+
+  async getMempoolBalance (addresses) {
+    const balance = await this.getMethod('getBalance')(addresses)
+    const _addressMempool = await this.getAddressMempool(addresses)
+    const addressMempool = _addressMempool.map(utxo => ({ ...utxo, satoshis: BigNumber(utxo.satoshis).toNumber() }))
+    const utxos = _.flatten(addressMempool)
+    const mempoolBalance = utxos.map(balance => new BigNumber(balance.satoshis)).reduce((acc, utxo) => acc.plus(utxo), new BigNumber(0))
+    return mempoolBalance.plus(balance)
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1) {

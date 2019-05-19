@@ -180,6 +180,14 @@ export default class Chain {
     return balance
   }
 
+  async getMempoolBalance (addresses) {
+    return this.client.getMethod('getMempoolBalance')(addresses)
+  }
+
+  async getAddressBalances (addresses) {
+    return this.client.getMethod('getAddressBalances')(addresses)
+  }
+
   /**
    * Check if an address has been used or not.
    * @param {!string|Address} addresses - An address to check for.
@@ -225,5 +233,17 @@ export default class Chain {
 
   async getAddressMempool (addresses) {
     return this.client.getMethod('getAddressMempool')(addresses)
+  }
+
+  async getCode (address, block) {
+    return this.client.getMethod('getCode')(address, block)
+  }
+
+  async erc20Approve (spender, value) {
+    return this.client.getMethod('erc20Approve')(spender, value)
+  }
+
+  async getTransactionReceipt (txHash) {
+    return this.client.getMethod('getTransactionReceipt')(txHash)
   }
 }

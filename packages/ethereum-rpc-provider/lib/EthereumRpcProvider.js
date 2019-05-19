@@ -9,6 +9,7 @@ import {
   remove0x
 } from '@liquality/ethereum-utils'
 import { addressToString, Address } from '@liquality/utils'
+import { padHexStart } from '@liquality/crypto'
 
 import { version } from '../package.json'
 
@@ -150,6 +151,14 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     transactionCount = parseInt(transactionCount, '16')
 
     return transactionCount > 0
+  }
+
+  async getCode (address, block) {
+    address = ensure0x(String(address))
+    block = typeof(block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
+
+     const code = await this.jsonrpc('eth_getCode', address, block)
+    return remove0x(code)
   }
 }
 

@@ -6,7 +6,7 @@ export default {
     pubKeyHash: '00',
     scriptHash: '05',
     coinType: '0',
-    explorerUrl: 'https://blockchain.info',
+    explorerUrl: 'https://blockstream.info/',
     wif: 0x80,
     bip32: {
       public: 0x0488b21e,
@@ -19,7 +19,7 @@ export default {
     pubKeyHash: '6F',
     scriptHash: 'C4',
     coinType: '1',
-    explorerUrl: 'https://testnet.blockchain.info',
+    explorerUrl: 'https://blockstream.info/testnet/',
     wif: 0xef,
     bip32: {
       public: 0x043587cf,

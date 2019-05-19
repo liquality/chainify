@@ -20,6 +20,8 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@ledgerhq/hw-app-eth": "^4.56.0",
+    "@ledgerhq/hw-transport-web-ble": "^4.57.0",
+    "@ledgerhq/hw-transport-webusb": "^4.57.0",
     "@liquality/ethereum-networks": "^0.2.6",
     "@liquality/ethereum-utils": "^0.2.6",
     "@liquality/ledger-provider": "^0.2.6",

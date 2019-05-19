@@ -14,8 +14,8 @@ import {
   addressToPubKeyHash,
   compressPubKey,
   getAddressNetwork
-} from '@liquality/bitcoin-utils'
-import networks from '@liquality/bitcoin-networks'
+} from '@atomicloans/bitcoin-utils'
+import networks from '@atomicloans/bitcoin-networks'
 import { Address, addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
@@ -176,7 +176,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       if (inputs && outputs) {
         let change = outputs.filter(output => output.id !== 'main')
 
-        if (change) {
+        if (change && change.length > 0) {
           change = change[0].value
         }
 
@@ -249,7 +249,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return { balance, unusedAddress, usedAddresses }
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data, from, extraOutputs) {
     const app = await this.getApp()
 
     if (data) {
@@ -257,14 +257,29 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
     }
 
+    let totalValue = value
+
+     if (extraOutputs) {
+      extraOutputs.forEach((output) => {
+        totalValue += output.value
+      })
+    }
+
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(value)
+    const { inputs, change } = await this.getInputsForAmount(totalValue)
 
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
     const sendScript = this.createScript(to)
     const outputs = [{ amount: this.getAmountBuffer(value), script: Buffer.from(sendScript, 'hex') }]
+
+    if (extraOutputs) {
+      extraOutputs.forEach((output) => {
+        const outputScript = this.createScript(output.to)
+        outputs.push({ amount: this.getAmountBuffer(output.value), script: Buffer.from(outputScript, 'hex') })
+      })
+    }
 
     if (change) {
       const changeScript = this.createScript(unusedAddress)

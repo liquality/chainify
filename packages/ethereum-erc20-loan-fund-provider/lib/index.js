@@ -1,0 +1,3 @@
+import EthereumERC20LoanFundProvider from './EthereumERC20LoanFundProvider'
+
+export default EthereumERC20LoanFundProvider

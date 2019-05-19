@@ -3,12 +3,12 @@ export default class Collateral {
     this.client = client
   }
 
-  async createRefundableCollateralScript (borrowerPubKey, lenderPubKey, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration) {
-    return this.client.getMethod('createRefundableCollateralScript')(borrowerPubKey, lenderPubKey, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration)
+  async createRefundableCollateralScript(borrowerPubKey, lenderPubKey, secretHashA2, secretHashB1, secretHashB2, loanExpiration, biddingExpiration) {
+    return this.client.getMethod('createRefundableCollateralScript')(borrowerPubKey, lenderPubKey, secretHashA2, secretHashB1, secretHashB2, loanExpiration, biddingExpiration)
   }
 
-  async createSeizableCollateralScript (borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration) {
-    return this.client.getMethod('createSeizableCollateralScript')(borrowerPubKey, lenderPubKey, borrowerSecretHash, lenderSecretHash, loanExpiration, biddingExpiration, seizureExpiration)
+  async createSeizableCollateralScript (borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB1, secretHashB2, loanExpiration, biddingExpiration, seizureExpiration) {
+    return this.client.getMethod('createSeizableCollateralScript')(borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB1, secretHashB2, loanExpiration, biddingExpiration, seizureExpiration)
   }
 
   async lockCollateral (refundableValue, seizableValue, borrowerPubKey, lenderPubKey, secretHashA1, secretHashA2, secretHashB2, secretHashB3, loanExpiration, biddingExpiration, seizureExpiration) {

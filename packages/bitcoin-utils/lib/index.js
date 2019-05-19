@@ -7,7 +7,7 @@ import {
   base58
 } from '@liquality/crypto'
 
-import networks from '@liquality/bitcoin-networks'
+import networks from '@atomicloans/bitcoin-networks'
 
 import { version } from '../package.json'
 

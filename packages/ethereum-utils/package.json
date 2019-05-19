@@ -1,7 +1,7 @@
 {
-  "name": "@liquality/ethereum-utils",
+  "name": "@atomicloans/ethereum-utils",
   "umdName": "EthereumUtils",
-  "version": "0.2.6",
+  "version": "0.2.8",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -14,11 +14,14 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "Liquality <info@liquality.io>",
+  "author": "AtomicLoans <info@atomicloans.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/schema": "^0.2.6"
+    "@liquality/crypto": "^0.2.6",
+    "@liquality/errors": "^0.2.6",
+    "@liquality/schema": "^0.2.6",
+    "eip55": "^1.0.3"
   },
   "engines": {
     "node": "~8.12.0"

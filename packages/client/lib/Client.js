@@ -13,6 +13,8 @@ import Chain from './Chain'
 import Wallet from './Wallet'
 import Swap from './Swap'
 import Collateral from './Collateral'
+import Loan from './Loan'
+import LoanFund from './LoanFund'
 
 import { version } from '../package.json'
 
@@ -49,6 +51,8 @@ export default class Client {
     this._wallet = new Wallet(this)
     this._swap = new Swap(this)
     this._collateral = new Collateral(this)
+    this._loan = new Loan(this)
+    this._loanFund = new LoanFund(this)
   }
 
   /**
@@ -147,6 +151,14 @@ export default class Client {
 
   get collateral () {
     return this._collateral
+  }
+
+  get loan () {
+    return this._loan
+  }
+
+  get loanFund () {
+    return this._loanFund
   }
 }
 

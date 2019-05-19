@@ -19,7 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
+    "@liquality/debug": "^0.2.6",
+    "@liquality/errors": "^0.2.6",
     "@liquality/jsonrpc-provider": "^0.2.6",
+    "@liquality/provider": "^0.2.6",
     "@liquality/utils": "^0.2.6",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.11"
