@@ -1,13 +1,13 @@
-import Client from '@liquality/client'
-import Provider from '@liquality/provider'
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
-import LedgerProvider from '@liquality/ledger-provider'
-import Debug from '@liquality/debug'
+import Client from '@atomicloans/client'
+import Provider from '@atomicloans/provider'
+import JsonRpcProvider from '@atomicloans/jsonrpc-provider'
+import LedgerProvider from '@atomicloans/ledger-provider'
+import Debug from '@atomicloans/debug'
 
-import * as crypto from '@liquality/crypto'
-import * as schema from '@liquality/schema'
-import * as errors from '@liquality/errors'
-import * as utils from '@liquality/utils'
+import * as crypto from '@atomicloans/crypto'
+import * as schema from '@atomicloans/schema'
+import * as errors from '@atomicloans/errors'
+import * as utils from '@atomicloans/utils'
 
 import * as providers from './providers'
 

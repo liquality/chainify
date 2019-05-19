@@ -18,9 +18,9 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/crypto": "^0.2.6",
-    "@liquality/errors": "^0.2.6",
-    "@liquality/schema": "^0.2.6",
+    "@atomicloans/crypto": "^0.2.25",
+    "@atomicloans/errors": "^0.2.25",
+    "@atomicloans/schema": "^0.2.25",
     "eip55": "^1.0.3"
   },
   "engines": {

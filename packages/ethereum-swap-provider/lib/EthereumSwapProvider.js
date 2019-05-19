@@ -1,7 +1,7 @@
-import Provider from '@liquality/provider'
-import { padHexStart } from '@liquality/crypto'
-import { sleep, addressToString } from '@liquality/utils'
-import { remove0x } from '@liquality/ethereum-utils'
+import Provider from '@atomicloans/provider'
+import { padHexStart } from '@atomicloans/crypto'
+import { sleep, addressToString } from '@atomicloans/utils'
+import { remove0x } from '@atomicloans/ethereum-utils'
 
 import { version } from '../package.json'
 

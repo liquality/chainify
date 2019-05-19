@@ -1,7 +1,7 @@
 {
   "name": "@atomicloans/bitcoin-utils",
   "umdName": "BitcoinUtils",
-  "version": "0.2.6",
+  "version": "0.2.25",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,8 +19,8 @@
   "dependencies": {
     "@atomicloans/bitcoin-networks": "^0.2.7",
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.2.6",
-    "@liquality/crypto": "^0.2.6",
+    "@atomicloans/bitcoin-networks": "^0.2.25",
+    "@atomicloans/crypto": "^0.2.25",
     "lodash": "^4.17.11"
   },
   "engines": {

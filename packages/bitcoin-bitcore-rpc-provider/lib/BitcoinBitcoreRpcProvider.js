@@ -1,8 +1,8 @@
-import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
-import { base58 } from '@liquality/crypto'
-import { addressToPubKeyHash } from '@liquality/bitcoin-utils'
-import networks from '@liquality/bitcoin-networks'
-import { addressToString } from '@liquality/utils'
+import BitcoinRpcProvider from '@atomicloans/bitcoin-rpc-provider'
+import { base58 } from '@atomicloans/crypto'
+import { addressToPubKeyHash } from '@atomicloans/bitcoin-utils'
+import networks from '@atomicloans/bitcoin-networks'
+import { addressToString } from '@atomicloans/utils'
 import { BigNumber } from 'bignumber.js'
 
 import { version } from '../package.json'

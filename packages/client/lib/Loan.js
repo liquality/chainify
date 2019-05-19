@@ -1,4 +1,4 @@
-import { sha256, padHexStart } from '@liquality/crypto'
+import { sha256, padHexStart } from '@atomicloans/crypto'
 import BigNumber from 'bignumber.js'
 
 export default class Loan {

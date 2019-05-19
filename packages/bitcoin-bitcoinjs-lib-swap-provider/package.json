@@ -1,8 +1,8 @@
 {
-  "name": "@liquality/bitcoin-bitcoinjs-lib-swap-provider",
+  "name": "@atomicloans/bitcoin-bitcoinjs-lib-swap-provider",
   "umdName": "BitcoinBitcoinJsLibSwapProvider",
   "umdExport": "default",
-  "version": "0.2.6",
+  "version": "0.2.25",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -15,15 +15,15 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "Liquality <info@liquality.io>",
+  "author": "AtomicLoans <info@atomicloans.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.2.6",
-    "@liquality/bitcoin-utils": "^0.2.6",
-    "@liquality/crypto": "^0.2.6",
-    "@liquality/provider": "^0.2.6",
-    "@liquality/utils": "^0.2.6",
+    "@atomicloans/bitcoin-networks": "^0.2.25",
+    "@atomicloans/bitcoin-utils": "^0.2.25",
+    "@atomicloans/crypto": "^0.2.25",
+    "@atomicloans/provider": "^0.2.25",
+    "@atomicloans/utils": "^0.2.25",
     "bitcoinjs-lib": "https://github.com/h4v0kr/bitcoinjs-lib"
   },
   "engines": {

@@ -1,6 +1,6 @@
-import Provider from '@liquality/provider'
-import { padHexStart } from '@liquality/crypto'
-import { sleep } from '@liquality/utils'
+import Provider from '@atomicloans/provider'
+import { padHexStart } from '@atomicloans/crypto'
+import { sleep } from '@atomicloans/utils'
 import { ensure0x, removeAddress0x } from '@atomicloans/ethereum-utils'
 import { BigNumber } from 'bignumber.js'
 

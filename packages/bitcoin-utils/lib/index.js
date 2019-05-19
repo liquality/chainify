@@ -5,7 +5,7 @@ import {
   hash160,
   sha256,
   base58
-} from '@liquality/crypto'
+} from '@atomicloans/crypto'
 
 import networks from '@atomicloans/bitcoin-networks'
 

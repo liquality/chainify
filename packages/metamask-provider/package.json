@@ -1,8 +1,8 @@
 {
-  "name": "@liquality/metamask-provider",
+  "name": "@atomicloans/metamask-provider",
   "umdName": "MetaMaskProvider",
   "umdExport": "default",
-  "version": "0.2.6",
+  "version": "0.2.25",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -15,14 +15,14 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "Liquality <info@liquality.io>",
+  "author": "AtomicLoans <info@atomicloans.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/debug": "^0.2.6",
-    "@liquality/errors": "^0.2.6",
-    "@liquality/ethereum-utils": "^0.2.6",
-    "@liquality/wallet-provider": "^0.2.6",
+    "@atomicloans/debug": "^0.2.25",
+    "@atomicloans/errors": "^0.2.25",
+    "@atomicloans/ethereum-utils": "^0.2.25",
+    "@atomicloans/wallet-provider": "^0.2.25",
     "lodash": "^4.17.11"
   },
   "engines": {

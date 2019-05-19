@@ -1,18 +1,18 @@
 import bitcoin from 'bitcoinjs-lib'
 
-import Provider from '@liquality/provider'
-import { addressToString, sleep } from '@liquality/utils'
-import networks from '@liquality/bitcoin-networks'
+import Provider from '@atomicloans/provider'
+import { addressToString, sleep } from '@atomicloans/utils'
+import networks from '@atomicloans/bitcoin-networks'
 import {
   calculateFee,
   addressToPubKeyHash,
   pubKeyToAddress,
   scriptNumEncode
-} from '@liquality/bitcoin-utils'
+} from '@atomicloans/bitcoin-utils'
 import {
   sha256,
   padHexStart
-} from '@liquality/crypto'
+} from '@atomicloans/crypto'
 
 import { version } from '../package.json'
 

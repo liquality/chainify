@@ -1,14 +1,14 @@
 import { isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
-import Provider from '@liquality/provider'
-import { padHexStart } from '@liquality/crypto'
+import Provider from '@atomicloans/provider'
+import { padHexStart } from '@atomicloans/crypto'
 import {
   ensure0x,
   remove0x,
   removeAddress0x
 } from '@atomicloans/ethereum-utils'
-import { addressToString } from '@liquality/utils'
+import { addressToString } from '@atomicloans/utils'
 
 import { version } from '../package.json'
 

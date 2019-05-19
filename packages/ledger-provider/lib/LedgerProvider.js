@@ -1,6 +1,6 @@
-import WalletProvider from '@liquality/wallet-provider'
-import { WalletError } from '@liquality/errors'
-import Debug from '@liquality/debug'
+import WalletProvider from '@atomicloans/wallet-provider'
+import { WalletError } from '@atomicloans/errors'
+import Debug from '@atomicloans/debug'
 
 import getTransport from './LedgerNodeTransport'
 import { version } from '../package.json'

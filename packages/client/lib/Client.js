@@ -7,7 +7,7 @@ import {
   NoProviderError,
   UnimplementedMethodError,
   UnsupportedMethodError
-} from '@liquality/errors'
+} from '@atomicloans/errors'
 
 import Chain from './Chain'
 import Wallet from './Wallet'

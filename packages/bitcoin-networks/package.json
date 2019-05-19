@@ -2,7 +2,7 @@
   "name": "@atomicloans/bitcoin-networks",
   "umdName": "BitcoinNetworks",
   "umdExport": "default",
-  "version": "0.2.7",
+  "version": "0.2.25",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
