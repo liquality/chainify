@@ -15,7 +15,7 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "AtomicLoans <info@liquality.io>",
+  "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3"
