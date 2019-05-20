@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-bitcoinjs-lib-swap-provider",
   "umdName": "BitcoinBitcoinJsLibSwapProvider",
   "umdExport": "default",
-  "version": "0.2.28",
+  "version": "0.2.6",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -18,12 +18,12 @@
   "author": "AtomicLoans <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-networks": "^0.2.6",
     "@liquality/bitcoin-utils": "^0.2.6",
     "@liquality/crypto": "^0.2.6",
     "@liquality/provider": "^0.2.6",
     "@liquality/utils": "^0.2.6",
-    "@babel/runtime": "^7.4.3",
     "bitcoinjs-lib": "https://github.com/h4v0kr/bitcoinjs-lib"
   },
   "engines": {
