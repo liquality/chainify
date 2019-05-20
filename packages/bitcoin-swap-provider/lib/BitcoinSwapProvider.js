@@ -1,16 +1,16 @@
 import { BigNumber } from 'bignumber.js'
 
-import Provider from '@atomicloans/provider'
+import Provider from '@liquality/provider'
 import {
   calculateFee,
   addressToPubKeyHash,
   pubKeyToAddress,
   reverseBuffer,
   scriptNumEncode
-} from '@atomicloans/bitcoin-utils'
-import { sha256, padHexStart } from '@atomicloans/crypto'
-import { addressToString, sleep } from '@atomicloans/utils'
-import networks from '@atomicloans/bitcoin-networks'
+} from '@liquality/bitcoin-utils'
+import { sha256, padHexStart } from '@liquality/crypto'
+import { addressToString, sleep } from '@liquality/utils'
+import networks from '@liquality/bitcoin-networks'
 
 import { version } from '../package.json'
 

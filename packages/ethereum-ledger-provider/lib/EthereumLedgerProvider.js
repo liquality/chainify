@@ -1,15 +1,15 @@
 import { BigNumber } from 'bignumber.js'
 import EthereumJsTx from 'ethereumjs-tx'
 
-import LedgerProvider from '@atomicloans/ledger-provider'
+import LedgerProvider from '@liquality/ledger-provider'
 import Ethereum from '@ledgerhq/hw-app-eth'
 
-import networks from '@atomicloans/ethereum-networks'
+import networks from '@liquality/ethereum-networks'
 import {
   ensure0x,
   remove0x
-} from '@atomicloans/ethereum-utils'
-import { Address, addressToString } from '@atomicloans/utils'
+} from '@liquality/ethereum-utils'
+import { Address, addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
 

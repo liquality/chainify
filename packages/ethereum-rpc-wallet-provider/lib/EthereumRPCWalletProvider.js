@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import { BigNumber } from 'bignumber.js'
-import Provider from '@atomicloans/provider'
+import Provider from '@liquality/provider'
 import EthereumTx from 'ethereumjs-tx'
 import Wallet from 'ethereumjs-wallet'
 import EthCrypto from 'eth-crypto';
-import { ensure0x, remove0x, removeAddress0x } from '@atomicloans/ethereum-utils'
-import { WalletError } from '@atomicloans/errors'
-import networks from '@atomicloans/ethereum-networks'
+import { ensure0x, remove0x, removeAddress0x } from '@liquality/ethereum-utils'
+import { WalletError } from '@liquality/errors'
+import networks from '@liquality/ethereum-networks'
 
 import { version } from '../package.json'
 

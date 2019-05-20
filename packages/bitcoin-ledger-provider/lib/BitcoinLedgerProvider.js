@@ -2,21 +2,21 @@ import { BigNumber } from 'bignumber.js'
 import bip32 from 'bip32'
 import coinselect from 'coinselect'
 
-import LedgerProvider from '@atomicloans/ledger-provider'
+import LedgerProvider from '@liquality/ledger-provider'
 import Bitcoin from '@ledgerhq/hw-app-btc'
 
 import {
   base58,
   padHexStart
-} from '@atomicloans/crypto'
+} from '@liquality/crypto'
 import {
   pubKeyToAddress,
   addressToPubKeyHash,
   compressPubKey,
   getAddressNetwork
-} from '@atomicloans/bitcoin-utils'
-import networks from '@atomicloans/bitcoin-networks'
-import { Address, addressToString } from '@atomicloans/utils'
+} from '@liquality/bitcoin-utils'
+import networks from '@liquality/bitcoin-networks'
+import { Address, addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
 

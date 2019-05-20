@@ -1,5 +1,5 @@
-import Provider from '@atomicloans/provider'
-import networks from '@atomicloans/bitcoin-networks'
+import Provider from '@liquality/provider'
+import networks from '@liquality/bitcoin-networks'
 
 import {
   calculateFee,
@@ -7,13 +7,13 @@ import {
   pubKeyToAddress,
   reverseBuffer,
   scriptNumEncode
-} from '@atomicloans/bitcoin-utils'
+} from '@liquality/bitcoin-utils'
 import {
   hash160,
   sha256,
   padHexStart
-} from '@atomicloans/crypto'
-import { sleep } from '@atomicloans/utils'
+} from '@liquality/crypto'
+import { sleep } from '@liquality/utils'
 
 import { version } from '../package.json'
 

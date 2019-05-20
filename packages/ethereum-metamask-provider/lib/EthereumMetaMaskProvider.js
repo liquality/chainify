@@ -1,19 +1,19 @@
 import { findKey } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
-import MetaMaskProvider from '@atomicloans/metamask-provider'
-import networks from '@atomicloans/ethereum-networks'
+import MetaMaskProvider from '@liquality/metamask-provider'
+import networks from '@liquality/ethereum-networks'
 import {
   WalletError
-} from '@atomicloans/errors'
+} from '@liquality/errors'
 import {
   ensure0x,
   remove0x
-} from '@atomicloans/ethereum-utils'
+} from '@liquality/ethereum-utils'
 import {
   Address,
   addressToString
-} from '@atomicloans/utils'
+} from '@liquality/utils'
 
 import { version } from '../package.json'
 

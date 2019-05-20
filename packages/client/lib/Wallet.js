@@ -1,6 +1,6 @@
 import { isArray } from 'lodash'
 
-import { InvalidProviderResponseError } from '@atomicloans/errors'
+import { InvalidProviderResponseError } from '@liquality/errors'
 
 export default class Wallet {
   constructor (client) {
