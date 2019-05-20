@@ -1,5 +1,5 @@
 {
-  "name": "@atomicloans/bitcoin-bitcore-rpc-provider",
+  "name": "@liquality/bitcoin-bitcore-rpc-provider",
   "umdName": "BitcoinBitcoreRpcProvider",
   "umdExport": "default",
   "version": "0.2.28",
@@ -15,17 +15,17 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "AtomicLoans <info@atomicloans.io>",
+  "author": "AtomicLoans <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@atomicloans/bitcoin-networks": "^0.2.28",
-    "@atomicloans/bitcoin-rpc-provider": "^0.2.28",
-    "@atomicloans/bitcoin-utils": "^0.2.28",
-    "@atomicloans/crypto": "^0.2.28",
-    "@atomicloans/debug": "^0.2.28",
-    "@atomicloans/errors": "^0.2.28",
-    "@atomicloans/provider": "^0.2.28",
-    "@atomicloans/utils": "^0.2.28",
+    "@liquality/bitcoin-networks": "^0.2.6",
+    "@liquality/bitcoin-rpc-provider": "^0.2.6",
+    "@liquality/bitcoin-utils": "^0.2.6",
+    "@liquality/crypto": "^0.2.6",
+    "@liquality/debug": "^0.2.6",
+    "@liquality/errors": "^0.2.6",
+    "@liquality/provider": "^0.2.6",
+    "@liquality/utils": "^0.2.6",
     "@babel/runtime": "^7.4.3",
     "bignumber.js": "^8.1.1"
   },

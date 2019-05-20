@@ -1,5 +1,5 @@
 {
-  "name": "@atomicloans/ethereum-utils",
+  "name": "@liquality/ethereum-utils",
   "umdName": "EthereumUtils",
   "version": "0.2.28",
   "description": "",
@@ -14,12 +14,12 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "AtomicLoans <info@atomicloans.io>",
+  "author": "AtomicLoans <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@atomicloans/crypto": "^0.2.28",
-    "@atomicloans/errors": "^0.2.28",
-    "@atomicloans/schema": "^0.2.28",
+    "@liquality/crypto": "^0.2.6",
+    "@liquality/errors": "^0.2.6",
+    "@liquality/schema": "^0.2.6",
     "@babel/runtime": "^7.4.3",
     "eip55": "^1.0.3"
   },

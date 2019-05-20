@@ -1,5 +1,5 @@
 {
-  "name": "@atomicloans/errors",
+  "name": "@liquality/errors",
   "umdName": "CALErrors",
   "version": "0.2.28",
   "description": "",
@@ -14,7 +14,7 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "AtomicLoans <info@atomicloans.io>",
+  "author": "AtomicLoans <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
