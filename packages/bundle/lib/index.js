@@ -1,5 +1,3 @@
-import '@babel/polyfill/noConflict'
-
 import Client from '@liquality/client'
 import Provider from '@liquality/provider'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'

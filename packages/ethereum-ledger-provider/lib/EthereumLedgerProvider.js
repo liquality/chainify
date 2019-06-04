@@ -1,15 +1,13 @@
-import '@babel/polyfill/noConflict'
-
 import { BigNumber } from 'bignumber.js'
 import EthereumJsTx from 'ethereumjs-tx'
 
+import LedgerProvider from '@liquality/ledger-provider'
 import Ethereum from '@ledgerhq/hw-app-eth'
 
-import LedgerProvider from '@liquality/ledger-provider'
 import networks from '@liquality/ethereum-networks'
 import {
-  ensureHexEthFormat,
-  ensureHexStandardFormat
+  ensure0x,
+  remove0x
 } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
 
@@ -66,17 +64,17 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const path = address.derivationPath
 
     const txData = {
-      to: to ? ensureHexEthFormat(to) : null,
-      from: ensureHexEthFormat(from),
-      value: ensureHexEthFormat(BigNumber(value).toString(16)),
-      data: data ? ensureHexEthFormat(data) : undefined,
-      chainId: ensureHexEthFormat(BigNumber(this._network.chainId).toString(16))
+      to: to ? ensure0x(to) : null,
+      from: ensure0x(from),
+      value: ensure0x(BigNumber(value).toString(16)),
+      data: data ? ensure0x(data) : undefined,
+      chainId: ensure0x(BigNumber(this._network.chainId).toString(16))
     }
 
     txData.v = txData.chainId
 
     const [ nonce, gasPrice, gasLimit ] = await Promise.all([
-      this.getMethod('getTransactionCount')(ensureHexStandardFormat(from)),
+      this.getMethod('getTransactionCount')(remove0x(from)),
       this.getMethod('getGasPrice')(),
       this.getMethod('estimateGas')(txData)
     ])
@@ -90,9 +88,9 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const txSig = await app.signTransaction(path, serializedTx)
     const signedTxData = {
       ...txData,
-      v: ensureHexEthFormat(txSig.v),
-      r: ensureHexEthFormat(txSig.r),
-      s: ensureHexEthFormat(txSig.s)
+      v: ensure0x(txSig.v),
+      r: ensure0x(txSig.r),
+      s: ensure0x(txSig.s)
     }
 
     const signedTx = new EthereumJsTx(signedTxData)

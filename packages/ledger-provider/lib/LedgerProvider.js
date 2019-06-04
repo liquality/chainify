@@ -1,5 +1,3 @@
-import '@babel/polyfill/noConflict'
-
 import WalletProvider from '@liquality/wallet-provider'
 import { WalletError } from '@liquality/errors'
 import Debug from '@liquality/debug'

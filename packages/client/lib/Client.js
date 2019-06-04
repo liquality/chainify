@@ -44,6 +44,11 @@ export default class Client {
     if (provider) {
       this.addProvider(provider)
     }
+
+    this._chain = new Chain(this)
+    this._wallet = new Wallet(this)
+    this._swap = new Swap(this)
+    this._collateral = new Collateral(this)
   }
 
   /**
@@ -129,34 +134,18 @@ export default class Client {
   }
 
   get chain () {
-    if (!this._chain) {
-      this._chain = new Chain(this)
-    }
-
     return this._chain
   }
 
   get wallet () {
-    if (!this._wallet) {
-      this._wallet = new Wallet(this)
-    }
-
     return this._wallet
   }
 
   get swap () {
-    if (!this._swap) {
-      this._swap = new Swap(this)
-    }
-
     return this._swap
   }
 
   get collateral () {
-    if (!this._collateral) {
-      this._collateral = new Collateral(this)
-    }
-
     return this._collateral
   }
 }

@@ -1,12 +1,10 @@
-import '@babel/polyfill/noConflict'
-
 import { BigNumber } from 'bignumber.js'
 import bip32 from 'bip32'
 import coinselect from 'coinselect'
 
+import LedgerProvider from '@liquality/ledger-provider'
 import Bitcoin from '@ledgerhq/hw-app-btc'
 
-import LedgerProvider from '@liquality/ledger-provider'
 import {
   base58,
   padHexStart
