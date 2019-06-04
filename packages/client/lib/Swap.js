@@ -43,6 +43,7 @@ export default class Swap {
    */
   async generateSecret (message) {
     const address = (await this.client.getMethod('getAddresses')())[0]
+    console.log('generate', message, address)
     const signedMessage = await this.client.getMethod('signMessage')(message, address)
     const secret = sha256(signedMessage)
     return secret
@@ -157,5 +158,20 @@ export default class Swap {
     }
 
     return this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
+  }
+
+    /**
+   * Refund the swap
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    return this.client.getMethod('findRefundSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock)
   }
 }

@@ -146,7 +146,6 @@ export default class EthereumSwapProvider extends Provider {
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
     let claimSwapTransaction = false
-
     while (!claimSwapTransaction) {
       const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
@@ -158,7 +157,7 @@ export default class EthereumSwapProvider extends Provider {
 
         if (transaction) {
           const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-          if (transactionReceipt.status === '1') claimSwapTransaction = transaction
+          if (transactionReceipt.status === '1' && transaction.input !== '') claimSwapTransaction = transaction
         }
 
         blockNumber++
@@ -166,7 +165,6 @@ export default class EthereumSwapProvider extends Provider {
 
       await sleep(5000)
     }
-
     claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
 
     return claimSwapTransaction
@@ -175,6 +173,35 @@ export default class EthereumSwapProvider extends Provider {
   async getSwapSecret (claimTxHash) {
     const claimTransaction = await this.getMethod('getTransactionByHash')(claimTxHash)
     return claimTransaction.input
+  }
+
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
+    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    let refundSwapTransaction = false
+
+    while (!refundSwapTransaction) {
+      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      if (block) {
+        console.log(block.transactions)
+        for (const transaction of block.transactions) {
+          console.log( transaction.to === initiationTransaction.contractAddress,initiationTransaction.contractAddress, transaction.to)
+          console.log( transaction.input === '');
+          console.log(block.timestamp >= expiration);
+          console.log(block.timestamp, expiration)
+        }
+        refundSwapTransaction = block.transactions.find(transaction =>
+          transaction.to === initiationTransaction.contractAddress &&
+          transaction.input === '' &&
+          block.timestamp >= expiration
+        )
+
+        blockNumber++
+      }
+      console.log(refundSwapTransaction)
+      await sleep(5000)
+    }
+    return refundSwapTransaction
   }
 }
 

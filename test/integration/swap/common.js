@@ -132,6 +132,12 @@ async function refund (chain, initiationTxId, secretHash, swapParams) {
   return refundTxId
 }
 
+async function waitRefund(chain, initiationTxId, secretHash, swapParams) {
+  const refundTxId = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
+  console.log(`${chain.id} Refunded ${refundTxId}`)
+  return refundTxId
+}
+
 async function expectBalance (chain, address, func, comparison) {
   const balanceBefore = await chain.client.chain.getBalance([address])
   await func()
@@ -183,6 +189,7 @@ export {
   initiateAndVerify,
   claimAndVerify,
   refund,
+  waitRefund,
   getSwapParams,
   expectBalance,
   sleep,

@@ -21,6 +21,7 @@ export default class BitcoinSwapProvider extends Provider {
   constructor (chain = { network: networks.bitcoin }) {
     super()
     this._network = chain.network
+    console.log(this, 'initaited btc swap provider')
   }
 
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
@@ -63,6 +64,7 @@ export default class BitcoinSwapProvider extends Provider {
     const script = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     const scriptPubKey = padHexStart(script)
     const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    console.log('INITIATE SWAP')
     return this.getMethod('sendTransaction')(p2shAddress, value, script)
   }
 
@@ -174,6 +176,7 @@ export default class BitcoinSwapProvider extends Provider {
       p2shTransactions = p2shTransactions.concat(p2shMempoolTransactions)
       const transactionIds = p2shTransactions.map(tx => tx.txid)
       const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
+      console.log(transactions)
       swapTransaction = transactions.find(predicate)
       await sleep(5000)
     }
@@ -199,13 +202,20 @@ export default class BitcoinSwapProvider extends Provider {
       refundAddress,
       secretHash,
       expiration,
-      tx => tx._raw.vin.find(vin => vin.txid === initiationTxHash)
+      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses.includes(recipientAddress))
     )
 
     return {
       ...claimSwapTransaction,
       secret: await this.getSwapSecret(claimSwapTransaction.hash)
     }
+  }
+
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    const refundSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses.includes(refundAddress))
+    )
+    return refundSwapTransaction
   }
 
   async getSwapSecret (claimTxHash) {

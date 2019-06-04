@@ -5,7 +5,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import { crypto, providers } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, refund, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask } from './common'
+import { chains, initiateAndVerify, claimAndVerify, refund, waitRefund, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask } from './common'
 import config from './config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -99,7 +99,7 @@ function testSingle (chain) {
       },
       (before, after) => expect(after).to.be.bignumber.equal(before))
   })
-
+  
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
@@ -108,6 +108,17 @@ function testSingle (chain) {
     await expect(refund(chain, initiationTxId, secretHash, swapParams)).to.be.rejected
     await sleep(20000)
     await refund(chain, initiationTxId, secretHash, swapParams)
+  })
+
+  it('Refund - Wait for transaction', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain)
+    swapParams.expiration = parseInt(Date.now() / 1000) + 20
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await sleep(20000)
+    let refundTransactionHash = await refund(chain, initiationTxId, secretHash, swapParams)
+    let waitRefundTransaction = await waitRefund(chain, initiationTxId, secretHash, swapParams)
+    expect(waitRefundTransaction.hash).to.be.equal(refundTransactionHash)
   })
 }
 

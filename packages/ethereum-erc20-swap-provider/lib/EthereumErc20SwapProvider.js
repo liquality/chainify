@@ -156,6 +156,26 @@ export default class EthereumErc20SwapProvider extends Provider {
     const claimTransaction = await this.getMethod('getTransactionByHash')(claimTxHash)
     return claimTransaction.input.substring(8)
   }
+
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
+    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    let refundSwapTransaction = false
+
+    while (!refundSwapTransaction) {
+      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+      if (block) {
+        refundSwapTransaction = block.transactions.find(transaction =>
+          transaction.to === initiationTransaction.contractAddress &&
+          transaction.input === ensureAddressStandardFormat(SOL_REFUND_FUNCTION) &&
+          block.timestamp >= expiration
+        )
+        blockNumber++
+      }
+      await sleep(5000)
+    }
+    return refundSwapTransaction
+  }
 }
 
 EthereumErc20SwapProvider.version = version
