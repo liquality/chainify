@@ -183,13 +183,6 @@ export default class EthereumSwapProvider extends Provider {
     while (!refundSwapTransaction) {
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
       if (block) {
-        console.log(block.transactions)
-        for (const transaction of block.transactions) {
-          console.log( transaction.to === initiationTransaction.contractAddress,initiationTransaction.contractAddress, transaction.to)
-          console.log( transaction.input === '');
-          console.log(block.timestamp >= expiration);
-          console.log(block.timestamp, expiration)
-        }
         refundSwapTransaction = block.transactions.find(transaction =>
           transaction.to === initiationTransaction.contractAddress &&
           transaction.input === '' &&
@@ -198,7 +191,6 @@ export default class EthereumSwapProvider extends Provider {
 
         blockNumber++
       }
-      console.log(refundSwapTransaction)
       await sleep(5000)
     }
     return refundSwapTransaction

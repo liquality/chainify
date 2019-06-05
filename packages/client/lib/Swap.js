@@ -162,7 +162,11 @@ export default class Swap {
     /**
    * Refund the swap
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
+   * @param {!number} startBlock - The minimum block to start the search from
    * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
