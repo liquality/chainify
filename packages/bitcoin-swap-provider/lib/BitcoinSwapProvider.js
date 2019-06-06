@@ -199,13 +199,20 @@ export default class BitcoinSwapProvider extends Provider {
       refundAddress,
       secretHash,
       expiration,
-      tx => tx._raw.vin.find(vin => vin.txid === initiationTxHash)
+      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses.includes(recipientAddress))
     )
 
     return {
       ...claimSwapTransaction,
       secret: await this.getSwapSecret(claimSwapTransaction.hash)
     }
+  }
+
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+    const refundSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses.includes(refundAddress))
+    )
+    return refundSwapTransaction
   }
 
   async getSwapSecret (claimTxHash) {
