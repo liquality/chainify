@@ -149,9 +149,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
 
     if (!newAddress) return null
 
-    return new Address({
-      address: newAddress
-    })
+    return new Address(newAddress)
   }
 
   async getUnusedAddress () {

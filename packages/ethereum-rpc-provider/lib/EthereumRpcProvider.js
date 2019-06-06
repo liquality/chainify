@@ -51,6 +51,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
     const tx = {
       from: ensure0x(addressToString(from)),
+      to: to ? ensure0x(addressToString(from)) : null,
       value: ensure0x(BigNumber(value).toString(16))
     }
 

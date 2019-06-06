@@ -125,9 +125,11 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
   return claimTx
 }
 
-async function refund (chain, initiationTxId, secretHash, swapParams) {
+async function refundAndVerify (chain, initiationTxId, secretHash, swapParams) {
   console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
+  const foundRefundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
+  expect(refundTxId).to.equal(foundRefundTx.hash)
   console.log(`${chain.id} Refunded ${refundTxId}`)
   return refundTxId
 }
@@ -182,7 +184,7 @@ export {
   metaMaskConnector,
   initiateAndVerify,
   claimAndVerify,
-  refund,
+  refundAndVerify,
   getSwapParams,
   expectBalance,
   sleep,

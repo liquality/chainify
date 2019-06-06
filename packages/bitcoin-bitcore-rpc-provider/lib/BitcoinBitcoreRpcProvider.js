@@ -82,7 +82,6 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
       const address = await this.getNewAddress()
       addresses.push(address)
     }
-
     return addresses
   }
 

@@ -74,7 +74,7 @@ class Address {
 
 function addressToString (any) {
   if (typeof any === 'string') return any
-
+  
   return String(new Address(any))
 }
 
