@@ -24,7 +24,8 @@
     "@liquality/crypto": "^0.2.6",
     "@liquality/provider": "^0.2.6",
     "@liquality/utils": "^0.2.6",
-    "bitcoinjs-lib": "https://github.com/h4v0kr/bitcoinjs-lib"
+    "bignumber.js": "^9.0.0",
+    "bitcoinjs-lib": "^5.0.5"
   },
   "engines": {
     "node": "~8.12.0"

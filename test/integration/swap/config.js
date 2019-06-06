@@ -5,7 +5,7 @@ export default {
       username: 'bitcoin',
       password: 'local321'
     },
-    network: 'bitcoin_testnet',
+    network: 'bitcoin_regtest',
     value: 1000000,
     mineBlocks: true
   },

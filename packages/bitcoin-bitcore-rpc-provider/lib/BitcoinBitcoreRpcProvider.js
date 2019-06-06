@@ -74,18 +74,6 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
     return this.jsonrpc('getaddressmempool', { 'addresses': addresses })
   }
 
-  async getAddresses (startingIndex = 0, numAddresses = 1) {
-    const addresses = []
-    const lastIndex = startingIndex + numAddresses
-
-    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = await this.getNewAddress()
-      addresses.push(address)
-    }
-
-    return addresses
-  }
-
   // async getAddressTransactions (address, start, end) {
   //   return this.jsonrpc('getaddresstxids', { 'addresses': [address], start, end })
   // }
