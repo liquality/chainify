@@ -58,7 +58,6 @@ module.exports = {
         'vout': [
           {
             'value': 50.00003840,
-            'valueSat': 5000003840,
             'n': 0,
             'scriptPubKey': {
               'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
@@ -95,14 +94,12 @@ module.exports = {
               'hex': '47304402201a5a9ae682bee3972650ea2b7cb935c654f02523958f33cb675ca02ed58dcb5302204d4275e17e11720daba94957ae7cb60a6e993fa64986d8d8aabf08f0d0f629d701'
             },
             'value': 50.00000000,
-            'valueSat': 5000000000,
             'sequence': 4294967294
           }
         ],
         'vout': [
           {
             'value': 1.00000000,
-            'valueSat': 100000000,
             'n': 0,
             'scriptPubKey': {
               'asm': 'OP_DUP OP_HASH160 e983c4ef1c97ef46a94b1cc0fabfe6184ddf5754 OP_EQUALVERIFY OP_CHECKSIG',
@@ -119,7 +116,6 @@ module.exports = {
           },
           {
             'value': 48.99996160,
-            'valueSat': 4899996160,
             'n': 1,
             'scriptPubKey': {
               'asm': 'OP_DUP OP_HASH160 7bc785319c23f39249507dd930bac3461dfe45af OP_EQUALVERIFY OP_CHECKSIG',
@@ -157,7 +153,6 @@ module.exports = {
         'vout': [
           {
             'value': 50.00003840,
-            'valueSat': 5000003840,
             'n': 0,
             'scriptPubKey': {
               'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
@@ -226,7 +221,7 @@ module.exports = {
   ],
   'getnewaddress': [
     {
-      params: [],
+      params: ['', 'legacy'],
       result: 'n3UEcXH2m85Ph47nPE3pmCkA2yZ8kVm8PJ'
     }
   ],

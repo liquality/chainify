@@ -212,7 +212,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value).times(1e8)), BigNumber(0))
     const result = {
       hash: tx.txid,
-      value,
+      value: value.toNumber(),
       _raw: tx,
       confirmations: 0
     }

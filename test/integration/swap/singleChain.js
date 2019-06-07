@@ -99,7 +99,7 @@ function testSingle (chain) {
       },
       (before, after) => expect(after).to.be.bignumber.equal(before))
   })
-  
+
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)

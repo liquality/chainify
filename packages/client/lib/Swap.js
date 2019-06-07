@@ -159,7 +159,7 @@ export default class Swap {
     return this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
 
-    /**
+  /**
    * Refund the swap
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.
