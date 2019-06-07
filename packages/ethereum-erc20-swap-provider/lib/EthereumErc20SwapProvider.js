@@ -167,7 +167,7 @@ export default class EthereumErc20SwapProvider extends Provider {
       if (block) {
         refundSwapTransaction = block.transactions.find(transaction =>
           transaction.to === initiationTransaction.contractAddress &&
-          transaction.input === ensureAddressStandardFormat(SOL_REFUND_FUNCTION) &&
+          transaction.input === remove0x(SOL_REFUND_FUNCTION) &&
           block.timestamp >= expiration
         )
         blockNumber++
