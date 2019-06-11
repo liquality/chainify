@@ -174,10 +174,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       const { inputs, outputs, fee } = coinselect(globalUtxoSet, [{ id: 'main', value: amount }], feePerByte)
 
       if (inputs && outputs) {
-        let change = outputs.filter(output => output.id !== 'main')
+        let change = outputs.find(output => output.id !== 'main')
 
-        if (change && change.length > 0) {
-          change = change[0].value
+        if (change) {
+          change = change.value
         }
 
         return {
