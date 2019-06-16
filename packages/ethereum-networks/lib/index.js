@@ -36,6 +36,13 @@ export default {
     chainId: 42,
     isTestnet: true
   },
+  goerli: {
+    name: 'goerli',
+    coinType: '60',
+    networkId: 5,
+    chainId: 5,
+    isTestnet: true
+  },
 
   version
 }
