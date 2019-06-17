@@ -197,8 +197,8 @@ export default class Chain {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendTransaction (to, value, data, from, extraOutputs) {
-    return this.client.getMethod('sendTransaction')(to, value, data, from, extraOutputs)
+  async sendTransaction (to, value, data, from) {
+    return this.client.getMethod('sendTransaction')(to, value, data, from)
   }
 
   /**
