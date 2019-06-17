@@ -203,11 +203,11 @@ export default class Chain {
 
   /**
    * Create, sign & broad a transaction with multiple outputs.
-   * @param {string[]} outputs - to, value, data, from.
+   * @param {string[]} transactions - to, value, data, from.
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendBatchTransaction (outputs) {
-    return this.client.getMethod('sendBatchTransaction')(outputs)
+  async sendBatchTransaction (transactions) {
+    return this.client.getMethod('sendBatchTransaction')(transactions)
   }
 
   /**

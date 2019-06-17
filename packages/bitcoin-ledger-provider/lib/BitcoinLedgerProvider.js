@@ -281,17 +281,17 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
-  async sendBatchTransaction (outputs) {
+  async sendBatchTransaction (transactions) {
     const app = await this.getApp()
 
     let totalValue = 0
 
-    outputs.forEach((output) => {
-      if (output.data) {
-        const scriptPubKey = padHexStart(output.data)
-        output.to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
+    transactions.forEach((tx) => {
+      if (tx.data) {
+        const scriptPubKey = padHexStart(tx.data)
+        tx.to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
       }
-      totalValue += output.value
+      totalValue += tx.value
     })
 
     const unusedAddress = await this.getUnusedAddress(true)
@@ -300,18 +300,18 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
-    let txOutputs = []
-    outputs.forEach((output) => {
-      const outputScript = this.createScript(output.to)
-      txOutputs.push({ amount: this.getAmountBuffer(output.value), script: Buffer.from(outputScript, 'hex') })
+    let outputs = []
+    transactions.forEach((tx) => {
+      const outputScript = this.createScript(tx.to)
+      outputs.push({ amount: this.getAmountBuffer(tx.value), script: Buffer.from(outputScript, 'hex') })
     })
 
     if (change) {
       const changeScript = this.createScript(unusedAddress)
-      txOutputs.push({ amount: this.getAmountBuffer(change), script: Buffer.from(changeScript, 'hex') })
+      outputs.push({ amount: this.getAmountBuffer(change), script: Buffer.from(changeScript, 'hex') })
     }
 
-    const serializedOutputs = app.serializeTransactionOutputs({ txOutputs }).toString('hex')
+    const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
     const signedTransaction = await app.createPaymentTransactionNew(
       ledgerInputs,
       paths,
