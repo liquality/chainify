@@ -57,7 +57,10 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     }
 
     if (to) tx.to = ensure0x(addressToString(to))
-    if (data) tx.data = ensure0x(data)
+    if (data) {
+      tx.data = ensure0x(data)
+      tx.gas = ensure0x((await this.estimateGas(tx)).toString(16))
+    }
 
     const txHash = await this.jsonrpc('eth_sendTransaction', tx)
 
@@ -156,7 +159,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
   async getCode (address, block) {
     address = ensure0x(String(address))
-    block = typeof(block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
+    block = typeof (block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
     const code = await this.jsonrpc('eth_getCode', address, block)
     return remove0x(code)
   }
