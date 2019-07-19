@@ -408,6 +408,11 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   async getConnectedNetwork () {
     const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
     const network = getAddressNetwork(walletPubKey.bitcoinAddress)
+    // Bitcoin Ledger app does not distinguish between regtest & testnet
+    if (this._network.name === networks.bitcoin_regtest.name &&
+      network.name === networks.bitcoin_testnet.name) {
+      return networks.bitcoin_regtest
+    }
     return network
   }
 }

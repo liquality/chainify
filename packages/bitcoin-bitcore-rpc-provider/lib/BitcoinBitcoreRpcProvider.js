@@ -2,7 +2,7 @@ import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
 import { base58 } from '@liquality/crypto'
 import { addressToPubKeyHash } from '@liquality/bitcoin-utils'
 import networks from '@liquality/bitcoin-networks'
-import { addressToString } from '@liquality/utils'
+import { Address, addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
 
@@ -42,6 +42,14 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
     const data = await this.getAddressBalance(address)
 
     return data.received !== 0
+  }
+
+  async getNewAddress () {
+    const newAddress = await this.jsonrpc('getnewaddress')
+
+    if (!newAddress) return null
+
+    return new Address(newAddress)
   }
 
   async getAddressBalances (addresses) {

@@ -30,8 +30,8 @@ export default {
   bitcoin_regtest: {
     name: 'bitcoin_regtest',
     messagePrefix: '\x18Bitcoin Signed Message:\n',
-    pubKeyHash: 0x6f,
-    scriptHash: 0xc4,
+    pubKeyHash: '6F',
+    scriptHash: 'C4',
     coinType: '1',
     wif: 0xef,
     bip32: {
