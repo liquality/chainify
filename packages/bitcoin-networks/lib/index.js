@@ -27,6 +27,19 @@ export default {
     },
     isTestnet: true
   },
+  bitcoin_regtest: {
+    name: 'bitcoin_regtest',
+    messagePrefix: '\x18Bitcoin Signed Message:\n',
+    pubKeyHash: '6F',
+    scriptHash: 'C4',
+    coinType: '1',
+    wif: 0xef,
+    bip32: {
+      public: 0x043587cf,
+      private: 0x04358394
+    },
+    isTestnet: true
+  },
 
   version
 }

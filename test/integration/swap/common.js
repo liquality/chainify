@@ -18,7 +18,7 @@ bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ netw
 bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
 
 const bitcoinWithNode = new Client()
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinBitcoinJsLibSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
 
 // TODO: required for BITCOIN too?

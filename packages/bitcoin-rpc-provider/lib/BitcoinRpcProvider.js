@@ -144,12 +144,25 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return this.jsonrpc('getblockcount')
   }
 
-  async getNewAddress () {
-    const newAddress = await this.jsonrpc('getnewaddress')
+  async getNewAddress (type = 'legacy') {
+    const params = type ? ['', type] : []
+    const newAddress = await this.jsonrpc('getnewaddress', ...params)
 
     if (!newAddress) return null
 
     return new Address(newAddress)
+  }
+
+  async getAddresses (startingIndex = 0, numAddresses = 1) {
+    const addresses = []
+    const lastIndex = startingIndex + numAddresses
+
+    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
+      const address = await this.getNewAddress()
+      addresses.push(address)
+    }
+
+    return addresses
   }
 
   async getUnusedAddress () {
@@ -196,10 +209,10 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
 
   async getTransactionByHash (transactionHash) {
     const tx = await this.getRawTransactionByHash(transactionHash, true)
-    const value = tx.vout.reduce((p, n) => p + parseInt(n.valueSat), 0)
+    const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value).times(1e8)), BigNumber(0))
     const result = {
       hash: tx.txid,
-      value,
+      value: value.toNumber(),
       _raw: tx,
       confirmations: 0
     }

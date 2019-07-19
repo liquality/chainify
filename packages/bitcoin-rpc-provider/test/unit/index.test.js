@@ -75,7 +75,6 @@ describe('Bitcoin RPC provider', () => {
             'vout': [
               {
                 'value': 50.0000384,
-                'valueSat': 5000003840,
                 'n': 0,
                 'scriptPubKey': {
                   'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
@@ -177,7 +176,6 @@ describe('Bitcoin RPC provider', () => {
           'vout': [
             {
               'value': 50.0000384,
-              'valueSat': 5000003840,
               'n': 0,
               'scriptPubKey': {
                 'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',

@@ -38,7 +38,7 @@ function ensureBlockFormat (block) {
   if (block === undefined) {
     return 'latest'
   } else {
-    return (typeof(block) === 'number') ? ensure0x(padHexStart(block.toString(16))) : block
+    return (typeof block === 'number') ? ensure0x(padHexStart(block.toString(16))) : block
   }
 }
 
@@ -92,6 +92,6 @@ export {
   checksumEncode,
   formatEthResponse,
   normalizeTransactionObject,
-
+  ensureBlockFormat,
   version
 }
