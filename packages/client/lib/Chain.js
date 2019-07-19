@@ -226,4 +226,8 @@ export default class Chain {
   async getAddressMempool (addresses) {
     return this.client.getMethod('getAddressMempool')(addresses)
   }
+
+  async getTransactionReceipt (txHash) {
+    return this.client.getMethod('getTransactionReceipt')(txHash)
+  }
 }

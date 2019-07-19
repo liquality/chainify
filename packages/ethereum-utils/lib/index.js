@@ -1,4 +1,6 @@
 import { Block, Transaction } from '@liquality/schema'
+import { padHexStart } from '@liquality/crypto'
+import eip55 from 'eip55'
 
 import { version } from '../package.json'
 
@@ -18,6 +20,26 @@ function ensure0x (hash) {
  */
 function remove0x (hash) {
   return (typeof hash === 'string') ? hash.replace(/^0x/, '') : hash
+}
+
+/**
+ * Converts an ethereum address to the standard format
+ * @param {*} address
+ */
+function removeAddress0x (address) {
+  return remove0x(address).toLowerCase()
+}
+
+function checksumEncode (hash) {
+  return eip55.encode(ensure0x(hash))
+}
+
+function ensureBlockFormat (block) {
+  if (block === undefined) {
+    return 'latest'
+  } else {
+    return (typeof block === 'number') ? ensure0x(padHexStart(block.toString(16))) : block
+  }
 }
 
 function formatEthResponse (obj) {
@@ -66,8 +88,10 @@ function normalizeTransactionObject (tx, currentHeight) {
 export {
   ensure0x,
   remove0x,
+  removeAddress0x,
+  checksumEncode,
   formatEthResponse,
   normalizeTransactionObject,
-
+  ensureBlockFormat,
   version
 }

@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-rpc-provider",
   "umdName": "EthereumRpcProvider",
   "umdExport": "default",
-  "version": "0.2.7",
+  "version": "0.2.10",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,9 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/ethereum-utils": "^0.2.7",
-    "@liquality/jsonrpc-provider": "^0.2.7",
-    "@liquality/utils": "^0.2.7",
+    "@liquality/crypto": "^0.2.10",
+    "@liquality/ethereum-utils": "^0.2.10",
+    "@liquality/jsonrpc-provider": "^0.2.10",
+    "@liquality/utils": "^0.2.10",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.11"
   },

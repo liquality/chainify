@@ -15,7 +15,7 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
     address = addressToString(address)
     const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
     const pubKeyHash = addressToPubKeyHash(address)
-    if (type === networks.bitcoin_testnet.pubKeyHash) {
+    if (Object.values(networks).find(network => network.pubKeyHash === type)) {
       return [
         '76', // OP_DUP
         'a9', // OP_HASH160
@@ -24,7 +24,7 @@ export default class BitcoinBitcoreRpcProvider extends BitcoinRpcProvider {
         '88', // OP_EQUALVERIFY
         'ac' // OP_CHECKSIG
       ].join('')
-    } else if (type === networks.bitcoin_testnet.scriptHash) {
+    } else if (Object.values(networks).find(network => network.scriptHash === type)) {
       return [
         'a9', // OP_HASH160
         '14', // data size to be pushed
