@@ -55,6 +55,7 @@
     "bootstrap": "lerna bootstrap --force-local",
     "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
     "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha",
+    "test:tx": "cross-env NODE_ENV=test nyc mocha test/integration/tx $npm_package_options_mocha",
     "watch": "cross-env WEBPACK_WATCH=true lerna run build --parallel",
     "build:dev:node": "lerna run build:node --stream",
     "build:dev:browser": "lerna run build:browser --stream",

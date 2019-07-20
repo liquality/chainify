@@ -2,8 +2,8 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { crypto } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, getSwapParams, mineBitcoinBlocks, connectMetaMask } from './common'
-import config from './config'
+import { chains, initiateAndVerify, claimAndVerify, getSwapParams, mineBitcoinBlocks, connectMetaMask } from '../common'
+import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 

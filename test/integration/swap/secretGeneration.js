@@ -2,8 +2,8 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { chains, metaMaskConnector } from './common'
-import config from './config'
+import { chains, metaMaskConnector } from '../common'
+import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 

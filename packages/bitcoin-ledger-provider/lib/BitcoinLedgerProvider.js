@@ -176,8 +176,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')
 
-        if (change) {
-          change = change.value
+        if (change.length) {
+          change = change[0].value
         }
 
         return {
