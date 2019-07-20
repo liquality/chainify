@@ -1,11 +1,8 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import _ from 'lodash'
-import { crypto, providers } from '../../../packages/bundle/lib'
-import { chains, mineBitcoinBlocks } from '../common'
+import { chains } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -45,7 +42,7 @@ function testBatchTransaction (chain) {
   })
 }
 
-describe('Send Transactions', function() {
+describe('Send Transactions', function () {
   this.timeout(config.timeout)
 
   describe('Bitcoin - Ledger', () => {
