@@ -11,9 +11,15 @@ const BIP70_CHAIN_TO_NETWORK = {
   'regtest': BitcoinNetworks.bitcoin_regtest
 }
 
+const ADDRESS_TYPES = ['legacy', 'p2sh-segwit', 'bech32']
+
 export default class BitcoinNodeWalletProvider extends WalletProvider {
-  constructor (network, uri, username, password) {
+  constructor (network, uri, username, password, addressType = 'bech32') {
     super()
+    if (!ADDRESS_TYPES.includes(addressType)) {
+      throw new Error(`addressType must be one of ${ADDRESS_TYPES.join(',')}`)
+    }
+    this.addressType = addressType
     this.network = network
     this.rpc = new JsonRpcProvider(uri, username, password)
   }
@@ -28,8 +34,8 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return this.rpc.jsonrpc('dumpprivkey', address)
   }
 
-  async getNewAddress (type = 'legacy') {
-    const params = type ? ['', type] : []
+  async getNewAddress () {
+    const params = this.addressType ? ['', this.addressType] : []
     const newAddress = await this.rpc.jsonrpc('getnewaddress', ...params)
 
     if (!newAddress) return null
