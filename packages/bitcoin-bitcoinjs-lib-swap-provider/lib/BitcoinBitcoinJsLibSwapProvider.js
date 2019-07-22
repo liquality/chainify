@@ -239,7 +239,7 @@ export default class BitcoinBitcoinJsLibSwapProvider extends Provider {
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
     const refundSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
-      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses.includes(refundAddress))
+      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.includes(refundAddress))
     )
     return refundSwapTransaction
   }
