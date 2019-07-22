@@ -2,7 +2,7 @@ import { isArray, flatten } from 'lodash'
 import BigNumber from 'bignumber.js'
 
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
-import { Address, addressToString } from '@liquality/utils'
+import { addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
 
@@ -35,24 +35,10 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     }
   }
 
-  async signMessage (message, from) {
-    from = addressToString(from)
-    return this.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
-  }
-
   async sendTransaction (to, value) {
     to = addressToString(to)
     value = BigNumber(value).dividedBy(1e8).toNumber()
     return this.jsonrpc('sendtoaddress', to, value)
-  }
-
-  async dumpPrivKey (address) {
-    address = addressToString(address)
-    return this.jsonrpc('dumpprivkey', address)
-  }
-
-  async signRawTransaction (hexstring, prevtxs, privatekeys, sighashtype) {
-    return this.jsonrpc('signrawtransaction', hexstring, prevtxs, privatekeys)
   }
 
   async createRawTransaction (transactions, outputs) {
@@ -143,69 +129,6 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   async getBlockHeight () {
     return this.jsonrpc('getblockcount')
   }
-
-  async getNewAddress (type = 'legacy') {
-    const params = type ? ['', type] : []
-    const newAddress = await this.jsonrpc('getnewaddress', ...params)
-
-    if (!newAddress) return null
-
-    return new Address(newAddress)
-  }
-
-  async getAddresses (startingIndex = 0, numAddresses = 1) {
-    const addresses = []
-    const lastIndex = startingIndex + numAddresses
-
-    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = await this.getNewAddress()
-      addresses.push(address)
-    }
-
-    return addresses
-  }
-
-  async getUnusedAddress () {
-    return this.getNewAddress()
-  }
-
-  async getUsedAddresses () {
-    const addresses = await this.jsonrpc('listaddressgroupings')
-    const ret = []
-
-    for (const group of addresses) {
-      for (const address of group) {
-        ret.push(new Address({ address: address[0] }))
-      }
-    }
-
-    const emptyaddresses = await this.jsonrpc('listreceivedbyaddress', 0, true)
-
-    for (const address of emptyaddresses) {
-      ret.push(new Address({ address: address.address }))
-    }
-
-    return ret
-  }
-
-  async isWalletAvailable () {
-    const newAddress = await this.getNewAddress()
-    return !!newAddress
-  }
-
-  // async getAddressTransactions (address, start, end) {
-  //   const transactionIds = []
-  //   for (const blockNumber of _.range(start, end + 1)) {
-  //     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-  //     const matchingTransactions = block.transactions.filter(tx =>
-  //       tx._raw.vout.find(v => v.scriptPubKey.addresses.includes(address) ||
-  //       tx._raw.vin.find(v => v.address === address)))
-  //     if (matchingTransactions) {
-  //       transactionIds.push(...matchingTransactions.map(tx => tx.hash))
-  //     }
-  //   }
-  //   return transactionIds
-  // }
 
   async getTransactionByHash (transactionHash) {
     const tx = await this.getRawTransactionByHash(transactionHash, true)
