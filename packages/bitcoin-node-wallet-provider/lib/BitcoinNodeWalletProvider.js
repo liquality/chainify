@@ -1,8 +1,15 @@
 import WalletProvider from '@liquality/wallet-provider'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
+import BitcoinNetworks from '@liquality/bitcoin-networks'
 import { Address, addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
+
+const BIP70_CHAIN_TO_NETWORK = {
+  'main': BitcoinNetworks.bitcoin,
+  'test': BitcoinNetworks.bitcoin_testnet,
+  'regtest': BitcoinNetworks.bitcoin_regtest
+}
 
 export default class BitcoinNodeWalletProvider extends WalletProvider {
   constructor (network, uri, username, password) {
@@ -68,6 +75,12 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   async isWalletAvailable () {
     const newAddress = await this.getNewAddress()
     return !!newAddress
+  }
+
+  async getConnectedNetwork () {
+    const blockchainInfo = await this.rpc.jsonrpc('getblockchaininfo')
+    const chain = blockchainInfo.chain
+    return BIP70_CHAIN_TO_NETWORK[chain]
   }
 }
 
