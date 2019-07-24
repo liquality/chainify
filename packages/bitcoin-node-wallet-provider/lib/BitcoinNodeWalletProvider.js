@@ -1,6 +1,7 @@
 import WalletProvider from '@liquality/wallet-provider'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import BitcoinNetworks from '@liquality/bitcoin-networks'
+import { sha256 } from '@liquality/crypto'
 import { Address, addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
@@ -34,8 +35,8 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return this.rpc.jsonrpc('dumpprivkey', address)
   }
 
-  async getNewAddress () {
-    const params = this.addressType ? ['', this.addressType] : []
+  async getNewAddress (addressType) {
+    const params = addressType ? ['', addressType] : []
     const newAddress = await this.rpc.jsonrpc('getnewaddress', ...params)
 
     if (!newAddress) return null
@@ -43,20 +44,12 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return new Address(newAddress)
   }
 
-  async getAddresses (startingIndex = 0, numAddresses = 1) {
-    const addresses = []
-    const lastIndex = startingIndex + numAddresses
-
-    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
-      const address = await this.getNewAddress()
-      addresses.push(address)
-    }
-
-    return addresses
+  async getAddresses () {
+    return this.getUsedAddresses()
   }
 
   async getUnusedAddress () {
-    return this.getNewAddress()
+    return this.getNewAddress(this.addressType)
   }
 
   async getUsedAddresses () {
@@ -87,6 +80,13 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     const blockchainInfo = await this.rpc.jsonrpc('getblockchaininfo')
     const chain = blockchainInfo.chain
     return BIP70_CHAIN_TO_NETWORK[chain]
+  }
+
+  async generateSecret (message) {
+    const address = await this.getNewAddress('legacy') // Signing only possible with legacy addresses
+    const signedMessage = await this.signMessage(message, address)
+    const secret = sha256(signedMessage)
+    return secret
   }
 }
 
