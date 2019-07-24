@@ -20,7 +20,7 @@
     "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-networks": "^0.2.11",
     "@liquality/crypto": "^0.2.11",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.13"
   },
   "engines": {
     "node": "~8.12.0"
