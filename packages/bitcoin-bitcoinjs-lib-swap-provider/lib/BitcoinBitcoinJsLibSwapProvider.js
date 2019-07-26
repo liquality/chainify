@@ -145,6 +145,7 @@ export default class BitcoinBitcoinJsLibSwapProvider extends Provider {
     swapVout.vSat = swapVout.value * 1e8
 
     const txb = new bitcoin.TransactionBuilder(network)
+    txb.setVersion(1)
 
     if (!isRedeem) txb.setLockTime(expiration)
 
