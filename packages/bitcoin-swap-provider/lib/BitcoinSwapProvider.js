@@ -103,7 +103,7 @@ export default class BitcoinSwapProvider extends Provider {
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
     const address = this.getSwapPaymentVariants(swapOutput)[this._mode].address
-    return this.getMethod('sendTransaction')(address, value, swapOutput.toString('hex'))
+    return this.getMethod('sendTransaction')(address, value)
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {

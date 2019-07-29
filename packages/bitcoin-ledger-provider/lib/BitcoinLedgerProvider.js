@@ -252,11 +252,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   async sendTransaction (to, value, data, from) {
     const app = await this.getApp()
 
-    if (data) {
-      const scriptPubKey = padHexStart(data)
-      to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-    }
-
     const unusedAddress = await this.getUnusedAddress(true)
     const { inputs, change } = await this.getInputsForAmount(value)
 
