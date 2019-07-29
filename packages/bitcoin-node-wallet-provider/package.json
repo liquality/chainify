@@ -25,6 +25,7 @@
     "@liquality/utils": "^0.2.11",
     "@liquality/wallet-provider": "^0.2.10",
     "bignumber.js": "^8.1.1",
+    "bitcoinjs-lib": "^5.1.2",
     "lodash": "^4.17.11"
   },
   "engines": {

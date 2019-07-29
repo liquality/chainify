@@ -58,29 +58,41 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(address.derivationPath, hex)
   }
 
+  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
+    const app = await this.getApp()
+    const walletAddress = await this.getWalletAddress(address)
+
+    tx.setInputScript(vout.n, outputScript)
+
+    const ledgerInputTx = await app.splitTransaction(inputTxHex, true)
+    const ledgerTx = await app.splitTransaction(tx.toHex(), true)
+    const ledgerOutputs = (await app.serializeTransactionOutputs(ledgerTx)).toString('hex')
+    const ledgerSig = await app.signP2SHTransaction(
+      [[ledgerInputTx, 0, outputScript.toString('hex'), 0]],
+      [walletAddress.derivationPath],
+      ledgerOutputs.toString('hex'),
+      lockTime,
+      undefined, // SIGHASH_ALL
+      undefined, // TODO: true for segwit?
+      2 // transaction version always 2
+    )
+
+    // TODO: sig for witness
+    // if (needsWitness) {
+    //   sigHash = tx.hashForWitnessV0(0, swapPaymentVariants.p2wsh.redeem.output, swapVout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+    // } else {
+    //   sigHash = tx.hashForSignature(0, paymentVariant.redeem.output, bitcoin.Transaction.SIGHASH_ALL)
+    // }
+    const sig = Buffer.from(ledgerSig[0] + '01', 'hex')
+
+    return sig
+  }
+
   getAmountBuffer (amount) {
     let hexAmount = BigNumber(Math.round(amount)).toString(16)
     hexAmount = padHexStart(hexAmount, 16)
     const valueBuffer = Buffer.from(hexAmount, 'hex')
     return valueBuffer.reverse()
-  }
-
-  async splitTransaction (transactionHex, isSegwitSupported) {
-    const app = await this.getApp()
-
-    return app.splitTransaction(transactionHex, isSegwitSupported)
-  }
-
-  async serializeTransactionOutputs (transactionHex) {
-    const app = await this.getApp()
-
-    return app.serializeTransactionOutputs(transactionHex)
-  }
-
-  async signP2SHTransaction (inputs, associatedKeysets, changePath, outputScriptHex) {
-    const app = await this.getApp()
-
-    return app.signP2SHTransaction(inputs, associatedKeysets, changePath, outputScriptHex)
   }
 
   createScript (address) {
@@ -297,7 +309,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
       addresses.push(new Address({
         address,
-        publicKey: publicKey.toString('hex'),
+        publicKey: publicKey,
         derivationPath: path,
         index: currentIndex
       }))

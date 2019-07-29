@@ -1,4 +1,3 @@
-import BitcoinBitcoinJsLibSwapProvider from '@liquality/bitcoin-bitcoinjs-lib-swap-provider'
 import BitcoinBitcoreRpcProvider from '@liquality/bitcoin-bitcore-rpc-provider'
 import BitcoinCollateralProvider from '@liquality/bitcoin-collateral-provider'
 import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
@@ -18,7 +17,6 @@ import * as EthereumNetworks from '@liquality/ethereum-networks'
 import * as EthereumUtils from '@liquality/ethereum-utils'
 
 const bitcoin = {
-  BitcoinBitcoinJsLibSwapProvider,
   BitcoinBitcoreRpcProvider,
   BitcoinCollateralProvider,
   BitcoinLedgerProvider,

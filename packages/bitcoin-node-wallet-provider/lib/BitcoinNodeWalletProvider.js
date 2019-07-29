@@ -1,6 +1,7 @@
 import WalletProvider from '@liquality/wallet-provider'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import BitcoinNetworks from '@liquality/bitcoin-networks'
+import * as bitcoin from 'bitcoinjs-lib'
 import { sha256 } from '@liquality/crypto'
 import { Address, addressToString } from '@liquality/utils'
 
@@ -22,12 +23,34 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     }
     this.addressType = addressType
     this.network = network
+    if (this.network.name === BitcoinNetworks.bitcoin.name) {
+      this.bitcoinJsNetwork = bitcoin.networks.mainnet
+    } else if (this.network.name === BitcoinNetworks.bitcoin_testnet.name) {
+      this.bitcoinJsNetwork = bitcoin.networks.testnet
+    } else if (this.network.name === BitcoinNetworks.bitcoin_regtest.name) {
+      this.bitcoinJsNetwork = bitcoin.networks.regtest
+    }
     this.rpc = new JsonRpcProvider(uri, username, password)
   }
 
   async signMessage (message, from) {
     from = addressToString(from)
     return this.rpc.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
+  }
+
+  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
+    const wif = await this.dumpPrivKey(address)
+    const wallet = bitcoin.ECPair.fromWIF(wif, this.bitcoinJsNetwork)
+
+    let sigHash
+    if (segwit) {
+      sigHash = tx.hashForWitnessV0(0, outputScript, vout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+    } else {
+      sigHash = tx.hashForSignature(0, outputScript, bitcoin.Transaction.SIGHASH_ALL)
+    }
+
+    const sig = bitcoin.script.signature.encode(wallet.sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
+    return sig
   }
 
   async dumpPrivKey (address) {
@@ -69,6 +92,12 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     }
 
     return ret
+  }
+
+  async getWalletAddress (address) {
+    const wif = await this.dumpPrivKey(address)
+    const wallet = bitcoin.ECPair.fromWIF(wif, this.bitcoinJsNetwork)
+    return new Address(address, null, wallet.publicKey, null)
   }
 
   async isWalletAvailable () {
