@@ -2,7 +2,7 @@
   "name": "@mblackmblack/bitcoin-swap-provider",
   "umdName": "BitcoinSwapProvider",
   "umdExport": "default",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@mblackmblack/bitcoin-networks": "^0.2.11",
-    "@mblackmblack/bitcoin-utils": "^0.2.11",
-    "@mblackmblack/crypto": "^0.2.11",
-    "@mblackmblack/provider": "^0.2.11",
-    "@mblackmblack/utils": "^0.2.11",
+    "@mblackmblack/bitcoin-networks": "^0.2.12",
+    "@mblackmblack/bitcoin-utils": "^0.2.12",
+    "@mblackmblack/crypto": "^0.2.12",
+    "@mblackmblack/provider": "^0.2.12",
+    "@mblackmblack/utils": "^0.2.12",
     "bignumber.js": "^8.1.1"
   },
   "engines": {

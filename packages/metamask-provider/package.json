@@ -2,7 +2,7 @@
   "name": "@mblackmblack/metamask-provider",
   "umdName": "MetaMaskProvider",
   "umdExport": "default",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,10 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@mblackmblack/debug": "^0.2.11",
-    "@mblackmblack/errors": "^0.2.11",
-    "@mblackmblack/ethereum-utils": "^0.2.11",
-    "@mblackmblack/wallet-provider": "^0.2.11",
+    "@mblackmblack/debug": "^0.2.12",
+    "@mblackmblack/errors": "^0.2.12",
+    "@mblackmblack/ethereum-utils": "^0.2.12",
+    "@mblackmblack/wallet-provider": "^0.2.12",
     "lodash": "^4.17.13"
   },
   "engines": {
