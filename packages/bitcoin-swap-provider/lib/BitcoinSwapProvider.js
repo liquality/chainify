@@ -13,11 +13,11 @@ export default class BitcoinSwapProvider extends Provider {
   // TODO: have a generate InitSwap and generate RecipSwap
   // InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
 
-  constructor (chain = { network: networks.bitcoin }, mode = 'p2sh') {
+  constructor (chain = { network: networks.bitcoin }, mode = 'p2wsh') {
     super()
     this._network = chain.network
     if (!['p2wsh', 'p2shSegwit', 'p2sh'].includes(mode)) {
-      throw new Error('Mode must be one of p2wsh, p2sSegwit, p2sh')
+      throw new Error('Mode must be one of p2wsh, p2shSegwit, p2sh')
     }
     this._mode = mode
     if (this._network.name === networks.bitcoin.name) {
@@ -225,7 +225,7 @@ export default class BitcoinSwapProvider extends Provider {
   // }
 
   async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, predicate) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
+    let blockNumber = await this.getMethod('getBlockHeight')() // TODO: What about mempool txs?
     let swapTransaction = null
     while (!swapTransaction) {
       let block

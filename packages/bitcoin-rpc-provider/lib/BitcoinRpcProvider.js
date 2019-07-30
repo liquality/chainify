@@ -56,30 +56,28 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
       addresses = [ addresses ]
     }
 
-    const _utxos = await this.getUnspentTransactionsForAddresses(addresses)
+    const _utxos = await this.getUnspentTransactions(addresses)
+    console.log(_utxos)
     const utxos = flatten(_utxos)
 
     return utxos
       .reduce((acc, utxo) => acc.plus(utxo.satoshis), new BigNumber(0))
   }
 
-  async getListUnspent (addresses) {
+  async getUnspentTransactions (addresses) {
     addresses = addresses.map(addressToString)
     const utxos = await this.jsonrpc('listunspent', 0, 9999999, addresses)
     return utxos.map(utxo => ({ ...utxo, satoshis: BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
-  async getUnspentTransactionsForAddresses (addresses) {
-    return this.getListUnspent(addresses)
-  }
-
-  async getUnspentTransactions (address) {
-    return this.getListUnspent([address])
-  }
-
   async getReceivedByAddress (address) {
     address = addressToString(address)
     return this.jsonrpc('getreceivedbyaddress', address)
+  }
+
+  async importAddresses (addresses) {
+    const request = addresses.map(address => ({ scriptPubKey: { address }, timestamp: 0 }))
+    return this.jsonrpc('importmulti', JSON.stringify(request))
   }
 
   async getTransactionHex (transactionHash) {

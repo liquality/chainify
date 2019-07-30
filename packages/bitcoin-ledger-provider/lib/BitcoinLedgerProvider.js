@@ -1,9 +1,10 @@
 import { BigNumber } from 'bignumber.js'
 import bip32 from 'bip32'
 import coinselect from 'coinselect'
+import * as bitcoin from 'bitcoinjs-lib'
 
 import LedgerProvider from '@liquality/ledger-provider'
-import Bitcoin from '@ledgerhq/hw-app-btc'
+import HwAppBitcoin from '@ledgerhq/hw-app-btc'
 
 import {
   base58,
@@ -25,15 +26,42 @@ const NONCHANGE_ADDRESS = 0
 const CHANGE_ADDRESS = 1
 const NONCHANGE_OR_CHANGE_ADDRESS = 2
 
+const ADDRESS_TYPES = ['legacy', 'p2sh-segwit', 'bech32']
+const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
+  'legacy': 44,
+  'p2sh-segwit': 49,
+  'bech32': 84
+}
+
 export default class BitcoinLedgerProvider extends LedgerProvider {
-  constructor (chain = { network: networks.bitcoin, segwit: false }, numberOfBlockConfirmation = 1) {
-    super(Bitcoin, `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`, chain.network, 'BTC')
+  constructor (chain = { network: networks.bitcoin, segwit: false }, addressType = 'bech32') {
+    if (!ADDRESS_TYPES.includes(addressType)) {
+      throw new Error(`addressType must be one of ${ADDRESS_TYPES.join(',')}`)
+    }
+    super(HwAppBitcoin, `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${chain.network.coinType}'/0'/`, chain.network, 'BTC')
+    this.addressType = addressType
     this._derivationPath = `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`
     this._network = chain.network
     this._bjsnetwork = chain.network.name.replace('bitcoin_', '') // for bitcoin js
     this._segwit = chain.segwit
     this._coinType = chain.network.coinType
     this._walletPublicKeyCache = {}
+    // TODO: Remove the internal "network" type - notneeded anymore. Probably "Bitcoin-Networks" can be an alias
+    if (this._network.name === networks.bitcoin.name) {
+      this._bitcoinJsNetwork = bitcoin.networks.mainnet
+    } else if (this._network.name === networks.bitcoin_testnet.name) {
+      this._bitcoinJsNetwork = bitcoin.networks.testnet
+    } else if (this._network.name === networks.bitcoin_regtest.name) {
+      this._bitcoinJsNetwork = bitcoin.networks.regtest
+    }
+    this._importAddresses()
+  }
+
+  async _importAddresses () {
+    const change = await this.getAddresses(0, 200, true)
+    const nonChange = await this.getAddresses(0, 200, false)
+    const all = [...nonChange, ...change].map(addressToString)
+    await this.getMethod('importAddresses', all)
   }
 
   async _getWalletPublicKey (path) {
@@ -73,7 +101,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       ledgerOutputs.toString('hex'),
       lockTime,
       undefined, // SIGHASH_ALL
-      undefined, // TODO: true for segwit?
+      this._segwit, // TODO: true for segwit?
       2 // transaction version always 2
     )
 
@@ -122,7 +150,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   async getInputsForAmount (amount, numAddressPerCall = 100) {
-    let globalUtxoSet = []
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -151,39 +178,24 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         addrList = addrList.concat(nonChangeAddresses)
       }
 
-      let [ confirmedAdd, utxosMempool, utxos ] = await Promise.all([
-        this.getMethod('getAddressBalances')(addrList),
-        this.getMethod('getAddressMempool')(addrList),
-        this.getMethod('getAddressUtxos')(addrList)
-      ])
+      let utxos = await this.getMethod('getUnspentTransactions')(addrList)
+      utxos = utxos.map(utxo => {
+        const addr = addrList.find(a => a.equals(utxo.address))
+        return {
+          ...utxo,
+          value: BigNumber(utxo.amount).times(1e8).toNumber(),
+          derivationPath: addr.derivationPath
+        }
+      })
 
-      const usedAddresses = confirmedAdd.concat(utxosMempool)
-      utxos = utxos
-        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+      const usedAddresses = []
+      // const usedAddresses = confirmedAdd.concat(utxosMempool) // TODO: USED ADDRESSES
+      // utxos = utxos // TODO: Filter out utxos in the mempool that have already been used? Does the node already do this?
+      //   .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
 
-      utxosMempool = utxosMempool
-        .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
-        .filter(utxo => utxo.prevtxid === undefined)
-        .map(utxo => {
-          utxo.outputIndex = utxo.index
-          return utxo
-        })
-
-      utxos = utxos
-        .concat(utxosMempool)
-        .map(utxo => {
-          const addr = addrList.find(a => a.equals(utxo.address))
-
-          utxo.value = utxo.satoshis
-          utxo.derivationPath = addr.derivationPath
-
-          return utxo
-        })
-
-      globalUtxoSet = globalUtxoSet.concat(utxos)
       if (feePerByte === false) feePerByte = await feePerBytePromise
 
-      const { inputs, outputs, fee } = coinselect(globalUtxoSet, [{ id: 'main', value: amount }], feePerByte)
+      const { inputs, outputs, fee } = coinselect(utxos, [{ id: 'main', value: amount }], feePerByte)
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')
@@ -229,38 +241,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }))
   }
 
-  async getWalletInfo (numAddressPerCall = 10, from = {}) {
-    let addressIndex = from.index || 0
-    let unusedAddress = false
-    let usedAddresses = []
-    let balance = 0
-
-    while (!unusedAddress) {
-      const addresses = await this.getAddresses(addressIndex, numAddressPerCall)
-      const addressDeltas = await this.getMethod('getAddressDeltas')(addresses)
-
-      addressDeltas.forEach((delta) => {
-        const addressIndex = addresses.findIndex(address => address.equals(delta.address))
-        if (addresses[addressIndex].balance === undefined) { addresses[addressIndex].balance = 0 }
-        addresses[addressIndex].balance += delta.satoshis
-        balance += delta.satoshis
-      })
-
-      addresses.forEach((address) => {
-        if (!unusedAddress) {
-          if (address.balance === undefined) {
-            unusedAddress = addressToString(address)
-          } else {
-            usedAddresses.push(addressToString(address))
-          }
-        }
-      })
-
-      addressIndex += numAddressPerCall
-    }
-    return { balance, unusedAddress, usedAddresses }
-  }
-
   async sendTransaction (to, value, data, from) {
     const app = await this.getApp()
 
@@ -283,9 +263,25 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       ledgerInputs,
       paths,
       unusedAddress.derivationPath,
-      serializedOutputs
+      serializedOutputs,
+      undefined,
+      undefined,
+      this._segwit
     )
+
     return this.getMethod('sendRawTransaction')(signedTransaction)
+  }
+
+  getAddressFromPublicKey (publicKey) {
+    if (this.addressType === 'legacy') {
+      return bitcoin.payments.p2pkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }).address
+    } else if (this.addressType === 'p2sh-segwit') {
+      return bitcoin.payments.p2sh({
+        redeem: bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }),
+        network: this._bitcoinJsNetwork }).address
+    } else if (this.addressType === 'bech32') {
+      return bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }).address
+    }
   }
 
   async getLedgerAddresses (startingIndex, numAddresses, change = false) {
@@ -304,7 +300,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const subPath = changeVal + '/' + currentIndex
       const publicKey = node.derivePath(subPath).publicKey
-      const address = pubKeyToAddress(publicKey, this._network.name, 'pubKeyHash')
+      const address = this.getAddressFromPublicKey(publicKey)
+      console.log(address)
       const path = this._baseDerivationPath + subPath
 
       addresses.push(new Address({
@@ -355,11 +352,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
         addrList = addrList.concat(nonChangeAddresses)
       }
 
-      const [ confirmedAdd, utxosMempool ] = await Promise.all([
-        this.getMethod('getAddressBalances')(addrList),
-        this.getMethod('getAddressMempool')(addrList)
-      ])
-      const totalUsedAddresses = confirmedAdd.concat(utxosMempool)
+      let totalUsedAddresses = await this.getMethod('getUnspentTransactions')(addrList)
 
       for (let address of addrList) {
         const isUsed = totalUsedAddresses.find(a => address.equals(a))

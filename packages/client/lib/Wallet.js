@@ -60,8 +60,4 @@ export default class Wallet {
   async getWalletNetworkId () {
     return this.client.getMethod('getWalletNetworkId')()
   }
-
-  async getWalletInfo () {
-    return this.client.getMethod('getWalletInfo')()
-  }
 }
