@@ -5,9 +5,9 @@ import {
   hash160,
   sha256,
   base58
-} from '@liquality/crypto'
+} from '@mblackmblack/crypto'
 
-import networks from '@liquality/bitcoin-networks'
+import networks from '@mblackmblack/bitcoin-networks'
 
 import { version } from '../package.json'
 

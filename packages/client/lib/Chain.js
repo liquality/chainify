@@ -2,8 +2,8 @@ import { find, isArray, isBoolean, isNumber, isString } from 'lodash'
 import Ajv from 'ajv'
 import { BigNumber } from 'bignumber.js'
 
-import { InvalidProviderResponseError } from '@liquality/errors'
-import { Block, Transaction } from '@liquality/schema'
+import { InvalidProviderResponseError } from '@mblackmblack/errors'
+import { Block, Transaction } from '@mblackmblack/schema'
 
 export default class Chain {
   /**

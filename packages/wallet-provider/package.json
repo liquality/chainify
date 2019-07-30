@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/wallet-provider",
+  "name": "@mblackmblack/wallet-provider",
   "umdName": "WalletProvider",
   "umdExport": "default",
   "version": "0.2.11",
@@ -19,8 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/errors": "^0.2.11",
-    "@liquality/provider": "^0.2.11",
+    "@mblackmblack/errors": "^0.2.11",
+    "@mblackmblack/provider": "^0.2.11",
     "lodash": "^4.17.13"
   },
   "engines": {

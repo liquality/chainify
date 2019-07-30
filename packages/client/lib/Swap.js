@@ -1,6 +1,6 @@
 import { isNumber, isString } from 'lodash'
 
-import { sha256 } from '@liquality/crypto'
+import { sha256 } from '@mblackmblack/crypto'
 
 export default class Swap {
   constructor (client) {

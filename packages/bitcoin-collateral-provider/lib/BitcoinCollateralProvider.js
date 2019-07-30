@@ -1,17 +1,17 @@
-import Provider from '@liquality/provider'
-import networks from '@liquality/bitcoin-networks'
+import Provider from '@mblackmblack/provider'
+import networks from '@mblackmblack/bitcoin-networks'
 
 import {
   addressToPubKeyHash,
   pubKeyToAddress,
   reverseBuffer,
   scriptNumEncode
-} from '@liquality/bitcoin-utils'
+} from '@mblackmblack/bitcoin-utils'
 import {
   hash160,
   sha256,
   padHexStart
-} from '@liquality/crypto'
+} from '@mblackmblack/crypto'
 
 import { version } from '../package.json'
 

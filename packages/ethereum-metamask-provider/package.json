@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/ethereum-metamask-provider",
+  "name": "@mblackmblack/ethereum-metamask-provider",
   "umdName": "EthereumMetaMaskProvider",
   "umdExport": "default",
   "version": "0.2.11",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/errors": "^0.2.11",
-    "@liquality/ethereum-networks": "^0.2.11",
-    "@liquality/ethereum-utils": "^0.2.11",
-    "@liquality/metamask-provider": "^0.2.11",
-    "@liquality/utils": "^0.2.11",
+    "@mblackmblack/errors": "^0.2.11",
+    "@mblackmblack/ethereum-networks": "^0.2.11",
+    "@mblackmblack/ethereum-utils": "^0.2.11",
+    "@mblackmblack/metamask-provider": "^0.2.11",
+    "@mblackmblack/utils": "^0.2.11",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.13"
   },

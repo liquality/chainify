@@ -1,8 +1,8 @@
 import { isArray, flatten } from 'lodash'
 import BigNumber from 'bignumber.js'
 
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
-import { Address, addressToString } from '@liquality/utils'
+import JsonRpcProvider from '@mblackmblack/jsonrpc-provider'
+import { Address, addressToString } from '@mblackmblack/utils'
 
 import { version } from '../package.json'
 

@@ -1,8 +1,8 @@
-import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
-import { base58 } from '@liquality/crypto'
-import { addressToPubKeyHash } from '@liquality/bitcoin-utils'
-import networks from '@liquality/bitcoin-networks'
-import { Address, addressToString } from '@liquality/utils'
+import BitcoinRpcProvider from '@mblackmblack/bitcoin-rpc-provider'
+import { base58 } from '@mblackmblack/crypto'
+import { addressToPubKeyHash } from '@mblackmblack/bitcoin-utils'
+import networks from '@mblackmblack/bitcoin-networks'
+import { Address, addressToString } from '@mblackmblack/utils'
 
 import { version } from '../package.json'
 

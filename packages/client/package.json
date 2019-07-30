@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/client",
+  "name": "@mblackmblack/client",
   "umdName": "Client",
   "umdExport": "default",
   "version": "0.2.11",
@@ -19,9 +19,9 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/crypto": "^0.2.11",
-    "@liquality/errors": "^0.2.11",
-    "@liquality/schema": "^0.2.11",
+    "@mblackmblack/crypto": "^0.2.11",
+    "@mblackmblack/errors": "^0.2.11",
+    "@mblackmblack/schema": "^0.2.11",
     "ajv": "^6.10.0",
     "bignumber.js": "^8.1.1",
     "debug": "^4.1.1",

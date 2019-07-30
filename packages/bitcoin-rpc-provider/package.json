@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/bitcoin-rpc-provider",
+  "name": "@mblackmblack/bitcoin-rpc-provider",
   "umdName": "BitcoinRpcProvider",
   "umdExport": "default",
   "version": "0.2.11",
@@ -19,8 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/jsonrpc-provider": "^0.2.11",
-    "@liquality/utils": "^0.2.11",
+    "@mblackmblack/jsonrpc-provider": "^0.2.11",
+    "@mblackmblack/utils": "^0.2.11",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.13"
   },

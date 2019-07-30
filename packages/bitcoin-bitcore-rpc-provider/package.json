@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/bitcoin-bitcore-rpc-provider",
+  "name": "@mblackmblack/bitcoin-bitcore-rpc-provider",
   "umdName": "BitcoinBitcoreRpcProvider",
   "umdExport": "default",
   "version": "0.2.11",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.2.11",
-    "@liquality/bitcoin-rpc-provider": "^0.2.11",
-    "@liquality/bitcoin-utils": "^0.2.11",
-    "@liquality/crypto": "^0.2.11",
-    "@liquality/utils": "^0.2.11"
+    "@mblackmblack/bitcoin-networks": "^0.2.11",
+    "@mblackmblack/bitcoin-rpc-provider": "^0.2.11",
+    "@mblackmblack/bitcoin-utils": "^0.2.11",
+    "@mblackmblack/crypto": "^0.2.11",
+    "@mblackmblack/utils": "^0.2.11"
   },
   "engines": {
     "node": "~8.12.0"

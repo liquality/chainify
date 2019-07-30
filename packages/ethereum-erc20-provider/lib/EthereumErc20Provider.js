@@ -1,13 +1,13 @@
 import { isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
-import Provider from '@liquality/provider'
-import { padHexStart } from '@liquality/crypto'
+import Provider from '@mblackmblack/provider'
+import { padHexStart } from '@mblackmblack/crypto'
 import {
   ensure0x,
   remove0x
-} from '@liquality/ethereum-utils'
-import { addressToString } from '@liquality/utils'
+} from '@mblackmblack/ethereum-utils'
+import { addressToString } from '@mblackmblack/utils'
 
 import { version } from '../package.json'
 

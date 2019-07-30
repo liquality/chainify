@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/bitcoin-swap-provider",
+  "name": "@mblackmblack/bitcoin-swap-provider",
   "umdName": "BitcoinSwapProvider",
   "umdExport": "default",
   "version": "0.2.11",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.2.11",
-    "@liquality/bitcoin-utils": "^0.2.11",
-    "@liquality/crypto": "^0.2.11",
-    "@liquality/provider": "^0.2.11",
-    "@liquality/utils": "^0.2.11",
+    "@mblackmblack/bitcoin-networks": "^0.2.11",
+    "@mblackmblack/bitcoin-utils": "^0.2.11",
+    "@mblackmblack/crypto": "^0.2.11",
+    "@mblackmblack/provider": "^0.2.11",
+    "@mblackmblack/utils": "^0.2.11",
     "bignumber.js": "^8.1.1"
   },
   "engines": {

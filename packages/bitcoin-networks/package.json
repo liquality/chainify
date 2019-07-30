@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/bitcoin-networks",
+  "name": "@mblackmblack/bitcoin-networks",
   "umdName": "BitcoinNetworks",
   "umdExport": "default",
   "version": "0.2.11",

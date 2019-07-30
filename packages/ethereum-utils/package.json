@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/ethereum-utils",
+  "name": "@mblackmblack/ethereum-utils",
   "umdName": "EthereumUtils",
   "version": "0.2.11",
   "description": "",
@@ -18,8 +18,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/crypto": "^0.2.11",
-    "@liquality/schema": "^0.2.11",
+    "@mblackmblack/crypto": "^0.2.11",
+    "@mblackmblack/schema": "^0.2.11",
     "eip55": "^1.0.3"
   },
   "engines": {
