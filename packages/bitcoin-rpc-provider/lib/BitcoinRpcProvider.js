@@ -46,6 +46,17 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return this.jsonrpc('sendtoaddress', to, value)
   }
 
+  async sendBatchTransaction (transactions) {
+    let outputs = {}
+    for (const tx of transactions) {
+      outputs[addressToString(tx.to)] = BigNumber(tx.value).dividedBy(1e8).toNumber()
+    }
+    const rawTxOutputs = await this.createRawTransaction([], outputs)
+    const rawTxFunded = await this.fundRawTransaction(rawTxOutputs)
+    const rawTxSigned = await this.signRawTransaction(rawTxFunded.hex)
+    return this.sendRawTransaction(rawTxSigned.hex)
+  }
+
   async dumpPrivKey (address) {
     address = addressToString(address)
     return this.jsonrpc('dumpprivkey', address)
@@ -57,6 +68,10 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
 
   async createRawTransaction (transactions, outputs) {
     return this.jsonrpc('createrawtransaction', transactions, outputs)
+  }
+
+  async fundRawTransaction (hexstring) {
+    return this.jsonrpc('fundrawtransaction', hexstring)
   }
 
   async isAddressUsed (address) {

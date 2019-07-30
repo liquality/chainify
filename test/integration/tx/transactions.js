@@ -56,4 +56,8 @@ describe('Send Batch Transactions', function () {
   describe('Bitcoin - Ledger', () => {
     testBatchTransaction(chains.bitcoinWithLedger)
   })
+
+  describe('Bitcoin - Ledger', () => {
+    testBatchTransaction(chains.bitcoinWithNode)
+  })
 })
