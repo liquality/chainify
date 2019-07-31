@@ -77,7 +77,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
 
   async importAddresses (addresses) {
     const request = addresses.map(address => ({ scriptPubKey: { address }, timestamp: 0 }))
-    return this.jsonrpc('importmulti', JSON.stringify(request))
+    return this.jsonrpc('importmulti', request)
   }
 
   async getTransactionHex (transactionHash) {

@@ -7,12 +7,9 @@ import LedgerProvider from '@liquality/ledger-provider'
 import HwAppBitcoin from '@ledgerhq/hw-app-btc'
 
 import {
-  base58,
   padHexStart
 } from '@liquality/crypto'
 import {
-  pubKeyToAddress,
-  addressToPubKeyHash,
   compressPubKey,
   getAddressNetwork
 } from '@liquality/bitcoin-utils'
@@ -54,14 +51,15 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     } else if (this._network.name === networks.bitcoin_regtest.name) {
       this._bitcoinJsNetwork = bitcoin.networks.regtest
     }
-    this._importAddresses()
+    // this._importAddresses()
   }
 
   async _importAddresses () {
     const change = await this.getAddresses(0, 200, true)
     const nonChange = await this.getAddresses(0, 200, false)
+    console.log(change.slice(0, 10).map(addressToString))
     const all = [...nonChange, ...change].map(addressToString)
-    await this.getMethod('importAddresses', all)
+    await this.getMethod('importAddresses')(all)
   }
 
   async _getWalletPublicKey (path) {
@@ -101,8 +99,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       ledgerOutputs.toString('hex'),
       lockTime,
       undefined, // SIGHASH_ALL
-      this._segwit, // TODO: true for segwit?
-      2 // transaction version always 2
+      this._segwit
     )
 
     // TODO: sig for witness
@@ -121,32 +118,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     hexAmount = padHexStart(hexAmount, 16)
     const valueBuffer = Buffer.from(hexAmount, 'hex')
     return valueBuffer.reverse()
-  }
-
-  createScript (address) {
-    address = addressToString(address)
-
-    const type = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
-    const pubKeyHash = addressToPubKeyHash(address)
-    if (type === this._network.pubKeyHash) {
-      return [
-        '76', // OP_DUP
-        'a9', // OP_HASH160
-        '14', // data size to be pushed
-        pubKeyHash, // <PUB_KEY_HASH>
-        '88', // OP_EQUALVERIFY
-        'ac' // OP_CHECKSIG
-      ].join('')
-    } else if (type === this._network.scriptHash) {
-      return [
-        'a9', // OP_HASH160
-        '14', // data size to be pushed
-        pubKeyHash, // <PUB_KEY_HASH>
-        '87' // OP_EQUAL
-      ].join('')
-    } else {
-      throw new Error('Not a valid address:', address)
-    }
   }
 
   async getInputsForAmount (amount, numAddressPerCall = 100) {
@@ -235,9 +206,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return Promise.all(unspentOutputs.map(async utxo => {
       const hex = await this.getMethod('getTransactionHex')(utxo.txid)
       const tx = app.splitTransaction(hex, true)
-      const vout = ('vout' in utxo) ? utxo.vout : utxo.outputIndex
-
-      return [ tx, vout ]
+      return [ tx, utxo.vout ]
     }))
   }
 
@@ -245,20 +214,25 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const app = await this.getApp()
 
     const unusedAddress = await this.getUnusedAddress(true)
+    console.log('CHANGE ADDRESS', unusedAddress)
     const { inputs, change } = await this.getInputsForAmount(value)
-
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
-    const sendScript = this.createScript(to)
-    const outputs = [{ amount: this.getAmountBuffer(value), script: Buffer.from(sendScript, 'hex') }]
+    const outputs = [{
+      amount: this.getAmountBuffer(value),
+      script: bitcoin.address.toOutputScript(to, this._bitcoinJsNetwork)
+    }]
 
     if (change) {
-      const changeScript = this.createScript(unusedAddress)
-      outputs.push({ amount: this.getAmountBuffer(change), script: Buffer.from(changeScript, 'hex') })
+      outputs.push({
+        amount: this.getAmountBuffer(change),
+        script: bitcoin.address.toOutputScript(addressToString(unusedAddress), this._bitcoinJsNetwork)
+      })
     }
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
+
     const signedTransaction = await app.createPaymentTransactionNew(
       ledgerInputs,
       paths,
@@ -266,7 +240,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       serializedOutputs,
       undefined,
       undefined,
-      this._segwit
+      this._segwit,
+      undefined,
+      this.addressType === 'bech32' ? ['bech32'] : undefined
     )
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
@@ -301,7 +277,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       const subPath = changeVal + '/' + currentIndex
       const publicKey = node.derivePath(subPath).publicKey
       const address = this.getAddressFromPublicKey(publicKey)
-      console.log(address)
       const path = this._baseDerivationPath + subPath
 
       addresses.push(new Address({
