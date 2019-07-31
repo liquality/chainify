@@ -18,8 +18,6 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-bitcoinjs-lib-swap-provider": "^0.2.11",
-    "@liquality/bitcoin-bitcore-rpc-provider": "^0.2.11",
     "@liquality/bitcoin-collateral-provider": "^0.2.11",
     "@liquality/bitcoin-ledger-provider": "^0.2.11",
     "@liquality/bitcoin-networks": "^0.2.11",
