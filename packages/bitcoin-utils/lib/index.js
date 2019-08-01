@@ -126,9 +126,16 @@ function toHexInt (number) {
  * @return {Network}
  */
 function getAddressNetwork (address) {
-  const prefix = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
-  const networkKey = findKey(networks,
-    network => [network.pubKeyHash, network.scriptHash].includes(prefix))
+  // TODO: can this be simplified using just bitcoinjs-lib??
+  let networkKey
+  // bech32
+  networkKey = findKey(networks, network => address.startsWith(network.bech32))
+  // base58
+  if (!networkKey) {
+    const prefix = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
+    networkKey = findKey(networks,
+      network => [network.pubKeyHash, network.scriptHash].includes(prefix))
+  }
   return networks[networkKey]
 }
 

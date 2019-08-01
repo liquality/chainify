@@ -23,24 +23,23 @@ const NONCHANGE_ADDRESS = 0
 const CHANGE_ADDRESS = 1
 const NONCHANGE_OR_CHANGE_ADDRESS = 2
 
-const ADDRESS_TYPES = ['legacy', 'p2sh-segwit', 'bech32']
+const ADDRESS_TYPES = ['legacy', 'p2sh', 'bech32']
 const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
   'legacy': 44,
-  'p2sh-segwit': 49,
+  'p2sh': 49,
   'bech32': 84
 }
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
-  constructor (chain = { network: networks.bitcoin, segwit: false }, addressType = 'bech32') {
+  constructor (chain = { network: networks.bitcoin }, addressType = 'bech32') {
     if (!ADDRESS_TYPES.includes(addressType)) {
       throw new Error(`addressType must be one of ${ADDRESS_TYPES.join(',')}`)
     }
-    super(HwAppBitcoin, `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${chain.network.coinType}'/0'/`, chain.network, 'BTC')
+    const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${chain.network.coinType}'/0'/`
+    super(HwAppBitcoin, derivationPath, chain.network, 'BTC')
     this.addressType = addressType
-    this._derivationPath = `${chain.segwit ? '49' : '44'}'/${chain.network.coinType}'/0'/`
+    this._derivationPath = derivationPath
     this._network = chain.network
-    this._bjsnetwork = chain.network.name.replace('bitcoin_', '') // for bitcoin js
-    this._segwit = chain.segwit
     this._coinType = chain.network.coinType
     this._walletPublicKeyCache = {}
     // TODO: Remove the internal "network" type - notneeded anymore. Probably "Bitcoin-Networks" can be an alias
@@ -51,30 +50,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     } else if (this._network.name === networks.bitcoin_regtest.name) {
       this._bitcoinJsNetwork = bitcoin.networks.regtest
     }
-    // this._importAddresses()
-  }
-
-  async _importAddresses () {
-    const change = await this.getAddresses(0, 200, true)
-    const nonChange = await this.getAddresses(0, 200, false)
-    console.log(change.slice(0, 10).map(addressToString))
-    const all = [...nonChange, ...change].map(addressToString)
-    await this.getMethod('importAddresses')(all)
-  }
-
-  async _getWalletPublicKey (path) {
-    const app = await this.getApp()
-    return app.getWalletPublicKey(path, undefined, this._segwit)
-  }
-
-  async getWalletPublicKey (path) {
-    if (path in this._walletPublicKeyCache) {
-      return this._walletPublicKeyCache[path]
-    }
-
-    const walletPublicKey = await this._getWalletPublicKey(path)
-    this._walletPublicKeyCache[path] = walletPublicKey
-    return walletPublicKey
+    this._importAddresses()
   }
 
   async signMessage (message, from) {
@@ -84,11 +60,50 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(address.derivationPath, hex)
   }
 
+  async sendTransaction (to, value, data, from) {
+    const app = await this.getApp()
+
+    const unusedAddress = await this.getUnusedAddress(true)
+    const { inputs, change } = await this.getInputsForAmount(value)
+    const ledgerInputs = await this.getLedgerInputs(inputs)
+    const paths = inputs.map(utxo => utxo.derivationPath)
+
+    const outputs = [{
+      amount: this.getAmountBuffer(value),
+      script: bitcoin.address.toOutputScript(to, this._bitcoinJsNetwork)
+    }]
+
+    if (change) {
+      outputs.push({
+        amount: this.getAmountBuffer(change),
+        script: bitcoin.address.toOutputScript(addressToString(unusedAddress), this._bitcoinJsNetwork)
+      })
+    }
+
+    const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
+
+    const signedTransaction = await app.createPaymentTransactionNew(
+      ledgerInputs,
+      paths,
+      unusedAddress.derivationPath,
+      serializedOutputs,
+      undefined,
+      undefined,
+      ['bech32', 'p2sh'].includes(this.addressType),
+      undefined,
+      this.addressType === 'bech32' ? ['bech32'] : undefined
+    )
+
+    return this.getMethod('sendRawTransaction')(signedTransaction)
+  }
+
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
     const app = await this.getApp()
     const walletAddress = await this.getWalletAddress(address)
 
-    tx.setInputScript(vout.n, outputScript)
+    if (!segwit) {
+      tx.setInputScript(vout.n, outputScript) // TODO: is this ok for p2sh-segwit??
+    }
 
     const ledgerInputTx = await app.splitTransaction(inputTxHex, true)
     const ledgerTx = await app.splitTransaction(tx.toHex(), true)
@@ -99,16 +114,12 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       ledgerOutputs.toString('hex'),
       lockTime,
       undefined, // SIGHASH_ALL
-      this._segwit
+      segwit,
+      2
     )
 
-    // TODO: sig for witness
-    // if (needsWitness) {
-    //   sigHash = tx.hashForWitnessV0(0, swapPaymentVariants.p2wsh.redeem.output, swapVout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
-    // } else {
-    //   sigHash = tx.hashForSignature(0, paymentVariant.redeem.output, bitcoin.Transaction.SIGHASH_ALL)
-    // }
-    const sig = Buffer.from(ledgerSig[0] + '01', 'hex')
+    const finalSig = segwit ? ledgerSig[0] : ledgerSig[0] + '01' // Is this a ledger bug? Why non segwit signs need the sighash appended?
+    const sig = Buffer.from(finalSig, 'hex')
 
     return sig
   }
@@ -210,44 +221,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }))
   }
 
-  async sendTransaction (to, value, data, from) {
-    const app = await this.getApp()
-
-    const unusedAddress = await this.getUnusedAddress(true)
-    console.log('CHANGE ADDRESS', unusedAddress)
-    const { inputs, change } = await this.getInputsForAmount(value)
-    const ledgerInputs = await this.getLedgerInputs(inputs)
-    const paths = inputs.map(utxo => utxo.derivationPath)
-
-    const outputs = [{
-      amount: this.getAmountBuffer(value),
-      script: bitcoin.address.toOutputScript(to, this._bitcoinJsNetwork)
-    }]
-
-    if (change) {
-      outputs.push({
-        amount: this.getAmountBuffer(change),
-        script: bitcoin.address.toOutputScript(addressToString(unusedAddress), this._bitcoinJsNetwork)
-      })
-    }
-
-    const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
-
-    const signedTransaction = await app.createPaymentTransactionNew(
-      ledgerInputs,
-      paths,
-      unusedAddress.derivationPath,
-      serializedOutputs,
-      undefined,
-      undefined,
-      this._segwit,
-      undefined,
-      this.addressType === 'bech32' ? ['bech32'] : undefined
-    )
-
-    return this.getMethod('sendRawTransaction')(signedTransaction)
-  }
-
   getAddressFromPublicKey (publicKey) {
     if (this.addressType === 'legacy') {
       return bitcoin.payments.p2pkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }).address
@@ -258,6 +231,29 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     } else if (this.addressType === 'bech32') {
       return bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }).address
     }
+  }
+
+  async _importAddresses () {
+    const change = await this.getAddresses(0, 200, true)
+    const nonChange = await this.getAddresses(0, 200, false)
+    console.log(change.slice(0, 10).map(addressToString))
+    const all = [...nonChange, ...change].map(addressToString)
+    await this.getMethod('importAddresses')(all)
+  }
+
+  async _getWalletPublicKey (path) {
+    const app = await this.getApp()
+    return app.getWalletPublicKey(path, { format: this.addressType })
+  }
+
+  async getWalletPublicKey (path) {
+    if (path in this._walletPublicKeyCache) {
+      return this._walletPublicKeyCache[path]
+    }
+
+    const walletPublicKey = await this._getWalletPublicKey(path)
+    this._walletPublicKeyCache[path] = walletPublicKey
+    return walletPublicKey
   }
 
   async getLedgerAddresses (startingIndex, numAddresses, change = false) {

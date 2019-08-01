@@ -3,6 +3,7 @@ import { version } from '../package.json'
 export default {
   bitcoin: {
     name: 'bitcoin',
+    bech32: 'bc',
     pubKeyHash: '00',
     scriptHash: '05',
     coinType: '0',
@@ -16,6 +17,7 @@ export default {
   },
   bitcoin_testnet: {
     name: 'bitcoin_testnet',
+    bech32: 'tb',
     pubKeyHash: '6F',
     scriptHash: 'C4',
     coinType: '1',
@@ -29,6 +31,7 @@ export default {
   },
   bitcoin_regtest: {
     name: 'bitcoin_regtest',
+    bech32: 'bcrt',
     messagePrefix: '\x18Bitcoin Signed Message:\n',
     pubKeyHash: '6F',
     scriptHash: 'C4',
