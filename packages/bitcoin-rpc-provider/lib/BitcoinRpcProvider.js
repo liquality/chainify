@@ -57,7 +57,6 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     }
 
     const _utxos = await this.getUnspentTransactions(addresses)
-    console.log(_utxos)
     const utxos = flatten(_utxos)
 
     return utxos

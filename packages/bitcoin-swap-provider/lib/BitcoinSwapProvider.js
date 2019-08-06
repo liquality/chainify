@@ -184,8 +184,6 @@ export default class BitcoinSwapProvider extends Provider {
       tx.setInputScript(0, paymentWithInput.input)
     }
 
-    console.log(tx.toHex())
-
     return this.getMethod('sendRawTransaction')(tx.toHex())
   }
 

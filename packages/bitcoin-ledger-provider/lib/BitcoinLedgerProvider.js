@@ -50,7 +50,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     } else if (this._network.name === networks.bitcoin_regtest.name) {
       this._bitcoinJsNetwork = bitcoin.networks.regtest
     }
-    this._importAddresses()
+    // this._importAddresses()
   }
 
   async signMessage (message, from) {
@@ -236,7 +236,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   async _importAddresses () {
     const change = await this.getAddresses(0, 200, true)
     const nonChange = await this.getAddresses(0, 200, false)
-    console.log(change.slice(0, 10).map(addressToString))
     const all = [...nonChange, ...change].map(addressToString)
     await this.getMethod('importAddresses')(all)
   }
