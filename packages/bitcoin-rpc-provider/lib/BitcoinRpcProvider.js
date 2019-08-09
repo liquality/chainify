@@ -87,7 +87,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return this.jsonrpc('generate', numberOfBlocks)
   }
 
-  async getBlockByHash (blockHash, includeTx) {
+  async getBlockByHash (blockHash, includeTx = false) {
     const data = await this.jsonrpc('getblock', blockHash)
     const {
       hash,
@@ -128,7 +128,12 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionByHash (transactionHash) {
-    const tx = await this.getRawTransactionByHash(transactionHash, true)
+    return this.getRawTransactionByHash(transactionHash, true)
+  }
+
+  async getRawTransactionByHash (transactionHash, decode = false) {
+    const tx = await this.jsonrpc('getrawtransaction', transactionHash, decode ? 1 : 0)
+    if (!decode) return tx
     const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value).times(1e8)), BigNumber(0))
     const result = {
       hash: tx.txid,
@@ -147,10 +152,6 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     }
 
     return result
-  }
-
-  async getRawTransactionByHash (transactionHash, decode = false) {
-    return this.jsonrpc('getrawtransaction', transactionHash, decode ? 1 : 0)
   }
 
   async sendRawTransaction (rawTransaction) {

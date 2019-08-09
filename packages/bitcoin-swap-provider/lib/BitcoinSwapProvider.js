@@ -120,13 +120,13 @@ export default class BitcoinSwapProvider extends Provider {
     const swapPaymentVariants = this.getSwapPaymentVariants(swapOutput)
 
     const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
-    const initiationTx = await this.getMethod('decodeRawTransaction')(initiationTxRaw)
+    const initiationTx = await this.getMethod('getRawTransactionByHash')(initiationTxHash, true)
 
     let swapVout
     let paymentVariantName
     let paymentVariant
-    for (const voutIndex in initiationTx._raw.data.vout) {
-      const vout = initiationTx._raw.data.vout[voutIndex]
+    for (const voutIndex in initiationTx._raw.vout) {
+      const vout = initiationTx._raw.vout[voutIndex]
       const paymentVariantEntry = Object.entries(swapPaymentVariants).find(([, payment]) => payment.output.toString('hex') === vout.scriptPubKey.hex)
       if (paymentVariantEntry) {
         paymentVariantName = paymentVariantEntry[0]
