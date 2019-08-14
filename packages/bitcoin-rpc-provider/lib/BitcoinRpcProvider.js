@@ -41,10 +41,6 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return this.jsonrpc('sendtoaddress', to, value)
   }
 
-  async createRawTransaction (transactions, outputs) {
-    return this.jsonrpc('createrawtransaction', transactions, outputs)
-  }
-
   async isAddressUsed (address) {
     const amountReceived = await this.getReceivedByAddress(address)
 
