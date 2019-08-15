@@ -53,7 +53,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
       .reduce((acc, utxo) => acc.plus(utxo.satoshis), new BigNumber(0))
   }
 
-  async _getUnspentTransaction (address) {
+  async _getUnspentTransactions (address) {
     const response = await this._axios.get(`/address/${addressToString(address)}/utxo`)
     return response.data.map(utxo => ({
       ...utxo,
@@ -64,7 +64,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async getUnspentTransactions (addresses) {
-    const utxoSets = await Promise.all(addresses.map(addr => this._getUnspentTransaction(addr)))
+    const utxoSets = await Promise.all(addresses.map(addr => this._getUnspentTransactions(addr)))
     const utxos = flatten(utxoSets)
     return utxos
   }
@@ -76,10 +76,11 @@ export default class BitcoinEsploraApiProvider extends Provider {
 
   async getTransaction (transactionHash) {
     const response = await this._axios.get(`/tx/${transactionHash}`)
-    return this.formatTransaction(response.data)
+    const currentHeight = await this.getBlockHeight()
+    return this.formatTransaction(response.data, currentHeight)
   }
 
-  formatTransaction (tx) {
+  formatTransaction (tx, currentHeight) {
     const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value)), BigNumber(0))
 
     const rawVin = tx.vin.map(vin => ({
@@ -111,24 +112,27 @@ export default class BitcoinEsploraApiProvider extends Provider {
       vout: rawVout
     }
 
+    const confirmations = tx.status.confirmed ? currentHeight - tx.status.block_height + 1 : 0
+
     return {
       hash: tx.txid,
       value: value.toNumber(),
       _raw: rawTx,
       blockHash: tx.status.block_hash,
       blockNumber: tx.status.block_height,
-      confirmations: 0 // TODO: calculate confirmations effeciently
+      confirmations
     }
   }
 
   async getBlockTransactions (blockHash) {
     let transactions = []
+    const currentHeight = await this.getBlockHeight()
     for (let i = 0; ;i += 25) {
       try {
         const response = await this._axios.get(`/block/${blockHash}/txs/${i}`)
         const data = response.data
         if (isArray(data)) {
-          transactions = transactions.concat(data.map(this.formatTransaction))
+          transactions = transactions.concat(data.map(tx => this.formatTransaction(tx, currentHeight)))
         }
       } catch (e) {
         if (e.response.data === 'start index out of range') {

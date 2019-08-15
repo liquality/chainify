@@ -84,7 +84,7 @@ describe('Bitcoin Esplora Api Provider', () => {
         },
         'blockHash': '000000000000015df12c1a2656f4284edc7c8130d68112d5e522b5d22f79b2b0',
         'blockNumber': 1574469,
-        'confirmations': 0
+        'confirmations': 204
       })
       //   expect(tx).to.deep.equal({
       //     'hash': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',

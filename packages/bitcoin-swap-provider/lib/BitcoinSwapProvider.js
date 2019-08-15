@@ -142,6 +142,10 @@ export default class BitcoinSwapProvider extends Provider {
     swapVout.txid = initiationTxHash
     swapVout.vSat = swapVout.value * 1e8
 
+    if (swapVout.vSat - txfee < 0) {
+      throw new Error('Transaction amount does not cover fee.')
+    }
+
     const txb = new bitcoin.TransactionBuilder(network)
 
     if (!isRedeem) txb.setLockTime(expiration)
