@@ -153,6 +153,29 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   async sendRawTransaction (rawTransaction) {
     return this.jsonrpc('sendrawtransaction', rawTransaction)
   }
+
+  async sendBatchTransaction (transactions) {
+    let outputs = {}
+    for (const tx of transactions) {
+      outputs[addressToString(tx.to)] = BigNumber(tx.value).dividedBy(1e8).toNumber()
+    }
+    const rawTxOutputs = await this.createRawTransaction([], outputs)
+    const rawTxFunded = await this.fundRawTransaction(rawTxOutputs)
+    const rawTxSigned = await this.signRawTransaction(rawTxFunded.hex)
+    return this.sendRawTransaction(rawTxSigned.hex)
+  }
+
+  async signRawTransaction (hexstring, prevtxs, privatekeys, sighashtype) {
+    return this.jsonrpc('signrawtransaction', hexstring, prevtxs, privatekeys)
+  }
+
+  async createRawTransaction (transactions, outputs) {
+    return this.jsonrpc('createrawtransaction', transactions, outputs)
+  }
+
+  async fundRawTransaction (hexstring) {
+    return this.jsonrpc('fundrawtransaction', hexstring)
+  }
 }
 
 BitcoinRpcProvider.version = version

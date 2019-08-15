@@ -2,8 +2,8 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
-import { Client, Provider, providers, crypto } from '../../../packages/bundle/lib'
-import { sleep } from '../../../packages/utils'
+import { Client, Provider, providers, crypto } from '../../packages/bundle/lib'
+import { sleep } from '../../packages/utils'
 import { findLast } from 'lodash'
 import config from './config'
 

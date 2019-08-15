@@ -202,6 +202,15 @@ export default class Chain {
   }
 
   /**
+   * Create, sign & broad a transaction with multiple outputs.
+   * @param {string[]} transactions - to, value, data, from.
+   * @return {Promise<string>} Resolves with a signed transaction.
+   */
+  async sendBatchTransaction (transactions) {
+    return this.client.getMethod('sendBatchTransaction')(transactions)
+  }
+
+  /**
    * Broadcast a signed transaction to the network.
    * @param {!string} rawTransaction - A raw transaction usually in the form of a
    *  hexadecimal string that represents the serialized transaction.

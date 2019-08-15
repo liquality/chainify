@@ -2,8 +2,8 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.3",
     "@babel/register": "^7.4.0",
@@ -55,6 +55,7 @@
     "bootstrap": "lerna bootstrap --force-local",
     "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
     "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha",
+    "test:tx": "cross-env NODE_ENV=test nyc mocha test/integration/tx $npm_package_options_mocha",
     "watch": "cross-env WEBPACK_WATCH=true lerna run build --parallel",
     "build:dev:node": "lerna run build:node --stream",
     "build:dev:browser": "lerna run build:browser --stream",
