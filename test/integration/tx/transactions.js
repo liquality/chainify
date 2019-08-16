@@ -26,8 +26,11 @@ function testTransaction (chain) {
 
 function testBatchTransaction (chain) {
   it('Sent value to 2 addresses', async () => {
-    const addr1 = 'n2LYtVFhTMy7S924ff666uRF1qEvGb9nF6'
-    const addr2 = 'n2gEtQHgtKoxUYyXzkzmVdbFPB3kt6Ea6R'
+    const addr1 = (await chain.client.wallet.getUnusedAddress()).address
+    let addr2 = (await chain.client.wallet.getUnusedAddress()).address
+    if (addr2 === addr1) { // Workaround for allowing test to work for ledger
+      addr2 = (await chain.client.wallet.getAddresses())[0].address
+    }
     const value = config[chain.name].value
 
     const bal1Before = await chain.client.chain.getBalance(addr1)
@@ -57,7 +60,7 @@ describe('Send Batch Transactions', function () {
     testBatchTransaction(chains.bitcoinWithLedger)
   })
 
-  describe('Bitcoin - Ledger', () => {
+  describe('Bitcoin - Node', () => {
     testBatchTransaction(chains.bitcoinWithNode)
   })
 })

@@ -60,22 +60,26 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(address.derivationPath, hex)
   }
 
-  async sendTransaction (to, value, data, from) {
+  async _sendTransaction (_outputs) {
     const app = await this.getApp()
 
+    const totalValue = _outputs.reduce((prev, curr) => {
+      return prev.plus(BigNumber(curr.value))
+    }, BigNumber(0)).toNumber()
+
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(value)
+    const { inputs, change } = await this.getInputsForAmount(totalValue)
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
-    const outputs = [{
-      amount: this.getAmountBuffer(value),
-      script: bitcoin.address.toOutputScript(to, this._bitcoinJsNetwork)
-    }]
+    const outputs = _outputs.map(output => {
+      const outputScript = bitcoin.address.toOutputScript(output.to, this._bitcoinJsNetwork)
+      return { amount: this.getAmountBuffer(output.value), script: outputScript }
+    })
 
     if (change) {
       outputs.push({
-        amount: this.getAmountBuffer(change),
+        amount: this.getAmountBuffer(change.value),
         script: bitcoin.address.toOutputScript(addressToString(unusedAddress), this._bitcoinJsNetwork)
       })
     }
@@ -95,6 +99,14 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     )
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
+  }
+
+  async sendTransaction (to, value, data, from) {
+    return this._sendTransaction([{ to, value }])
+  }
+
+  async sendBatchTransaction (transactions) {
+    return this._sendTransaction(transactions)
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
@@ -253,46 +265,6 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const walletPublicKey = await this._getWalletPublicKey(path)
     this._walletPublicKeyCache[path] = walletPublicKey
     return walletPublicKey
-  }
-
-  async sendBatchTransaction (transactions) {
-    const app = await this.getApp()
-
-    let totalValue = 0
-
-    transactions.forEach((tx) => {
-      if (tx.data) {
-        const scriptPubKey = padHexStart(tx.data)
-        tx.to = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-      }
-      totalValue += tx.value
-    })
-
-    const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(totalValue)
-
-    const ledgerInputs = await this.getLedgerInputs(inputs)
-    const paths = inputs.map(utxo => utxo.derivationPath)
-
-    let outputs = []
-    transactions.forEach((tx) => {
-      const outputScript = this.createScript(tx.to)
-      outputs.push({ amount: this.getAmountBuffer(tx.value), script: Buffer.from(outputScript, 'hex') })
-    })
-
-    if (change) {
-      const changeScript = this.createScript(unusedAddress)
-      outputs.push({ amount: this.getAmountBuffer(change), script: Buffer.from(changeScript, 'hex') })
-    }
-
-    const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
-    const signedTransaction = await app.createPaymentTransactionNew(
-      ledgerInputs,
-      paths,
-      unusedAddress.derivationPath,
-      serializedOutputs
-    )
-    return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
   async getLedgerAddresses (startingIndex, numAddresses, change = false) {
