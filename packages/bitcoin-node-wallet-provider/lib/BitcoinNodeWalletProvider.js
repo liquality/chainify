@@ -20,26 +20,19 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     if (!AddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
     }
-    this.addressType = addressType
-    this.network = network
-    if (this.network.name === BitcoinNetworks.bitcoin.name) {
-      this.bitcoinJsNetwork = bitcoin.networks.mainnet
-    } else if (this.network.name === BitcoinNetworks.bitcoin_testnet.name) {
-      this.bitcoinJsNetwork = bitcoin.networks.testnet
-    } else if (this.network.name === BitcoinNetworks.bitcoin_regtest.name) {
-      this.bitcoinJsNetwork = bitcoin.networks.regtest
-    }
-    this.rpc = new JsonRpcProvider(uri, username, password)
+    this._addressType = addressType
+    this._network = network
+    this._rpc = new JsonRpcProvider(uri, username, password)
   }
 
   async signMessage (message, from) {
     from = addressToString(from)
-    return this.rpc.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
+    return this._rpc.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
     const wif = await this.dumpPrivKey(address)
-    const wallet = bitcoin.ECPair.fromWIF(wif, this.bitcoinJsNetwork)
+    const wallet = bitcoin.ECPair.fromWIF(wif, this._network)
 
     let sigHash
     if (segwit) {
@@ -54,12 +47,12 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   async dumpPrivKey (address) {
     address = addressToString(address)
-    return this.rpc.jsonrpc('dumpprivkey', address)
+    return this._rpc.jsonrpc('dumpprivkey', address)
   }
 
   async getNewAddress (addressType) {
     const params = addressType ? ['', addressType] : []
-    const newAddress = await this.rpc.jsonrpc('getnewaddress', ...params)
+    const newAddress = await this._rpc.jsonrpc('getnewaddress', ...params)
 
     if (!newAddress) return null
 
@@ -71,11 +64,11 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async getUnusedAddress () {
-    return this.getNewAddress(this.addressType)
+    return this.getNewAddress(this._addressType)
   }
 
   async getUsedAddresses () {
-    const addresses = await this.rpc.jsonrpc('listaddressgroupings')
+    const addresses = await this._rpc.jsonrpc('listaddressgroupings')
     const ret = []
 
     for (const group of addresses) {
@@ -84,7 +77,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
       }
     }
 
-    const emptyaddresses = await this.rpc.jsonrpc('listreceivedbyaddress', 0, true)
+    const emptyaddresses = await this._rpc.jsonrpc('listreceivedbyaddress', 0, true)
 
     for (const address of emptyaddresses) {
       ret.push(new Address({ address: address.address }))
@@ -95,7 +88,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   async getWalletAddress (address) {
     const wif = await this.dumpPrivKey(address)
-    const wallet = bitcoin.ECPair.fromWIF(wif, this.bitcoinJsNetwork)
+    const wallet = bitcoin.ECPair.fromWIF(wif, this._network)
     return new Address(address, null, wallet.publicKey, null)
   }
 
@@ -105,7 +98,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async getConnectedNetwork () {
-    const blockchainInfo = await this.rpc.jsonrpc('getblockchaininfo')
+    const blockchainInfo = await this._rpc.jsonrpc('getblockchaininfo')
     const chain = blockchainInfo.chain
     return BIP70_CHAIN_TO_NETWORK[chain]
   }

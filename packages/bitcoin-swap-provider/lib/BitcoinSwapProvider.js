@@ -20,13 +20,6 @@ export default class BitcoinSwapProvider extends Provider {
       throw new Error('Mode must be one of p2wsh, p2shSegwit, p2sh')
     }
     this._mode = mode
-    if (this._network.name === networks.bitcoin.name) {
-      this._bitcoinJsNetwork = bitcoin.networks.mainnet
-    } else if (this._network.name === networks.bitcoin_testnet.name) {
-      this._bitcoinJsNetwork = bitcoin.networks.testnet
-    } else if (this._network.name === networks.bitcoin_regtest.name) {
-      this._bitcoinJsNetwork = bitcoin.networks.regtest
-    }
   }
 
   getPubKeyHash (address) {
@@ -84,15 +77,15 @@ export default class BitcoinSwapProvider extends Provider {
 
   getSwapPaymentVariants (swapOutput) {
     const p2wsh = bitcoin.payments.p2wsh({
-      redeem: { output: swapOutput, network: this._bitcoinJsNetwork },
-      network: this._bitcoinJsNetwork
+      redeem: { output: swapOutput, network: this._network },
+      network: this._network
     })
     const p2shSegwit = bitcoin.payments.p2sh({
-      redeem: p2wsh, network: this._bitcoinJsNetwork
+      redeem: p2wsh, network: this._network
     })
     const p2sh = bitcoin.payments.p2sh({
-      redeem: { output: swapOutput, network: this._bitcoinJsNetwork },
-      network: this._bitcoinJsNetwork
+      redeem: { output: swapOutput, network: this._network },
+      network: this._network
     })
 
     return { p2wsh, p2shSegwit, p2sh }
@@ -114,7 +107,7 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isRedeem, secret, secretHash) {
-    const network = this._bitcoinJsNetwork
+    const network = this._network
     const address = isRedeem ? recipientAddress : refundAddress
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
     const swapPaymentVariants = this.getSwapPaymentVariants(swapOutput)
@@ -208,28 +201,8 @@ export default class BitcoinSwapProvider extends Provider {
     return this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
-  // TODO: What about mempool txs?
-  // async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, predicate) {
-  //   const script = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration).toString('hex')
-  //   const scriptPubKey = padHexStart(script)
-  //   const p2shAddress = pubKeyToAddress(scriptPubKey, this._network.name, 'scriptHash')
-  //   let swapTransaction = false
-
-  //   while (!swapTransaction) {
-  //     let p2shTransactions = await this.getMethod('getAddressDeltas')([p2shAddress])
-  //     const p2shMempoolTransactions = await this.getMethod('getAddressMempool')([p2shAddress])
-  //     p2shTransactions = p2shTransactions.concat(p2shMempoolTransactions)
-  //     const transactionIds = p2shTransactions.map(tx => tx.txid)
-  //     const transactions = await Promise.all(transactionIds.map(this.getMethod('getTransactionByHash')))
-  //     swapTransaction = transactions.find(predicate)
-  //     await sleep(5000)
-  //   }
-
-  //   return swapTransaction
-  // }
-
   async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, predicate) {
-    let blockNumber = await this.getMethod('getBlockHeight')() // TODO: What about mempool txs?
+    let blockNumber = await this.getMethod('getBlockHeight')() // TODO: Are mempool TXs possible?
     let swapTransaction = null
     while (!swapTransaction) {
       let block

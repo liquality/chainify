@@ -37,20 +37,10 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }
     const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${chain.network.coinType}'/0'/`
     super(HwAppBitcoin, derivationPath, chain.network, 'BTC')
-    this.addressType = addressType
+    this._addressType = addressType
     this._derivationPath = derivationPath
     this._network = chain.network
-    this._coinType = chain.network.coinType
     this._walletPublicKeyCache = {}
-    // TODO: Remove the internal "network" type - notneeded anymore. Probably "Bitcoin-Networks" can be an alias
-    if (this._network.name === networks.bitcoin.name) {
-      this._bitcoinJsNetwork = bitcoin.networks.mainnet
-    } else if (this._network.name === networks.bitcoin_testnet.name) {
-      this._bitcoinJsNetwork = bitcoin.networks.testnet
-    } else if (this._network.name === networks.bitcoin_regtest.name) {
-      this._bitcoinJsNetwork = bitcoin.networks.regtest
-    }
-    // this._importAddresses()
   }
 
   async signMessage (message, from) {
@@ -73,14 +63,14 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const paths = inputs.map(utxo => utxo.derivationPath)
 
     const outputs = _outputs.map(output => {
-      const outputScript = bitcoin.address.toOutputScript(output.to, this._bitcoinJsNetwork)
+      const outputScript = bitcoin.address.toOutputScript(output.to, this._network)
       return { amount: this.getAmountBuffer(output.value), script: outputScript }
     })
 
     if (change) {
       outputs.push({
         amount: this.getAmountBuffer(change.value),
-        script: bitcoin.address.toOutputScript(addressToString(unusedAddress), this._bitcoinJsNetwork)
+        script: bitcoin.address.toOutputScript(addressToString(unusedAddress), this._network)
       })
     }
 
@@ -93,9 +83,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       serializedOutputs,
       undefined,
       undefined,
-      ['bech32', 'p2sh-segwit'].includes(this.addressType),
+      ['bech32', 'p2sh-segwit'].includes(this._addressType),
       undefined,
-      this.addressType === 'bech32' ? ['bech32'] : undefined
+      this._addressType === 'bech32' ? ['bech32'] : undefined
     )
 
     return this.getMethod('sendRawTransaction')(signedTransaction)
@@ -234,14 +224,14 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   }
 
   getAddressFromPublicKey (publicKey) {
-    if (this.addressType === 'legacy') {
-      return bitcoin.payments.p2pkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }).address
-    } else if (this.addressType === 'p2sh-segwit') {
+    if (this._addressType === 'legacy') {
+      return bitcoin.payments.p2pkh({ pubkey: publicKey, network: this._network }).address
+    } else if (this._addressType === 'p2sh-segwit') {
       return bitcoin.payments.p2sh({
-        redeem: bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }),
-        network: this._bitcoinJsNetwork }).address
-    } else if (this.addressType === 'bech32') {
-      return bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._bitcoinJsNetwork }).address
+        redeem: bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._network }),
+        network: this._network }).address
+    } else if (this._addressType === 'bech32') {
+      return bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._network }).address
     }
   }
 
@@ -254,7 +244,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async _getWalletPublicKey (path) {
     const app = await this.getApp()
-    return app.getWalletPublicKey(path, { format: this.addressType })
+    return app.getWalletPublicKey(path, { format: this._addressType })
   }
 
   async getWalletPublicKey (path) {

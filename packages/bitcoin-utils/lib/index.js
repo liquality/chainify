@@ -1,11 +1,8 @@
 import { findKey } from 'lodash'
 
-import {
-  base58
-} from '@liquality/crypto'
-
+import { base58 } from '@liquality/crypto'
+import { padHexStart } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
-
 import { version } from '../package.json'
 
 function calculateFee (numInputs, numOutputs, feePerByte) {
@@ -39,8 +36,11 @@ function getAddressNetwork (address) {
   // base58
   if (!networkKey) {
     const prefix = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
-    networkKey = findKey(networks,
-      network => [network.pubKeyHash, network.scriptHash].includes(prefix))
+    networkKey = findKey(networks, network => {
+      const pubKeyHashPrefix = padHexStart((network.pubKeyHash).toString(16), 2)
+      const scriptHashPrefix = padHexStart((network.scriptHash).toString(16), 2)
+      return [pubKeyHashPrefix, scriptHashPrefix].includes(prefix)
+    })
   }
   return networks[networkKey]
 }
