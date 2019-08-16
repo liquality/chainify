@@ -12,7 +12,7 @@ There are 2 categories of tests:
 ### Node only
 To run the node based swap tests, a node of each chain (Bitcoin and Ethereum) is needed. The following nodes were used to develop and run these tests:
 
-- *Bitcoin:* Regtest bitcore node.
+- *Bitcoin:* Regtest bitcoin core node.
 - *Ethereum:* Geth client in dev mode (5s blocktime).
 
 Ensure that the wallets are unlocked on these nodes.

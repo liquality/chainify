@@ -19,7 +19,6 @@ Query different blockchains with account management using a single and simple in
 |Package|Version|
 |---|---|
 |[@liquality/bitcoin-bitcoinjs-lib-swap-provider](./packages/bitcoin-bitcoinjs-lib-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-bitcoinjs-lib-swap-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcoinjs-lib-swap-provider)|
-|[@liquality/bitcoin-bitcore-rpc-provider](./packages/bitcoin-bitcore-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-bitcore-rpc-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcore-rpc-provider)|
 |[@liquality/bitcoin-ledger-provider](./packages/bitcoin-ledger-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-ledger-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-ledger-provider)|
 |[@liquality/bitcoin-networks](./packages/bitcoin-networks)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-networks.svg)](https://npmjs.com/package/@liquality/bitcoin-networks)|
 |[@liquality/bitcoin-rpc-provider](./packages/bitcoin-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-rpc-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-rpc-provider)|

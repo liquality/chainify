@@ -11,7 +11,8 @@ import {
 } from '@liquality/crypto'
 import {
   compressPubKey,
-  getAddressNetwork
+  getAddressNetwork,
+  AddressTypes
 } from '@liquality/bitcoin-utils'
 import networks from '@liquality/bitcoin-networks'
 import { Address, addressToString } from '@liquality/utils'
@@ -23,7 +24,6 @@ const NONCHANGE_ADDRESS = 0
 const CHANGE_ADDRESS = 1
 const NONCHANGE_OR_CHANGE_ADDRESS = 2
 
-const ADDRESS_TYPES = ['legacy', 'p2sh', 'bech32']
 const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
   'legacy': 44,
   'p2sh': 49,
@@ -32,8 +32,8 @@ const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.bitcoin }, addressType = 'bech32') {
-    if (!ADDRESS_TYPES.includes(addressType)) {
-      throw new Error(`addressType must be one of ${ADDRESS_TYPES.join(',')}`)
+    if (!AddressTypes.includes(addressType)) {
+      throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
     }
     const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${chain.network.coinType}'/0'/`
     super(HwAppBitcoin, derivationPath, chain.network, 'BTC')
@@ -93,7 +93,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       serializedOutputs,
       undefined,
       undefined,
-      ['bech32', 'p2sh'].includes(this.addressType),
+      ['bech32', 'p2sh-segwit'].includes(this.addressType),
       undefined,
       this.addressType === 'bech32' ? ['bech32'] : undefined
     )

@@ -104,11 +104,11 @@
   <script>
 /* global $, Bundle, web3 */
 const { Client, providers, crypto } = Bundle
-const bitcoinNetworks = providers.bitcoin.networks
+const bitcoinNetworks = providers.bitcoin.networks.default
 const bitcoin = new Client()
-bitcoin.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider('https://localhost:18332', 'bitcoin', 'local321'))
-bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks.bitcoin_testnet, segwit: false }))
-bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks.bitcoin_testnet }))
+bitcoin.addProvider(new providers.bitcoin.BitcoinRpcProvider('http://localhost:17772', 'bitcoin', 'local321'))
+bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks.bitcoin_regtest }))
+bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks.bitcoin_regtest }))
 
 const ethereum = new Client()
 ethereum.addProvider(new providers.ethereum.EthereumRpcProvider('http://localhost:8545'))

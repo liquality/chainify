@@ -45,9 +45,14 @@ function getAddressNetwork (address) {
   return networks[networkKey]
 }
 
+const AddressTypes = [
+  'legacy', 'p2sh', 'bech32'
+]
+
 export {
   calculateFee,
   compressPubKey,
   getAddressNetwork,
+  AddressTypes,
   version
 }

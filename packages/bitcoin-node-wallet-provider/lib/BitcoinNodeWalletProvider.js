@@ -1,6 +1,7 @@
 import WalletProvider from '@liquality/wallet-provider'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import BitcoinNetworks from '@liquality/bitcoin-networks'
+import { AddressTypes } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import { sha256 } from '@liquality/crypto'
 import { Address, addressToString } from '@liquality/utils'
@@ -13,13 +14,11 @@ const BIP70_CHAIN_TO_NETWORK = {
   'regtest': BitcoinNetworks.bitcoin_regtest
 }
 
-const ADDRESS_TYPES = ['legacy', 'p2sh-segwit', 'bech32']
-
 export default class BitcoinNodeWalletProvider extends WalletProvider {
   constructor (network, uri, username, password, addressType = 'bech32') {
     super()
-    if (!ADDRESS_TYPES.includes(addressType)) {
-      throw new Error(`addressType must be one of ${ADDRESS_TYPES.join(',')}`)
+    if (!AddressTypes.includes(addressType)) {
+      throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
     }
     this.addressType = addressType
     this.network = network

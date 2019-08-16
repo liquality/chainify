@@ -20,6 +20,7 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-networks": "^0.2.11",
+    "@liquality/bitcoin-utils": "^0.2.11",
     "@liquality/crypto": "^0.2.11",
     "@liquality/jsonrpc-provider": "^0.2.11",
     "@liquality/utils": "^0.2.11",
