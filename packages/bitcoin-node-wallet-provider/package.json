@@ -1,6 +1,6 @@
 {
-  "name": "@liquality/bitcoin-bitcore-rpc-provider",
-  "umdName": "BitcoinBitcoreRpcProvider",
+  "name": "@liquality/bitcoin-node-wallet-provider",
+  "umdName": "BitcoinNodeWalletProvider",
   "umdExport": "default",
   "version": "0.2.11",
   "description": "",
@@ -20,10 +20,14 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-networks": "^0.2.11",
-    "@liquality/bitcoin-rpc-provider": "^0.2.11",
     "@liquality/bitcoin-utils": "^0.2.11",
     "@liquality/crypto": "^0.2.11",
-    "@liquality/utils": "^0.2.11"
+    "@liquality/jsonrpc-provider": "^0.2.11",
+    "@liquality/utils": "^0.2.11",
+    "@liquality/wallet-provider": "^0.2.10",
+    "bignumber.js": "^8.1.1",
+    "bitcoinjs-lib": "^5.1.2",
+    "lodash": "^4.17.11"
   },
   "engines": {
     "node": "~8.12.0"

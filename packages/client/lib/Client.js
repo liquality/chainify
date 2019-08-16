@@ -12,7 +12,6 @@ import {
 import Chain from './Chain'
 import Wallet from './Wallet'
 import Swap from './Swap'
-import Collateral from './Collateral'
 
 import { version } from '../package.json'
 
@@ -48,7 +47,6 @@ export default class Client {
     this._chain = new Chain(this)
     this._wallet = new Wallet(this)
     this._swap = new Swap(this)
-    this._collateral = new Collateral(this)
   }
 
   /**
@@ -143,10 +141,6 @@ export default class Client {
 
   get swap () {
     return this._swap
-  }
-
-  get collateral () {
-    return this._collateral
   }
 }
 

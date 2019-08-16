@@ -1,9 +1,8 @@
-import BitcoinBitcoinJsLibSwapProvider from '@liquality/bitcoin-bitcoinjs-lib-swap-provider'
-import BitcoinBitcoreRpcProvider from '@liquality/bitcoin-bitcore-rpc-provider'
-import BitcoinCollateralProvider from '@liquality/bitcoin-collateral-provider'
 import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
 import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
+import BitcoinNodeWalletProvider from '@liquality/bitcoin-node-wallet-provider'
 import BitcoinSwapProvider from '@liquality/bitcoin-swap-provider'
+import BitcoinEsploraApiProvider from '@liquality/bitcoin-esplora-api-provider'
 import * as BitcoinNetworks from '@liquality/bitcoin-networks'
 import * as BitcoinUtils from '@liquality/bitcoin-utils'
 
@@ -17,12 +16,11 @@ import * as EthereumNetworks from '@liquality/ethereum-networks'
 import * as EthereumUtils from '@liquality/ethereum-utils'
 
 const bitcoin = {
-  BitcoinBitcoinJsLibSwapProvider,
-  BitcoinBitcoreRpcProvider,
-  BitcoinCollateralProvider,
   BitcoinLedgerProvider,
   BitcoinRpcProvider,
+  BitcoinNodeWalletProvider,
   BitcoinSwapProvider,
+  BitcoinEsploraApiProvider,
   BitcoinNetworks,
   BitcoinUtils,
   networks: BitcoinNetworks

@@ -1,11 +1,11 @@
-# `@liquality/bitcoin-bitcoinjs-lib-swap-provider` <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
+# `@liquality/bitcoin-node-wallet-provider` <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
 
 
 [![Build Status](https://travis-ci.com/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.com/liquality/chainabstractionlayer)
 [![Coverage Status](https://coveralls.io/repos/github/liquality/chainabstractionlayer/badge.svg?branch=master)](https://coveralls.io/github/liquality/chainabstractionlayer?branch=master)
 [![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](../../LICENSE.md)
-[![@liquality/bitcoin-bitcoinjs-lib-swap-provider](https://img.shields.io/npm/dt/@liquality/bitcoin-bitcoinjs-lib-swap-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcoinjs-lib-swap-provider)
+[![@liquality/bitcoin-node-wallet-provider](https://img.shields.io/npm/dt/@liquality/bitcoin-node-wallet-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-node-wallet-provider)
 [![Gitter](https://img.shields.io/gitter/room/liquality/Lobby.svg)](https://gitter.im/liquality/Lobby?source=orgpage)
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality) [![Greenkeeper badge](https://badges.greenkeeper.io/liquality/chainabstractionlayer.svg)](https://greenkeeper.io/)
 
@@ -20,15 +20,26 @@ Query different blockchains with account management using a single and simple in
 ## Installation
 
 ```bash
-npm i @liquality/bitcoin-bitcoinjs-lib-swap-provider
+npm i @liquality/bitcoin-node-wallet-provider
 ```
 
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcoinjs-lib-swap-provider@0.2.3/dist/bitcoin-bitcoinjs-lib-swap-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-bitcoinjs-lib-swap-provider@0.2.3/dist/bitcoin-bitcoinjs-lib-swap-provider.min.js.map -->
-<!-- available as window.BitcoinBitcoinJsLibSwapProvider -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/bitcoin-node-wallet-provider@0.2.3/dist/bitcoin-node-wallet-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/bitcoin-node-wallet-provider@0.2.3/dist/bitcoin-node-wallet-provider.min.js.map -->
+<!-- available as window.BitcoinNodeWalletProvider -->
+```
+
+
+## Usage
+
+```js
+import BitcoinNodeWalletProvider from '@liquality/bitcoin-node-wallet-provider'
+
+const nodeWalletProvider = new BitcoinNodeWalletProvider('https://bitcoin.local', 'username', 'password')
+
+await nodeWalletProvider.getNewAddress()
 ```
 
 

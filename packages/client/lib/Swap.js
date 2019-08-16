@@ -1,6 +1,7 @@
 import { isNumber, isString } from 'lodash'
 
 import { sha256 } from '@liquality/crypto'
+import { UnimplementedMethodError } from '@liquality/errors'
 
 export default class Swap {
   constructor (client) {
@@ -42,6 +43,11 @@ export default class Swap {
    * @return {Promise<string>} Resolves with a 32 byte secret
    */
   async generateSecret (message) {
+    try {
+      return this.client.getMethod('generateSecret')(message)
+    } catch (e) {
+      if (!(e instanceof UnimplementedMethodError)) throw e
+    }
     const address = (await this.client.getMethod('getAddresses')())[0]
     const signedMessage = await this.client.getMethod('signMessage')(message, address)
     const secret = sha256(signedMessage)

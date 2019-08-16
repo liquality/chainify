@@ -13,13 +13,14 @@ const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMask
 
 const bitcoinNetworks = providers.bitcoin.networks
 const bitcoinWithLedger = new Client()
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks[config.bitcoin.network], segwit: false }))
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'bech32'))
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'p2wsh'))
 
 const bitcoinWithNode = new Client()
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinBitcoinJsLibSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(bitcoinNetworks[config.bitcoin.network], config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, 'bech32'))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'p2wsh'))
 
 // TODO: required for BITCOIN too?
 class RandomEthereumAddressProvider extends Provider {

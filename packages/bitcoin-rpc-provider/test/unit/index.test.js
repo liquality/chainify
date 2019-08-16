@@ -24,6 +24,18 @@ describe('Bitcoin RPC provider', () => {
     mockJsonRpc('http://localhost:18332', bitcoinRpc, 100)
   })
 
+  describe('isAddressUsed', () => {
+    it('should return false for an unused address', async () => {
+      const isUsed = await provider.isAddressUsed('n187i8H1sA5RcFPESf2sgzufirnKcxBfhg')
+      expect(isUsed).to.equal(false)
+    })
+
+    it('should return true for a used address', async () => {
+      const isUsed = await provider.isAddressUsed('mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc')
+      expect(isUsed).to.equal(true)
+    })
+  })
+
   describe('getFeePerByte', () => {
     it('should return default value 3 sat per byte', async () => {
       const fee = await provider.getFeePerByte()
@@ -35,13 +47,6 @@ describe('Bitcoin RPC provider', () => {
     it('should return correct block height', async () => {
       const height = await provider.getBlockHeight()
       expect(height).to.equal(114)
-    })
-  })
-
-  describe('signMessage', () => {
-    it('should return signature', async () => {
-      const sig = await provider.signMessage('liquality', 'mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi')
-      expect(sig).to.equal('205bfd8bb8ccc907e3c5e832eccef1df619d52ea8785045ee9cb7b069e8785e7185d8a8d395666f1c441a7423325c1e4abfd4b9f33e851c60f99f8deb0165e3ef3')
     })
   })
 
@@ -113,38 +118,10 @@ describe('Bitcoin RPC provider', () => {
     })
   })
 
-  describe('isAddressUsed', () => {
-    it('should return false for an unused address', async () => {
-      const isUsed = await provider.isAddressUsed('n187i8H1sA5RcFPESf2sgzufirnKcxBfhg')
-      expect(isUsed).to.equal(false)
-    })
-
-    it('should return true for a used address', async () => {
-      const isUsed = await provider.isAddressUsed('mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc')
-      expect(isUsed).to.equal(true)
-    })
-  })
-
   describe('getBalance', () => {
     it('should return correct balance in sats', async () => {
       const balance = await provider.getBalance(['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'])
       expect(balance).to.be.bignumber.equal(new BigNumber(20000000))
-    })
-  })
-
-  describe('getNewAddress', () => {
-    it('should return a new address', async () => {
-      const address = await provider.getNewAddress()
-      const isUsed = await provider.isAddressUsed(address)
-      expect(isUsed).to.equal(false)
-    })
-  })
-
-  describe('getUnusedAddress', () => {
-    it('should return a unused address', async () => {
-      const { address } = await provider.getUnusedAddress()
-      const isUsed = await provider.isAddressUsed(address)
-      expect(isUsed).to.equal(false)
     })
   })
 

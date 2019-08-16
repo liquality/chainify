@@ -24,7 +24,8 @@
     "@liquality/crypto": "^0.2.11",
     "@liquality/provider": "^0.2.11",
     "@liquality/utils": "^0.2.11",
-    "bignumber.js": "^8.1.1"
+    "bignumber.js": "^8.1.1",
+    "bitcoinjs-lib": "^5.1.1"
   },
   "engines": {
     "node": "~8.12.0"

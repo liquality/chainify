@@ -19,11 +19,10 @@ Query different blockchains with account management using a single and simple in
 |Package|Version|
 |---|---|
 |[@liquality/bitcoin-bitcoinjs-lib-swap-provider](./packages/bitcoin-bitcoinjs-lib-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-bitcoinjs-lib-swap-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcoinjs-lib-swap-provider)|
-|[@liquality/bitcoin-bitcore-rpc-provider](./packages/bitcoin-bitcore-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-bitcore-rpc-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcore-rpc-provider)|
-|[@liquality/bitcoin-collateral-provider](./packages/bitcoin-collateral-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-collateral-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-collateral-provider)|
 |[@liquality/bitcoin-ledger-provider](./packages/bitcoin-ledger-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-ledger-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-ledger-provider)|
 |[@liquality/bitcoin-networks](./packages/bitcoin-networks)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-networks.svg)](https://npmjs.com/package/@liquality/bitcoin-networks)|
 |[@liquality/bitcoin-rpc-provider](./packages/bitcoin-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-rpc-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-rpc-provider)|
+|[@liquality/bitcoin-wallet-node-provider](./packages/bitcoin-node-wallet-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-node-wallet-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-node-wallet-provider)|
 |[@liquality/bitcoin-swap-provider](./packages/bitcoin-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-swap-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-swap-provider)|
 |[@liquality/bitcoin-utils](./packages/bitcoin-utils)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-utils.svg)](https://npmjs.com/package/@liquality/bitcoin-utils)|
 |[@liquality/bundle](./packages/bundle)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bundle.svg)](https://npmjs.com/package/@liquality/bundle)|
