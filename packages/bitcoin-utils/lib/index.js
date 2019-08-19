@@ -1,7 +1,6 @@
 import { findKey } from 'lodash'
 
-import { base58 } from '@liquality/crypto'
-import { padHexStart } from '@liquality/utils'
+import { base58, padHexStart } from '@liquality/crypto'
 import networks from '@liquality/bitcoin-networks'
 import { version } from '../package.json'
 
