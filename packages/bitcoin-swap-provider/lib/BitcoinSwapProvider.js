@@ -10,9 +10,6 @@ import networks from '@liquality/bitcoin-networks'
 import { version } from '../package.json'
 
 export default class BitcoinSwapProvider extends Provider {
-  // TODO: have a generate InitSwap and generate RecipSwap
-  // InitSwap should use checkSequenceVerify instead of checkLockTimeVerify
-
   constructor (chain = { network: networks.bitcoin }, mode = 'p2wsh') {
     super()
     this._network = chain.network
@@ -201,31 +198,36 @@ export default class BitcoinSwapProvider extends Provider {
     return this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
-  async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, predicate) {
-    let blockNumber = await this.getMethod('getBlockHeight')() // TODO: Are mempool TXs possible?
+  async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, startBlock, predicate) {
+    let blockNumber = startBlock || await this.getMethod('getBlockHeight')() // TODO: Are mempool TXs possible?
     let swapTransaction = null
+    let arrivedAtTip = false
     while (!swapTransaction) {
       let block
       try {
         block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      } catch (e) { }
+      } catch (e) {
+        arrivedAtTip = true
+      }
       if (block) {
         swapTransaction = block.transactions.find(predicate)
         blockNumber++
       }
-      await sleep(5000)
+      if (arrivedAtTip) {
+        await sleep(5000)
+      }
     }
     return swapTransaction
   }
 
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    return this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, startBlock,
       tx => this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
     )
   }
 
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, startBlock,
       tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.includes(recipientAddress))
     )
 
@@ -235,8 +237,8 @@ export default class BitcoinSwapProvider extends Provider {
     }
   }
 
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    const refundSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration,
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
+    const refundSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, startBlock,
       tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.includes(refundAddress))
     )
     return refundSwapTransaction

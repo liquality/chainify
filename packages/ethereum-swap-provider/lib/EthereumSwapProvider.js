@@ -115,9 +115,28 @@ export default class EthereumSwapProvider extends Provider {
     return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
   }
 
+  async findSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock, predicate) {
+    let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
+    let swapTransaction = false
+
+    while (!swapTransaction) {
+      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+
+      if (block) {
+        swapTransaction = block.transactions.find(predicate)
+        blockNumber++
+      }
+
+      await sleep(5000)
+    }
+
+    return swapTransaction
+  }
+
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
     let initiateSwapTransaction = false
+    let arrivedAtTip = false
 
     while (!initiateSwapTransaction) {
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
@@ -135,9 +154,11 @@ export default class EthereumSwapProvider extends Provider {
         )
 
         blockNumber++
+      } else {
+        arrivedAtTip = true
       }
 
-      await sleep(5000)
+      if (arrivedAtTip) { await sleep(5000) }
     }
 
     return initiateSwapTransaction
@@ -146,6 +167,7 @@ export default class EthereumSwapProvider extends Provider {
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
     let claimSwapTransaction = false
+    let arrivedAtTip = false
     while (!claimSwapTransaction) {
       const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
@@ -161,9 +183,11 @@ export default class EthereumSwapProvider extends Provider {
         }
 
         blockNumber++
+      } else {
+        arrivedAtTip = true
       }
 
-      await sleep(5000)
+      if (arrivedAtTip) { await sleep(5000) }
     }
     claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
 
@@ -179,6 +203,7 @@ export default class EthereumSwapProvider extends Provider {
     let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     let refundSwapTransaction = false
+    let arrivedAtTip = false
 
     while (!refundSwapTransaction) {
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
@@ -190,8 +215,11 @@ export default class EthereumSwapProvider extends Provider {
         )
 
         blockNumber++
+      } else {
+        arrivedAtTip = true
       }
-      await sleep(5000)
+
+      if (arrivedAtTip) { await sleep(5000) }
     }
     return refundSwapTransaction
   }
