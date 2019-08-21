@@ -37,6 +37,25 @@ export default class Swap {
   }
 
   /**
+   * Refund the swap
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @param {number} [startBlock] - The block number to start finding from (Optional)
+   * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock = null) {
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    return this.client.getMethod('findRefundSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock)
+  }
+
+  /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
    * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
@@ -163,24 +182,5 @@ export default class Swap {
     }
 
     return this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
-  }
-
-  /**
-   * Refund the swap
-   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
-   * @param {!string} recipientAddress - Recepient address for the swap in hex.
-   * @param {!string} refundAddress - Refund address for the swap in hex.
-   * @param {!string} secretHash - Secret hash for the swap in hex.
-   * @param {!number} expiration - Expiration time for the swap.
-   * @param {!number} startBlock - The minimum block to start the search from
-   * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
-    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
-    return this.client.getMethod('findRefundSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock)
   }
 }
