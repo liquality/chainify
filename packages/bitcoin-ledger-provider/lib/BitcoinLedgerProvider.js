@@ -99,7 +99,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return this._sendTransaction(transactions)
   }
 
-  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
+  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false, index = 0) {
     const app = await this.getApp()
     const walletAddress = await this.getWalletAddress(address)
 
@@ -111,7 +111,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const ledgerTx = await app.splitTransaction(tx.toHex(), true)
     const ledgerOutputs = (await app.serializeTransactionOutputs(ledgerTx)).toString('hex')
     const ledgerSig = await app.signP2SHTransaction(
-      [[ledgerInputTx, 0, outputScript.toString('hex'), 0]],
+      [[ledgerInputTx, index, outputScript.toString('hex'), 0]],
       [walletAddress.derivationPath],
       ledgerOutputs.toString('hex'),
       lockTime,
