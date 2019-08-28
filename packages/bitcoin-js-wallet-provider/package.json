@@ -1,6 +1,6 @@
 {
-  "name": "@liquality/ethereum-networks",
-  "umdName": "EthereumNetworks",
+  "name": "@liquality/bitcoin-js-wallet-provider",
+  "umdName": "BitcoinJsWalletProvider",
   "umdExport": "default",
   "version": "0.3.2",
   "description": "",
@@ -19,7 +19,16 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-js-wallet-provider": "^0.3.2"
+    "@liquality/bitcoin-networks": "^0.3.2",
+    "@liquality/bitcoin-utils": "^0.3.2",
+    "@liquality/crypto": "^0.3.2",
+    "@liquality/jsonrpc-provider": "^0.3.2",
+    "@liquality/utils": "^0.3.2",
+    "@liquality/wallet-provider": "^0.3.2",
+    "bignumber.js": "^8.1.1",
+    "bitcoinjs-lib": "^5.1.2",
+    "bitcoinjs-message": "^2.1.0",
+    "lodash": "^4.17.11"
   },
   "engines": {
     "node": "~8.12.0"

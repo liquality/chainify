@@ -18,7 +18,8 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.4.3"
+    "@babel/runtime": "^7.4.3",
+    "@liquality/bitcoin-js-wallet-provider": "^0.3.2"
   },
   "engines": {
     "node": "~8.12.0"

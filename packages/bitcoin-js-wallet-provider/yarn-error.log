@@ -1,0 +1,32 @@
+Arguments: 
+  /Users/matthewblack/.nvm/versions/node/v8.12.0/bin/node /usr/local/Cellar/yarn/1.17.3/libexec/bin/yarn.js add bitcoinjs-message
+
+PATH: 
+  /Users/matthewblack/.pyenv/shims:/Users/matthewblack/bin:/Users/matthewblack/.nvm/versions/node/v8.12.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:~/homebrew/bin/:~/.bin
+
+Yarn version: 
+  1.17.3
+
+Node version: 
+  8.12.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/matthewblack/liquality/chainabstractionlayer/packages/bitcoin-js-wallet-provider/package.json: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.17.3/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.17.3/libexec/lib/cli.js:304:30)
+      at /usr/local/Cellar/yarn/1.17.3/libexec/lib/cli.js:315:13
+      at <anonymous>
+
+npm manifest: 
+  
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

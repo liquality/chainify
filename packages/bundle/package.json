@@ -19,6 +19,7 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-esplora-api-provider": "^0.3.2",
+    "@liquality/bitcoin-js-wallet-provider": "^0.3.2",
     "@liquality/bitcoin-ledger-provider": "^0.3.2",
     "@liquality/bitcoin-networks": "^0.3.2",
     "@liquality/bitcoin-node-wallet-provider": "^0.3.2",

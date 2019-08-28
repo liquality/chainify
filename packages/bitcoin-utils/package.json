@@ -18,6 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
+    "@liquality/bitcoin-js-wallet-provider": "^0.3.2",
     "@liquality/bitcoin-networks": "^0.3.2",
     "@liquality/crypto": "^0.3.2",
     "@liquality/utils": "^0.3.2",
