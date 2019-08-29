@@ -112,7 +112,7 @@ async function getSwapParams (chain) {
 
 async function importBitcoinAddresses (chain) {
   const nonChangeAddresses = await chain.client.getMethod('getAddresses')(0, 20)
-  const changeAddresses = await chain.client.getMethod('getAddresses')(0, 20)
+  const changeAddresses = await chain.client.getMethod('getAddresses')(0, 20, true)
 
   const addresses = [ ...nonChangeAddresses, ...changeAddresses ]
 

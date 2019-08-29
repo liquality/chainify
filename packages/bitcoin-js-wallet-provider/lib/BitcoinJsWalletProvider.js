@@ -136,7 +136,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     const addressesPerCall = 50
 
     while (index < maxAddresses) {
-      const addrs = await this.getAddresses(index, addressesPerCall)
+      const addrs = await this.getAddresses(index, addressesPerCall, change)
       const addr = addrs.find(addr => addr.equals(address))
       if (addr) return addr
 
@@ -173,6 +173,8 @@ export default class BitcoinJsWalletProvider extends Provider {
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    if (numAddresses < 1) { throw new Error('You must return at least one address') }
+
     const node = await this.node()
 
     const addresses = []

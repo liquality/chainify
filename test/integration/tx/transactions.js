@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { chains } from '../common'
+import { chains, importBitcoinAddresses, fundUnusedBitcoinAddress } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -51,6 +51,18 @@ describe('Send Transactions', function () {
   describe('Bitcoin - Ledger', () => {
     testTransaction(chains.bitcoinWithLedger)
   })
+
+  describe('Bitcoin - Js', () => {
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinWithJs)
+    })
+
+    beforeEach(async function () {
+      await fundUnusedBitcoinAddress(chains.bitcoinWithJs)
+    })
+
+    testTransaction(chains.bitcoinWithJs)
+  })
 })
 
 describe('Send Batch Transactions', function () {
@@ -62,5 +74,17 @@ describe('Send Batch Transactions', function () {
 
   describe('Bitcoin - Node', () => {
     testBatchTransaction(chains.bitcoinWithNode)
+  })
+
+  describe('Bitcoin - Js', () => {
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinWithJs)
+    })
+
+    beforeEach(async function () {
+      await fundUnusedBitcoinAddress(chains.bitcoinWithJs)
+    })
+
+    testBatchTransaction(chains.bitcoinWithJs)
   })
 })
