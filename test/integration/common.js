@@ -5,6 +5,7 @@ import MetaMaskConnector from 'node-metamask'
 import { Client, Provider, providers, crypto } from '../../packages/bundle/lib'
 import { sleep } from '../../packages/utils'
 import { findLast } from 'lodash'
+import { generateMnemonic } from 'bip39'
 import config from './config'
 
 chai.use(chaiAsPromised)
@@ -12,6 +13,7 @@ chai.use(chaiAsPromised)
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 
 const bitcoinNetworks = providers.bitcoin.networks
+
 const bitcoinWithLedger = new Client()
 bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
 bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'bech32'))
@@ -21,6 +23,11 @@ const bitcoinWithNode = new Client()
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(bitcoinNetworks[config.bitcoin.network], config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, 'bech32'))
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'p2wsh'))
+
+const bitcoinWithJs = new Client()
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks[config.bitcoin.network], config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, generateMnemonic(256), 'bech32'))
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'p2wsh'))
 
 // TODO: required for BITCOIN too?
 class RandomEthereumAddressProvider extends Provider {
@@ -33,6 +40,7 @@ class RandomEthereumAddressProvider extends Provider {
 }
 
 const ethereumNetworks = providers.ethereum.networks
+
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
@@ -73,6 +81,7 @@ erc20WithLedger.addProvider(new RandomEthereumAddressProvider())
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger },
   bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode },
+  bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
@@ -99,6 +108,26 @@ async function getSwapParams (chain) {
     expiration,
     value
   }
+}
+
+async function importBitcoinAddresses (chain) {
+  const nonChangeAddresses = await chain.client.getMethod('getAddresses')(0, 20)
+  const changeAddresses = await chain.client.getMethod('getAddresses')(0, 20, true)
+
+  const addresses = [ ...nonChangeAddresses, ...changeAddresses ]
+
+  let addressesToImport = []
+  for (const address of addresses) {
+    addressesToImport.push({ 'scriptPubKey': { 'address': address.address }, 'timestamp': 'now' })
+  }
+
+  await chain.client.getMethod('jsonrpc')('importmulti', addressesToImport, { rescan: false })
+}
+
+async function fundUnusedBitcoinAddress (chain) {
+  const unusedAddress = await chain.client.wallet.getUnusedAddress()
+  await chains.bitcoinWithNode.client.chain.sendTransaction(unusedAddress, 100000000)
+  await chains.bitcoinWithNode.client.chain.generateBlock(1)
 }
 
 async function initiateAndVerify (chain, secretHash, swapParams) {
@@ -182,6 +211,8 @@ function deployERC20Token (client) {
 
 export {
   chains,
+  importBitcoinAddresses,
+  fundUnusedBitcoinAddress,
   metaMaskConnector,
   initiateAndVerify,
   claimAndVerify,

@@ -5,7 +5,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import { crypto, providers } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask, fundUnusedBitcoinAddress, importBitcoinAddresses } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -180,6 +180,19 @@ describe('Swap Single Chain Flow', function () {
   describe('Bitcoin - Node', () => {
     mineBitcoinBlocks()
     testSingle(chains.bitcoinWithNode)
+  })
+
+  describe('Bitcoin - Js', () => {
+    mineBitcoinBlocks()
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinWithJs)
+    })
+
+    beforeEach(async function () {
+      await fundUnusedBitcoinAddress(chains.bitcoinWithJs)
+    })
+
+    testSingle(chains.bitcoinWithJs)
   })
 
   describe('Ethereum - MetaMask', () => {
