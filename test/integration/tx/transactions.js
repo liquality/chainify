@@ -56,7 +56,7 @@ function testSignBatchP2SHTransaction (chain) {
 
     const { address: unusedAddressOne } = await chain.client.wallet.getUnusedAddress()
     await chain.client.chain.sendTransaction(unusedAddressOne, value)
-    mineBitcoinBlocks()
+    await chains.bitcoinWithNode.client.chain.generateBlock(1)
 
     const { address: unusedAddressTwo } = await chain.client.wallet.getUnusedAddress()
 
@@ -73,7 +73,7 @@ function testSignBatchP2SHTransaction (chain) {
       Buffer.from(addresses[0].publicKey, 'hex'),
       Buffer.from(addresses[1].publicKey, 'hex'),
       OPS.OP_2,
-      OPS.OP_CHECKMULTISIG,
+      OPS.OP_CHECKMULTISIG
     ])
 
     const multisigOutputTwo = bitcoin.script.compile([
@@ -81,7 +81,7 @@ function testSignBatchP2SHTransaction (chain) {
       Buffer.from(addresses[1].publicKey, 'hex'),
       Buffer.from(addresses[0].publicKey, 'hex'),
       OPS.OP_2,
-      OPS.OP_CHECKMULTISIG,
+      OPS.OP_CHECKMULTISIG
     ])
 
     const paymentVariantOne = bitcoin.payments.p2wsh({ redeem: { output: multisigOutputOne, network }, network })
@@ -149,8 +149,8 @@ function testSignBatchP2SHTransaction (chain) {
 
     const multiTwoInput = bitcoin.script.compile([
       OPS.OP_0,
-      signaturesOne[1],
-      signaturesTwo[1]
+      signaturesTwo[1],
+      signaturesOne[1]
     ])
 
     multiOne.paymentParams = { redeem: { output: multisigOutputOne, input: multiOneInput, network }, network }
@@ -163,6 +163,15 @@ function testSignBatchP2SHTransaction (chain) {
     tx.setWitness(1, multiTwo.paymentWithInput.witness)
 
     const claimTxHash = await chain.client.getMethod('sendRawTransaction')(tx.toHex())
+
+    const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
+    const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
+
+    const claimVouts = claimTx._raw.data.vout
+    const claimVins = claimTx._raw.data.vin
+
+    expect(claimVins.length).to.equal(2)
+    expect(claimVouts.length).to.equal(1)
   })
 }
 
@@ -174,14 +183,8 @@ describe('Send Transactions', function () {
   })
 
   describe('Bitcoin - Js', () => {
-    before(async function () {
-      await importBitcoinAddresses(chains.bitcoinWithJs)
-    })
-
-    beforeEach(async function () {
-      await fundUnusedBitcoinAddress(chains.bitcoinWithJs)
-    })
-
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
     testTransaction(chains.bitcoinWithJs)
   })
 })
@@ -198,22 +201,28 @@ describe('Send Batch Transactions', function () {
   })
 
   describe('Bitcoin - Js', () => {
-    before(async function () {
-      await importBitcoinAddresses(chains.bitcoinWithJs)
-    })
-
-    beforeEach(async function () {
-      await fundUnusedBitcoinAddress(chains.bitcoinWithJs)
-    })
-
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
     testBatchTransaction(chains.bitcoinWithJs)
   })
 })
 
-describe('Sign Batch P2SH Transaction', function() {
+describe('Sign Batch P2SH Transaction', function () {
   this.timeout(config.timeout)
 
-  describe('Bitcoin - Js', () => {
+  describe('Bitcoin - Ledger', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
+    testSignBatchP2SHTransaction(chains.bitcoinWithLedger)
+  })
+
+  describe('Bitcoin - Node', () => {
     testSignBatchP2SHTransaction(chains.bitcoinWithNode)
+  })
+
+  describe('Bitcoin - Js', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
+    testSignBatchP2SHTransaction(chains.bitcoinWithJs)
   })
 })
