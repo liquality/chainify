@@ -99,7 +99,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return this._sendTransaction(transactions)
   }
 
-  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
+  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false, index = 0) {
     const app = await this.getApp()
     const walletAddress = await this.getWalletAddress(address)
 
@@ -111,7 +111,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const ledgerTx = await app.splitTransaction(tx.toHex(), true)
     const ledgerOutputs = (await app.serializeTransactionOutputs(ledgerTx)).toString('hex')
     const ledgerSig = await app.signP2SHTransaction(
-      [[ledgerInputTx, 0, outputScript.toString('hex'), 0]],
+      [[ledgerInputTx, index, outputScript.toString('hex'), 0]],
       [walletAddress.derivationPath],
       ledgerOutputs.toString('hex'),
       lockTime,
@@ -124,6 +124,50 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const sig = Buffer.from(finalSig, 'hex')
 
     return sig
+  }
+
+  // inputs consists of [{ inputTxHex, index, vout, outputScript }]
+  async signBatchP2SHTransaction (inputs, addresses, tx, lockTime = 0, segwit = false) {
+    const app = await this.getApp()
+
+    let walletAddressDerivationPaths = []
+    for (const address of addresses) {
+      const walletAddress = await this.getWalletAddress(address)
+      walletAddressDerivationPaths.push(walletAddress.derivationPath)
+    }
+
+    if (!segwit) {
+      for (const input of inputs) {
+        tx.setInputScript(input.vout.n, input.outputScript)
+      }
+    }
+
+    const ledgerTx = await app.splitTransaction(tx.toHex(), true)
+    const ledgerOutputs = (await app.serializeTransactionOutputs(ledgerTx)).toString('hex')
+
+    let ledgerInputs = []
+    for (const input of inputs) {
+      const ledgerInputTx = await app.splitTransaction(input.inputTxHex, true)
+      ledgerInputs.push([ledgerInputTx, input.index, input.outputScript.toString('hex'), 0])
+    }
+
+    const ledgerSigs = await app.signP2SHTransaction(
+      ledgerInputs,
+      walletAddressDerivationPaths,
+      ledgerOutputs.toString('hex'),
+      lockTime,
+      undefined,
+      segwit,
+      2
+    )
+
+    let finalLedgerSigs = []
+    for (const ledgerSig of ledgerSigs) {
+      const finalSig = segwit ? ledgerSig : ledgerSig + '01'
+      finalLedgerSigs.push(Buffer.from(finalSig, 'hex'))
+    }
+
+    return finalLedgerSigs
   }
 
   getAmountBuffer (amount) {

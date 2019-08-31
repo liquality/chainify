@@ -126,6 +126,31 @@ export default class BitcoinJsWalletProvider extends Provider {
     return sig
   }
 
+  // inputs consists of [{ inputTxHex, index, vout, outputScript }]
+  async signBatchP2SHTransaction (inputs, addresses, tx, lockTime = 0, segwit = false) {
+    let keyPairs = []
+    for (const address of addresses) {
+      const wallet = await this.getWalletAddress(address)
+      const keyPair = await this.keyPair(wallet.derivationPath)
+      keyPairs.push(keyPair)
+    }
+
+    let sigs = []
+    for (let i = 0; i < inputs.length; i++) {
+      let sigHash
+      if (segwit) {
+        sigHash = tx.hashForWitnessV0(inputs[i].index, inputs[i].outputScript, inputs[i].vout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+      } else {
+        sigHash = tx.hashForSignature(inputs[i].index, inputs[i].outputScript, bitcoin.Transaction.SIGHASH_ALL)
+      }
+
+      const sig = bitcoin.script.signature.encode(keyPairs[i].sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
+      sigs.push(sig)
+    }
+
+    return sigs
+  }
+
   async getWalletAddress (address) {
     let index = 0
     let change = false

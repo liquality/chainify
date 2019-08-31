@@ -45,6 +45,31 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return sig
   }
 
+  // inputs consists of [{ inputTxHex, index, vout, outputScript }]
+  async signBatchP2SHTransaction (inputs, addresses, tx, lockTime = 0, segwit = false) {
+    let wallets = []
+    for (const address of addresses) {
+      const wif = await this.dumpPrivKey(address)
+      const wallet = bitcoin.ECPair.fromWIF(wif, this._network)
+      wallets.push(wallet)
+    }
+
+    let sigs = []
+    for (let i = 0; i < inputs.length; i++) {
+      let sigHash
+      if (segwit) {
+        sigHash = tx.hashForWitnessV0(inputs[i].index, inputs[i].outputScript, inputs[i].vout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+      } else {
+        sigHash = tx.hashForSignature(inputs[i].index, inputs[i].outputScript, bitcoin.Transaction.SIGHASH_ALL)
+      }
+
+      const sig = bitcoin.script.signature.encode(wallets[i].sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
+      sigs.push(sig)
+    }
+
+    return sigs
+  }
+
   async dumpPrivKey (address) {
     address = addressToString(address)
     return this._rpc.jsonrpc('dumpprivkey', address)
