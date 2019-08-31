@@ -40,10 +40,11 @@ class RandomEthereumAddressProvider extends Provider {
 }
 
 const ethereumNetworks = providers.ethereum.networks
+const ethereumNetwork = ethereumNetworks[config.ethereum.network]
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
+ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
@@ -58,9 +59,15 @@ ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
 
+const ethereumWithJs = new Client()
+ethereumWithJs.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
+ethereumWithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(ethereumNetwork, generateMnemonic(256)))
+ethereumWithJs.addProvider(new providers.ethereum.EthereumSwapProvider())
+ethereumWithJs.addProvider(new RandomEthereumAddressProvider())
+
 const erc20WithMetaMask = new Client()
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetworks[config.ethereum.network]))
+erc20WithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 erc20WithMetaMask.addProvider(new RandomEthereumAddressProvider())
@@ -85,6 +92,7 @@ const chains = {
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
+  ethereumWithJs: { id: 'Ethereum Js', name: 'ethereum', client: ethereumWithJs },
   erc20WithMetaMask: { id: 'ERC20 MetaMask', name: 'ethereum', client: erc20WithMetaMask },
   erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
   erc20WithLedger: { id: 'Erc20 Ledger', name: 'ethereum', client: erc20WithLedger }
@@ -128,6 +136,11 @@ async function fundUnusedBitcoinAddress (chain) {
   const unusedAddress = await chain.client.wallet.getUnusedAddress()
   await chains.bitcoinWithNode.client.chain.sendTransaction(unusedAddress, 100000000)
   await chains.bitcoinWithNode.client.chain.generateBlock(1)
+}
+
+async function fundUnusedEthereumAddress (chain) {
+  const unusedAddress = await chain.client.wallet.getUnusedAddress()
+  await chains.ethereumWithNode.client.chain.sendTransaction(unusedAddress, (10 ** 18))
 }
 
 async function initiateAndVerify (chain, secretHash, swapParams) {
@@ -213,6 +226,7 @@ export {
   chains,
   importBitcoinAddresses,
   fundUnusedBitcoinAddress,
+  fundUnusedEthereumAddress,
   metaMaskConnector,
   initiateAndVerify,
   claimAndVerify,

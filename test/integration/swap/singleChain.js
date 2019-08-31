@@ -5,7 +5,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import { crypto, providers } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask, fundUnusedBitcoinAddress, importBitcoinAddresses } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask, fundUnusedBitcoinAddress, fundUnusedEthereumAddress, importBitcoinAddresses } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -69,11 +69,11 @@ function testSingle (chain) {
   it('Initiate and Refund', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = parseInt(Date.now() / 1000) + 20
+    swapParams.expiration = parseInt(Date.now() / 1000)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
-        await sleep(20000)
+        await sleep(5000)
         await refundAndVerify(chain, initiationTxId, secretHash, swapParams)
       },
       (before, after) => expect(after).to.be.bignumber.greaterThan(before))
@@ -82,7 +82,7 @@ function testSingle (chain) {
   it('Refund fails after claim', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = parseInt(Date.now() / 1000) + 20
+    swapParams.expiration = parseInt(Date.now() / 1000)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expectBalance(chain, swapParams.recipientAddress,
       async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
@@ -92,7 +92,7 @@ function testSingle (chain) {
         try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
       },
       (before, after) => expect(after).to.be.bignumber.equal(before))
-    await sleep(20000)
+    await sleep(5000)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
         try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
@@ -103,10 +103,10 @@ function testSingle (chain) {
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = parseInt(Date.now() / 1000) + 20
+    swapParams.expiration = parseInt(Date.now() / 1000)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expect(refundAndVerify(chain, initiationTxId, secretHash, swapParams)).to.be.rejected
-    await sleep(20000)
+    await sleep(5000)
     await refundAndVerify(chain, initiationTxId, secretHash, swapParams)
   })
 }
@@ -206,6 +206,14 @@ describe('Swap Single Chain Flow', function () {
 
   describe('Ethereum - Ledger', () => {
     testSingle(chains.ethereumWithLedger)
+  })
+
+  describe('Ethereum - Js', () => {
+    beforeEach(async function () {
+      await fundUnusedEthereumAddress(chains.ethereumWithJs)
+    })
+
+    testSingle(chains.ethereumWithJs)
   })
 
   describe('ERC20 - MetaMask', () => {

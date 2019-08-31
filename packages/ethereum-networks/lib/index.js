@@ -43,6 +43,11 @@ export default {
     chainId: 5,
     isTestnet: true
   },
+  local: {
+    name: 'local',
+    coinType: '60',
+    isTestnet: true
+  },
 
   version
 }
