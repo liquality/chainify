@@ -14,6 +14,7 @@ export default {
       host: 'http://localhost:8545'
     },
     value: 10000000000000000,
+    network: 'local',
     metaMaskConnector: {
       port: 3333
     }

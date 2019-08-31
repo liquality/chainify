@@ -11,6 +11,7 @@ import EthereumErc20Provider from '@liquality/ethereum-erc20-provider'
 import EthereumErc20SwapProvider from '@liquality/ethereum-erc20-swap-provider'
 import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
 import EthereumMetaMaskProvider from '@liquality/ethereum-metamask-provider'
+import EthereumJsWalletProvider from '@liquality/ethereum-js-wallet-provider'
 import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
 import EthereumSwapProvider from '@liquality/ethereum-swap-provider'
 import * as EthereumNetworks from '@liquality/ethereum-networks'
@@ -33,6 +34,7 @@ const ethereum = {
   EthereumErc20SwapProvider,
   EthereumLedgerProvider,
   EthereumMetaMaskProvider,
+  EthereumJsWalletProvider,
   EthereumRpcProvider,
   EthereumSwapProvider,
   EthereumNetworks,
