@@ -106,7 +106,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
       hash,
       number,
       timestamp,
-      difficulty,
+      difficulty: parseFloat(BigNumber(difficulty).toFixed()),
       size,
       parentHash,
       nonce,
