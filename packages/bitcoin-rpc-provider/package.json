@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-rpc-provider",
   "umdName": "BitcoinRpcProvider",
   "umdExport": "default",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,8 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/jsonrpc-provider": "^0.3.2",
-    "@liquality/utils": "^0.3.2",
+    "@liquality/jsonrpc-provider": "^0.3.3",
+    "@liquality/utils": "^0.3.3",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.13"
   },
