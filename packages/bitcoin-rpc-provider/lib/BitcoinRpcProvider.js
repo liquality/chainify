@@ -166,7 +166,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async signRawTransaction (hexstring, prevtxs, privatekeys, sighashtype) {
-    return this.jsonrpc('signrawtransaction', hexstring, prevtxs, privatekeys)
+    return this.jsonrpc('signrawtransactionwithwallet', hexstring, prevtxs, privatekeys)
   }
 
   async createRawTransaction (transactions, outputs) {
