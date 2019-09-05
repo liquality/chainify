@@ -80,7 +80,8 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async generateBlock (numberOfBlocks) {
-    return this.jsonrpc('generate', numberOfBlocks)
+    const newAddress = await this.jsonrpc('getnewaddress')
+    return this.jsonrpc('generatetoaddress', numberOfBlocks, newAddress)
   }
 
   async getBlockByHash (blockHash, includeTx = false) {

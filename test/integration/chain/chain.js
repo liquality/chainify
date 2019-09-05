@@ -20,10 +20,28 @@ function testGetBlock (chain) {
   })
 }
 
-describe('Send Transactions', function () {
+function testGenerateBlock (chain) {
+  it('should generate a new block', async () => {
+    const blockHeightBefore = await chain.client.chain.getBlockHeight()
+    await chain.client.chain.generateBlock(1)
+    const blockHeightAfter = await chain.client.chain.getBlockHeight()
+
+    expect(blockHeightAfter).to.equal(blockHeightBefore + 1)
+  })
+}
+
+describe('Block Numbers', function () {
   this.timeout(config.timeout)
 
-  describe('Bitcoin - Ledger', () => {
+  describe('Bitcoin - Node', () => {
     testGetBlock(chains.bitcoinWithNode)
+  })
+})
+
+describe('Block Generate', function () {
+  this.timeout(config.timeout)
+
+  describe('Bitcoin - Node', () => {
+    testGenerateBlock(chains.bitcoinWithNode)
   })
 })
