@@ -111,6 +111,14 @@ npm run build
 ```
 
 
+## Publish
+
+```bash
+npm run new:version # prepare
+npm run publish:all # publish
+```
+
+
 ## License
 
 [MIT](./LICENSE.md)
