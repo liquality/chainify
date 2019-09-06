@@ -28,6 +28,9 @@ export default class BitcoinJsWalletProvider extends Provider {
     if (!AddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
     }
+    if (mnemonic === '') {
+      throw new Error('Mnemonic should not be empty')
+    }
     const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${network.coinType}'/0'/`
     this._derivationPath = derivationPath
     this._network = network
@@ -83,9 +86,15 @@ export default class BitcoinJsWalletProvider extends Provider {
       const wallet = await this.getWalletAddress(inputs[i].address)
       const keyPair = await this.keyPair(wallet.derivationPath)
       const paymentVariant = this.getPaymentVariantFromPublicKey(keyPair.publicKey)
-      const needsWitness = this._addressType === 'bech32' || this._addressType === 'p2sh'
 
-      txb.addInput(inputs[i].txid, inputs[i].vout, null, paymentVariant.output)
+      txb.addInput(inputs[i].txid, inputs[i].vout, 0, paymentVariant.output)
+    }
+
+    for (let i = 0; i < inputs.length; i++) {
+      const wallet = await this.getWalletAddress(inputs[i].address)
+      const keyPair = await this.keyPair(wallet.derivationPath)
+      const paymentVariant = this.getPaymentVariantFromPublicKey(keyPair.publicKey)
+      const needsWitness = this._addressType === 'bech32' || this._addressType === 'p2sh'
 
       const signParams = { prevOutScriptType, vin: i, keyPair }
 
