@@ -1,7 +1,6 @@
 const { Client, providers } = require('@liquality/bundle')
 const config = require('./config')
 
-
 const bitcoinNetworks = providers.bitcoin.networks
 const bitcoinNetwork = bitcoinNetworks[config.bitcoin.network]
 
@@ -27,4 +26,3 @@ exports.getProvider = () => {
   )
   return provider
 }
-

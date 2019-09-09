@@ -14,12 +14,10 @@ const getAddress = async () => {
   console.log(addresses)
 }
 
-
 const getUsedAddresses = async () => {
-    const usedAddresses = await provider.wallet.getUsedAddresses()
-    console.log(usedAddresses)
-  }
-  
+  const usedAddresses = await provider.wallet.getUsedAddresses()
+  console.log(usedAddresses)
+}
 
-  getAddress()
-  getUsedAddresses()
+getAddress()
+getUsedAddresses()
