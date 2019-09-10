@@ -63,7 +63,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const paths = inputs.map(utxo => utxo.derivationPath)
 
     const outputs = _outputs.map(output => {
-      const outputScript = bitcoin.address.toOutputScript(output.to, this._network)
+      const outputScript = Buffer.isBuffer(output.to) ? output.to : bitcoin.address.toOutputScript(output.to, this._network) // Allow for OP_RETURN
       return { amount: this.getAmountBuffer(output.value), script: outputScript }
     })
 
