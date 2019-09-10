@@ -94,14 +94,12 @@ export default class EthereumJsWalletProvider extends Provider {
     tx.sign(hdKey._privateKey)
     const serializedTx = tx.serialize().toString('hex')
 
-    const txHash = this.getMethod('sendRawTransaction')(serializedTx)
-
-    return txHash
+    return serializedTx
   }
 
   async sendTransaction (to, value, data) {
     const serializedTx = await this.buildTransaction(to, value, data)
-    const txHash = this.getMethod('sendRawTransaction')(serializedTx)
+    const txHash = await this.getMethod('sendRawTransaction')(serializedTx)
     return txHash
   }
 }
