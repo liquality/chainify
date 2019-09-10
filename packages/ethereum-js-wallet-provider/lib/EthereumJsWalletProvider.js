@@ -64,7 +64,7 @@ export default class EthereumJsWalletProvider extends Provider {
     return this.getAddresses()
   }
 
-  async sendTransaction (to, value, data) {
+  async buildTransaction (to, value, data) {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
 
@@ -96,6 +96,12 @@ export default class EthereumJsWalletProvider extends Provider {
 
     const txHash = this.getMethod('sendRawTransaction')(serializedTx)
 
+    return txHash
+  }
+
+  async sendTransaction (to, value, data) {
+    const serializedTx = await this.buildTransaction(to, value, data)
+    const txHash = this.getMethod('sendRawTransaction')(serializedTx)
     return txHash
   }
 }
