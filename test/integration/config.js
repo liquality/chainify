@@ -19,5 +19,5 @@ export default {
       port: 3333
     }
   },
-  timeout: 120000 // No timeout
+  timeout: 240000 // No timeout
 }

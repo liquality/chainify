@@ -17,88 +17,88 @@ const { calculateFee } = providers.bitcoin.BitcoinUtils
 const mockSecret = _.repeat('ff', 32)
 
 function testSingle (chain) {
-  // it('Generated secrets are different', async () => {
-  //   const secret1 = await chain.client.swap.generateSecret('secret1')
-  //   const secret2 = await chain.client.swap.generateSecret('secret2')
-  //   expect(secret1).to.not.equal(secret2)
-  // })
+  it('Generated secrets are different', async () => {
+    const secret1 = await chain.client.swap.generateSecret('secret1')
+    const secret2 = await chain.client.swap.generateSecret('secret2')
+    expect(secret1).to.not.equal(secret2)
+  })
 
-  // it('Initiate and claim - happy route', async () => {
-  //   console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
-  //   const secret = await chain.client.swap.generateSecret('secret')
-  //   const secretHash = crypto.sha256(secret)
-  //   const swapParams = await getSwapParams(chain)
-  //   const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-  //   let claimTx
-  //   await expectBalance(chain, swapParams.recipientAddress,
-  //     async () => { claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
-  //     (before, after) => expect(after).to.be.bignumber.greaterThan(before))
-  //   const revealedSecret = claimTx.secret
-  //   expect(revealedSecret).to.equal(secret)
-  // })
+  it('Initiate and claim - happy route', async () => {
+    console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
+    const secret = await chain.client.swap.generateSecret('secret')
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    let claimTx
+    await expectBalance(chain, swapParams.recipientAddress,
+      async () => { claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
+      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
+    const revealedSecret = claimTx.secret
+    expect(revealedSecret).to.equal(secret)
+  })
 
-  // it('Claim only works using correct secret', async () => {
-  //   const secretHash = crypto.sha256(mockSecret)
-  //   const swapParams = await getSwapParams(chain)
-  //   const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-  //   const wrongSecret = crypto.sha256('0')
-  //   const emptySecret = ''
-  //   await expect(claimAndVerify(chain, initiationTxId, wrongSecret, swapParams)).to.be.rejected
-  //   await expect(claimAndVerify(chain, initiationTxId, emptySecret, swapParams)).to.be.rejected
-  //   const claimTx = await claimAndVerify(chain, initiationTxId, mockSecret, swapParams)
-  //   const revealedSecret = claimTx.secret
-  //   expect(revealedSecret).to.equal(mockSecret)
-  // })
+  it('Claim only works using correct secret', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    const wrongSecret = crypto.sha256('0')
+    const emptySecret = ''
+    await expect(claimAndVerify(chain, initiationTxId, wrongSecret, swapParams)).to.be.rejected
+    await expect(claimAndVerify(chain, initiationTxId, emptySecret, swapParams)).to.be.rejected
+    const claimTx = await claimAndVerify(chain, initiationTxId, mockSecret, swapParams)
+    const revealedSecret = claimTx.secret
+    expect(revealedSecret).to.equal(mockSecret)
+  })
 
-  // it('Claim fails with secret longer than 32 bytes', async () => {
-  //   const secret = _.repeat('ff', 33)
-  //   const secretHash = crypto.sha256(secret)
-  //   const swapParams = await getSwapParams(chain)
-  //   const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-  //   await expect(claimAndVerify(chain, initiationTxId, secret, swapParams)).to.be.rejected
-  // })
+  it('Claim fails with secret longer than 32 bytes', async () => {
+    const secret = _.repeat('ff', 33)
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await expect(claimAndVerify(chain, initiationTxId, secret, swapParams)).to.be.rejected
+  })
 
-  // it('Claim fails with secret shorter than 32 bytes', async () => {
-  //   const secret = _.repeat('ff', 31)
-  //   const secretHash = crypto.sha256(secret)
-  //   const swapParams = await getSwapParams(chain)
-  //   const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-  //   await expect(claimAndVerify(chain, initiationTxId, secret, swapParams)).to.be.rejected
-  // })
+  it('Claim fails with secret shorter than 32 bytes', async () => {
+    const secret = _.repeat('ff', 31)
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await expect(claimAndVerify(chain, initiationTxId, secret, swapParams)).to.be.rejected
+  })
 
-  // it('Initiate and Refund', async () => {
-  //   const secretHash = crypto.sha256(mockSecret)
-  //   const swapParams = await getSwapParams(chain)
-  //   swapParams.expiration = parseInt(Date.now() / 1000)
-  //   const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-  //   await expectBalance(chain, swapParams.refundAddress,
-  //     async () => {
-  //       await sleep(5000)
-  //       await refundAndVerify(chain, initiationTxId, secretHash, swapParams)
-  //     },
-  //     (before, after) => expect(after).to.be.bignumber.greaterThan(before))
-  // })
+  it('Initiate and Refund', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain)
+    swapParams.expiration = parseInt(Date.now() / 1000)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await expectBalance(chain, swapParams.refundAddress,
+      async () => {
+        await sleep(5000)
+        await refundAndVerify(chain, initiationTxId, secretHash, swapParams)
+      },
+      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
+  })
 
-  // it('Refund fails after claim', async () => {
-  //   const secretHash = crypto.sha256(mockSecret)
-  //   const swapParams = await getSwapParams(chain)
-  //   swapParams.expiration = parseInt(Date.now() / 1000)
-  //   const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-  //   await expectBalance(chain, swapParams.recipientAddress,
-  //     async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
-  //     (before, after) => expect(after).to.be.bignumber.greaterThan(before))
-  //   await expectBalance(chain, swapParams.refundAddress,
-  //     async () => {
-  //       try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
-  //     },
-  //     (before, after) => expect(after).to.be.bignumber.equal(before))
-  //   await sleep(5000)
-  //   await expectBalance(chain, swapParams.refundAddress,
-  //     async () => {
-  //       try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
-  //     },
-  //     (before, after) => expect(after).to.be.bignumber.equal(before))
-  // })
+  it('Refund fails after claim', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain)
+    swapParams.expiration = parseInt(Date.now() / 1000)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    await expectBalance(chain, swapParams.recipientAddress,
+      async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
+      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
+    await expectBalance(chain, swapParams.refundAddress,
+      async () => {
+        try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
+      },
+      (before, after) => expect(after).to.be.bignumber.equal(before))
+    await sleep(5000)
+    await expectBalance(chain, swapParams.refundAddress,
+      async () => {
+        try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
+      },
+      (before, after) => expect(after).to.be.bignumber.equal(before))
+  })
 
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
