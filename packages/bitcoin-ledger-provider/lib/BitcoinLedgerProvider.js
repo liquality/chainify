@@ -50,7 +50,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(address.derivationPath, hex)
   }
 
-  async _sendTransaction (_outputs) {
+  async _buildTransaction (_outputs) {
     const app = await this.getApp()
 
     const totalValue = _outputs.reduce((prev, curr) => {
@@ -76,7 +76,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
 
-    const signedTransaction = await app.createPaymentTransactionNew(
+    return app.createPaymentTransactionNew(
       ledgerInputs,
       paths,
       unusedAddress.derivationPath,
@@ -87,7 +87,18 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       undefined,
       this._addressType === 'bech32' ? ['bech32'] : undefined
     )
+  }
 
+  async buildTransaction (to, value, data, from) {
+    return this._buildTransaction([{ to, value }])
+  }
+
+  async buildBatchTransaction (transactions) {
+    return this._buildTransaction(transactions)
+  }
+
+  async _sendTransaction (transactions) {
+    const signedTransaction = await this._buildTransaction(transactions)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 

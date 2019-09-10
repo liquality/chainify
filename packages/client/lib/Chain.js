@@ -190,6 +190,27 @@ export default class Chain {
   }
 
   /**
+   * Create & sign a transaction.
+   * @param {!string} to - Recepient address.
+   * @param {!string} value - Value of transaction.
+   * @param {!string} data - Data to be passed to the transaction.
+   * @param {!string} from - The address from which the message is signed.
+   * @return {Promise<string>} Resolves with a signed transaction object.
+   */
+  async buildTransaction (to, value, data, from) {
+    return this.client.getMethod('buildTransaction')(to, value, data, from)
+  }
+
+  /**
+   * Create & sign a transaction with multiple outputs.
+   * @param {string[]} transactions - to, value, data, from.
+   * @return {Promise<string>} Resolves with a signed transaction object.
+   */
+  async buildBatchTransaction (transactions) {
+    return this.client.getMethod('buildBatchTransaction')(transactions)
+  }
+
+  /**
    * Create, sign & broadcast a transaction.
    * @param {!string} to - Recepient address.
    * @param {!string} value - Value of transaction.
