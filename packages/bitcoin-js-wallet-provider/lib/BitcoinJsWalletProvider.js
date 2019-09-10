@@ -57,7 +57,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     return signature.toString('hex')
   }
 
-  async _sendTransaction (outputs) {
+  async _buildTransaction (outputs) {
     const network = this._network
 
     const totalValue = outputs.reduce((prev, curr) => {
@@ -77,7 +77,8 @@ export default class BitcoinJsWalletProvider extends Provider {
     const txb = new bitcoin.TransactionBuilder(network)
 
     for (const output of outputs) {
-      txb.addOutput(addressToString(output.to), output.value)
+      const to = output.to.address === undefined ? output.to : addressToString(output.to) // Allow for OP_RETURN
+      txb.addOutput(to, output.value)
     }
 
     const prevOutScriptType = this.getScriptType()
@@ -109,7 +110,20 @@ export default class BitcoinJsWalletProvider extends Provider {
       txb.sign(signParams)
     }
 
-    return this.getMethod('sendRawTransaction')(txb.build().toHex())
+    return txb.build().toHex()
+  }
+
+  async buildTransaction (to, value, data, from) {
+    return this._buildTransaction([{ to, value }])
+  }
+
+  async buildBatchTransaction (transactions) {
+    return this._buildTransaction(transactions)
+  }
+
+  async _sendTransaction (transactions) {
+    const signedTransaction = await this._buildTransaction(transactions)
+    return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
   async sendTransaction (to, value, data, from) {

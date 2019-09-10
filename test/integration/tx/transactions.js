@@ -179,6 +179,8 @@ describe('Send Transactions', function () {
   this.timeout(config.timeout)
 
   describe('Bitcoin - Ledger', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
     testTransaction(chains.bitcoinWithLedger)
   })
 
@@ -193,6 +195,8 @@ describe('Send Batch Transactions', function () {
   this.timeout(config.timeout)
 
   describe('Bitcoin - Ledger', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
     testBatchTransaction(chains.bitcoinWithLedger)
   })
 

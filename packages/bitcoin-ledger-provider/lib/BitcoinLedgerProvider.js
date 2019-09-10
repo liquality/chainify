@@ -50,7 +50,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(address.derivationPath, hex)
   }
 
-  async _sendTransaction (_outputs) {
+  async _buildTransaction (_outputs) {
     const app = await this.getApp()
 
     const totalValue = _outputs.reduce((prev, curr) => {
@@ -63,7 +63,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     const paths = inputs.map(utxo => utxo.derivationPath)
 
     const outputs = _outputs.map(output => {
-      const outputScript = bitcoin.address.toOutputScript(output.to, this._network)
+      const outputScript = Buffer.isBuffer(output.to) ? output.to : bitcoin.address.toOutputScript(output.to, this._network) // Allow for OP_RETURN
       return { amount: this.getAmountBuffer(output.value), script: outputScript }
     })
 
@@ -76,7 +76,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
 
-    const signedTransaction = await app.createPaymentTransactionNew(
+    return app.createPaymentTransactionNew(
       ledgerInputs,
       paths,
       unusedAddress.derivationPath,
@@ -87,7 +87,18 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       undefined,
       this._addressType === 'bech32' ? ['bech32'] : undefined
     )
+  }
 
+  async buildTransaction (to, value, data, from) {
+    return this._buildTransaction([{ to, value }])
+  }
+
+  async buildBatchTransaction (transactions) {
+    return this._buildTransaction(transactions)
+  }
+
+  async _sendTransaction (transactions) {
+    const signedTransaction = await this._buildTransaction(transactions)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
