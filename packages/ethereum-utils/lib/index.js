@@ -80,6 +80,9 @@ function normalizeTransactionObject (tx, currentHeight) {
     } else if (!isNaN(tx.blockNumber)) {
       tx.confirmations = currentHeight - tx.blockNumber + 1
     }
+    if (tx.blockHash === null) {
+      delete tx.blockHash
+    }
   }
 
   return tx
