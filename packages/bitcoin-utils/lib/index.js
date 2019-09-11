@@ -45,7 +45,7 @@ function getAddressNetwork (address) {
 }
 
 const AddressTypes = [
-  'legacy', 'p2sh', 'bech32'
+  'legacy', 'p2sh-segwit', 'bech32'
 ]
 
 export {
