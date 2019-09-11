@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/debug",
+  "name": "@liquality-dev/debug",
   "umdName": "Debug",
   "umdExport": "default",
   "version": "0.3.6",
@@ -15,14 +15,11 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "Liquality <info@liquality.io>",
+  "author": "Liquality <info@liquality-dev.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "debug": "^4.1.1"
-  },
-  "engines": {
-    "node": "~8.12.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

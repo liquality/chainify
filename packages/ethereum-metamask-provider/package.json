@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/ethereum-metamask-provider",
+  "name": "@liquality-dev/ethereum-metamask-provider",
   "umdName": "EthereumMetaMaskProvider",
   "umdExport": "default",
   "version": "0.3.6",
@@ -15,20 +15,17 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "Liquality <info@liquality.io>",
+  "author": "Liquality <info@liquality-dev.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/errors": "^0.3.6",
-    "@liquality/ethereum-networks": "^0.3.6",
-    "@liquality/ethereum-utils": "^0.3.6",
-    "@liquality/metamask-provider": "^0.3.6",
-    "@liquality/utils": "^0.3.6",
+    "@liquality-dev/errors": "^0.3.6",
+    "@liquality-dev/ethereum-networks": "^0.3.6",
+    "@liquality-dev/ethereum-utils": "^0.3.6",
+    "@liquality-dev/metamask-provider": "^0.3.6",
+    "@liquality-dev/utils": "^0.3.6",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.13"
-  },
-  "engines": {
-    "node": "~8.12.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

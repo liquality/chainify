@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/ethereum-erc20-provider",
+  "name": "@liquality-dev/ethereum-erc20-provider",
   "umdName": "EthereumErc20Provider",
   "umdExport": "default",
   "version": "0.3.6",
@@ -15,19 +15,16 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "Liquality <info@liquality.io>",
+  "author": "Liquality <info@liquality-dev.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/crypto": "^0.3.6",
-    "@liquality/ethereum-utils": "^0.3.6",
-    "@liquality/provider": "^0.3.6",
-    "@liquality/utils": "^0.3.6",
+    "@liquality-dev/crypto": "^0.3.6",
+    "@liquality-dev/ethereum-utils": "^0.3.6",
+    "@liquality-dev/provider": "^0.3.6",
+    "@liquality-dev/utils": "^0.3.6",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.13"
-  },
-  "engines": {
-    "node": "~8.12.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

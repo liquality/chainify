@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/crypto",
+  "name": "@liquality-dev/crypto",
   "umdName": "Crypto",
   "version": "0.3.6",
   "description": "",
@@ -14,16 +14,13 @@
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
-  "author": "Liquality <info@liquality.io>",
+  "author": "Liquality <info@liquality-dev.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "bech32": "^1.1.3",
     "bs58": "^4.0.1",
     "crypto-hashing": "^1.0.0"
-  },
-  "engines": {
-    "node": "~8.12.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
