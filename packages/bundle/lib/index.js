@@ -1,7 +1,6 @@
 import Client from '@liquality-dev/client'
 import Provider from '@liquality-dev/provider'
 import JsonRpcProvider from '@liquality-dev/jsonrpc-provider'
-import LedgerProvider from '@liquality-dev/ledger-provider'
 import Debug from '@liquality-dev/debug'
 
 import * as crypto from '@liquality-dev/crypto'
@@ -17,7 +16,6 @@ export {
   Client,
   Provider,
   JsonRpcProvider,
-  LedgerProvider,
   Debug,
 
   crypto,
