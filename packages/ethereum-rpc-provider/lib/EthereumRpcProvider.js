@@ -1,15 +1,15 @@
 import { isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
+import JsonRpcProvider from '@liquality-dev/jsonrpc-provider'
 import {
   formatEthResponse,
   ensure0x,
   normalizeTransactionObject,
   remove0x
-} from '@liquality/ethereum-utils'
-import { addressToString, Address } from '@liquality/utils'
-import { padHexStart } from '@liquality/crypto'
+} from '@liquality-dev/ethereum-utils'
+import { addressToString, Address } from '@liquality-dev/utils'
+import { padHexStart } from '@liquality-dev/crypto'
 
 import { version } from '../package.json'
 

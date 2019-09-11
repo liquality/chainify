@@ -1,7 +1,7 @@
 import { findKey } from 'lodash'
 
-import { base58, padHexStart } from '@liquality/crypto'
-import networks from '@liquality/bitcoin-networks'
+import { base58, padHexStart } from '@liquality-dev/crypto'
+import networks from '@liquality-dev/bitcoin-networks'
 import { version } from '../package.json'
 
 function calculateFee (numInputs, numOutputs, feePerByte) {

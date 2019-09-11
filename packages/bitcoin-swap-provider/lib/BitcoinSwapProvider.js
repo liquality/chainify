@@ -1,11 +1,11 @@
 import * as bitcoin from 'bitcoinjs-lib'
 import BigNumber from 'bignumber.js'
-import Provider from '@liquality/provider'
+import Provider from '@liquality-dev/provider'
 import {
   calculateFee
-} from '@liquality/bitcoin-utils'
-import { addressToString, sleep } from '@liquality/utils'
-import networks from '@liquality/bitcoin-networks'
+} from '@liquality-dev/bitcoin-utils'
+import { addressToString, sleep } from '@liquality-dev/utils'
+import networks from '@liquality-dev/bitcoin-networks'
 
 import { version } from '../package.json'
 

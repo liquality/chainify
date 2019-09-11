@@ -1,5 +1,5 @@
-import { Block, Transaction } from '@liquality/schema'
-import { padHexStart } from '@liquality/crypto'
+import { Block, Transaction } from '@liquality-dev/schema'
+import { padHexStart } from '@liquality-dev/crypto'
 import eip55 from 'eip55'
 
 import { version } from '../package.json'

@@ -1,24 +1,21 @@
-import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
-import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
-import BitcoinNodeWalletProvider from '@liquality/bitcoin-node-wallet-provider'
-import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
-import BitcoinSwapProvider from '@liquality/bitcoin-swap-provider'
-import BitcoinEsploraApiProvider from '@liquality/bitcoin-esplora-api-provider'
-import * as BitcoinNetworks from '@liquality/bitcoin-networks'
-import * as BitcoinUtils from '@liquality/bitcoin-utils'
+import BitcoinRpcProvider from '@liquality-dev/bitcoin-rpc-provider'
+import BitcoinNodeWalletProvider from '@liquality-dev/bitcoin-node-wallet-provider'
+import BitcoinJsWalletProvider from '@liquality-dev/bitcoin-js-wallet-provider'
+import BitcoinSwapProvider from '@liquality-dev/bitcoin-swap-provider'
+import BitcoinEsploraApiProvider from '@liquality-dev/bitcoin-esplora-api-provider'
+import * as BitcoinNetworks from '@liquality-dev/bitcoin-networks'
+import * as BitcoinUtils from '@liquality-dev/bitcoin-utils'
 
-import EthereumErc20Provider from '@liquality/ethereum-erc20-provider'
-import EthereumErc20SwapProvider from '@liquality/ethereum-erc20-swap-provider'
-import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
-import EthereumMetaMaskProvider from '@liquality/ethereum-metamask-provider'
-import EthereumJsWalletProvider from '@liquality/ethereum-js-wallet-provider'
-import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
-import EthereumSwapProvider from '@liquality/ethereum-swap-provider'
-import * as EthereumNetworks from '@liquality/ethereum-networks'
-import * as EthereumUtils from '@liquality/ethereum-utils'
+import EthereumErc20Provider from '@liquality-dev/ethereum-erc20-provider'
+import EthereumErc20SwapProvider from '@liquality-dev/ethereum-erc20-swap-provider'
+import EthereumMetaMaskProvider from '@liquality-dev/ethereum-metamask-provider'
+import EthereumJsWalletProvider from '@liquality-dev/ethereum-js-wallet-provider'
+import EthereumRpcProvider from '@liquality-dev/ethereum-rpc-provider'
+import EthereumSwapProvider from '@liquality-dev/ethereum-swap-provider'
+import * as EthereumNetworks from '@liquality-dev/ethereum-networks'
+import * as EthereumUtils from '@liquality-dev/ethereum-utils'
 
 const bitcoin = {
-  BitcoinLedgerProvider,
   BitcoinRpcProvider,
   BitcoinNodeWalletProvider,
   BitcoinJsWalletProvider,
@@ -32,7 +29,6 @@ const bitcoin = {
 const ethereum = {
   EthereumErc20Provider,
   EthereumErc20SwapProvider,
-  EthereumLedgerProvider,
   EthereumMetaMaskProvider,
   EthereumJsWalletProvider,
   EthereumRpcProvider,

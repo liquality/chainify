@@ -29,7 +29,7 @@ debug.formatArgs = function (args) {
 
   if (!console.history) {
     console.history = [
-      `@liquality/debug v${version}`
+      `@liquality-dev/debug v${version}`
     ]
   }
 

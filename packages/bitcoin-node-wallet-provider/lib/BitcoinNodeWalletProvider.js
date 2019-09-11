@@ -1,10 +1,10 @@
-import WalletProvider from '@liquality/wallet-provider'
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
-import BitcoinNetworks from '@liquality/bitcoin-networks'
-import { AddressTypes } from '@liquality/bitcoin-utils'
+import WalletProvider from '@liquality-dev/wallet-provider'
+import JsonRpcProvider from '@liquality-dev/jsonrpc-provider'
+import BitcoinNetworks from '@liquality-dev/bitcoin-networks'
+import { AddressTypes } from '@liquality-dev/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
-import { sha256 } from '@liquality/crypto'
-import { Address, addressToString } from '@liquality/utils'
+import { sha256 } from '@liquality-dev/crypto'
+import { Address, addressToString } from '@liquality-dev/utils'
 
 import { version } from '../package.json'
 

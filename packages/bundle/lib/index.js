@@ -1,13 +1,13 @@
-import Client from '@liquality/client'
-import Provider from '@liquality/provider'
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
-import LedgerProvider from '@liquality/ledger-provider'
-import Debug from '@liquality/debug'
+import Client from '@liquality-dev/client'
+import Provider from '@liquality-dev/provider'
+import JsonRpcProvider from '@liquality-dev/jsonrpc-provider'
+import LedgerProvider from '@liquality-dev/ledger-provider'
+import Debug from '@liquality-dev/debug'
 
-import * as crypto from '@liquality/crypto'
-import * as schema from '@liquality/schema'
-import * as errors from '@liquality/errors'
-import * as utils from '@liquality/utils'
+import * as crypto from '@liquality-dev/crypto'
+import * as schema from '@liquality-dev/schema'
+import * as errors from '@liquality-dev/errors'
+import * as utils from '@liquality-dev/utils'
 
 import * as providers from './providers'
 

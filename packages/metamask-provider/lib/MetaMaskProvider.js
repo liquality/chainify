@@ -1,9 +1,9 @@
 import { isFunction } from 'lodash'
 
-import WalletProvider from '@liquality/wallet-provider'
-import { formatEthResponse } from '@liquality/ethereum-utils'
-import { WalletError } from '@liquality/errors'
-import Debug from '@liquality/debug'
+import WalletProvider from '@liquality-dev/wallet-provider'
+import { formatEthResponse } from '@liquality-dev/ethereum-utils'
+import { WalletError } from '@liquality-dev/errors'
+import Debug from '@liquality-dev/debug'
 
 import { version } from '../package.json'
 

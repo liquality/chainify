@@ -1,9 +1,9 @@
 import axios from 'axios'
-import Provider from '@liquality/provider'
+import Provider from '@liquality-dev/provider'
 import { isArray, flatten } from 'lodash'
 import BigNumber from 'bignumber.js'
 
-import { addressToString } from '@liquality/utils'
+import { addressToString } from '@liquality-dev/utils'
 
 import { version } from '../package.json'
 
