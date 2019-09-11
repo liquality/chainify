@@ -2,7 +2,7 @@
   "name": "@liquality-dev/ethereum-erc20-swap-provider",
   "umdName": "EthereumErc20SwapProvider",
   "umdExport": "default",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,10 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality-dev/crypto": "^0.3.6",
-    "@liquality-dev/ethereum-utils": "^0.3.6",
-    "@liquality-dev/provider": "^0.3.6",
-    "@liquality-dev/utils": "^0.3.6"
+    "@liquality-dev/crypto": "^0.3.7",
+    "@liquality-dev/ethereum-utils": "^0.3.7",
+    "@liquality-dev/provider": "^0.3.7",
+    "@liquality-dev/utils": "^0.3.7"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

@@ -1,7 +1,7 @@
 {
   "name": "@liquality-dev/ethereum-utils",
   "umdName": "EthereumUtils",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -18,8 +18,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality-dev/crypto": "^0.3.6",
-    "@liquality-dev/schema": "^0.3.6",
+    "@liquality-dev/crypto": "^0.3.7",
+    "@liquality-dev/schema": "^0.3.7",
     "eip55": "^1.0.3"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",

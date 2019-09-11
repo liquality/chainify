@@ -2,7 +2,7 @@
   "name": "@liquality-dev/jsonrpc-provider",
   "umdName": "JsonRpcProvider",
   "umdExport": "default",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,10 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality-dev/debug": "^0.3.6",
-    "@liquality-dev/errors": "^0.3.6",
-    "@liquality-dev/provider": "^0.3.6",
-    "@liquality-dev/schema": "^0.3.6",
+    "@liquality-dev/debug": "^0.3.7",
+    "@liquality-dev/errors": "^0.3.7",
+    "@liquality-dev/provider": "^0.3.7",
+    "@liquality-dev/schema": "^0.3.7",
     "axios": "^0.18.0",
     "json-bigint": "^0.3.0",
     "lodash": "^4.17.13"
