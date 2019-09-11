@@ -38,7 +38,6 @@
     "@liquality-dev/ethereum-swap-provider": "^0.3.7",
     "@liquality-dev/ethereum-utils": "^0.3.7",
     "@liquality-dev/jsonrpc-provider": "^0.3.7",
-    "@liquality-dev/ledger-provider": "^0.3.6",
     "@liquality-dev/metamask-provider": "^0.3.7",
     "@liquality-dev/provider": "^0.3.7",
     "@liquality-dev/schema": "^0.3.7",
