@@ -55,11 +55,13 @@ export default class BitcoinEsploraApiProvider extends Provider {
 
   async _getUnspentTransactions (address) {
     const response = await this._axios.get(`/address/${addressToString(address)}/utxo`)
+    const currentHeight = await this.getBlockHeight()
     return response.data.map(utxo => ({
       ...utxo,
       address: addressToString(address),
       satoshis: utxo.value,
-      amount: BigNumber(utxo.value).dividedBy(1e8).toNumber()
+      amount: BigNumber(utxo.value).dividedBy(1e8).toNumber(),
+      confirmations: utxo.status.confirmed ? (currentHeight - utxo.status.block_height) + 1 : 0
     }))
   }
 
