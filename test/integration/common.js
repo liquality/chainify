@@ -75,7 +75,7 @@ const chains = {
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithJs: { id: 'Ethereum Js', name: 'ethereum', client: ethereumWithJs },
   erc20WithMetaMask: { id: 'ERC20 MetaMask', name: 'ethereum', client: erc20WithMetaMask },
-  erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
+  erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode }
 }
 
 async function getSwapParams (chain) {
