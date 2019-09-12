@@ -15,11 +15,6 @@ const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMask
 const bitcoinNetworks = providers.bitcoin.networks
 const bitcoinNetwork = bitcoinNetworks[config.bitcoin.network]
 
-const bitcoinWithLedger = new Client()
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetwork }, 'bech32'))
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetwork }, 'p2wsh'))
-
 const bitcoinWithNode = new Client()
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(bitcoinNetwork, config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, 'bech32'))
@@ -54,12 +49,6 @@ ethereumWithNode.addProvider(new providers.ethereum.EthereumRpcProvider(config.e
 ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
 ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
 
-const ethereumWithLedger = new Client()
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
-
 const ethereumWithJs = new Client()
 ethereumWithJs.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(ethereumNetwork, generateMnemonic(256)))
@@ -79,24 +68,14 @@ erc20WithNode.addProvider(new providers.ethereum.EthereumErc20Provider('We dont 
 erc20WithNode.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 erc20WithNode.addProvider(new RandomEthereumAddressProvider())
 
-const erc20WithLedger = new Client()
-erc20WithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
-erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
-erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
-erc20WithLedger.addProvider(new RandomEthereumAddressProvider())
-
 const chains = {
-  bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: bitcoinNetwork },
   bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: bitcoinNetwork },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
-  ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
   ethereumWithJs: { id: 'Ethereum Js', name: 'ethereum', client: ethereumWithJs },
   erc20WithMetaMask: { id: 'ERC20 MetaMask', name: 'ethereum', client: erc20WithMetaMask },
   erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
-  erc20WithLedger: { id: 'Erc20 Ledger', name: 'ethereum', client: erc20WithLedger }
 }
 
 async function getSwapParams (chain) {

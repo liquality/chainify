@@ -177,12 +177,6 @@ function testSignBatchP2SHTransaction (chain) {
 describe('Send Transactions', function () {
   this.timeout(config.timeout)
 
-  describe('Bitcoin - Ledger', () => {
-    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
-    testTransaction(chains.bitcoinWithLedger)
-  })
-
   describe('Bitcoin - Js', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
     beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
@@ -192,12 +186,6 @@ describe('Send Transactions', function () {
 
 describe('Send Batch Transactions', function () {
   this.timeout(config.timeout)
-
-  describe('Bitcoin - Ledger', () => {
-    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
-    testBatchTransaction(chains.bitcoinWithLedger)
-  })
 
   describe('Bitcoin - Node', () => {
     testBatchTransaction(chains.bitcoinWithNode)
@@ -212,12 +200,6 @@ describe('Send Batch Transactions', function () {
 
 describe('Sign Batch P2SH Transaction', function () {
   this.timeout(config.timeout)
-
-  describe('Bitcoin - Ledger', () => {
-    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
-    testSignBatchP2SHTransaction(chains.bitcoinWithLedger)
-  })
 
   describe('Bitcoin - Node', () => {
     testSignBatchP2SHTransaction(chains.bitcoinWithNode)
