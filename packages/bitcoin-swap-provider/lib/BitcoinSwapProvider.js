@@ -23,7 +23,7 @@ export default class BitcoinSwapProvider extends Provider {
   getPubKeyHash (address) {
     const outputScript = bitcoin.address.toOutputScript(address, this._network)
     const type = classify.output(outputScript)
-    if (![classify.types.P2PK, classify.types.P2WPKH].includes(type)) {
+    if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
       throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`)
     }
 

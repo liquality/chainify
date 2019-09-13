@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 import BitcoinSwapProvider from '../../lib'
+import BitcoinNetworks from '@liquality/bitcoin-networks'
 
 const { expect } = require('chai').use(require('chai-as-promised'))
 
@@ -8,7 +9,7 @@ describe('Bitcoin Swap provider', () => {
   let lib
 
   beforeEach(() => {
-    lib = new BitcoinSwapProvider()
+    lib = new BitcoinSwapProvider({ network: BitcoinNetworks.bitcoin_testnet })
   })
 
   describe('Generate swap', () => {
