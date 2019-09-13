@@ -1,4 +1,5 @@
 import * as bitcoin from 'bitcoinjs-lib'
+import * as classify from '../node_modules/bitcoinjs-lib/src/classify'
 import BigNumber from 'bignumber.js'
 import Provider from '@liquality/provider'
 import {
@@ -20,7 +21,12 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   getPubKeyHash (address) {
-    // TODO: wrapped segwit addresses not supported. Not possible to derive pubkeyHash from address
+    const outputScript = bitcoin.address.toOutputScript(address, this._network)
+    const type = classify.output(outputScript)
+    if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
+      throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`)
+    }
+
     try {
       const bech32 = bitcoin.address.fromBech32(address)
       return bech32.data

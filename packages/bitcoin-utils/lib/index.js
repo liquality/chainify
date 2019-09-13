@@ -34,7 +34,7 @@ function getAddressNetwork (address) {
   networkKey = findKey(networks, network => address.startsWith(network.bech32))
   // base58
   if (!networkKey) {
-    const prefix = base58.decode(address).toString('hex').substring(0, 2).toUpperCase()
+    const prefix = base58.decode(address).toString('hex').substring(0, 2)
     networkKey = findKey(networks, network => {
       const pubKeyHashPrefix = padHexStart((network.pubKeyHash).toString(16), 2)
       const scriptHashPrefix = padHexStart((network.scriptHash).toString(16), 2)
@@ -45,7 +45,7 @@ function getAddressNetwork (address) {
 }
 
 const AddressTypes = [
-  'legacy', 'p2sh', 'bech32'
+  'legacy', 'p2sh-segwit', 'bech32'
 ]
 
 export {

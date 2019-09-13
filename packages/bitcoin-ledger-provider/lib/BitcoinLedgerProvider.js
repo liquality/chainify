@@ -26,7 +26,7 @@ const NONCHANGE_OR_CHANGE_ADDRESS = 2
 
 const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
   'legacy': 44,
-  'p2sh': 49,
+  'p2sh-segwit': 49,
   'bech32': 84
 }
 
@@ -299,7 +299,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
   async _getWalletPublicKey (path) {
     const app = await this.getApp()
-    return app.getWalletPublicKey(path, { format: this._addressType })
+    const format = this._addressType === 'p2sh-segwit' ? 'p2sh' : this._addressType
+    return app.getWalletPublicKey(path, { format: format })
   }
 
   async getWalletPublicKey (path) {
