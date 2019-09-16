@@ -1,5 +1,5 @@
 import * as bitcoin from 'bitcoinjs-lib'
-import * as classify from '../node_modules/bitcoinjs-lib/src/classify'
+import * as classify from 'bitcoinjs-lib/src/classify'
 import BigNumber from 'bignumber.js'
 import Provider from '@liquality/provider'
 import {
