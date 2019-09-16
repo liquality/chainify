@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-erc20-swap-provider",
   "umdName": "EthereumErc20SwapProvider",
   "umdExport": "default",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,10 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/crypto": "^0.3.7",
-    "@liquality/ethereum-utils": "^0.3.7",
-    "@liquality/provider": "^0.3.7",
-    "@liquality/utils": "^0.3.7"
+    "@liquality/crypto": "^0.3.8",
+    "@liquality/ethereum-utils": "^0.3.8",
+    "@liquality/provider": "^0.3.8",
+    "@liquality/utils": "^0.3.8"
   },
   "engines": {
     "node": "~8.12.0"
