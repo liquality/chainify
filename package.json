@@ -56,6 +56,7 @@
     "lint": "standard $npm_package_options_standard",
     "bootstrap": "lerna bootstrap --force-local",
     "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
+    "test:api": "cross-env NODE_ENV=test nyc mocha test/integration/api $npm_package_options_mocha",
     "test:chain": "cross-env NODE_ENV=test nyc mocha test/integration/chain $npm_package_options_mocha",
     "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha",
     "test:tx": "cross-env NODE_ENV=test nyc mocha test/integration/tx $npm_package_options_mocha",
