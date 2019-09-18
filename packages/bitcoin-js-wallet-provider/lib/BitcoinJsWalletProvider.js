@@ -17,7 +17,7 @@ const NONCHANGE_OR_CHANGE_ADDRESS = 2
 
 const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
   'legacy': 44,
-  'p2sh': 49,
+  'p2sh-segwit': 49,
   'bech32': 84
 }
 
@@ -93,7 +93,7 @@ export default class BitcoinJsWalletProvider extends Provider {
       const wallet = await this.getWalletAddress(inputs[i].address)
       const keyPair = await this.keyPair(wallet.derivationPath)
       const paymentVariant = this.getPaymentVariantFromPublicKey(keyPair.publicKey)
-      const needsWitness = this._addressType === 'bech32' || this._addressType === 'p2sh'
+      const needsWitness = this._addressType === 'bech32' || this._addressType === 'p2sh-segwit'
 
       const signParams = { prevOutScriptType, vin: i, keyPair }
 
@@ -101,7 +101,7 @@ export default class BitcoinJsWalletProvider extends Provider {
         signParams.witnessValue = inputs[i].value
       }
 
-      if (this._addressType === 'p2sh') {
+      if (this._addressType === 'p2sh-segwit') {
         signParams.redeemScript = paymentVariant.redeem.output
       }
 
@@ -198,7 +198,7 @@ export default class BitcoinJsWalletProvider extends Provider {
 
   getScriptType () {
     if (this._addressType === 'legacy') return 'p2pkh'
-    else if (this._addressType === 'p2sh') return 'p2sh-p2wpkh'
+    else if (this._addressType === 'p2sh-segwit') return 'p2sh-p2wpkh'
     else if (this._addressType === 'bech32') return 'p2wpkh'
   }
 
@@ -209,7 +209,7 @@ export default class BitcoinJsWalletProvider extends Provider {
   getPaymentVariantFromPublicKey (publicKey) {
     if (this._addressType === 'legacy') {
       return bitcoin.payments.p2pkh({ pubkey: publicKey, network: this._network })
-    } else if (this._addressType === 'p2sh') {
+    } else if (this._addressType === 'p2sh-segwit') {
       return bitcoin.payments.p2sh({
         redeem: bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._network }),
         network: this._network })
