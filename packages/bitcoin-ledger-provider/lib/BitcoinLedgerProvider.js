@@ -50,7 +50,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return app.signMessageNew(address.derivationPath, hex)
   }
 
-  async _buildTransaction (_outputs) {
+  async _buildTransaction (_outputs, feePerByte) {
     const app = await this.getApp()
 
     const totalValue = _outputs.reduce((prev, curr) => {
@@ -58,7 +58,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }, BigNumber(0)).toNumber()
 
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(totalValue)
+    const { inputs, change } = await this.getInputsForAmount(totalValue, feePerByte)
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
@@ -89,25 +89,25 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     )
   }
 
-  async buildTransaction (to, value, data, from) {
-    return this._buildTransaction([{ to, value }])
+  async buildTransaction (to, value, data, from, feePerByte) {
+    return this._buildTransaction([{ to, value }], feePerByte)
   }
 
-  async buildBatchTransaction (transactions) {
-    return this._buildTransaction(transactions)
+  async buildBatchTransaction (transactions, feePerByte) {
+    return this._buildTransaction(transactions, feePerByte)
   }
 
-  async _sendTransaction (transactions) {
-    const signedTransaction = await this._buildTransaction(transactions)
+  async _sendTransaction (transactions, feePerByte) {
+    const signedTransaction = await this._buildTransaction(transactions, feePerByte)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
-  async sendTransaction (to, value, data, from) {
-    return this._sendTransaction([{ to, value }])
+  async sendTransaction (to, value, data, from, feePerByte) {
+    return this._sendTransaction([{ to, value }], feePerByte)
   }
 
-  async sendBatchTransaction (transactions) {
-    return this._sendTransaction(transactions)
+  async sendBatchTransaction (transactions, feePerByte) {
+    return this._sendTransaction(transactions, feePerByte)
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false, index = 0) {
@@ -188,7 +188,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return valueBuffer.reverse()
   }
 
-  async getInputsForAmount (amount, numAddressPerCall = 100) {
+  async getInputsForAmount (amount, feePerByte, numAddressPerCall = 100) {
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -198,7 +198,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     }
 
     const feePerBytePromise = this.getMethod('getFeePerByte')()
-    let feePerByte = false
+    if (feePerByte === undefined) feePerByte = false
 
     while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
       let addrList = []
