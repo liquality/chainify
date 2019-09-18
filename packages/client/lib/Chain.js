@@ -197,8 +197,8 @@ export default class Chain {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed transaction object.
    */
-  async buildTransaction (to, value, data, from) {
-    return this.client.getMethod('buildTransaction')(to, value, data, from)
+  async buildTransaction (to, value, data, from, feePerByte) {
+    return this.client.getMethod('buildTransaction')(to, value, data, from, feePerByte)
   }
 
   /**
@@ -206,8 +206,8 @@ export default class Chain {
    * @param {string[]} transactions - to, value, data, from.
    * @return {Promise<string>} Resolves with a signed transaction object.
    */
-  async buildBatchTransaction (transactions) {
-    return this.client.getMethod('buildBatchTransaction')(transactions)
+  async buildBatchTransaction (transactions, feePerByte) {
+    return this.client.getMethod('buildBatchTransaction')(transactions, feePerByte)
   }
 
   /**
@@ -218,8 +218,8 @@ export default class Chain {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendTransaction (to, value, data, from) {
-    return this.client.getMethod('sendTransaction')(to, value, data, from)
+  async sendTransaction (to, value, data, from, feePerByte) {
+    return this.client.getMethod('sendTransaction')(to, value, data, from, feePerByte)
   }
 
   /**
@@ -227,8 +227,8 @@ export default class Chain {
    * @param {string[]} transactions - to, value, data, from.
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendBatchTransaction (transactions) {
-    return this.client.getMethod('sendBatchTransaction')(transactions)
+  async sendBatchTransaction (transactions, feePerByte) {
+    return this.client.getMethod('sendBatchTransaction')(transactions, feePerByte)
   }
 
   /**

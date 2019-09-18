@@ -47,6 +47,49 @@ function testBatchTransaction (chain) {
   })
 }
 
+function testTransactionFees (chain) {
+  it('should allow for manual feePerByte input', async () => {
+    const addr = (await chain.client.wallet.getUnusedAddress()).address
+    const value = config[chain.name].value
+
+    const feePerByte = await chain.client.getMethod('getFeePerByte')(1)
+
+    const tx = await chain.client.chain.sendTransaction(addr, value, null, null, feePerByte)
+    await chains.bitcoinWithNode.client.chain.generateBlock(1)
+    const fees = await getTxFees(chain, tx)
+
+    const addr2 = (await chain.client.wallet.getUnusedAddress()).address
+    const tx2 = await chain.client.chain.sendTransaction(addr2, value, null, null, feePerByte * 2)
+    await chains.bitcoinWithNode.client.chain.generateBlock(1)
+    const doubleFees = await getTxFees(chain, tx2)
+
+    expect(fees * 2).to.equal(doubleFees)
+  })
+
+  it('should allow for manual feePerByte input for batch Transactions', async () => {
+    const addr1 = (await chain.client.wallet.getUnusedAddress()).address
+    await fundUnusedBitcoinAddress(chain)
+    const addr2 = (await chain.client.wallet.getUnusedAddress()).address
+    const value = config[chain.name].value
+
+    const feePerByte = await chain.client.getMethod('getFeePerByte')(1)
+
+    const tx = await chain.client.chain.sendBatchTransaction([{ to: addr1, value }, { to: addr2, value }], feePerByte)
+    await chains.bitcoinWithNode.client.chain.generateBlock(1)
+    const fees = await getTxFees(chain, tx)
+
+    const addr3 = (await chain.client.wallet.getUnusedAddress()).address
+    await fundUnusedBitcoinAddress(chain)
+    const addr4 = (await chain.client.wallet.getUnusedAddress()).address
+
+    const tx2 = await chain.client.chain.sendBatchTransaction([{ to: addr3, value }, { to: addr4, value }], feePerByte * 2)
+    await chains.bitcoinWithNode.client.chain.generateBlock(1)
+    const doubleFees = await getTxFees(chain, tx2)
+
+    expect(fees * 2).to.equal(doubleFees)
+  })
+}
+
 function testSignBatchP2SHTransaction (chain) {
   it('Should redeem two P2SH\'s', async () => {
     const network = chain.network
@@ -174,6 +217,25 @@ function testSignBatchP2SHTransaction (chain) {
   })
 }
 
+async function getTxFees (chain, transactionHash) {
+  const rawTx = await chain.client.getMethod('getTransactionHex')(transactionHash)
+  const txObject = await chain.client.getMethod('decodeRawTransaction')(rawTx)
+  const vins = txObject._raw.data.vin
+  const vouts = txObject._raw.data.vout
+
+  let vinsValue = 0
+  for (let i = 0; i < vins.length; i++) {
+    const rawVinTx = await chain.client.getMethod('getTransactionHex')(vins[i].txid)
+    const vinTxObject = await chain.client.getMethod('decodeRawTransaction')(rawVinTx)
+    const vinVouts = vinTxObject._raw.data.vout
+    vinsValue += vinVouts[vins[i].vout].value * (10 ** 8)
+  }
+
+  const voutsValue = vouts.reduce((acc, vout) => acc + parseInt((vout.value * (10 ** 8))), 0)
+
+  return vinsValue - voutsValue
+}
+
 describe('Send Transactions', function () {
   this.timeout(config.timeout)
 
@@ -207,6 +269,22 @@ describe('Send Batch Transactions', function () {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
     beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
     testBatchTransaction(chains.bitcoinWithJs)
+  })
+})
+
+describe('Send Transactions with custom fees', function () {
+  this.timeout(config.timeout)
+
+  describe('Bitcoin - Ledger', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
+    testTransactionFees(chains.bitcoinWithLedger)
+  })
+
+  describe('Bitcoin - Js', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
+    testTransactionFees(chains.bitcoinWithJs)
   })
 })
 
