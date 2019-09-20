@@ -187,7 +187,32 @@ export default class BitcoinSwapProvider extends Provider {
     return this.getMethod('sendRawTransaction')(tx.toHex())
   }
 
-  doesTransactionMatchSwapParams (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
+  getInputScriptFromTransaction (tx) {
+    const vin = tx._raw.vin[0]
+    if (!vin.scriptSig) return null
+
+    const inputScript = vin.txinwitness ? vin.txinwitness
+      : bitcoin.script.decompile(Buffer.from(vin.scriptSig.hex, 'hex'))
+        .map(b => Buffer.isBuffer(b) ? b.toString('hex') : b)
+    return inputScript
+  }
+
+  doesTransactionMatchRedeem (initiationTxHash, tx, address, isRefund) {
+    if (tx._raw.vin[0].txid !== initiationTxHash) return false
+    const inputScript = this.getInputScriptFromTransaction(tx)
+    if (!inputScript) return false
+    if (isRefund) {
+      if (inputScript.length !== 4) return false
+    } else {
+      if (inputScript.length !== 5) return false
+    }
+    const vout = tx._raw.vout.find(vout => vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.includes(address))
+    if (!vout) return false
+
+    return true
+  }
+
+  doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
     const swapPaymentVariants = this.getSwapPaymentVariants(swapOutput)
     const vout = transaction._raw.vout.find(vout =>
@@ -201,7 +226,7 @@ export default class BitcoinSwapProvider extends Provider {
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
-    return this.doesTransactionMatchSwapParams(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
+    return this.doesTransactionMatchInitiation(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, startBlock, predicate) {
@@ -228,13 +253,13 @@ export default class BitcoinSwapProvider extends Provider {
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     return this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, startBlock,
-      tx => this.doesTransactionMatchSwapParams(tx, value, recipientAddress, refundAddress, secretHash, expiration)
+      tx => this.doesTransactionMatchInitiation(tx, value, recipientAddress, refundAddress, secretHash, expiration)
     )
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, startBlock,
-      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.includes(recipientAddress))
+      tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, recipientAddress, false)
     )
 
     return {
@@ -245,17 +270,14 @@ export default class BitcoinSwapProvider extends Provider {
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     const refundSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, startBlock,
-      tx => tx._raw.vout.find(vout => vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.includes(refundAddress))
+      tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, refundAddress, true)
     )
     return refundSwapTransaction
   }
 
   async getSwapSecret (claimTxHash) {
     const claimTx = await this.getMethod('getTransactionByHash')(claimTxHash)
-    const vin = claimTx._raw.vin[0]
-    const inputScript = vin.txinwitness ? vin.txinwitness
-      : bitcoin.script.decompile(Buffer.from(vin.scriptSig.hex, 'hex'))
-        .map(b => Buffer.isBuffer(b) ? b.toString('hex') : b)
+    const inputScript = this.getInputScriptFromTransaction(claimTx)
     return inputScript[2]
   }
 }
