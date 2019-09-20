@@ -1,4 +1,5 @@
 import Provider from '@liquality/provider'
+import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { AddressTypes } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
@@ -22,7 +23,7 @@ const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
 }
 
 export default class BitcoinJsWalletProvider extends Provider {
-  constructor (network, mnemonic, addressType = 'bech32') {
+  constructor (network, uri, username, password, mnemonic, addressType = 'bech32') {
     super()
     if (!AddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
@@ -33,6 +34,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${network.coinType}'/0'/`
     this._derivationPath = derivationPath
     this._network = network
+    this._rpc = new JsonRpcProvider(uri, username, password)
     this._mnemonic = mnemonic
     this._addressType = addressType
   }
@@ -55,7 +57,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     return signature.toString('hex')
   }
 
-  async _buildTransaction (outputs, feePerByte) {
+  async _buildTransaction (outputs) {
     const network = this._network
 
     const totalValue = outputs.reduce((prev, curr) => {
@@ -63,7 +65,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     }, BigNumber(0)).toNumber()
 
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(totalValue, feePerByte)
+    const { inputs, change } = await this.getInputsForAmount(totalValue)
 
     if (change) {
       outputs.push({
@@ -111,25 +113,25 @@ export default class BitcoinJsWalletProvider extends Provider {
     return txb.build().toHex()
   }
 
-  async buildTransaction (to, value, data, from, feePerByte) {
-    return this._buildTransaction([{ to, value }], feePerByte)
+  async buildTransaction (to, value, data, from) {
+    return this._buildTransaction([{ to, value }])
   }
 
-  async buildBatchTransaction (transactions, feePerByte) {
-    return this._buildTransaction(transactions, feePerByte)
+  async buildBatchTransaction (transactions) {
+    return this._buildTransaction(transactions)
   }
 
-  async _sendTransaction (transactions, feePerByte) {
-    const signedTransaction = await this._buildTransaction(transactions, feePerByte)
+  async _sendTransaction (transactions) {
+    const signedTransaction = await this._buildTransaction(transactions)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
-  async sendTransaction (to, value, data, from, feePerByte) {
-    return this._sendTransaction([{ to, value }], feePerByte)
+  async sendTransaction (to, value, data, from) {
+    return this._sendTransaction([{ to, value }])
   }
 
-  async sendBatchTransaction (transactions, feePerByte) {
-    return this._sendTransaction(transactions, feePerByte)
+  async sendBatchTransaction (transactions) {
+    return this._sendTransaction(transactions)
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
@@ -330,7 +332,7 @@ export default class BitcoinJsWalletProvider extends Provider {
       .then(({ unusedAddress }) => unusedAddress[key])
   }
 
-  async getInputsForAmount (amount, feePerByte, numAddressPerCall = 100) {
+  async getInputsForAmount (amount, numAddressPerCall = 100) {
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -340,7 +342,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     }
 
     const feePerBytePromise = this.getMethod('getFeePerByte')()
-    if (feePerByte === undefined) feePerByte = false
+    let feePerByte = false
 
     while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
       let addrList = []
