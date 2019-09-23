@@ -102,6 +102,8 @@ export default class EthereumSwapProvider extends Provider {
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    if (!initiationTransaction) return false
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     const transactionMatchesSwapParams = this.doesTransactionMatchSwapParams(
       initiationTransaction,
@@ -112,7 +114,7 @@ export default class EthereumSwapProvider extends Provider {
       expiration
     )
 
-    return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
+    return transactionMatchesSwapParams && initiationTransactionReceipt && initiationTransactionReceipt.status === '1'
   }
 
   async findSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock, predicate) {
