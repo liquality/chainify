@@ -102,6 +102,8 @@ export default class EthereumSwapProvider extends Provider {
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    if (!initiationTransaction) return false
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     const transactionMatchesSwapParams = this.doesTransactionMatchSwapParams(
       initiationTransaction,
@@ -112,7 +114,7 @@ export default class EthereumSwapProvider extends Provider {
       expiration
     )
 
-    return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
+    return transactionMatchesSwapParams && initiationTransactionReceipt && initiationTransactionReceipt.status === '1'
   }
 
   async findSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, startBlock, predicate) {
@@ -172,22 +174,24 @@ export default class EthereumSwapProvider extends Provider {
       const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
 
-      if (block && initiationTransaction) {
-        const transaction = block.transactions.find(
-          transaction => transaction.to === initiationTransaction.contractAddress
-        )
+      if (initiationTransaction) {
+        if (block) {
+          const transaction = block.transactions.find(
+            transaction => transaction.to === initiationTransaction.contractAddress
+          )
 
-        if (transaction) {
-          const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-          if (transactionReceipt.status === '1' && transaction.input !== '') claimSwapTransaction = transaction
+          if (transaction) {
+            const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
+            if (transactionReceipt.status === '1' && transaction.input !== '') claimSwapTransaction = transaction
+          }
+
+          blockNumber++
+        } else {
+          arrivedAtTip = true
         }
-
-        blockNumber++
-      } else {
-        arrivedAtTip = true
       }
 
-      if (arrivedAtTip) { await sleep(5000) }
+      if (arrivedAtTip || !initiationTransaction) { await sleep(5000) }
     }
     claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
 
@@ -201,25 +205,28 @@ export default class EthereumSwapProvider extends Provider {
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
     let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     let refundSwapTransaction = false
     let arrivedAtTip = false
 
     while (!refundSwapTransaction) {
+      const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
       const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      if (block) {
-        refundSwapTransaction = block.transactions.find(transaction =>
-          transaction.to === initiationTransaction.contractAddress &&
-          transaction.input === '' &&
-          block.timestamp >= expiration
-        )
 
-        blockNumber++
-      } else {
-        arrivedAtTip = true
+      if (initiationTransaction) {
+        if (block) {
+          refundSwapTransaction = block.transactions.find(transaction =>
+            transaction.to === initiationTransaction.contractAddress &&
+            transaction.input === '' &&
+            block.timestamp >= expiration
+          )
+
+          blockNumber++
+        } else {
+          arrivedAtTip = true
+        }
       }
 
-      if (arrivedAtTip) { await sleep(5000) }
+      if (arrivedAtTip || !initiationTransaction) { await sleep(5000) }
     }
     return refundSwapTransaction
   }
