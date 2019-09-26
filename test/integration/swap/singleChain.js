@@ -173,17 +173,14 @@ describe('Swap Single Chain Flow', function () {
   this.timeout(config.timeout)
 
   describe('Bitcoin - Ledger', () => {
-    mineBitcoinBlocks()
     testSingle(chains.bitcoinWithLedger)
   })
 
   describe('Bitcoin - Node', () => {
-    mineBitcoinBlocks()
     testSingle(chains.bitcoinWithNode)
   })
 
   describe('Bitcoin - Js', () => {
-    mineBitcoinBlocks()
     before(async function () {
       await importBitcoinAddresses(chains.bitcoinWithJs)
     })
