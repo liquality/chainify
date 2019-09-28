@@ -2,7 +2,7 @@
   "name": "@liquality/ledger-provider",
   "umdName": "LedgerProvider",
   "umdExport": "default",
-  "version": "0.3.9",
+  "version": "0.3.10-beta.0",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -26,9 +26,9 @@
     "@ledgerhq/hw-transport-node-hid": "^4.56.0",
     "@ledgerhq/hw-transport-web-ble": "^4.56.0",
     "@ledgerhq/hw-transport-webusb": "^4.56.0",
-    "@liquality/debug": "^0.3.9",
-    "@liquality/errors": "^0.3.9",
-    "@liquality/wallet-provider": "^0.3.9"
+    "@liquality/debug": "^0.3.10-beta.0",
+    "@liquality/errors": "^0.3.10-beta.0",
+    "@liquality/wallet-provider": "^0.3.10-beta.0"
   },
   "engines": {
     "node": "~8.12.0"
