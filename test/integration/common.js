@@ -2,7 +2,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
-import { Client, Provider, providers, crypto } from '../../packages/bundle/lib'
+import { Client, Provider, providers, crypto, errors } from '../../packages/bundle/lib'
 import { sleep } from '../../packages/utils'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
@@ -149,13 +149,25 @@ async function fundUnusedEthereumAddress (chain) {
   await chains.ethereumWithNode.client.chain.sendTransaction(unusedAddress, (10 ** 18))
 }
 
+async function mineBlock (chain) {
+  try {
+    await chain.client.chain.generateBlock(1)
+  } catch (e) {
+    if (!(e instanceof errors.UnimplementedMethodError)) throw e
+    console.log('Skipped mining block - not implement for chain - probably client automines')
+  }
+}
+
 async function initiateAndVerify (chain, secretHash, swapParams) {
   console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const initiationParams = [swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration]
-  const [initiationTx, initiationTxId] = await Promise.all([
-    chain.client.swap.findInitiateSwapTransaction(...initiationParams),
-    chain.client.swap.initiateSwap(...initiationParams)
-  ])
+  const initiationTxId = await chain.client.swap.initiateSwap(...initiationParams)
+  await mineBlock(chain)
+  const currentBlock = await chain.client.chain.getBlockHeight()
+  const blockNumber = chain.id.includes('ERC20')
+    ? currentBlock - 1 // ERC20 swaps involve 2 transactions - ganache auto mines for each
+    : currentBlock
+  const initiationTx = await chain.client.swap.findInitiateSwapTransaction(...initiationParams, blockNumber)
   expect(initiationTx.hash).to.equal(initiationTxId)
   const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
   expect(isVerified).to.equal(true)
@@ -166,10 +178,10 @@ async function initiateAndVerify (chain, secretHash, swapParams) {
 async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
   console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const secretHash = crypto.sha256(secret)
-  const [claimTx, claimTxId] = await Promise.all([
-    chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration),
-    chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
-  ])
+  const claimTxId = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
+  await mineBlock(chain)
+  const currentBlock = await chain.client.chain.getBlockHeight()
+  const claimTx = await chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
   console.log(`${chain.id} Claimed ${claimTxId}`)
   return claimTx
 }
@@ -177,10 +189,12 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
 async function refundAndVerify (chain, initiationTxId, secretHash, swapParams) {
   console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
-  const foundRefundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
-  expect(refundTxId).to.equal(foundRefundTx.hash)
+  await mineBlock(chain)
+  const currentBlock = await chain.client.chain.getBlockHeight()
+  const refundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
+  expect(refundTxId).to.equal(refundTx.hash)
   console.log(`${chain.id} Refunded ${refundTxId}`)
-  return refundTxId
+  return refundTx
 }
 
 async function expectBalance (chain, address, func, comparison) {

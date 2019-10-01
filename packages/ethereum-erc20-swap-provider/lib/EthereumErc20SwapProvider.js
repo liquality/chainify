@@ -56,7 +56,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_REFUND_FUNCTION)
   }
 
-  doesTransactionMatchSwapParams (transaction, recipientAddress, refundAddress, secretHash, expiration) {
+  doesTransactionMatchInitiation (transaction, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     return transaction.input === data
   }
@@ -69,7 +69,7 @@ export default class EthereumErc20SwapProvider extends Provider {
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    const transactionMatchesSwapParams = this.doesTransactionMatchSwapParams(
+    const transactionMatchesSwapParams = this.doesTransactionMatchInitiation(
       initiationTransaction,
       recipientAddress,
       refundAddress,
@@ -83,73 +83,34 @@ export default class EthereumErc20SwapProvider extends Provider {
            balanceMatchValue
   }
 
-  async findContractDeployTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
-    let initiateSwapTransaction = false
-
-    while (!initiateSwapTransaction) {
-      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-
-      if (block) {
-        initiateSwapTransaction = block.transactions.find(
-          transaction => this.doesTransactionMatchSwapParams(
-            transaction,
-            recipientAddress,
-            refundAddress,
-            secretHash,
-            expiration
-          )
-        )
-
-        blockNumber++
-      }
-
-      await sleep(5000)
-    }
-
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    const initiateSwapTransaction = block.transactions.find(
+      transaction => this.doesTransactionMatchInitiation(
+        transaction,
+        recipientAddress,
+        refundAddress,
+        secretHash,
+        expiration
+      )
+    )
     return initiateSwapTransaction
   }
 
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    const tx = await this.findContractDeployTransaction(value, recipientAddress, refundAddress, secretHash, expiration)
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(tx.hash)
-    let contractBalanceMatchesValue = false
-
-    while (!contractBalanceMatchesValue) {
-      contractBalanceMatchesValue = await this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
-      await sleep(5000)
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransaction) return
+    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    const transaction = block.transactions.find(
+      transaction => transaction.to === initiationTransaction.contractAddress
+    )
+    if (!transaction) return
+    const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
+    if (!transactionReceipt) return
+    if (transactionReceipt.status === '1') {
+      transaction.secret = await this.getSwapSecret(transaction.hash)
+      return transaction
     }
-
-    return tx
-  }
-
-  async findClaimSwapTransaction (initiationTxHash) {
-    let blockNumber = await this.getMethod('getBlockHeight')()
-    let claimSwapTransaction = false
-
-    while (!claimSwapTransaction) {
-      const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-
-      if (block && initiationTransaction) {
-        const transaction = block.transactions.find(
-          transaction => transaction.to === initiationTransaction.contractAddress
-        )
-
-        if (transaction) {
-          const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-          if (transactionReceipt.status === '1') claimSwapTransaction = transaction
-        }
-
-        blockNumber++
-      }
-
-      await sleep(5000)
-    }
-
-    claimSwapTransaction.secret = await this.getSwapSecret(claimSwapTransaction.hash)
-
-    return claimSwapTransaction
   }
 
   async getSwapSecret (claimTxHash) {
@@ -157,23 +118,15 @@ export default class EthereumErc20SwapProvider extends Provider {
     return claimTransaction.input.substring(8)
   }
 
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, startBlock) {
-    let blockNumber = startBlock || await this.getMethod('getBlockHeight')()
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    let refundSwapTransaction = false
-
-    while (!refundSwapTransaction) {
-      const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-      if (block) {
-        refundSwapTransaction = block.transactions.find(transaction =>
-          transaction.to === initiationTransaction.contractAddress &&
-          transaction.input === remove0x(SOL_REFUND_FUNCTION) && // eslint-disable-line
-          block.timestamp >= expiration
-        )
-        blockNumber++
-      }
-      await sleep(5000)
-    }
+    if (!initiationTransaction) return
+    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    const refundSwapTransaction = block.transactions.find(transaction =>
+      transaction.to === initiationTransaction.contractAddress &&
+      transaction.input === remove0x(SOL_REFUND_FUNCTION) && // eslint-disable-line
+      block.timestamp >= expiration
+    )
     return refundSwapTransaction
   }
 }
