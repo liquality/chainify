@@ -247,9 +247,12 @@ export default class BitcoinSwapProvider extends Provider {
       tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, recipientAddress, false)
     )
 
-    return {
-      ...claimSwapTransaction,
-      secret: await this.getSwapSecret(claimSwapTransaction.hash)
+    if (claimSwapTransaction) {
+      const secret = await this.getSwapSecret(claimSwapTransaction.hash)
+      return {
+        ...claimSwapTransaction,
+        secret
+      }
     }
   }
 
