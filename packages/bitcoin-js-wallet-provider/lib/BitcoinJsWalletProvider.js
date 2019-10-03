@@ -60,12 +60,8 @@ export default class BitcoinJsWalletProvider extends Provider {
   async _buildTransaction (outputs) {
     const network = this._network
 
-    const totalValue = outputs.reduce((prev, curr) => {
-      return prev.plus(BigNumber(curr.value))
-    }, BigNumber(0)).toNumber()
-
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(totalValue)
+    const { inputs, change } = await this.getInputsForAmount(outputs)
 
     if (change) {
       outputs.push({
@@ -332,7 +328,7 @@ export default class BitcoinJsWalletProvider extends Provider {
       .then(({ unusedAddress }) => unusedAddress[key])
   }
 
-  async getInputsForAmount (amount, numAddressPerCall = 100) {
+  async getInputsForAmount (_targets, numAddressPerCall = 100) {
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -378,7 +374,9 @@ export default class BitcoinJsWalletProvider extends Provider {
 
       if (feePerByte === false) feePerByte = await feePerBytePromise
 
-      const { inputs, outputs, fee } = coinselect(utxos, [{ id: 'main', value: amount }], feePerByte)
+      const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+
+      const { inputs, outputs, fee } = coinselect(utxos, targets, feePerByte)
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')
