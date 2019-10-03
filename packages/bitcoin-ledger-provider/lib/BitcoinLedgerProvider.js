@@ -53,12 +53,8 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   async _buildTransaction (_outputs) {
     const app = await this.getApp()
 
-    const totalValue = _outputs.reduce((prev, curr) => {
-      return prev.plus(BigNumber(curr.value))
-    }, BigNumber(0)).toNumber()
-
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(totalValue)
+    const { inputs, change } = await this.getInputsForAmount(_outputs)
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
@@ -188,7 +184,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return valueBuffer.reverse()
   }
 
-  async getInputsForAmount (amount, numAddressPerCall = 100) {
+  async getInputsForAmount (_targets, numAddressPerCall = 100) {
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -234,7 +230,9 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
       if (feePerByte === false) feePerByte = await feePerBytePromise
 
-      const { inputs, outputs, fee } = coinselect(utxos, [{ id: 'main', value: amount }], feePerByte)
+      const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+
+      const { inputs, outputs, fee } = coinselect(utxos, targets, feePerByte)
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')
