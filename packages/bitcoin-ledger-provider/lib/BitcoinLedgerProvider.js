@@ -232,7 +232,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
 
       const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
 
-      const { inputs, outputs, fee } = coinselect(utxos, targets, feePerByte)
+      const { inputs, outputs, fee } = coinselect(utxos, targets, Math.ceil(feePerByte))
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')
