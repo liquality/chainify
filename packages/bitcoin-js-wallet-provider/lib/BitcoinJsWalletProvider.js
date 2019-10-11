@@ -1,5 +1,4 @@
 import Provider from '@liquality/provider'
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { AddressTypes } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
@@ -23,7 +22,7 @@ const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
 }
 
 export default class BitcoinJsWalletProvider extends Provider {
-  constructor (network, uri, username, password, mnemonic, addressType = 'bech32') {
+  constructor (network, mnemonic, addressType = 'bech32') {
     super()
     if (!AddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
@@ -34,7 +33,6 @@ export default class BitcoinJsWalletProvider extends Provider {
     const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${network.coinType}'/0'/`
     this._derivationPath = derivationPath
     this._network = network
-    this._rpc = new JsonRpcProvider(uri, username, password)
     this._mnemonic = mnemonic
     this._addressType = addressType
   }
