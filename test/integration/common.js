@@ -27,7 +27,7 @@ bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network:
 
 const bitcoinWithJs = new Client()
 bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
-bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks[config.bitcoin.network], config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, generateMnemonic(256), 'bech32'))
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks[config.bitcoin.network], generateMnemonic(256), 'bech32'))
 bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'p2wsh'))
 
 const bitcoinWithEsplora = new Client()
