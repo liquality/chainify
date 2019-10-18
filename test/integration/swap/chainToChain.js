@@ -2,7 +2,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { crypto } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, getSwapParams, mineBitcoinBlocks, connectMetaMask } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, getSwapParams, connectMetaMask } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -28,8 +28,17 @@ async function testSwap (chain1, chain2) {
 describe('Swap Chain to Chain', function () {
   this.timeout(config.timeout)
 
+  describe.only('Ledger to Node', function () {
+    it('BTC (Ledger) - BTC (Node)', async () => {
+      await testSwap(chains.bitcoinWithLedger, chains.bitcoinWithNode)
+    })
+
+    it('BTC (Node) - BTC (Ledger)', async () => {
+      await testSwap(chains.bitcoinWithNode, chains.bitcoinWithLedger)
+    })
+  })
+
   describe('Ledger to MetaMask', function () {
-    mineBitcoinBlocks()
     connectMetaMask()
 
     it('BTC (Ledger) - ETH (MetaMask)', async () => {
@@ -42,8 +51,6 @@ describe('Swap Chain to Chain', function () {
   })
 
   describe('Node to Node', function () {
-    mineBitcoinBlocks()
-
     it('BTC (Node) - ETH (Node)', async () => {
       await testSwap(chains.bitcoinWithNode, chains.ethereumWithNode)
     })
