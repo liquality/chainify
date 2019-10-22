@@ -28,7 +28,7 @@ async function testSwap (chain1, chain2) {
 describe('Swap Chain to Chain', function () {
   this.timeout(config.timeout)
 
-  describe.only('Ledger to Node', function () {
+  describe('Ledger to Node', function () {
     it('BTC (Ledger) - BTC (Node)', async () => {
       await testSwap(chains.bitcoinWithLedger, chains.bitcoinWithNode)
     })
