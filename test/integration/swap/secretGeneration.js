@@ -9,8 +9,17 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 chai.use(chaiAsPromised)
 
-describe('Secret generation', function () {
+describe.only('Secret generation', function () {
   this.timeout(config.timeout)
+  describe.only('Secret is the same when generated multiple times', () => {
+    it.only('Bitcoin Node', async () => {
+      const message = 'message'
+      const secret1 = await chains.bitcoinWithNode.client.swap.generateSecret(message)
+      const secret2 = await chains.bitcoinWithNode.client.swap.generateSecret(message)
+      expect(secret1).to.be.equal(secret2)
+    })
+  })
+
   describe('Secrets with same message differ on different wallets', () => {
     it('Nodes', async () => {
       const message = 'message'
