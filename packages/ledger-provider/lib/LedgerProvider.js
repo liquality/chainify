@@ -8,7 +8,7 @@ import { version } from '../package.json'
 const debug = Debug('ledger')
 
 export default class LedgerProvider extends WalletProvider {
-  static getTransport (config = { useWebBle: false }) {
+  static getTransport (config = { useWebBle: false, useU2F: false }) {
     return getTransport(config)
   }
 
@@ -33,12 +33,19 @@ export default class LedgerProvider extends WalletProvider {
     return this
   }
 
+  useU2F () {
+    this._useU2F = true
+    return this
+  }
+
   async createTransport () {
     if (!this._transport) {
       debug('creating ledger transport')
       debug('useWebBle', this._useWebBle)
+      debug('useU2F', this._useU2F)
       const Transport = LedgerProvider.getTransport({
-        useWebBle: this._useWebBle
+        useWebBle: this._useWebBle,
+        useU2F: this._useU2F
       })
 
       this._transport = await Transport.create()
