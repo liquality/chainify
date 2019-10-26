@@ -136,7 +136,7 @@ export default class BitcoinSwapProvider extends Provider {
     const txfee = calculateFee(1, 1, 3)
 
     swapVout.txid = initiationTxHash
-    swapVout.vSat = swapVout.value * 1e8
+    swapVout.vSat = BigNumber(swapVout.value).times(1e8).toNumber()
 
     if (swapVout.vSat - txfee < 0) {
       throw new Error('Transaction amount does not cover fee.')

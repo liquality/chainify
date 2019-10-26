@@ -75,8 +75,8 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return this._rpc.jsonrpc('dumpprivkey', address)
   }
 
-  async getNewAddress (addressType) {
-    const params = addressType ? ['', addressType] : []
+  async getNewAddress (addressType, label = '') {
+    const params = addressType ? [label, addressType] : [label]
     const newAddress = await this._rpc.jsonrpc('getnewaddress', ...params)
 
     if (!newAddress) return null
@@ -129,7 +129,14 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async generateSecret (message) {
-    const address = await this.getNewAddress('legacy') // Signing only possible with legacy addresses
+    const secretAddressLabel = 'secretAddress'
+    let address
+    try {
+      const labelAddresses = await this._rpc.jsonrpc('getaddressesbylabel', secretAddressLabel)
+      address = Object.keys(labelAddresses)[0]
+    } catch (e) { // Label does not exist
+      address = await this.getNewAddress('legacy', secretAddressLabel) // Signing only possible with legacy addresses
+    }
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
