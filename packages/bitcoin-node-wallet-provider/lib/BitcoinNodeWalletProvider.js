@@ -5,6 +5,7 @@ import { AddressTypes } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import { sha256 } from '@liquality/crypto'
 import { Address, addressToString } from '@liquality/utils'
+import _ from 'lodash'
 
 import { version } from '../package.json'
 
@@ -94,21 +95,8 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   async getUsedAddresses () {
     const addresses = await this._rpc.jsonrpc('listaddressgroupings')
-    const ret = []
 
-    for (const group of addresses) {
-      for (const address of group) {
-        ret.push(new Address({ address: address[0] }))
-      }
-    }
-
-    const emptyaddresses = await this._rpc.jsonrpc('listreceivedbyaddress', 0, true)
-
-    for (const address of emptyaddresses) {
-      ret.push(new Address({ address: address.address }))
-    }
-
-    return ret
+    return _.flatten(addresses).map(addr => new Address({ address: addr[0] }))
   }
 
   async getWalletAddress (address) {
