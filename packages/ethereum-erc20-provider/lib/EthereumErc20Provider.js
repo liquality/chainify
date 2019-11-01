@@ -20,6 +20,11 @@ export default class EthereumErc20Provider extends Provider {
     this._contractAddress = remove0x(contractAddress)
   }
 
+  async assertContractExists () {
+    const code = await this.getMethod('getCode')(this._contractAddress, 'latest')
+    if (code === '') throw new Error(`Contract does not exist at given address: ${this._contractAddress}`)
+  }
+
   generateErc20Transfer (to, value) {
     value = BigNumber(value).toString(16)
 
@@ -33,7 +38,9 @@ export default class EthereumErc20Provider extends Provider {
     ].join('').toLowerCase()
   }
 
-  sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data, from) {
+    await this.assertContractExists()
+
     if (!data) {
       // erc20 transfer
       data = this.generateErc20Transfer(to, value)
@@ -49,6 +56,8 @@ export default class EthereumErc20Provider extends Provider {
   }
 
   async getBalance (addresses) {
+    await this.assertContractExists()
+
     if (!isArray(addresses)) {
       addresses = [ addresses ]
     }
