@@ -1,0 +1,15 @@
+{
+  "name": "BitcoinJsWalletProvider",
+  "version": "1.0.0",
+  "description": "These examples are to provide demos and insight into how to do basic functionality with the BitcoinJsWalletProvider",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@liquality/bundle": "^0.3.5"
+  }
+}
