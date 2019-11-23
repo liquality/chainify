@@ -1,0 +1,50 @@
+{
+  "name": "@liquality/litecoin-js-wallet-provider",
+  "umdName": "LitecoinJsWalletProvider",
+  "umdExport": "default",
+  "version": "0.4.8",
+  "description": "",
+  "module": "lib/index.js",
+  "main": "dist/index.cjs.js",
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
+    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.4.3",
+    "@liquality/bitcoin-utils": "^0.4.8",
+    "@liquality/jsonrpc-provider": "^0.4.8",
+    "@liquality/provider": "^0.4.8",
+    "@liquality/utils": "^0.4.8",
+    "bignumber.js": "^9.0.0",
+    "bip32": "^1.0.2",
+    "bip39": "^3.0.2",
+    "bitcoinjs-lib": "^5.1.2",
+    "coininfo": "^5.1.0",
+    "bitcoinjs-message": "^2.1.0",
+    "coinselect": "^3.1.11",
+    "lodash": "^4.17.13"
+  },
+  "engines": {
+    "node": "~8.12.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c"
+}

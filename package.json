@@ -13,6 +13,7 @@
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
     "bitcoinjs-lib": "^5.1.6",
+    "coininfo": "^5.1.0",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
     "copy": "^0.3.2",
