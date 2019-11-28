@@ -94,9 +94,15 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async getUsedAddresses () {
-    const addresses = await this._rpc.jsonrpc('listaddressgroupings')
+    const usedAddresses = await this._rpc.jsonrpc('listaddressgroupings')
+    const emptyAddresses = await this._rpc.jsonrpc('listreceivedbyaddress', 0, true)
 
-    return _.flatten(addresses).map(addr => new Address({ address: addr[0] }))
+    const addrs = [
+      ..._.flatten(usedAddresses).map(addr => addr[0]),
+      ...emptyAddresses.map(a => a.address)
+    ]
+
+    return _.uniq(addrs).map(addr => new Address({ address: addr }))
   }
 
   async getWalletAddress (address) {
