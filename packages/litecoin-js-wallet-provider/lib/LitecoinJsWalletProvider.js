@@ -38,7 +38,7 @@ export default class BitcoinJsWalletProvider extends Provider {
   }
 
   async node () {
-	console.log("here")
+    console.log('here')
     const seed = await mnemonicToSeed(this._mnemonic)
     return fromSeed(seed, this._network)
   }
