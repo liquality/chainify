@@ -7,6 +7,7 @@ import { BigNumber } from 'bignumber.js'
 import { fromMasterSeed } from 'hdkey'
 import * as ethUtil from 'ethereumjs-util'
 import { Transaction } from 'ethereumjs-tx'
+import Common from 'ethereumjs-common'
 
 import { version } from '../package.json'
 
@@ -76,8 +77,7 @@ export default class EthereumJsWalletProvider extends Provider {
       to: to ? ensure0x(to) : null,
       from: ensure0x(from),
       value: ensure0x(BigNumber(value).toString(16)),
-      data: data ? ensure0x(data) : undefined,
-      chainId: ensure0x(BigNumber(this._network.chainId).toString(16))
+      data: data ? ensure0x(data) : undefined
     }
 
     const [ nonce, gasPrice, gasLimit ] = await Promise.all([
@@ -90,7 +90,17 @@ export default class EthereumJsWalletProvider extends Provider {
     txData.gasPrice = gasPrice
     txData.gasLimit = gasLimit
 
-    const tx = new Transaction(txData)
+    let common
+    if (!(this._network.name === 'local')) {
+      const baseChain = this._network.name
+      common = Common.forCustomChain(baseChain, {
+        name: this._network.name,
+        chainId: this._network.chainId,
+        networkId: this._network.networkId
+      }, 'istanbul')
+    }
+
+    const tx = new Transaction(txData, { common })
     tx.sign(hdKey._privateKey)
     const serializedTx = tx.serialize().toString('hex')
 
