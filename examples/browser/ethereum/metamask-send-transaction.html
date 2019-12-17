@@ -13,17 +13,24 @@
   <p><code>For errors and logs, check console</code></p>
   <script>
 /* global $, web3, Bundle */
-const { Client, providers } = Bundle
-const ethereum = new Client()
-ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
-ethereum.wallet.getAddresses().then(addresses => {
-  const from = addresses[0]
-  $('#send').click(() => {
-    ethereum.chain.sendTransaction(from, $('#toAddress').val() || undefined, $('#value').val(), $('#data').val()).then(result => {
-      $('#result').text(JSON.stringify(result))
+
+if (typeof web3 === 'undefined') {
+  alert('Please install MetaMask.')
+} else if (document.location.protocol === 'file:') {
+  alert('Due to browser security restrictions, MetaMask can\'t communicate with dapps running on file://. Please use a local server for development.')
+} else {
+  const { Client, providers } = Bundle
+  const ethereum = new Client()
+  ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
+  ethereum.wallet.getAddresses().then(addresses => {
+    const from = addresses[0]
+    $('#send').click(() => {
+      ethereum.chain.sendTransaction(from, $('#toAddress').val() || undefined, $('#value').val(), $('#data').val()).then(result => {
+        $('#result').text(JSON.stringify(result))
+      })
     })
   })
-})
+}
   </script>
 </body>
 </html>
