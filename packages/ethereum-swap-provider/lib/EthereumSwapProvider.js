@@ -133,7 +133,7 @@ export default class EthereumSwapProvider extends Provider {
     const transaction = await this.findSwapTransaction(blockNumber, transaction => transaction.to === initiationTransaction.contractAddress)
     if (!transaction) return
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-    if (transactionReceipt.status === '1' && transaction.input !== '') {
+    if (transactionReceipt && transactionReceipt.status === '1' && transaction.input !== '') {
       transaction.secret = await this.getSwapSecret(transaction.hash)
       return transaction
     }

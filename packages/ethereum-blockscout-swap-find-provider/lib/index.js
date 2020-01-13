@@ -1,0 +1,3 @@
+import EthereumBlockscoutSwapFindProvider from './EthereumBlockscoutSwapFindProvider'
+
+export default EthereumBlockscoutSwapFindProvider

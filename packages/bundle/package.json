@@ -38,6 +38,7 @@
     "@liquality/ethereum-networks": "^0.4.11",
     "@liquality/ethereum-rpc-provider": "^0.4.11",
     "@liquality/ethereum-swap-provider": "^0.4.11",
+    "@liquality/ethereum-blockscout-swap-find-provider": "^0.4.11",
     "@liquality/ethereum-utils": "^0.4.11",
     "@liquality/jsonrpc-provider": "^0.4.11",
     "@liquality/ledger-provider": "^0.4.11",

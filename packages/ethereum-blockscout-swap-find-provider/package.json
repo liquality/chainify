@@ -1,0 +1,43 @@
+{
+  "name": "@liquality/ethereum-blockscout-swap-find-provider",
+  "umdName": "EthereumBlockscoutSwapFindProvider",
+  "umdExport": "default",
+  "version": "0.4.11",
+  "description": "",
+  "module": "lib/index.js",
+  "main": "dist/index.cjs.js",
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
+    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.4.3",
+    "@liquality/crypto": "^0.4.11",
+    "@liquality/ethereum-utils": "^0.4.11",
+    "@liquality/provider": "^0.4.11",
+    "@liquality/utils": "^0.4.11",
+    "axios": "^0.19.0"
+  },
+  "engines": {
+    "node": "~8.12.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c"
+}
