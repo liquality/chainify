@@ -15,8 +15,8 @@ export default class Provider {
    * @return {function} Returns a method from a provider above current Provider
    *  in the stack.
    */
-  getMethod (method) {
-    return this.client.getMethod(method, this).bind(this)
+  getMethod (method, requestor = this) {
+    return this.client.getMethod(method, requestor).bind(this)
   }
 }
 

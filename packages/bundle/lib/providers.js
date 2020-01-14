@@ -4,6 +4,7 @@ import BitcoinNodeWalletProvider from '@liquality/bitcoin-node-wallet-provider'
 import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
 import BitcoinSwapProvider from '@liquality/bitcoin-swap-provider'
 import BitcoinEsploraApiProvider from '@liquality/bitcoin-esplora-api-provider'
+import BitcoinEsploraSwapFindProvider from '@liquality/bitcoin-esplora-swap-find-provider'
 import * as BitcoinNetworks from '@liquality/bitcoin-networks'
 import * as BitcoinUtils from '@liquality/bitcoin-utils'
 
@@ -25,6 +26,7 @@ const bitcoin = {
   BitcoinJsWalletProvider,
   BitcoinSwapProvider,
   BitcoinEsploraApiProvider,
+  BitcoinEsploraSwapFindProvider,
   BitcoinNetworks,
   BitcoinUtils,
   networks: BitcoinNetworks
