@@ -237,13 +237,13 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    return this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
+    return this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
       tx => this.doesTransactionMatchInitiation(tx, value, recipientAddress, refundAddress, secretHash, expiration)
     )
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const claimSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
+    const claimSwapTransaction = await this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
       tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, recipientAddress, false)
     )
 
@@ -257,7 +257,7 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const refundSwapTransaction = await this.findSwapTransaction(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
+    const refundSwapTransaction = await this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
       tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, refundAddress, true)
     )
     return refundSwapTransaction
