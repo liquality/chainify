@@ -1,0 +1,3 @@
+import EthereumScrapperSwapFindProvider from './EthereumScrapperSwapFindProvider'
+
+export default EthereumScrapperSwapFindProvider
