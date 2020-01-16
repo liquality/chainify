@@ -183,4 +183,13 @@ export default class Swap {
 
     return this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
   }
+
+  get doesBlockScan () {
+    try {
+      return this.client.getMethod('doesBlockScan')()
+    } catch (e) {
+      if (!(e instanceof UnimplementedMethodError)) throw e
+    }
+    return true
+  }
 }

@@ -73,8 +73,12 @@ export default class EthereumBlockscoutSwapFindProvider extends Provider {
     const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress, (tx) =>
       tx.to === initiationTransaction.contractAddress &&
       tx.input === '' &&
-      tx.timestamp >= expiration)
+      tx.timeStamp >= expiration)
     return transaction
+  }
+
+  doesBlockScan () {
+    return false
   }
 }
 

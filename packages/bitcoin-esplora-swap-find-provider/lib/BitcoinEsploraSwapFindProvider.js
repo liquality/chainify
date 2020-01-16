@@ -35,6 +35,10 @@ export default class BitcoinEsploraSwapFindProvider extends Provider {
       if (addressTransaction) return addressTransaction
     }
   }
+
+  doesBlockScan () {
+    return false
+  }
 }
 
 BitcoinEsploraSwapFindProvider.version = version
