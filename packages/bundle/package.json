@@ -39,7 +39,7 @@
     "@liquality/ethereum-metamask-provider": "^0.4.14",
     "@liquality/ethereum-networks": "^0.4.14",
     "@liquality/ethereum-rpc-provider": "^0.4.14",
-    "@liquality/ethereum-scrapper-swap-find-provider": "^0.4.14",
+    "@liquality/ethereum-scraper-swap-find-provider": "^0.4.14",
     "@liquality/ethereum-swap-provider": "^0.4.14",
     "@liquality/ethereum-utils": "^0.4.14",
     "@liquality/jsonrpc-provider": "^0.4.14",

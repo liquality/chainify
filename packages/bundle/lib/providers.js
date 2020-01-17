@@ -16,7 +16,7 @@ import EthereumJsWalletProvider from '@liquality/ethereum-js-wallet-provider'
 import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
 import EthereumSwapProvider from '@liquality/ethereum-swap-provider'
 import EthereumBlockscoutSwapFindProvider from '@liquality/ethereum-blockscout-swap-find-provider'
-import EthereumScrapperSwapFindProvider from '@liquality/ethereum-scrapper-swap-find-provider'
+import EthereumScraperSwapFindProvider from '@liquality/ethereum-scraper-swap-find-provider'
 import * as EthereumNetworks from '@liquality/ethereum-networks'
 import * as EthereumUtils from '@liquality/ethereum-utils'
 
@@ -42,7 +42,7 @@ const ethereum = {
   EthereumRpcProvider,
   EthereumSwapProvider,
   EthereumBlockscoutSwapFindProvider,
-  EthereumScrapperSwapFindProvider,
+  EthereumScraperSwapFindProvider,
   EthereumNetworks,
   EthereumUtils,
   networks: EthereumNetworks

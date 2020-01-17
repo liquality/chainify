@@ -5,7 +5,7 @@ import { addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
 
-export default class EthereumScrapperSwapFindProvider extends Provider {
+export default class EthereumScraperSwapFindProvider extends Provider {
   constructor (url) {
     super()
     this.url = url
@@ -81,4 +81,4 @@ export default class EthereumScrapperSwapFindProvider extends Provider {
   }
 }
 
-EthereumScrapperSwapFindProvider.version = version
+EthereumScraperSwapFindProvider.version = version

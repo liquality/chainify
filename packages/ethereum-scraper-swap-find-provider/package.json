@@ -1,6 +1,6 @@
 {
-  "name": "@liquality/ethereum-scrapper-swap-find-provider",
-  "umdName": "EthereumScrapperSwapFindProvider",
+  "name": "@liquality/ethereum-scraper-swap-find-provider",
+  "umdName": "EthereumScraperSwapFindProvider",
   "umdExport": "default",
   "version": "0.4.14",
   "description": "",
