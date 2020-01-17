@@ -1,10 +1,6 @@
 import axios from 'axios'
 import Provider from '@liquality/provider'
-import {
-  ensure0x,
-  normalizeTransactionObject,
-  formatEthResponse
-} from '@liquality/ethereum-utils'
+import { ensure0x } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
@@ -24,11 +20,24 @@ export default class EthereumScrapperSwapFindProvider extends Provider {
   async findAddressTransaction (address, predicate) {
     address = ensure0x(addressToString(address))
 
-    const response = await this._axios(`/txs/${address}`)
-    const transactions = response.data.data.txs
-    if (transactions.length === 0) return
+    const limit = 250
+    for (let page = 1; ; page++) {
+      const response = await this._axios(`/txs/${address}`, {
+        params: {
+          limit,
+          page,
+          sort: 'desc'
+        }
+      })
 
-    return transactions.find(predicate)
+      const transactions = response.data.data.txs
+      if (transactions.length === 0) return
+
+      const tx = transactions.find(predicate)
+      if (tx) return tx
+
+      if (transactions.length < limit) return
+    }
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
@@ -57,11 +66,12 @@ export default class EthereumScrapperSwapFindProvider extends Provider {
 
     const transaction = await this.findAddressTransaction(
       initiationTransaction.contractAddress,
-      (tx) =>
+      (tx) => (
         tx.to === initiationTransaction.contractAddress &&
         tx.input === '' &&
         tx.timestamp >= expiration
       )
+    )
 
     return transaction
   }
