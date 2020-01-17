@@ -119,8 +119,9 @@ export default class EthereumSwapProvider extends Provider {
 
   async findSwapTransaction (blockNumber, predicate) {
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-    const swapTransaction = block.transactions.find(tx => predicate(tx, block))
-    return swapTransaction
+    if (block) {
+      return block.transactions.find(tx => predicate(tx, block))
+    }
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
