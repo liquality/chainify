@@ -50,7 +50,7 @@ export default class EthereumBlockscoutSwapFindProvider extends Provider {
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.findAddressTransaction(recipientAddress, tx => this.getMethod('doesTransactionMatchInitiation')(
+    return this.findAddressTransaction(refundAddress, tx => this.getMethod('doesTransactionMatchInitiation')(
       tx, value, recipientAddress, refundAddress, secretHash, expiration
     ))
   }
