@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Provider from '@liquality/provider'
-import { ensure0x } from '@liquality/ethereum-utils'
+import { ensure0x, normalizeTransactionObject, formatEthResponse } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
@@ -15,6 +15,14 @@ export default class EthereumScraperSwapFindProvider extends Provider {
       responseType: 'text',
       transformResponse: undefined // https://github.com/axios/axios/issues/907,
     })
+  }
+
+  normalizeTransactionResponse (tx) {
+    const normalizedTx = normalizeTransactionObject(formatEthResponse(tx))
+    if (normalizedTx.contractAddress) {
+      normalizedTx.contractAddress = normalizedTx.contractAddress.toLowerCase()
+    }
+    return normalizedTx
   }
 
   async findAddressTransaction (address, predicate) {
@@ -33,7 +41,8 @@ export default class EthereumScraperSwapFindProvider extends Provider {
       const transactions = response.data.data.txs
       if (transactions.length === 0) return
 
-      const tx = transactions.find(predicate)
+      const normalizedTransactions = transactions.map(this.normalizeTransactionResponse)
+      const tx = normalizedTransactions.find(predicate)
       if (tx) return tx
 
       if (transactions.length < limit) return
