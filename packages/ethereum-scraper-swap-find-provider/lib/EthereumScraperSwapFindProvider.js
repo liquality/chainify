@@ -60,7 +60,7 @@ export default class EthereumScraperSwapFindProvider extends Provider {
     if (!initiationTransaction) return
 
     const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress,
-      tx => tx.to === initiationTransaction.contractAddress && tx.input.length === 64)
+      tx => this.getMethod('doesTransactionMatchClaim', false)(tx, initiationTransaction))
     if (!transaction) return
 
     if (transaction.status === true) {
