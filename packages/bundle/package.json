@@ -40,6 +40,7 @@
     "@liquality/ethereum-networks": "^0.4.16",
     "@liquality/ethereum-rpc-provider": "^0.4.16",
     "@liquality/ethereum-scraper-swap-find-provider": "^0.4.16",
+    "@liquality/ethereum-erc20-scraper-swap-find-provider": "^0.4.16",
     "@liquality/ethereum-swap-provider": "^0.4.16",
     "@liquality/ethereum-utils": "^0.4.16",
     "@liquality/jsonrpc-provider": "^0.4.16",

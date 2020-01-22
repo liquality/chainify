@@ -100,6 +100,10 @@ export default class EthereumSwapProvider extends Provider {
     return transaction.input === data && transaction.value === value
   }
 
+  doesTransactionMatchClaim (transaction, initiationTransaction) {
+    return transaction.to === initiationTransaction.contractAddress && transaction.input.length === 64
+  }
+
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     if (!initiationTransaction) return false
@@ -131,10 +135,10 @@ export default class EthereumSwapProvider extends Provider {
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransaction) return
-    const transaction = await this.findSwapTransaction(blockNumber, transaction => transaction.to === initiationTransaction.contractAddress)
+    const transaction = await this.findSwapTransaction(blockNumber, transaction => this.doesTransactionMatchClaim(transaction, initiationTransaction))
     if (!transaction) return
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-    if (transactionReceipt && transactionReceipt.status === '1' && transaction.input !== '') {
+    if (transactionReceipt && transactionReceipt.status === '1') {
       transaction.secret = await this.getSwapSecret(transaction.hash)
       return transaction
     }

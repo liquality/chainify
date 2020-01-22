@@ -17,6 +17,7 @@ import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
 import EthereumSwapProvider from '@liquality/ethereum-swap-provider'
 import EthereumBlockscoutSwapFindProvider from '@liquality/ethereum-blockscout-swap-find-provider'
 import EthereumScraperSwapFindProvider from '@liquality/ethereum-scraper-swap-find-provider'
+import EthereumErc20ScraperSwapFindProvider from '@liquality/ethereum-erc20-scraper-swap-find-provider'
 import * as EthereumNetworks from '@liquality/ethereum-networks'
 import * as EthereumUtils from '@liquality/ethereum-utils'
 
@@ -43,6 +44,7 @@ const ethereum = {
   EthereumSwapProvider,
   EthereumBlockscoutSwapFindProvider,
   EthereumScraperSwapFindProvider,
+  EthereumErc20ScraperSwapFindProvider,
   EthereumNetworks,
   EthereumUtils,
   networks: EthereumNetworks

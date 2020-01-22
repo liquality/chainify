@@ -56,9 +56,14 @@ export default class EthereumErc20SwapProvider extends Provider {
     return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_REFUND_FUNCTION)
   }
 
-  doesTransactionMatchInitiation (transaction, recipientAddress, refundAddress, secretHash, expiration) {
+  doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     return transaction.input === data
+  }
+
+  doesTransactionMatchClaim (transaction, initiationTransaction, recipientAddress, refundAddress, secretHash, expiration) {
+    return transaction.to === initiationTransaction.contractAddress &&
+      transaction.input.startsWith(remove0x(SOL_CLAIM_FUNCTION))
   }
 
   async doesBalanceMatchValue (contractAddress, value) {
@@ -71,6 +76,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     const transactionMatchesSwapParams = this.doesTransactionMatchInitiation(
       initiationTransaction,
+      value,
       recipientAddress,
       refundAddress,
       secretHash,
@@ -88,6 +94,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     const initiateSwapTransaction = block.transactions.find(
       transaction => this.doesTransactionMatchInitiation(
         transaction,
+        value,
         recipientAddress,
         refundAddress,
         secretHash,
@@ -102,7 +109,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     if (!initiationTransaction) return
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
     const transaction = block.transactions.find(
-      transaction => transaction.to === initiationTransaction.contractAddress
+      transaction => this.doesTransactionMatchClaim(transaction, initiationTransaction)
     )
     if (!transaction) return
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
@@ -131,4 +138,6 @@ export default class EthereumErc20SwapProvider extends Provider {
   }
 }
 
+EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION = SOL_CLAIM_FUNCTION
+EthereumErc20SwapProvider.SOL_REFUND_FUNCTION = SOL_REFUND_FUNCTION
 EthereumErc20SwapProvider.version = version
