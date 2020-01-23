@@ -154,11 +154,12 @@ export default class BitcoinJsWalletProvider extends Provider {
 
     let sigs = []
     for (let i = 0; i < inputs.length; i++) {
+      const index = inputs[i].txInputIndex ? inputs[i].txInputIndex : inputs[i].index
       let sigHash
       if (segwit) {
-        sigHash = tx.hashForWitnessV0(inputs[i].index, inputs[i].outputScript, inputs[i].vout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+        sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
       } else {
-        sigHash = tx.hashForSignature(inputs[i].index, inputs[i].outputScript, bitcoin.Transaction.SIGHASH_ALL)
+        sigHash = tx.hashForSignature(index, inputs[i].outputScript, bitcoin.Transaction.SIGHASH_ALL)
       }
 
       const sig = bitcoin.script.signature.encode(keyPairs[i].sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
