@@ -2,10 +2,9 @@ import Provider from '@liquality/provider'
 import { AddressTypes } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
-import { Address, addressToString } from '@liquality/utils'
+import { Address, addressToString, selectCoins } from '@liquality/utils'
 import { mnemonicToSeed } from 'bip39'
 import { fromSeed } from 'bip32'
-import coinselect from 'coinselect'
 import { BigNumber } from 'bignumber.js'
 
 import { version } from '../package.json'
@@ -372,10 +371,11 @@ export default class BitcoinJsWalletProvider extends Provider {
       //   .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
 
       if (feePerByte === false) feePerByte = await feePerBytePromise
+      const minRelayFee = await this.getMethod('getMinRelayFee')()
 
       const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
 
-      const { inputs, outputs, fee } = coinselect(utxos, targets, Math.ceil(feePerByte))
+      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), minRelayFee)
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')

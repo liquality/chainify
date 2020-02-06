@@ -2,6 +2,7 @@ import { findKey } from 'lodash'
 
 import { base58, padHexStart } from '@liquality/crypto'
 import networks from '@liquality/bitcoin-networks'
+import coinselect from 'coinselect'
 import { version } from '../package.json'
 
 function calculateFee (numInputs, numOutputs, feePerByte) {
@@ -44,6 +45,15 @@ function getAddressNetwork (address) {
   return networks[networkKey]
 }
 
+function selectCoins (utxos, targets, feeRate, minRelayFee) {
+  let inputs, outputs
+  let fee = 0
+  for (let feePerByte = feeRate; fee < minRelayFee; feePerByte++) {
+    ({ inputs, outputs, fee } = coinselect(utxos, targets, Math.ceil(feePerByte)))
+  }
+  return { inputs, outputs, fee }
+}
+
 const AddressTypes = [
   'legacy', 'p2sh-segwit', 'bech32'
 ]
@@ -52,6 +62,7 @@ export {
   calculateFee,
   compressPubKey,
   getAddressNetwork,
+  selectCoins,
   AddressTypes,
   version
 }

@@ -35,6 +35,10 @@ export default class BitcoinEsploraApiProvider extends Provider {
     }
   }
 
+  async getMinRelayFee () {
+    return 1000
+  }
+
   async isAddressUsed (address) {
     const amountReceived = await this.getReceivedByAddress(address)
 

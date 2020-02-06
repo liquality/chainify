@@ -28,7 +28,6 @@
     "bignumber.js": "^8.1.1",
     "bip32": "^1.0.2",
     "bitcoinjs-lib": "^5.1.2",
-    "coinselect": "^3.1.11",
     "lodash": "^4.17.13"
   },
   "engines": {

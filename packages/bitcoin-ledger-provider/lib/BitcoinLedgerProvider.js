@@ -1,6 +1,5 @@
 import { BigNumber } from 'bignumber.js'
 import bip32 from 'bip32'
-import coinselect from 'coinselect'
 import * as bitcoin from 'bitcoinjs-lib'
 
 import LedgerProvider from '@liquality/ledger-provider'
@@ -12,7 +11,8 @@ import {
 import {
   compressPubKey,
   getAddressNetwork,
-  AddressTypes
+  AddressTypes,
+  selectCoins
 } from '@liquality/bitcoin-utils'
 import networks from '@liquality/bitcoin-networks'
 import { Address, addressToString } from '@liquality/utils'
@@ -229,10 +229,11 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
       //   .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
 
       if (feePerByte === false) feePerByte = await feePerBytePromise
+      const minRelayFee = await this.getMethod('getMinRelayFee')()
 
       const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
 
-      const { inputs, outputs, fee } = coinselect(utxos, targets, Math.ceil(feePerByte))
+      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), minRelayFee)
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')

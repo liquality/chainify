@@ -91,23 +91,25 @@ export default class EthereumErc20SwapProvider extends Provider {
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
-    const initiateSwapTransaction = block.transactions.find(
-      transaction => this.doesTransactionMatchInitiation(
-        transaction,
-        value,
-        recipientAddress,
-        refundAddress,
-        secretHash,
-        expiration
+    if (block) {
+      return block.transactions.find(
+        transaction => this.doesTransactionMatchInitiation(
+          transaction,
+          value,
+          recipientAddress,
+          refundAddress,
+          secretHash,
+          expiration
+        )
       )
-    )
-    return initiateSwapTransaction
+    }
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransaction) return
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    if (!block) return
     const transaction = block.transactions.find(
       transaction => this.doesTransactionMatchClaim(transaction, initiationTransaction)
     )
@@ -129,6 +131,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransaction) return
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    if (!block) return
     const refundSwapTransaction = block.transactions.find(transaction =>
       transaction.to === initiationTransaction.contractAddress &&
       transaction.input === remove0x(SOL_REFUND_FUNCTION) && // eslint-disable-line

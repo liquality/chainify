@@ -35,6 +35,11 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     }
   }
 
+  async getMinRelayFee () {
+    const { relayfee } = await this.jsonrpc('getnetworkinfo')
+    return relayfee * 1e8
+  }
+
   async sendTransaction (to, value) {
     to = addressToString(to)
     value = BigNumber(value).dividedBy(1e8).toNumber()
