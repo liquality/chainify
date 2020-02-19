@@ -3,6 +3,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import * as bitcoin from 'bitcoinjs-lib'
+import { hash160 } from '../../../packages/crypto/lib'
 import { calculateFee } from '../../../packages/bitcoin-utils/lib'
 import { addressToString } from '../../../packages/utils/lib'
 import { chains, mineBitcoinBlocks, importBitcoinAddresses, fundUnusedBitcoinAddress } from '../common'
@@ -44,6 +45,88 @@ function testBatchTransaction (chain) {
 
     expect(bal1Before.plus(value).toString()).to.equal(bal1After.toString())
     expect(bal2Before.plus(value).toString()).to.equal(bal2After.toString())
+  })
+}
+
+function testSignP2SHTransaction (chain) {
+  it('should redeem one P2SH', async () => {
+    const network = chain.network
+    const value = config[chain.name].value
+    const OPS = bitcoin.script.OPS
+
+    const { address: unusedAddressOne } = await chain.client.wallet.getUnusedAddress()
+    await chain.client.chain.sendTransaction(unusedAddressOne, value)
+    await chains.bitcoinWithNode.client.chain.generateBlock(1)
+
+    const { address: unusedAddressTwo } = await chain.client.wallet.getUnusedAddress()
+
+    const newAddresses = [ unusedAddressOne ]
+
+    let addresses = []
+    for (const newAddress of newAddresses) {
+      const address = await chain.client.getMethod('getWalletAddress')(newAddress)
+      addresses.push(address)
+    }
+
+    const multisigOutput = bitcoin.script.compile([
+      OPS.OP_DUP,
+      OPS.OP_HASH160,
+      Buffer.from(hash160(addresses[0].publicKey), 'hex'),
+      OPS.OP_EQUALVERIFY,
+      OPS.OP_CHECKSIG
+    ])
+
+    const paymentVariant = bitcoin.payments.p2wsh({ redeem: { output: multisigOutput, network }, network })
+
+    const address = paymentVariant.address
+
+    const initiationTxHash = await chain.client.chain.sendTransaction(address, value)
+    mineBitcoinBlocks()
+
+    const initiationTxRaw = await chain.client.getMethod('getRawTransactionByHash')(initiationTxHash)
+    const initiationTx = await chain.client.getMethod('decodeRawTransaction')(initiationTxRaw)
+
+    const multiOne = {}
+
+    for (const voutIndex in initiationTx._raw.data.vout) {
+      const vout = initiationTx._raw.data.vout[voutIndex]
+      const paymentVariantEntryOne = (paymentVariant.output.toString('hex') === vout.scriptPubKey.hex)
+      if (paymentVariantEntryOne) multiOne.multiVout = vout
+    }
+
+    const txb = new bitcoin.TransactionBuilder(network)
+    const txfee = calculateFee(3, 3, 9)
+
+    multiOne.multiVout.vSat = value
+
+    txb.addInput(initiationTxHash, multiOne.multiVout.n, 0, paymentVariant.output)
+    txb.addOutput(addressToString(unusedAddressTwo), value - txfee)
+
+    const tx = txb.buildIncomplete()
+
+    const signaturesOne = await chain.client.getMethod('signP2SHTransaction')(initiationTxRaw, tx, addresses[0].address, multiOne.multiVout, paymentVariant.redeem.output, 0, true)
+
+    const multiOneInput = bitcoin.script.compile([
+      signaturesOne,
+      Buffer.from(addresses[0].publicKey, 'hex')
+    ])
+
+    multiOne.paymentParams = { redeem: { output: multisigOutput, input: multiOneInput, network }, network }
+
+    multiOne.paymentWithInput = bitcoin.payments.p2wsh(multiOne.paymentParams)
+
+    tx.setWitness(0, multiOne.paymentWithInput.witness)
+
+    const claimTxHash = await chain.client.getMethod('sendRawTransaction')(tx.toHex())
+
+    const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
+    const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
+
+    const claimVouts = claimTx._raw.data.vout
+    const claimVins = claimTx._raw.data.vin
+
+    expect(claimVins.length).to.equal(1)
+    expect(claimVouts.length).to.equal(1)
   })
 }
 
@@ -207,6 +290,26 @@ describe('Send Batch Transactions', function () {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
     beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
     testBatchTransaction(chains.bitcoinWithJs)
+  })
+})
+
+describe('Sign P2SH Transaction', function () {
+  this.timeout(config.timeout)
+
+  describe('Bitcoin - Ledger', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
+    testSignP2SHTransaction(chains.bitcoinWithLedger)
+  })
+
+  describe('Bitcoin - Node', () => {
+    testSignP2SHTransaction(chains.bitcoinWithNode)
+  })
+
+  describe('Bitcoin - Js', () => {
+    before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
+    testSignP2SHTransaction(chains.bitcoinWithJs)
   })
 })
 
