@@ -106,7 +106,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     return txb.build().toHex()
   }
 
-  async buildTransaction (to, value, data, from) {
+  async buildTransaction (to, value, data) {
     return this._buildTransaction([{ to, value }])
   }
 
@@ -119,7 +119,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data) {
     return this._sendTransaction([{ to, value }])
   }
 

@@ -38,7 +38,7 @@ export default class EthereumErc20Provider extends Provider {
     ].join('').toLowerCase()
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data) {
     await this.assertContractExists()
 
     if (!data) {
@@ -48,7 +48,7 @@ export default class EthereumErc20Provider extends Provider {
       to = ensure0x(this._contractAddress)
     }
 
-    return this.getMethod('sendTransaction')(to, value, data, from)
+    return this.getMethod('sendTransaction')(to, value, data)
   }
 
   getContractAddress () {

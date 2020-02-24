@@ -197,8 +197,8 @@ export default class Chain {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed transaction object.
    */
-  async buildTransaction (to, value, data, from) {
-    return this.client.getMethod('buildTransaction')(to, value, data, from)
+  async buildTransaction (to, value, data) {
+    return this.client.getMethod('buildTransaction')(to, value, data)
   }
 
   /**
@@ -215,11 +215,10 @@ export default class Chain {
    * @param {!string} to - Recepient address.
    * @param {!string} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
-   * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendTransaction (to, value, data, from) {
-    return this.client.getMethod('sendTransaction')(to, value, data, from)
+  async sendTransaction (to, value, data) {
+    return this.client.getMethod('sendTransaction')(to, value, data)
   }
 
   /**

@@ -85,7 +85,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     )
   }
 
-  async buildTransaction (to, value, data, from) {
+  async buildTransaction (to, value, data) {
     return this._buildTransaction([{ to, value }])
   }
 
@@ -98,7 +98,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data) {
     return this._sendTransaction([{ to, value }])
   }
 

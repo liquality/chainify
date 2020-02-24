@@ -44,11 +44,9 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     return addresses.length > 0
   }
 
-  async sendTransaction (to, value, data, from) {
-    if (!from) {
-      const addresses = await this.getAddresses()
-      from = addresses[0]
-    }
+  async sendTransaction (to, value, data) {
+    const addresses = await this.getAddresses()
+    const from = addresses[0]
 
     const tx = {
       from: ensure0x(addressToString(from)),

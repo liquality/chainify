@@ -51,7 +51,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     return this.metamask('personal_sign', ensure0x(hex), ensure0x(address))
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data) {
     const networkId = await this.getWalletNetworkId()
 
     if (this._network) {
@@ -60,10 +60,8 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
       }
     }
 
-    if (!from) {
-      const addresses = await this.getAddresses()
-      from = addressToString(addresses[0])
-    }
+    const addresses = await this.getAddresses()
+    const from = addressToString(addresses[0])
 
     const tx = {
       from: ensure0x(from),
