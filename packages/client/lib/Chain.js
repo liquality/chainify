@@ -215,10 +215,11 @@ export default class Chain {
    * @param {!string} to - Recepient address.
    * @param {!string} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
+   * @param {!string} fee - Desired speed to set the fee with. "slow", "standard", "fast"
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendTransaction (to, value, data) {
-    return this.client.getMethod('sendTransaction')(to, value, data)
+  async sendTransaction (to, value, data, fee) {
+    return this.client.getMethod('sendTransaction')(to, value, data, fee)
   }
 
   /**

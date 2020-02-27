@@ -58,11 +58,18 @@ const AddressTypes = [
   'legacy', 'p2sh-segwit', 'bech32'
 ]
 
+const FeeNameToBlocks = {
+  'slow': 6,
+  'standard': 4,
+  'fast': 2
+}
+
 export {
   calculateFee,
   compressPubKey,
   getAddressNetwork,
   selectCoins,
   AddressTypes,
+  FeeNameToBlocks,
   version
 }

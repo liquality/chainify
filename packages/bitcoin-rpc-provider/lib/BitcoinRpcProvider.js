@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
+import { FeeNameToBlocks } from '@liquality/bitcoin-utils'
 
 import { version } from '../package.json'
 
@@ -40,15 +41,18 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return relayfee * 1e8
   }
 
-  async sendTransaction (to, value) {
+  async sendTransaction (to, value, data, fee) {
     to = addressToString(to)
     value = BigNumber(value).dividedBy(1e8).toNumber()
-    return this.jsonrpc('sendtoaddress', to, value)
+    return this.jsonrpc(
+      'sendtoaddress', to, value,
+      '', '', false,
+      false, // Replaceable BIP125
+      fee ? FeeNameToBlocks[fee] : null)
   }
 
   async isAddressUsed (address) {
     const amountReceived = await this.getReceivedByAddress(address)
-
     return amountReceived > 0
   }
 

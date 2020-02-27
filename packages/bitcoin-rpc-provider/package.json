@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
+    "@liquality/bitcoin-utils": "^0.4.21",
     "@liquality/jsonrpc-provider": "^0.4.21",
     "@liquality/utils": "^0.4.21",
     "bignumber.js": "^8.1.1",
