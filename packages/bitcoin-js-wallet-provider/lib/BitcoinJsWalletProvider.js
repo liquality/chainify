@@ -277,10 +277,10 @@ export default class BitcoinJsWalletProvider extends Provider {
         addrList = addrList.concat(nonChangeAddresses)
       }
 
-      let totalUsedAddresses = await this.getMethod('getUnspentTransactions')(addrList)
+      const transactionCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
 
       for (let address of addrList) {
-        const isUsed = totalUsedAddresses.find(a => address.equals(a))
+        const isUsed = transactionCounts[address] > 0
         const isChangeAddress = changeAddresses.find(a => address.equals(a))
         const key = isChangeAddress ? 'change' : 'nonChange'
 

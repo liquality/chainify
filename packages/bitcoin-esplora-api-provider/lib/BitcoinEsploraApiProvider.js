@@ -75,6 +75,20 @@ export default class BitcoinEsploraApiProvider extends Provider {
     return utxos
   }
 
+  async _getAddressTransactionCount (address) {
+    const response = await this._axios.get(`/address/${addressToString(address)}`)
+    return response.data.chain_stats.tx_count + response.data.mempool_stats.tx_count
+  }
+
+  async getAddressTransactionCounts (addresses) {
+    const transactionCountsArray = await Promise.all(addresses.map(async (addr) => {
+      const txCount = await this._getAddressTransactionCount(addr)
+      return { [addr]: txCount }
+    }))
+    const transactionCounts = Object.assign({}, ...transactionCountsArray)
+    return transactionCounts
+  }
+
   async getTransactionHex (transactionHash) {
     const response = await this._axios.get(`/tx/${transactionHash}/hex`)
     return response.data
