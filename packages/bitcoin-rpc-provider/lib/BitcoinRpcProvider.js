@@ -70,6 +70,17 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return utxos.map(utxo => ({ ...utxo, satoshis: BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
+  async getAddressTransactionCounts (addresses) {
+    const receivedAddresses = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
+    const transactionCountsArray = addresses.map(addr => {
+      const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addr)
+      const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
+      return { [addr]: transactionCount }
+    })
+    const transactionCounts = Object.assign({}, ...transactionCountsArray)
+    return transactionCounts
+  }
+
   async getReceivedByAddress (address) {
     address = addressToString(address)
     return this.jsonrpc('getreceivedbyaddress', address)
