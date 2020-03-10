@@ -380,7 +380,7 @@ export default class BitcoinJsWalletProvider extends Provider {
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')
 
-        if (change.length) {
+        if (change && change.length) {
           change = change[0].value
         }
 
