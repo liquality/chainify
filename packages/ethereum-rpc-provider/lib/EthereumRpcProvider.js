@@ -111,10 +111,10 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     return this.jsonrpc('eth_getTransactionReceipt', txHash)
   }
 
-  async getTransactionCount (address) {
+  async getTransactionCount (address, block = 'latest') {
     address = ensure0x(addressToString(address))
 
-    const count = await this.jsonrpc('eth_getTransactionCount', address, 'latest')
+    const count = await this.jsonrpc('eth_getTransactionCount', address, block)
 
     return parseInt(count, '16')
   }

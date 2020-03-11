@@ -74,7 +74,7 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     txData.v = txData.chainId
 
     const [ nonce, gasPrice, gasLimit ] = await Promise.all([
-      this.getMethod('getTransactionCount')(remove0x(from)),
+      this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
       this.getMethod('getGasPrice')(),
       this.getMethod('estimateGas')(txData)
     ])
