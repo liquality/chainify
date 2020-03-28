@@ -34,7 +34,7 @@ export default class WalletProvider extends Provider {
 
   async assertNetworkMatch () {
     const connectedNetwork = await this.getConnectedNetwork()
-    if (!isEqual(connectedNetwork, this._network)) {
+    if (!(isEqual(connectedNetwork, this._network) || connectedNetwork.name === 'unknown')) {
       throw new WalletError(`Network mismatch. Configured network '${this._network.name}' does not match connected network '${connectedNetwork.name}'`)
     }
   }

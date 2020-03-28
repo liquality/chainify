@@ -2,6 +2,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
+import KibaConnector from 'node-kiba'
 import { Client, Provider, providers, crypto, errors } from '../../packages/bundle/lib'
 import { sleep } from '../../packages/utils'
 import { findLast } from 'lodash'
@@ -11,6 +12,7 @@ import config from './config'
 chai.use(chaiAsPromised)
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
+const kibaConnector = new KibaConnector({ port: config.bitcoin.kibaConnector.port })
 
 const bitcoinNetworks = providers.bitcoin.networks
 const bitcoinNetwork = bitcoinNetworks[config.bitcoin.network]
@@ -30,19 +32,23 @@ bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoi
 bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks[config.bitcoin.network], generateMnemonic(256), 'bech32'))
 bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'p2wsh'))
 
+const bitcoinWithKiba = new Client()
+bitcoinWithKiba.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
+bitcoinWithKiba.addProvider(new providers.bitcoin.BitcoinKibaProvider(kibaConnector.getProvider(), bitcoinNetwork))
+
 const bitcoinWithEsplora = new Client()
 bitcoinWithEsplora.addProvider(new providers.bitcoin.BitcoinEsploraApiProvider('https://blockstream.info/testnet/api'))
 bitcoinWithEsplora.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks.bitcoin_testnet, generateMnemonic(256), 'bech32'))
 
 // TODO: required for BITCOIN too?
-class RandomEthereumAddressProvider extends Provider {
-  getUnusedAddress () { // Mock unique address
-    const randomString = parseInt(Math.random() * 1000000000000).toString()
-    const randomHash = crypto.sha256(randomString)
-    const address = randomHash.substr(0, 40)
-    return { address }
-  }
-}
+// class RandomEthereumAddressProvider extends Provider {
+//   getUnusedAddress () { // Mock unique address
+//     const randomString = parseInt(Math.random() * 1000000000000).toString()
+//     const randomHash = crypto.sha256(randomString)
+//     const address = randomHash.substr(0, 40)
+//     return { address }
+//   }
+// }
 
 const ethereumNetworks = providers.ethereum.networks
 const ethereumNetwork = ethereumNetworks[config.ethereum.network]
@@ -51,49 +57,50 @@ const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithMetaMask.addProvider(new RandomEthereumAddressProvider())
+// ethereumWithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithNode = new Client()
 ethereumWithNode.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
+// ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithLedger = new Client()
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
+// ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithJs = new Client()
 ethereumWithJs.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(ethereumNetwork, generateMnemonic(256)))
 ethereumWithJs.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithJs.addProvider(new RandomEthereumAddressProvider())
+// ethereumWithJs.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithMetaMask = new Client()
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
-erc20WithMetaMask.addProvider(new RandomEthereumAddressProvider())
+// erc20WithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithNode = new Client()
 erc20WithNode.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 erc20WithNode.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
 erc20WithNode.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
-erc20WithNode.addProvider(new RandomEthereumAddressProvider())
+// erc20WithNode.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithLedger = new Client()
 erc20WithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
 erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
 erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
-erc20WithLedger.addProvider(new RandomEthereumAddressProvider())
+// erc20WithLedger.addProvider(new RandomEthereumAddressProvider())
 
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: bitcoinNetwork },
   bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: bitcoinNetwork },
+  bitcoinWithKiba: { id: 'Bitcoin Kiba', name: 'bitcoin', client: bitcoinWithKiba, network: bitcoinNetwork },
   bitcoinWithEsplora: { id: 'Bitcoin Esplora', name: 'bitcoin', client: bitcoinWithEsplora },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
@@ -225,6 +232,14 @@ function connectMetaMask () {
   after(async () => metaMaskConnector.stop())
 }
 
+function connectKiba () {
+  before(async () => {
+    console.log('\x1b[36m', 'Starting Kiba connector on http://localhost:3334 - Open in browser to continue', '\x1b[0m')
+    await kibaConnector.start()
+  })
+  after(async () => kibaConnector.stop())
+}
+
 function deployERC20Token (client) {
   before(async () => {
     console.log('\x1b[36m', 'Deploying the ERC20 token contract', '\x1b[0m')
@@ -248,6 +263,7 @@ export {
   fundUnusedBitcoinAddress,
   fundUnusedEthereumAddress,
   metaMaskConnector,
+  kibaConnector,
   initiateAndVerify,
   claimAndVerify,
   refundAndVerify,
@@ -256,5 +272,6 @@ export {
   sleep,
   mineBitcoinBlocks,
   deployERC20Token,
-  connectMetaMask
+  connectMetaMask,
+  connectKiba
 }
