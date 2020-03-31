@@ -65,9 +65,12 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
       from = addressToString(addresses[0])
     }
 
+    const gasPrice = await this.getMethod('getGasPrice')()
+
     const tx = {
       from: ensure0x(from),
-      value: ensure0x(BigNumber(value).toString(16))
+      value: ensure0x(BigNumber(value).toString(16)),
+      gasPrice: ensure0x(gasPrice.toString(16))
     }
 
     if (to) tx.to = ensure0x(addressToString(to))
