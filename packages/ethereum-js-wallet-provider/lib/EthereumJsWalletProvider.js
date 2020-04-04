@@ -12,13 +12,14 @@ import Common from 'ethereumjs-common'
 import { version } from '../package.json'
 
 export default class EthereumJsWalletProvider extends Provider {
-  constructor (network, mnemonic, hardfork = 'istanbul') {
+  constructor (network, mnemonic, hardfork = 'istanbul', gasPriceMultiplier = 1) {
     super()
     const derivationPath = `m/44'/${network.coinType}'/0'/`
     this._derivationPath = derivationPath
     this._mnemonic = mnemonic
     this._network = network
     this._hardfork = hardfork
+    this._gasPriceMultiplier = gasPriceMultiplier
   }
 
   async node () {
@@ -81,11 +82,13 @@ export default class EthereumJsWalletProvider extends Provider {
       data: data ? ensure0x(data) : undefined
     }
 
-    const [ nonce, gasPrice, gasLimit ] = await Promise.all([
+    const [ nonce, baseGasPrice, gasLimit ] = await Promise.all([
       this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
       this.getMethod('getGasPrice')(),
       this.getMethod('estimateGas')(txData)
     ])
+
+    const gasPrice = parseInt(BigNumber(baseGasPrice).times(BigNumber(this._gasPriceMultiplier)).toFixed(0))
 
     txData.nonce = nonce
     txData.gasPrice = gasPrice
