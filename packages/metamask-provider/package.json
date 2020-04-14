@@ -2,7 +2,7 @@
   "name": "@liquality/metamask-provider",
   "umdName": "MetaMaskProvider",
   "umdExport": "default",
-  "version": "0.4.26-beta.1",
+  "version": "0.4.26-beta.2",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -18,10 +18,10 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@liquality/debug": "^0.4.26-beta.1",
-    "@liquality/errors": "^0.4.26-beta.1",
-    "@liquality/ethereum-utils": "^0.4.26-beta.1",
-    "@liquality/wallet-provider": "^0.4.26-beta.1",
+    "@liquality/debug": "^0.4.26-beta.2",
+    "@liquality/errors": "^0.4.26-beta.2",
+    "@liquality/ethereum-utils": "^0.4.26-beta.2",
+    "@liquality/wallet-provider": "^0.4.26-beta.2",
     "lodash": "^4.17.15"
   },
   "engines": {
