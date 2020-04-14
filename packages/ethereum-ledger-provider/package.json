@@ -18,8 +18,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.4.3",
-    "@ledgerhq/hw-app-eth": "^5.0.0",
+    "@ledgerhq/hw-app-eth": "^5.2.0",
     "@liquality/ethereum-networks": "^0.4.26-beta.1",
     "@liquality/ethereum-utils": "^0.4.26-beta.1",
     "@liquality/ledger-provider": "^0.4.26-beta.1",

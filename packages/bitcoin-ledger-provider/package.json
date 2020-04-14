@@ -18,8 +18,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.4.3",
-    "@ledgerhq/hw-app-btc": "^5.0.0",
+    "@ledgerhq/hw-app-btc": "^5.2.0",
     "@liquality/bitcoin-networks": "^0.4.26-beta.1",
     "@liquality/bitcoin-utils": "^0.4.26-beta.1",
     "@liquality/crypto": "^0.4.26-beta.1",

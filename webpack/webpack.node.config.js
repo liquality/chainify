@@ -3,7 +3,7 @@ const path = require('path')
 const cwd = process.cwd()
 const pkg = require(path.join(cwd, 'package.json'))
 const babelRule = require('./babel.rule.js')
-const plugins = require('./plugins.js')
+const plugins = require('./webpack.plugins.js')
 const externals = require('./externals.js')
 
 const isProdEnv = process.env.NODE_ENV === 'production'

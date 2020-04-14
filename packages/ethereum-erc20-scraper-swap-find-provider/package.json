@@ -18,7 +18,6 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.4.3",
     "@liquality/crypto": "^0.4.26-beta.1",
     "@liquality/ethereum-erc20-swap-provider": "^0.4.26-beta.1",
     "@liquality/ethereum-scraper-swap-find-provider": "^0.4.26-beta.1",

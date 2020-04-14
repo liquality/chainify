@@ -18,7 +18,6 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.4.3",
     "bitcoinjs-lib": "^5.1.7"
   },
   "engines": {
