@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import bip32 from 'bip32'
+import { fromPublicKey } from 'bip32'
 import * as bitcoin from 'bitcoinjs-lib'
 
 import LedgerProvider from '@liquality/ledger-provider'
@@ -315,7 +315,7 @@ export default class BitcoinLedgerProvider extends LedgerProvider {
   async getLedgerAddresses (startingIndex, numAddresses, change = false) {
     const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
     const compressedPubKey = compressPubKey(walletPubKey.publicKey)
-    const node = bip32.fromPublicKey(
+    const node = fromPublicKey(
       Buffer.from(compressedPubKey, 'hex'),
       Buffer.from(walletPubKey.chainCode, 'hex'),
       this._network

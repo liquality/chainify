@@ -18,10 +18,11 @@ describe('Bitcoin RPC provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    provider = new BitcoinNodeWalletProvider(BitcoinNetworks.bitcoin_testnet, 'http://localhost:18332', 'bitcoin', 'local321')
+
+    provider = new BitcoinNodeWalletProvider(BitcoinNetworks.bitcoin_testnet, 'http://localhost:18443', 'bitcoin', 'local321')
     client.addProvider(provider)
 
-    mockJsonRpc('http://localhost:18332', bitcoinRpc, 100)
+    mockJsonRpc('http://localhost:18443', bitcoinRpc, 100)
   })
 
   describe('signMessage', () => {

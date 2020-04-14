@@ -3,9 +3,15 @@ const path = require('path')
 const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const { DuplicatesPlugin } = require('inspectpack/plugin')
 
 module.exports = (config = { target: 'web' }) => {
-  const plugins = []
+  const plugins = [
+    new DuplicatesPlugin({
+      emitErrors: false,
+      verbose: false
+    })
+  ]
 
   if (process.env.NODE_ENV === 'production') {
     if (config.target === 'web') {

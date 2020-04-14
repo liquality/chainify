@@ -18,7 +18,6 @@ export const UnsupportedMethodError = createError('UnsupportedMethodError')
 export const UnimplementedMethodError = createError('UnimplementedMethodError')
 export const InvalidProviderResponseError = createError('InvalidProviderResponseError')
 export const WalletError = createError('WalletError')
-export const NodeError = createError('NodeError')
 
 export class RpcError extends StandardError {
   constructor (code, msg, props = {}) {

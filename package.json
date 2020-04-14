@@ -4,7 +4,6 @@
   "devDependencies": {
     "@babel/core": "^7.6.2",
     "@babel/plugin-transform-runtime": "^7.6.2",
-    "@babel/polyfill": "^7.6.0",
     "@babel/preset-env": "^7.6.2",
     "@babel/register": "^7.6.2",
     "babel-loader": "^8.0.6",
@@ -12,10 +11,10 @@
     "babel-plugin-lodash": "^3.3.4",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
-    "bitcoinjs-lib": "^5.1.6",
-    "coininfo": "^5.1.0",
+    "bitcoinjs-lib": "^5.1.7",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
+    "coininfo": "^5.1.0",
     "copy": "^0.3.2",
     "coveralls": "^3.0.6",
     "cross-env": "^5.2.1",
@@ -25,6 +24,7 @@
     "eslint-plugin-html": "^5.0.5",
     "eslint-plugin-markdown": "^1.0.0",
     "gh-pages": "^2.1.1",
+    "inspectpack": "^4.4.0",
     "lerna": "^3.16.4",
     "lodash-webpack-plugin": "^0.11.5",
     "mocha": "^6.2.1",
@@ -55,7 +55,7 @@
   "scripts": {
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
     "lint": "standard $npm_package_options_standard",
-    "bootstrap": "lerna bootstrap --force-local",
+    "bootstrap": "lerna bootstrap --force-local --hoist",
     "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
     "test:api": "cross-env NODE_ENV=test nyc mocha test/integration/api $npm_package_options_mocha",
     "test:chain": "cross-env NODE_ENV=test nyc mocha test/integration/chain $npm_package_options_mocha",
@@ -70,7 +70,7 @@
     "build:browser": "cross-env NODE_ENV=production npm run build:browser",
     "build": "cross-env NODE_ENV=production npm run build:dev",
     "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
-    "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && lerna bootstrap",
+    "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && npm run bootstrap",
     "publish:all": "lerna publish from-package",
     "prepublishOnly": "npm run lint && npm run build:dev:browser && npm run build && npm run test"
   },
@@ -104,5 +104,8 @@
     "lint",
     "build",
     "test"
-  ]
+  ],
+  "dependencies": {
+    "@babel/polyfill": "^7.8.7"
+  }
 }

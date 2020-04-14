@@ -4,7 +4,7 @@ import { get, has } from 'lodash'
 
 import Provider from '@liquality/provider'
 import Debug from '@liquality/debug'
-import { NodeError, RpcError } from '@liquality/errors'
+import { RpcError } from '@liquality/errors'
 
 import { version } from '../package.json'
 
@@ -21,7 +21,7 @@ export default class JsonRpcProvider extends Provider {
     this._axios = axios.create({
       baseURL: uri,
       responseType: 'text',
-      transformResponse: undefined, // https://github.com/axios/axios/issues/907,
+      transformResponse: [data => data],
       validateStatus: (status) => true
     })
 
@@ -65,8 +65,9 @@ export default class JsonRpcProvider extends Provider {
     )
       .then(this._parseResponse)
       .catch(e => {
-        const { name, message, ...errorNoNameNoMessage } = e
-        throw new NodeError(`${this._uri} - ${e.toString()}`, errorNoNameNoMessage)
+        e.name = 'NodeError'
+
+        throw e
       })
   }
 }

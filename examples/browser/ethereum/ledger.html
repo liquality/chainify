@@ -5,22 +5,41 @@
 </head>
 <body>
   <h1>CAL + Ledger: Sign a message (Ethereum)</h1>
+  <button id="init">Init</button>
   <p>From: <span id="address"></span></p>
   <p>Message: <input type="text" id="message"/> <button id="sign">Sign</button></p>
+  <button id="balance">Balance</button>
   <p>Result: <span id="result"></span></p>
+  <p>Value: <input type="text" id="value" value="0"/> <button id="send">Send</button></p>
   <p><code>For errors and logs, check console</code></p>
   <script>
 /* global $, Bundle */
 const { Client, providers } = Bundle
 const ethereum = new Client()
+ethereum.addProvider(new providers.ethereum.EthereumRpcProvider('https://rinkeby.infura.io/v3/da99ebc8c0964bb8bb757b6f8cc40f1f'))
 ethereum.addProvider(new providers.ethereum.EthereumLedgerProvider())
-ethereum.wallet.getAddresses().then(addresses => {
-  const from = addresses[0]
-  $('#address').text(from)
+$('#init').click(() => {
+  ethereum.wallet.getAddresses().then(addresses => {
+    const from = addresses[0].address
+    $('#address').text(from)
 
-  $('#sign').click(() => {
-    ethereum.wallet.signMessage($('#message').val(), from).then(result => {
-      $('#result').text(JSON.stringify(result, null, 2))
+    $('#sign').click(() => {
+      ethereum.wallet.signMessage($('#message').val(), from).then(result => {
+        $('#result').text(JSON.stringify(result, null, 2))
+      })
+    })
+
+    $('#balance').click(async () => {
+      const addresses = await ethereum.wallet.getUsedAddresses()
+      console.log(addresses.map(a => a.address))
+      const balance = await ethereum.chain.getBalance(addresses.map(a => a.address))
+      $('#result').text(JSON.stringify(balance, null, 2))
+    })
+
+    $('#send').click(() => {
+      ethereum.chain.sendTransaction(from, $('#value').val()).then(result => {
+        $('#result').text(JSON.stringify(result))
+      })
     })
   })
 })

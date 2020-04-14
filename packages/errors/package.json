@@ -1,7 +1,7 @@
 {
   "name": "@liquality/errors",
   "umdName": "CALErrors",
-  "version": "0.4.25",
+  "version": "0.4.26-beta.0",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -34,5 +34,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c"
+  "gitHead": "b459fdaf88c935472f4aaa69b3f9920d3a29ad77"
 }
