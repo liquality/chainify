@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { Transaction } from 'ethereumjs-tx'
+import EthereumJsTx from 'ethereumjs-tx'
 
 import LedgerProvider from '@liquality/ledger-provider'
 import Ethereum from '@ledgerhq/hw-app-eth'
@@ -83,7 +83,7 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     txData.gasPrice = gasPrice
     txData.gasLimit = gasLimit
 
-    const tx = new Transaction(txData)
+    const tx = new EthereumJsTx(txData)
     const serializedTx = tx.serialize().toString('hex')
     const txSig = await app.signTransaction(path, serializedTx)
     const signedTxData = {
@@ -93,7 +93,7 @@ export default class EthereumLedgerProvider extends LedgerProvider {
       s: ensure0x(txSig.s)
     }
 
-    const signedTx = new Transaction(signedTxData)
+    const signedTx = new EthereumJsTx(signedTxData)
     const signedSerializedTx = signedTx.serialize().toString('hex')
     const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
 
