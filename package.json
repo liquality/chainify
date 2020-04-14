@@ -57,8 +57,8 @@
   "scripts": {
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
     "lint": "standard $npm_package_options_standard",
-    "bootstrap": "lerna bootstrap --force-local",
-    "bootstrap:hoist": "lerna bootstrap --force-local --hoist",
+    "clean": "lerna clean",
+    "bootstrap": "lerna bootstrap --force-local --hoist",
     "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
     "test:api": "cross-env NODE_ENV=test nyc mocha test/integration/api $npm_package_options_mocha",
     "test:chain": "cross-env NODE_ENV=test nyc mocha test/integration/chain $npm_package_options_mocha",
@@ -73,7 +73,7 @@
     "build:browser": "cross-env NODE_ENV=production npm run build:dev:browser",
     "build": "cross-env NODE_ENV=production npm run build:dev",
     "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
-    "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && npm run bootstrap:hoist",
+    "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && npm run bootstrap",
     "publish:all": "lerna publish from-package",
     "prepublishOnly": "npm run lint && npm run build && npm run test"
   },
