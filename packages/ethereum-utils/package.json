@@ -1,7 +1,7 @@
 {
   "name": "@liquality/ethereum-utils",
   "umdName": "EthereumUtils",
-  "version": "0.4.26-beta.4",
+  "version": "0.4.26-beta.5",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -17,8 +17,8 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@liquality/crypto": "^0.4.26-beta.4",
-    "@liquality/schema": "^0.4.26-beta.4",
+    "@liquality/crypto": "^0.4.26-beta.5",
+    "@liquality/schema": "^0.4.26-beta.5",
     "eip55": "^1.0.3"
   },
   "engines": {
