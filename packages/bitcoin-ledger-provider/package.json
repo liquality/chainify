@@ -27,6 +27,7 @@
     "bignumber.js": "^9.0.0",
     "bip32": "^2.0.5",
     "bitcoinjs-lib": "^5.1.7",
+    "invariant": "^2.2.4",
     "lodash": "^4.17.15"
   },
   "engines": {
