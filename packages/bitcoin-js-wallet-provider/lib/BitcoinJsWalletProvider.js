@@ -365,10 +365,7 @@ export default class BitcoinJsWalletProvider extends Provider {
         }
       })
 
-      const usedAddresses = []
-      // const usedAddresses = confirmedAdd.concat(utxosMempool) // TODO: USED ADDRESSES
-      // utxos = utxos // TODO: Filter out utxos in the mempool that have already been used? Does the node already do this?
-      //   .filter(utxo => utxosMempool.filter(mempoolUtxo => utxo.txid === mempoolUtxo.prevtxid).length === 0)
+      const transactionCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
 
       if (feePerByte === false) feePerByte = await feePerBytePromise
       const minRelayFee = await this.getMethod('getMinRelayFee')()
@@ -392,7 +389,7 @@ export default class BitcoinJsWalletProvider extends Provider {
       }
 
       for (let address of addrList) {
-        const isUsed = usedAddresses.find(a => address.equals(a))
+        const isUsed = transactionCounts[address.address]
         const isChangeAddress = changeAddresses.find(a => address.equals(a))
         const key = isChangeAddress ? 'change' : 'nonChange'
 
