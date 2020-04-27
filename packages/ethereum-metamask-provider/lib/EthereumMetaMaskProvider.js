@@ -51,7 +51,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     return this.metamask('personal_sign', ensure0x(hex), ensure0x(address))
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data, fee) {
     const networkId = await this.getWalletNetworkId()
 
     if (this._network) {
@@ -60,25 +60,24 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
       }
     }
 
-    if (!from) {
-      const addresses = await this.getAddresses()
-      from = addressToString(addresses[0])
-    }
+    const addresses = await this.getAddresses()
+    const from = addressToString(addresses[0])
 
-    const gasPrice = await this.getMethod('getGasPrice')()
-
-    const tx = {
-      from: ensure0x(from),
-      value: ensure0x(BigNumber(value).toString(16)),
-      gasPrice: ensure0x(gasPrice.toString(16))
-    }
-
-    if (to) tx.to = ensure0x(addressToString(to))
-    if (data) tx.data = ensure0x(data)
+    const tx = await this.buildTransaction(from, to, value, data, fee)
 
     const txHash = await this.metamask('eth_sendTransaction', tx)
 
     return remove0x(txHash)
+  }
+
+  async updateTransactionFee (txHash, newGasPrice) {
+    const transaction = await this.getMethod('getTransactionByHash')(txHash)
+
+    const tx = await this.buildTransaction(transaction.from, transaction.to, transaction.value, transaction.data, newGasPrice, transaction.nonce)
+
+    const newTxHash = await this.metamask('eth_sendTransaction', tx)
+
+    return remove0x(newTxHash)
   }
 
   async getWalletNetworkId () {

@@ -215,11 +215,29 @@ export default class Chain {
    * @param {!string} to - Recepient address.
    * @param {!string} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
-   * @param {!string} from - The address from which the message is signed.
+   * @param {!string} fee - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendTransaction (to, value, data, from) {
-    return this.client.getMethod('sendTransaction')(to, value, data, from)
+  async sendTransaction (to, value, data, fee) {
+    return this.client.getMethod('sendTransaction')(to, value, data, fee)
+  }
+
+  /**
+   * Update the fee of a transaction.
+   * @param {!string} txHash - Hash of the transaction to update
+   * @param {!string} fee - New fee price in native unit (e.g. sat/b, wei)
+   * @return {Promise<string>} Resolves with the new transaction hash
+   */
+  async updateTransactionFee (txHash, newFee) { // TODO: txHash or Tx Object
+    if (!isString(txHash)) {
+      throw new TypeError('Transaction hash should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
+      throw new TypeError('Transaction hash should be a valid hex string')
+    }
+
+    return this.client.getMethod('updateTransactionFee')(txHash, newFee)
   }
 
   /**
@@ -259,5 +277,9 @@ export default class Chain {
 
   async getTransactionReceipt (txHash) {
     return this.client.getMethod('getTransactionReceipt')(txHash)
+  }
+
+  async getFees () {
+    return this.client.getMethod('getFees')()
   }
 }

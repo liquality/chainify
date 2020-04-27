@@ -80,19 +80,19 @@ export default class EthereumSwapProvider extends Provider {
     ].join('').toLowerCase()
   }
 
-  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    return this.getMethod('sendTransaction')(null, value, bytecode)
+    return this.getMethod('sendTransaction')(null, value, bytecode, gasPrice)
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, gasPrice) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, secret)
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, secret, gasPrice)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, '')
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, '', gasPrice)
   }
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {

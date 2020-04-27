@@ -32,9 +32,9 @@ export default class EthereumErc20SwapProvider extends Provider {
     return bytecode
   }
 
-  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    const txHash = await this.getMethod('sendTransaction')(null, 0, bytecode)
+    const txHash = await this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
     let initiationTransactionReceipt = null
 
     while (initiationTransactionReceipt === null) {
@@ -42,18 +42,23 @@ export default class EthereumErc20SwapProvider extends Provider {
       await sleep(5000)
     }
 
-    await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value)
+    await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value, undefined, gasPrice)
     return txHash
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, gasPrice) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_CLAIM_FUNCTION + secret)
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_CLAIM_FUNCTION + secret, gasPrice)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_REFUND_FUNCTION)
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_REFUND_FUNCTION, gasPrice)
+  }
+
+  // TODO: UPDATING INITIATE SWAP OF ERC20: Should bump both transactions
+  async updateTransactionFee (txHash, newGasPrice) {
+    throw new Error('Needs implementation')
   }
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {

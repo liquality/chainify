@@ -6,7 +6,8 @@ import {
   formatEthResponse,
   ensure0x,
   normalizeTransactionObject,
-  remove0x
+  remove0x,
+  buildTransaction
 } from '@liquality/ethereum-utils'
 import { addressToString, Address } from '@liquality/utils'
 import { padHexStart } from '@liquality/crypto'
@@ -44,27 +45,25 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     return addresses.length > 0
   }
 
-  async sendTransaction (to, value, data, from) {
-    if (!from) {
-      const addresses = await this.getAddresses()
-      from = addresses[0]
-    }
+  async sendTransaction (to, value, data, gasPrice) {
+    const addresses = await this.getAddresses()
+    const from = addressToString(addresses[0])
 
-    const tx = {
-      from: ensure0x(addressToString(from)),
-      to: to ? ensure0x(addressToString(from)) : null,
-      value: ensure0x(BigNumber(value).toString(16))
-    }
-
-    if (to) tx.to = ensure0x(addressToString(to))
-    if (data) {
-      tx.data = ensure0x(data)
-      tx.gas = ensure0x((await this.estimateGas(tx)).toString(16))
-    }
+    const tx = await buildTransaction(from, to, value, data, gasPrice)
 
     const txHash = await this.jsonrpc('eth_sendTransaction', tx)
 
     return remove0x(txHash)
+  }
+
+  async updateTransactionFee (txHash, newGasPrice) {
+    const transaction = await this.getMethod('getTransactionByHash')(txHash)
+
+    const tx = await this.buildTransaction(transaction.from, transaction.to, transaction.value, transaction.data, newGasPrice, transaction.nonce)
+
+    const newTxHash = await this.jsonrpc('eth_sendTransaction', tx)
+
+    return remove0x(newTxHash)
   }
 
   async sendRawTransaction (hash) {

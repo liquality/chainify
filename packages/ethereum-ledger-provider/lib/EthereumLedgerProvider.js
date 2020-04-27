@@ -7,7 +7,8 @@ import Ethereum from '@ledgerhq/hw-app-eth'
 import networks from '@liquality/ethereum-networks'
 import {
   ensure0x,
-  remove0x
+  remove0x,
+  buildTransaction
 } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
 
@@ -56,33 +57,8 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     return this.getAddresses()
   }
 
-  async sendTransaction (to, value, data) {
+  async signTransaction (txData, path) {
     const app = await this.getApp()
-    const addresses = await this.getAddresses()
-    const address = addresses[0]
-    const from = addressToString(address)
-    const path = address.derivationPath
-
-    const txData = {
-      to: to ? ensure0x(to) : null,
-      from: ensure0x(from),
-      value: ensure0x(BigNumber(value).toString(16)),
-      data: data ? ensure0x(data) : undefined,
-      chainId: ensure0x(BigNumber(this._network.chainId).toString(16))
-    }
-
-    txData.v = txData.chainId
-
-    const [ nonce, gasPrice, gasLimit ] = await Promise.all([
-      this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
-      this.getMethod('getGasPrice')(),
-      this.getMethod('estimateGas')(txData)
-    ])
-
-    txData.nonce = nonce
-    txData.gasPrice = gasPrice
-    txData.gasLimit = gasLimit
-
     const tx = new EthereumJsTx(txData)
     const serializedTx = tx.serialize().toString('hex')
     const txSig = await app.signTransaction(path, serializedTx)
@@ -95,6 +71,27 @@ export default class EthereumLedgerProvider extends LedgerProvider {
 
     const signedTx = new EthereumJsTx(signedTxData)
     const signedSerializedTx = signedTx.serialize().toString('hex')
+    return signedSerializedTx
+  }
+
+  async sendTransaction (to, value, data, _gasPrice) {
+    const addresses = await this.getAddresses()
+    const address = addresses[0]
+    const from = addressToString(address)
+
+    const [ nonce, gasPrice ] = await Promise.all([
+      this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
+      _gasPrice ? Promise.resolve(_gasPrice) : this.getMethod('getGasPrice')()
+    ])
+
+    const txData = buildTransaction(from, to, value, data, gasPrice, nonce)
+    txData.gasLimit = await this.getMethod('estimateGas')(txData) // TODO: shouldn't these be 0x?
+    const chainId = ensure0x(BigNumber(this._network.chainId).toString(16))
+    txData.chainId = chainId
+    txData.v = chainId
+
+    const signedSerializedTx = this.signTransaction(txData, address.derivationPath)
+
     const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
 
     return txHash

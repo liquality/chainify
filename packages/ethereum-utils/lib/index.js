@@ -1,5 +1,7 @@
 import { Block, Transaction } from '@liquality/schema'
 import { padHexStart } from '@liquality/crypto'
+import { addressToString } from '@liquality/utils'
+import BigNumber from 'bignumber.js'
 import eip55 from 'eip55'
 
 import { version } from '../package.json'
@@ -88,6 +90,20 @@ function normalizeTransactionObject (tx, currentHeight) {
   return tx
 }
 
+function buildTransaction (from, to, value, data, gasPrice, nonce) {
+  const tx = {
+    from: ensure0x(addressToString(from)),
+    value: ensure0x(BigNumber(value).toString(16))
+  }
+
+  if (gasPrice) tx.gasPrice = ensure0x(gasPrice.toString(16))
+  if (to) tx.to = ensure0x(addressToString(to))
+  if (data) tx.data = ensure0x(data)
+  if (nonce) tx.nonce = ensure0x(nonce.toString(16))
+
+  return tx
+}
+
 export {
   ensure0x,
   remove0x,
@@ -96,5 +112,6 @@ export {
   formatEthResponse,
   normalizeTransactionObject,
   ensureBlockFormat,
+  buildTransaction,
   version
 }
