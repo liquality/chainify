@@ -107,15 +107,19 @@ export default class EthereumErc20SwapProvider extends Provider {
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
     if (!block) return
+
     const transaction = block.transactions.find(
       transaction => this.doesTransactionMatchClaim(transaction, initiationTransaction)
     )
     if (!transaction) return
+
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-    if (!transactionReceipt) return
+    if (!transactionReceipt) throw new Error('Transaction receipt is not available')
+
     if (transactionReceipt.status === '1') {
       transaction.secret = await this.getSwapSecret(transaction.hash)
       return transaction

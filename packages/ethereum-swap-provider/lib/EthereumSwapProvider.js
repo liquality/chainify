@@ -134,9 +134,11 @@ export default class EthereumSwapProvider extends Provider {
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     const transaction = await this.findSwapTransaction(blockNumber, transaction => this.doesTransactionMatchClaim(transaction, initiationTransaction))
     if (!transaction) return
+
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
     if (transactionReceipt && transactionReceipt.status === '1') {
       transaction.secret = await this.getSwapSecret(transaction.hash)
