@@ -25,6 +25,7 @@
     "@liquality/bitcoin-networks": "^0.4.28",
     "@liquality/bitcoin-node-wallet-provider": "^0.4.28",
     "@liquality/bitcoin-rpc-provider": "^0.4.28",
+    "@liquality/bitcoin-rpc-fee-provider": "^0.4.28",
     "@liquality/bitcoin-swap-provider": "^0.4.28",
     "@liquality/bitcoin-utils": "^0.4.28",
     "@liquality/client": "^0.4.28",

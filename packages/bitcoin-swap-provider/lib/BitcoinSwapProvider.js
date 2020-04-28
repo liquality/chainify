@@ -11,9 +11,9 @@ import networks from '@liquality/bitcoin-networks'
 import { version } from '../package.json'
 
 export default class BitcoinSwapProvider extends Provider {
-  constructor (chain = { network: networks.bitcoin }, mode = 'p2wsh') {
+  constructor (network = networks.bitcoin, mode = 'p2wsh') {
     super()
-    this._network = chain.network
+    this._network = network
     if (!['p2wsh', 'p2shSegwit', 'p2sh'].includes(mode)) {
       throw new Error('Mode must be one of p2wsh, p2shSegwit, p2sh')
     }
@@ -94,22 +94,22 @@ export default class BitcoinSwapProvider extends Provider {
     return { p2wsh, p2shSegwit, p2sh }
   }
 
-  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
     const address = this.getSwapPaymentVariants(swapOutput)[this._mode].address
-    return this.getMethod('sendTransaction')(address, value)
+    return this.getMethod('sendTransaction')(address, value, undefined, feePerByte)
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, feePerByte) {
     const secretHash = bitcoin.crypto.sha256(Buffer.from(secret, 'hex')).toString('hex')
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash)
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, false, undefined, secretHash)
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, false, undefined, secretHash, feePerByte)
   }
 
-  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isRedeem, secret, secretHash) {
+  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isRedeem, secret, secretHash, _feePerByte) {
     const network = this._network
     const address = isRedeem ? recipientAddress : refundAddress
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
@@ -131,9 +131,10 @@ export default class BitcoinSwapProvider extends Provider {
       }
     }
 
+    const feePerByte = _feePerByte || await this.getMethod('getFeePerByte')()
+
     // TODO: Implement proper fee calculation that counts bytes in inputs and outputs
-    // TODO: use node's feePerByte
-    const txfee = calculateFee(1, 1, 3)
+    const txfee = calculateFee(1, 1, feePerByte)
 
     swapVout.txid = initiationTxHash
     swapVout.vSat = BigNumber(swapVout.value).times(1e8).toNumber()

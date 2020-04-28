@@ -54,11 +54,11 @@ export default class BitcoinJsWalletProvider extends Provider {
     return signature.toString('hex')
   }
 
-  async _buildTransaction (outputs) {
+  async _buildTransaction (outputs, feePerByte, fixedInputs) {
     const network = this._network
 
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(outputs)
+    const { inputs, change } = await this.getInputsForAmount(outputs, feePerByte, fixedInputs)
 
     if (change) {
       outputs.push({
@@ -106,34 +106,71 @@ export default class BitcoinJsWalletProvider extends Provider {
     return txb.build().toHex()
   }
 
-  async buildTransaction (to, value, data, from) {
-    return this._buildTransaction([{ to, value }])
+  async buildTransaction (to, value, data, feePerByte) {
+    return this._buildTransaction([{ to, value, feePerByte }])
   }
 
   async buildBatchTransaction (transactions) {
     return this._buildTransaction(transactions)
   }
 
-  async _sendTransaction (transactions) {
-    const signedTransaction = await this._buildTransaction(transactions)
+  async _sendTransaction (transactions, feePerByte) {
+    const signedTransaction = await this._buildTransaction(transactions, feePerByte)
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
-  async sendTransaction (to, value, data, from) {
-    return this._sendTransaction([{ to, value }])
+  async sendTransaction (to, value, data, feePerByte) {
+    return this._sendTransaction([{ to, value }], feePerByte)
+  }
+
+  async updateTransactionFee (txHash, newFeePerByte) {
+    const transaction = await this.getMethod('getTransactionByHash')(txHash)
+    if (transaction._raw.vin.length === 1 && transaction._raw.vout.length === 1) { // TODO: better heurestic for P2SH/ P2WSH
+      const inputTx = await this.getMethod('getTransactionByHash')(transaction._raw.vin[0].txid)
+      const inputTxHex = inputTx._raw.hex
+      const tx = bitcoin.Transaction.fromHex(transaction._raw.hex)
+
+      // // Modify output
+      // tx.outs[0]
+
+      const address = transaction._raw.vout[0].scriptPubKey.addresses[0]
+      const prevout = inputTx._raw.vout[transaction._raw.vin[0].vout]
+      prevout.vSat = BigNumber(prevout.value).times(1e8).toNumber()
+      const outputScript = Buffer.from(transaction._raw.vin[0].txinwitness[transaction._raw.vin[0].txinwitness.length - 1]) // TODO: this doesn't seem accurate enough
+      const lockTime = 0 // TBD
+      const segwit = true // TBD LOOK BELOW
+      // isSegwit ? swapPaymentVariants.p2wsh.redeem.output : swapPaymentVariants.p2sh.redeem.output,
+      // isRedeem ? 0 : expiration,
+      // isSegwit
+
+      const sig = await this.signP2SHTransaction(inputTxHex, tx, address, prevout, outputScript, lockTime, segwit)
+
+      tx.setWitness(0, [sig, tx.ins[0].witness[1], tx.ins[0].witness[2], tx.ins[0].witness[3], tx.ins[0].witness[4]]) // lol???? the hell is this
+
+      return this.getMethod('sendRawTransaction')(tx.toHex())
+    }
+    const fixedInputs = [transaction._raw.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
+    const changeAddresses = (await this.getAddresses(0, 1000, true)).map(a => a.address)
+    const nonChangeOutputs = transaction._raw.vout.filter(vout => !changeAddresses.includes(vout.scriptPubKey.addresses[0]))
+    const transactions = nonChangeOutputs.map(output =>
+      ({ to: output.scriptPubKey.addresses[0], value: BigNumber(output.value).times(1e8).toNumber() })
+    )
+    const signedTransaction = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
+    return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
   async sendBatchTransaction (transactions) {
     return this._sendTransaction(transactions)
   }
 
-  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
+  async signP2SHTransaction (inputTxHex, tx, address, prevout, outputScript, lockTime = 0, segwit = false) {
     const wallet = await this.getWalletAddress(address)
     const keyPair = await this.keyPair(wallet.derivationPath)
 
     let sigHash
+
     if (segwit) {
-      sigHash = tx.hashForWitnessV0(0, outputScript, vout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+      sigHash = tx.hashForWitnessV0(0, outputScript, prevout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
     } else {
       sigHash = tx.hashForSignature(0, outputScript, bitcoin.Transaction.SIGHASH_ALL)
     }
@@ -212,6 +249,13 @@ export default class BitcoinJsWalletProvider extends Provider {
     } else if (this._addressType === 'bech32') {
       return bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._network })
     }
+  }
+
+  async _importAddresses () {
+    const change = await this.getAddresses(0, 200, true)
+    const nonChange = await this.getAddresses(0, 200, false)
+    const all = [...nonChange, ...change].map(addressToString)
+    await this.getMethod('importAddresses')(all)
   }
 
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
@@ -326,7 +370,7 @@ export default class BitcoinJsWalletProvider extends Provider {
       .then(({ unusedAddress }) => unusedAddress[key])
   }
 
-  async getInputsForAmount (_targets, numAddressPerCall = 100) {
+  async getInputsForAmount (_targets, _feePerByte, fixedInputs = [], numAddressPerCall = 100) {
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -336,7 +380,7 @@ export default class BitcoinJsWalletProvider extends Provider {
     }
 
     const feePerBytePromise = this.getMethod('getFeePerByte')()
-    let feePerByte = false
+    let feePerByte = _feePerByte || false
 
     while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
       let addrList = []
@@ -370,9 +414,18 @@ export default class BitcoinJsWalletProvider extends Provider {
       if (feePerByte === false) feePerByte = await feePerBytePromise
       const minRelayFee = await this.getMethod('getMinRelayFee')()
 
+      if (fixedInputs.length) {
+        for (const input of fixedInputs) {
+          const tx = await this.getMethod('getTransactionByHash')(input.txid)
+          input.value = BigNumber(tx._raw.vout[input.vout].value).times(1e8).toNumber()
+          input.address = tx._raw.vout[input.vout].scriptPubKey.addresses[0]
+        }
+      }
+
       const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
 
-      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), minRelayFee)
+      // TODO: does minrelayfee need to consider RBF?
+      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), minRelayFee, fixedInputs)
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')

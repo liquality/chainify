@@ -1,5 +1,6 @@
 import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
 import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
+import BitcoinRpcFeeProvider from '@liquality/bitcoin-rpc-fee-provider'
 import BitcoinNodeWalletProvider from '@liquality/bitcoin-node-wallet-provider'
 import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
 import BitcoinSwapProvider from '@liquality/bitcoin-swap-provider'
@@ -25,6 +26,7 @@ import * as EthereumUtils from '@liquality/ethereum-utils'
 const bitcoin = {
   BitcoinLedgerProvider,
   BitcoinRpcProvider,
+  BitcoinRpcFeeProvider,
   BitcoinNodeWalletProvider,
   BitcoinJsWalletProvider,
   BitcoinSwapProvider,
