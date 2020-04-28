@@ -57,10 +57,12 @@ export default class EthereumBlockscoutSwapFindProvider extends Provider {
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress,
       tx => tx.to === initiationTransaction.contractAddress && tx.input.length === 64)
     if (!transaction) return
+
     if (transaction.status === '1') {
       transaction.secret = await this.getMethod('getSwapSecret')(transaction.hash)
       return transaction
@@ -69,11 +71,13 @@ export default class EthereumBlockscoutSwapFindProvider extends Provider {
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress, (tx) =>
       tx.to === initiationTransaction.contractAddress &&
       tx.input === '' &&
       tx.timeStamp >= expiration)
+
     return transaction
   }
 

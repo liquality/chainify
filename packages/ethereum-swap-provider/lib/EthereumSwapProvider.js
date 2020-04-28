@@ -87,11 +87,15 @@ export default class EthereumSwapProvider extends Provider {
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, secret)
   }
 
   async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, '')
   }
 
@@ -109,6 +113,8 @@ export default class EthereumSwapProvider extends Provider {
     if (!initiationTransaction) return false
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     const transactionMatchesSwapParams = this.doesTransactionMatchInitiation(
       initiationTransaction,
       value,
@@ -118,7 +124,7 @@ export default class EthereumSwapProvider extends Provider {
       expiration
     )
 
-    return transactionMatchesSwapParams && initiationTransactionReceipt && initiationTransactionReceipt.status === '1'
+    return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
   }
 
   async findSwapTransaction (blockNumber, predicate) {
@@ -134,9 +140,11 @@ export default class EthereumSwapProvider extends Provider {
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     const transaction = await this.findSwapTransaction(blockNumber, transaction => this.doesTransactionMatchClaim(transaction, initiationTransaction))
     if (!transaction) return
+
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
     if (transactionReceipt && transactionReceipt.status === '1') {
       transaction.secret = await this.getSwapSecret(transaction.hash)
@@ -151,7 +159,8 @@ export default class EthereumSwapProvider extends Provider {
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+
     const refundSwapTransaction = await this.findSwapTransaction(blockNumber, (transaction, block) =>
       transaction.to === initiationTransaction.contractAddress &&
       transaction.input === '' &&

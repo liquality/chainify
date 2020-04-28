@@ -57,7 +57,7 @@ export default class EthereumScraperSwapFindProvider extends Provider {
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
 
     const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress,
       tx => this.getMethod('doesTransactionMatchClaim', false)(tx, initiationTransaction))
@@ -71,7 +71,7 @@ export default class EthereumScraperSwapFindProvider extends Provider {
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) return
+    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
 
     const transaction = await this.findAddressTransaction(
       initiationTransaction.contractAddress,
