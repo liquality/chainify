@@ -1,0 +1,3 @@
+import EthereumWalletConnectProvider from './EthereumWalletConnectProvider'
+
+export default EthereumWalletConnectProvider

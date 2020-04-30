@@ -38,6 +38,7 @@
     "@liquality/ethereum-js-wallet-provider": "^0.4.28",
     "@liquality/ethereum-ledger-provider": "^0.4.28",
     "@liquality/ethereum-metamask-provider": "^0.4.28",
+    "@liquality/ethereum-wallet-connect-provider": "^0.4.28",
     "@liquality/ethereum-networks": "^0.4.28",
     "@liquality/ethereum-rpc-provider": "^0.4.28",
     "@liquality/ethereum-scraper-swap-find-provider": "^0.4.28",
