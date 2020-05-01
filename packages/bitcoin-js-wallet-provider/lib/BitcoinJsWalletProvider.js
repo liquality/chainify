@@ -1,5 +1,5 @@
 import Provider from '@liquality/provider'
-import { AddressTypes, selectCoins } from '@liquality/bitcoin-utils'
+import { AddressTypes, selectCoins, calculateFee } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
 import { Address, addressToString } from '@liquality/utils'
@@ -124,38 +124,56 @@ export default class BitcoinJsWalletProvider extends Provider {
   }
 
   async updateTransactionFee (txHash, newFeePerByte) {
-    const transaction = await this.getMethod('getTransactionByHash')(txHash)
-    if (transaction._raw.vin.length === 1 && transaction._raw.vout.length === 1) { // TODO: better heurestic for P2SH/ P2WSH
-      const inputTx = await this.getMethod('getTransactionByHash')(transaction._raw.vin[0].txid)
-      const inputTxHex = inputTx._raw.hex
-      const tx = bitcoin.Transaction.fromHex(transaction._raw.hex)
+    const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
+    if (transaction.vin.length === 1 && transaction.vout.length === 1) { // TODO: better heurestic for P2SH/ P2WSH
+      const segwit = true // TODO:
+      const inputTx = (await this.getMethod('getTransactionByHash')(transaction.vin[0].txid))._raw
+      const inputTxHex = inputTx.hex
+      const tx = bitcoin.Transaction.fromHex(transaction.hex)
 
-      // // Modify output
-      // tx.outs[0]
-
-      const address = transaction._raw.vout[0].scriptPubKey.addresses[0]
-      const prevout = inputTx._raw.vout[transaction._raw.vin[0].vout]
+      const address = transaction.vout[0].scriptPubKey.addresses[0]
+      const prevout = inputTx.vout[transaction.vin[0].vout]
       prevout.vSat = BigNumber(prevout.value).times(1e8).toNumber()
-      const outputScript = Buffer.from(transaction._raw.vin[0].txinwitness[transaction._raw.vin[0].txinwitness.length - 1]) // TODO: this doesn't seem accurate enough
-      const lockTime = 0 // TBD
-      const segwit = true // TBD LOOK BELOW
+
+      const txfee = calculateFee(1, 1, newFeePerByte)
+
+      if (prevout.vSat - txfee < 0) {
+        throw new Error('Transaction amount does not cover fee.')
+      }
+
+      tx.outs[0].value = BigNumber(prevout.vSat).minus(BigNumber(txfee)).toNumber()
+
+      let outputScript
+      if (segwit) {
+        const witness = transaction.vin[0].txinwitness
+        outputScript = Buffer.from(witness[witness.length - 1], 'hex')
+      } else {
+        // TODO:
+      }
+      const lockTime = transaction.lockTime // TBD
       // isSegwit ? swapPaymentVariants.p2wsh.redeem.output : swapPaymentVariants.p2sh.redeem.output,
       // isRedeem ? 0 : expiration,
       // isSegwit
 
       const sig = await this.signP2SHTransaction(inputTxHex, tx, address, prevout, outputScript, lockTime, segwit)
-
-      tx.setWitness(0, [sig, tx.ins[0].witness[1], tx.ins[0].witness[2], tx.ins[0].witness[3], tx.ins[0].witness[4]]) // lol???? the hell is this
-
+      if (segwit) {
+        const witness = [
+          sig, tx.ins[0].witness[1], tx.ins[0].witness[2], tx.ins[0].witness[3], tx.ins[0].witness[4]
+        ]
+        tx.setWitness(0, witness) // lol???? the hell is this
+      } else {
+        // TOOD:
+      }
       return this.getMethod('sendRawTransaction')(tx.toHex())
     }
-    const fixedInputs = [transaction._raw.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
+    const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
     const changeAddresses = (await this.getAddresses(0, 1000, true)).map(a => a.address)
-    const nonChangeOutputs = transaction._raw.vout.filter(vout => !changeAddresses.includes(vout.scriptPubKey.addresses[0]))
+    const nonChangeOutputs = transaction.vout.filter(vout => !changeAddresses.includes(vout.scriptPubKey.addresses[0]))
     const transactions = nonChangeOutputs.map(output =>
       ({ to: output.scriptPubKey.addresses[0], value: BigNumber(output.value).times(1e8).toNumber() })
     )
     const signedTransaction = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
+    
     return this.getMethod('sendRawTransaction')(signedTransaction)
   }
 
