@@ -19,6 +19,7 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@liquality/crypto": "^0.4.28",
+    "@liquality/utils": "^0.4.28",
     "@liquality/schema": "^0.4.28",
     "eip55": "^1.0.3"
   },

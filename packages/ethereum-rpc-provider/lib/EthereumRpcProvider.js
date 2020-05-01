@@ -59,7 +59,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   async updateTransactionFee (txHash, newGasPrice) {
     const transaction = await this.getMethod('getTransactionByHash')(txHash)
 
-    const tx = await this.buildTransaction(transaction.from, transaction.to, transaction.value, transaction.data, newGasPrice, transaction.nonce)
+    const tx = await buildTransaction(transaction.from, transaction.to, transaction.value, transaction.data, newGasPrice, transaction.nonce)
 
     const newTxHash = await this.jsonrpc('eth_sendTransaction', tx)
 

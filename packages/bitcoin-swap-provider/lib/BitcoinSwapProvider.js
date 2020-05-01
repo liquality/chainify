@@ -188,6 +188,57 @@ export default class BitcoinSwapProvider extends Provider {
     return this.getMethod('sendRawTransaction')(tx.toHex())
   }
 
+  async updateTransactionFee (txHash, newFeePerByte) {
+    const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
+    if (transaction.vin.length === 1 && transaction.vout.length === 1) {
+      const inputTx = (await this.getMethod('getTransactionByHash')(transaction.vin[0].txid))._raw
+      const vout = inputTx.vout[transaction.vin[0].vout]
+      const voutType = vout.scriptPubKey.type
+      if (['scripthash', 'witness_v0_scripthash'].includes(voutType)) {
+        const segwit = voutType === 'witness_v0_scripthash'
+        const inputTxHex = inputTx.hex
+        const tx = bitcoin.Transaction.fromHex(transaction.hex)
+
+        const address = transaction.vout[0].scriptPubKey.addresses[0]
+        const prevout = inputTx.vout[transaction.vin[0].vout]
+        prevout.vSat = BigNumber(prevout.value).times(1e8).toNumber()
+
+        const txfee = calculateFee(1, 1, newFeePerByte)
+
+        if (prevout.vSat - txfee < 0) {
+          throw new Error('Transaction amount does not cover fee.')
+        }
+
+        tx.outs[0].value = BigNumber(prevout.vSat).minus(BigNumber(txfee)).toNumber()
+
+        let outputScript
+        if (segwit) {
+          const witness = transaction.vin[0].txinwitness
+          outputScript = Buffer.from(witness[witness.length - 1], 'hex')
+        } else {
+          const scriptSig = transaction.vin[0].scriptSig.hex
+          const script = bitcoin.script.decompile(Buffer.from(scriptSig, 'hex'))
+          outputScript = script[script.length - 1]
+        }
+        const lockTime = transaction.lockTime
+
+        const sig = await this.getMethod('signP2SHTransaction')(inputTxHex, tx, address, prevout, outputScript, lockTime, segwit)
+        if (segwit) {
+          const witness = [sig, ...tx.ins[0].witness.slice(1)]
+          tx.setWitness(0, witness)
+        } else {
+          const scriptSig = transaction.vin[0].scriptSig.hex
+          const script = bitcoin.script.decompile(Buffer.from(scriptSig, 'hex'))
+          const inputScript = bitcoin.script.compile([sig, ...script.slice(1)])
+          tx.setInputScript(0, inputScript)
+        }
+        return this.getMethod('sendRawTransaction')(tx.toHex())
+      }
+    }
+
+    return this.getMethod('updateTransactionFee')(txHash, newFeePerByte)
+  }
+
   getInputScriptFromTransaction (tx) {
     const vin = tx._raw.vin[0]
     if (!vin.scriptSig) return null
