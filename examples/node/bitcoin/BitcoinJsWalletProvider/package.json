@@ -4,12 +4,16 @@
   "description": "These examples are to provide demos and insight into how to do basic functionality with the BitcoinJsWalletProvider",
   "main": "api.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@liquality/bundle": "^0.3.5"
-  }
+    "@liquality/bundle": "^0.3.5",
+    "snyk": "^1.316.1"
+  },
+  "snyk": true
 }
