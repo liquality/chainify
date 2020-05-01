@@ -7,7 +7,10 @@ export default {
     },
     network: 'bitcoin_regtest',
     value: 1000000,
-    mineBlocks: true
+    mineBlocks: true,
+    kibaConnector: {
+      port: 3334
+    }
   },
   ethereum: {
     rpc: {
