@@ -2,7 +2,7 @@
   "name": "@liquality/kiba-provider",
   "umdName": "KibaProvider",
   "umdExport": "default",
-  "version": "0.4.28",
+  "version": "0.4.29",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.3",
-    "@liquality/provider": "^0.4.28",
+    "@liquality/provider": "^0.4.29",
     "core-connection": "0.0.12"
   },
   "engines": {
