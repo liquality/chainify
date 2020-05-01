@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-rpc-provider",
   "umdName": "BitcoinRpcProvider",
   "umdExport": "default",
-  "version": "0.4.29",
+  "version": "0.4.28",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -13,16 +13,19 @@
   "scripts": {
     "build:node": "webpack --config ../../webpack/webpack.node.config.js",
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
-    "build": "webpack --config ../../webpack/webpack.config.js"
+    "build": "webpack --config ../../webpack/webpack.config.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/jsonrpc-provider": "^0.4.29",
-    "@liquality/utils": "^0.4.29",
+    "@liquality/jsonrpc-provider": "^0.4.28",
+    "@liquality/utils": "^0.4.28",
     "bignumber.js": "^8.1.1",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.13",
+    "snyk": "^1.316.1"
   },
   "engines": {
     "node": "~8.12.0"
@@ -38,5 +41,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c"
+  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c",
+  "snyk": true
 }
