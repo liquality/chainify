@@ -1,0 +1,12 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - '@liquality/bundle > @liquality/ethereum-rpc-provider > lodash':
+        patched: '2020-05-01T00:06:26.576Z'
+    - '@liquality/bundle > @liquality/ethereum-metamask-provider > @liquality/metamask-provider > lodash':
+        patched: '2020-05-01T00:06:26.576Z'
+    - '@liquality/bundle > @liquality/ethereum-metamask-provider > @liquality/metamask-provider > @liquality/wallet-provider > lodash':
+        patched: '2020-05-01T00:06:26.576Z'
