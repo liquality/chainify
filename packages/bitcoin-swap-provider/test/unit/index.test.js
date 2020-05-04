@@ -9,16 +9,16 @@ describe('Bitcoin Swap provider', () => {
   let lib
 
   beforeEach(() => {
-    lib = new BitcoinSwapProvider({ network: BitcoinNetworks.bitcoin_testnet })
+    lib = new BitcoinSwapProvider(BitcoinNetworks.bitcoin_testnet)
   })
 
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.getSwapOutput('n3F7jE262SfYXBRTvi54HyyYmWnrWisRV9',
-        'n3F7jE262SfYXBRTvi54HyyYmWnrWisRV9',
+      return expect(lib.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+        'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         1468194353).toString('hex'))
-        .to.equal('6382012088a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a914ee53fca8c7e918379b8dacc21747ed123e89e0dd670431de8257b17576a914ee53fca8c7e918379b8dacc21747ed123e89e0dd6888ac')
+        .to.equal('6382012088a820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8876a91477195a4f131ed1de8a5b10ce236f169b2f58cba8670431de8257b17576a91477195a4f131ed1de8a5b10ce236f169b2f58cba86888ac')
     })
   })
 
