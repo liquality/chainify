@@ -19,29 +19,14 @@ export default class Chain {
   /**
    * Generate a block
    * @param {!number} numberOfBlocks - Number of blocks to be generated
-   * @return {Promise<string[], TypeError|InvalidProviderResponseError>} Resolves
-   *  with Block hash of the generated blocks.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   * @return {Promise>}
    */
   async generateBlock (numberOfBlocks) {
     if (!isNumber(numberOfBlocks)) {
       throw new TypeError('First argument should be a number')
     }
 
-    const blockHashes = await this.client.getMethod('generateBlock')(numberOfBlocks)
-
-    if (!isArray(blockHashes)) {
-      throw new InvalidProviderResponseError('Response should be an array')
-    }
-
-    const invalidBlock = find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))
-
-    if (invalidBlock) {
-      throw new InvalidProviderResponseError('Invalid block(s) found in provider\'s reponse')
-    }
-
-    return blockHashes
+    await this.client.getMethod('generateBlock')(numberOfBlocks)
   }
 
   /**

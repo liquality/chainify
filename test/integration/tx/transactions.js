@@ -6,7 +6,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 import { hash160 } from '../../../packages/crypto/lib'
 import { calculateFee } from '../../../packages/bitcoin-utils/lib'
 import { addressToString } from '../../../packages/utils/lib'
-import { chains, mineBitcoinBlocks, importBitcoinAddresses, fundUnusedBitcoinAddress } from '../common'
+import { chains, mineBitcoinBlocks, importBitcoinAddresses, fundBitcoinWallet, getNewAddress } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -16,7 +16,7 @@ chai.use(require('chai-bignumber')())
 
 function testTransaction (chain) {
   it('Sent value to 1 address', async () => {
-    const addr = (await chain.client.wallet.getUnusedAddress()).address
+    const addr = (await getNewAddress(chain)).address
     const value = config[chain.name].value
 
     const balBefore = await chain.client.chain.getBalance(addr)
@@ -30,9 +30,9 @@ function testTransaction (chain) {
 
 function testBatchTransaction (chain) {
   it('Sent value to 2 addresses', async () => {
-    const addr1 = (await chain.client.wallet.getUnusedAddress()).address
-    await fundUnusedBitcoinAddress(chain)
-    const addr2 = (await chain.client.wallet.getUnusedAddress()).address
+    const addr1 = (await getNewAddress(chain)).address
+    await fundBitcoinWallet(chain)
+    const addr2 = (await getNewAddress(chain)).address
 
     const value = config[chain.name].value
 
@@ -54,11 +54,11 @@ function testSignP2SHTransaction (chain) {
     const value = config[chain.name].value
     const OPS = bitcoin.script.OPS
 
-    const { address: unusedAddressOne } = await chain.client.wallet.getUnusedAddress()
+    const { address: unusedAddressOne } = await getNewAddress(chain)
     await chain.client.chain.sendTransaction(unusedAddressOne, value)
     await chains.bitcoinWithNode.client.chain.generateBlock(1)
 
-    const { address: unusedAddressTwo } = await chain.client.wallet.getUnusedAddress()
+    const { address: unusedAddressTwo } = await getNewAddress(chain)
 
     const newAddresses = [ unusedAddressOne ]
 
@@ -136,11 +136,11 @@ function testSignBatchP2SHTransaction (chain) {
     const value = config[chain.name].value
     const OPS = bitcoin.script.OPS
 
-    const { address: unusedAddressOne } = await chain.client.wallet.getUnusedAddress()
+    const { address: unusedAddressOne } = await getNewAddress(chain)
     await chain.client.chain.sendTransaction(unusedAddressOne, value)
     await chains.bitcoinWithNode.client.chain.generateBlock(1)
 
-    const { address: unusedAddressTwo } = await chain.client.wallet.getUnusedAddress()
+    const { address: unusedAddressTwo } = await getNewAddress(chain)
 
     const newAddresses = [ unusedAddressOne, unusedAddressTwo ]
 
@@ -262,13 +262,13 @@ describe('Send Transactions', function () {
 
   describe('Bitcoin - Ledger', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithLedger) })
     testTransaction(chains.bitcoinWithLedger)
   })
 
   describe('Bitcoin - Js', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithJs) })
     testTransaction(chains.bitcoinWithJs)
   })
 })
@@ -278,7 +278,7 @@ describe('Send Batch Transactions', function () {
 
   describe('Bitcoin - Ledger', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithLedger) })
     testBatchTransaction(chains.bitcoinWithLedger)
   })
 
@@ -288,7 +288,7 @@ describe('Send Batch Transactions', function () {
 
   describe('Bitcoin - Js', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithJs) })
     testBatchTransaction(chains.bitcoinWithJs)
   })
 })
@@ -298,7 +298,7 @@ describe('Sign P2SH Transaction', function () {
 
   describe('Bitcoin - Ledger', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithLedger) })
     testSignP2SHTransaction(chains.bitcoinWithLedger)
   })
 
@@ -308,7 +308,7 @@ describe('Sign P2SH Transaction', function () {
 
   describe('Bitcoin - Js', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithJs) })
     testSignP2SHTransaction(chains.bitcoinWithJs)
   })
 })
@@ -318,7 +318,7 @@ describe('Sign Batch P2SH Transaction', function () {
 
   describe('Bitcoin - Ledger', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithLedger) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithLedger) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithLedger) })
     testSignBatchP2SHTransaction(chains.bitcoinWithLedger)
   })
 
@@ -328,7 +328,7 @@ describe('Sign Batch P2SH Transaction', function () {
 
   describe('Bitcoin - Js', () => {
     before(async function () { await importBitcoinAddresses(chains.bitcoinWithJs) })
-    beforeEach(async function () { await fundUnusedBitcoinAddress(chains.bitcoinWithJs) })
+    beforeEach(async function () { await fundBitcoinWallet(chains.bitcoinWithJs) })
     testSignBatchP2SHTransaction(chains.bitcoinWithJs)
   })
 })

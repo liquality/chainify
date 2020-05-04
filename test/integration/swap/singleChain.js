@@ -5,7 +5,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import { crypto, providers } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask, fundUnusedBitcoinAddress, fundUnusedEthereumAddress, importBitcoinAddresses } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask, fundBitcoinWallet, fundEthereumWallet, importBitcoinAddresses, stopEthAutoMining } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -186,7 +186,7 @@ describe('Swap Single Chain Flow', function () {
     })
 
     beforeEach(async function () {
-      await fundUnusedBitcoinAddress(chains.bitcoinWithJs)
+      await fundBitcoinWallet(chains.bitcoinWithJs)
     })
 
     testSingle(chains.bitcoinWithJs)
@@ -194,49 +194,56 @@ describe('Swap Single Chain Flow', function () {
 
   describe('Ethereum - MetaMask', () => {
     connectMetaMask()
+    stopEthAutoMining()
     testSingle(chains.ethereumWithMetaMask)
   })
 
   describe('Ethereum - Node', () => {
+    stopEthAutoMining()
     testSingle(chains.ethereumWithNode)
   })
 
   describe('Ethereum - Ledger', () => {
+    stopEthAutoMining()
     testSingle(chains.ethereumWithLedger)
   })
 
   describe('Ethereum - Js', () => {
-    beforeEach(async function () {
-      await fundUnusedEthereumAddress(chains.ethereumWithJs)
-    })
-
+    fundEthereumWallet(chains.ethereumWithJs)
+    stopEthAutoMining()
     testSingle(chains.ethereumWithJs)
   })
 
   describe('ERC20 - MetaMask', () => {
     connectMetaMask(chains.erc20WithMetaMask.client)
     deployERC20Token(chains.erc20WithMetaMask.client)
+    stopEthAutoMining()
     testSingle(chains.erc20WithMetaMask)
   })
 
   describe('ERC20 - Node', async () => {
     deployERC20Token(chains.erc20WithNode.client)
+    stopEthAutoMining()
     testSingle(chains.erc20WithNode)
   })
 
   describe('ERC20 - Ledger', () => {
+    stopEthAutoMining()
     testSingle(chains.erc20WithLedger)
   })
 
   describe('Ethereum - Balance', () => {
     describe('Ledger', () => {
+      stopEthAutoMining()
       testEthereumBalance(chains.ethereumWithLedger)
     })
     describe('MetaMask', () => {
       connectMetaMask()
+      stopEthAutoMining()
       testEthereumBalance(chains.ethereumWithMetaMask)
     })
     describe('Node', () => {
+      stopEthAutoMining()
       testEthereumBalance(chains.ethereumWithNode)
     })
   })

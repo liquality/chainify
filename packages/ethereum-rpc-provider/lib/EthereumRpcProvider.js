@@ -162,6 +162,22 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     const code = await this.jsonrpc('eth_getCode', address, block)
     return remove0x(code)
   }
+
+  async stopMiner () {
+    await this.jsonrpc('miner_stop')
+  }
+
+  async startMiner () {
+    await this.jsonrpc('miner_start')
+  }
+
+  async generateBlock (numberOfBlocks) {
+    if (numberOfBlocks && numberOfBlocks > 1) {
+      throw new Error('Ethereum generation limited to 1 block at a time.')
+    }
+    await this.startMiner()
+    await this.stopMiner()
+  }
 }
 
 EthereumRpcProvider.version = version

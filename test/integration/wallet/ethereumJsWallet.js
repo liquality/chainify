@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { chains, fundUnusedEthereumAddress } from '../common'
+import { chains } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -73,10 +73,6 @@ describe('Wallet Interaction', function () {
   this.timeout(config.timeout)
 
   describe('Ethereum - Js', () => {
-    beforeEach(async function () {
-      await fundUnusedEthereumAddress(chains.ethereumWithJs)
-    })
-
     testWallet(chains.ethereumWithJs)
   })
 })
