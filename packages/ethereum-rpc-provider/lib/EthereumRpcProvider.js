@@ -9,7 +9,7 @@ import {
   remove0x,
   buildTransaction
 } from '@liquality/ethereum-utils'
-import { addressToString, Address } from '@liquality/utils'
+import { addressToString, Address, sleep } from '@liquality/utils'
 import { padHexStart } from '@liquality/crypto'
 
 import { version } from '../package.json'
@@ -176,6 +176,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
       throw new Error('Ethereum generation limited to 1 block at a time.')
     }
     await this.startMiner()
+    await sleep(500) // Give node a chance to mine
     await this.stopMiner()
   }
 }

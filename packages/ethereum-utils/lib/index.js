@@ -99,7 +99,7 @@ function buildTransaction (from, to, value, data, gasPrice, nonce) {
   if (gasPrice) tx.gasPrice = ensure0x(gasPrice.toString(16))
   if (to) tx.to = ensure0x(addressToString(to))
   if (data) tx.data = ensure0x(data)
-  if (nonce) tx.nonce = ensure0x(nonce.toString(16))
+  if (nonce !== null && nonce !== undefined) tx.nonce = ensure0x(nonce.toString(16))
 
   return tx
 }

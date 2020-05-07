@@ -12,14 +12,13 @@ import Common from 'ethereumjs-common'
 import { version } from '../package.json'
 
 export default class EthereumJsWalletProvider extends Provider {
-  constructor (network, mnemonic, hardfork = 'istanbul', gasPriceMultiplier = 1) {
+  constructor (network, mnemonic, hardfork = 'istanbul') {
     super()
     const derivationPath = `m/44'/${network.coinType}'/0'/`
     this._derivationPath = derivationPath
     this._mnemonic = mnemonic
     this._network = network
     this._hardfork = hardfork
-    this._gasPriceMultiplier = gasPriceMultiplier
   }
 
   async node () {
