@@ -31,15 +31,15 @@ const ADDRESS_TYPE_TO_LEDGER_PREFIX = {
 }
 
 export default class BitcoinLedgerProvider extends LedgerProvider {
-  constructor (chain = { network: networks.bitcoin }, addressType = 'bech32') {
+  constructor (network = networks.bitcoin, addressType = 'bech32') {
     if (!AddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
     }
-    const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${chain.network.coinType}'/0'/`
-    super(HwAppBitcoin, derivationPath, chain.network, 'BTC')
+    const derivationPath = `${ADDRESS_TYPE_TO_LEDGER_PREFIX[addressType]}'/${network.coinType}'/0'/`
+    super(HwAppBitcoin, derivationPath, network, 'BTC')
     this._addressType = addressType
     this._derivationPath = derivationPath
-    this._network = chain.network
+    this._network = network
     this._walletPublicKeyCache = {}
   }
 
