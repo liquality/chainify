@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { chains, fundBitcoinWallet, importBitcoinAddresses, mineBitcoinBlocks } from '../common'
+import { chains, importBitcoinAddresses, fundAddress } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -82,10 +82,9 @@ function testWallet (chain) {
 
   describe('getUnusedAddress', () => {
     it('should return next derivation path address', async () => {
-      const { index: firstIndex } = await chain.client.wallet.getUnusedAddress()
+      const { index: firstIndex, address: firstAddress } = await chain.client.wallet.getUnusedAddress()
 
-      await fundBitcoinWallet(chain)
-      mineBitcoinBlocks()
+      await fundAddress(chain, firstAddress)
 
       const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress()
 
@@ -101,10 +100,8 @@ function testWallet (chain) {
     it('should return next derivation path change address', async () => {
       const change = true
       const { address: firstAddress, index: firstIndex } = await chain.client.wallet.getUnusedAddress(change)
-      const value = config[chain.name].value
 
-      await fundBitcoinWallet(chain)
-      await chain.client.chain.sendTransaction(firstAddress, value)
+      await fundAddress(chain, firstAddress)
 
       const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress(change)
 
@@ -122,7 +119,7 @@ function testWallet (chain) {
     it('should include address recently sent funds to in array', async () => {
       const { address: expectedAddress } = await chain.client.wallet.getUnusedAddress()
 
-      await fundBitcoinWallet(chain)
+      await fundAddress(chain, expectedAddress)
 
       const usedAddresses = await chain.client.wallet.getUsedAddresses()
 

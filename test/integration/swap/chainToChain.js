@@ -2,7 +2,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { crypto } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, getSwapParams, connectMetaMask } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, getSwapParams, connectMetaMask, fundWallet, importBitcoinAddresses, describeExternal } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -25,7 +25,7 @@ async function testSwap (chain1, chain2) {
   await claimAndVerify(chain2, chain2InitiationTxId, revealedSecret, chain2SwapParams)
 }
 
-describe('Swap Chain to Chain', function () {
+describeExternal('Swap Chain to Chain', function () {
   this.timeout(config.timeout)
 
   describe('Ledger to Node', function () {
@@ -38,7 +38,7 @@ describe('Swap Chain to Chain', function () {
     })
   })
 
-  describe('Ledger to MetaMask', function () {
+  describeExternal('Ledger to MetaMask', function () {
     connectMetaMask()
 
     it('BTC (Ledger) - ETH (MetaMask)', async () => {
@@ -57,6 +57,22 @@ describe('Swap Chain to Chain', function () {
 
     it('ETH (Node) - BTC (Node)', async () => {
       await testSwap(chains.ethereumWithNode, chains.bitcoinWithNode)
+    })
+  })
+
+  describe('JS to JS', function () {
+    before(async () => {
+      await importBitcoinAddresses(chains.bitcoinWithJs)
+      await fundWallet(chains.bitcoinWithJs)
+      await fundWallet(chains.ethereumWithJs)
+    })
+
+    it('BTC (JS) - ETH (JS)', async () => {
+      await testSwap(chains.bitcoinWithJs, chains.ethereumWithJs)
+    })
+
+    it('ETH (JS) - BTC (JS)', async () => {
+      await testSwap(chains.ethereumWithJs, chains.bitcoinWithJs)
     })
   })
 })

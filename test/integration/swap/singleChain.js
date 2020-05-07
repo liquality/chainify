@@ -5,7 +5,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import { crypto, providers } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, sleep, mineBitcoinBlocks, deployERC20Token, connectMetaMask, fundBitcoinWallet, fundEthereumWallet, importBitcoinAddresses, stopEthAutoMining } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, stopEthAutoMining, mineUntilTimestamp, CONSTANTS, describeExternal } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -73,7 +73,7 @@ function testSingle (chain) {
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
-        await sleep(5000)
+        await mineUntilTimestamp(chain, swapParams.expiration)
         await refundAndVerify(chain, initiationTxId, secretHash, swapParams)
       },
       (before, after) => expect(after).to.be.bignumber.greaterThan(before))
@@ -92,7 +92,7 @@ function testSingle (chain) {
         try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
       },
       (before, after) => expect(after).to.be.bignumber.equal(before))
-    await sleep(5000)
+    await mineUntilTimestamp(chain, swapParams.expiration)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
         try { await refundAndVerify(chain, initiationTxId, secretHash, swapParams) } catch (e) {} // Refund failing is ok
@@ -103,10 +103,10 @@ function testSingle (chain) {
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = parseInt(Date.now() / 1000) + 40000
+    swapParams.expiration = parseInt(Date.now() / 1000) + 10
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expect(refundAndVerify(chain, initiationTxId, secretHash, swapParams)).to.be.rejected
-    await sleep(40000)
+    await mineUntilTimestamp(chain, swapParams.expiration)
     await refundAndVerify(chain, initiationTxId, secretHash, swapParams)
   })
 }
@@ -129,7 +129,7 @@ function testEthereumBalance (chain) {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = parseInt(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    await sleep(20000)
+    await mineUntilTimestamp(chain, swapParams.expiration)
     await expectBalance(chain, swapParams.refundAddress,
       async () => refundAndVerify(chain, initiationTxId, secretHash, swapParams),
       (before, after) => {
@@ -144,7 +144,7 @@ function testBitcoinBalance (chain) {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const fee = calculateFee(1, 1, 3)
+    const fee = calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
     await expectBalance(chain, swapParams.recipientAddress,
       async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
       (before, after) => {
@@ -158,8 +158,8 @@ function testBitcoinBalance (chain) {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = parseInt(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const fee = calculateFee(1, 1, 3)
-    await sleep(20000)
+    const fee = calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
+    await mineUntilTimestamp(chain, swapParams.expiration)
     await expectBalance(chain, swapParams.refundAddress,
       async () => refundAndVerify(chain, initiationTxId, secretHash, swapParams),
       (before, after) => {
@@ -172,7 +172,11 @@ function testBitcoinBalance (chain) {
 describe('Swap Single Chain Flow', function () {
   this.timeout(config.timeout)
 
-  describe('Bitcoin - Ledger', () => {
+  describeExternal('Bitcoin - Ledger', () => {
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinWithLedger)
+      await fundWallet(chains.bitcoinWithLedger)
+    })
     testSingle(chains.bitcoinWithLedger)
   })
 
@@ -183,78 +187,114 @@ describe('Swap Single Chain Flow', function () {
   describe('Bitcoin - Js', () => {
     before(async function () {
       await importBitcoinAddresses(chains.bitcoinWithJs)
+      await fundWallet(chains.bitcoinWithJs)
     })
-
-    beforeEach(async function () {
-      await fundBitcoinWallet(chains.bitcoinWithJs)
-    })
-
     testSingle(chains.bitcoinWithJs)
   })
 
-  describe('Ethereum - MetaMask', () => {
+  describeExternal('Ethereum - MetaMask', () => {
     connectMetaMask()
-    stopEthAutoMining()
+    stopEthAutoMining(chains.ethereumWithMetaMask)
+    before(async function () {
+      await fundWallet(chains.ethereumWithMetaMask)
+    })
     testSingle(chains.ethereumWithMetaMask)
   })
 
   describe('Ethereum - Node', () => {
-    stopEthAutoMining()
+    stopEthAutoMining(chains.ethereumWithNode)
     testSingle(chains.ethereumWithNode)
   })
 
-  describe('Ethereum - Ledger', () => {
-    stopEthAutoMining()
+  describeExternal('Ethereum - Ledger', () => {
+    stopEthAutoMining(chains.ethereumWithLedger)
+    before(async function () {
+      await fundWallet(chains.ethereumWithLedger)
+    })
     testSingle(chains.ethereumWithLedger)
   })
 
   describe('Ethereum - Js', () => {
-    fundEthereumWallet(chains.ethereumWithJs)
-    stopEthAutoMining()
+    stopEthAutoMining(chains.ethereumWithJs)
+    before(async function () {
+      await fundWallet(chains.ethereumWithJs)
+    })
     testSingle(chains.ethereumWithJs)
   })
 
-  describe('ERC20 - MetaMask', () => {
+  describeExternal('ERC20 - MetaMask', () => {
     connectMetaMask(chains.erc20WithMetaMask.client)
+    before(async function () {
+      await fundWallet(chains.erc20WithMetaMask)
+    })
     deployERC20Token(chains.erc20WithMetaMask.client)
-    stopEthAutoMining()
+    stopEthAutoMining(chains.erc20WithMetaMask)
     testSingle(chains.erc20WithMetaMask)
   })
 
   describe('ERC20 - Node', async () => {
-    deployERC20Token(chains.erc20WithNode.client)
-    stopEthAutoMining()
+    deployERC20Token(chains.erc20WithNode)
+    stopEthAutoMining(chains.erc20WithNode)
     testSingle(chains.erc20WithNode)
   })
 
-  describe('ERC20 - Ledger', () => {
-    stopEthAutoMining()
+  describeExternal('ERC20 - Ledger', () => {
+    stopEthAutoMining(chains.erc20WithLedger)
+    before(async function () {
+      await fundWallet(chains.erc20WithLedger)
+    })
     testSingle(chains.erc20WithLedger)
   })
 
   describe('Ethereum - Balance', () => {
-    describe('Ledger', () => {
-      stopEthAutoMining()
+    describeExternal('Ledger', () => {
+      stopEthAutoMining(chains.ethereumWithLedger)
+      before(async function () {
+        await fundWallet(chains.ethereumWithLedger)
+      })
       testEthereumBalance(chains.ethereumWithLedger)
     })
-    describe('MetaMask', () => {
+    describeExternal('MetaMask', () => {
       connectMetaMask()
-      stopEthAutoMining()
+      stopEthAutoMining(chains.ethereumWithMetaMask)
+      before(async function () {
+        await fundWallet(chains.ethereumWithMetaMask)
+      })
       testEthereumBalance(chains.ethereumWithMetaMask)
     })
     describe('Node', () => {
-      stopEthAutoMining()
+      stopEthAutoMining(chains.ethereumWithNode)
       testEthereumBalance(chains.ethereumWithNode)
+    })
+
+    describe('JS', () => {
+      stopEthAutoMining(chains.ethereumWithJs)
+      before(async function () {
+        await fundWallet(chains.ethereumWithJs)
+      })
+      testEthereumBalance(chains.ethereumWithJs)
     })
   })
 
   describe('Bitcoin - Balance', () => {
-    mineBitcoinBlocks()
-    describe('Ledger', () => {
+    describeExternal('Ledger', () => {
+      before(async function () {
+        await importBitcoinAddresses(chains.bitcoinWithLedger)
+        await fundWallet(chains.bitcoinWithLedger)
+      })
       testBitcoinBalance(chains.bitcoinWithLedger)
     })
+
     describe('Node', () => {
       testBitcoinBalance(chains.bitcoinWithNode)
+    })
+
+    describe('JS', () => {
+      before(async function () {
+        await importBitcoinAddresses(chains.bitcoinWithJs)
+        await fundWallet(chains.bitcoinWithJs)
+      })
+      testBitcoinBalance(chains.bitcoinWithJs)
     })
   })
 })
