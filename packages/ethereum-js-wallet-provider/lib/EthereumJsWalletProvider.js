@@ -1,9 +1,8 @@
 import Provider from '@liquality/provider'
 import { Address, addressToString } from '@liquality/utils'
-import { ensure0x, remove0x, buildTransaction } from '@liquality/ethereum-utils'
+import { remove0x, buildTransaction } from '@liquality/ethereum-utils'
 import { sha256 } from '@liquality/crypto'
 import { mnemonicToSeed } from 'bip39'
-import { BigNumber } from 'bignumber.js'
 import { fromMasterSeed } from 'hdkey'
 import * as ethUtil from 'ethereumjs-util'
 import { Transaction } from 'ethereumjs-tx'
@@ -115,7 +114,6 @@ export default class EthereumJsWalletProvider extends Provider {
     const newTxHash = await this.getMethod('sendRawTransaction')(serializedTx)
     return remove0x(newTxHash)
   }
-
 }
 
 EthereumJsWalletProvider.version = version

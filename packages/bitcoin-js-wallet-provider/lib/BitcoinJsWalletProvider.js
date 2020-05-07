@@ -1,5 +1,5 @@
 import Provider from '@liquality/provider'
-import { AddressTypes, selectCoins, calculateFee } from '@liquality/bitcoin-utils'
+import { AddressTypes, selectCoins } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
 import { Address, addressToString } from '@liquality/utils'

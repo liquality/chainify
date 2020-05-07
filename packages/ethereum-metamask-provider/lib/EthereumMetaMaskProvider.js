@@ -1,5 +1,4 @@
 import { findKey } from 'lodash'
-import { BigNumber } from 'bignumber.js'
 
 import MetaMaskProvider from '@liquality/metamask-provider'
 import networks from '@liquality/ethereum-networks'
