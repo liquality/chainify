@@ -104,7 +104,7 @@ describe('Bitcoin RPC provider', () => {
       expect(block).to.deep.equal({
         hash: '191c4a31dc689cd02c3c3858838db5b4b07f8fe5af0fad61c5ea0dfb7163f254',
         number: 102,
-        timestamp: 1544536091,
+        timestamp: 1544535204,
         difficulty: 4.656542373906925e-10,
         size: 371,
         parentHash: '432e14437b326efe9ea90031729eb0713d19445b077ab442a98e6a48dde0da44',

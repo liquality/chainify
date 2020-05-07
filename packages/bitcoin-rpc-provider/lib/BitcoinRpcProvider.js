@@ -105,7 +105,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     const {
       hash,
       height: number,
-      time: timestamp,
+      mediantime: timestamp,
       difficulty,
       size,
       previousblockhash: parentHash,
