@@ -1,7 +1,7 @@
 {
   "name": "@liquality/errors",
   "umdName": "CALErrors",
-  "version": "0.4.29",
+  "version": "0.4.30",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",

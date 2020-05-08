@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-esplora-swap-find-provider",
   "umdName": "BitcoinEsploraSwapFindProvider",
   "umdExport": "default",
-  "version": "0.4.29",
+  "version": "0.4.30",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,8 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/provider": "^0.4.29",
-    "@liquality/utils": "^0.4.29",
+    "@liquality/provider": "^0.4.30",
+    "@liquality/utils": "^0.4.30",
     "axios": "^0.19.0",
     "bignumber.js": "^8.1.1",
     "lodash": "^4.17.11"
