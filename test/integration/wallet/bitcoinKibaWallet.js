@@ -119,6 +119,36 @@ function testWallet (chain) {
       expect(vins.length).to.equal(1)
       expect(vouts.length).to.equal(3)
     })
+
+    it('should successfully create op_return tx', async () => {
+      const { address: address1 } = await chain.client.wallet.getUnusedAddress()
+
+      const data = Buffer.from(
+        `test`,
+        'utf8'
+      )
+      const dataScript = bitcoin.payments.embed({ data: [data] })
+
+      const value = 50000
+
+      const rawTx = await chain.client.chain.buildBatchTransaction([{ to: address1, value }, { to: dataScript.output, value: 0 }])
+
+      const tx = await chain.client.getMethod('decodeRawTransaction')(rawTx)
+
+      const vouts = tx._raw.data.vout
+      const vins = tx._raw.data.vin
+
+      expect(vins.length).to.equal(1)
+      expect(vouts.length).to.equal(3)
+    })
+  })
+
+  describe('getConnectedNetwork', () => {
+    it('should return bitcoin_testnet', async () => {
+      const network = await chain.client.getMethod('getConnectedNetwork')()
+
+      expect(network.name).to.equal('bitcoin_testnet')
+    })
   })
 
   describe('signP2SHTransaction', () => {
