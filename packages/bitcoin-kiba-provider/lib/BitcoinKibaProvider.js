@@ -1,7 +1,7 @@
 import KibaProvider from '@liquality/kiba-provider'
 import { Address } from '@liquality/utils'
 import * as bitcoin from 'bitcoinjs-lib'
-import { calculateFee } from '@liquality/bitcoin-utils'
+import { calculateFee, getAddressNetwork } from '@liquality/bitcoin-utils'
 
 import { version } from '../package.json'
 
@@ -274,6 +274,12 @@ export default class BitcoinKibaProvider extends KibaProvider {
     }
 
     throw new Error('BitcoinJs: Wallet does not contain address')
+  }
+
+  async getConnectedNetwork () {
+    const { address } = (await this.getAddresses(0, 1))[0]
+
+    return getAddressNetwork(address)
   }
 }
 
