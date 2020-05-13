@@ -214,8 +214,9 @@ export default class BitcoinKibaProvider extends KibaProvider {
     }
 
     const { signature } = await this.kiba(method, params)
+    const sig = Buffer.from(signature, 'hex')
 
-    return signature
+    return sig
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]
@@ -249,7 +250,12 @@ export default class BitcoinKibaProvider extends KibaProvider {
 
     const { signatures } = await this.kiba(method, params)
 
-    return signatures
+    let sigs = []
+    for (const signature of signatures) {
+      sigs.push(Buffer.from(signature, 'hex'))
+    }
+
+    return sigs
   }
 
   async getWalletAddress (address) {
