@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import * as bitcoin from 'bitcoinjs-lib'
 import { chains, importBitcoinAddresses, fundAddress } from '../common'
 import config from '../config'
 
@@ -149,6 +150,28 @@ function testWallet (chain) {
       const signedMessage2 = await chain.client.wallet.signMessage('secret', address)
 
       expect(signedMessage1).to.equal(signedMessage2)
+    })
+  })
+
+  describe('buildBatchTransaction', () => {
+    it('should successfully create op_return tx', async () => {
+      const { address: address1 } = await chain.client.wallet.getUnusedAddress()
+
+      const data = Buffer.from(
+        `test`,
+        'utf8'
+      )
+      const dataScript = bitcoin.payments.embed({ data: [data] })
+
+      const rawTx = await chain.client.chain.buildBatchTransaction([{ to: address1, value: 50000 }, { to: dataScript.output, value: 0 }])
+
+      const tx = await chain.client.getMethod('decodeRawTransaction')(rawTx)
+
+      const vouts = tx._raw.data.vout
+      const vins = tx._raw.data.vin
+
+      expect(vins.length).to.equal(1)
+      expect(vouts.length).to.equal(3)
     })
   })
 }

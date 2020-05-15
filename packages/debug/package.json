@@ -2,7 +2,7 @@
   "name": "@liquality/debug",
   "umdName": "Debug",
   "umdExport": "default",
-  "version": "0.4.28",
+  "version": "0.4.31",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
