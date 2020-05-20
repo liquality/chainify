@@ -40,10 +40,34 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return relayfee * 1e8
   }
 
-  async sendTransaction (to, value) {
+  async withTxFee (func, feePerByte) {
+    const feePerKB = BigNumber(feePerByte).div(1e8).times(1000).toNumber()
+    const originalTxFee = (await this.jsonrpc('getwalletinfo')).paytxfee
+    await this.jsonrpc('settxfee', feePerKB)
+
+    const result = await func()
+
+    await this.jsonrpc('settxfee', originalTxFee)
+
+    return result
+  }
+
+  async sendTransaction (to, value, data, feePerByte) {
     to = addressToString(to)
     value = BigNumber(value).dividedBy(1e8).toNumber()
-    return this.jsonrpc('sendtoaddress', to, value)
+
+    const send = async () => {
+      return this.jsonrpc('sendtoaddress', to, value, '', '', false, true)
+    }
+
+    return feePerByte ? this.withTxFee(send, feePerByte) : send()
+  }
+
+  async updateTransactionFee (txHash, newFeePerByte) {
+    return this.withTxFee(async () => {
+      const result = await this.jsonrpc('bumpfee', txHash)
+      return result.txid
+    }, newFeePerByte)
   }
 
   async isAddressUsed (address) {
