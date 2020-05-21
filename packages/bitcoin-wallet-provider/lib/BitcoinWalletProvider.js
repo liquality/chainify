@@ -29,6 +29,27 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     this._addressType = addressType
   }
 
+  async buildTransaction (to, value, data, feePerByte) {
+    return this._buildTransaction([{ to, value, feePerByte }])
+  }
+
+  async buildBatchTransaction (transactions) {
+    return this._buildTransaction(transactions)
+  }
+
+  async _sendTransaction (transactions, feePerByte) {
+    const signedTransaction = await this._buildTransaction(transactions, feePerByte)
+    return this.getMethod('sendRawTransaction')(signedTransaction)
+  }
+
+  async sendTransaction (to, value, data, feePerByte) {
+    return this._sendTransaction([{ to, value }], feePerByte)
+  }
+
+  async sendBatchTransaction (transactions) {
+    return this._sendTransaction(transactions)
+  }
+
   async updateTransactionFee (txHash, newFeePerByte) {
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
@@ -251,6 +272,8 @@ export default superclass => class BitcoinWalletProvider extends superclass {
           const tx = await this.getMethod('getTransactionByHash')(input.txid)
           input.value = BigNumber(tx._raw.vout[input.vout].value).times(1e8).toNumber()
           input.address = tx._raw.vout[input.vout].scriptPubKey.addresses[0]
+          const walletAddress = await this.getWalletAddress(input.address)
+          input.derivationPath = walletAddress.derivationPath
         }
       }
 

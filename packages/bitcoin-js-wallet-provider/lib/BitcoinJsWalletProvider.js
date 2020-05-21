@@ -92,27 +92,6 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return txb.build().toHex()
   }
 
-  async buildTransaction (to, value, data, feePerByte) {
-    return this._buildTransaction([{ to, value, feePerByte }])
-  }
-
-  async buildBatchTransaction (transactions) {
-    return this._buildTransaction(transactions)
-  }
-
-  async _sendTransaction (transactions, feePerByte) {
-    const signedTransaction = await this._buildTransaction(transactions, feePerByte)
-    return this.getMethod('sendRawTransaction')(signedTransaction)
-  }
-
-  async sendTransaction (to, value, data, feePerByte) {
-    return this._sendTransaction([{ to, value }], feePerByte)
-  }
-
-  async sendBatchTransaction (transactions) {
-    return this._sendTransaction(transactions)
-  }
-
   async signP2SHTransaction (inputTxHex, tx, address, prevout, outputScript, lockTime = 0, segwit = false) {
     const wallet = await this.getWalletAddress(address)
     const keyPair = await this.keyPair(wallet.derivationPath)

@@ -32,11 +32,11 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return sig.r + sig.s
   }
 
-  async _buildTransaction (_outputs) {
+  async _buildTransaction (_outputs, feePerByte, fixedInputs) {
     const app = await this.getApp()
 
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(_outputs)
+    const { inputs, change } = await this.getInputsForAmount(_outputs, feePerByte, fixedInputs)
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
@@ -65,27 +65,6 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       undefined,
       this._addressType === 'bech32' ? ['bech32'] : undefined
     )
-  }
-
-  async buildTransaction (to, value, data, from) {
-    return this._buildTransaction([{ to, value }])
-  }
-
-  async buildBatchTransaction (transactions) {
-    return this._buildTransaction(transactions)
-  }
-
-  async _sendTransaction (transactions) {
-    const signedTransaction = await this._buildTransaction(transactions)
-    return this.getMethod('sendRawTransaction')(signedTransaction)
-  }
-
-  async sendTransaction (to, value, data, from) {
-    return this._sendTransaction([{ to, value }])
-  }
-
-  async sendBatchTransaction (transactions) {
-    return this._sendTransaction(transactions)
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
@@ -172,7 +151,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return Promise.all(unspentOutputs.map(async utxo => {
       const hex = await this.getMethod('getTransactionHex')(utxo.txid)
       const tx = app.splitTransaction(hex, true)
-      return [ tx, utxo.vout ]
+      return [ tx, utxo.vout, undefined, 0 ]
     }))
   }
 
