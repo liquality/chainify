@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import * as bitcoin from 'bitcoinjs-lib'
 import { chains, importBitcoinAddresses, fundAddress, describeExternal } from '../common'
 import config from '../config'
 
@@ -102,9 +103,6 @@ function testWallet (chain) {
       const { address: firstAddress, index: firstIndex } = await chain.client.wallet.getUnusedAddress(change)
       await fundAddress(chain, firstAddress)
 
-      const value = config[chain.name].value
-      await chain.client.chain.sendTransaction(firstAddress, value)
-
       const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress(change)
 
       const expectedSecondIndex = firstIndex + 1
@@ -138,6 +136,8 @@ function testWallet (chain) {
 
       const signedMessage = await chain.client.wallet.signMessage('secret', address)
 
+      console.log(signedMessage)
+
       const signedMessageBuffer = Buffer.from(signedMessage, 'hex')
 
       expect(signedMessage).to.equal(signedMessageBuffer.toString('hex'))
@@ -153,10 +153,40 @@ function testWallet (chain) {
       expect(signedMessage1).to.equal(signedMessage2)
     })
   })
+
+  describe('buildBatchTransaction', () => {
+    it('should successfully create op_return tx', async () => {
+      const { address: address1 } = await chain.client.wallet.getUnusedAddress()
+
+      const data = Buffer.from(
+        `test`,
+        'utf8'
+      )
+      const dataScript = bitcoin.payments.embed({ data: [data] })
+
+      const rawTx = await chain.client.chain.buildBatchTransaction([{ to: address1, value: 50000 }, { to: dataScript.output, value: 0 }])
+
+      const tx = await chain.client.getMethod('decodeRawTransaction')(rawTx)
+
+      const vouts = tx._raw.data.vout
+      const vins = tx._raw.data.vin
+
+      expect(vins.length).to.equal(1)
+      expect(vouts.length).to.equal(3)
+    })
+  })
 }
 
 describe('Wallet Interaction', function () {
   this.timeout(config.timeout)
+
+  describe('Bitcoin - JsWallet', () => {
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinWithJs)
+    })
+
+    testWallet(chains.bitcoinWithJs)
+  })
 
   describeExternal('Bitcoin - Ledger', () => {
     before(async function () {

@@ -361,7 +361,7 @@ function testWallet (chain) {
   })
 }
 
-describe('Wallet Interaction', function () {
+describe.skip('Wallet Interaction', function () {
   this.timeout(config.timeout)
 
   describeExternal('Bitcoin - Kiba', () => {
