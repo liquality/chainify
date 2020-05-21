@@ -137,17 +137,7 @@ async function getSwapParams (chain) {
 }
 
 async function importBitcoinAddresses (chain) {
-  const nonChangeAddresses = await chain.client.getMethod('getAddresses')(0, 20)
-  const changeAddresses = await chain.client.getMethod('getAddresses')(0, 20, true)
-
-  const addresses = [ ...nonChangeAddresses, ...changeAddresses ]
-
-  let addressesToImport = []
-  for (const address of addresses) {
-    addressesToImport.push({ 'scriptPubKey': { 'address': address.address }, 'timestamp': 'now' })
-  }
-
-  await chain.client.getMethod('jsonrpc')('importmulti', addressesToImport, { rescan: false })
+  return chain.client.getMethod('importAddresses')()
 }
 
 async function fundAddress (chain, address) {
@@ -247,6 +237,7 @@ async function refundAndVerify (chain, initiationTxId, secretHash, swapParams) {
 async function expectBalance (chain, address, func, comparison) {
   const balanceBefore = await chain.client.chain.getBalance([address])
   await func()
+  if (chain.name === 'bitcoin') await sleep(1000) // Node seems to need a little bit of time to process utxos
   const balanceAfter = await chain.client.chain.getBalance([address])
   comparison(balanceBefore, balanceAfter)
 }

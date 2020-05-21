@@ -83,7 +83,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     }
   }
 
-  async _importAddresses () {
+  async importAddresses () {
     const change = await this.getAddresses(0, 200, true)
     const nonChange = await this.getAddresses(0, 200, false)
     const all = [...nonChange, ...change].map(addressToString)
