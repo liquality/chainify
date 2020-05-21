@@ -28,7 +28,8 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const app = await this.getApp()
     const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signMessageNew(address.derivationPath, hex)
+    const sig = await app.signMessageNew(address.derivationPath, hex)
+    return sig.r + sig.s
   }
 
   async _buildTransaction (_outputs) {
