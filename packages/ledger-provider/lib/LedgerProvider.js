@@ -16,11 +16,10 @@ export default class LedgerProvider extends WalletProvider {
     return getTransport(config).isSupported()
   }
 
-  constructor (App, baseDerivationPath, network, ledgerScrambleKey) {
+  constructor (App, network, ledgerScrambleKey) {
     super(network)
 
     this._App = App
-    this._baseDerivationPath = baseDerivationPath
     this._network = network
     // The ledger scramble key is required to be set on the ledger transport
     // if communicating with the device using `transport.send` for the first time

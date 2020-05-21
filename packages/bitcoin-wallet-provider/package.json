@@ -1,6 +1,6 @@
 {
-  "name": "@liquality/bitcoin-ledger-provider",
-  "umdName": "BitcoinLedgerProvider",
+  "name": "@liquality/bitcoin-wallet-provider",
+  "umdName": "BitcoinWalletProvider",
   "umdExport": "default",
   "version": "0.4.31",
   "description": "",
@@ -19,15 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@ledgerhq/hw-app-btc": "^4.68.2",
-    "@liquality/bitcoin-networks": "^0.4.31",
     "@liquality/bitcoin-utils": "^0.4.31",
-    "@liquality/crypto": "^0.4.31",
-    "@liquality/ledger-provider": "^0.4.31",
-    "@liquality/bitcoin-wallet-provider": "^0.4.31",
+    "@liquality/provider": "^0.4.31",
     "@liquality/utils": "^0.4.31",
-    "bignumber.js": "^8.1.1",
-    "bip32": "^1.0.2",
+    "bignumber.js": "^9.0.0",
     "bitcoinjs-lib": "^5.1.2",
     "lodash": "^4.17.13"
   },

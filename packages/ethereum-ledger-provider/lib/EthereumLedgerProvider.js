@@ -16,7 +16,8 @@ import { version } from '../package.json'
 
 export default class EthereumLedgerProvider extends LedgerProvider {
   constructor (chain = { network: networks.mainnet }) {
-    super(Ethereum, `44'/${chain.network.coinType}'/0'/`, chain.network, 'w0w') // srs!
+    super(Ethereum, chain.network, 'w0w') // srs!
+    this._baseDerivationPath = `44'/${chain.network.coinType}'/0'`
   }
 
   async signMessage (message, from) {
@@ -28,7 +29,7 @@ export default class EthereumLedgerProvider extends LedgerProvider {
 
   async getAddresses () { // TODO: Retrieve given num addresses?
     const app = await this.getApp()
-    const path = this._baseDerivationPath + '0/0'
+    const path = this._baseDerivationPath + '/0/0'
     const address = await app.getAddress(path)
     return [
       new Address({

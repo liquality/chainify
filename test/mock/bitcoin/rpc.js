@@ -176,7 +176,7 @@ module.exports = {
   ],
   'sendtoaddress': [
     {
-      params: ['mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi', 0.00001],
+      params: ['mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi', 0.00001, '', '', false, true],
       result: '7a16d66f0e5abe24f6f9680da0e9dabf877577209180b9fb43c55d001ddf208b'
     }
   ],
