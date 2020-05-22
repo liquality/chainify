@@ -17,20 +17,20 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     })
   }
 
-  doesTransactionMatchClaim (transaction, initiationTransaction) {
-    return transaction.to === initiationTransaction.contractAddress && transaction.input.startsWith(remove0x(EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION))
+  doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
+    return transaction._raw.to === initiationTransactionReceipt.contractAddress && transaction._raw.input.startsWith(remove0x(EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION))
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
     const transaction = await this.findAddressTransaction(
-      initiationTransaction.contractAddress,
+      initiationTransactionReceipt.contractAddress,
       (tx) => (
-        tx.to === initiationTransaction.contractAddress &&
-        tx.input === remove0x(EthereumErc20SwapProvider.SOL_REFUND_FUNCTION) &&
-        tx.timestamp >= expiration
+        tx._raw.to === initiationTransactionReceipt.contractAddress &&
+        tx._raw.input === remove0x(EthereumErc20SwapProvider.SOL_REFUND_FUNCTION) &&
+        tx._raw.timestamp >= expiration
       )
     )
 

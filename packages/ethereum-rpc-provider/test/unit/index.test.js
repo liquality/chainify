@@ -88,6 +88,43 @@ describe('Ethereum RPC provider', () => {
         transactions: [
           {
             hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+            blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
+            blockNumber: 1,
+            value: 10000,
+            confirmations: 11,
+            _raw: {
+              hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+              nonce: 0,
+              blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
+              blockNumber: 1,
+              transactionIndex: '00',
+              from: '322d4959c911520645c0638204b42ce0689236e9',
+              to: '635d7d148054b9471d79084b80b864a166956139',
+              value: 10000,
+              gas: '015f90',
+              gasPrice: '04a817c800',
+              input: '0'
+            }
+          }
+        ],
+        uncles: [] })
+    })
+  })
+
+  describe('getTransactionByHash', () => {
+    it('should return transaction', async () => {
+      const tx = await client.chain.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd')
+      expect(tx)
+        .to
+        .deep
+        .equal({
+          hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+          blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
+          blockNumber: 1,
+          value: 10000,
+          confirmations: 11,
+          _raw: {
+            hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
             nonce: 0,
             blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
             blockNumber: 1,
@@ -97,33 +134,8 @@ describe('Ethereum RPC provider', () => {
             value: 10000,
             gas: '015f90',
             gasPrice: '04a817c800',
-            input: '0',
-            confirmations: 11
+            input: '0'
           }
-        ],
-        uncles: [] })
-    })
-  })
-
-  describe('getTransactionByHash', () => {
-    it('should return block height', async () => {
-      const tx = await client.chain.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd')
-      expect(tx)
-        .to
-        .deep
-        .equal({
-          hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
-          nonce: 0,
-          blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-          blockNumber: 1,
-          transactionIndex: '00',
-          from: '322d4959c911520645c0638204b42ce0689236e9',
-          to: '635d7d148054b9471d79084b80b864a166956139',
-          value: 10000,
-          gas: '015f90',
-          gasPrice: '04a817c800',
-          input: '0',
-          confirmations: 11
         })
     })
   })

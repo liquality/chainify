@@ -29,7 +29,11 @@ describe('Ethereum Util', () => {
     it('should remove blockNumber key if it is null', () => {
       expect(EthereumUtil.normalizeTransactionObject({
         blockNumber: null
-      })).to.deep.equal({})
+      })).to.deep.equal({
+        _raw: {
+          blockNumber: null
+        }
+      })
     })
 
     it('should add number of confirmation if blockNumber key is not null', () => {
@@ -37,7 +41,10 @@ describe('Ethereum Util', () => {
         blockNumber: 5
       }, 10)).to.deep.equal({
         blockNumber: 5,
-        confirmations: 6
+        confirmations: 6,
+        _raw: {
+          blockNumber: 5
+        }
       })
     })
   })

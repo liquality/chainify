@@ -3,6 +3,7 @@ import { padHexStart } from '@liquality/crypto'
 import { addressToString } from '@liquality/utils'
 import BigNumber from 'bignumber.js'
 import eip55 from 'eip55'
+import _ from 'lodash'
 
 import { version } from '../package.json'
 
@@ -76,18 +77,23 @@ function formatEthResponse (obj) {
 }
 
 function normalizeTransactionObject (tx, currentHeight) {
-  if (tx) {
-    if (tx.blockNumber === null) {
-      delete tx.blockNumber
-    } else if (!isNaN(tx.blockNumber) && !('confirmations' in tx)) {
-      tx.confirmations = currentHeight - tx.blockNumber + 1
-    }
-    if (tx.blockHash === null) {
-      delete tx.blockHash
-    }
+  if (!tx) return
+
+  const normalizedTx = {
+    ..._.pick(tx, ['blockNumber', 'blockHash', 'hash', 'value', 'confirmations']),
+    _raw: tx
   }
 
-  return tx
+  if (normalizedTx.blockNumber === null) {
+    delete normalizedTx.blockNumber
+  } else if (!isNaN(normalizedTx.blockNumber) && !('confirmations' in normalizedTx)) {
+    normalizedTx.confirmations = currentHeight - normalizedTx.blockNumber + 1
+  }
+  if (normalizedTx.blockHash === null) {
+    delete normalizedTx.blockHash
+  }
+
+  return normalizedTx
 }
 
 function buildTransaction (from, to, value, data, gasPrice, nonce) {
