@@ -7,7 +7,8 @@ import {
 } from '@liquality/errors'
 import {
   ensure0x,
-  remove0x
+  remove0x,
+  buildTransaction
 } from '@liquality/ethereum-utils'
 import {
   Address,
@@ -62,7 +63,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     const addresses = await this.getAddresses()
     const from = addressToString(addresses[0])
 
-    const tx = await this.buildTransaction(from, to, value, data, fee)
+    const tx = await buildTransaction(from, to, value, data, fee)
 
     const txHash = await this.metamask('eth_sendTransaction', tx)
 
@@ -72,7 +73,10 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
   async updateTransactionFee (txHash, newGasPrice) {
     const transaction = await this.getMethod('getTransactionByHash')(txHash)
 
-    const tx = await this.buildTransaction(transaction.from, transaction.to, transaction.value, transaction.data, newGasPrice, transaction.nonce)
+    const tx = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
+
+    const gas = await this.getMethod('estimateGas')(tx)
+    tx.gas = ensure0x((gas + 20000).toString(16))
 
     const newTxHash = await this.metamask('eth_sendTransaction', tx)
 

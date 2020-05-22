@@ -28,7 +28,7 @@ export default class EthereumErc20Provider extends Provider {
   generateErc20Transfer (to, value) {
     value = BigNumber(value).toString(16)
 
-    const encodedAddress = padHexStart(remove0x(to), 64)
+    const encodedAddress = padHexStart(remove0x(addressToString(to)), 64)
     const encodedValue = padHexStart(value, 64)
 
     return [

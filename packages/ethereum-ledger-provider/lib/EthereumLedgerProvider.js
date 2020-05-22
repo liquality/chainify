@@ -15,9 +15,9 @@ import { Address, addressToString } from '@liquality/utils'
 import { version } from '../package.json'
 
 export default class EthereumLedgerProvider extends LedgerProvider {
-  constructor (chain = { network: networks.mainnet }) {
-    super(Ethereum, chain.network, 'w0w') // srs!
-    this._baseDerivationPath = `44'/${chain.network.coinType}'/0'`
+  constructor (network = networks.mainnet) {
+    super(Ethereum, network, 'w0w') // srs!
+    this._baseDerivationPath = `44'/${network.coinType}'/0'`
   }
 
   async signMessage (message, from) {
@@ -96,6 +96,21 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
 
     return txHash
+  }
+
+  async updateTransactionFee (txHash, newGasPrice) {
+    const transaction = await this.getMethod('getTransactionByHash')(txHash)
+
+    const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
+    const gas = await this.getMethod('estimateGas')(txData)
+    txData.gasLimit = gas + 20000 // Gas estimation on pending blocks incorrect
+    const chainId = ensure0x(BigNumber(this._network.chainId).toString(16))
+    txData.chainId = chainId
+    txData.v = chainId
+
+    const serializedTx = await this.signTransaction(txData)
+    const newTxHash = await this.getMethod('sendRawTransaction')(serializedTx)
+    return remove0x(newTxHash)
   }
 }
 
