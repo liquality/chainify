@@ -5,7 +5,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import { crypto, providers } from '../../../packages/bundle/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, stopEthAutoMining, mineUntilTimestamp, CONSTANTS, describeExternal } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, stopEthAutoMining, mineUntilTimestamp, CONSTANTS, addInternalSendMineHook, removeInternalSendMineHook, describeExternal } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -192,63 +192,78 @@ describe('Swap Single Chain Flow', function () {
     testSingle(chains.bitcoinWithJs)
   })
 
-  describeExternal('Ethereum - MetaMask', () => {
-    connectMetaMask()
-    stopEthAutoMining(chains.ethereumWithMetaMask)
-    before(async function () {
-      await fundWallet(chains.ethereumWithMetaMask)
-    })
-    testSingle(chains.ethereumWithMetaMask)
-  })
-
-  describe('Ethereum - Node', () => {
+  describe('Ethereum', () => {
     stopEthAutoMining(chains.ethereumWithNode)
-    testSingle(chains.ethereumWithNode)
-  })
 
-  describeExternal('Ethereum - Ledger', () => {
-    stopEthAutoMining(chains.ethereumWithLedger)
-    before(async function () {
-      await fundWallet(chains.ethereumWithLedger)
+    describeExternal('Ethereum - MetaMask', () => {
+      connectMetaMask()
+      before(async function () {
+        await fundWallet(chains.ethereumWithMetaMask)
+      })
+      testSingle(chains.ethereumWithMetaMask)
     })
-    testSingle(chains.ethereumWithLedger)
-  })
 
-  describe('Ethereum - Js', () => {
-    stopEthAutoMining(chains.ethereumWithJs)
-    before(async function () {
-      await fundWallet(chains.ethereumWithJs)
+    describe('Ethereum - Node', () => {
+      testSingle(chains.ethereumWithNode)
     })
-    testSingle(chains.ethereumWithJs)
-  })
 
-  describeExternal('ERC20 - MetaMask', () => {
-    connectMetaMask(chains.erc20WithMetaMask.client)
-    before(async function () {
-      await fundWallet(chains.erc20WithMetaMask)
+    describeExternal('Ethereum - Ledger', () => {
+      before(async function () {
+        await fundWallet(chains.ethereumWithLedger)
+      })
+      testSingle(chains.ethereumWithLedger)
     })
-    deployERC20Token(chains.erc20WithMetaMask.client)
-    stopEthAutoMining(chains.erc20WithMetaMask)
-    testSingle(chains.erc20WithMetaMask)
-  })
 
-  describe('ERC20 - Node', async () => {
-    deployERC20Token(chains.erc20WithNode)
-    stopEthAutoMining(chains.erc20WithNode)
-    testSingle(chains.erc20WithNode)
-  })
-
-  describeExternal('ERC20 - Ledger', () => {
-    stopEthAutoMining(chains.erc20WithLedger)
-    before(async function () {
-      await fundWallet(chains.erc20WithLedger)
+    describe('Ethereum - Js', () => {
+      before(async function () {
+        await fundWallet(chains.ethereumWithJs)
+      })
+      testSingle(chains.ethereumWithJs)
     })
-    testSingle(chains.erc20WithLedger)
+
+    describeExternal('ERC20 - MetaMask', () => {
+      connectMetaMask()
+      addInternalSendMineHook(chains.erc20WithMetaMask, providers.ethereum.EthereumMetaMaskProvider)
+      before(async function () {
+        await fundWallet(chains.erc20WithMetaMask)
+        await deployERC20Token(chains.erc20WithMetaMask)
+      })
+
+      testSingle(chains.erc20WithMetaMask)
+    })
+
+    describe('ERC20 - Node', async () => {
+      addInternalSendMineHook(chains.erc20WithNode, providers.ethereum.EthereumRpcProvider)
+      before(async function () {
+        await deployERC20Token(chains.erc20WithNode)
+      })
+
+      testSingle(chains.erc20WithNode)
+    })
+
+    describeExternal('ERC20 - Ledger', () => {
+      addInternalSendMineHook(chains.erc20WithLedger, providers.ethereum.EthereumLedgerProvider)
+      before(async function () {
+        await fundWallet(chains.erc20WithLedger)
+        await deployERC20Token(chains.erc20WithLedger)
+      })
+      testSingle(chains.erc20WithLedger)
+    })
+
+    describeExternal('ERC20 - JS', () => {
+      addInternalSendMineHook(chains.erc20WithJs, providers.ethereum.EthereumJsWalletProvider)
+      before(async function () {
+        await fundWallet(chains.erc20WithJs)
+        await deployERC20Token(chains.erc20WithJs)
+      })
+      testSingle(chains.erc20WithJs)
+    })
   })
 
   describe('Ethereum - Balance', () => {
+    stopEthAutoMining(chains.ethereumWithNode)
+
     describeExternal('Ledger', () => {
-      stopEthAutoMining(chains.ethereumWithLedger)
       before(async function () {
         await fundWallet(chains.ethereumWithLedger)
       })
@@ -256,19 +271,16 @@ describe('Swap Single Chain Flow', function () {
     })
     describeExternal('MetaMask', () => {
       connectMetaMask()
-      stopEthAutoMining(chains.ethereumWithMetaMask)
       before(async function () {
         await fundWallet(chains.ethereumWithMetaMask)
       })
       testEthereumBalance(chains.ethereumWithMetaMask)
     })
     describe('Node', () => {
-      stopEthAutoMining(chains.ethereumWithNode)
       testEthereumBalance(chains.ethereumWithNode)
     })
 
     describe('JS', () => {
-      stopEthAutoMining(chains.ethereumWithJs)
       before(async function () {
         await fundWallet(chains.ethereumWithJs)
       })
