@@ -78,6 +78,7 @@ function testTransaction (chain, segwitFeeImplemented = false) {
     const txHash = await chain.client.chain.sendTransaction(addr, value, undefined, 100)
     await expectFee(chain, txHash, 100, segwitFeeImplemented)
     const newTxHash = await chain.client.chain.updateTransactionFee(txHash, 120)
+    await expect(newTxHash).to.not.equal(txHash)
     await expectFee(chain, newTxHash, 120, segwitFeeImplemented)
     await mineBlock(chain)
 
