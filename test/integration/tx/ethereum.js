@@ -37,7 +37,7 @@ function testTransaction (chain) {
     await expectEthereumFee(chain, txHash, 10)
   })
 
-  it('Update transaction fee', async () => {
+  ;(chain.client.wallet.canUpdateFee ? it : it.skip)('Update transaction fee', async () => {
     const addr = await getNewAddress(chain)
     const value = config[chain.name].value
 

@@ -70,17 +70,8 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     return remove0x(txHash)
   }
 
-  async updateTransactionFee (txHash, newGasPrice) {
-    const transaction = await this.getMethod('getTransactionByHash')(txHash)
-
-    const tx = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
-
-    const gas = await this.getMethod('estimateGas')(tx)
-    tx.gas = ensure0x((gas + 20000).toString(16))
-
-    const newTxHash = await this.metamask('eth_sendTransaction', tx)
-
-    return remove0x(newTxHash)
+  canUpdateFee () {
+    return false
   }
 
   async getWalletNetworkId () {
