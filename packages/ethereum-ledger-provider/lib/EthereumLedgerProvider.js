@@ -59,6 +59,10 @@ export default class EthereumLedgerProvider extends LedgerProvider {
   }
 
   async signTransaction (txData, path) {
+    const chainId = ensure0x(BigNumber(this._network.chainId).toString(16))
+    txData.chainId = chainId
+    txData.v = chainId
+
     const app = await this.getApp()
     const tx = new EthereumJsTx(txData)
     const serializedTx = tx.serialize().toString('hex')
@@ -87,15 +91,12 @@ export default class EthereumLedgerProvider extends LedgerProvider {
 
     const txData = buildTransaction(from, to, value, data, gasPrice, nonce)
     txData.gasLimit = await this.getMethod('estimateGas')(txData) // TODO: shouldn't these be 0x?
-    const chainId = ensure0x(BigNumber(this._network.chainId).toString(16))
-    txData.chainId = chainId
-    txData.v = chainId
 
-    const signedSerializedTx = this.signTransaction(txData, address.derivationPath)
+    const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)
 
     const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
 
-    return txHash
+    return remove0x(txHash)
   }
 
   async updateTransactionFee (txHash, newGasPrice) {
@@ -104,12 +105,9 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
     const gas = await this.getMethod('estimateGas')(txData)
     txData.gasLimit = gas + 20000 // Gas estimation on pending blocks incorrect
-    const chainId = ensure0x(BigNumber(this._network.chainId).toString(16))
-    txData.chainId = chainId
-    txData.v = chainId
 
-    const serializedTx = await this.signTransaction(txData)
-    const newTxHash = await this.getMethod('sendRawTransaction')(serializedTx)
+    const signedSerializedTx = await this.signTransaction(txData)
+    const newTxHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
     return remove0x(newTxHash)
   }
 }
