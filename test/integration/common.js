@@ -61,7 +61,7 @@ const ethereumNetworks = providers.ethereum.networks
 const ethereumNetwork = {
   ...ethereumNetworks[config.ethereum.network],
   name: 'mainnet',
-  chainId: 1337,
+  chainId: 1337, // Default geth dev mode - * Needs to be <= 255 for ledger *
   networkId: 1337
 }
 
@@ -109,7 +109,7 @@ erc20WithJs.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: bitcoinNetwork },
-  bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork },
+  bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork, segwitFeeImplemented: true },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: bitcoinNetwork },
   bitcoinWithKiba: { id: 'Bitcoin Kiba', name: 'bitcoin', client: bitcoinWithKiba, network: bitcoinNetworks['bitcoin_testnet'] },
   bitcoinWithEsplora: { id: 'Bitcoin Esplora', name: 'bitcoin', client: bitcoinWithEsplora },
@@ -249,6 +249,40 @@ async function expectBalance (chain, address, func, comparison) {
   comparison(balanceBefore, balanceAfter)
 }
 
+async function getBitcoinTransactionFee (chain, tx) {
+  const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
+  const inputTransactions = await Promise.all(
+    inputs.map(input => chain.client.chain.getTransactionByHash(input.txid))
+  )
+  const inputValues = inputTransactions.map((inputTx, index) => {
+    const vout = inputs[index].vout
+    const output = inputTx._raw.vout[vout]
+    return output.value * 1e8
+  })
+  const inputValue = inputValues.reduce((a, b) => a + b, 0)
+
+  const outputValue = tx._raw.vout.reduce((a, b) => a + b.value * 1e8, 0)
+
+  const feeValue = inputValue - outputValue
+
+  return feeValue
+}
+
+async function expectBitcoinFee (chain, txHash, feePerByte) {
+  const tx = await chain.client.chain.getTransactionByHash(txHash)
+  const fee = await getBitcoinTransactionFee(chain, tx)
+  const size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
+  const maxFeePerByte = (feePerByte * (size + 2)) / size // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
+
+  expect(fee / size).gte(feePerByte)
+  expect(fee / size).lte(maxFeePerByte)
+}
+
+async function expectEthereumFee (chain, txHash, gasPrice) {
+  const tx = await chain.client.chain.getTransactionByHash(txHash)
+  expect(parseInt(tx._raw.gasPrice, 16)).to.equal(gasPrice)
+}
+
 function findProvider (client, type) {
   return findLast(
     client._providers,
@@ -332,6 +366,8 @@ export {
   refundAndVerify,
   getSwapParams,
   expectBalance,
+  expectBitcoinFee,
+  expectEthereumFee,
   sleep,
   stopEthAutoMining,
   mineUntilTimestamp,

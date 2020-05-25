@@ -6,7 +6,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 import { hash160 } from '../../../packages/crypto/lib'
 import { calculateFee } from '../../../packages/bitcoin-utils/lib'
 import { addressToString } from '../../../packages/utils/lib'
-import { chains, importBitcoinAddresses, getNewAddress, getRandomBitcoinAddress, mineBlock, fundWallet, describeExternal } from '../common'
+import { chains, importBitcoinAddresses, getNewAddress, getRandomBitcoinAddress, mineBlock, fundWallet, describeExternal, expectBitcoinFee } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -14,36 +14,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-async function getTransactionFee (chain, tx) {
-  const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
-  const inputTransactions = await Promise.all(
-    inputs.map(input => chain.client.chain.getTransactionByHash(input.txid))
-  )
-  const inputValues = inputTransactions.map((inputTx, index) => {
-    const vout = inputs[index].vout
-    const output = inputTx._raw.vout[vout]
-    return output.value * 1e8
-  })
-  const inputValue = inputValues.reduce((a, b) => a + b, 0)
-
-  const outputValue = tx._raw.vout.reduce((a, b) => a + b.value * 1e8, 0)
-
-  const feeValue = inputValue - outputValue
-
-  return feeValue
-}
-
-async function expectFee (chain, txHash, feePerByte, segwitFeeImplemented = false) {
-  const tx = await chain.client.chain.getTransactionByHash(txHash)
-  const fee = await getTransactionFee(chain, tx)
-  const size = segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
-  const maxFeePerByte = (feePerByte * (size + 2)) / size // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
-
-  expect(fee / size).gte(feePerByte)
-  expect(fee / size).lte(maxFeePerByte)
-}
-
-function testTransaction (chain, segwitFeeImplemented = false) {
+function testTransaction (chain) {
   it('Sent value to 1 address', async () => {
     const addr = await getRandomBitcoinAddress(chain)
     const value = config[chain.name].value
@@ -67,7 +38,7 @@ function testTransaction (chain, segwitFeeImplemented = false) {
     const balAfter = await chain.client.chain.getBalance(addr)
 
     expect(balBefore.plus(value).toString()).to.equal(balAfter.toString())
-    await expectFee(chain, txHash, 100, segwitFeeImplemented)
+    await expectBitcoinFee(chain, txHash, 100)
   })
 
   it('Update transaction fee', async () => {
@@ -76,10 +47,10 @@ function testTransaction (chain, segwitFeeImplemented = false) {
 
     const balBefore = await chain.client.chain.getBalance(addr)
     const txHash = await chain.client.chain.sendTransaction(addr, value, undefined, 100)
-    await expectFee(chain, txHash, 100, segwitFeeImplemented)
+    await expectBitcoinFee(chain, txHash, 100)
     const newTxHash = await chain.client.chain.updateTransactionFee(txHash, 120)
     await expect(newTxHash).to.not.equal(txHash)
-    await expectFee(chain, newTxHash, 120, segwitFeeImplemented)
+    await expectBitcoinFee(chain, newTxHash, 120)
     await mineBlock(chain)
 
     const balAfter = await chain.client.chain.getBalance(addr)
@@ -335,7 +306,7 @@ describe('Transactions', function () {
   })
 
   describe('Bitcoin - Node', () => {
-    testTransaction(chains.bitcoinWithNode, true)
+    testTransaction(chains.bitcoinWithNode)
     testBatchTransaction(chains.bitcoinWithNode)
     testSignP2SHTransaction(chains.bitcoinWithNode)
     testSignBatchP2SHTransaction(chains.bitcoinWithNode)
