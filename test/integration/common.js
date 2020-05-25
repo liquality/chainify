@@ -9,12 +9,13 @@ import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
 import config from './config'
 import testnetConfig from './testnetConfig'
+import BigNumber from 'bignumber.js'
 
 chai.use(chaiAsPromised)
 
 const CONSTANTS = {
   BITCOIN_FEE_PER_BYTE: 3,
-  BITCOIN_ADDRESS_DEFAULT_BALANCE: 100000000,
+  BITCOIN_ADDRESS_DEFAULT_BALANCE: 50 * 1e8,
   ETHEREUM_ADDRESS_DEFAULT_BALANCE: 10 * 1e18,
   ETHEREUM_NON_EXISTING_CONTRACT: '0000000000000000000000000000000000000000'
 }
@@ -119,8 +120,8 @@ const chains = {
   ethereumWithJs: { id: 'Ethereum Js', name: 'ethereum', client: ethereumWithJs },
   erc20WithMetaMask: { id: 'ERC20 MetaMask', name: 'ethereum', client: erc20WithMetaMask },
   erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
-  erc20WithLedger: { id: 'Erc20 Ledger', name: 'ethereum', client: erc20WithLedger },
-  erc20WithJs: { id: 'Erc20 Js', name: 'ethereum', client: erc20WithJs }
+  erc20WithLedger: { id: 'ERC20 Ledger', name: 'ethereum', client: erc20WithLedger },
+  erc20WithJs: { id: 'ERC20 Js', name: 'ethereum', client: erc20WithJs }
 }
 
 async function getSwapParams (chain) {
@@ -166,13 +167,25 @@ async function fundWallet (chain) {
 
 async function getNewAddress (chain) {
   if (chain.name === 'ethereum') {
-    const randomString = parseInt(Math.random() * 1000000000000).toString()
-    const randomHash = crypto.sha256(randomString)
-    const address = randomHash.substr(0, 40)
-    return { address }
+    return getRandomEthereumAddress()
   } else {
     return chain.client.wallet.getUnusedAddress()
   }
+}
+
+async function getRandomAddress (chain) {
+  if (chain.name === 'ethereum') {
+    return getRandomEthereumAddress()
+  } else {
+    return getRandomBitcoinAddress(chain)
+  }
+}
+
+function getRandomEthereumAddress () {
+  const randomString = parseInt(Math.random() * 1000000000000).toString()
+  const randomHash = crypto.sha256(randomString)
+  const address = randomHash.substr(0, 40)
+  return { address }
 }
 
 async function getRandomBitcoinAddress (chain) {
@@ -202,27 +215,35 @@ async function mineUntilTimestamp (chain, timestamp) {
   }
 }
 
-async function initiateAndVerify (chain, secretHash, swapParams) {
+async function initiateAndVerify (chain, secretHash, swapParams, fee) {
   console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  const isERC20 = chain.id.includes('ERC20')
   const initiationParams = [swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration]
-  const initiationTxId = await chain.client.swap.initiateSwap(...initiationParams)
-  await mineBlock(chain)
-  const currentBlock = await chain.client.chain.getBlockHeight()
-  const blockNumber = chain.id.includes('ERC20')
-    ? currentBlock - 1 // ERC20 swaps involve 2 transactions - ganache auto mines for each
-    : currentBlock
-  const initiationTx = await chain.client.swap.findInitiateSwapTransaction(...initiationParams, blockNumber)
-  expect(initiationTx.hash).to.equal(initiationTxId)
-  const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
-  expect(isVerified).to.equal(true)
-  console.log(`${chain.id} Initiated ${initiationTxId}`)
-  return initiationTxId
+  const func = async () => {
+    const initiationTxId = await chain.client.swap.initiateSwap(...initiationParams, fee)
+    await mineBlock(chain)
+    const currentBlock = await chain.client.chain.getBlockHeight()
+    const blockNumber = isERC20
+      ? currentBlock - 1 // ERC20 swaps involve 2 transactions - ganache auto mines for each
+      : currentBlock
+
+    const initiationTx = await chain.client.swap.findInitiateSwapTransaction(...initiationParams, blockNumber)
+    expect(initiationTx.hash).to.equal(initiationTxId)
+    const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
+    expect(isVerified).to.equal(true)
+    console.log(`${chain.id} Initiated ${initiationTxId}`)
+    return initiationTxId
+  }
+
+  return isERC20
+    ? withInternalSendMineHook(chain, providers.ethereum.EthereumRpcProvider, func)
+    : func()
 }
 
-async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
+async function claimAndVerify (chain, initiationTxId, secret, swapParams, fee) {
   console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const secretHash = crypto.sha256(secret)
-  const claimTxId = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
+  const claimTxId = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
   const claimTx = await chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
@@ -230,9 +251,9 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
   return claimTx
 }
 
-async function refundAndVerify (chain, initiationTxId, secretHash, swapParams) {
+async function refundAndVerify (chain, initiationTxId, secretHash, swapParams, fee) {
   console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
-  const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
+  const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
   const refundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
@@ -259,23 +280,44 @@ async function getBitcoinTransactionFee (chain, tx) {
     const output = inputTx._raw.vout[vout]
     return output.value * 1e8
   })
-  const inputValue = inputValues.reduce((a, b) => a + b, 0)
+  const inputValue = inputValues.reduce((a, b) => a.plus(BigNumber(b)), BigNumber(0))
 
-  const outputValue = tx._raw.vout.reduce((a, b) => a + b.value * 1e8, 0)
+  const outputValue = tx._raw.vout.reduce((a, b) => a.plus(BigNumber(b.value).times(BigNumber(1e8))), BigNumber(0))
 
-  const feeValue = inputValue - outputValue
+  const feeValue = inputValue.minus(outputValue)
 
-  return feeValue
+  return feeValue.toNumber()
 }
 
-async function expectBitcoinFee (chain, txHash, feePerByte) {
+async function expectFee (chain, txHash, expectedFeePerByte, swapRedeem = false) {
+  if (chain.name === 'bitcoin') {
+    return swapRedeem // It's dumb because it does legacy calculation using 1 input 1 output
+      ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte)
+      : expectBitcoinFee(chain, txHash, expectedFeePerByte)
+  }
+  if (chain.name === 'ethereum') {
+    return expectEthereumFee(chain, txHash, expectedFeePerByte)
+  }
+}
+
+async function expectBitcoinFee (chain, txHash, expectedFeePerByte) {
   const tx = await chain.client.chain.getTransactionByHash(txHash)
   const fee = await getBitcoinTransactionFee(chain, tx)
   const size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
-  const maxFeePerByte = (feePerByte * (size + 2)) / size // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
+  const maxFeePerByte = (expectedFeePerByte * (size + 2)) / size // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
+  const feePerByte = BigNumber(fee).div(size).toNumber()
 
-  expect(fee / size).gte(feePerByte)
-  expect(fee / size).lte(maxFeePerByte)
+  expect(feePerByte).gte(expectedFeePerByte)
+  expect(feePerByte).lte(maxFeePerByte)
+}
+
+// A dumber fee calculation that is used in swap redeems - 1 in 1 out - legacy tx/inputs assumed
+async function expectBitcoinSwapRedeemFee (chain, txHash, expectedFeePerByte) {
+  const tx = await chain.client.chain.getTransactionByHash(txHash)
+  const fee = await getBitcoinTransactionFee(chain, tx)
+  const expectedFee = providers.bitcoin.BitcoinUtils.calculateFee(1, 1, expectedFeePerByte)
+
+  expect(fee).to.equal(expectedFee)
 }
 
 async function expectEthereumFee (chain, txHash, gasPrice) {
@@ -317,21 +359,19 @@ function connectKiba () {
   after(async () => kibaConnector.stop())
 }
 
-function addInternalSendMineHook (chain, providerClass) {
+async function withInternalSendMineHook (chain, providerClass, func) {
   const provider = findProvider(chain.client, providerClass)
   let originalSendTransaction = provider.sendTransaction
-  before(() => {
-    provider.sendTransaction = async (to, value, data, gasPrice) => {
-      const txHash = await originalSendTransaction.bind(provider)(to, value, data, gasPrice)
-      if (data !== null) {
-        await mineBlock(chain)
-      }
-      return txHash
+  provider.sendTransaction = async (to, value, data, gasPrice) => {
+    const txHash = await originalSendTransaction.bind(provider)(to, value, data, gasPrice)
+    if (data !== null) {
+      await mineBlock(chain)
     }
-  })
-  after(() => {
-    provider.sendTransaction = originalSendTransaction
-  })
+    return txHash
+  }
+  const result = await func()
+  provider.sendTransaction = originalSendTransaction
+  return result
 }
 
 async function deployERC20Token (chain) {
@@ -355,6 +395,7 @@ export {
   CONSTANTS,
   chains,
   getNewAddress,
+  getRandomAddress,
   getRandomBitcoinAddress,
   importBitcoinAddresses,
   fundAddress,
@@ -366,14 +407,12 @@ export {
   refundAndVerify,
   getSwapParams,
   expectBalance,
-  expectBitcoinFee,
-  expectEthereumFee,
+  expectFee,
   sleep,
   stopEthAutoMining,
   mineUntilTimestamp,
   mineBlock,
   deployERC20Token,
-  addInternalSendMineHook,
   connectMetaMask,
   connectKiba,
   describeExternal

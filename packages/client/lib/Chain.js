@@ -200,7 +200,7 @@ export default class Chain {
    * @param {!string} to - Recepient address.
    * @param {!string} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
-   * @param {!string} fee - Fee price in native unit (e.g. sat/b, wei)
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<string>} Resolves with a signed transaction.
    */
   async sendTransaction (to, value, data, fee) {

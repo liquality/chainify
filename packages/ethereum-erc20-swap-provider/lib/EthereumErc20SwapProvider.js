@@ -60,13 +60,6 @@ export default class EthereumErc20SwapProvider extends Provider {
     return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, SOL_REFUND_FUNCTION, gasPrice)
   }
 
-  // TODO: UPDATING INITIATE SWAP OF ERC20: Should bump both transactions
-  async updateTransactionFee (txHash, newGasPrice) {
-    // TODO: Handle swaps otherwise delegate
-
-    return this.getMethod('updateTransactionFee')(txHash, newGasPrice)
-  }
-
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     return transaction._raw.input === data

@@ -101,7 +101,6 @@ export default class EthereumSwapProvider extends Provider {
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    console.log(transaction)
     return transaction._raw.input === data && transaction._raw.value === value
   }
 
