@@ -176,9 +176,9 @@ function testFee (chain) {
       const swapParams = await getSwapParams(chain)
       const expectedFee = 25
       const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams, expectedFee)
-      await expectFee(chain, initiationTxId, expectedFee)
+      await expectFee(chain, initiationTxId, expectedFee, true)
       const claimTx = await claimAndVerify(chain, initiationTxId, mockSecret, swapParams, expectedFee)
-      await expectFee(chain, claimTx.hash, expectedFee, true)
+      await expectFee(chain, claimTx.hash, expectedFee, false, true)
     })
 
     it('Initiate & Refund', async () => {
@@ -187,10 +187,10 @@ function testFee (chain) {
       swapParams.expiration = parseInt(Date.now() / 1000)
       const expectedFee = 25
       const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams, expectedFee)
-      await expectFee(chain, initiationTxId, expectedFee)
+      await expectFee(chain, initiationTxId, expectedFee, true)
       await mineUntilTimestamp(chain, swapParams.expiration)
       const refundTx = await refundAndVerify(chain, initiationTxId, secretHash, swapParams, expectedFee)
-      await expectFee(chain, refundTx.hash, expectedFee, true)
+      await expectFee(chain, refundTx.hash, expectedFee, false, true)
     })
   })
 
@@ -203,7 +203,7 @@ function testFee (chain) {
         const initiationTxId = await chain.client.swap.initiateSwap(...initiationParams, 25)
         const expectedFee = 50
         const newInitiateTxId = await chain.client.chain.updateTransactionFee(initiationTxId, expectedFee)
-        await expectFee(chain, newInitiateTxId, expectedFee)
+        await expectFee(chain, newInitiateTxId, expectedFee, true)
       })
     }
 
@@ -215,7 +215,7 @@ function testFee (chain) {
       const claimTxId = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, mockSecret, swapParams.expiration, 25)
       const expectedFee = 50
       const newClaimTxId = await chain.client.chain.updateTransactionFee(claimTxId, expectedFee)
-      await expectFee(chain, newClaimTxId, expectedFee, true)
+      await expectFee(chain, newClaimTxId, expectedFee, false, true)
     })
 
     it('Refund', async () => {
@@ -228,7 +228,7 @@ function testFee (chain) {
       const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, 25)
       const expectedFee = 50
       const newRefundTxId = await chain.client.chain.updateTransactionFee(refundTxId, expectedFee)
-      await expectFee(chain, newRefundTxId, expectedFee, true)
+      await expectFee(chain, newRefundTxId, expectedFee, false, true)
     })
   })
 }

@@ -29,6 +29,11 @@ describeExternal('Swap Chain to Chain', function () {
   this.timeout(config.timeout)
 
   describe('Ledger to Node', function () {
+    before(async () => {
+      await importBitcoinAddresses(chains.bitcoinWithLedger)
+      await fundWallet(chains.bitcoinWithLedger)
+    })
+
     it('BTC (Ledger) - BTC (Node)', async () => {
       await testSwap(chains.bitcoinWithLedger, chains.bitcoinWithNode)
     })
@@ -40,6 +45,12 @@ describeExternal('Swap Chain to Chain', function () {
 
   describeExternal('Ledger to MetaMask', function () {
     connectMetaMask()
+
+    before(async () => {
+      await importBitcoinAddresses(chains.bitcoinWithLedger)
+      await fundWallet(chains.bitcoinWithLedger)
+      await fundWallet(chains.ethereumWithMetaMask)
+    })
 
     it('BTC (Ledger) - ETH (MetaMask)', async () => {
       await testSwap(chains.bitcoinWithLedger, chains.ethereumWithMetaMask)

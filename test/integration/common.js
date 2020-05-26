@@ -289,21 +289,24 @@ async function getBitcoinTransactionFee (chain, tx) {
   return feeValue.toNumber()
 }
 
-async function expectFee (chain, txHash, expectedFeePerByte, swapRedeem = false) {
+async function expectFee (chain, txHash, expectedFeePerByte, swapInitiate = false, swapRedeem = false) {
   if (chain.name === 'bitcoin') {
     return swapRedeem // It's dumb because it does legacy calculation using 1 input 1 output
       ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte)
-      : expectBitcoinFee(chain, txHash, expectedFeePerByte)
+      : expectBitcoinFee(chain, txHash, expectedFeePerByte, swapInitiate)
   }
   if (chain.name === 'ethereum') {
     return expectEthereumFee(chain, txHash, expectedFeePerByte)
   }
 }
 
-async function expectBitcoinFee (chain, txHash, expectedFeePerByte) {
+async function expectBitcoinFee (chain, txHash, expectedFeePerByte, payToScript) {
   const tx = await chain.client.chain.getTransactionByHash(txHash)
   const fee = await getBitcoinTransactionFee(chain, tx)
-  const size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
+  let size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
+  if (payToScript && (chain.id.includes('Ledger') || chain.id.includes('Js'))) {
+    size -= 10 // Coin select fee calculation is off by 10 bytes as it does not consider pay to script
+  }
   const maxFeePerByte = (expectedFeePerByte * (size + 2)) / size // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
   const feePerByte = BigNumber(fee).div(size).toNumber()
 
