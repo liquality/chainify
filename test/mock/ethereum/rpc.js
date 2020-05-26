@@ -18,6 +18,12 @@ module.exports = {
       ]
     }
   ],
+  'eth_gasPrice': [
+    {
+      params: [],
+      result: '0xa'
+    }
+  ],
   'eth_sendTransaction': [
     {
       params: [{

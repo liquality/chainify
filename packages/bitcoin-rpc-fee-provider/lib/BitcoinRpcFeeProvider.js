@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { version } from '../package.json'
 
 export default class BitcoinRpcFeeProvider extends Provider {
-  constructor (slowTargetBlocks = 6, averageTargetBlocks = 4, fastTargetBlocks = 2) {
+  constructor (slowTargetBlocks = 6, averageTargetBlocks = 3, fastTargetBlocks = 1) {
     super()
     this._slowTargetBlocks = slowTargetBlocks
     this._averageTargetBlocks = averageTargetBlocks

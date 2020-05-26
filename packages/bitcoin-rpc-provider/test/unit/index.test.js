@@ -38,7 +38,7 @@ describe('Bitcoin RPC provider', () => {
 
   describe('getFeePerByte', () => {
     it('should return default value 3 sat per byte', async () => {
-      const fee = await provider.getFeePerByte()
+      const fee = await provider.getFeePerByte(null)
       expect(fee).to.equal(3)
     })
   })

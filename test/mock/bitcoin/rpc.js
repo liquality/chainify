@@ -3,6 +3,27 @@ module.exports = {
     {
       params: [],
       result: { feerate: -1 }
+    },
+    {
+      params: [1],
+      result: {
+        feerate: 0.0002,
+        blocks: 2
+      }
+    },
+    {
+      params: [3],
+      result: {
+        feerate: 0.0001,
+        blocks: 3
+      }
+    },
+    {
+      params: [6],
+      result: {
+        feerate: 0.00005,
+        blocks: 6
+      }
     }
   ],
   'getblockhash': [
