@@ -1,6 +1,7 @@
 import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
 import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
 import BitcoinRpcFeeProvider from '@liquality/bitcoin-rpc-fee-provider'
+import BitcoinEarnFeeProvider from '@liquality/bitcoin-earn-fee-provider'
 import BitcoinNodeWalletProvider from '@liquality/bitcoin-node-wallet-provider'
 import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
 import BitcoinKibaProvider from '@liquality/bitcoin-kiba-provider'
@@ -17,6 +18,7 @@ import EthereumMetaMaskProvider from '@liquality/ethereum-metamask-provider'
 import EthereumJsWalletProvider from '@liquality/ethereum-js-wallet-provider'
 import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
 import EthereumRpcFeeProvider from '@liquality/ethereum-rpc-fee-provider'
+import EthereumGasStationFeeProvider from '@liquality/ethereum-gas-station-fee-provider'
 import EthereumSwapProvider from '@liquality/ethereum-swap-provider'
 import EthereumBlockscoutSwapFindProvider from '@liquality/ethereum-blockscout-swap-find-provider'
 import EthereumScraperSwapFindProvider from '@liquality/ethereum-scraper-swap-find-provider'
@@ -28,6 +30,7 @@ const bitcoin = {
   BitcoinLedgerProvider,
   BitcoinRpcProvider,
   BitcoinRpcFeeProvider,
+  BitcoinEarnFeeProvider,
   BitcoinNodeWalletProvider,
   BitcoinJsWalletProvider,
   BitcoinKibaProvider,
@@ -47,6 +50,7 @@ const ethereum = {
   EthereumJsWalletProvider,
   EthereumRpcProvider,
   EthereumRpcFeeProvider,
+  EthereumGasStationFeeProvider,
   EthereumSwapProvider,
   EthereumBlockscoutSwapFindProvider,
   EthereumScraperSwapFindProvider,
