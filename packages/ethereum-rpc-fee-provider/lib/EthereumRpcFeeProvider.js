@@ -19,9 +19,15 @@ export default class EthereumRpcFeeProvider extends Provider {
   async getFees () {
     const baseGasPrice = await this.getMethod('getGasPrice')()
     return {
-      slow: this.calculateFee(baseGasPrice, this._slowMultiplier),
-      average: this.calculateFee(baseGasPrice, this._averageMultiplier),
-      fast: this.calculateFee(baseGasPrice, this._fastMultiplier)
+      slow: {
+        fee: this.calculateFee(baseGasPrice, this._slowMultiplier)
+      },
+      average: {
+        fee: this.calculateFee(baseGasPrice, this._averageMultiplier)
+      },
+      fast: {
+        fee: this.calculateFee(baseGasPrice, this._fastMultiplier)
+      }
     }
   }
 }

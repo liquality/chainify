@@ -26,9 +26,9 @@ describe('Ethereum RPC Fee provider', () => {
   describe('getFees', () => {
     it('Should return correct fees', async () => {
       const fees = await client.chain.getFees()
-      expect(fees.slow).to.equal(10)
-      expect(fees.average).to.equal(15)
-      expect(fees.fast).to.equal(20)
+      expect(fees.slow.fee).to.equal(10)
+      expect(fees.average.fee).to.equal(15)
+      expect(fees.fast.fee).to.equal(20)
     })
   })
 })

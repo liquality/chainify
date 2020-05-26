@@ -12,15 +12,22 @@ export default class BitcoinRpcFeeProvider extends Provider {
     this._fastTargetBlocks = fastTargetBlocks
   }
 
-  async getFeePerByte (targetBlocks) {
-    return this.getMethod('getFeePerByte')(targetBlocks)
+  getWaitTime (numBlocks) {
+    return numBlocks * 10 // Minutes per block* 60 // Seconds per minute
+  }
+
+  async getFee (targetBlocks) {
+    const value = await this.getMethod('getFeePerByte')(targetBlocks)
+    const wait = targetBlocks * 10 * 60 // 10 minute blocks in seconds
+
+    return { fee: value, wait }
   }
 
   async getFees () {
     return _.zipObject(['slow', 'average', 'fast'], await Promise.all([
-      this.getFeePerByte(this._slowTargetBlocks),
-      this.getFeePerByte(this._averageTargetBlocks),
-      this.getFeePerByte(this._fastTargetBlocks)
+      this.getFee(this._slowTargetBlocks),
+      this.getFee(this._averageTargetBlocks),
+      this.getFee(this._fastTargetBlocks)
     ]))
   }
 }
