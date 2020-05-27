@@ -169,6 +169,9 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionFee (tx) {
+    const isCoinbaseTx = tx._raw.vin.find(vin => vin.coinbase)
+    if (isCoinbaseTx) return // Coinbase transactions do not have a fee
+
     const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
     const inputTransactions = await Promise.all(
       inputs.map(input => this.getRawTransactionByHash(input.txid, true))
@@ -206,11 +209,13 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
 
     if (addFees) {
       const totalFee = await this.getTransactionFee(result)
-      const fee = Math.round(totalFee / tx.vsize)
-      Object.assign(result, {
-        fee,
-        totalFee
-      })
+      if (totalFee) {
+        const fee = Math.round(totalFee / tx.vsize)
+        Object.assign(result, {
+          fee,
+          totalFee
+        })
+      }
     }
 
     return result
