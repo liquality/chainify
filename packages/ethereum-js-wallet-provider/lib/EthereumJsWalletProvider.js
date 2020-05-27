@@ -1,6 +1,6 @@
 import Provider from '@liquality/provider'
 import { Address, addressToString } from '@liquality/utils'
-import { remove0x, ensure0x, buildTransaction } from '@liquality/ethereum-utils'
+import { remove0x, buildTransaction } from '@liquality/ethereum-utils'
 import { sha256 } from '@liquality/crypto'
 import { mnemonicToSeed } from 'bip39'
 import { fromMasterSeed } from 'hdkey'
