@@ -13,7 +13,7 @@ export default class EthereumRpcFeeProvider extends Provider {
   }
 
   calculateFee (base, multiplier) {
-    return parseInt(BigNumber(base).times(BigNumber(multiplier)).toFixed(0))
+    return BigNumber(base).times(BigNumber(multiplier)).toNumber()
   }
 
   async getFees () {

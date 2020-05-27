@@ -7,6 +7,8 @@ import _ from 'lodash'
 
 import { version } from '../package.json'
 
+const GWEI = 1e9
+
 /**
  * Converts a hex string to the ethereum format
  * @param {*} hash
@@ -105,7 +107,7 @@ function buildTransaction (from, to, value, data, gasPrice, nonce) {
     value: ensure0x(BigNumber(value).toString(16))
   }
 
-  if (gasPrice) tx.gasPrice = ensure0x(gasPrice.toString(16))
+  if (gasPrice) tx.gasPrice = ensure0x(BigNumber(gasPrice).times(GWEI).toString(16))
   if (to) tx.to = ensure0x(addressToString(to))
   if (data) tx.data = ensure0x(data)
   if (nonce !== null && nonce !== undefined) tx.nonce = ensure0x(nonce.toString(16))

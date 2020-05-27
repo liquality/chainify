@@ -123,7 +123,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
   async getGasPrice () {
     const gasPrice = await this.jsonrpc('eth_gasPrice')
-    return parseInt(gasPrice, '16')
+    return BigNumber(parseInt(gasPrice, '16')).div(1e9).toNumber() // Gwei
   }
 
   async getBalance (addresses) {

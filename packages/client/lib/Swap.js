@@ -89,7 +89,7 @@ export default class Swap {
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
-   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<string, TypeError>} Resolves with the transaction ID for the swap.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
@@ -152,7 +152,7 @@ export default class Swap {
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secret - 32 byte secret for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
-   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
@@ -175,7 +175,7 @@ export default class Swap {
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
-   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */

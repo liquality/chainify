@@ -17,7 +17,8 @@ const CONSTANTS = {
   BITCOIN_FEE_PER_BYTE: 3,
   BITCOIN_ADDRESS_DEFAULT_BALANCE: 50 * 1e8,
   ETHEREUM_ADDRESS_DEFAULT_BALANCE: 10 * 1e18,
-  ETHEREUM_NON_EXISTING_CONTRACT: '0000000000000000000000000000000000000000'
+  ETHEREUM_NON_EXISTING_CONTRACT: '0000000000000000000000000000000000000000',
+  GWEI: 1e9
 }
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
@@ -325,7 +326,7 @@ async function expectBitcoinSwapRedeemFee (chain, txHash, expectedFeePerByte) {
 
 async function expectEthereumFee (chain, txHash, gasPrice) {
   const tx = await chain.client.chain.getTransactionByHash(txHash)
-  expect(parseInt(tx._raw.gasPrice, 16)).to.equal(gasPrice)
+  expect(parseInt(tx._raw.gasPrice, 16)).to.equal(BigNumber(gasPrice).times(CONSTANTS.GWEI).toNumber())
 }
 
 function findProvider (client, type) {

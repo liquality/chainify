@@ -21,7 +21,7 @@ module.exports = {
   'eth_gasPrice': [
     {
       params: [],
-      result: '0xa'
+      result: '0x2540be400'
     }
   ],
   'eth_sendTransaction': [

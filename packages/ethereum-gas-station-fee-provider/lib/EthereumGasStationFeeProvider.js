@@ -17,15 +17,15 @@ export default class EthereumGasStationFeeProvider extends Provider {
 
     return {
       slow: {
-        fee: BigNumber(data.safeLow).times(1e8).toNumber(),
+        fee: BigNumber(data.safeLow).div(10).toNumber(),
         wait: data.safeLowWait * 60
       },
       average: {
-        fee: BigNumber(data.average).times(1e8).toNumber(),
+        fee: BigNumber(data.average).div(10).toNumber(),
         wait: data.avgWait * 60
       },
       fast: {
-        fee: BigNumber(data.fast).times(1e8).toNumber(),
+        fee: BigNumber(data.fast).div(10).toNumber(),
         wait: data.fastWait * 60
       }
     }
