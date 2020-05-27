@@ -28,23 +28,67 @@ describe('Ethereum Util', () => {
   describe('normalizeTransactionObject', () => {
     it('should remove blockNumber key if it is null', () => {
       expect(EthereumUtil.normalizeTransactionObject({
-        blockNumber: null
+        hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+        nonce: '0x0',
+        blockNumber: null,
+        transactionIndex: '0x00',
+        from: '0x322d4959c911520645c0638204b42ce0689236e9',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: 100000,
+        gas: '0x015f90',
+        gasPrice: '0x04a817c800',
+        input: '0x0'
       })).to.deep.equal({
+        hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+        value: 100000,
         _raw: {
-          blockNumber: null
-        }
+          hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+          nonce: '0x0',
+          blockNumber: null,
+          transactionIndex: '0x00',
+          from: '0x322d4959c911520645c0638204b42ce0689236e9',
+          to: '0x635d7d148054b9471d79084b80b864a166956139',
+          value: 100000,
+          gas: '0x015f90',
+          gasPrice: '0x04a817c800',
+          input: '0x0'
+        },
+        fee: 20000000000,
+        totalFee: 1800000000000000
       })
     })
 
     it('should add number of confirmation if blockNumber key is not null', () => {
       expect(EthereumUtil.normalizeTransactionObject({
-        blockNumber: 5
+        hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+        nonce: '0x0',
+        blockNumber: 5,
+        transactionIndex: '0x00',
+        from: '0x322d4959c911520645c0638204b42ce0689236e9',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: 100000,
+        gas: '0x015f90',
+        gasPrice: '0x04a817c800',
+        input: '0x0'
       }, 10)).to.deep.equal({
+        hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+        value: 100000,
+        _raw: {
+          hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+          nonce: '0x0',
+          blockNumber: 5,
+          transactionIndex: '0x00',
+          from: '0x322d4959c911520645c0638204b42ce0689236e9',
+          to: '0x635d7d148054b9471d79084b80b864a166956139',
+          value: 100000,
+          gas: '0x015f90',
+          gasPrice: '0x04a817c800',
+          input: '0x0'
+        },
         blockNumber: 5,
         confirmations: 6,
-        _raw: {
-          blockNumber: 5
-        }
+        fee: 20000000000,
+        totalFee: 1800000000000000
       })
     })
   })

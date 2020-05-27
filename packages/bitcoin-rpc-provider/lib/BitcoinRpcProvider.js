@@ -165,10 +165,26 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionByHash (transactionHash) {
-    return this.getRawTransactionByHash(transactionHash, true)
+    return this.getRawTransactionByHash(transactionHash, true, true)
   }
 
-  async getRawTransactionByHash (transactionHash, decode = false) {
+  async getTransactionFee (tx) {
+    const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
+    const inputTransactions = await Promise.all(
+      inputs.map(input => this.getRawTransactionByHash(input.txid, true))
+    )
+    const inputValues = inputTransactions.map((inputTx, index) => {
+      const vout = inputs[index].vout
+      const output = inputTx._raw.vout[vout]
+      return output.value * 1e8
+    })
+    const inputValue = inputValues.reduce((a, b) => a.plus(BigNumber(b)), BigNumber(0))
+    const outputValue = tx._raw.vout.reduce((a, b) => a.plus(BigNumber(b.value).times(BigNumber(1e8))), BigNumber(0))
+    const feeValue = inputValue.minus(outputValue)
+    return feeValue.toNumber()
+  }
+
+  async getRawTransactionByHash (transactionHash, decode = false, addFees = false) {
     const tx = await this.jsonrpc('getrawtransaction', transactionHash, decode ? 1 : 0)
     if (!decode) return tx
     const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value).times(1e8)), BigNumber(0))
@@ -185,6 +201,15 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
         blockHash: block.hash,
         blockNumber: block.number,
         confirmations: tx.confirmations
+      })
+    }
+
+    if (addFees) {
+      const totalFee = await this.getTransactionFee(result)
+      const fee = Math.round(totalFee / tx.vsize)
+      Object.assign(result, {
+        fee,
+        totalFee
       })
     }
 

@@ -93,6 +93,9 @@ function normalizeTransactionObject (tx, currentHeight) {
     delete normalizedTx.blockHash
   }
 
+  normalizedTx.totalFee = BigNumber(parseInt(tx.gas, 16)).times(BigNumber(parseInt(tx.gasPrice, 16))).toNumber()
+  normalizedTx.fee = parseInt(tx.gasPrice, 16)
+
   return normalizedTx
 }
 

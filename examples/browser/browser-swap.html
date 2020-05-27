@@ -1,0 +1,71 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="../../packages/bundle/dist/bundle.min.js"></script>
+</head>
+<body>
+  <h1>Send swap then bump fee</h1>
+  <script>
+/* global $, web3, Bundle */
+
+  var { Client, providers, crypto } = Bundle;
+  var client = new Client();
+  // client.addProvider(new providers.ethereum.EthereumRpcProvider('http://localhost:8545'));
+  // client.addProvider(new providers.ethereum.EthereumRpcFeeProvider());
+  // client.addProvider(new providers.ethereum.EthereumSwapProvider());
+
+  client.addProvider(new providers.bitcoin.BitcoinRpcProvider('http://localhost:18443', 'bitcoin', 'local321'));
+  client.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(providers.bitcoin.BitcoinNetworks.default.bitcoin_regtest, 'piece effort bind that embrace enrich remind powder sudden patient legend group'));
+  client.addProvider(new providers.bitcoin.BitcoinRpcFeeProvider());
+  client.addProvider(new providers.bitcoin.BitcoinSwapProvider(providers.bitcoin.BitcoinNetworks.default.bitcoin_regtest));
+  (async () => {
+    await client._providers[1].importAddresses();
+  })();
+
+  (async () => {
+    const fees = await client.chain.getFees();
+    console.log({fees})
+    const address = (await client.wallet.getUnusedAddress()).address;
+    console.log(address)
+    const recipientAddress = address;
+    const refundAddress = address;
+    const secret = await client.swap.generateSecret('test');
+    const secretHash = Bundle.crypto.sha256(secret);
+    const expiration = Math.floor(Date.now() / 1000);
+    const value = 100000;
+
+    const initiationTxHash = await client.swap.initiateSwap(value, recipientAddress, refundAddress, secretHash, expiration, fees.slow)
+    const newInitiateTxHash = await client.chain.updateTransactionFee(initiationTxHash, fees.fast * 100)
+    // const claimTxHash = await client.swap.claimSwap(newInitiateTxHash, recipientAddress, refundAddress, secret, expiration, fees.slow)
+    // console.log(await client.chain.getTransactionByHash(claimTxHash))
+    // const newClaimTxHash = await client.chain.updateTransactionFee(claimTxHash, fees.fast * 100)
+    // const claimTx = await client.chain.getTransactionByHash(newClaimTxHash)
+
+    let done = false
+    window.sendReplace = async () => {
+      const claimTxHash = await client.swap.refundSwap(newInitiateTxHash, recipientAddress, refundAddress, secretHash, expiration, fees.slow)
+      console.log(await client.chain.getTransactionByHash(claimTxHash))
+      client.chain.updateTransactionFee(claimTxHash, fees.fast * 100).then((result) => {
+        console.log(result)
+      })
+    }
+    // while (!done) {
+    //   try {
+    //     const newClaimTxHash = await 
+    //     done = true
+    //     const claimTx = await client.chain.getTransactionByHash(newClaimTxHash)
+    //   } catch (e) {
+    //     console.log('refund failed')
+    //   }
+    // }
+
+    // console.log({
+    //   initiationTxHash,
+    //   newInitiateTxHash,
+    //   claimTxHash,
+    //   newClaimTxHash
+    // })
+  })()
+  </script>
+</body>
+</html>

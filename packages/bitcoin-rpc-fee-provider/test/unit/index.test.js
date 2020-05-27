@@ -19,10 +19,10 @@ describe('Bitcoin RPC Fee provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    client.addProvider(new BitcoinRpcProvider('http://localhost:18332'))
+    client.addProvider(new BitcoinRpcProvider('http://localhost:18334'))
     client.addProvider(new BitcoinRpcFeeProvider(6, 3, 1))
 
-    mockJsonRpc('http://localhost:18332', bitcoinRpc, 100)
+    mockJsonRpc('http://localhost:18334', bitcoinRpc, 100)
   })
 
   describe('getFees', () => {

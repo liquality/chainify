@@ -1,0 +1,31 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="../../packages/bundle/dist/bundle.min.js"></script>
+</head>
+<body>
+  <h1>CAL + MetaMask: Sign a message (Ethereum)</h1>
+  <script>
+/* global $, web3, Bundle */
+  var { Client, providers } = Bundle;
+  var client = new Client();
+  client.addProvider(new providers.ethereum.EthereumRpcProvider('http://localhost:8545'));
+  client.addProvider(new providers.ethereum.EthereumWalletConnectProvider())
+  const addressToSend = '0x93261B4021dbd6200Df9B36B151f4ECF34889e94';
+
+  (async () => {
+    const addresses = await client.wallet.getAddresses()
+    console.log(addresses)
+    // const txHash = await client.chain.sendTransaction(addressToSend, 10000, undefined, 1);
+    // console.log('TX 1', await client.chain.getTransactionByHash(txHash))
+    // const newTxHash = await client.chain.updateTransactionFee(txHash, 2);
+    
+    // console.log('TX 2', await client.chain.getTransactionByHash(newTxHash))
+
+    // const newTxHash2 = await client.chain.updateTransactionFee(newTxHash, 3);
+
+    // console.log('TX 3', await client.chain.getTransactionByHash(newTxHash2))
+  })()
+  </script>
+</body>
+</html>

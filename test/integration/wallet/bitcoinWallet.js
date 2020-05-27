@@ -136,8 +136,6 @@ function testWallet (chain) {
 
       const signedMessage = await chain.client.wallet.signMessage('secret', address)
 
-      console.log(signedMessage)
-
       const signedMessageBuffer = Buffer.from(signedMessage, 'hex')
 
       expect(signedMessage).to.equal(signedMessageBuffer.toString('hex'))

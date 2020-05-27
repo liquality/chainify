@@ -92,6 +92,8 @@ describe('Ethereum RPC provider', () => {
             blockNumber: 1,
             value: 10000,
             confirmations: 11,
+            fee: 20000000000,
+            totalFee: 1800000000000000,
             _raw: {
               hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
               nonce: 0,
@@ -123,6 +125,8 @@ describe('Ethereum RPC provider', () => {
           blockNumber: 1,
           value: 10000,
           confirmations: 11,
+          fee: 20000000000,
+          totalFee: 1800000000000000,
           _raw: {
             hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
             nonce: 0,
