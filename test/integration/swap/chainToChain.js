@@ -10,7 +10,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 
 async function testSwap (chain1, chain2) {
-  console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
+  if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
   const secret = await chain1.client.swap.generateSecret('test')
   const secretHash = crypto.sha256(secret)
 
@@ -25,10 +25,10 @@ async function testSwap (chain1, chain2) {
   await claimAndVerify(chain2, chain2InitiationTxId, revealedSecret, chain2SwapParams)
 }
 
-describeExternal('Swap Chain to Chain', function () {
+describe.only('Swap Chain to Chain', function () {
   this.timeout(config.timeout)
 
-  describe('Ledger to Node', function () {
+  describeExternal('Ledger to Node', function () {
     before(async () => {
       await importBitcoinAddresses(chains.bitcoinWithLedger)
       await fundWallet(chains.bitcoinWithLedger)

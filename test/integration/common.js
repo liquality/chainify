@@ -21,6 +21,8 @@ const CONSTANTS = {
   GWEI: 1e9
 }
 
+console.warn = () => {} // Silence warnings
+
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 const kibaConnector = new KibaConnector({ port: config.bitcoin.kibaConnector.port })
 
@@ -131,12 +133,6 @@ async function getSwapParams (chain) {
   const expiration = parseInt(Date.now() / 1000) + parseInt(Math.random() * 1000000)
   const value = config[chain.name].value
 
-  console.log('\x1b[2m', `Swap Params for ${chain.id}`, '\x1b[0m')
-  console.log('\x1b[2m', 'Recipient Address:', recipientAddress, '\x1b[0m')
-  console.log('\x1b[2m', 'Refund Address:', refundAddress, '\x1b[0m')
-  console.log('\x1b[2m', 'Expiry:', expiration, '\x1b[0m')
-  console.log('\x1b[2m', 'Value:', value, '\x1b[0m')
-
   return {
     recipientAddress,
     refundAddress,
@@ -206,7 +202,7 @@ async function mineUntilTimestamp (chain, timestamp) {
   const maxNumBlocks = 100
   for (let i = 0; i < maxNumBlocks; i++) {
     const block = await chain.client.chain.getBlockByNumber(await chain.client.chain.getBlockHeight())
-    if (i === 0) console.log(`Mining until chain timestamp: ${timestamp}. Now: ${block.timestamp}. Remaining: ${timestamp - block.timestamp}s`)
+    if (i === 0) console.log('\x1b[2m', `Mining until chain timestamp: ${timestamp}. Now: ${block.timestamp}. Remaining: ${timestamp - block.timestamp}s`, '\x1b[0m')
     if (block.timestamp > timestamp) break
     if (chain.name === 'ethereum') { // Send random tx to cause Geth to mime block
       await chains.ethereumWithNode.client.chain.sendTransaction((await getNewAddress(chain)).address, 10000)
@@ -217,7 +213,7 @@ async function mineUntilTimestamp (chain, timestamp) {
 }
 
 async function initiateAndVerify (chain, secretHash, swapParams, fee) {
-  console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const isERC20 = chain.id.includes('ERC20')
   const initiationParams = [swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration]
   const func = async () => {
@@ -232,7 +228,6 @@ async function initiateAndVerify (chain, secretHash, swapParams, fee) {
     expect(initiationTx.hash).to.equal(initiationTxId)
     const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
     expect(isVerified).to.equal(true)
-    console.log(`${chain.id} Initiated ${initiationTxId}`)
     return initiationTxId
   }
 
@@ -242,24 +237,22 @@ async function initiateAndVerify (chain, secretHash, swapParams, fee) {
 }
 
 async function claimAndVerify (chain, initiationTxId, secret, swapParams, fee) {
-  console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const secretHash = crypto.sha256(secret)
-  const claimTxId = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration, fee)
+  await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
   const claimTx = await chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
-  console.log(`${chain.id} Claimed ${claimTxId}`)
   return claimTx
 }
 
 async function refundAndVerify (chain, initiationTxId, secretHash, swapParams, fee) {
-  console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
   const refundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
   expect(refundTxId).to.equal(refundTx.hash)
-  console.log(`${chain.id} Refunded ${refundTxId}`)
   return refundTx
 }
 
