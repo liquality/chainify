@@ -1,7 +1,7 @@
 version: '3'
 services:
   bitcoin:
-    image: ruimarinho/bitcoin-core
+    image: ruimarinho/bitcoin-core:0.18.1
     ports:
       - "18443:18443"
     command:
