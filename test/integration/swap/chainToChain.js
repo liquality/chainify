@@ -25,7 +25,7 @@ async function testSwap (chain1, chain2) {
   await claimAndVerify(chain2, chain2InitiationTxId, revealedSecret, chain2SwapParams)
 }
 
-describe.only('Swap Chain to Chain', function () {
+describe('Swap Chain to Chain', function () {
   this.timeout(config.timeout)
 
   describeExternal('Ledger to Node', function () {
