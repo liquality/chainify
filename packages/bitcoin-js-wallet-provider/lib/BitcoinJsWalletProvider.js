@@ -11,7 +11,7 @@ import { version } from '../package.json'
 export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider) {
   constructor (network, mnemonic, addressType = 'bech32') {
     super(network, addressType, [network])
-    if (mnemonic === '') {
+    if (!mnemonic) {
       throw new Error('Mnemonic should not be empty')
     }
     this._mnemonic = mnemonic

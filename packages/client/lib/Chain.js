@@ -19,14 +19,14 @@ export default class Chain {
   /**
    * Generate a block
    * @param {!number} numberOfBlocks - Number of blocks to be generated
-   * @return {Promise>}
+   * @return {<Promise>}
    */
   async generateBlock (numberOfBlocks) {
     if (!isNumber(numberOfBlocks)) {
       throw new TypeError('First argument should be a number')
     }
 
-    await this.client.getMethod('generateBlock')(numberOfBlocks)
+    return this.client.getMethod('generateBlock')(numberOfBlocks)
   }
 
   /**
