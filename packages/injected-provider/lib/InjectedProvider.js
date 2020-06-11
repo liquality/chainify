@@ -5,6 +5,8 @@ export default class InjectedProvider {
     this.injectedProvider = injectedProvider
   }
 
+  setClient (client) {}
+
   // <chain>
 
   async getBlockByHash (blockHash, includeTx = false) {
