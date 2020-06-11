@@ -35,7 +35,7 @@ export default class EthereumJsWalletProvider extends Provider {
   async signMessage (message) {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
-    const msgHash = sha256(message)
+    const msgHash = sha256(Buffer.from(message).toString('hex'))
     const hex = Buffer.from(msgHash, 'hex')
 
     const { v, r, s } = ethUtil.ecsign(hex, hdKey._privateKey)
