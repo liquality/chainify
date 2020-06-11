@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-swap-provider",
   "umdName": "BitcoinSwapProvider",
   "umdExport": "default",
-  "version": "0.4.31",
+  "version": "0.4.32",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.4.31",
-    "@liquality/bitcoin-utils": "^0.4.31",
-    "@liquality/crypto": "^0.4.31",
-    "@liquality/provider": "^0.4.31",
-    "@liquality/utils": "^0.4.31",
+    "@liquality/bitcoin-networks": "^0.4.32",
+    "@liquality/bitcoin-utils": "^0.4.32",
+    "@liquality/crypto": "^0.4.32",
+    "@liquality/provider": "^0.4.32",
+    "@liquality/utils": "^0.4.32",
     "bignumber.js": "^8.1.1",
     "bitcoinjs-lib": "^5.1.1"
   },
@@ -40,6 +40,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c"
+  }
 }
