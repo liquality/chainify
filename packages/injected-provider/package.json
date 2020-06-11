@@ -1,9 +1,9 @@
 {
-  "name": "@liquality/kiba-provider",
-  "umdName": "KibaProvider",
+  "name": "@liquality/injected-provider",
+  "umdName": "InjectedProvider",
   "umdExport": "default",
   "version": "0.4.31",
-  "description": "",
+  "description": "Query different blockchains with account management using a single and simple interface.",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
   "files": [
@@ -18,9 +18,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.4.3",
-    "@liquality/provider": "^0.4.31",
-    "core-connection": "0.0.12"
+    "@babel/runtime": "^7.4.3"
   },
   "engines": {
     "node": "~8.12.0"
