@@ -53,6 +53,17 @@ export default class Wallet {
     return this.client.getMethod('signMessage')(message, from)
   }
 
+  /**
+   * Verify a message.
+   * @param {!string} message - Message to be verified.
+   * @param {!string} from - The address from which the message was signed.
+   * @param {!string} signature - The message signature.
+   * @return {Promise<string>} Resolves with a Boolean.
+   */
+  async verifyMessage (message, from, signature) {
+    return this.client.getMethod('verifyMessage')(message, from, signature)
+  }
+
   async isWalletAvailable () {
     return this.client.getMethod('isWalletAvailable')()
   }
