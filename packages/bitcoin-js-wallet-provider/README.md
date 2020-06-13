@@ -36,10 +36,10 @@ or
 
 ```js
 import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
-import BitcoinNetworks from '@liquality/bitcoin-network'
+import BitcoinNetworks from '@liquality/bitcoin-networks'
 import { generateMnemonic } from 'bip39'
 
-const jsWallet = new BitcoinJsWalletProvider(bitcoinNetworks[config.bitcoin.network], config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, generateMnemonic(256), 'bech32')
+const jsWallet = new BitcoinJsWalletProvider(bitcoinNetworks[config.bitcoin.network], generateMnemonic(256), 'bech32')
 
 await jsWallet.getAddresses(0, 1)
 ```

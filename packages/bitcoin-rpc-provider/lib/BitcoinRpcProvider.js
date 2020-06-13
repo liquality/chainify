@@ -52,6 +52,14 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return amountReceived > 0
   }
 
+  async signMessage (address, message) {
+    return this.jsonrpc('signmessage', address, message)
+  }
+
+  async verifyMessage (address, signature, message) {
+    return this.jsonrpc('verifymessage', address, signature, message)
+  }
+
   async getBalance (addresses) {
     if (!isArray(addresses)) {
       addresses = [ addresses ]
