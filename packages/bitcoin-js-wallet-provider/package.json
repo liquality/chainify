@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-js-wallet-provider",
   "umdName": "BitcoinJsWalletProvider",
   "umdExport": "default",
-  "version": "0.4.31",
+  "version": "0.4.34",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-utils": "^0.4.31",
-    "@liquality/jsonrpc-provider": "^0.4.31",
-    "@liquality/bitcoin-wallet-provider": "^0.4.31",
-    "@liquality/wallet-provider": "^0.4.31",
-    "@liquality/utils": "^0.4.31",
+    "@liquality/bitcoin-utils": "^0.4.34",
+    "@liquality/bitcoin-wallet-provider": "^0.4.34",
+    "@liquality/jsonrpc-provider": "^0.4.34",
+    "@liquality/wallet-provider": "^0.4.34",
+    "@liquality/utils": "^0.4.34",
     "bignumber.js": "^9.0.0",
     "bip32": "^1.0.2",
     "bip39": "^3.0.2",
@@ -44,6 +44,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "1855d9ec369c8c577f74eb04e310a7c00b9eaa6c"
+  }
 }
