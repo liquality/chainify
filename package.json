@@ -110,6 +110,6 @@
   "pre-commit": [
     "lint",
     "build",
-    "test"
+    "test:unit"
   ]
 }
