@@ -12,7 +12,9 @@
   "scripts": {
     "build:node": "webpack --config ../../webpack/webpack.node.config.js",
     "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
-    "build": "webpack --config ../../webpack/webpack.config.js"
+    "build": "webpack --config ../../webpack/webpack.config.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
@@ -22,7 +24,8 @@
     "@liquality/schema": "^0.4.34",
     "@liquality/utils": "^0.4.34",
     "eip55": "^1.0.3",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "snyk": "^1.341.1"
   },
   "engines": {
     "node": "~8.12.0"
@@ -37,5 +40,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "snyk": true
 }
