@@ -1,0 +1,316 @@
+import { AddressTypes, selectCoins } from '@liquality/bitcoin-utils'
+import * as bitcoin from 'bitcoinjs-lib'
+import { Address, addressToString } from '@liquality/utils'
+import { BigNumber } from 'bignumber.js'
+
+const ADDRESS_GAP = 20
+const NONCHANGE_ADDRESS = 0
+const CHANGE_ADDRESS = 1
+const NONCHANGE_OR_CHANGE_ADDRESS = 2
+
+const ADDRESS_TYPE_TO_PREFIX = {
+  'legacy': 44,
+  'p2sh-segwit': 49,
+  'bech32': 84
+}
+
+export default superclass => class BitcoinWalletProvider extends superclass {
+  constructor (network, addressType = 'bech32', superArgs = []) {
+    if (!AddressTypes.includes(addressType)) {
+      throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
+    }
+
+    const baseDerivationPath = `${ADDRESS_TYPE_TO_PREFIX[addressType]}'/${network.coinType}'/0'`
+
+    super(...superArgs)
+
+    this._baseDerivationPath = baseDerivationPath
+    this._network = network
+    this._addressType = addressType
+  }
+
+  async buildTransaction (to, value, data, feePerByte) {
+    return this._buildTransaction([{ to, value, feePerByte }])
+  }
+
+  async buildBatchTransaction (transactions) {
+    return this._buildTransaction(transactions)
+  }
+
+  async _sendTransaction (transactions, feePerByte) {
+    const signedTransaction = await this._buildTransaction(transactions, feePerByte)
+    return this.getMethod('sendRawTransaction')(signedTransaction)
+  }
+
+  async sendTransaction (to, value, data, feePerByte) {
+    return this._sendTransaction([{ to, value }], feePerByte)
+  }
+
+  async sendBatchTransaction (transactions) {
+    return this._sendTransaction(transactions)
+  }
+
+  async updateTransactionFee (txHash, newFeePerByte) {
+    const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
+    const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
+    const changeAddresses = (await this.getAddresses(0, 1000, true)).map(a => a.address)
+    const nonChangeOutputs = transaction.vout.filter(vout => !changeAddresses.includes(vout.scriptPubKey.addresses[0]))
+    // TODO more checks?
+    const transactions = nonChangeOutputs.map(output =>
+      ({ to: output.scriptPubKey.addresses[0], value: BigNumber(output.value).times(1e8).toNumber() })
+    )
+    const signedTransaction = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
+
+    return this.getMethod('sendRawTransaction')(signedTransaction)
+  }
+
+  async getWalletAddress (address) {
+    let index = 0
+    let change = false
+
+    // A maximum number of addresses to lookup after which it is deemed
+    // that the wallet does not contain this address
+    const maxAddresses = 1000
+    const addressesPerCall = 50
+
+    while (index < maxAddresses) {
+      const addrs = await this.getAddresses(index, addressesPerCall, change)
+      const addr = addrs.find(addr => addr.equals(address))
+      if (addr) return addr
+
+      index += addressesPerCall
+      if (index === maxAddresses && change === false) {
+        index = 0
+        change = true
+      }
+    }
+
+    throw new Error('Wallet does not contain address')
+  }
+
+  getAddressFromPublicKey (publicKey) {
+    return this.getPaymentVariantFromPublicKey(publicKey).address
+  }
+
+  getPaymentVariantFromPublicKey (publicKey) {
+    if (this._addressType === 'legacy') {
+      return bitcoin.payments.p2pkh({ pubkey: publicKey, network: this._network })
+    } else if (this._addressType === 'p2sh-segwit') {
+      return bitcoin.payments.p2sh({
+        redeem: bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._network }),
+        network: this._network })
+    } else if (this._addressType === 'bech32') {
+      return bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._network })
+    }
+  }
+
+  async importAddresses () {
+    const change = await this.getAddresses(0, 200, true)
+    const nonChange = await this.getAddresses(0, 200, false)
+    const all = [...nonChange, ...change].map(addressToString)
+    await this.getMethod('importAddresses')(all)
+  }
+
+  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    if (numAddresses < 1) { throw new Error('You must return at least one address') }
+
+    const baseDerivationNode = await this.baseDerivationNode()
+
+    const addresses = []
+    const lastIndex = startingIndex + numAddresses
+    const changeVal = change ? '1' : '0'
+
+    for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
+      const subPath = changeVal + '/' + currentIndex
+      const publicKey = baseDerivationNode.derivePath(subPath).publicKey
+      const path = this._baseDerivationPath + '/' + subPath
+      const address = this.getAddressFromPublicKey(publicKey)
+
+      addresses.push(new Address({
+        address,
+        publicKey,
+        derivationPath: path,
+        index: currentIndex
+      }))
+    }
+
+    return addresses
+  }
+
+  async _getUsedUnusedAddresses (numAddressPerCall = 100, addressType) {
+    const usedAddresses = []
+    const addressCountMap = { change: 0, nonChange: 0 }
+    const unusedAddressMap = { change: null, nonChange: null }
+
+    let addrList
+    let addressIndex = 0
+    let changeAddresses = []
+    let nonChangeAddresses = []
+
+    /* eslint-disable no-unmodified-loop-condition */
+    while (
+      (addressType === NONCHANGE_OR_CHANGE_ADDRESS && (
+        addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP)
+      ) ||
+      (addressType === NONCHANGE_ADDRESS && addressCountMap.nonChange < ADDRESS_GAP) ||
+      (addressType === CHANGE_ADDRESS && addressCountMap.change < ADDRESS_GAP)
+    ) {
+      /* eslint-enable no-unmodified-loop-condition */
+      addrList = []
+
+      if ((addressType === NONCHANGE_OR_CHANGE_ADDRESS || addressType === CHANGE_ADDRESS) &&
+           addressCountMap.change < ADDRESS_GAP) {
+        // Scanning for change addr
+        changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
+        addrList = addrList.concat(changeAddresses)
+      } else {
+        changeAddresses = []
+      }
+
+      if ((addressType === NONCHANGE_OR_CHANGE_ADDRESS || addressType === NONCHANGE_ADDRESS) &&
+           addressCountMap.nonChange < ADDRESS_GAP) {
+        // Scanning for non change addr
+        nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
+        addrList = addrList.concat(nonChangeAddresses)
+      }
+
+      const transactionCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
+
+      for (let address of addrList) {
+        const isUsed = transactionCounts[address] > 0
+        const isChangeAddress = changeAddresses.find(a => address.equals(a))
+        const key = isChangeAddress ? 'change' : 'nonChange'
+
+        if (isUsed) {
+          usedAddresses.push(address)
+          addressCountMap[key] = 0
+          unusedAddressMap[key] = null
+        } else {
+          addressCountMap[key]++
+
+          if (!unusedAddressMap[key]) {
+            unusedAddressMap[key] = address
+          }
+        }
+      }
+
+      addressIndex += numAddressPerCall
+    }
+
+    let firstUnusedAddress
+    const indexNonChange = unusedAddressMap.nonChange ? unusedAddressMap.nonChange.index : Infinity
+    const indexChange = unusedAddressMap.change ? unusedAddressMap.change.index : Infinity
+
+    if (indexNonChange <= indexChange) firstUnusedAddress = unusedAddressMap.nonChange
+    else firstUnusedAddress = unusedAddressMap.change
+
+    return {
+      usedAddresses,
+      unusedAddress: unusedAddressMap,
+      firstUnusedAddress
+    }
+  }
+
+  async getUsedAddresses (numAddressPerCall = 100) {
+    return this._getUsedUnusedAddresses(numAddressPerCall, NONCHANGE_OR_CHANGE_ADDRESS)
+      .then(({ usedAddresses }) => usedAddresses)
+  }
+
+  async getUnusedAddress (change = false, numAddressPerCall = 100) {
+    const addressType = change ? CHANGE_ADDRESS : NONCHANGE_ADDRESS
+    const key = change ? 'change' : 'nonChange'
+    return this._getUsedUnusedAddresses(numAddressPerCall, addressType)
+      .then(({ unusedAddress }) => unusedAddress[key])
+  }
+
+  async getInputsForAmount (_targets, _feePerByte, fixedInputs = [], numAddressPerCall = 100) {
+    let addressIndex = 0
+    let changeAddresses = []
+    let nonChangeAddresses = []
+    let addressCountMap = {
+      change: 0,
+      nonChange: 0
+    }
+
+    const feePerBytePromise = this.getMethod('getFeePerByte')()
+    let feePerByte = _feePerByte || false
+
+    while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
+      let addrList = []
+
+      if (addressCountMap.change < ADDRESS_GAP) {
+        // Scanning for change addr
+        changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
+        addrList = addrList.concat(changeAddresses)
+      } else {
+        changeAddresses = []
+      }
+
+      if (addressCountMap.nonChange < ADDRESS_GAP) {
+        // Scanning for non change addr
+        nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
+        addrList = addrList.concat(nonChangeAddresses)
+      }
+
+      let utxos = await this.getMethod('getUnspentTransactions')(addrList)
+      utxos = utxos.map(utxo => {
+        const addr = addrList.find(a => a.equals(utxo.address))
+        return {
+          ...utxo,
+          value: BigNumber(utxo.amount).times(1e8).toNumber(),
+          derivationPath: addr.derivationPath
+        }
+      })
+
+      const transactionCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
+
+      if (feePerByte === false) feePerByte = await feePerBytePromise
+      const minRelayFee = await this.getMethod('getMinRelayFee')()
+
+      if (fixedInputs.length) {
+        for (const input of fixedInputs) {
+          const tx = await this.getMethod('getTransactionByHash')(input.txid)
+          input.value = BigNumber(tx._raw.vout[input.vout].value).times(1e8).toNumber()
+          input.address = tx._raw.vout[input.vout].scriptPubKey.addresses[0]
+          const walletAddress = await this.getWalletAddress(input.address)
+          input.derivationPath = walletAddress.derivationPath
+        }
+      }
+
+      const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+
+      // TODO: does minrelayfee need to consider RBF?
+      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), minRelayFee, fixedInputs)
+
+      if (inputs && outputs) {
+        let change = outputs.find(output => output.id !== 'main')
+
+        if (change && change.length) {
+          change = change[0].value
+        }
+
+        return {
+          inputs,
+          change,
+          fee
+        }
+      }
+
+      for (let address of addrList) {
+        const isUsed = transactionCounts[address.address]
+        const isChangeAddress = changeAddresses.find(a => address.equals(a))
+        const key = isChangeAddress ? 'change' : 'nonChange'
+
+        if (isUsed) {
+          addressCountMap[key] = 0
+        } else {
+          addressCountMap[key]++
+        }
+      }
+
+      addressIndex += numAddressPerCall
+    }
+
+    throw new Error('Not enough balance')
+  }
+}

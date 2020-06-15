@@ -5,10 +5,10 @@ const networks = providers.bitcoin.networks
 const chains = {}
 
 chains.bitcoin = new Client()
-chains.bitcoin.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider('http://localhost:18332', 'bitcoin', 'local321'))
+chains.bitcoin.addProvider(new providers.bitcoin.BitcoinBitcoreRpcProvider('http://localhost:18443', 'bitcoin', 'local321'))
 // chains.bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
 // chains.bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
-chains.bitcoin.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(networks.bitcoin_testnet, 'http://localhost:18332', 'bitcoin', 'local321'))
+chains.bitcoin.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(networks.bitcoin_testnet, 'http://localhost:18443', 'bitcoin', 'local321'))
 chains.bitcoin.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: networks.bitcoin_testnet }))
 async function doSwap () {
   chains.bitcoin.swap.generateSecret('test').then(secret => {

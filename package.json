@@ -32,6 +32,7 @@
     "nock": "^10.0.6",
     "node-kiba": "^1.0.2",
     "node-metamask": "^1.1.2",
+    "npm-run-all": "^4.1.5",
     "nyc": "^14.1.1",
     "pre-commit": "^1.2.2",
     "should": "^13.2.3",
@@ -57,12 +58,17 @@
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
     "lint": "standard $npm_package_options_standard",
     "bootstrap": "lerna bootstrap --force-local",
-    "test": "cross-env NODE_ENV=test nyc mocha packages/*/test/unit $npm_package_options_mocha",
-    "test:api": "cross-env NODE_ENV=test nyc mocha test/integration/api $npm_package_options_mocha",
-    "test:chain": "cross-env NODE_ENV=test nyc mocha test/integration/chain $npm_package_options_mocha",
-    "test:swap": "cross-env NODE_ENV=test nyc mocha test/integration/swap $npm_package_options_mocha",
-    "test:tx": "cross-env NODE_ENV=test nyc mocha test/integration/tx $npm_package_options_mocha",
-    "test:wallet": "cross-env NODE_ENV=test nyc mocha test/integration/wallet $npm_package_options_mocha",
+    "test": "run-s test:unit env:integration env:integration:bootup test:integration",
+    "test:unit": "cross-env NODE_ENV=test mocha packages/*/test/unit $npm_package_options_mocha",
+    "env:integration": "docker-compose -f test/integration/environment/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
+    "env:integration:bootup": "sleep 10",
+    "test:integration:api": "cross-env NODE_ENV=test mocha test/integration/api $npm_package_options_mocha",
+    "test:integration:chain": "cross-env NODE_ENV=test mocha test/integration/chain $npm_package_options_mocha",
+    "test:integration:swap": "cross-env NODE_ENV=test mocha test/integration/swap $npm_package_options_mocha",
+    "test:integration:tx": "cross-env NODE_ENV=test mocha test/integration/tx $npm_package_options_mocha",
+    "test:integration:wallet": "cross-env NODE_ENV=test mocha test/integration/wallet $npm_package_options_mocha",
+    "test:integration": "cross-env NODE_ENV=test mocha test/integration $npm_package_options_mocha",
+    "test:integration:external": "cross-env NODE_ENV=test RUN_EXTERNAL=true mocha test/integration $npm_package_options_mocha",
     "watch": "cross-env NODE_ENV=production WEBPACK_WATCH=true lerna run build --parallel",
     "build:dev:node": "lerna run build:node --stream",
     "build:dev:browser": "lerna run build:browser --stream",
@@ -104,6 +110,6 @@
   "pre-commit": [
     "lint",
     "build",
-    "test"
+    "test:unit"
   ]
 }

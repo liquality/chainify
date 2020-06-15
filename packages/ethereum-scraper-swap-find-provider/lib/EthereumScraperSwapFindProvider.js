@@ -19,8 +19,8 @@ export default class EthereumScraperSwapFindProvider extends Provider {
 
   normalizeTransactionResponse (tx) {
     const normalizedTx = normalizeTransactionObject(formatEthResponse(tx))
-    if (normalizedTx.contractAddress) {
-      normalizedTx.contractAddress = normalizedTx.contractAddress.toLowerCase()
+    if (normalizedTx._raw.contractAddress) {
+      normalizedTx._raw.contractAddress = normalizedTx._raw.contractAddress.toLowerCase()
     }
     return normalizedTx
   }
@@ -56,29 +56,29 @@ export default class EthereumScraperSwapFindProvider extends Provider {
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
-    const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress,
-      tx => this.getMethod('doesTransactionMatchClaim', false)(tx, initiationTransaction))
+    const transaction = await this.findAddressTransaction(initiationTransactionReceipt.contractAddress,
+      tx => this.getMethod('doesTransactionMatchClaim', false)(tx, initiationTransactionReceipt))
     if (!transaction) return
 
-    if (transaction.status === true) {
+    if (transaction._raw.status === true) {
       transaction.secret = await this.getMethod('getSwapSecret')(transaction.hash)
       return transaction
     }
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
     const transaction = await this.findAddressTransaction(
-      initiationTransaction.contractAddress,
+      initiationTransactionReceipt.contractAddress,
       (tx) => (
-        tx.to === initiationTransaction.contractAddress &&
-        tx.input === '' &&
-        tx.timestamp >= expiration
+        tx._raw.to === initiationTransactionReceipt.contractAddress &&
+        tx._raw.input === '' &&
+        tx._raw.timestamp >= expiration
       )
     )
 

@@ -134,13 +134,18 @@ export default class BitcoinEsploraApiProvider extends Provider {
 
     const confirmations = tx.status.confirmed ? currentHeight - tx.status.block_height + 1 : 0
 
+    const totalFee = tx.fee
+    const fee = Math.round(totalFee / Math.ceil(tx.weight / 4))
+
     return {
       hash: tx.txid,
       value: value.toNumber(),
       _raw: rawTx,
       blockHash: tx.status.block_hash,
       blockNumber: tx.status.block_height,
-      confirmations
+      confirmations,
+      fee,
+      totalFee
     }
   }
 

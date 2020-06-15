@@ -89,11 +89,12 @@ export default class Swap {
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<string, TypeError>} Resolves with the transaction ID for the swap.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.client.getMethod('initiateSwap')(value, recipientAddress, refundAddress, secretHash, expiration)
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, fee) {
+    return this.client.getMethod('initiateSwap')(value, recipientAddress, refundAddress, secretHash, expiration, fee)
   }
 
   /**
@@ -151,10 +152,11 @@ export default class Swap {
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secret - 32 byte secret for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<string, TypeError>} Resolves with redeem swap contract bytecode.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
@@ -163,7 +165,7 @@ export default class Swap {
       throw new TypeError('Secret should be a 32 byte hex string')
     }
 
-    return this.client.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
+    return this.client.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee)
   }
 
   /**
@@ -173,15 +175,16 @@ export default class Swap {
    * @param {!string} refundAddress - Refund address for the swap in hex.
    * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, fee) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    return this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
+    return this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, fee)
   }
 
   get doesBlockScan () {

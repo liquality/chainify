@@ -3,6 +3,7 @@ import { findKey } from 'lodash'
 import { base58, padHexStart } from '@liquality/crypto'
 import networks from '@liquality/bitcoin-networks'
 import coinselect from 'coinselect'
+import coinselectAccumulative from 'coinselect/accumulative'
 import { version } from '../package.json'
 
 function calculateFee (numInputs, numOutputs, feePerByte) {
@@ -45,11 +46,23 @@ function getAddressNetwork (address) {
   return networks[networkKey]
 }
 
-function selectCoins (utxos, targets, feeRate, minRelayFee) {
+function selectCoins (utxos, targets, feeRate, minRelayFee, fixedInputs = []) {
+  let selectUtxos = utxos
   let inputs, outputs
   let fee = 0
+
+  // Default coinselect won't accumulate some inputs
+  // TODO: does coinselect need to be modified to ABSOLUTELY not skip an input?
+  const coinselectStrat = fixedInputs.length ? coinselectAccumulative : coinselect
+  if (fixedInputs.length) {
+    selectUtxos = [ // Order fixed inputs to the start of the list so they are used
+      ...fixedInputs,
+      ...utxos.filter(utxo => !fixedInputs.find(input => input.vout === utxo.vout && input.txid === utxo.txid))
+    ]
+  }
+
   for (let feePerByte = feeRate; fee < minRelayFee; feePerByte++) {
-    ({ inputs, outputs, fee } = coinselect(utxos, targets, Math.ceil(feePerByte)))
+    ({ inputs, outputs, fee } = coinselectStrat(selectUtxos, targets, Math.ceil(feePerByte)))
   }
   return { inputs, outputs, fee }
 }

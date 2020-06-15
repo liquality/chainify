@@ -1,6 +1,6 @@
 import { isArray } from 'lodash'
 
-import { InvalidProviderResponseError } from '@liquality/errors'
+import { InvalidProviderResponseError, UnimplementedMethodError } from '@liquality/errors'
 
 export default class Wallet {
   constructor (client) {
@@ -53,11 +53,32 @@ export default class Wallet {
     return this.client.getMethod('signMessage')(message, from)
   }
 
+  /**
+   * Retrieve the availability status of the wallet
+   * @return {Promise<Boolean>} True if the wallet is available to use
+   */
   async isWalletAvailable () {
     return this.client.getMethod('isWalletAvailable')()
   }
 
+  /**
+   * Retrieve the network id of the connected network
+   * @return {Promise<Number>} The network id of the connected network
+   */
   async getWalletNetworkId () {
     return this.client.getMethod('getWalletNetworkId')()
+  }
+
+  /**
+   * Flag indicating if the wallet allows apps to update transaction fees
+   * @return {Promise<Boolean>} True if wallet accepts fee updating
+   */
+  get canUpdateFee () {
+    try {
+      return this.client.getMethod('canUpdateFee')()
+    } catch (e) {
+      if (!(e instanceof UnimplementedMethodError)) throw e
+    }
+    return true
   }
 }

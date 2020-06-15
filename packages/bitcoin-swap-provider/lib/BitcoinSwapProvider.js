@@ -11,9 +11,9 @@ import networks from '@liquality/bitcoin-networks'
 import { version } from '../package.json'
 
 export default class BitcoinSwapProvider extends Provider {
-  constructor (chain = { network: networks.bitcoin }, mode = 'p2wsh') {
+  constructor (network = networks.bitcoin, mode = 'p2wsh') {
     super()
-    this._network = chain.network
+    this._network = network
     if (!['p2wsh', 'p2shSegwit', 'p2sh'].includes(mode)) {
       throw new Error('Mode must be one of p2wsh, p2shSegwit, p2sh')
     }
@@ -94,22 +94,22 @@ export default class BitcoinSwapProvider extends Provider {
     return { p2wsh, p2shSegwit, p2sh }
   }
 
-  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
     const address = this.getSwapPaymentVariants(swapOutput)[this._mode].address
-    return this.getMethod('sendTransaction')(address, value)
+    return this.getMethod('sendTransaction')(address, value, undefined, feePerByte)
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, feePerByte) {
     const secretHash = bitcoin.crypto.sha256(Buffer.from(secret, 'hex')).toString('hex')
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash)
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, false, undefined, secretHash)
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, false, undefined, secretHash, feePerByte)
   }
 
-  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isRedeem, secret, secretHash) {
+  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isRedeem, secret, secretHash, _feePerByte) {
     const network = this._network
     const address = isRedeem ? recipientAddress : refundAddress
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
@@ -131,9 +131,10 @@ export default class BitcoinSwapProvider extends Provider {
       }
     }
 
+    const feePerByte = _feePerByte || await this.getMethod('getFeePerByte')()
+
     // TODO: Implement proper fee calculation that counts bytes in inputs and outputs
-    // TODO: use node's feePerByte
-    const txfee = calculateFee(1, 1, 3)
+    const txfee = calculateFee(1, 1, feePerByte)
 
     swapVout.txid = initiationTxHash
     swapVout.vSat = BigNumber(swapVout.value).times(1e8).toNumber()
@@ -185,6 +186,57 @@ export default class BitcoinSwapProvider extends Provider {
     }
 
     return this.getMethod('sendRawTransaction')(tx.toHex())
+  }
+
+  async updateTransactionFee (txHash, newFeePerByte) {
+    const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
+    if (transaction.vin.length === 1 && transaction.vout.length === 1) {
+      const inputTx = (await this.getMethod('getTransactionByHash')(transaction.vin[0].txid))._raw
+      const vout = inputTx.vout[transaction.vin[0].vout]
+      const voutType = vout.scriptPubKey.type
+      if (['scripthash', 'witness_v0_scripthash'].includes(voutType)) {
+        const segwit = voutType === 'witness_v0_scripthash'
+        const inputTxHex = inputTx.hex
+        const tx = bitcoin.Transaction.fromHex(transaction.hex)
+
+        const address = transaction.vout[0].scriptPubKey.addresses[0]
+        const prevout = inputTx.vout[transaction.vin[0].vout]
+        prevout.vSat = BigNumber(prevout.value).times(1e8).toNumber()
+
+        const txfee = calculateFee(1, 1, newFeePerByte)
+
+        if (prevout.vSat - txfee < 0) {
+          throw new Error('Transaction amount does not cover fee.')
+        }
+
+        tx.outs[0].value = BigNumber(prevout.vSat).minus(BigNumber(txfee)).toNumber()
+
+        let outputScript
+        if (segwit) {
+          const witness = transaction.vin[0].txinwitness
+          outputScript = Buffer.from(witness[witness.length - 1], 'hex')
+        } else {
+          const scriptSig = transaction.vin[0].scriptSig.hex
+          const script = bitcoin.script.decompile(Buffer.from(scriptSig, 'hex'))
+          outputScript = script[script.length - 1]
+        }
+        const lockTime = transaction.lockTime
+
+        const sig = await this.getMethod('signP2SHTransaction')(inputTxHex, tx, address, prevout, outputScript, lockTime, segwit)
+        if (segwit) {
+          const witness = [sig, ...tx.ins[0].witness.slice(1)]
+          tx.setWitness(0, witness)
+        } else {
+          const scriptSig = transaction.vin[0].scriptSig.hex
+          const script = bitcoin.script.decompile(Buffer.from(scriptSig, 'hex'))
+          const inputScript = bitcoin.script.compile([sig, ...script.slice(1)])
+          tx.setInputScript(0, inputScript)
+        }
+        return this.getMethod('sendRawTransaction')(tx.toHex())
+      }
+    }
+
+    return this.getMethod('updateTransactionFee')(txHash, newFeePerByte)
   }
 
   getInputScriptFromTransaction (tx) {

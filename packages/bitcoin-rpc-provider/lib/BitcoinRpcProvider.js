@@ -40,10 +40,34 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return relayfee * 1e8
   }
 
-  async sendTransaction (to, value) {
+  async withTxFee (func, feePerByte) {
+    const feePerKB = BigNumber(feePerByte).div(1e8).times(1000).toNumber()
+    const originalTxFee = (await this.jsonrpc('getwalletinfo')).paytxfee
+    await this.jsonrpc('settxfee', feePerKB)
+
+    const result = await func()
+
+    await this.jsonrpc('settxfee', originalTxFee)
+
+    return result
+  }
+
+  async sendTransaction (to, value, data, feePerByte) {
     to = addressToString(to)
     value = BigNumber(value).dividedBy(1e8).toNumber()
-    return this.jsonrpc('sendtoaddress', to, value)
+
+    const send = async () => {
+      return this.jsonrpc('sendtoaddress', to, value, '', '', false, true)
+    }
+
+    return feePerByte ? this.withTxFee(send, feePerByte) : send()
+  }
+
+  async updateTransactionFee (txHash, newFeePerByte) {
+    return this.withTxFee(async () => {
+      const result = await this.jsonrpc('bumpfee', txHash)
+      return result.txid
+    }, newFeePerByte)
   }
 
   async isAddressUsed (address) {
@@ -73,9 +97,9 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   async getAddressTransactionCounts (addresses) {
     const receivedAddresses = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
     const transactionCountsArray = addresses.map(addr => {
-      const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addr)
+      const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addressToString(addr))
       const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
-      return { [addr]: transactionCount }
+      return { [addressToString(addr)]: transactionCount }
     })
     const transactionCounts = Object.assign({}, ...transactionCountsArray)
     return transactionCounts
@@ -105,7 +129,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     const {
       hash,
       height: number,
-      time: timestamp,
+      mediantime: timestamp,
       difficulty,
       size,
       previousblockhash: parentHash,
@@ -141,10 +165,29 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionByHash (transactionHash) {
-    return this.getRawTransactionByHash(transactionHash, true)
+    return this.getRawTransactionByHash(transactionHash, true, true)
   }
 
-  async getRawTransactionByHash (transactionHash, decode = false) {
+  async getTransactionFee (tx) {
+    const isCoinbaseTx = tx._raw.vin.find(vin => vin.coinbase)
+    if (isCoinbaseTx) return // Coinbase transactions do not have a fee
+
+    const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
+    const inputTransactions = await Promise.all(
+      inputs.map(input => this.getRawTransactionByHash(input.txid, true))
+    )
+    const inputValues = inputTransactions.map((inputTx, index) => {
+      const vout = inputs[index].vout
+      const output = inputTx._raw.vout[vout]
+      return output.value * 1e8
+    })
+    const inputValue = inputValues.reduce((a, b) => a.plus(BigNumber(b)), BigNumber(0))
+    const outputValue = tx._raw.vout.reduce((a, b) => a.plus(BigNumber(b.value).times(BigNumber(1e8))), BigNumber(0))
+    const feeValue = inputValue.minus(outputValue)
+    return feeValue.toNumber()
+  }
+
+  async getRawTransactionByHash (transactionHash, decode = false, addFees = false) {
     const tx = await this.jsonrpc('getrawtransaction', transactionHash, decode ? 1 : 0)
     if (!decode) return tx
     const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value).times(1e8)), BigNumber(0))
@@ -162,6 +205,17 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
         blockNumber: block.number,
         confirmations: tx.confirmations
       })
+    }
+
+    if (addFees) {
+      const totalFee = await this.getTransactionFee(result)
+      if (totalFee) {
+        const fee = Math.round(totalFee / tx.vsize)
+        Object.assign(result, {
+          fee,
+          totalFee
+        })
+      }
     }
 
     return result

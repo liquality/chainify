@@ -28,7 +28,7 @@ export default class EthereumErc20Provider extends Provider {
   generateErc20Transfer (to, value) {
     value = BigNumber(value).toString(16)
 
-    const encodedAddress = padHexStart(remove0x(to), 64)
+    const encodedAddress = padHexStart(remove0x(addressToString(to)), 64)
     const encodedValue = padHexStart(value, 64)
 
     return [
@@ -38,7 +38,7 @@ export default class EthereumErc20Provider extends Provider {
     ].join('').toLowerCase()
   }
 
-  async sendTransaction (to, value, data, from) {
+  async sendTransaction (to, value, data, gasPrice) {
     await this.assertContractExists()
 
     if (!data) {
@@ -48,7 +48,7 @@ export default class EthereumErc20Provider extends Provider {
       to = ensure0x(this._contractAddress)
     }
 
-    return this.getMethod('sendTransaction')(to, value, data, from)
+    return this.getMethod('sendTransaction')(to, value, data, gasPrice)
   }
 
   getContractAddress () {

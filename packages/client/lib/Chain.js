@@ -1,4 +1,4 @@
-import { find, isArray, isBoolean, isNumber, isString } from 'lodash'
+import { isArray, isBoolean, isNumber, isString } from 'lodash'
 import Ajv from 'ajv'
 import { BigNumber } from 'bignumber.js'
 
@@ -19,29 +19,14 @@ export default class Chain {
   /**
    * Generate a block
    * @param {!number} numberOfBlocks - Number of blocks to be generated
-   * @return {Promise<string[], TypeError|InvalidProviderResponseError>} Resolves
-   *  with Block hash of the generated blocks.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   * @return {<Promise>}
    */
   async generateBlock (numberOfBlocks) {
     if (!isNumber(numberOfBlocks)) {
       throw new TypeError('First argument should be a number')
     }
 
-    const blockHashes = await this.client.getMethod('generateBlock')(numberOfBlocks)
-
-    if (!isArray(blockHashes)) {
-      throw new InvalidProviderResponseError('Response should be an array')
-    }
-
-    const invalidBlock = find(blockHashes, blockHash => !(/^[A-Fa-f0-9]+$/.test(blockHash)))
-
-    if (invalidBlock) {
-      throw new InvalidProviderResponseError('Invalid block(s) found in provider\'s reponse')
-    }
-
-    return blockHashes
+    return this.client.getMethod('generateBlock')(numberOfBlocks)
   }
 
   /**
@@ -215,11 +200,29 @@ export default class Chain {
    * @param {!string} to - Recepient address.
    * @param {!string} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
-   * @param {!string} from - The address from which the message is signed.
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<string>} Resolves with a signed transaction.
    */
-  async sendTransaction (to, value, data, from) {
-    return this.client.getMethod('sendTransaction')(to, value, data, from)
+  async sendTransaction (to, value, data, fee) {
+    return this.client.getMethod('sendTransaction')(to, value, data, fee)
+  }
+
+  /**
+   * Update the fee of a transaction.
+   * @param {!string} txHash - Hash of the transaction to update
+   * @param {!string} fee - New fee price in native unit (e.g. sat/b, wei)
+   * @return {Promise<string>} Resolves with the new transaction hash
+   */
+  async updateTransactionFee (txHash, newFee) { // TODO: txHash or Tx Object
+    if (!isString(txHash)) {
+      throw new TypeError('Transaction hash should be a string')
+    }
+
+    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
+      throw new TypeError('Transaction hash should be a valid hex string')
+    }
+
+    return this.client.getMethod('updateTransactionFee')(txHash, newFee)
   }
 
   /**
@@ -259,5 +262,9 @@ export default class Chain {
 
   async getTransactionReceipt (txHash) {
     return this.client.getMethod('getTransactionReceipt')(txHash)
+  }
+
+  async getFees () {
+    return this.client.getMethod('getFees')()
   }
 }

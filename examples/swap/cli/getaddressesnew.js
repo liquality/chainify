@@ -4,7 +4,7 @@ const { Client, providers } = require('../../../packages/bundle')
 const { BitcoinLedgerProvider, BitcoreRpcProvider, networks } = providers.bitcoin
 
 const bitcoin = new Client()
-bitcoin.addProvider(new BitcoreRpcProvider('http://localhost:18332', 'bitcoin', 'local321'))
+bitcoin.addProvider(new BitcoreRpcProvider('http://localhost:18443', 'bitcoin', 'local321'))
 bitcoin.addProvider(new BitcoinLedgerProvider({ network: networks.bitcoin_testnet, segwit: false }))
 
 ;(async () => {

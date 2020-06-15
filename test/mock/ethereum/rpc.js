@@ -18,6 +18,12 @@ module.exports = {
       ]
     }
   ],
+  'eth_gasPrice': [
+    {
+      params: [],
+      result: '0x2540be400'
+    }
+  ],
   'eth_sendTransaction': [
     {
       params: [{

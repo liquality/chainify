@@ -32,9 +32,9 @@ export default class EthereumErc20SwapProvider extends Provider {
     return bytecode
   }
 
-  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration) {
+  async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    const txHash = await this.getMethod('sendTransaction')(null, 0, bytecode)
+    const txHash = await this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
     let initiationTransactionReceipt = null
 
     while (initiationTransactionReceipt === null) {
@@ -42,32 +42,32 @@ export default class EthereumErc20SwapProvider extends Provider {
       await sleep(5000)
     }
 
-    await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value)
+    await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value, undefined, gasPrice)
     return txHash
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, gasPrice) {
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransaction) throw new Error('Transaction receipt is not available')
 
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_CLAIM_FUNCTION + secret)
+    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_CLAIM_FUNCTION + secret, gasPrice)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
-    return this.getMethod('sendTransaction')(initiationTransaction.contractAddress, 0, SOL_REFUND_FUNCTION)
+    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, SOL_REFUND_FUNCTION, gasPrice)
   }
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    return transaction.input === data
+    return transaction._raw.input === data
   }
 
-  doesTransactionMatchClaim (transaction, initiationTransaction, recipientAddress, refundAddress, secretHash, expiration) {
-    return transaction.to === initiationTransaction.contractAddress &&
-      transaction.input.startsWith(remove0x(SOL_CLAIM_FUNCTION))
+  doesTransactionMatchClaim (transaction, initiationTransactionReceipt, recipientAddress, refundAddress, secretHash, expiration) {
+    return transaction._raw.to === initiationTransactionReceipt.contractAddress &&
+      transaction._raw.input.startsWith(remove0x(SOL_CLAIM_FUNCTION))
   }
 
   async doesBalanceMatchValue (contractAddress, value) {
@@ -112,14 +112,14 @@ export default class EthereumErc20SwapProvider extends Provider {
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
     if (!block) throw new Error('Block is not available')
 
     const transaction = block.transactions.find(
-      transaction => this.doesTransactionMatchClaim(transaction, initiationTransaction)
+      transaction => this.doesTransactionMatchClaim(transaction, initiationTransactionReceipt)
     )
     if (!transaction) return
 
@@ -134,19 +134,19 @@ export default class EthereumErc20SwapProvider extends Provider {
 
   async getSwapSecret (claimTxHash) {
     const claimTransaction = await this.getMethod('getTransactionByHash')(claimTxHash)
-    return claimTransaction.input.substring(8)
+    return claimTransaction._raw.input.substring(8)
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
     if (!block) throw new Error('Block is not available')
 
     const refundSwapTransaction = block.transactions.find(transaction =>
-      transaction.to === initiationTransaction.contractAddress &&
-      transaction.input === remove0x(SOL_REFUND_FUNCTION) && // eslint-disable-line
+      transaction._raw.to === initiationTransactionReceipt.contractAddress &&
+      transaction._raw.input === remove0x(SOL_REFUND_FUNCTION) && // eslint-disable-line
       block.timestamp >= expiration
     )
     return refundSwapTransaction

@@ -1,0 +1,38 @@
+version: '3'
+services:
+  bitcoin:
+    image: ruimarinho/bitcoin-core:0.18.1
+    ports:
+      - "18443:18443"
+    command:
+      -regtest=1
+      -txindex
+      -deprecatedrpc=generate
+      -rpcuser=bitcoin
+      -rpcpassword=local321
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -server
+  ethereum:
+    image: ethereum/client-go
+    ports:
+      - "8545:8545"
+    command:
+      --dev
+      --rpc
+      --rpcapi eth,net,web3,miner
+      --rpcport 8545
+      --rpccorsdomain "*"
+      --rpcaddr "0.0.0.0"
+      --allow-insecure-unlock
+    volumes:
+      - .:/root
+  bitcoin-miner:
+    build:
+      context: .
+      dockerfile: miner.Dockerfile
+    environment:
+      - TARGET_HOST=bitcoin
+      - TARGET_PORT=18443
+    depends_on:
+      - bitcoin

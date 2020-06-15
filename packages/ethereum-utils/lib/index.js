@@ -1,8 +1,13 @@
 import { Block, Transaction } from '@liquality/schema'
 import { padHexStart } from '@liquality/crypto'
+import { addressToString } from '@liquality/utils'
+import BigNumber from 'bignumber.js'
 import eip55 from 'eip55'
+import _ from 'lodash'
 
 import { version } from '../package.json'
+
+const GWEI = 1e9
 
 /**
  * Converts a hex string to the ethereum format
@@ -74,16 +79,38 @@ function formatEthResponse (obj) {
 }
 
 function normalizeTransactionObject (tx, currentHeight) {
-  if (tx) {
-    if (tx.blockNumber === null) {
-      delete tx.blockNumber
-    } else if (!isNaN(tx.blockNumber) && !('confirmations' in tx)) {
-      tx.confirmations = currentHeight - tx.blockNumber + 1
-    }
-    if (tx.blockHash === null) {
-      delete tx.blockHash
-    }
+  if (!tx) return
+
+  const normalizedTx = {
+    ..._.pick(tx, ['blockNumber', 'blockHash', 'hash', 'value', 'confirmations']),
+    _raw: tx
   }
+
+  if (normalizedTx.blockNumber === null) {
+    delete normalizedTx.blockNumber
+  } else if (!isNaN(normalizedTx.blockNumber) && !('confirmations' in normalizedTx)) {
+    normalizedTx.confirmations = currentHeight - normalizedTx.blockNumber + 1
+  }
+  if (normalizedTx.blockHash === null) {
+    delete normalizedTx.blockHash
+  }
+
+  normalizedTx.totalFee = BigNumber(parseInt(tx.gas, 16)).times(BigNumber(parseInt(tx.gasPrice, 16))).toNumber()
+  normalizedTx.fee = parseInt(tx.gasPrice, 16)
+
+  return normalizedTx
+}
+
+function buildTransaction (from, to, value, data, gasPrice, nonce) {
+  const tx = {
+    from: ensure0x(addressToString(from)),
+    value: ensure0x(BigNumber(value).toString(16))
+  }
+
+  if (gasPrice) tx.gasPrice = ensure0x(BigNumber(gasPrice).times(GWEI).toString(16))
+  if (to) tx.to = ensure0x(addressToString(to))
+  if (data) tx.data = ensure0x(data)
+  if (nonce !== null && nonce !== undefined) tx.nonce = ensure0x(nonce.toString(16))
 
   return tx
 }
@@ -96,5 +123,6 @@ export {
   formatEthResponse,
   normalizeTransactionObject,
   ensureBlockFormat,
+  buildTransaction,
   version
 }

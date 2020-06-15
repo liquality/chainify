@@ -6,7 +6,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 import { hash160 } from '../../../packages/crypto/lib'
 import { calculateFee } from '../../../packages/bitcoin-utils/lib'
 import { addressToString } from '../../../packages/utils/lib'
-import { chains, connectKiba, sleep } from '../common'
+import { chains, connectKiba, sleep, describeExternal } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -361,10 +361,10 @@ function testWallet (chain) {
   })
 }
 
-describe('Wallet Interaction', function () {
+describe.skip('Wallet Interaction', function () {
   this.timeout(config.timeout)
 
-  describe('Bitcoin - Kiba', () => {
+  describeExternal('Bitcoin - Kiba', () => {
     connectKiba()
 
     testWallet(chains.bitcoinWithKiba)

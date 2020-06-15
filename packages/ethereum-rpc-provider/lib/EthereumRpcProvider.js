@@ -6,9 +6,10 @@ import {
   formatEthResponse,
   ensure0x,
   normalizeTransactionObject,
-  remove0x
+  remove0x,
+  buildTransaction
 } from '@liquality/ethereum-utils'
-import { addressToString, Address } from '@liquality/utils'
+import { addressToString, Address, sleep } from '@liquality/utils'
 import { padHexStart } from '@liquality/crypto'
 
 import { version } from '../package.json'
@@ -44,27 +45,28 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     return addresses.length > 0
   }
 
-  async sendTransaction (to, value, data, from) {
-    if (!from) {
-      const addresses = await this.getAddresses()
-      from = addresses[0]
-    }
+  async sendTransaction (to, value, data, gasPrice) {
+    const addresses = await this.getAddresses()
+    const from = addressToString(addresses[0])
 
-    const tx = {
-      from: ensure0x(addressToString(from)),
-      to: to ? ensure0x(addressToString(from)) : null,
-      value: ensure0x(BigNumber(value).toString(16))
-    }
-
-    if (to) tx.to = ensure0x(addressToString(to))
-    if (data) {
-      tx.data = ensure0x(data)
-      tx.gas = ensure0x((await this.estimateGas(tx)).toString(16))
-    }
+    const tx = await buildTransaction(from, to, value, data, gasPrice)
 
     const txHash = await this.jsonrpc('eth_sendTransaction', tx)
 
     return remove0x(txHash)
+  }
+
+  async updateTransactionFee (txHash, newGasPrice) {
+    const transaction = await this.getMethod('getTransactionByHash')(txHash)
+
+    const tx = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
+
+    const gas = await this.getMethod('estimateGas')(tx)
+    tx.gas = ensure0x((gas + 20000).toString(16))
+
+    const newTxHash = await this.jsonrpc('eth_sendTransaction', tx)
+
+    return remove0x(newTxHash)
   }
 
   async sendRawTransaction (hash) {
@@ -121,7 +123,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
   async getGasPrice () {
     const gasPrice = await this.jsonrpc('eth_gasPrice')
-    return parseInt(gasPrice, '16')
+    return BigNumber(parseInt(gasPrice, '16')).div(1e9).toNumber() // Gwei
   }
 
   async getBalance (addresses) {
@@ -162,6 +164,23 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     block = typeof (block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
     const code = await this.jsonrpc('eth_getCode', address, block)
     return remove0x(code)
+  }
+
+  async stopMiner () {
+    await this.jsonrpc('miner_stop')
+  }
+
+  async startMiner () {
+    await this.jsonrpc('miner_start')
+  }
+
+  async generateBlock (numberOfBlocks) {
+    if (numberOfBlocks && numberOfBlocks > 1) {
+      throw new Error('Ethereum generation limited to 1 block at a time.')
+    }
+    await this.startMiner()
+    await sleep(500) // Give node a chance to mine
+    await this.stopMiner()
   }
 }
 

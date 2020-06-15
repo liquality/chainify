@@ -56,27 +56,27 @@ export default class EthereumBlockscoutSwapFindProvider extends Provider {
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
-    const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress,
-      tx => tx.to === initiationTransaction.contractAddress && tx.input.length === 64)
+    const transaction = await this.findAddressTransaction(initiationTransactionReceipt.contractAddress,
+      tx => tx._raw.to === initiationTransactionReceipt.contractAddress && tx._raw.input.length === 64)
     if (!transaction) return
 
-    if (transaction.status === '1') {
+    if (transaction._raw.status === '1') {
       transaction.secret = await this.getMethod('getSwapSecret')(transaction.hash)
       return transaction
     }
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
-    const transaction = await this.findAddressTransaction(initiationTransaction.contractAddress, (tx) =>
-      tx.to === initiationTransaction.contractAddress &&
-      tx.input === '' &&
-      tx.timeStamp >= expiration)
+    const transaction = await this.findAddressTransaction(initiationTransactionReceipt.contractAddress, (tx) =>
+      tx._raw.to === initiationTransactionReceipt.contractAddress &&
+      tx._raw.input === '' &&
+      tx._raw.timeStamp >= expiration)
 
     return transaction
   }

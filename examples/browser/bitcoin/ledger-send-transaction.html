@@ -30,7 +30,7 @@
 const { Client, providers } = Bundle
 const networks = providers.bitcoin.networks
 const bitcoin = new Client()
-bitcoin.addProvider(new providers.bitcoin.BitcoinRpcProvider('https://localhost:18332', 'bitcoin', 'local321'))
+bitcoin.addProvider(new providers.bitcoin.BitcoinRpcProvider('https://localhost:18443', 'bitcoin', 'local321'))
 bitcoin.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: networks.bitcoin_testnet }))
 
 let addresses, balance, newAddress

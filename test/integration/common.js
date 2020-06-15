@@ -3,14 +3,25 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
 import KibaConnector from 'node-kiba'
-import { Client, Provider, providers, crypto, errors } from '../../packages/bundle/lib'
+import { Client, providers, crypto, errors } from '../../packages/bundle/lib'
 import { sleep } from '../../packages/utils'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
 import config from './config'
 import testnetConfig from './testnetConfig'
+import BigNumber from 'bignumber.js'
 
 chai.use(chaiAsPromised)
+
+const CONSTANTS = {
+  BITCOIN_FEE_PER_BYTE: 3,
+  BITCOIN_ADDRESS_DEFAULT_BALANCE: 50 * 1e8,
+  ETHEREUM_ADDRESS_DEFAULT_BALANCE: 10 * 1e18,
+  ETHEREUM_NON_EXISTING_CONTRACT: '0000000000000000000000000000000000000000',
+  GWEI: 1e9
+}
+
+console.warn = () => {} // Silence warnings
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 const kibaConnector = new KibaConnector({ port: config.bitcoin.kibaConnector.port })
@@ -18,20 +29,27 @@ const kibaConnector = new KibaConnector({ port: config.bitcoin.kibaConnector.por
 const bitcoinNetworks = providers.bitcoin.networks
 const bitcoinNetwork = bitcoinNetworks[config.bitcoin.network]
 
+function mockedBitcoinRpcProvider () {
+  const bitcoinRpcProvider = new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password)
+  // Mock Fee Per Byte to prevent from changing
+  bitcoinRpcProvider.getFeePerByte = async () => CONSTANTS.BITCOIN_FEE_PER_BYTE
+  return bitcoinRpcProvider
+}
+
 const bitcoinWithLedger = new Client()
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider({ network: bitcoinNetwork }, 'bech32'))
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetwork }, 'p2wsh'))
+bitcoinWithLedger.addProvider(mockedBitcoinRpcProvider())
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider(bitcoinNetwork, 'bech32'))
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwork, 'p2wsh'))
 
 const bitcoinWithNode = new Client()
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
+bitcoinWithNode.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(bitcoinNetwork, config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, 'bech32'))
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetwork }, 'p2wsh'))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwork, 'p2wsh'))
 
 const bitcoinWithJs = new Client()
-bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password))
-bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks[config.bitcoin.network], generateMnemonic(256), 'bech32'))
-bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider({ network: bitcoinNetworks[config.bitcoin.network] }, 'p2wsh'))
+bitcoinWithJs.addProvider(mockedBitcoinRpcProvider())
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetwork, generateMnemonic(256), 'bech32'))
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwork, 'p2wsh'))
 
 // To run bitcoinWithKiba tests create a testnetConfig.js with testnetHost, testnetUsername, testnetConfig, testnetApi, testnetNetwork
 const bitcoinWithKiba = new Client()
@@ -43,65 +61,59 @@ const bitcoinWithEsplora = new Client()
 bitcoinWithEsplora.addProvider(new providers.bitcoin.BitcoinEsploraApiProvider('https://blockstream.info/testnet/api'))
 bitcoinWithEsplora.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks.bitcoin_testnet, generateMnemonic(256), 'bech32'))
 
-// TODO: required for BITCOIN too?
-class RandomEthereumAddressProvider extends Provider {
-  getUnusedAddress () { // Mock unique address
-    const randomString = parseInt(Math.random() * 1000000000000).toString()
-    const randomHash = crypto.sha256(randomString)
-    const address = randomHash.substr(0, 40)
-    return { address }
-  }
-}
-
 const ethereumNetworks = providers.ethereum.networks
-const ethereumNetwork = ethereumNetworks[config.ethereum.network]
+const ethereumNetwork = {
+  ...ethereumNetworks[config.ethereum.network],
+  name: 'mainnet',
+  chainId: 1337, // Default geth dev mode - * Needs to be <= 255 for ledger *
+  networkId: 1337
+}
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithNode = new Client()
 ethereumWithNode.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithNode.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithLedger = new Client()
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider(ethereumNetwork))
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithLedger.addProvider(new RandomEthereumAddressProvider())
 
 const ethereumWithJs = new Client()
 ethereumWithJs.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 ethereumWithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(ethereumNetwork, generateMnemonic(256)))
 ethereumWithJs.addProvider(new providers.ethereum.EthereumSwapProvider())
-ethereumWithJs.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithMetaMask = new Client()
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
-erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
+erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
-erc20WithMetaMask.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithNode = new Client()
 erc20WithNode.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithNode.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
+erc20WithNode.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithNode.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
-erc20WithNode.addProvider(new RandomEthereumAddressProvider())
 
 const erc20WithLedger = new Client()
 erc20WithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider())
-erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20Provider('We dont have an addres yet'))
+erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider(ethereumNetwork))
+erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
-erc20WithLedger.addProvider(new RandomEthereumAddressProvider())
+
+const erc20WithJs = new Client()
+erc20WithJs.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
+erc20WithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(ethereumNetwork, generateMnemonic(256)))
+erc20WithJs.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
+erc20WithJs.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 
 const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: bitcoinNetwork },
-  bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork },
+  bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork, segwitFeeImplemented: true },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: bitcoinNetwork },
   bitcoinWithKiba: { id: 'Bitcoin Kiba', name: 'bitcoin', client: bitcoinWithKiba, network: bitcoinNetworks['bitcoin_testnet'] },
   bitcoinWithEsplora: { id: 'Bitcoin Esplora', name: 'bitcoin', client: bitcoinWithEsplora },
@@ -111,20 +123,15 @@ const chains = {
   ethereumWithJs: { id: 'Ethereum Js', name: 'ethereum', client: ethereumWithJs },
   erc20WithMetaMask: { id: 'ERC20 MetaMask', name: 'ethereum', client: erc20WithMetaMask },
   erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
-  erc20WithLedger: { id: 'Erc20 Ledger', name: 'ethereum', client: erc20WithLedger }
+  erc20WithLedger: { id: 'ERC20 Ledger', name: 'ethereum', client: erc20WithLedger },
+  erc20WithJs: { id: 'ERC20 Js', name: 'ethereum', client: erc20WithJs }
 }
 
 async function getSwapParams (chain) {
-  const recipientAddress = (await chain.client.wallet.getUnusedAddress()).address
-  const refundAddress = (await chain.client.wallet.getUnusedAddress()).address
+  const recipientAddress = (await getNewAddress(chain)).address
+  const refundAddress = (await getNewAddress(chain)).address
   const expiration = parseInt(Date.now() / 1000) + parseInt(Math.random() * 1000000)
   const value = config[chain.name].value
-
-  console.log('\x1b[2m', `Swap Params for ${chain.id}`, '\x1b[0m')
-  console.log('\x1b[2m', 'Recipient Address:', recipientAddress, '\x1b[0m')
-  console.log('\x1b[2m', 'Refund Address:', refundAddress, '\x1b[0m')
-  console.log('\x1b[2m', 'Expiry:', expiration, '\x1b[0m')
-  console.log('\x1b[2m', 'Value:', value, '\x1b[0m')
 
   return {
     recipientAddress,
@@ -135,28 +142,51 @@ async function getSwapParams (chain) {
 }
 
 async function importBitcoinAddresses (chain) {
-  const nonChangeAddresses = await chain.client.getMethod('getAddresses')(0, 20)
-  const changeAddresses = await chain.client.getMethod('getAddresses')(0, 20, true)
+  return chain.client.getMethod('importAddresses')()
+}
 
-  const addresses = [ ...nonChangeAddresses, ...changeAddresses ]
-
-  let addressesToImport = []
-  for (const address of addresses) {
-    addressesToImport.push({ 'scriptPubKey': { 'address': address.address }, 'timestamp': 'now' })
+async function fundAddress (chain, address) {
+  if (chain.name === 'bitcoin') {
+    await chains.bitcoinWithNode.client.chain.sendTransaction(address, CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE)
+  } else if (chain.name === 'ethereum') {
+    await chains.ethereumWithNode.client.chain.sendTransaction(address, CONSTANTS.ETHEREUM_ADDRESS_DEFAULT_BALANCE)
   }
-
-  await chain.client.getMethod('jsonrpc')('importmulti', addressesToImport, { rescan: false })
+  await mineBlock(chain)
 }
 
-async function fundUnusedBitcoinAddress (chain) {
-  const unusedAddress = await chain.client.wallet.getUnusedAddress()
-  await chains.bitcoinWithNode.client.chain.sendTransaction(unusedAddress, 100000000)
-  await chains.bitcoinWithNode.client.chain.generateBlock(1)
+async function fundWallet (chain) {
+  if (chain.funded) return
+
+  const address = await chain.client.wallet.getUnusedAddress()
+  await fundAddress(chain, address)
+  chain.funded = true
 }
 
-async function fundUnusedEthereumAddress (chain) {
-  const unusedAddress = await chain.client.wallet.getUnusedAddress()
-  await chains.ethereumWithNode.client.chain.sendTransaction(unusedAddress, (10 ** 18))
+async function getNewAddress (chain) {
+  if (chain.name === 'ethereum') {
+    return getRandomEthereumAddress()
+  } else {
+    return chain.client.wallet.getUnusedAddress()
+  }
+}
+
+async function getRandomAddress (chain) {
+  if (chain.name === 'ethereum') {
+    return getRandomEthereumAddress()
+  } else {
+    return getRandomBitcoinAddress(chain)
+  }
+}
+
+function getRandomEthereumAddress () {
+  const randomString = parseInt(Math.random() * 1000000000000).toString()
+  const randomHash = crypto.sha256(randomString)
+  const address = randomHash.substr(0, 40)
+  return { address }
+}
+
+async function getRandomBitcoinAddress (chain) {
+  return findProvider(chain.client, providers.bitcoin.BitcoinRpcProvider).jsonrpc('getnewaddress')
 }
 
 async function mineBlock (chain) {
@@ -168,63 +198,146 @@ async function mineBlock (chain) {
   }
 }
 
-async function initiateAndVerify (chain, secretHash, swapParams) {
-  console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
-  const initiationParams = [swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration]
-  const initiationTxId = await chain.client.swap.initiateSwap(...initiationParams)
-  await mineBlock(chain)
-  const currentBlock = await chain.client.chain.getBlockHeight()
-  const blockNumber = chain.id.includes('ERC20')
-    ? currentBlock - 1 // ERC20 swaps involve 2 transactions - ganache auto mines for each
-    : currentBlock
-  const initiationTx = await chain.client.swap.findInitiateSwapTransaction(...initiationParams, blockNumber)
-  expect(initiationTx.hash).to.equal(initiationTxId)
-  const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
-  expect(isVerified).to.equal(true)
-  console.log(`${chain.id} Initiated ${initiationTxId}`)
-  return initiationTxId
+async function mineUntilTimestamp (chain, timestamp) {
+  const maxNumBlocks = 100
+  for (let i = 0; i < maxNumBlocks; i++) {
+    const block = await chain.client.chain.getBlockByNumber(await chain.client.chain.getBlockHeight())
+    if (i === 0) console.log('\x1b[2m', `Mining until chain timestamp: ${timestamp}. Now: ${block.timestamp}. Remaining: ${timestamp - block.timestamp}s`, '\x1b[0m')
+    if (block.timestamp > timestamp) break
+    if (chain.name === 'ethereum') { // Send random tx to cause Geth to mime block
+      await chains.ethereumWithNode.client.chain.sendTransaction((await getNewAddress(chain)).address, 10000)
+    }
+    await mineBlock(chain)
+    await sleep(1000)
+  }
 }
 
-async function claimAndVerify (chain, initiationTxId, secret, swapParams) {
-  console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+async function initiateAndVerify (chain, secretHash, swapParams, fee) {
+  if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  const isERC20 = chain.id.includes('ERC20')
+  const initiationParams = [swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration]
+  const func = async () => {
+    const initiationTxId = await chain.client.swap.initiateSwap(...initiationParams, fee)
+    await mineBlock(chain)
+    const currentBlock = await chain.client.chain.getBlockHeight()
+    const blockNumber = isERC20
+      ? currentBlock - 1 // ERC20 swaps involve 2 transactions - ganache auto mines for each
+      : currentBlock
+
+    const initiationTx = await chain.client.swap.findInitiateSwapTransaction(...initiationParams, blockNumber)
+    expect(initiationTx.hash).to.equal(initiationTxId)
+    const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(initiationTxId, ...initiationParams)
+    expect(isVerified).to.equal(true)
+    return initiationTxId
+  }
+
+  return isERC20
+    ? withInternalSendMineHook(chain, providers.ethereum.EthereumRpcProvider, func)
+    : func()
+}
+
+async function claimAndVerify (chain, initiationTxId, secret, swapParams, fee) {
+  if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const secretHash = crypto.sha256(secret)
-  const claimTxId = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration)
+  await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
   const claimTx = await chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
-  console.log(`${chain.id} Claimed ${claimTxId}`)
   return claimTx
 }
 
-async function refundAndVerify (chain, initiationTxId, secretHash, swapParams) {
-  console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
-  const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration)
+async function refundAndVerify (chain, initiationTxId, secretHash, swapParams, fee) {
+  if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  const refundTxId = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
   const refundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
   expect(refundTxId).to.equal(refundTx.hash)
-  console.log(`${chain.id} Refunded ${refundTxId}`)
   return refundTx
 }
 
 async function expectBalance (chain, address, func, comparison) {
   const balanceBefore = await chain.client.chain.getBalance([address])
   await func()
-  await sleep(5000) // Await block time
+  if (chain.name === 'bitcoin') await sleep(1000) // Node seems to need a little bit of time to process utxos
   const balanceAfter = await chain.client.chain.getBalance([address])
   comparison(balanceBefore, balanceAfter)
 }
 
-function mineBitcoinBlocks () {
-  if (config.bitcoin.mineBlocks) {
-    let interval
-    before(async () => {
-      interval = setInterval(() => {
-        chains.bitcoinWithNode.client.chain.generateBlock(1)
-      }, 1000)
-    })
-    after(() => clearInterval(interval))
+async function getBitcoinTransactionFee (chain, tx) {
+  const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
+  const inputTransactions = await Promise.all(
+    inputs.map(input => chain.client.chain.getTransactionByHash(input.txid))
+  )
+  const inputValues = inputTransactions.map((inputTx, index) => {
+    const vout = inputs[index].vout
+    const output = inputTx._raw.vout[vout]
+    return output.value * 1e8
+  })
+  const inputValue = inputValues.reduce((a, b) => a.plus(BigNumber(b)), BigNumber(0))
+
+  const outputValue = tx._raw.vout.reduce((a, b) => a.plus(BigNumber(b.value).times(BigNumber(1e8))), BigNumber(0))
+
+  const feeValue = inputValue.minus(outputValue)
+
+  return feeValue.toNumber()
+}
+
+async function expectFee (chain, txHash, expectedFeePerByte, swapInitiate = false, swapRedeem = false) {
+  if (chain.name === 'bitcoin') {
+    return swapRedeem // It's dumb because it does legacy calculation using 1 input 1 output
+      ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte)
+      : expectBitcoinFee(chain, txHash, expectedFeePerByte, swapInitiate)
   }
+  if (chain.name === 'ethereum') {
+    return expectEthereumFee(chain, txHash, expectedFeePerByte)
+  }
+}
+
+async function expectBitcoinFee (chain, txHash, expectedFeePerByte, payToScript) {
+  const tx = await chain.client.chain.getTransactionByHash(txHash)
+  const fee = await getBitcoinTransactionFee(chain, tx)
+  let size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
+  if (payToScript && (chain.id.includes('Ledger') || chain.id.includes('Js'))) {
+    size -= 10 // Coin select fee calculation is off by 10 bytes as it does not consider pay to script
+  }
+  const maxFeePerByte = (expectedFeePerByte * (size + 2)) / size // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
+  const feePerByte = BigNumber(fee).div(size).toNumber()
+
+  expect(feePerByte).gte(expectedFeePerByte)
+  expect(feePerByte).lte(maxFeePerByte)
+}
+
+// A dumber fee calculation that is used in swap redeems - 1 in 1 out - legacy tx/inputs assumed
+async function expectBitcoinSwapRedeemFee (chain, txHash, expectedFeePerByte) {
+  const tx = await chain.client.chain.getTransactionByHash(txHash)
+  const fee = await getBitcoinTransactionFee(chain, tx)
+  const expectedFee = providers.bitcoin.BitcoinUtils.calculateFee(1, 1, expectedFeePerByte)
+
+  expect(fee).to.equal(expectedFee)
+}
+
+async function expectEthereumFee (chain, txHash, gasPrice) {
+  const tx = await chain.client.chain.getTransactionByHash(txHash)
+  expect(parseInt(tx._raw.gasPrice, 16)).to.equal(BigNumber(gasPrice).times(CONSTANTS.GWEI).toNumber())
+}
+
+function findProvider (client, type) {
+  return findLast(
+    client._providers,
+    provider => provider instanceof type, client._providers.length
+  )
+}
+
+function stopEthAutoMining (chain) {
+  beforeEach(async () => {
+    findProvider(chain.client, providers.ethereum.EthereumRpcProvider).stopMiner()
+  })
+
+  afterEach(async () => {
+    findProvider(chain.client, providers.ethereum.EthereumRpcProvider).startMiner()
+    await sleep(1000) // Give pending transactions time to clear
+  })
 }
 
 function connectMetaMask () {
@@ -243,28 +356,47 @@ function connectKiba () {
   after(async () => kibaConnector.stop())
 }
 
-function deployERC20Token (client) {
-  before(async () => {
-    console.log('\x1b[36m', 'Deploying the ERC20 token contract', '\x1b[0m')
-    const bytecode = '608060405234801561001057600080fd5b5060408051678ac7230489e800008152905133916000917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a3336000908152602081905260409020678ac7230489e80000905561055b8061007a6000396000f3fe608060405260043610610087577c0100000000000000000000000000000000000000000000000000000000600035046306fdde03811461008c578063095ea7b31461011657806323b872dd14610163578063313ce567146101a657806370a08231146101d157806395d89b4114610216578063a9059cbb1461022b578063dd62ed3e14610264575b600080fd5b34801561009857600080fd5b506100a161029f565b6040805160208082528351818301528351919283929083019185019080838360005b838110156100db5781810151838201526020016100c3565b50505050905090810190601f1680156101085780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b34801561012257600080fd5b5061014f6004803603604081101561013957600080fd5b50600160a060020a0381351690602001356102d6565b604080519115158252519081900360200190f35b34801561016f57600080fd5b5061014f6004803603606081101561018657600080fd5b50600160a060020a0381358116916020810135909116906040013561033c565b3480156101b257600080fd5b506101bb6103ab565b6040805160ff9092168252519081900360200190f35b3480156101dd57600080fd5b50610204600480360360208110156101f457600080fd5b5035600160a060020a03166103b0565b60408051918252519081900360200190f35b34801561022257600080fd5b506100a16103c2565b34801561023757600080fd5b5061014f6004803603604081101561024e57600080fd5b50600160a060020a0381351690602001356103f9565b34801561027057600080fd5b506102046004803603604081101561028757600080fd5b50600160a060020a038135811691602001351661040f565b60408051808201909152600a81527f546f6b656e205465737400000000000000000000000000000000000000000000602082015281565b336000818152600160209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b600160a060020a038316600090815260016020908152604080832033845290915281205482111561036c57600080fd5b600160a060020a03841660009081526001602090815260408083203384529091529020805483900390556103a184848461042c565b5060019392505050565b601281565b60006020819052908152604090205481565b60408051808201909152600481527f5357415000000000000000000000000000000000000000000000000000000000602082015281565b600061040633848461042c565b50600192915050565b600160209081526000928352604080842090915290825290205481565b600160a060020a038216151561044157600080fd5b600160a060020a03831660009081526020819052604090205481111561046657600080fd5b600160a060020a038216600090815260208190526040902054818101101561048d57600080fd5b600160a060020a03808316600081815260208181526040808320805495891680855282852080548981039091559486905281548801909155815187815291519390950194927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a3600160a060020a0380841660009081526020819052604080822054928716825290205401811461052957fe5b5050505056fea165627a7a72305820db460d87e53e94fdd939b99d2a07ceb235e8a2ce62f7d320cd34a12c1c613a860029'
-    let txHash = await client.getMethod('sendTransaction')(null, 0, bytecode)
-    let initiationTransactionReceipt = null
-    while (initiationTransactionReceipt === null) {
-      initiationTransactionReceipt = await client.getMethod('getTransactionReceipt')(txHash)
+async function withInternalSendMineHook (chain, providerClass, func) {
+  const provider = findProvider(chain.client, providerClass)
+  let originalSendTransaction = provider.sendTransaction
+  provider.sendTransaction = async (to, value, data, gasPrice) => {
+    const txHash = await originalSendTransaction.bind(provider)(to, value, data, gasPrice)
+    if (data !== null) {
+      await mineBlock(chain)
     }
-    const erc20Provider = findLast(
-      client._providers,
-      provider => provider instanceof providers.ethereum.EthereumErc20Provider, client._providers.length
-    )
-    erc20Provider._contractAddress = initiationTransactionReceipt.contractAddress
-  })
+    return txHash
+  }
+  const result = await func()
+  provider.sendTransaction = originalSendTransaction
+  return result
 }
 
+async function deployERC20Token (chain) {
+  const erc20Provider = findProvider(chain.client, providers.ethereum.EthereumErc20Provider)
+  const ethereumRpcProvider = findProvider(chain.client, providers.ethereum.EthereumRpcProvider)
+  const ethereumJsProvider = findProvider(chain.client, providers.ethereum.EthereumJsWalletProvider)
+  const ethereumLedgerProvider = findProvider(chain.client, providers.ethereum.EthereumLedgerProvider)
+  if (erc20Provider._contractAddress !== CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT) return
+  console.log('\x1b[36m', 'Deploying the ERC20 token contract', '\x1b[0m')
+  const bytecode = '608060405234801561001057600080fd5b5060408051678ac7230489e800008152905133916000917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a3336000908152602081905260409020678ac7230489e80000905561055b8061007a6000396000f3fe608060405260043610610087577c0100000000000000000000000000000000000000000000000000000000600035046306fdde03811461008c578063095ea7b31461011657806323b872dd14610163578063313ce567146101a657806370a08231146101d157806395d89b4114610216578063a9059cbb1461022b578063dd62ed3e14610264575b600080fd5b34801561009857600080fd5b506100a161029f565b6040805160208082528351818301528351919283929083019185019080838360005b838110156100db5781810151838201526020016100c3565b50505050905090810190601f1680156101085780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b34801561012257600080fd5b5061014f6004803603604081101561013957600080fd5b50600160a060020a0381351690602001356102d6565b604080519115158252519081900360200190f35b34801561016f57600080fd5b5061014f6004803603606081101561018657600080fd5b50600160a060020a0381358116916020810135909116906040013561033c565b3480156101b257600080fd5b506101bb6103ab565b6040805160ff9092168252519081900360200190f35b3480156101dd57600080fd5b50610204600480360360208110156101f457600080fd5b5035600160a060020a03166103b0565b60408051918252519081900360200190f35b34801561022257600080fd5b506100a16103c2565b34801561023757600080fd5b5061014f6004803603604081101561024e57600080fd5b50600160a060020a0381351690602001356103f9565b34801561027057600080fd5b506102046004803603604081101561028757600080fd5b50600160a060020a038135811691602001351661040f565b60408051808201909152600a81527f546f6b656e205465737400000000000000000000000000000000000000000000602082015281565b336000818152600160209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b600160a060020a038316600090815260016020908152604080832033845290915281205482111561036c57600080fd5b600160a060020a03841660009081526001602090815260408083203384529091529020805483900390556103a184848461042c565b5060019392505050565b601281565b60006020819052908152604090205481565b60408051808201909152600481527f5357415000000000000000000000000000000000000000000000000000000000602082015281565b600061040633848461042c565b50600192915050565b600160209081526000928352604080842090915290825290205481565b600160a060020a038216151561044157600080fd5b600160a060020a03831660009081526020819052604090205481111561046657600080fd5b600160a060020a038216600090815260208190526040902054818101101561048d57600080fd5b600160a060020a03808316600081815260208181526040808320805495891680855282852080548981039091559486905281548801909155815187815291519390950194927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a3600160a060020a0380841660009081526020819052604080822054928716825290205401811461052957fe5b5050505056fea165627a7a72305820db460d87e53e94fdd939b99d2a07ceb235e8a2ce62f7d320cd34a12c1c613a860029'
+  const deployingProvider = ethereumJsProvider || ethereumLedgerProvider || ethereumRpcProvider
+  let txHash = await deployingProvider.sendTransaction(null, 0, bytecode)
+  await mineBlock(chain)
+  const initiationTransactionReceipt = await chain.client.getMethod('getTransactionReceipt')(txHash)
+  erc20Provider._contractAddress = initiationTransactionReceipt.contractAddress
+}
+
+const describeExternal = process.env.RUN_EXTERNAL ? describe.only : describe.skip
+
 export {
+  CONSTANTS,
   chains,
+  getNewAddress,
+  getRandomAddress,
+  getRandomBitcoinAddress,
   importBitcoinAddresses,
-  fundUnusedBitcoinAddress,
-  fundUnusedEthereumAddress,
+  fundAddress,
+  fundWallet,
   metaMaskConnector,
   kibaConnector,
   initiateAndVerify,
@@ -272,9 +404,13 @@ export {
   refundAndVerify,
   getSwapParams,
   expectBalance,
+  expectFee,
   sleep,
-  mineBitcoinBlocks,
+  stopEthAutoMining,
+  mineUntilTimestamp,
+  mineBlock,
   deployERC20Token,
   connectMetaMask,
-  connectKiba
+  connectKiba,
+  describeExternal
 }
