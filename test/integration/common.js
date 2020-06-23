@@ -231,9 +231,14 @@ async function initiateAndVerify (chain, secretHash, swapParams, fee) {
     return initiationTxId
   }
 
-  return isERC20
-    ? withInternalSendMineHook(chain, providers.ethereum.EthereumRpcProvider, func)
-    : func()
+  if (isERC20) {
+    const ethereumRpcProvider = findProvider(chain.client, providers.ethereum.EthereumRpcProvider)
+    const ethereumJsProvider = findProvider(chain.client, providers.ethereum.EthereumJsWalletProvider)
+    const ethereumLedgerProvider = findProvider(chain.client, providers.ethereum.EthereumLedgerProvider)
+    return withInternalSendMineHook(chain, ethereumJsProvider || ethereumLedgerProvider || ethereumRpcProvider, func)
+  } else {
+    return func()
+  }
 }
 
 async function claimAndVerify (chain, initiationTxId, secret, swapParams, fee) {
@@ -356,8 +361,7 @@ function connectKiba () {
   after(async () => kibaConnector.stop())
 }
 
-async function withInternalSendMineHook (chain, providerClass, func) {
-  const provider = findProvider(chain.client, providerClass)
+async function withInternalSendMineHook (chain, provider, func) {
   let originalSendTransaction = provider.sendTransaction
   provider.sendTransaction = async (to, value, data, gasPrice) => {
     const txHash = await originalSendTransaction.bind(provider)(to, value, data, gasPrice)
