@@ -331,7 +331,7 @@ describe('Swap Single Chain Flow', function () {
       testFee(chains.erc20WithLedger)
     })
 
-    describeExternal('ERC20 - JS', () => {
+    describe('ERC20 - JS', () => {
       before(async function () {
         await fundWallet(chains.erc20WithJs)
         await deployERC20Token(chains.erc20WithJs)
