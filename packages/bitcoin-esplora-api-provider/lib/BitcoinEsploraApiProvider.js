@@ -28,7 +28,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
       const closestBlockOption = blockOptions.reduce((prev, curr) => {
         return Math.abs(prev - numberOfBlocks) < Math.abs(curr - numberOfBlocks) ? prev : curr
       })
-      const rate = feeEstimates[closestBlockOption]
+      const rate = Math.round(feeEstimates[closestBlockOption])
       return rate
     } catch (e) {
       return this._defaultFeePerByte
