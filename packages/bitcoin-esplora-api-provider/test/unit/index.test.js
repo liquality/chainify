@@ -20,6 +20,13 @@ describe('Bitcoin Esplora Api Provider', () => {
     client.addProvider(provider)
   })
 
+  describe('getFeePerByte', () => {
+    it('should return the right fee', async () => {
+      const fee = await provider.getFeePerByte(5)
+      expect(fee).to.equal(10)
+    })
+  })
+
   describe('getTransactionByHash', () => {
     it('should return a transaction', async () => {
       const tx = await provider.getTransactionByHash('d4b1add055db58343500157a6525a73ceb9c8850f0fb435f1f60071e8cad6540')
