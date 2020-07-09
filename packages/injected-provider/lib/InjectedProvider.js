@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js'
+
 import { version } from '../package.json'
 
 export default class InjectedProvider {
@@ -26,7 +28,9 @@ export default class InjectedProvider {
   }
 
   async getBalance (addresses) {
-    return this.injectedProvider.getMethod('chain.getBalance')(addresses)
+    return this.injectedProvider
+      .getMethod('chain.getBalance')(addresses)
+      .then(balance => BigNumber(balance))
   }
 
   async isAddressUsed (address) {
