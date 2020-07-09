@@ -57,7 +57,8 @@ export default class Chain {
     const block = await this.client.getMethod('getBlockByHash')(blockHash, includeTx)
 
     if (!this.validateBlock(block)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid block')
+      const { errors } = this.validateBlock
+      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
     }
 
     return block
@@ -85,11 +86,9 @@ export default class Chain {
 
     const block = await this.client.getMethod('getBlockByNumber')(blockNumber, includeTx)
 
-    const valid = this.validateBlock(block)
-
-    if (!valid) {
-      const errors = this.validateBlock.errors
-      throw new InvalidProviderResponseError(`Provider returned an invalid block, ${errors[0].dataPath} ${errors[0].message}`)
+    if (!this.validateBlock(block)) {
+      const { errors } = this.validateBlock
+      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
     }
 
     return block
@@ -135,8 +134,8 @@ export default class Chain {
       const valid = this.validateTransaction(transaction)
 
       if (!valid) {
-        const errors = this.validateTransaction.errors
-        throw new InvalidProviderResponseError(`Provider returned an invalid transaction: ${errors[0].dataPath} ${errors[0].message}`)
+        const { errors } = this.validateTransaction
+        throw new InvalidProviderResponseError(`Provider returned an invalid transaction, "${errors[0].dataPath}" ${errors[0].message}`)
       }
     }
 
