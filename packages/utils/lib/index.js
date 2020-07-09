@@ -70,6 +70,10 @@ class Address {
 
     return obj
   }
+
+  toJSON () {
+    return this.toObject()
+  }
 }
 
 function addressToString (any) {
