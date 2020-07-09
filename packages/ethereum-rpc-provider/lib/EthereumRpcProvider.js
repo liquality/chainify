@@ -82,11 +82,22 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     return this.jsonrpc('eth_sign', from, message)
   }
 
+  async getBlockByHash (blockHash, includeTx) {
+    const block = await this.jsonrpc('eth_getBlockByHash', ensure0x(blockHash), includeTx)
+
+    if (block && includeTx) {
+      const currentHeight = await this.getBlockHeight()
+      block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentHeight))
+    }
+
+    return block
+  }
+
   async getBlockByNumber (blockNumber, includeTx) {
-    const currentHeight = await this.getBlockHeight()
     const block = await this.jsonrpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
 
-    if (block) {
+    if (block && includeTx) {
+      const currentHeight = await this.getBlockHeight()
       block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentHeight))
     }
 
