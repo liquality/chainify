@@ -113,7 +113,7 @@ export default class EthereumSwapProvider extends Provider {
     if (!initiationTransaction) return false
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransaction) throw new Error('Transaction receipt is not available')
+    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
 
     const transactionMatchesSwapParams = this.doesTransactionMatchInitiation(
       initiationTransaction,
