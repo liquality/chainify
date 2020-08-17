@@ -1,5 +1,5 @@
 import { findKey } from 'lodash'
-
+import BigNumber from 'bignumber.js'
 import { base58, padHexStart } from '@liquality/crypto'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as classify from 'bitcoinjs-lib/src/classify';
@@ -126,6 +126,34 @@ function decodeRawTransaction (hex, network) {
   }
 }
 
+function normalizeTransactionObject (tx, fee, block) {
+  const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value).times(1e8)), BigNumber(0))
+  const result = {
+    hash: tx.txid,
+    value: value.toNumber(),
+    _raw: tx,
+    confirmations: 0
+  }
+
+  if (fee) {
+    const feePrice = Math.round(fee / tx.vsize)
+    Object.assign(result, {
+      fee,
+      feePrice
+    })
+  }
+
+  if (block) {
+    Object.assign(result, {
+      blockHash: block.hash,
+      blockNumber: block.number,
+      confirmations: tx.confirmations
+    })
+  }
+
+  return result
+}
+
 const AddressTypes = [
   'legacy', 'p2sh-segwit', 'bech32'
 ]
@@ -136,6 +164,7 @@ export {
   getAddressNetwork,
   selectCoins,
   decodeRawTransaction,
+  normalizeTransactionObject,
   AddressTypes,
   version
 }

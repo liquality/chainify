@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js'
 
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
+import { normalizeTransactionObject } from '@liquality/bitcoin-utils'
 
 import { version } from '../package.json'
 
@@ -169,20 +170,21 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionFee (tx) {
-    const isCoinbaseTx = tx._raw.vin.find(vin => vin.coinbase)
+    const isCoinbaseTx = tx.vin.find(vin => vin.coinbase)
     if (isCoinbaseTx) return // Coinbase transactions do not have a fee
 
-    const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
+    const inputs = tx.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
     const inputTransactions = await Promise.all(
-      inputs.map(input => this.getRawTransactionByHash(input.txid, true))
+      inputs.map(input => this.jsonrpc('getrawtransaction', input.txid, 1))
     )
+
     const inputValues = inputTransactions.map((inputTx, index) => {
       const vout = inputs[index].vout
-      const output = inputTx._raw.vout[vout]
+      const output = inputTx.vout[vout]
       return output.value * 1e8
     })
     const inputValue = inputValues.reduce((a, b) => a.plus(BigNumber(b)), BigNumber(0))
-    const outputValue = tx._raw.vout.reduce((a, b) => a.plus(BigNumber(b.value).times(BigNumber(1e8))), BigNumber(0))
+    const outputValue = tx.vout.reduce((a, b) => a.plus(BigNumber(b.value).times(BigNumber(1e8))), BigNumber(0))
     const feeValue = inputValue.minus(outputValue)
     return feeValue.toNumber()
   }
@@ -190,35 +192,12 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   async getRawTransactionByHash (transactionHash, decode = false, addFees = false) {
     const tx = await this.jsonrpc('getrawtransaction', transactionHash, decode ? 1 : 0)
     if (!decode) return tx
-    const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value).times(1e8)), BigNumber(0))
-    const result = {
-      hash: tx.txid,
-      value: value.toNumber(),
-      _raw: tx,
-      confirmations: 0
-    }
 
-    if (tx.confirmations > 0) {
-      const block = await this.getBlockByHash(tx.blockhash)
-      Object.assign(result, {
-        blockHash: block.hash,
-        blockNumber: block.number,
-        confirmations: tx.confirmations
-      })
-    }
-
-    if (addFees) {
-      const fee = await this.getTransactionFee(result)
-      if (fee) {
-        const feePrice = Math.round(fee / tx.vsize)
-        Object.assign(result, {
-          fee,
-          feePrice
-        })
-      }
-    }
-
-    return result
+    return normalizeTransactionObject(
+      tx,
+      addFees ? (await this.getTransactionFee(tx)) : undefined,
+      tx.confirmations > 0 ? (await this.getBlockByHash(tx.blockhash)) : undefined
+    )
   }
 
   async sendRawTransaction (rawTransaction) {
