@@ -1,6 +1,8 @@
 import { findKey } from 'lodash'
 
 import { base58, padHexStart } from '@liquality/crypto'
+import * as bitcoin from 'bitcoinjs-lib'
+import * as classify from 'bitcoinjs-lib/src/classify';
 import networks from '@liquality/bitcoin-networks'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
@@ -66,6 +68,64 @@ function selectCoins (utxos, targets, feePerByte, fixedInputs = []) {
   return { inputs, outputs, fee }
 }
 
+const OUTPUT_TYPES_MAP = {
+  [classify.types.P2WPKH]: 'witness_v0_keyhash',
+  [classify.types.P2WSH]: 'witness_v0_scripthash'
+}
+
+function decodeRawTransaction (hex, network) {
+  const bjsTx = bitcoin.Transaction.fromHex(hex)
+
+  const vin = bjsTx.ins.map((input) => {
+    return {
+        txid: Buffer.from(input.hash).reverse().toString('hex'),
+        vout: input.index,
+        scriptSig: {
+          asm: bitcoin.script.toASM(input.script),
+          hex: input.script.toString('hex')
+        },
+        txinwitness: input.witness.map(w => w.toString('hex')),
+        sequence: input.sequence,
+    }
+  })
+
+  const vout = bjsTx.outs.map((output, n) => {
+    const type = classify.output(output.script)
+
+    var vout = {
+      value: output.value / 1e8,
+      n,
+      scriptPubKey: {
+        asm: bitcoin.script.toASM(output.script),
+        hex: output.script.toString('hex'),
+        reqSigs: 1, // TODO: not sure how to derive this
+        type: OUTPUT_TYPES_MAP[type] || type,
+        addresses: [],
+      }
+    };
+
+    try {
+      const address = bitcoin.address.fromOutputScript(output.script, network)
+      vout.scriptPubKey.addresses.push(address)
+    } catch (e) {}
+
+    return vout
+  })
+
+  return {
+    txid: bjsTx.getHash(false).reverse().toString('hex'),
+    hash: bjsTx.getHash(true).reverse().toString('hex'),
+    version: bjsTx.version,
+    locktime: bjsTx.locktime,
+    size: bjsTx.byteLength(),
+    vsize: bjsTx.virtualSize(),
+    weight: bjsTx.weight(),
+    vin,
+    vout,
+    hex
+  }
+}
+
 const AddressTypes = [
   'legacy', 'p2sh-segwit', 'bech32'
 ]
@@ -75,6 +135,7 @@ export {
   compressPubKey,
   getAddressNetwork,
   selectCoins,
+  decodeRawTransaction,
   AddressTypes,
   version
 }

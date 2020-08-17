@@ -21,6 +21,7 @@
     "@liquality/bitcoin-networks": "^0.5.0",
     "@liquality/crypto": "^0.5.0",
     "@liquality/utils": "^0.5.0",
+    "bitcoinjs-lib": "^5.1.10",
     "coinselect": "^3.1.11",
     "lodash": "^4.17.13"
   },
