@@ -92,8 +92,8 @@ describe('Bitcoin Esplora Api Provider', () => {
         'blockHash': '000000000000015df12c1a2656f4284edc7c8130d68112d5e522b5d22f79b2b0',
         'blockNumber': 1574469,
         'confirmations': 204,
-        'totalFee': 26780,
-        'fee': 131
+        'fee': 26780,
+        'feePrice': 131
       })
     })
   })

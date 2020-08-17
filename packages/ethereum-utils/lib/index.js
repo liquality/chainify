@@ -98,8 +98,8 @@ function normalizeTransactionObject (tx, currentHeight) {
   const gas = BigNumber(parseInt(tx.gas, 16))
   const gasPrice = BigNumber(parseInt(tx.gasPrice, 16))
 
-  normalizedTx.totalFee = gas.times(gasPrice).toNumber()
-  normalizedTx.fee = gasPrice.div(GWEI).toNumber()
+  normalizedTx.fee = gas.times(gasPrice).toNumber()
+  normalizedTx.feePrice = gasPrice.div(GWEI).toNumber()
 
   return normalizedTx
 }

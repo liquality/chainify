@@ -208,12 +208,12 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     }
 
     if (addFees) {
-      const totalFee = await this.getTransactionFee(result)
-      if (totalFee) {
-        const fee = Math.round(totalFee / tx.vsize)
+      const fee = await this.getTransactionFee(result)
+      if (fee) {
+        const feePrice = Math.round(fee / tx.vsize)
         Object.assign(result, {
           fee,
-          totalFee
+          feePrice
         })
       }
     }

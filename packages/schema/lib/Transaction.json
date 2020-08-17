@@ -30,14 +30,14 @@
       "title": "Confirmations",
       "minimum": 0
     },
+    "feePrice": {
+      "type": "number",
+      "title": "Fee Price",
+      "minimum": 0
+    },
     "fee": {
       "type": "number",
       "title": "Fee",
-      "minimum": 0
-    },
-    "totalFee": {
-      "type": "number",
-      "title": "Total Fee",
       "minimum": 0
     },
     "_raw": {

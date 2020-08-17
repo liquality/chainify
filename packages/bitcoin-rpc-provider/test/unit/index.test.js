@@ -194,8 +194,8 @@ describe('Bitcoin RPC provider', () => {
         'confirmations': 20,
         'blockHash': '494a5c635fd483c82a4a684f3982f52af27a29ee5217a0409cdad45afc2709d7',
         'blockNumber': 630,
-        'totalFee': 3740,
-        'fee': 20
+        'fee': 3740,
+        'feePrice': 20
       })
     })
   })

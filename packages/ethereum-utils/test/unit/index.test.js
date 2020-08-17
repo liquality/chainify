@@ -53,8 +53,8 @@ describe('Ethereum Util', () => {
           gasPrice: '0x04a817c800',
           input: '0x0'
         },
-        fee: 20,
-        totalFee: 1800000000000000
+        feePrice: 20,
+        fee: 1800000000000000
       })
     })
 
@@ -87,8 +87,8 @@ describe('Ethereum Util', () => {
         },
         blockNumber: 5,
         confirmations: 6,
-        fee: 20,
-        totalFee: 1800000000000000
+        feePrice: 20,
+        fee: 1800000000000000
       })
     })
   })
