@@ -29,7 +29,7 @@
     "bip39": "^3.0.2",
     "bitcoinjs-lib": "^5.1.2",
     "bitcoinjs-message": "^2.1.0",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"
