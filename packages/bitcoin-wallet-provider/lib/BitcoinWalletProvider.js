@@ -266,6 +266,9 @@ export default superclass => class BitcoinWalletProvider extends superclass {
 
       if (feePerByte === false) feePerByte = await feePerBytePromise
       const minRelayFee = await this.getMethod('getMinRelayFee')()
+      if (feePerByte < minRelayFee) {
+        throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
+      }
 
       if (fixedInputs.length) {
         for (const input of fixedInputs) {
@@ -279,8 +282,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
 
       const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
 
-      // TODO: does minrelayfee need to consider RBF?
-      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), minRelayFee, fixedInputs)
+      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedInputs)
 
       if (inputs && outputs) {
         let change = outputs.find(output => output.id !== 'main')

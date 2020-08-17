@@ -26,7 +26,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
       const { feerate } = await this.jsonrpc('estimatesmartfee', numberOfBlocks)
 
       if (feerate && feerate > 0) {
-        return Math.ceil((feerate * 1e8) / 1024)
+        return Math.ceil((feerate * 1e8) / 1000)
       }
 
       throw new Error('Invalid estimated fee')
@@ -37,7 +37,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
 
   async getMinRelayFee () {
     const { relayfee } = await this.jsonrpc('getnetworkinfo')
-    return relayfee * 1e8
+    return relayfee * 1e8 / 1000
   }
 
   async withTxFee (func, feePerByte) {

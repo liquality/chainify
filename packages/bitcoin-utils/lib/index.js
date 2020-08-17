@@ -46,7 +46,7 @@ function getAddressNetwork (address) {
   return networks[networkKey]
 }
 
-function selectCoins (utxos, targets, feeRate, minRelayFee, fixedInputs = []) {
+function selectCoins (utxos, targets, feePerByte, fixedInputs = []) {
   let selectUtxos = utxos
   let inputs, outputs
   let fee = 0
@@ -61,9 +61,8 @@ function selectCoins (utxos, targets, feeRate, minRelayFee, fixedInputs = []) {
     ]
   }
 
-  for (let feePerByte = feeRate; fee < minRelayFee; feePerByte++) {
-    ({ inputs, outputs, fee } = coinselectStrat(selectUtxos, targets, Math.ceil(feePerByte)))
-  }
+  ({ inputs, outputs, fee } = coinselectStrat(selectUtxos, targets, Math.ceil(feePerByte)))
+
   return { inputs, outputs, fee }
 }
 
