@@ -1,6 +1,8 @@
 import { find, findLast, findLastIndex, isFunction } from 'lodash'
 import debug from 'debug'
 import Ajv from 'ajv'
+
+import { InvalidProviderResponseError } from '@liquality/errors'
 import { Block, Transaction } from '@liquality/schema'
 
 import {

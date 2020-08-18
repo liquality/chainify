@@ -94,8 +94,8 @@ function testWallet (chain) {
 
       const tx = await chain.client.getMethod('decodeRawTransaction')(rawTx)
 
-      const vouts = tx._raw.data.vout
-      const vins = tx._raw.data.vin
+      const vouts = tx._raw.vout
+      const vins = tx._raw.vin
 
       expect(vins.length).to.equal(1)
       expect(vouts.length).to.equal(1)
@@ -113,8 +113,8 @@ function testWallet (chain) {
 
       const tx = await chain.client.getMethod('decodeRawTransaction')(rawTx)
 
-      const vouts = tx._raw.data.vout
-      const vins = tx._raw.data.vin
+      const vouts = tx._raw.vout
+      const vins = tx._raw.vin
 
       expect(vins.length).to.equal(1)
       expect(vouts.length).to.equal(3)
@@ -135,8 +135,8 @@ function testWallet (chain) {
 
       const tx = await chain.client.getMethod('decodeRawTransaction')(rawTx)
 
-      const vouts = tx._raw.data.vout
-      const vins = tx._raw.data.vin
+      const vouts = tx._raw.vout
+      const vins = tx._raw.vin
 
       expect(vins.length).to.equal(1)
       expect(vouts.length).to.equal(3)
@@ -190,8 +190,8 @@ function testWallet (chain) {
 
       const multiOne = {}
 
-      for (const voutIndex in initiationTx._raw.data.vout) {
-        const vout = initiationTx._raw.data.vout[voutIndex]
+      for (const voutIndex in initiationTx._raw.vout) {
+        const vout = initiationTx._raw.vout[voutIndex]
         const paymentVariantEntryOne = (paymentVariant.output.toString('hex') === vout.scriptPubKey.hex)
         if (paymentVariantEntryOne) multiOne.multiVout = vout
       }
@@ -224,8 +224,8 @@ function testWallet (chain) {
       const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
       const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
 
-      const claimVouts = claimTx._raw.data.vout
-      const claimVins = claimTx._raw.data.vin
+      const claimVouts = claimTx._raw.vout
+      const claimVins = claimTx._raw.vin
 
       expect(claimVins.length).to.equal(1)
       expect(claimVouts.length).to.equal(1)
@@ -282,8 +282,8 @@ function testWallet (chain) {
       const multiOne = {}
       const multiTwo = {}
 
-      for (const voutIndex in initiationTx._raw.data.vout) {
-        const vout = initiationTx._raw.data.vout[voutIndex]
+      for (const voutIndex in initiationTx._raw.vout) {
+        const vout = initiationTx._raw.vout[voutIndex]
         const paymentVariantEntryOne = (paymentVariantOne.output.toString('hex') === vout.scriptPubKey.hex)
         const paymentVariantEntryTwo = (paymentVariantTwo.output.toString('hex') === vout.scriptPubKey.hex)
         if (paymentVariantEntryOne) multiOne.multiVout = vout
@@ -352,8 +352,8 @@ function testWallet (chain) {
       const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
       const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
 
-      const claimVouts = claimTx._raw.data.vout
-      const claimVins = claimTx._raw.data.vin
+      const claimVouts = claimTx._raw.vout
+      const claimVins = claimTx._raw.vin
 
       expect(claimVins.length).to.equal(2)
       expect(claimVouts.length).to.equal(1)

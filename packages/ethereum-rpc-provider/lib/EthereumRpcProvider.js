@@ -53,7 +53,9 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
     const txHash = await this.jsonrpc('eth_sendTransaction', tx)
 
-    return remove0x(txHash)
+    tx.hash = txHash
+
+    return normalizeTransactionObject(formatEthResponse(tx))
   }
 
   async updateTransactionFee (txHash, newGasPrice) {
@@ -66,7 +68,9 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
     const newTxHash = await this.jsonrpc('eth_sendTransaction', tx)
 
-    return remove0x(newTxHash)
+    tx.hash = newTxHash
+
+    return normalizeTransactionObject(formatEthResponse(tx))
   }
 
   async sendRawTransaction (hash) {

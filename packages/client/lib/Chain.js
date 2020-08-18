@@ -1,9 +1,6 @@
 import { isArray, isBoolean, isNumber, isString } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
-import { InvalidProviderResponseError } from '@liquality/errors'
-
-
 export default class Chain {
   /**
    * ChainProvider
@@ -177,7 +174,7 @@ export default class Chain {
    * @param {!string} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
    * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
-   * @return {Promise<string>} Resolves with a signed transaction.
+   * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
   async sendTransaction (to, value, data, fee) {
     const transaction = await this.client.getMethod('sendTransaction')(to, value, data, fee)
@@ -189,7 +186,7 @@ export default class Chain {
    * Update the fee of a transaction.
    * @param {!string} txHash - Hash of the transaction to update
    * @param {!string} fee - New fee price in native unit (e.g. sat/b, wei)
-   * @return {Promise<string>} Resolves with the new transaction hash
+   * @return {Promise<Transaction>} Resolves with the new transaction
    */
   async updateTransactionFee (txHash, newFee) { // TODO: txHash or Tx Object
     if (!isString(txHash)) {
@@ -200,7 +197,7 @@ export default class Chain {
       throw new TypeError('Transaction hash should be a valid hex string')
     }
 
-    const transaction = this.client.getMethod('updateTransactionFee')(txHash, newFee)
+    const transaction = await this.client.getMethod('updateTransactionFee')(txHash, newFee)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
@@ -208,7 +205,7 @@ export default class Chain {
   /**
    * Create, sign & broad a transaction with multiple outputs.
    * @param {string[]} transactions - to, value, data, from.
-   * @return {Promise<string>} Resolves with a signed transaction.
+   * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
   async sendBatchTransaction (transactions) {
     return this.client.getMethod('sendBatchTransaction')(transactions)

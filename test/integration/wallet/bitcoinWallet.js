@@ -162,12 +162,12 @@ function testWallet (chain) {
       )
       const dataScript = bitcoin.payments.embed({ data: [data] })
 
-      const rawTx = await chain.client.chain.buildBatchTransaction([{ to: address1, value: 50000 }, { to: dataScript.output, value: 0 }])
+      const { hex } = await chain.client.chain.buildBatchTransaction([{ to: address1, value: 50000 }, { to: dataScript.output, value: 0 }])
 
-      const tx = await chain.client.getMethod('decodeRawTransaction')(rawTx)
+      const tx = await chain.client.getMethod('decodeRawTransaction')(hex)
 
-      const vouts = tx._raw.data.vout
-      const vins = tx._raw.data.vin
+      const vouts = tx._raw.vout
+      const vins = tx._raw.vin
 
       expect(vins.length).to.equal(1)
       expect(vouts.length).to.equal(3)

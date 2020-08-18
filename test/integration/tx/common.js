@@ -22,13 +22,13 @@ function testTransaction (chain) {
     const value = config[chain.name].value
 
     const balBefore = await chain.client.chain.getBalance(addr)
-    const txHash = await chain.client.chain.sendTransaction(addr, value, undefined, 100)
+    const tx = await chain.client.chain.sendTransaction(addr, value, undefined, 100)
     await mineBlock(chain)
 
     const balAfter = await chain.client.chain.getBalance(addr)
 
     expect(balBefore.plus(value).toString()).to.equal(balAfter.toString())
-    await expectFee(chain, txHash, 100)
+    await expectFee(chain, tx.hash, 100)
   })
 
   ;(chain.client.wallet.canUpdateFee ? it : it.skip)('Update transaction fee', async () => {
@@ -36,11 +36,11 @@ function testTransaction (chain) {
     const value = config[chain.name].value
 
     const balBefore = await chain.client.chain.getBalance(addr)
-    const txHash = await chain.client.chain.sendTransaction(addr, value, undefined, 100)
-    await expectFee(chain, txHash, 100)
-    const newTxHash = await chain.client.chain.updateTransactionFee(txHash, 120)
-    await expect(newTxHash).to.not.equal(txHash)
-    await expectFee(chain, newTxHash, 120)
+    const tx = await chain.client.chain.sendTransaction(addr, value, undefined, 100)
+    await expectFee(chain, tx.hash, 100)
+    const newTx = await chain.client.chain.updateTransactionFee(tx.hash, 120)
+    await expect(newTx.hash).to.not.equal(tx.hash)
+    await expectFee(chain, newTx.hash, 120)
     await mineBlock(chain)
 
     const balAfter = await chain.client.chain.getBalance(addr)

@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
-import { normalizeTransactionObject } from '@liquality/bitcoin-utils'
+import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 
 import { version } from '../package.json'
 
@@ -18,7 +18,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     const data = await this.jsonrpc('decoderawtransaction', rawTransaction)
     const { txid: hash, vout } = data
     const value = vout.reduce((p, n) => p + parseInt(n.value), 0)
-    const output = { hash, value, _raw: { hex: rawTransaction, data } }
+    const output = { hash, value, _raw: { hex: rawTransaction, ...data } }
     return output
   }
 
@@ -58,7 +58,10 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     value = BigNumber(value).dividedBy(1e8).toNumber()
 
     const send = async () => {
-      return this.jsonrpc('sendtoaddress', to, value, '', '', false, true)
+      const hash = await this.jsonrpc('sendtoaddress', to, value, '', '', false, true)
+      const transaction = await this.jsonrpc('gettransaction', hash, true)
+      const fee = BigNumber(transaction.fee).abs().times(1e8).toNumber()
+      return normalizeTransactionObject(decodeRawTransaction(transaction.hex), fee)
     }
 
     return feePerByte ? this.withTxFee(send, feePerByte) : send()
@@ -67,7 +70,9 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   async updateTransactionFee (txHash, newFeePerByte) {
     return this.withTxFee(async () => {
       const result = await this.jsonrpc('bumpfee', txHash)
-      return result.txid
+      const transaction = await this.jsonrpc('gettransaction', result.txid, true)
+      const fee = BigNumber(transaction.fee).abs().times(1e8).toNumber()
+      return normalizeTransactionObject(decodeRawTransaction(transaction.hex), fee)
     }, newFeePerByte)
   }
 
@@ -212,7 +217,9 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     const rawTxOutputs = await this.createRawTransaction([], outputs)
     const rawTxFunded = await this.fundRawTransaction(rawTxOutputs)
     const rawTxSigned = await this.signRawTransaction(rawTxFunded.hex)
-    return this.sendRawTransaction(rawTxSigned.hex)
+    const fee = BigNumber(rawTxFunded.fee).times(1e8).toNumber()
+    await this.sendRawTransaction(rawTxSigned.hex)
+    return normalizeTransactionObject(decodeRawTransaction(rawTxSigned.hex), fee)
   }
 
   async signRawTransaction (hexstring, prevtxs, privatekeys, sighashtype) {

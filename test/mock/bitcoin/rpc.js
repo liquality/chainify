@@ -236,8 +236,43 @@ module.exports = {
   ],
   'sendtoaddress': [
     {
-      params: ['mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi', 0.00001, '', '', false, true],
-      result: '7a16d66f0e5abe24f6f9680da0e9dabf877577209180b9fb43c55d001ddf208b'
+      params: ['2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23', 0.00001, '', '', false, true],
+      result: '8d2ef62766cb1c15744228335483d37a7addc2a2f88d47413527e55e212ef8cd'
+    }
+  ],
+  'gettransaction': [
+    {
+      params: ['8d2ef62766cb1c15744228335483d37a7addc2a2f88d47413527e55e212ef8cd', true],
+      result: {
+        'amount': 0,
+        'fee': -0.0000374,
+        'confirmations': 0,
+        'trusted': true,
+        'txid': '8d2ef62766cb1c15744228335483d37a7addc2a2f88d47413527e55e212ef8cd',
+        'walletconflicts': [],
+        'time': 1597754379,
+        'timereceived': 1597754379,
+        'bip125-replaceable': 'no',
+        'details': [
+            {
+                'address': '2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23',
+                'category': 'send',
+                'amount': -0.0001,
+                'label': '',
+                'vout': 1,
+                'fee': -0.0000374,
+                'abandoned': false
+            },
+            {
+                'address': '2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23',
+                'category': 'receive',
+                'amount': 0.0001,
+                'label': '',
+                'vout': 1
+            }
+        ],
+        'hex': '020000000144559fe3bc19957925cbd45bd8a7378ca964892ea375d09535fcc9725285634200000000484730440220653f079162334a15dd60275552e2cd2ab7a57978667d5120aec926a5d55a4cce02200d0ae39fa2a60e52223a4a8fec90222804160592fdd745b3f18d734674a76ee701feffffff0254bc052a0100000017a914c55f29c3225858086d2c71979f04e45bff09251987102700000000000017a9143eb8d2fbe1f6614b55d5f31eecc074667cb690c08766000000'
+      }
     }
   ],
   'getreceivedbyaddress': [
@@ -256,7 +291,7 @@ module.exports = {
   ],
   'listunspent': [
     {
-      params: [ 0, 9999999, [ 'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc' ] ],
+      params: [0, 9999999, ['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc']],
       result: [
         {
           txid: '467dec8ca158d0939e27e49e86dddf996020e707e1c68a68e6990a6770833474',

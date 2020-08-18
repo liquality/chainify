@@ -44,7 +44,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     const network = this._network
 
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(outputs, feePerByte, fixedInputs)
+    const { inputs, change, fee } = await this.getInputsForAmount(outputs, feePerByte, fixedInputs)
 
     if (change) {
       outputs.push({
@@ -89,7 +89,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       txb.sign(signParams)
     }
 
-    return txb.build().toHex()
+    return { hex: txb.build().toHex(), fee }
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, prevout, outputScript, lockTime = 0, segwit = false) {

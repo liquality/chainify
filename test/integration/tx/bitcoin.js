@@ -66,16 +66,14 @@ function testSignP2SHTransaction (chain) {
 
     const address = paymentVariant.address
 
-    const initiationTxHash = await chain.client.chain.sendTransaction(address, value)
-    await mineBlock(chain)
+    const initiationTx = await chain.client.chain.sendTransaction(address, value)
 
-    const initiationTxRaw = await chain.client.getMethod('getRawTransactionByHash')(initiationTxHash)
-    const initiationTx = await chain.client.getMethod('decodeRawTransaction')(initiationTxRaw)
+    await mineBlock(chain)
 
     const multiOne = {}
 
-    for (const voutIndex in initiationTx._raw.data.vout) {
-      const vout = initiationTx._raw.data.vout[voutIndex]
+    for (const voutIndex in initiationTx._raw.vout) {
+      const vout = initiationTx._raw.vout[voutIndex]
       const paymentVariantEntryOne = (paymentVariant.output.toString('hex') === vout.scriptPubKey.hex)
       if (paymentVariantEntryOne) multiOne.multiVout = vout
     }
@@ -85,12 +83,12 @@ function testSignP2SHTransaction (chain) {
 
     multiOne.multiVout.vSat = value
 
-    txb.addInput(initiationTxHash, multiOne.multiVout.n, 0, paymentVariant.output)
+    txb.addInput(initiationTx.hash, multiOne.multiVout.n, 0, paymentVariant.output)
     txb.addOutput(addressToString(unusedAddressTwo), value - txfee)
 
     const tx = txb.buildIncomplete()
 
-    const signaturesOne = await chain.client.getMethod('signP2SHTransaction')(initiationTxRaw, tx, addresses[0].address, multiOne.multiVout, paymentVariant.redeem.output, 0, true)
+    const signaturesOne = await chain.client.getMethod('signP2SHTransaction')(initiationTx._raw.hex, tx, addresses[0].address, multiOne.multiVout, paymentVariant.redeem.output, 0, true)
 
     const multiOneInput = bitcoin.script.compile([
       signaturesOne,
@@ -110,8 +108,8 @@ function testSignP2SHTransaction (chain) {
     const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
     const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
 
-    const claimVouts = claimTx._raw.data.vout
-    const claimVins = claimTx._raw.data.vin
+    const claimVouts = claimTx._raw.vout
+    const claimVins = claimTx._raw.vin
 
     expect(claimVins.length).to.equal(1)
     expect(claimVouts.length).to.equal(1)
@@ -160,17 +158,14 @@ function testSignBatchP2SHTransaction (chain) {
     const addressOne = paymentVariantOne.address
     const addressTwo = paymentVariantTwo.address
 
-    const initiationTxHash = await chain.client.chain.sendBatchTransaction([{ to: addressOne, value }, { to: addressTwo, value }])
+    const initiationTx = await chain.client.chain.sendBatchTransaction([{ to: addressOne, value }, { to: addressTwo, value }])
     await mineBlock(chain)
-
-    const initiationTxRaw = await chain.client.getMethod('getRawTransactionByHash')(initiationTxHash)
-    const initiationTx = await chain.client.getMethod('decodeRawTransaction')(initiationTxRaw)
 
     const multiOne = {}
     const multiTwo = {}
 
-    for (const voutIndex in initiationTx._raw.data.vout) {
-      const vout = initiationTx._raw.data.vout[voutIndex]
+    for (const voutIndex in initiationTx._raw.vout) {
+      const vout = initiationTx._raw.vout[voutIndex]
       const paymentVariantEntryOne = (paymentVariantOne.output.toString('hex') === vout.scriptPubKey.hex)
       const paymentVariantEntryTwo = (paymentVariantTwo.output.toString('hex') === vout.scriptPubKey.hex)
       if (paymentVariantEntryOne) multiOne.multiVout = vout
@@ -183,16 +178,16 @@ function testSignBatchP2SHTransaction (chain) {
     multiOne.multiVout.vSat = value
     multiTwo.multiVout.vSat = value
 
-    txb.addInput(initiationTxHash, multiOne.multiVout.n, 0, paymentVariantOne.output)
-    txb.addInput(initiationTxHash, multiTwo.multiVout.n, 0, paymentVariantTwo.output)
+    txb.addInput(initiationTx.hash, multiOne.multiVout.n, 0, paymentVariantOne.output)
+    txb.addInput(initiationTx.hash, multiTwo.multiVout.n, 0, paymentVariantTwo.output)
     txb.addOutput(addressToString(unusedAddressTwo), (value * 2) - txfee)
 
     const tx = txb.buildIncomplete()
 
     const signaturesOne = await chain.client.getMethod('signBatchP2SHTransaction')(
       [
-        { inputTxHex: initiationTxRaw, index: 0, vout: multiOne.multiVout, outputScript: paymentVariantOne.redeem.output },
-        { inputTxHex: initiationTxRaw, index: 1, vout: multiTwo.multiVout, outputScript: paymentVariantTwo.redeem.output }
+        { inputTxHex: initiationTx._raw.hex, index: 0, vout: multiOne.multiVout, outputScript: paymentVariantOne.redeem.output },
+        { inputTxHex: initiationTx._raw.hex, index: 1, vout: multiTwo.multiVout, outputScript: paymentVariantTwo.redeem.output }
       ],
       [ addresses[0].address, addresses[0].address ],
       tx,
@@ -202,8 +197,8 @@ function testSignBatchP2SHTransaction (chain) {
 
     const signaturesTwo = await chain.client.getMethod('signBatchP2SHTransaction')(
       [
-        { inputTxHex: initiationTxRaw, index: 0, vout: multiOne.multiVout, outputScript: paymentVariantOne.redeem.output },
-        { inputTxHex: initiationTxRaw, index: 1, vout: multiTwo.multiVout, outputScript: paymentVariantTwo.redeem.output }
+        { inputTxHex: initiationTx._raw.hex, index: 0, vout: multiOne.multiVout, outputScript: paymentVariantOne.redeem.output },
+        { inputTxHex: initiationTx._raw.hex, index: 1, vout: multiTwo.multiVout, outputScript: paymentVariantTwo.redeem.output }
       ],
       [ addresses[1].address, addresses[1].address ],
       tx,
@@ -239,8 +234,8 @@ function testSignBatchP2SHTransaction (chain) {
     const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
     const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
 
-    const claimVouts = claimTx._raw.data.vout
-    const claimVins = claimTx._raw.data.vin
+    const claimVouts = claimTx._raw.vout
+    const claimVins = claimTx._raw.vin
 
     expect(claimVins.length).to.equal(2)
     expect(claimVouts.length).to.equal(1)
