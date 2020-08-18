@@ -2,7 +2,7 @@ import { findKey } from 'lodash'
 import BigNumber from 'bignumber.js'
 import { base58, padHexStart } from '@liquality/crypto'
 import * as bitcoin from 'bitcoinjs-lib'
-import * as classify from 'bitcoinjs-lib/src/classify';
+import * as classify from 'bitcoinjs-lib/src/classify'
 import networks from '@liquality/bitcoin-networks'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
@@ -78,14 +78,14 @@ function decodeRawTransaction (hex, network) {
 
   const vin = bjsTx.ins.map((input) => {
     return {
-        txid: Buffer.from(input.hash).reverse().toString('hex'),
-        vout: input.index,
-        scriptSig: {
-          asm: bitcoin.script.toASM(input.script),
-          hex: input.script.toString('hex')
-        },
-        txinwitness: input.witness.map(w => w.toString('hex')),
-        sequence: input.sequence,
+      txid: Buffer.from(input.hash).reverse().toString('hex'),
+      vout: input.index,
+      scriptSig: {
+        asm: bitcoin.script.toASM(input.script),
+        hex: input.script.toString('hex')
+      },
+      txinwitness: input.witness.map(w => w.toString('hex')),
+      sequence: input.sequence
     }
   })
 
@@ -100,9 +100,9 @@ function decodeRawTransaction (hex, network) {
         hex: output.script.toString('hex'),
         reqSigs: 1, // TODO: not sure how to derive this
         type: OUTPUT_TYPES_MAP[type] || type,
-        addresses: [],
+        addresses: []
       }
-    };
+    }
 
     try {
       const address = bitcoin.address.fromOutputScript(output.script, network)
