@@ -1,5 +1,7 @@
 import { find, findLast, findLastIndex, isFunction } from 'lodash'
 import debug from 'debug'
+import Ajv from 'ajv'
+import { Block, Transaction } from '@liquality/schema'
 
 import {
   DuplicateProviderError,
@@ -43,6 +45,10 @@ export default class Client {
     if (provider) {
       this.addProvider(provider)
     }
+
+    const ajv = new Ajv()
+    this.validateTransaction = ajv.compile(Transaction)
+    this.validateBlock = ajv.compile(Block)
 
     this._chain = new Chain(this)
     this._wallet = new Wallet(this)
@@ -129,6 +135,20 @@ export default class Client {
   getMethod (method, requestor) {
     const provider = this.getProviderForMethod(method, requestor)
     return provider[method].bind(provider)
+  }
+
+  assertValidTransaction (transaction) {
+    if (!this.validateTransaction(transaction)) {
+      const { errors } = this.validateTransaction
+      throw new InvalidProviderResponseError(`Provider returned an invalid transaction, "${errors[0].dataPath}" ${errors[0].message}`)
+    }
+  }
+
+  assertValidBlock (block) {
+    if (!this.validateBlock(block)) {
+      const { errors } = this.validateBlock
+      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
+    }
   }
 
   get chain () {

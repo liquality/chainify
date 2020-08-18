@@ -1,18 +1,14 @@
 import { isArray, isBoolean, isNumber, isString } from 'lodash'
-import Ajv from 'ajv'
 import { BigNumber } from 'bignumber.js'
 
 import { InvalidProviderResponseError } from '@liquality/errors'
-import { Block, Transaction } from '@liquality/schema'
+
 
 export default class Chain {
   /**
    * ChainProvider
    */
   constructor (client) {
-    const ajv = new Ajv()
-    this.validateTransaction = ajv.compile(Transaction)
-    this.validateBlock = ajv.compile(Block)
     this.client = client
   }
 
@@ -55,12 +51,7 @@ export default class Chain {
     }
 
     const block = await this.client.getMethod('getBlockByHash')(blockHash, includeTx)
-
-    if (!this.validateBlock(block)) {
-      const { errors } = this.validateBlock
-      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
-    }
-
+    this.client.assertValidBlock(block)
     return block
   }
 
@@ -85,12 +76,7 @@ export default class Chain {
     }
 
     const block = await this.client.getMethod('getBlockByNumber')(blockNumber, includeTx)
-
-    if (!this.validateBlock(block)) {
-      const { errors } = this.validateBlock
-      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
-    }
-
+    this.client.assertValidBlock(block)
     return block
   }
 
@@ -129,16 +115,7 @@ export default class Chain {
     }
 
     const transaction = await this.client.getMethod('getTransactionByHash')(txHash)
-
-    if (transaction) {
-      const valid = this.validateTransaction(transaction)
-
-      if (!valid) {
-        const { errors } = this.validateTransaction
-        throw new InvalidProviderResponseError(`Provider returned an invalid transaction, "${errors[0].dataPath}" ${errors[0].message}`)
-      }
-    }
-
+    this.client.assertValidTransaction(transaction)
     return transaction
   }
 
@@ -203,7 +180,9 @@ export default class Chain {
    * @return {Promise<string>} Resolves with a signed transaction.
    */
   async sendTransaction (to, value, data, fee) {
-    return this.client.getMethod('sendTransaction')(to, value, data, fee)
+    const transaction = await this.client.getMethod('sendTransaction')(to, value, data, fee)
+    this.client.assertValidTransaction(transaction)
+    return transaction
   }
 
   /**
@@ -221,7 +200,9 @@ export default class Chain {
       throw new TypeError('Transaction hash should be a valid hex string')
     }
 
-    return this.client.getMethod('updateTransactionFee')(txHash, newFee)
+    const transaction = this.client.getMethod('updateTransactionFee')(txHash, newFee)
+    this.client.assertValidTransaction(transaction)
+    return transaction
   }
 
   /**
@@ -253,14 +234,6 @@ export default class Chain {
 
   async getConnectedNetwork () {
     return this.client.getMethod('getConnectedNetwork')()
-  }
-
-  async getAddressMempool (addresses) {
-    return this.client.getMethod('getAddressMempool')(addresses)
-  }
-
-  async getTransactionReceipt (txHash) {
-    return this.client.getMethod('getTransactionReceipt')(txHash)
   }
 
   async getFees () {
