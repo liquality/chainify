@@ -64,7 +64,8 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       ['bech32', 'p2sh-segwit'].includes(this._addressType),
       undefined,
       this._addressType === 'bech32' ? ['bech32'] : undefined
-    ), fee }
+    ),
+    fee }
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {

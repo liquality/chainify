@@ -51,7 +51,8 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     return this._sendTransaction(transactions)
   }
 
-  async updateTransactionFee (txHash, newFeePerByte) {
+  async updateTransactionFee (tx, newFeePerByte) {
+    const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
     const changeAddresses = (await this.getAddresses(0, 1000, true)).map(a => a.address)

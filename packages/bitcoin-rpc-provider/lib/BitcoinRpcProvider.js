@@ -1,4 +1,4 @@
-import { isArray, flatten } from 'lodash'
+import { isArray, flatten, isString } from 'lodash'
 import BigNumber from 'bignumber.js'
 
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
@@ -67,7 +67,8 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     return feePerByte ? this.withTxFee(send, feePerByte) : send()
   }
 
-  async updateTransactionFee (txHash, newFeePerByte) {
+  async updateTransactionFee (tx, newFeePerByte) {
+    const txHash = isString(tx) ? tx : tx.hash
     return this.withTxFee(async () => {
       const result = await this.jsonrpc('bumpfee', txHash)
       const transaction = await this.jsonrpc('gettransaction', result.txid, true)

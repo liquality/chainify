@@ -1,5 +1,7 @@
-import { isArray, isBoolean, isNumber, isString } from 'lodash'
+import { isArray, isBoolean, isNumber, isString, isObject } from 'lodash'
 import { BigNumber } from 'bignumber.js'
+
+import { InvalidProviderResponseError } from '@liquality/errors'
 
 export default class Chain {
   /**
@@ -184,20 +186,22 @@ export default class Chain {
 
   /**
    * Update the fee of a transaction.
-   * @param {!string} txHash - Hash of the transaction to update
-   * @param {!string} fee - New fee price in native unit (e.g. sat/b, wei)
+   * @param {(string|Transaction)} tx - Transaction object or hash of the transaction to update
+   * @param {!string} newFee - New fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with the new transaction
    */
-  async updateTransactionFee (txHash, newFee) { // TODO: txHash or Tx Object
-    if (!isString(txHash)) {
-      throw new TypeError('Transaction hash should be a string')
+  async updateTransactionFee (tx, newFee) {
+    if (isString(tx)) {
+      if (!(/^[A-Fa-f0-9]+$/.test(tx))) {
+        throw new TypeError('Transaction hash should be a valid hex string')
+      }
+    } else if (isObject(tx)) {
+      this.client.assertValidTransaction(tx)
+    } else {
+      throw new TypeError('Transaction should be a string or object')
     }
 
-    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-      throw new TypeError('Transaction hash should be a valid hex string')
-    }
-
-    const transaction = await this.client.getMethod('updateTransactionFee')(txHash, newFee)
+    const transaction = await this.client.getMethod('updateTransactionFee')(tx, newFee)
     this.client.assertValidTransaction(transaction)
     return transaction
   }

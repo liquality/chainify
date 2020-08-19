@@ -254,22 +254,22 @@ module.exports = {
         'timereceived': 1597754379,
         'bip125-replaceable': 'no',
         'details': [
-            {
-                'address': '2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23',
-                'category': 'send',
-                'amount': -0.0001,
-                'label': '',
-                'vout': 1,
-                'fee': -0.0000374,
-                'abandoned': false
-            },
-            {
-                'address': '2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23',
-                'category': 'receive',
-                'amount': 0.0001,
-                'label': '',
-                'vout': 1
-            }
+          {
+            'address': '2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23',
+            'category': 'send',
+            'amount': -0.0001,
+            'label': '',
+            'vout': 1,
+            'fee': -0.0000374,
+            'abandoned': false
+          },
+          {
+            'address': '2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23',
+            'category': 'receive',
+            'amount': 0.0001,
+            'label': '',
+            'vout': 1
+          }
         ],
         'hex': '020000000144559fe3bc19957925cbd45bd8a7378ca964892ea375d09535fcc9725285634200000000484730440220653f079162334a15dd60275552e2cd2ab7a57978667d5120aec926a5d55a4cce02200d0ae39fa2a60e52223a4a8fec90222804160592fdd745b3f18d734674a76ee701feffffff0254bc052a0100000017a914c55f29c3225858086d2c71979f04e45bff09251987102700000000000017a9143eb8d2fbe1f6614b55d5f31eecc074667cb690c08766000000'
       }
