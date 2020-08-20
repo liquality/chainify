@@ -17,6 +17,7 @@ before_install:
 - chmod +x docker-compose
 - sudo mv docker-compose /usr/local/bin
 before_script:
+- export NODE_OPTIONS="--max_old_space_size=4096"
 - npm run bootstrap
 - npm run lint
 - npm run build

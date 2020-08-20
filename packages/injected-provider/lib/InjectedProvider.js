@@ -61,14 +61,6 @@ export default class InjectedProvider {
     return this.injectedProvider.getMethod('chain.getConnectedNetwork')()
   }
 
-  async getAddressMempool (addresses) {
-    return this.injectedProvider.getMethod('chain.getAddressMempool')(addresses)
-  }
-
-  async getTransactionReceipt (txHash) {
-    return this.injectedProvider.getMethod('chain.getTransactionReceipt')(txHash)
-  }
-
   // </chain>
 
   // <wallet>

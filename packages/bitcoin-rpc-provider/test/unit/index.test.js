@@ -51,9 +51,9 @@ describe('Bitcoin RPC provider', () => {
   })
 
   describe('sendTransaction', () => {
-    it('should return transaction hash', async () => {
-      const tx = await provider.sendTransaction('mfZfUQ4RWLhJdFZr9m2oDXsbcZfuNfYDYi', 1000)
-      expect(tx).to.equal('7a16d66f0e5abe24f6f9680da0e9dabf877577209180b9fb43c55d001ddf208b')
+    it('should return transaction', async () => {
+      const tx = await provider.sendTransaction('2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23', 1000)
+      expect(tx.hash).to.equal('8d2ef62766cb1c15744228335483d37a7addc2a2f88d47413527e55e212ef8cd')
     })
   })
 
@@ -66,33 +66,31 @@ describe('Bitcoin RPC provider', () => {
         'value': 50,
         '_raw': {
           'hex': '01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000',
-          'data': {
-            'txid': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
-            'size': 99,
-            'version': 1,
-            'locktime': 0,
-            'vin': [
-              {
-                'coinbase': '01660101',
-                'sequence': 4294967295
+          'txid': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
+          'size': 99,
+          'version': 1,
+          'locktime': 0,
+          'vin': [
+            {
+              'coinbase': '01660101',
+              'sequence': 4294967295
+            }
+          ],
+          'vout': [
+            {
+              'value': 50.0000384,
+              'n': 0,
+              'scriptPubKey': {
+                'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
+                'hex': '2103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac',
+                'reqSigs': 1,
+                'type': 'pubkey',
+                'addresses': [
+                  'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'
+                ]
               }
-            ],
-            'vout': [
-              {
-                'value': 50.0000384,
-                'n': 0,
-                'scriptPubKey': {
-                  'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
-                  'hex': '2103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac',
-                  'reqSigs': 1,
-                  'type': 'pubkey',
-                  'addresses': [
-                    'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'
-                  ]
-                }
-              }
-            ]
-          }
+            }
+          ]
         }
       })
     })

@@ -1,18 +1,13 @@
-import { isArray, isBoolean, isNumber, isString } from 'lodash'
-import Ajv from 'ajv'
+import { isArray, isBoolean, isNumber, isString, isObject } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
 import { InvalidProviderResponseError } from '@liquality/errors'
-import { Block, Transaction } from '@liquality/schema'
 
 export default class Chain {
   /**
    * ChainProvider
    */
   constructor (client) {
-    const ajv = new Ajv()
-    this.validateTransaction = ajv.compile(Transaction)
-    this.validateBlock = ajv.compile(Block)
     this.client = client
   }
 
@@ -55,12 +50,7 @@ export default class Chain {
     }
 
     const block = await this.client.getMethod('getBlockByHash')(blockHash, includeTx)
-
-    if (!this.validateBlock(block)) {
-      const { errors } = this.validateBlock
-      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
-    }
-
+    this.client.assertValidBlock(block)
     return block
   }
 
@@ -85,12 +75,7 @@ export default class Chain {
     }
 
     const block = await this.client.getMethod('getBlockByNumber')(blockNumber, includeTx)
-
-    if (!this.validateBlock(block)) {
-      const { errors } = this.validateBlock
-      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
-    }
-
+    this.client.assertValidBlock(block)
     return block
   }
 
@@ -129,14 +114,8 @@ export default class Chain {
     }
 
     const transaction = await this.client.getMethod('getTransactionByHash')(txHash)
-
     if (transaction) {
-      const valid = this.validateTransaction(transaction)
-
-      if (!valid) {
-        const { errors } = this.validateTransaction
-        throw new InvalidProviderResponseError(`Provider returned an invalid transaction, "${errors[0].dataPath}" ${errors[0].message}`)
-      }
+      this.client.assertValidTransaction(transaction)
     }
 
     return transaction
@@ -200,34 +179,40 @@ export default class Chain {
    * @param {!string} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
    * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
-   * @return {Promise<string>} Resolves with a signed transaction.
+   * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
   async sendTransaction (to, value, data, fee) {
-    return this.client.getMethod('sendTransaction')(to, value, data, fee)
+    const transaction = await this.client.getMethod('sendTransaction')(to, value, data, fee)
+    this.client.assertValidTransaction(transaction)
+    return transaction
   }
 
   /**
    * Update the fee of a transaction.
-   * @param {!string} txHash - Hash of the transaction to update
-   * @param {!string} fee - New fee price in native unit (e.g. sat/b, wei)
-   * @return {Promise<string>} Resolves with the new transaction hash
+   * @param {(string|Transaction)} tx - Transaction object or hash of the transaction to update
+   * @param {!string} newFee - New fee price in native unit (e.g. sat/b, wei)
+   * @return {Promise<Transaction>} Resolves with the new transaction
    */
-  async updateTransactionFee (txHash, newFee) { // TODO: txHash or Tx Object
-    if (!isString(txHash)) {
-      throw new TypeError('Transaction hash should be a string')
+  async updateTransactionFee (tx, newFee) {
+    if (isString(tx)) {
+      if (!(/^[A-Fa-f0-9]+$/.test(tx))) {
+        throw new TypeError('Transaction hash should be a valid hex string')
+      }
+    } else if (isObject(tx)) {
+      this.client.assertValidTransaction(tx)
+    } else {
+      throw new TypeError('Transaction should be a string or object')
     }
 
-    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
-      throw new TypeError('Transaction hash should be a valid hex string')
-    }
-
-    return this.client.getMethod('updateTransactionFee')(txHash, newFee)
+    const transaction = await this.client.getMethod('updateTransactionFee')(tx, newFee)
+    this.client.assertValidTransaction(transaction)
+    return transaction
   }
 
   /**
    * Create, sign & broad a transaction with multiple outputs.
    * @param {string[]} transactions - to, value, data, from.
-   * @return {Promise<string>} Resolves with a signed transaction.
+   * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
   async sendBatchTransaction (transactions) {
     return this.client.getMethod('sendBatchTransaction')(transactions)
@@ -253,14 +238,6 @@ export default class Chain {
 
   async getConnectedNetwork () {
     return this.client.getMethod('getConnectedNetwork')()
-  }
-
-  async getAddressMempool (addresses) {
-    return this.client.getMethod('getAddressMempool')(addresses)
-  }
-
-  async getTransactionReceipt (txHash) {
-    return this.client.getMethod('getTransactionReceipt')(txHash)
   }
 
   async getFees () {

@@ -1,6 +1,6 @@
 import Provider from '@liquality/provider'
 import { Address, addressToString } from '@liquality/utils'
-import { remove0x, buildTransaction } from '@liquality/ethereum-utils'
+import { remove0x, buildTransaction, formatEthResponse, normalizeTransactionObject } from '@liquality/ethereum-utils'
 import { sha256 } from '@liquality/crypto'
 import { mnemonicToSeed } from 'bip39'
 import { fromMasterSeed } from 'hdkey'
@@ -101,11 +101,12 @@ export default class EthereumJsWalletProvider extends Provider {
 
     const serializedTx = await this.signTransaction(txData)
     const txHash = await this.getMethod('sendRawTransaction')(serializedTx)
-    return remove0x(txHash)
+    txData.hash = txHash
+    return normalizeTransactionObject(formatEthResponse(txData))
   }
 
-  async updateTransactionFee (txHash, newGasPrice) {
-    const transaction = await this.getMethod('getTransactionByHash')(txHash)
+  async updateTransactionFee (tx, newGasPrice) {
+    const transaction = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
     const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
     const gas = await this.getMethod('estimateGas')(txData)
@@ -113,7 +114,9 @@ export default class EthereumJsWalletProvider extends Provider {
 
     const serializedTx = await this.signTransaction(txData)
     const newTxHash = await this.getMethod('sendRawTransaction')(serializedTx)
-    return remove0x(newTxHash)
+
+    txData.hash = newTxHash
+    return normalizeTransactionObject(formatEthResponse(txData))
   }
 }
 

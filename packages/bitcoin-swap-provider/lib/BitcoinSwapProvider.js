@@ -3,7 +3,9 @@ import * as classify from 'bitcoinjs-lib/src/classify'
 import BigNumber from 'bignumber.js'
 import Provider from '@liquality/provider'
 import {
-  calculateFee
+  calculateFee,
+  decodeRawTransaction,
+  normalizeTransactionObject
 } from '@liquality/bitcoin-utils'
 import { addressToString } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
@@ -185,10 +187,13 @@ export default class BitcoinSwapProvider extends Provider {
       tx.setInputScript(0, paymentWithInput.input)
     }
 
-    return this.getMethod('sendRawTransaction')(tx.toHex())
+    const hex = tx.toHex()
+    await this.getMethod('sendRawTransaction')(hex)
+    return normalizeTransactionObject(decodeRawTransaction(hex), txfee)
   }
 
-  async updateTransactionFee (txHash, newFeePerByte) {
+  async updateTransactionFee (tx, newFeePerByte) {
+    const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     if (transaction.vin.length === 1 && transaction.vout.length === 1) {
       const inputTx = (await this.getMethod('getTransactionByHash')(transaction.vin[0].txid))._raw
@@ -232,11 +237,13 @@ export default class BitcoinSwapProvider extends Provider {
           const inputScript = bitcoin.script.compile([sig, ...script.slice(1)])
           tx.setInputScript(0, inputScript)
         }
-        return this.getMethod('sendRawTransaction')(tx.toHex())
+        const hex = tx.toHex()
+        await this.getMethod('sendRawTransaction')(hex)
+        return normalizeTransactionObject(decodeRawTransaction(hex), txfee)
       }
     }
 
-    return this.getMethod('updateTransactionFee')(txHash, newFeePerByte)
+    return this.getMethod('updateTransactionFee')(tx, newFeePerByte)
   }
 
   getInputScriptFromTransaction (tx) {

@@ -36,7 +36,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const app = await this.getApp()
 
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change } = await this.getInputsForAmount(_outputs, feePerByte, fixedInputs)
+    const { inputs, change, fee } = await this.getInputsForAmount(_outputs, feePerByte, fixedInputs)
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map(utxo => utxo.derivationPath)
 
@@ -54,7 +54,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
 
     const serializedOutputs = app.serializeTransactionOutputs({ outputs }).toString('hex')
 
-    return app.createPaymentTransactionNew(
+    return { hex: await app.createPaymentTransactionNew(
       ledgerInputs,
       paths,
       unusedAddress.derivationPath,
@@ -64,7 +64,8 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       ['bech32', 'p2sh-segwit'].includes(this._addressType),
       undefined,
       this._addressType === 'bech32' ? ['bech32'] : undefined
-    )
+    ),
+    fee }
   }
 
   async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {

@@ -8,7 +8,9 @@ import networks from '@liquality/ethereum-networks'
 import {
   ensure0x,
   remove0x,
-  buildTransaction
+  buildTransaction,
+  formatEthResponse,
+  normalizeTransactionObject
 } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
 
@@ -96,11 +98,12 @@ export default class EthereumLedgerProvider extends LedgerProvider {
 
     const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
 
-    return remove0x(txHash)
+    txData.hash = txHash
+    return normalizeTransactionObject(formatEthResponse(txData))
   }
 
-  async updateTransactionFee (txHash, newGasPrice) {
-    const transaction = await this.getMethod('getTransactionByHash')(txHash)
+  async updateTransactionFee (tx, newGasPrice) {
+    const transaction = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
     const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
     const gas = await this.getMethod('estimateGas')(txData)
@@ -108,7 +111,9 @@ export default class EthereumLedgerProvider extends LedgerProvider {
 
     const signedSerializedTx = await this.signTransaction(txData)
     const newTxHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
-    return remove0x(newTxHash)
+
+    txData.hash = newTxHash
+    return normalizeTransactionObject(formatEthResponse(txData))
   }
 }
 

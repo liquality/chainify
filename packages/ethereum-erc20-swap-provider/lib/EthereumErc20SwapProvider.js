@@ -28,16 +28,16 @@ ${expirationEncoded}421161008e57600080fd5b600154600354604080516370a0823160e01b81
 
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    const txHash = await this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
+    const deployTx = await this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
     let initiationTransactionReceipt = null
 
     while (initiationTransactionReceipt === null) {
-      initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(txHash)
+      initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(deployTx.hash)
       await sleep(5000)
     }
 
     await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value, undefined, gasPrice)
-    return txHash
+    return deployTx
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, gasPrice) {

@@ -52,7 +52,8 @@ describe('Ethereum RPC provider', () => {
   describe('sendTransaction', () => {
     it('should return a txid without 0x', async () => {
       const tx = await client.chain.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)
-      expect(tx).to.match(/^[A-Fa-f0-9]+$/)
+      expect(tx.hash).to.match(/^[A-Fa-f0-9]+$/)
+      expect(tx.value).equal(1000)
     })
   })
 

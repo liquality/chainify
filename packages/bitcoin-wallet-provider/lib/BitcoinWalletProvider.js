@@ -1,4 +1,4 @@
-import { AddressTypes, selectCoins } from '@liquality/bitcoin-utils'
+import { AddressTypes, selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import * as bitcoin from 'bitcoinjs-lib'
 import { Address, addressToString } from '@liquality/utils'
 import { BigNumber } from 'bignumber.js'
@@ -30,7 +30,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
   }
 
   async buildTransaction (to, value, data, feePerByte) {
-    return this._buildTransaction([{ to, value, feePerByte }])
+    return this._buildTransaction([{ to, value }], feePerByte)
   }
 
   async buildBatchTransaction (transactions) {
@@ -38,8 +38,9 @@ export default superclass => class BitcoinWalletProvider extends superclass {
   }
 
   async _sendTransaction (transactions, feePerByte) {
-    const signedTransaction = await this._buildTransaction(transactions, feePerByte)
-    return this.getMethod('sendRawTransaction')(signedTransaction)
+    const { hex, fee } = await this._buildTransaction(transactions, feePerByte)
+    await this.getMethod('sendRawTransaction')(hex)
+    return normalizeTransactionObject(decodeRawTransaction(hex), fee)
   }
 
   async sendTransaction (to, value, data, feePerByte) {
@@ -50,7 +51,8 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     return this._sendTransaction(transactions)
   }
 
-  async updateTransactionFee (txHash, newFeePerByte) {
+  async updateTransactionFee (tx, newFeePerByte) {
+    const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
     const changeAddresses = (await this.getAddresses(0, 1000, true)).map(a => a.address)
@@ -59,9 +61,10 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     const transactions = nonChangeOutputs.map(output =>
       ({ to: output.scriptPubKey.addresses[0], value: BigNumber(output.value).times(1e8).toNumber() })
     )
-    const signedTransaction = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
+    const { hex, fee } = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
 
-    return this.getMethod('sendRawTransaction')(signedTransaction)
+    await this.getMethod('sendRawTransaction')(hex)
+    return normalizeTransactionObject(decodeRawTransaction(hex), fee)
   }
 
   async getWalletAddress (address) {
