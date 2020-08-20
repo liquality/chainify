@@ -114,7 +114,10 @@ export default class Chain {
     }
 
     const transaction = await this.client.getMethod('getTransactionByHash')(txHash)
-    this.client.assertValidTransaction(transaction)
+    if (transaction) {
+      this.client.assertValidTransaction(transaction)
+    }
+
     return transaction
   }
 
