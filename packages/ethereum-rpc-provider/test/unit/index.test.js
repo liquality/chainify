@@ -55,6 +55,11 @@ describe('Ethereum RPC provider', () => {
       expect(tx.hash).to.match(/^[A-Fa-f0-9]+$/)
       expect(tx.value).equal(1000)
     })
+
+    it('returned tx object should have input field', async () => {
+      const tx = await client.chain.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000, '1234')
+      expect(tx._raw.input).equal('1234')
+    })
   })
 
   describe('getBlockHeight', () => {

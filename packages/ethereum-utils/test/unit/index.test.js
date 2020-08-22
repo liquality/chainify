@@ -91,5 +91,24 @@ describe('Ethereum Util', () => {
         fee: 1800000000000000
       })
     })
+
+    it('should rename data field to input if exists', () => {
+      expect(EthereumUtil.normalizeTransactionObject({
+        nonce: '0x0',
+        from: '0x322d4959c911520645c0638204b42ce0689236e9',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: 100000,
+        data: '0x1234'
+      }, 10)).to.deep.equal({
+        value: 100000,
+        _raw: {
+          nonce: '0x0',
+          from: '0x322d4959c911520645c0638204b42ce0689236e9',
+          to: '0x635d7d148054b9471d79084b80b864a166956139',
+          value: 100000,
+          input: '0x1234'
+        }
+      })
+    })
   })
 })

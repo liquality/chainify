@@ -86,6 +86,12 @@ function normalizeTransactionObject (tx, currentHeight) {
     _raw: tx
   }
 
+  // Normalize data field. Called `data` in `sendTransaction` calls. `input` everywhere else
+  if ('data' in normalizedTx._raw) {
+    normalizedTx._raw.input = normalizedTx._raw.data
+    delete normalizedTx._raw.data
+  }
+
   if (normalizedTx.blockNumber === null) {
     delete normalizedTx.blockNumber
   } else if (!isNaN(normalizedTx.blockNumber) && !('confirmations' in normalizedTx)) {
