@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Provider from '@liquality/provider'
 import { isArray, flatten } from 'lodash'
+import { decodeRawTransaction, normalizeTransactionObject } from '@liquality/bitcoin-utils'
 import BigNumber from 'bignumber.js'
 
 import { addressToString } from '@liquality/utils'
@@ -8,9 +9,10 @@ import { addressToString } from '@liquality/utils'
 import { version } from '../package.json'
 
 export default class BitcoinEsploraApiProvider extends Provider {
-  constructor (url, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
+  constructor (url, network, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
     super()
     this.url = url
+    this._network = network
     this._numberOfBlockConfirmation = numberOfBlockConfirmation
     this._defaultFeePerByte = defaultFeePerByte
 
@@ -100,53 +102,12 @@ export default class BitcoinEsploraApiProvider extends Provider {
     return this.formatTransaction(response.data, currentHeight)
   }
 
-  formatTransaction (tx, currentHeight) {
-    const value = tx.vout.reduce((p, n) => p.plus(BigNumber(n.value)), BigNumber(0))
-
-    const rawVin = tx.vin.map(vin => ({
-      txid: vin.txid,
-      vout: vin.vout,
-      scriptSig: {
-        asm: vin.scriptsig_asm,
-        hex: vin.scriptsig
-      },
-      txinwitness: vin.witness
-    }))
-
-    const rawVout = tx.vout.map((vout, i) => ({
-      value: BigNumber(vout.value).dividedBy(1e8).toNumber(),
-      n: i,
-      scriptPubKey: {
-        asm: vout.scriptpubkey_asm,
-        hex: vout.scriptpubkey,
-        type: vout.scriptpubkey_type,
-        addresses: [
-          vout.scriptpubkey_address
-        ]
-      }
-    }))
-
-    const rawTx = {
-      ...tx,
-      vin: rawVin,
-      vout: rawVout
-    }
-
+  async formatTransaction (tx, currentHeight) {
+    const hex = await this.getTransactionHex(tx.txid)
     const confirmations = tx.status.confirmed ? currentHeight - tx.status.block_height + 1 : 0
-
-    const fee = tx.fee
-    const feePrice = Math.round(fee / Math.ceil(tx.weight / 4))
-
-    return {
-      hash: tx.txid,
-      value: value.toNumber(),
-      _raw: rawTx,
-      blockHash: tx.status.block_hash,
-      blockNumber: tx.status.block_height,
-      confirmations,
-      fee,
-      feePrice
-    }
+    const decodedTx = decodeRawTransaction(hex, this._network)
+    decodedTx.confirmations = confirmations
+    return normalizeTransactionObject(decodedTx, tx.fee, { hash: tx.status.block_hash, number: tx.status.block_height })
   }
 
   async getBlockTransactions (blockHash) {

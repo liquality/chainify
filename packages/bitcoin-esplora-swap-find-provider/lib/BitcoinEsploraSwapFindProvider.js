@@ -16,14 +16,15 @@ export default class BitcoinEsploraSwapFindProvider extends Provider {
 
   async findAddressTransaction (address, currentHeight, predicate) {
     // TODO: This does not go through pages as swap addresses have at most 2 transactions
-    // Investigate whether retrieving more transactions is requiredl.
+    // Investigate whether retrieving more transactions is required.
     const response = await this._axios.get(`/address/${address}/txs`)
     const transactions = response.data
-    const transaction = transactions.find(tx => {
-      const formattedTransaction = this.getMethod('formatTransaction')(tx, currentHeight)
-      return predicate(formattedTransaction)
-    })
-    if (transaction) return this.getMethod('formatTransaction')(transaction, currentHeight)
+    for (const transaction of transactions) {
+      const formattedTransaction = await this.getMethod('formatTransaction')(transaction, currentHeight)
+      if (predicate(formattedTransaction)) {
+        return formattedTransaction
+      }
+    }
   }
 
   async findSwapTransaction (recipientAddress, refundAddress, secretHash, expiration, blockNumber, predicate) {
