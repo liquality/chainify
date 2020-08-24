@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-kiba-provider",
   "umdName": "BitcoinKibaProvider",
   "umdExport": "default",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -20,11 +20,11 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.3",
-    "@liquality/bitcoin-networks": "^0.6.1",
-    "@liquality/bitcoin-utils": "^0.6.1",
-    "@liquality/kiba-provider": "^0.6.1",
-    "@liquality/provider": "^0.6.1",
-    "@liquality/utils": "^0.6.1",
+    "@liquality/bitcoin-networks": "^0.6.2",
+    "@liquality/bitcoin-utils": "^0.6.2",
+    "@liquality/kiba-provider": "^0.6.2",
+    "@liquality/provider": "^0.6.2",
+    "@liquality/utils": "^0.6.2",
     "core-connection": "0.0.12"
   },
   "engines": {
