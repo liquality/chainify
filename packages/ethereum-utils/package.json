@@ -22,7 +22,7 @@
     "@liquality/schema": "^0.6.2",
     "@liquality/utils": "^0.6.2",
     "eip55": "^1.0.3",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.17"
   },
   "engines": {
     "node": "~8.12.0"
