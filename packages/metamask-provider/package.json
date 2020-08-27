@@ -23,7 +23,7 @@
     "@liquality/errors": "^0.6.2",
     "@liquality/ethereum-utils": "^0.6.2",
     "@liquality/wallet-provider": "^0.6.2",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.17"
   },
   "engines": {
     "node": "~8.12.0"
