@@ -24,7 +24,7 @@
     "@liquality/provider": "^0.6.2",
     "@liquality/schema": "^0.6.2",
     "axios": "^0.18.0",
-    "json-bigint": "^0.3.0",
+    "json-bigint": "^1.0.0",
     "lodash": "^4.17.13"
   },
   "engines": {
