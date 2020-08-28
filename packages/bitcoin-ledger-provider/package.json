@@ -29,7 +29,7 @@
     "bignumber.js": "^8.1.1",
     "bip32": "^1.0.2",
     "bitcoinjs-lib": "^5.1.2",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.17"
   },
   "engines": {
     "node": "~8.12.0"
