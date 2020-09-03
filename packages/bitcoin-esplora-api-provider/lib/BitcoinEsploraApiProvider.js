@@ -109,28 +109,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
     return normalizeTransactionObject(decodedTx, tx.fee, { hash: tx.status.block_hash, number: tx.status.block_height })
   }
 
-  async getBlockTransactions (blockHash) {
-    let transactions = []
-    const currentHeight = await this.getBlockHeight()
-    for (let i = 0; ;i += 25) {
-      try {
-        const response = await this._axios.get(`/block/${blockHash}/txs/${i}`)
-        const data = response.data
-        if (isArray(data)) {
-          transactions = transactions.concat(data.map(tx => this.formatTransaction(tx, currentHeight)))
-        }
-      } catch (e) {
-        if (e.response.data === 'start index out of range') {
-          break
-        } else {
-          throw e
-        }
-      }
-    }
-    return transactions
-  }
-
-  async getBlockByHash (blockHash, includeTx = false) {
+  async getBlockByHash (blockHash) {
     const response = await this._axios.get(`/block/${blockHash}`)
     const data = response.data
     const {
@@ -141,10 +120,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
       size,
       previousblockhash: parentHash,
       nonce
-      // confirmations
     } = data
-
-    let transactions = await this.getBlockTransactions(blockHash)
 
     return {
       hash,
@@ -152,8 +128,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
       timestamp,
       size,
       parentHash,
-      nonce,
-      transactions
+      nonce
     }
   }
 
@@ -162,8 +137,8 @@ export default class BitcoinEsploraApiProvider extends Provider {
     return response.data
   }
 
-  async getBlockByNumber (blockNumber, includeTx) {
-    return this.getBlockByHash(await this.getBlockHash(blockNumber), includeTx)
+  async getBlockByNumber (blockNumber) {
+    return this.getBlockByHash(await this.getBlockHash(blockNumber))
   }
 
   async getBlockHeight () {
