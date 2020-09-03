@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-networks",
   "umdName": "BitcoinNetworks",
   "umdExport": "default",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
