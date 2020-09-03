@@ -82,10 +82,15 @@ function addressToString (any) {
   return String(new Address(any))
 }
 
+function asyncSetImmediate () {
+  return new Promise(resolve => setImmediate(resolve))
+}
+
 export {
   Address,
   addressToString,
   sleep,
+  asyncSetImmediate,
 
   version
 }
