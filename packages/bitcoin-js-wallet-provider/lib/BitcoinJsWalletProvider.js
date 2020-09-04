@@ -11,38 +11,26 @@ import { version } from '../package.json'
 export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider) {
   constructor (network, mnemonic, addressType = 'bech32') {
     super(network, addressType, [network])
-
-    if (!mnemonic) throw new Error('Mnemonic should not be empty')
-
+    if (!mnemonic) {
+      throw new Error('Mnemonic should not be empty')
+    }
     this._mnemonic = mnemonic
   }
 
   async seedNode () {
-    if (this._seedNode) return this._seedNode
-
     const seed = await mnemonicToSeed(this._mnemonic)
-    this._seedNode = bip32.fromSeed(seed, this._network)
-
-    return this._seedNode
+    return bip32.fromSeed(seed, this._network)
   }
 
   async baseDerivationNode () {
-    if (this._baseDerivationNode) return this._baseDerivationNode
-
     const baseNode = await this.seedNode()
-    this._baseDerivationNode = baseNode.derivePath(this._baseDerivationPath)
-
-    return this._baseDerivationNode
+    return baseNode.derivePath(this._baseDerivationPath)
   }
 
   async keyPair (derivationPath) {
-    if (this._keyPair) return this._keyPair
-
     const node = await this.seedNode()
     const wif = node.derivePath(derivationPath).toWIF()
-    this._keyPair = bitcoin.ECPair.fromWIF(wif, this._network)
-
-    return this._keyPair
+    return bitcoin.ECPair.fromWIF(wif, this._network)
   }
 
   async signMessage (message, from) {
