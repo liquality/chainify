@@ -11,20 +11,28 @@ import { version } from '../package.json'
 export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider) {
   constructor (network, mnemonic, addressType = 'bech32') {
     super(network, addressType, [network])
-    if (!mnemonic) {
-      throw new Error('Mnemonic should not be empty')
-    }
+
+    if (!mnemonic) throw new Error('Mnemonic should not be empty')
+
     this._mnemonic = mnemonic
   }
 
   async seedNode () {
+    if (this._seedNode) return this._seedNode
+
     const seed = await mnemonicToSeed(this._mnemonic)
-    return bip32.fromSeed(seed, this._network)
+    this._seedNode = bip32.fromSeed(seed, this._network)
+
+    return this._seedNode
   }
 
   async baseDerivationNode () {
+    if (this._baseDerivationNode) return this._baseDerivationNode
+
     const baseNode = await this.seedNode()
-    return baseNode.derivePath(this._baseDerivationPath)
+    this._baseDerivationNode = baseNode.derivePath(this._baseDerivationPath)
+
+    return this._baseDerivationNode
   }
 
   async keyPair (derivationPath) {
