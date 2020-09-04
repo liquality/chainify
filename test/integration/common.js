@@ -3,13 +3,14 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import MetaMaskConnector from 'node-metamask'
 import KibaConnector from 'node-kiba'
-import { Client, providers, crypto, errors } from '../../packages/bundle/lib'
-import { sleep } from '../../packages/utils'
+import { Client, providers, crypto, errors, utils } from '../../packages/bundle/lib'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
 import config from './config'
 import testnetConfig from './testnetConfig'
 import BigNumber from 'bignumber.js'
+
+const sleep = utils.sleep
 
 chai.use(chaiAsPromised)
 
