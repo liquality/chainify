@@ -52,7 +52,6 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     return this._sendTransaction(transactions)
   }
 
-  
   async updateTransactionFee (tx, newFeePerByte) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
