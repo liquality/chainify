@@ -51,6 +51,16 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     return this._sendTransaction(transactions)
   }
 
+  async buildSweepTransaction (externalChangeAddress, outputs, feePerByte, fixedInputs) {
+    return this._buildSweepTransaction(externalChangeAddress, outputs, feePerByte, fixedInputs)
+  }
+
+  async sendSweepTransaction (externalChangeAddress, outputs, feePerByte, fixedInputs) {
+    const { hex, fee } = await this._buildSweepTransaction(externalChangeAddress, outputs, feePerByte, fixedInputs)
+    await this.getMethod('sendRawTransaction')(hex)
+    return normalizeTransactionObject(decodeRawTransaction(hex), fee)
+  }
+
   async updateTransactionFee (tx, newFeePerByte) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
@@ -224,6 +234,102 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     const key = change ? 'change' : 'nonChange'
     return this._getUsedUnusedAddresses(numAddressPerCall, addressType)
       .then(({ unusedAddress }) => unusedAddress[key])
+  }
+
+  async getInputsForSweep (_targets = [], _feePerByte, fixedInputs = [], numAddressPerCall = 100) {
+    let addressIndex = 0
+    let changeAddresses = []
+    let nonChangeAddresses = []
+    let addressCountMap = {
+      change: 0,
+      nonChange: 0
+    }
+
+    const feePerBytePromise = this.getMethod('getFeePerByte')()
+    let feePerByte = _feePerByte || false
+
+    while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
+      let addrList = []
+
+      if (addressCountMap.change < ADDRESS_GAP) {
+        // Scanning for change addr
+        changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
+        addrList = addrList.concat(changeAddresses)
+      } else {
+        changeAddresses = []
+      }
+
+      if (addressCountMap.nonChange < ADDRESS_GAP) {
+        // Scanning for non change addr
+        nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
+        addrList = addrList.concat(nonChangeAddresses)
+      }
+
+      let utxos
+      if (fixedInputs.length === 0) {
+        utxos = await this.getMethod('getUnspentTransactions')(addrList)
+        utxos = utxos.map(utxo => {
+          const addr = addrList.find(a => a.equals(utxo.address))
+          return {
+            ...utxo,
+            value: BigNumber(utxo.amount).times(1e8).toNumber(),
+            derivationPath: addr.derivationPath
+          }
+        })
+      } else {
+        utxos = fixedInputs
+      }
+
+      const utxoBalance = utxos.reduce((a, b) => a + (b['value'] || 0), 0)
+
+      const transactionCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
+
+      if (feePerByte === false) feePerByte = await feePerBytePromise
+      const minRelayFee = await this.getMethod('getMinRelayFee')()
+      if (feePerByte < minRelayFee) {
+        throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
+      }
+
+      const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
+
+      const amountToSend = utxoBalance - (feePerByte * (((_targets.length + 1) * 45) + (utxos.length * 160))) // todo better calculation
+
+      let targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+      targets.push({ id: 'main', value: amountToSend - outputBalance })
+
+      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedInputs)
+
+      if (inputs && outputs) {
+        let change = outputs.find(output => output.id !== 'main')
+
+        if (change && change.length) {
+          change = change[0].value
+        }
+
+        return {
+          inputs,
+          change,
+          outputs,
+          fee
+        }
+      }
+
+      for (let address of addrList) {
+        const isUsed = transactionCounts[address.address]
+        const isChangeAddress = changeAddresses.find(a => address.equals(a))
+        const key = isChangeAddress ? 'change' : 'nonChange'
+
+        if (isUsed) {
+          addressCountMap[key] = 0
+        } else {
+          addressCountMap[key]++
+        }
+      }
+
+      addressIndex += numAddressPerCall
+    }
+
+    throw new Error('Not enough balance')
   }
 
   async getInputsForAmount (_targets, _feePerByte, fixedInputs = [], numAddressPerCall = 100) {

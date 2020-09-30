@@ -92,6 +92,29 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return { hex: txb.build().toHex(), fee }
   }
 
+  async _buildSweepTransaction (externalChangeAddress, _outputs = [], feePerByte, fixedInputs) {
+    let _feePerByte = feePerByte || false
+    if (_feePerByte === false) _feePerByte = await this.getMethod('getFeePerByte')()
+
+    const { inputs, outputs, change } = await this.getInputsForSweep(_outputs, _feePerByte, fixedInputs)
+
+    if (change) {
+      throw Error('There should not be any change for sweeping transaction')
+    }
+
+    _outputs.forEach((output, i) => {
+      const spliceIndex = outputs.findIndex((sweepOutput) => output.value === sweepOutput.value)
+      outputs.splice(spliceIndex, spliceIndex + 1)
+    })
+
+    _outputs.push({
+      to: externalChangeAddress,
+      value: outputs[0].value
+    })
+
+    return this._buildTransaction(_outputs, feePerByte, inputs)
+  }
+
   async signP2SHTransaction (inputTxHex, tx, address, prevout, outputScript, lockTime = 0, segwit = false) {
     const wallet = await this.getWalletAddress(address)
     const keyPair = await this.keyPair(wallet.derivationPath)

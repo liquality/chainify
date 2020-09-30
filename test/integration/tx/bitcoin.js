@@ -3,6 +3,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import * as bitcoin from 'bitcoinjs-lib'
+import BigNumber from 'bignumber.js'
 import { hash160 } from '../../../packages/crypto/lib'
 import { calculateFee } from '../../../packages/bitcoin-utils/lib'
 import { addressToString } from '../../../packages/utils/lib'
@@ -31,6 +32,77 @@ function testBatchTransaction (chain) {
 
     expect(bal1Before.plus(value).toString()).to.equal(bal1After.toString())
     expect(bal2Before.plus(value).toString()).to.equal(bal2After.toString())
+  })
+}
+
+function testSweepTransaction (chain) {
+  it('should sweep specific utxo', async () => {
+    await fundWallet(chains.bitcoinWithJs)
+
+    const nonChangeAddresses = await chain.client.wallet.getAddresses(0, 20, false)
+    const changeAddresses = await chain.client.wallet.getAddresses(0, 20, true)
+    const addrList = nonChangeAddresses.concat(changeAddresses)
+
+    await chain.client.chain.sendTransaction(changeAddresses[1], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[2], 200000000)
+
+    let testUtxos = await chain.client.getMethod('getUnspentTransactions')([changeAddresses[1]])
+
+    testUtxos = testUtxos.map(utxo => {
+      const addr = addrList.find(a => a.equals(utxo.address))
+      return {
+        ...utxo,
+        value: BigNumber(utxo.amount).times(1e8).toNumber(),
+        derivationPath: addr.derivationPath
+      }
+    })
+
+    let fixedInputs = testUtxos
+
+    const addr1 = await getRandomBitcoinAddress(chain)
+
+    await chain.client.getMethod('sendSweepTransaction')(addr1, [], false, fixedInputs)
+  })
+
+  it('should sweep wallet balance', async () => {
+    await fundWallet(chains.bitcoinWithJs)
+
+    const changeAddresses = await chain.client.wallet.getAddresses(0, 20, true)
+
+    await chain.client.chain.sendTransaction(changeAddresses[1], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[2], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[3], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[4], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[5], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[6], 200000000)
+
+    const addr1 = await getRandomBitcoinAddress(chain)
+
+    await chain.client.getMethod('sendSweepTransaction')(addr1)
+
+    const balanceAfter = await chain.client.chain.getBalance(changeAddresses)
+    expect(balanceAfter.toString()).to.equal('0')
+  })
+
+  it('should sweep wallet balance and send funds to external change address', async () => {
+    await fundWallet(chain)
+
+    const changeAddresses = await chain.client.wallet.getAddresses(0, 20, true)
+
+    await chain.client.chain.sendTransaction(changeAddresses[1], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[2], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[3], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[4], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[5], 200000000)
+    await chain.client.chain.sendTransaction(changeAddresses[6], 200000000)
+
+    const addr1 = await getRandomBitcoinAddress(chain)
+    const addr2 = await getRandomBitcoinAddress(chain)
+
+    await chain.client.getMethod('sendSweepTransaction')(addr1, [{ to: addr2, value: 1000000 }])
+
+    const balanceAfter = await chain.client.chain.getBalance(changeAddresses)
+    expect(balanceAfter.toString()).to.equal('0')
   })
 }
 
@@ -274,5 +346,6 @@ describe('Transactions', function () {
     testSignP2SHTransaction(chains.bitcoinWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs)
+    testSweepTransaction(chains.bitcoinWithJs)
   })
 })
