@@ -39,7 +39,7 @@ ${expirationEncoded}421161008e57600080fd5b600154600354604080516370a0823160e01b81
     const fundingTx = await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value, undefined, gasPrice)
 
     deployTx.secondaryTx = fundingTx
-    
+
     return deployTx
   }
 
