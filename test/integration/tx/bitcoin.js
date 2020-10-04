@@ -70,7 +70,7 @@ function testSweepTransaction (chain) {
 
     const addr1 = await getRandomBitcoinAddress(chain)
 
-    await chain.client.getMethod('sendSweepTransaction')(addr1, [], false, fixedInputs)
+    await chain.client.getMethod('sendSweepTransaction')(addr1, false, [], fixedInputs)
 
     const balanceAfter = await chain.client.chain.getBalance([changeAddresses[1]])
     expect(balanceAfter.toString()).to.equal('0')
@@ -133,7 +133,7 @@ function testSweepTransaction (chain) {
     const addr1 = await getRandomBitcoinAddress(chain)
     const addr2 = await getRandomBitcoinAddress(chain)
 
-    await chain.client.getMethod('sendSweepTransaction')(addr1, [{ to: addr2, value: 1000000 }])
+    await chain.client.getMethod('sendSweepTransaction')(addr1, false, [{ to: addr2, value: 1000000 }])
 
     const balanceAfter = await chain.client.chain.getBalance(changeAddresses)
     expect(balanceAfter.toString()).to.equal('0')
