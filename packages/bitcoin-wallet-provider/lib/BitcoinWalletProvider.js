@@ -51,12 +51,12 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     return this._sendTransaction(transactions)
   }
 
-  async buildSweepTransaction (externalChangeAddress, outputs, feePerByte, fixedInputs) {
-    return this._buildSweepTransaction(externalChangeAddress, outputs, feePerByte, fixedInputs)
+  async buildSweepTransaction (externalChangeAddress, feePerByte, outputs, fixedInputs) {
+    return this._buildSweepTransaction(externalChangeAddress, feePerByte, outputs, fixedInputs)
   }
 
-  async sendSweepTransaction (externalChangeAddress, outputs, feePerByte, fixedInputs) {
-    const { hex, fee } = await this._buildSweepTransaction(externalChangeAddress, outputs, feePerByte, fixedInputs)
+  async sendSweepTransaction (externalChangeAddress, feePerByte, outputs, fixedInputs) {
+    const { hex, fee } = await this._buildSweepTransaction(externalChangeAddress, feePerByte, outputs, fixedInputs)
     await this.getMethod('sendRawTransaction')(hex)
     return normalizeTransactionObject(decodeRawTransaction(hex), fee)
   }

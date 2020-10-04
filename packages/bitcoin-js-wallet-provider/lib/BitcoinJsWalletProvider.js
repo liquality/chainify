@@ -92,7 +92,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return { hex: txb.build().toHex(), fee }
   }
 
-  async _buildSweepTransaction (externalChangeAddress, _outputs = [], feePerByte, fixedInputs) {
+  async _buildSweepTransaction (externalChangeAddress, feePerByte, _outputs = [], fixedInputs) {
     let _feePerByte = feePerByte || false
     if (_feePerByte === false) _feePerByte = await this.getMethod('getFeePerByte')()
 
