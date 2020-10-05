@@ -236,7 +236,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
       .then(({ unusedAddress }) => unusedAddress[key])
   }
 
-  async getInputsForSweep (_targets = [], _feePerByte, fixedInputs = [], numAddressPerCall = 100) {
+  async getInputsForAmount (_targets = [], _feePerByte, fixedInputs = [], numAddressPerCall = 100, sweep = false) {
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -266,7 +266,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
       }
 
       let utxos
-      if (fixedInputs.length === 0) {
+      if (sweep === false || fixedInputs.length === 0) {
         utxos = await this.getMethod('getUnspentTransactions')(addrList)
         utxos = utxos.map(utxo => {
           const addr = addrList.find(a => a.equals(utxo.address))
@@ -290,12 +290,27 @@ export default superclass => class BitcoinWalletProvider extends superclass {
         throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
       }
 
-      const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
+      if (fixedInputs.length) {
+        for (const input of fixedInputs) {
+          const tx = await this.getMethod('getTransactionByHash')(input.txid)
+          input.value = BigNumber(tx._raw.vout[input.vout].value).times(1e8).toNumber()
+          input.address = tx._raw.vout[input.vout].scriptPubKey.addresses[0]
+          const walletAddress = await this.getWalletAddress(input.address)
+          input.derivationPath = walletAddress.derivationPath
+        }
+      }
 
-      const amountToSend = utxoBalance - (feePerByte * (((_targets.length + 1) * 39) + (utxos.length * 153))) // todo better calculation
+      let targets
+      if (sweep) {
+        const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
 
-      let targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
-      targets.push({ id: 'main', value: amountToSend - outputBalance })
+        const amountToSend = utxoBalance - (feePerByte * (((_targets.length + 1) * 39) + (utxos.length * 153))) // todo better calculation
+
+        targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+        targets.push({ id: 'main', value: amountToSend - outputBalance })
+      } else {
+        targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+      }
 
       const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedInputs)
 
@@ -329,99 +344,6 @@ export default superclass => class BitcoinWalletProvider extends superclass {
       addressIndex += numAddressPerCall
     }
 
-    throw new Error('Not enough balance: getInputsForSweep')
-  }
-
-  async getInputsForAmount (_targets, _feePerByte, fixedInputs = [], numAddressPerCall = 100) {
-    let addressIndex = 0
-    let changeAddresses = []
-    let nonChangeAddresses = []
-    let addressCountMap = {
-      change: 0,
-      nonChange: 0
-    }
-
-    const feePerBytePromise = this.getMethod('getFeePerByte')()
-    let feePerByte = _feePerByte || false
-
-    while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
-      let addrList = []
-
-      if (addressCountMap.change < ADDRESS_GAP) {
-        // Scanning for change addr
-        changeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, true)
-        addrList = addrList.concat(changeAddresses)
-      } else {
-        changeAddresses = []
-      }
-
-      if (addressCountMap.nonChange < ADDRESS_GAP) {
-        // Scanning for non change addr
-        nonChangeAddresses = await this.getAddresses(addressIndex, numAddressPerCall, false)
-        addrList = addrList.concat(nonChangeAddresses)
-      }
-
-      let utxos = await this.getMethod('getUnspentTransactions')(addrList)
-      utxos = utxos.map(utxo => {
-        const addr = addrList.find(a => a.equals(utxo.address))
-        return {
-          ...utxo,
-          value: BigNumber(utxo.amount).times(1e8).toNumber(),
-          derivationPath: addr.derivationPath
-        }
-      })
-
-      const transactionCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
-
-      if (feePerByte === false) feePerByte = await feePerBytePromise
-      const minRelayFee = await this.getMethod('getMinRelayFee')()
-      if (feePerByte < minRelayFee) {
-        throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
-      }
-
-      if (fixedInputs.length) {
-        for (const input of fixedInputs) {
-          const tx = await this.getMethod('getTransactionByHash')(input.txid)
-          input.value = BigNumber(tx._raw.vout[input.vout].value).times(1e8).toNumber()
-          input.address = tx._raw.vout[input.vout].scriptPubKey.addresses[0]
-          const walletAddress = await this.getWalletAddress(input.address)
-          input.derivationPath = walletAddress.derivationPath
-        }
-      }
-
-      const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
-
-      const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedInputs)
-
-      if (inputs && outputs) {
-        let change = outputs.find(output => output.id !== 'main')
-
-        if (change && change.length) {
-          change = change[0].value
-        }
-
-        return {
-          inputs,
-          change,
-          fee
-        }
-      }
-
-      for (let address of addrList) {
-        const isUsed = transactionCounts[address.address]
-        const isChangeAddress = changeAddresses.find(a => address.equals(a))
-        const key = isChangeAddress ? 'change' : 'nonChange'
-
-        if (isUsed) {
-          addressCountMap[key] = 0
-        } else {
-          addressCountMap[key]++
-        }
-      }
-
-      addressIndex += numAddressPerCall
-    }
-
-    throw new Error('Not enough balance: getInputsForAmount')
+    throw new Error('Not enough balance')
   }
 }
