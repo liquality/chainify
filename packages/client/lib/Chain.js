@@ -188,27 +188,13 @@ export default class Chain {
   }
 
   /**
-   * Create & sign a sweep transaction
-   * @param {!string} externalAddress - External Change address.
-   * @param {string[]} outputs - to, value.
-   * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
-   * @param {string[]} fixedInputs - txid, vout, address, value, satoshis, derivationPath
-   * @return {Promise<string>} Resolves with a signed transaction object.
-   */
-  async buildSweepTransaction (externalAddress, fee, outputs, fixedInputs) {
-    return this.client.getMethod('buildSweepTransaction')(externalAddress, fee, outputs, fixedInputs)
-  }
-
-  /**
    * Create, sign & broadcast a sweep transaction.
-   * @param {!string} externalAddress - External Change address.
-   * @param {string[]} outputs - to, value.
+   * @param {!string} address - External address.
    * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
-   * @param {string[]} fixedInputs - txid, vout, address, value, satoshis, derivationPath
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  async sendSweepTransaction (externalAddress, fee, outputs, fixedInputs) {
-    return this.client.getMethod('sendSweepTransaction')(externalAddress, fee, outputs, fixedInputs)
+  async sendSweepTransaction (address, fee) {
+    return this.client.getMethod('sendSweepTransaction')(address, fee)
   }
 
   /**
