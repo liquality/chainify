@@ -106,7 +106,7 @@ export default class EthereumJsWalletProvider extends Provider {
     return normalizeTransactionObject(formatEthResponse(txData))
   }
 
-  async sendSweepTransaction (externalAddress, _gasPrice) {
+  async sendSweepTransaction (address, _gasPrice) {
     const addresses = await this.getAddresses()
 
     const balance = await this.getMethod('getBalance')(addresses)
@@ -118,7 +118,7 @@ export default class EthereumJsWalletProvider extends Provider {
     const fees = BigNumber(gasPrice).times(21000).times('1000000000')
     const amountToSend = BigNumber(balance).minus(fees)
 
-    return this.sendTransaction(externalAddress, amountToSend, null, gasPrice)
+    return this.sendTransaction(address, amountToSend, null, gasPrice)
   }
 
   async updateTransactionFee (tx, newGasPrice) {
