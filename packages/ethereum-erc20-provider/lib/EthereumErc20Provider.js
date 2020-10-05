@@ -51,6 +51,14 @@ export default class EthereumErc20Provider extends Provider {
     return this.getMethod('sendTransaction')(to, value, data, gasPrice)
   }
 
+  async sendSweepTransaction (address, gasPrice) {
+    const addresses = await this.getMethod('getAddresses')()
+
+    const balance = await this.getBalance(addresses)
+
+    return this.sendTransaction(address, balance, null, gasPrice)
+  }
+
   getContractAddress () {
     return this._contractAddress
   }
