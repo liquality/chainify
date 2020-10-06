@@ -1,33 +1,48 @@
 import { findKey } from 'lodash'
 
-import MetaMaskProvider from '@liquality/metamask-provider'
+import WalletProvider from '@liquality/wallet-provider'
 import networks from '@liquality/ethereum-networks'
-import {
-  WalletError
-} from '@liquality/errors'
-import {
-  ensure0x,
-  remove0x,
-  buildTransaction
-} from '@liquality/ethereum-utils'
-import {
-  Address,
-  addressToString
-} from '@liquality/utils'
+import { WalletError } from '@liquality/errors'
+import { ensure0x, buildTransaction, formatEthResponse, normalizeTransactionObject } from '@liquality/ethereum-utils'
+import { Address, addressToString } from '@liquality/utils'
+import Debug from '@liquality/debug'
+
+const debug = Debug('ethereum')
 
 import { version } from '../package.json'
 
-export default class EthereumMetaMaskProvider extends MetaMaskProvider {
+// EIP1193
+export default class EthereumWalletApiProvider extends WalletProvider {
+  constructor (ethereumProvider, network) {
+    super(network)
+    this._ethereumProvider = ethereumProvider
+    this._network = network
+  }
+
+  async request (method, ...params) {
+    await this._ethereumProvider.enable()
+
+    try {
+      const result = await this._ethereumProvider.request({ method, params })
+      debug('got success', result)
+      console.log({result})
+      return formatEthResponse(result)
+    } catch (e) {
+      debug('got error', e.message)
+      throw new WalletError(e.toString(), e)
+    }
+  }
+
   async isWalletAvailable () {
-    const addresses = await this.metamask('eth_accounts')
+    const addresses = await this.request('eth_accounts')
     return addresses.length > 0
   }
 
   async getAddresses () {
-    const addresses = await this.metamask('eth_accounts')
+    const addresses = await this.request('eth_accounts')
 
     if (addresses.length === 0) {
-      throw new WalletError('Metamask: No addresses available from wallet')
+      throw new WalletError('Wallet: No addresses available')
     }
 
     return addresses.map((address) => { return new Address({ address: address }) })
@@ -48,7 +63,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
     const addresses = await this.getAddresses()
     const address = addressToString(addresses[0])
 
-    return this.metamask('personal_sign', ensure0x(hex), ensure0x(address))
+    return this.request('personal_sign', ensure0x(hex), ensure0x(address))
   }
 
   async sendTransaction (to, value, data, fee) {
@@ -56,7 +71,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
 
     if (this._network) {
       if (networkId !== this._network.networkId) {
-        throw new Error('Invalid MetaMask Network')
+        throw new Error('Invalid Network')
       }
     }
 
@@ -65,9 +80,12 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
 
     const tx = await buildTransaction(from, to, value, data, fee)
 
-    const txHash = await this.metamask('eth_sendTransaction', tx)
-
-    return remove0x(txHash)
+    const txHash = await this.request('eth_sendTransaction', tx)
+    
+    return normalizeTransactionObject(formatEthResponse({
+      ...tx,
+      hash: txHash
+    }))
   }
 
   canUpdateFee () {
@@ -75,7 +93,7 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
   }
 
   async getWalletNetworkId () {
-    const networkId = await this.metamask('net_version')
+    const networkId = await this.request('net_version')
 
     return parseInt(networkId)
   }
@@ -95,4 +113,4 @@ export default class EthereumMetaMaskProvider extends MetaMaskProvider {
   }
 }
 
-EthereumMetaMaskProvider.version = version
+EthereumWalletApiProvider.version = version

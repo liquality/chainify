@@ -14,7 +14,7 @@ import * as BitcoinUtils from '@liquality/bitcoin-utils'
 import EthereumErc20Provider from '@liquality/ethereum-erc20-provider'
 import EthereumErc20SwapProvider from '@liquality/ethereum-erc20-swap-provider'
 import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
-import EthereumMetaMaskProvider from '@liquality/ethereum-metamask-provider'
+import EthereumWalletApiProvider from '@liquality/ethereum-wallet-api-provider'
 import EthereumJsWalletProvider from '@liquality/ethereum-js-wallet-provider'
 import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
 import EthereumRpcFeeProvider from '@liquality/ethereum-rpc-fee-provider'
@@ -46,7 +46,7 @@ const ethereum = {
   EthereumErc20Provider,
   EthereumErc20SwapProvider,
   EthereumLedgerProvider,
-  EthereumMetaMaskProvider,
+  EthereumWalletApiProvider,
   EthereumJsWalletProvider,
   EthereumRpcProvider,
   EthereumRpcFeeProvider,

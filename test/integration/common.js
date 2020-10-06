@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+// TOOD: Connector does not work for EIP1193
 import MetaMaskConnector from 'node-metamask'
 import KibaConnector from 'node-kiba'
 import { Client, providers, crypto, errors, utils } from '../../packages/bundle/lib'
@@ -72,7 +73,7 @@ const ethereumNetwork = {
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
+ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumWalletApiProvider(metaMaskConnector.getProvider(), ethereumNetwork))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
 
 const ethereumWithNode = new Client()
@@ -91,7 +92,7 @@ ethereumWithJs.addProvider(new providers.ethereum.EthereumSwapProvider())
 
 const erc20WithMetaMask = new Client()
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithMetaMask.addProvider(new providers.ethereum.EthereumMetaMaskProvider(metaMaskConnector.getProvider(), ethereumNetwork))
+erc20WithMetaMask.addProvider(new providers.ethereum.EthereumWalletApiProvider(metaMaskConnector.getProvider(), ethereumNetwork))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 

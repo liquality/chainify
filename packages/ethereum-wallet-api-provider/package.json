@@ -1,6 +1,6 @@
 {
-  "name": "@liquality/metamask-provider",
-  "umdName": "MetaMaskProvider",
+  "name": "@liquality/ethereum-wallet-api-provider",
+  "umdName": "EthereumWalletApiProvider",
   "umdExport": "default",
   "version": "0.6.9",
   "description": "",
@@ -21,8 +21,11 @@
     "@babel/runtime": "^7.4.3",
     "@liquality/debug": "^0.6.9",
     "@liquality/errors": "^0.6.9",
+    "@liquality/ethereum-networks": "^0.6.9",
     "@liquality/ethereum-utils": "^0.6.9",
+    "@liquality/utils": "^0.6.9",
     "@liquality/wallet-provider": "^0.6.9",
+    "bignumber.js": "^8.1.1",
     "lodash": "^4.17.13"
   },
   "engines": {
