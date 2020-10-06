@@ -6,10 +6,9 @@ import { WalletError } from '@liquality/errors'
 import { ensure0x, buildTransaction, formatEthResponse, normalizeTransactionObject } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
 import Debug from '@liquality/debug'
+import { version } from '../package.json'
 
 const debug = Debug('ethereum')
-
-import { version } from '../package.json'
 
 // EIP1193
 export default class EthereumWalletApiProvider extends WalletProvider {
@@ -25,7 +24,6 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     try {
       const result = await this._ethereumProvider.request({ method, params })
       debug('got success', result)
-      console.log({result})
       return formatEthResponse(result)
     } catch (e) {
       debug('got error', e.message)
@@ -81,11 +79,8 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     const tx = await buildTransaction(from, to, value, data, fee)
 
     const txHash = await this.request('eth_sendTransaction', tx)
-    
-    return normalizeTransactionObject(formatEthResponse({
-      ...tx,
-      hash: txHash
-    }))
+
+    return normalizeTransactionObject(formatEthResponse({ ...tx, hash: txHash }))
   }
 
   canUpdateFee () {
