@@ -20,7 +20,9 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@liquality/provider": "^0.6.9",
-    "axios": "^0.19.2"
+    "ajv": "^6.12.5",
+    "axios": "^0.19.2",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"

@@ -26,7 +26,7 @@
     "@liquality/utils": "^0.6.9",
     "@liquality/wallet-provider": "^0.6.9",
     "bignumber.js": "^8.1.1",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"

@@ -19,7 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "bitcoinjs-lib": "^5.1.7"
+    "bitcoinjs-lib": "^5.1.7",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"

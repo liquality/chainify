@@ -22,7 +22,8 @@
     "@liquality/crypto": "^0.6.9",
     "@liquality/ethereum-utils": "^0.6.9",
     "@liquality/provider": "^0.6.9",
-    "@liquality/utils": "^0.6.9"
+    "@liquality/utils": "^0.6.9",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"

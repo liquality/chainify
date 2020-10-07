@@ -19,7 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "bignumber.js": "^8.1.1"
+    "bignumber.js": "^8.1.1",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"

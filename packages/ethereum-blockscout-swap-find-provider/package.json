@@ -23,7 +23,8 @@
     "@liquality/ethereum-utils": "^0.6.9",
     "@liquality/provider": "^0.6.9",
     "@liquality/utils": "^0.6.9",
-    "axios": "^0.19.0"
+    "axios": "^0.19.0",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"

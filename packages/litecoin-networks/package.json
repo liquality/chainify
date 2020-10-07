@@ -20,7 +20,8 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "bitcoinjs-lib": "^5.1.7",
-    "coininfo": "^5.1.0"
+    "coininfo": "^5.1.0",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"

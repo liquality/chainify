@@ -41,19 +41,20 @@
     "@liquality/ethereum-gas-station-fee-provider": "^0.6.9",
     "@liquality/ethereum-js-wallet-provider": "^0.6.9",
     "@liquality/ethereum-ledger-provider": "^0.6.9",
-    "@liquality/ethereum-wallet-api-provider": "^0.6.9",
     "@liquality/ethereum-networks": "^0.6.9",
     "@liquality/ethereum-rpc-fee-provider": "^0.6.9",
     "@liquality/ethereum-rpc-provider": "^0.6.9",
     "@liquality/ethereum-scraper-swap-find-provider": "^0.6.9",
     "@liquality/ethereum-swap-provider": "^0.6.9",
     "@liquality/ethereum-utils": "^0.6.9",
+    "@liquality/ethereum-wallet-api-provider": "^0.6.9",
     "@liquality/jsonrpc-provider": "^0.6.9",
     "@liquality/ledger-provider": "^0.6.9",
     "@liquality/provider": "^0.6.9",
     "@liquality/schema": "^0.6.9",
     "@liquality/utils": "^0.6.9",
-    "@liquality/wallet-provider": "^0.6.9"
+    "@liquality/wallet-provider": "^0.6.9",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"
