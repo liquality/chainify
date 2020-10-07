@@ -41,7 +41,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
   async _sendTransaction (transactions, feePerByte) {
     const { hex, fee } = await this._buildTransaction(transactions, feePerByte)
     await this.getMethod('sendRawTransaction')(hex)
-    return normalizeTransactionObject(decodeRawTransaction(hex), fee)
+    return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
 
   async sendTransaction (to, value, data, feePerByte) {
@@ -59,7 +59,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
   async sendSweepTransaction (externalChangeAddress, feePerByte) {
     const { hex, fee } = await this._buildSweepTransaction(externalChangeAddress, feePerByte)
     await this.getMethod('sendRawTransaction')(hex)
-    return normalizeTransactionObject(decodeRawTransaction(hex), fee)
+    return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
 
   async updateTransactionFee (tx, newFeePerByte) {
@@ -87,7 +87,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     )
     const { hex, fee } = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
     await this.getMethod('sendRawTransaction')(hex)
-    return normalizeTransactionObject(decodeRawTransaction(hex), fee)
+    return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
 
   async getWalletAddress (address) {
@@ -315,9 +315,10 @@ export default superclass => class BitcoinWalletProvider extends superclass {
 
       if (fixedInputs.length) {
         for (const input of fixedInputs) {
-          const tx = await this.getMethod('getTransactionByHash')(input.txid)
-          input.value = BigNumber(tx._raw.vout[input.vout].value).times(1e8).toNumber()
-          input.address = tx._raw.vout[input.vout].scriptPubKey.addresses[0]
+          const txHex = await this.getMethod('getRawTransactionByHash')(input.txid)
+          const tx = decodeRawTransaction(txHex, this._network)
+          input.value = BigNumber(tx.vout[input.vout].value).times(1e8).toNumber()
+          input.address = tx.vout[input.vout].scriptPubKey.addresses[0]
           const walletAddress = await this.getWalletAddress(input.address)
           input.derivationPath = walletAddress.derivationPath
         }
