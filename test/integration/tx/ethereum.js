@@ -22,7 +22,6 @@ function testSweepTransaction (chain) {
     const addresses = await chain.client.wallet.getAddresses()
 
     const balAfter = await chain.client.chain.getBalance(addresses[0])
-    console.log('balAfter', parseInt(balAfter))
 
     expect('0').to.equal(balAfter.toString())
   })

@@ -14,7 +14,7 @@ services:
       -rpcbind=0.0.0.0
       -server
   ethereum:
-    image: ethereum/client-go
+    image: ethereum/client-go:v1.9.22
     ports:
       - "8545:8545"
     command:
