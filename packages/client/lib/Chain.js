@@ -188,6 +188,16 @@ export default class Chain {
   }
 
   /**
+   * Create, sign & broadcast a sweep transaction.
+   * @param {!string} address - External address.
+   * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
+   * @return {Promise<Transaction>} Resolves with a signed transaction.
+   */
+  async sendSweepTransaction (address, fee) {
+    return this.client.getMethod('sendSweepTransaction')(address, fee)
+  }
+
+  /**
    * Update the fee of a transaction.
    * @param {(string|Transaction)} tx - Transaction object or hash of the transaction to update
    * @param {!string} newFee - New fee price in native unit (e.g. sat/b, wei)

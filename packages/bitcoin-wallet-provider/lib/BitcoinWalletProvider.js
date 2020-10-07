@@ -52,6 +52,16 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     return this._sendTransaction(transactions)
   }
 
+  async buildSweepTransaction (externalChangeAddress, feePerByte) {
+    return this._buildSweepTransaction(externalChangeAddress, feePerByte)
+  }
+
+  async sendSweepTransaction (externalChangeAddress, feePerByte) {
+    const { hex, fee } = await this._buildSweepTransaction(externalChangeAddress, feePerByte)
+    await this.getMethod('sendRawTransaction')(hex)
+    return normalizeTransactionObject(decodeRawTransaction(hex), fee)
+  }
+
   async updateTransactionFee (tx, newFeePerByte) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
@@ -249,7 +259,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
       .then(({ unusedAddress }) => unusedAddress[key])
   }
 
-  async getInputsForAmount (_targets, _feePerByte, fixedInputs = [], numAddressPerCall = 100) {
+  async getInputsForAmount (_targets = [], _feePerByte, fixedInputs = [], numAddressPerCall = 100, sweep = false) {
     let addressIndex = 0
     let changeAddresses = []
     let nonChangeAddresses = []
@@ -278,15 +288,22 @@ export default superclass => class BitcoinWalletProvider extends superclass {
         addrList = addrList.concat(nonChangeAddresses)
       }
 
-      let utxos = await this.getMethod('getUnspentTransactions')(addrList)
-      utxos = utxos.map(utxo => {
-        const addr = addrList.find(a => a.equals(utxo.address))
-        return {
-          ...utxo,
-          value: BigNumber(utxo.amount).times(1e8).toNumber(),
-          derivationPath: addr.derivationPath
-        }
-      })
+      let utxos
+      if (sweep === false || fixedInputs.length === 0) {
+        utxos = await this.getMethod('getUnspentTransactions')(addrList)
+        utxos = utxos.map(utxo => {
+          const addr = addrList.find(a => a.equals(utxo.address))
+          return {
+            ...utxo,
+            value: BigNumber(utxo.amount).times(1e8).toNumber(),
+            derivationPath: addr.derivationPath
+          }
+        })
+      } else {
+        utxos = fixedInputs
+      }
+
+      const utxoBalance = utxos.reduce((a, b) => a + (b['value'] || 0), 0)
 
       const transactionCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
 
@@ -306,7 +323,17 @@ export default superclass => class BitcoinWalletProvider extends superclass {
         }
       }
 
-      const targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+      let targets
+      if (sweep) {
+        const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
+
+        const amountToSend = utxoBalance - (feePerByte * (((_targets.length + 1) * 39) + (utxos.length * 153))) // todo better calculation
+
+        targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+        targets.push({ id: 'main', value: amountToSend - outputBalance })
+      } else {
+        targets = _targets.map((target, i) => ({ id: 'main', value: target.value }))
+      }
 
       const { inputs, outputs, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedInputs)
 
@@ -320,6 +347,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
         return {
           inputs,
           change,
+          outputs,
           fee
         }
       }

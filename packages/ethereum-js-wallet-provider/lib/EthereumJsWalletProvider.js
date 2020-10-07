@@ -3,6 +3,7 @@ import { Address, addressToString } from '@liquality/utils'
 import { remove0x, buildTransaction, formatEthResponse, normalizeTransactionObject } from '@liquality/ethereum-utils'
 import { sha256 } from '@liquality/crypto'
 import { mnemonicToSeed } from 'bip39'
+import BigNumber from 'bignumber.js'
 import { fromMasterSeed } from 'hdkey'
 import * as ethUtil from 'ethereumjs-util'
 import { Transaction } from 'ethereumjs-tx'
@@ -103,6 +104,21 @@ export default class EthereumJsWalletProvider extends Provider {
     const txHash = await this.getMethod('sendRawTransaction')(serializedTx)
     txData.hash = txHash
     return normalizeTransactionObject(formatEthResponse(txData))
+  }
+
+  async sendSweepTransaction (address, _gasPrice) {
+    const addresses = await this.getAddresses()
+
+    const balance = await this.getMethod('getBalance')(addresses)
+
+    const [ gasPrice ] = await Promise.all([
+      _gasPrice ? Promise.resolve(_gasPrice) : this.getMethod('getGasPrice')()
+    ])
+
+    const fees = BigNumber(gasPrice).times(21000).times('1000000000')
+    const amountToSend = BigNumber(balance).minus(fees)
+
+    return this.sendTransaction(address, amountToSend, null, gasPrice)
   }
 
   async updateTransactionFee (tx, newGasPrice) {

@@ -34,6 +34,39 @@ function testBatchTransaction (chain) {
   })
 }
 
+function testSweepTransaction (chain) {
+  it('should sweep wallet balance', async () => {
+    await fundWallet(chains.bitcoinWithJs)
+
+    const nonChangeAddresses = await chain.client.wallet.getAddresses(0, 20, false)
+    const changeAddresses = await chain.client.wallet.getAddresses(0, 20, true)
+    const addrList = nonChangeAddresses.concat(changeAddresses)
+
+    const bal = parseInt(await chain.client.chain.getBalance(addrList))
+
+    let sendTxChain
+    if (bal === 0) {
+      sendTxChain = chains.bitcoinWithNode
+    } else {
+      sendTxChain = chain
+    }
+
+    await sendTxChain.client.chain.sendTransaction(changeAddresses[1], 200000000)
+    await sendTxChain.client.chain.sendTransaction(changeAddresses[2], 200000000)
+    await sendTxChain.client.chain.sendTransaction(changeAddresses[3], 200000000)
+    await sendTxChain.client.chain.sendTransaction(changeAddresses[4], 200000000)
+    await sendTxChain.client.chain.sendTransaction(changeAddresses[5], 200000000)
+    await sendTxChain.client.chain.sendTransaction(changeAddresses[6], 200000000)
+
+    const addr1 = await getRandomBitcoinAddress(chain)
+
+    await chain.client.getMethod('sendSweepTransaction')(addr1)
+
+    const balanceAfter = await chain.client.chain.getBalance(changeAddresses)
+    expect(balanceAfter.toString()).to.equal('0')
+  })
+}
+
 function testSignP2SHTransaction (chain) {
   it('should redeem one P2SH', async () => {
     const network = chain.network
@@ -274,5 +307,6 @@ describe('Transactions', function () {
     testSignP2SHTransaction(chains.bitcoinWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs)
+    testSweepTransaction(chains.bitcoinWithJs)
   })
 })
