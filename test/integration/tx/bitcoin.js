@@ -4,7 +4,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import * as bitcoin from 'bitcoinjs-lib'
 import { hash160 } from '../../../packages/crypto/lib'
-import { calculateFee } from '../../../packages/bitcoin-utils/lib'
+import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
 import { addressToString } from '../../../packages/utils/lib'
 import { chains, importBitcoinAddresses, getNewAddress, getRandomBitcoinAddress, mineBlock, fundWallet, describeExternal } from '../common'
 import { testTransaction } from './common'
@@ -112,7 +112,7 @@ function testSignP2SHTransaction (chain) {
     }
 
     const txb = new bitcoin.TransactionBuilder(network)
-    const txfee = calculateFee(3, 3, 9)
+    const txfee = BitcoinUtils.calculateFee(3, 3, 9)
 
     multiOne.multiVout.vSat = value
 
@@ -206,7 +206,7 @@ function testSignBatchP2SHTransaction (chain) {
     }
 
     const txb = new bitcoin.TransactionBuilder(network)
-    const txfee = calculateFee(3, 3, 9)
+    const txfee = BitcoinUtils.calculateFee(3, 3, 9)
 
     multiOne.multiVout.vSat = value
     multiTwo.multiVout.vSat = value

@@ -3,13 +3,49 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 // TOOD: Connector does not work for EIP1193
 import MetaMaskConnector from 'node-metamask'
-import KibaConnector from 'node-kiba'
-import { Client, providers, crypto, errors, utils } from '../../packages/bundle/lib'
+import Client from '../../packages/client/lib'
+import * as crypto from '../../packages/crypto/lib'
+import * as errors from '../../packages/errors/lib'
+import * as utils from '../../packages/utils/lib'
+import bitcoinNetworks from '../../packages/bitcoin-networks/lib'
+import ethereumNetworks from '../../packages/ethereum-networks/lib'
+import BitcoinLedgerProvider from '../../packages/bitcoin-ledger-provider/lib'
+import BitcoinSwapProvider from '../../packages/bitcoin-swap-provider/lib'
+import BitcoinNodeWalletProvider from '../../packages/bitcoin-node-wallet-provider/lib'
+import BitcoinJsWalletProvider from '../../packages/bitcoin-js-wallet-provider/lib'
+import BitcoinRpcProvider from '../../packages/bitcoin-rpc-provider/lib'
+import * as BitcoinUtils from '../../packages/bitcoin-utils/lib'
+import EthereumRpcProvider from '../../packages/ethereum-rpc-provider/lib'
+import EthereumWalletApiProvider from '../../packages/ethereum-wallet-api-provider/lib'
+import EthereumSwapProvider from '../../packages/ethereum-swap-provider/lib'
+import EthereumLedgerProvider from '../../packages/ethereum-ledger-provider/lib'
+import EthereumJsWalletProvider from '../../packages/ethereum-js-wallet-provider/lib'
+import EthereumErc20Provider from '../../packages/ethereum-erc20-provider/lib'
+import EthereumErc20SwapProvider from '../../packages/ethereum-erc20-swap-provider/lib'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
 import config from './config'
-import testnetConfig from './testnetConfig'
 import BigNumber from 'bignumber.js'
+
+const providers = {
+  bitcoin: {
+    BitcoinRpcProvider,
+    BitcoinLedgerProvider,
+    BitcoinSwapProvider,
+    BitcoinNodeWalletProvider,
+    BitcoinJsWalletProvider,
+    BitcoinUtils
+  },
+  ethereum: {
+    EthereumRpcProvider,
+    EthereumWalletApiProvider,
+    EthereumSwapProvider,
+    EthereumLedgerProvider,
+    EthereumJsWalletProvider,
+    EthereumErc20Provider,
+    EthereumErc20SwapProvider
+  }
+}
 
 const sleep = utils.sleep
 
@@ -26,9 +62,7 @@ const CONSTANTS = {
 console.warn = () => {} // Silence warnings
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
-const kibaConnector = new KibaConnector({ port: config.bitcoin.kibaConnector.port })
 
-const bitcoinNetworks = providers.bitcoin.networks
 const bitcoinNetwork = bitcoinNetworks[config.bitcoin.network]
 
 function mockedBitcoinRpcProvider () {
@@ -53,17 +87,6 @@ bitcoinWithJs.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetwork, generateMnemonic(256), 'bech32'))
 bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwork, 'p2wsh'))
 
-// To run bitcoinWithKiba tests create a testnetConfig.js with testnetHost, testnetUsername, testnetConfig, testnetApi, testnetNetwork
-const bitcoinWithKiba = new Client()
-bitcoinWithKiba.addProvider(new providers.bitcoin.BitcoinRpcProvider(testnetConfig.bitcoin.rpc.testnetHost, testnetConfig.bitcoin.rpc.testnetUsername, testnetConfig.bitcoin.rpc.testnetPassword))
-bitcoinWithKiba.addProvider(new providers.bitcoin.BitcoinEsploraApiProvider(testnetConfig.bitcoin.rpc.testnetApi))
-bitcoinWithKiba.addProvider(new providers.bitcoin.BitcoinKibaProvider(kibaConnector.getProvider(), bitcoinNetworks[testnetConfig.bitcoin.testnetNetwork]))
-
-const bitcoinWithEsplora = new Client()
-bitcoinWithEsplora.addProvider(new providers.bitcoin.BitcoinEsploraApiProvider('https://blockstream.info/testnet/api'))
-bitcoinWithEsplora.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetworks.bitcoin_testnet, generateMnemonic(256), 'bech32'))
-
-const ethereumNetworks = providers.ethereum.networks
 const ethereumNetwork = {
   ...ethereumNetworks[config.ethereum.network],
   name: 'mainnet',
@@ -117,8 +140,6 @@ const chains = {
   bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: bitcoinNetwork },
   bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork, segwitFeeImplemented: true },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: bitcoinNetwork },
-  bitcoinWithKiba: { id: 'Bitcoin Kiba', name: 'bitcoin', client: bitcoinWithKiba, network: bitcoinNetworks['bitcoin_testnet'] },
-  bitcoinWithEsplora: { id: 'Bitcoin Esplora', name: 'bitcoin', client: bitcoinWithEsplora },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
@@ -355,14 +376,6 @@ function connectMetaMask () {
   after(async () => metaMaskConnector.stop())
 }
 
-function connectKiba () {
-  before(async () => {
-    console.log('\x1b[36m', 'Starting Kiba connector on http://localhost:3334 - Open in browser to continue', '\x1b[0m')
-    await kibaConnector.start()
-  })
-  after(async () => kibaConnector.stop())
-}
-
 async function withInternalSendMineHook (chain, provider, func) {
   let originalSendTransaction = provider.sendTransaction
   provider.sendTransaction = async (to, value, data, gasPrice) => {
@@ -404,7 +417,6 @@ export {
   fundAddress,
   fundWallet,
   metaMaskConnector,
-  kibaConnector,
   initiateAndVerify,
   claimAndVerify,
   refundAndVerify,
@@ -417,6 +429,5 @@ export {
   mineBlock,
   deployERC20Token,
   connectMetaMask,
-  connectKiba,
   describeExternal
 }

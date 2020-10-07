@@ -4,7 +4,8 @@ import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
-import { crypto, providers } from '../../../packages/bundle/lib'
+import * as crypto from '../../../packages/crypto/lib'
+import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
 import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, stopEthAutoMining, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee } from '../common'
 import config from '../config'
 
@@ -13,7 +14,6 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-const { calculateFee } = providers.bitcoin.BitcoinUtils
 const mockSecret = _.repeat('ff', 32)
 
 function testSwap (chain) {
@@ -144,7 +144,7 @@ function testBitcoinBalance (chain) {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const fee = calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
+    const fee = BitcoinUtils.calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
     await expectBalance(chain, swapParams.recipientAddress,
       async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
       (before, after) => {
@@ -158,7 +158,7 @@ function testBitcoinBalance (chain) {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = parseInt(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
-    const fee = calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
+    const fee = BitcoinUtils.calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
     await mineUntilTimestamp(chain, swapParams.expiration)
     await expectBalance(chain, swapParams.refundAddress,
       async () => refundAndVerify(chain, initiationTxId, secretHash, swapParams),

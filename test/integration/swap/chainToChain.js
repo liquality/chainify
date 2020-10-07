@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { crypto } from '../../../packages/bundle/lib'
+import * as crypto from '../../../packages/crypto/lib'
 import { chains, initiateAndVerify, claimAndVerify, getSwapParams, connectMetaMask, fundWallet, importBitcoinAddresses, describeExternal } from '../common'
 import config from '../config'
 
