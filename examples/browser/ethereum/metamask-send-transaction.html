@@ -21,7 +21,7 @@ if (typeof web3 === 'undefined') {
 } else {
   const { Client, providers } = Bundle
   const ethereum = new Client()
-  ethereum.addProvider(new providers.ethereum.EthereumMetaMaskProvider(web3.currentProvider))
+  ethereum.addProvider(new providers.ethereum.EthereumWalletApiProvider(web3.currentProvider))
   ethereum.wallet.getAddresses().then(addresses => {
     const from = addresses[0]
     $('#send').click(() => {

@@ -15,14 +15,13 @@ import { padHexStart } from '@liquality/crypto'
 import { version } from '../package.json'
 
 export default class EthereumRpcProvider extends JsonRpcProvider {
-  _parseResponse (response) {
-    const data = super._parseResponse(response)
-
-    return formatEthResponse(data)
+  async rpc (method, ...params) {
+    const result = await this.jsonrpc(method, ...params)
+    return formatEthResponse(result)
   }
 
   async getAddresses () {
-    const addresses = await this.jsonrpc('eth_accounts')
+    const addresses = await this.rpc('eth_accounts')
 
     return addresses.map(address => new Address({ address }))
   }
@@ -40,7 +39,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async isWalletAvailable () {
-    const addresses = await this.jsonrpc('eth_accounts')
+    const addresses = await this.rpc('eth_accounts')
 
     return addresses.length > 0
   }
@@ -51,7 +50,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
     const tx = await buildTransaction(from, to, value, data, gasPrice)
 
-    const txHash = await this.jsonrpc('eth_sendTransaction', tx)
+    const txHash = await this.rpc('eth_sendTransaction', tx)
 
     tx.hash = txHash
 
@@ -67,7 +66,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     const gas = await this.getMethod('estimateGas')(txData)
     txData.gas = ensure0x((gas + 20000).toString(16))
 
-    const newTxHash = await this.jsonrpc('eth_sendTransaction', txData)
+    const newTxHash = await this.rpc('eth_sendTransaction', txData)
 
     txData.hash = newTxHash
 
@@ -75,7 +74,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async sendRawTransaction (hash) {
-    const txHash = await this.jsonrpc('eth_sendRawTransaction', ensure0x(hash))
+    const txHash = await this.rpc('eth_sendRawTransaction', ensure0x(hash))
 
     return txHash
   }
@@ -84,11 +83,11 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     from = ensure0x(addressToString(from))
     message = ensure0x(Buffer.from(message).toString('hex'))
 
-    return this.jsonrpc('eth_sign', from, message)
+    return this.rpc('eth_sign', from, message)
   }
 
   async getBlockByHash (blockHash, includeTx) {
-    const block = await this.jsonrpc('eth_getBlockByHash', ensure0x(blockHash), includeTx)
+    const block = await this.rpc('eth_getBlockByHash', ensure0x(blockHash), includeTx)
 
     if (block && includeTx) {
       const currentHeight = await this.getBlockHeight()
@@ -99,7 +98,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    const block = await this.jsonrpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
+    const block = await this.rpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
 
     if (block && includeTx) {
       const currentHeight = await this.getBlockHeight()
@@ -110,7 +109,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async getBlockHeight () {
-    const hexHeight = await this.jsonrpc('eth_blockNumber')
+    const hexHeight = await this.rpc('eth_blockNumber')
 
     return parseInt(hexHeight, '16')
   }
@@ -119,26 +118,26 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     txHash = ensure0x(txHash)
 
     const currentBlock = await this.getBlockHeight()
-    const tx = await this.jsonrpc('eth_getTransactionByHash', txHash)
+    const tx = await this.rpc('eth_getTransactionByHash', txHash)
 
     return normalizeTransactionObject(tx, currentBlock)
   }
 
   async getTransactionReceipt (txHash) {
     txHash = ensure0x(txHash)
-    return this.jsonrpc('eth_getTransactionReceipt', txHash)
+    return this.rpc('eth_getTransactionReceipt', txHash)
   }
 
   async getTransactionCount (address, block = 'latest') {
     address = ensure0x(addressToString(address))
 
-    const count = await this.jsonrpc('eth_getTransactionCount', address, block)
+    const count = await this.rpc('eth_getTransactionCount', address, block)
 
     return parseInt(count, '16')
   }
 
   async getGasPrice () {
-    const gasPrice = await this.jsonrpc('eth_gasPrice')
+    const gasPrice = await this.rpc('eth_gasPrice')
     return BigNumber(parseInt(gasPrice, '16')).div(1e9).toNumber() // Gwei
   }
 
@@ -152,7 +151,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
       .map(ensure0x)
 
     const promiseBalances = await Promise.all(addresses.map(
-      address => this.jsonrpc('eth_getBalance', address, 'latest')
+      address => this.rpc('eth_getBalance', address, 'latest')
     ))
 
     return promiseBalances
@@ -161,7 +160,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async estimateGas (transaction) {
-    const estimatedGas = await this.jsonrpc('eth_estimateGas', transaction)
+    const estimatedGas = await this.rpc('eth_estimateGas', transaction)
 
     return parseInt(estimatedGas, '16')
   }
@@ -169,7 +168,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   async isAddressUsed (address) {
     address = ensure0x(addressToString(address))
 
-    let transactionCount = await this.jsonrpc('eth_getTransactionCount', address, 'latest')
+    let transactionCount = await this.rpc('eth_getTransactionCount', address, 'latest')
     transactionCount = parseInt(transactionCount, '16')
 
     return transactionCount > 0
@@ -178,16 +177,16 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   async getCode (address, block) {
     address = ensure0x(String(address))
     block = typeof (block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
-    const code = await this.jsonrpc('eth_getCode', address, block)
+    const code = await this.rpc('eth_getCode', address, block)
     return remove0x(code)
   }
 
   async stopMiner () {
-    await this.jsonrpc('miner_stop')
+    await this.rpc('miner_stop')
   }
 
   async startMiner () {
-    await this.jsonrpc('miner_start')
+    await this.rpc('miner_start')
   }
 
   async generateBlock (numberOfBlocks) {

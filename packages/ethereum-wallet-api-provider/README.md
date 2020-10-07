@@ -1,11 +1,11 @@
-# `@liquality/metamask-provider` <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
+# `@liquality/ethereum-wallet-api-provider` <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
 
 
 [![Build Status](https://travis-ci.com/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.com/liquality/chainabstractionlayer)
 [![Coverage Status](https://coveralls.io/repos/github/liquality/chainabstractionlayer/badge.svg?branch=master)](https://coveralls.io/github/liquality/chainabstractionlayer?branch=master)
 [![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](../../LICENSE.md)
-[![@liquality/metamask-provider](https://img.shields.io/npm/dt/@liquality/metamask-provider.svg)](https://npmjs.com/package/@liquality/metamask-provider)
+[![@liquality/ethereum-wallet-api-provider](https://img.shields.io/npm/dt/@liquality/ethereum-wallet-api-provider.svg)](https://npmjs.com/package/@liquality/ethereum-wallet-api-provider)
 [![Gitter](https://img.shields.io/gitter/room/liquality/Lobby.svg)](https://gitter.im/liquality/Lobby?source=orgpage)
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality) [![Greenkeeper badge](https://badges.greenkeeper.io/liquality/chainabstractionlayer.svg)](https://greenkeeper.io/)
 
@@ -20,15 +20,15 @@ Query different blockchains with account management using a single and simple in
 ## Installation
 
 ```bash
-npm i @liquality/metamask-provider
+npm i @liquality/ethereum-wallet-api-provider
 ```
 
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/metamask-provider@0.2.3/dist/metamask-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/metamask-provider@0.2.3/dist/metamask-provider.min.js.map -->
-<!-- available as window.MetaMaskProvider -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/ethereum-wallet-api-provider@0.2.3/dist/ethereum-wallet-api-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/ethereum-wallet-api-provider@0.2.3/dist/ethereum-wallet-api-provider.min.js.map -->
+<!-- available as window.EthereumWalletApiProvider -->
 ```
 
 

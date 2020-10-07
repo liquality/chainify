@@ -31,7 +31,8 @@
     "ethereumjs-common": "^1.4.0",
     "ethereumjs-tx": "^2.1.1",
     "ethereumjs-util": "^6.1.0",
-    "hdkey": "^1.1.1"
+    "hdkey": "^1.1.1",
+    "lodash": "^4.17.20"
   },
   "engines": {
     "node": "~8.12.0"
