@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@liquality/bundle": "^0.3.5"
+    "@liquality/bundle": "^0.7.0"
   }
 }
