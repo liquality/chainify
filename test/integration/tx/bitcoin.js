@@ -121,10 +121,10 @@ function testSignP2SHTransaction (chain) {
 
     const tx = txb.buildIncomplete()
 
-    const signaturesOne = await chain.client.getMethod('signP2SHTransaction')(initiationTx._raw.hex, tx, addresses[0].address, multiOne.multiVout, paymentVariant.redeem.output, 0, true)
+    const signaturesOne = await chain.client.getMethod('signP2SHTransaction')(initiationTx._raw.hex, tx.toHex(), addresses[0].address, multiOne.multiVout.n, paymentVariant.redeem.output.toString('hex'), 0, true)
 
     const multiOneInput = bitcoin.script.compile([
-      signaturesOne,
+      Buffer.from(signaturesOne, 'hex'),
       Buffer.from(addresses[0].publicKey, 'hex')
     ])
 
