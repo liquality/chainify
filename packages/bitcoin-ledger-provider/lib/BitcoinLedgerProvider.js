@@ -68,19 +68,21 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     fee }
   }
 
-  async signP2SHTransaction (inputTxHex, tx, address, vout, outputScript, lockTime = 0, segwit = false) {
+  async signP2SHTransaction (inputTxHex, txHex, address, vout, outputScript, lockTime = 0, segwit = false) {
     const app = await this.getApp()
     const walletAddress = await this.getWalletAddress(address)
 
+    const tx = bitcoin.Transaction.fromHex(txHex)
+
     if (!segwit) {
-      tx.setInputScript(vout.n, outputScript) // TODO: is this ok for p2sh-segwit??
+      tx.setInputScript(vout, Buffer.from(outputScript, 'hex')) // TODO: is this ok for p2sh-segwit??
     }
 
     const ledgerInputTx = await app.splitTransaction(inputTxHex, true)
     const ledgerTx = await app.splitTransaction(tx.toHex(), true)
     const ledgerOutputs = (await app.serializeTransactionOutputs(ledgerTx)).toString('hex')
     const ledgerSig = await app.signP2SHTransaction(
-      [[ledgerInputTx, vout.n, outputScript.toString('hex'), 0]],
+      [[ledgerInputTx, vout, outputScript, 0]],
       [walletAddress.derivationPath],
       ledgerOutputs.toString('hex'),
       lockTime,
@@ -90,9 +92,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     )
 
     const finalSig = segwit ? ledgerSig[0] : ledgerSig[0] + '01' // Is this a ledger bug? Why non segwit signs need the sighash appended?
-    const sig = Buffer.from(finalSig, 'hex')
-
-    return sig
+    return finalSig
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]
