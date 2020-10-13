@@ -8,8 +8,8 @@ export default {
     coinType: '0',
     isTestnet: false
   },
-  bitcoin_regtest: {
-    name: 'bitcoin_regtest',
+  liquid_regtest: {
+    name: 'liquid_regtest',
     ...liquidjs.networks.regtest,
     coinType: '1',
     isTestnet: true
