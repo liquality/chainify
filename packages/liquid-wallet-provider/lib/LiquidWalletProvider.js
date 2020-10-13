@@ -153,7 +153,7 @@ export default class LiquidWalletProvider {
         return liquid.payments.p2pkh({ pubkey: publicKey, network: this._network })
       case 'p2sh-segwit':
         return liquid.payments.p2sh({
-          redeem: bitcoin.payments.p2wpkh({ pubkey: publicKey, network: this._network }),
+          redeem: liquid.payments.p2wpkh({ pubkey: publicKey, network: this._network }),
           network: this._network
         })
       case 'bech32':
