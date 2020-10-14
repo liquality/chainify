@@ -44,6 +44,9 @@
     "node": "~8.12.0"
   },
   "standard": {
+    "env": [
+      "mocha"
+    ],
     "plugins": [
       "html",
       "markdown"
@@ -68,6 +71,7 @@
     "test:integration:wallet": "cross-env NODE_ENV=test mocha test/integration/wallet $npm_package_options_mocha",
     "test:integration": "cross-env NODE_ENV=test mocha test/integration $npm_package_options_mocha",
     "test:integration:external": "cross-env NODE_ENV=test RUN_EXTERNAL=true mocha test/integration $npm_package_options_mocha",
+    "test:liquid": "cross-env NODE_ENV=test RUN_EXTERNAL=true mocha ./test/liquid $npm_package_options_mocha",
     "watch": "cross-env NODE_ENV=production WEBPACK_WATCH=true lerna run build --parallel",
     "build:dev:node": "lerna run build:node --stream",
     "build:dev:browser": "lerna run build:browser --stream",
