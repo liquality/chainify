@@ -1,88 +1,32 @@
 import { version } from '../package.json'
 
-function sleep (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+import { Address, asyncSetImmediate, sleep } from '@liquality/utils'
 
-class ConfidentialAddress {
+class ConfidentialAddress extends Address {
   constructor (address, derivationPath, publicKey, index, blindingKey) {
+    super(address, derivationPath, publicKey, index)
+
+    // we assume the given address is a string
+    this._blindingKey = blindingKey
+
+    // We override it in case is already in the form of ConfidentialAddress
     if (address instanceof ConfidentialAddress || typeof address !== 'string') {
-      this._address = address.address
-      this._derivationPath = address.derivationPath
-      this._publicKey = address.publicKey
-      this._index = address.index
       this._blindingKey = address.blindingKey
-    } else {
-      this._address = address
-      this._derivationPath = derivationPath
-      this._publicKey = publicKey
-      this._index = index
-      this._blindingKey = blindingKey
     }
-  }
-
-  get address () {
-    return this._address
-  }
-
-  get derivationPath () {
-    return this._derivationPath
-  }
-
-  get publicKey () {
-    return this._publicKey
-  }
-
-  get index () {
-    return this._index
   }
 
   get blindingKey () {
     return this._blindingKey
   }
 
-  toLocaleString () {
-    return this._address
-  }
-
-  toString () {
-    return this._address
-  }
-
-  valueOf () {
-    return this._address
-  }
-
-  equals (addr) {
-    return this._address === addressToString(addr)
-  }
-
   toObject () {
-    const obj = {
-      address: this._address
-    }
-
-    if (this._derivationPath) {
-      obj.derivationPath = this._derivationPath
-    }
-
-    if (this._publicKey) {
-      obj.publicKey = this._publicKey
-    }
-
-    if (this._index !== undefined && this._index !== null) {
-      obj.index = this._index
-    }
+    const obj = super.toObject()
 
     if (this._blindingKey) {
       obj.blindingKey = this._blindingKey
     }
 
     return obj
-  }
-
-  toJSON () {
-    return this.toObject()
   }
 }
 
@@ -92,15 +36,10 @@ function addressToString (any) {
   return String(new ConfidentialAddress(any))
 }
 
-function asyncSetImmediate () {
-  return new Promise(resolve => setImmediate(resolve))
-}
-
 export {
   ConfidentialAddress,
   addressToString,
   sleep,
   asyncSetImmediate,
-
   version
 }
