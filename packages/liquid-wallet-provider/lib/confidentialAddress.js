@@ -38,6 +38,7 @@ function addressToString (any) {
 
 export {
   ConfidentialAddress,
+  Address as UnconfidentialAddress,
   addressToString,
   sleep,
   asyncSetImmediate,

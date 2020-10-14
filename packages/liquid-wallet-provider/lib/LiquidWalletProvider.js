@@ -1,11 +1,7 @@
 import * as liquid from 'liquidjs-lib'
-import * as slip77 from 'slip77'
-import * as bip32 from 'bip32'
-import { mnemonicToSeed } from 'bip39'
 
 import { LiquidAddressTypes } from './utils'
-import { Address, asyncSetImmediate } from '@liquality/utils'
-import { ConfidentialAddress } from './confidentialAddress'
+import { ConfidentialAddress, UnconfidentialAddress, asyncSetImmediate } from './confidentialAddress'
 
 const ADDRESS_TYPE_TO_PREFIX = {
   'legacy': 44,
@@ -16,64 +12,20 @@ const ADDRESS_TYPE_TO_PREFIX = {
   'blech32': 84
 }
 
-export default class LiquidWalletProvider {
-  constructor (network, mnemonic, addressType = 'blech32', superArgs = []) {
+export default superclass => class LiquidWalletProvider extends superclass {
+  constructor (network, addressType = 'blech32', superArgs = []) {
     if (!LiquidAddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${LiquidAddressTypes.join(',')}`)
     }
 
     const baseDerivationPath = `${ADDRESS_TYPE_TO_PREFIX[addressType]}'/${network.coinType}'/0'`
 
-    // super(...superArgs)
+    super(...superArgs)
 
     this._baseDerivationPath = baseDerivationPath
     this._network = network
     this._addressType = addressType
     this._addressesCache = {}
-
-    // TODO this should be moved up in LiquidJSWalletProvider
-    if (!mnemonic) throw new Error('Mnemonic should not be empty')
-    this._mnemonic = mnemonic
-  }
-
-  // TODO these need to me moved up in the parent provider, for example in a LiquidJSWalletProvider.
-  async seedNode () {
-    if (this._seedNode) return this._seedNode
-
-    const seed = await mnemonicToSeed(this._mnemonic)
-    this._seedNode = bip32.fromSeed(seed, this._network)
-
-    return this._seedNode
-  }
-
-  async blindingNode () {
-    if (this._blindingNode) return this._blindingNode
-
-    const seed = await mnemonicToSeed(this._mnemonic)
-    this._blindingNode = slip77.fromSeed(seed)
-
-    return this._blindingNode
-  }
-
-  async baseDerivationNode () {
-    if (this._baseDerivationNode) return this._baseDerivationNode
-
-    const baseNode = await this.seedNode()
-    this._baseDerivationNode = baseNode.derivePath(this._baseDerivationPath)
-
-    return this._baseDerivationNode
-  }
-
-  async keyPair (derivationPath) {
-    const node = await this.seedNode()
-    const wif = node.derivePath(derivationPath).toWIF()
-    return liquid.ECPair.fromWIF(wif, this._network)
-  }
-
-  async blindingKeyPair (scriptPubKey) {
-    const node = await this.blindingNode()
-    const { publicKey, privateKey } = node.derive(scriptPubKey)
-    return { publicKey, privateKey }
   }
 
   async getConfidentialAddresses (startingIndex = 0, numAddresses = 1, change = false) {
@@ -104,7 +56,7 @@ export default class LiquidWalletProvider {
       const publicKey = baseDerivationNode.derivePath(subPath).publicKey
 
       const address = this.getAddressFromPublicKey(publicKey)
-      let addressObject = new Address({
+      let addressObject = new UnconfidentialAddress({
         address,
         publicKey,
         derivationPath: path,
