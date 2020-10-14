@@ -1,5 +1,5 @@
 import LiquidWalletProvider from '../../liquid-wallet-provider/lib/index'
-import WalletProvider from '../../wallet-provider/lib/index'
+import WalletProvider from '@liquality/wallet-provider'
 
 import * as liquid from 'liquidjs-lib'
 import * as slip77 from 'slip77'
