@@ -65,16 +65,17 @@ export default superclass => class LiquidWalletProvider extends superclass {
 
       if (isConfidential) {
         const payment = this.getPaymentVariantFromPublicKey(publicKey)
-        const blindingPubKey = (await this.blindingKeyPair(payment.output)).publicKey
+        const blindingKeyPair = await this.blindingKeyPair(payment.output)
 
-        const confidentialAddress = this.getConfidentialAddressFromPublicKeyAndBlinding(publicKey, blindingPubKey)
+        const confidentialAddress = this.getConfidentialAddressFromPublicKeyAndBlinding(publicKey, blindingKeyPair.publicKey)
 
         addressObject = new ConfidentialAddress({
           address: confidentialAddress,
           publicKey,
           derivationPath: path,
           index: currentIndex,
-          blindingKey: blindingPubKey
+          blindingPublicKey: blindingKeyPair.publicKey,
+          blindingPrivateKey: blindingKeyPair.privateKey
         })
       }
 
@@ -85,6 +86,36 @@ export default superclass => class LiquidWalletProvider extends superclass {
     }
 
     return addresses
+  }
+
+  async getWalletAddress (address) {
+    let index = 0
+    let change = false
+
+    // A maximum number of addresses to lookup after which it is deemed
+    // that the wallet does not contain this address
+    const maxAddresses = 1000
+    const addressesPerCall = 50
+
+    let getAddrs = () => this.getAddresses(index, addressesPerCall, change)
+
+    if (isConfidentialAddress(address)) {
+      getAddrs = () => this.getConfidentialAddresses(index, addressesPerCall, change)
+    }
+
+    while (index < maxAddresses) {
+      const addrs = await getAddrs()
+      const addr = addrs.find(addr => addr.equals(address))
+      if (addr) return addr
+
+      index += addressesPerCall
+      if (index === maxAddresses && change === false) {
+        index = 0
+        change = true
+      }
+    }
+
+    throw new Error('Wallet does not contain address')
   }
 
   getAddressFromPublicKey (publicKey) {
@@ -117,5 +148,14 @@ export default superclass => class LiquidWalletProvider extends superclass {
       case 'blech32':
         return liquid.payments.p2wpkh({ pubkey: publicKey, blindkey: blindingPublicKey, network: this._network })
     }
+  }
+}
+
+function isConfidentialAddress (value) {
+  try {
+    liquid.address.fromConfidential(value)
+    return true
+  } catch (ignore) {
+    return false
   }
 }
