@@ -1,7 +1,10 @@
 import { isEqual } from 'lodash'
 
 import Provider from '@liquality/provider'
-import { WalletError } from '@liquality/errors'
+import {
+  WalletError,
+  UnimplementedMethodError
+} from '@liquality/errors'
 
 import { version } from '../package.json'
 
@@ -40,27 +43,27 @@ export default class WalletProvider extends Provider {
   }
 
   isWalletAvailable () {
-    throw new Error('isWalletAvailable not implemented.')
+    throw new UnimplementedMethodError('isWalletAvailable not implemented.')
   }
 
   getAddresses () {
-    throw new Error('getAddresses not implemented.')
+    throw new UnimplementedMethodError('getAddresses not implemented.')
   }
 
   getUsedAddresses () {
-    throw new Error('getUsedAddresses not implemented.')
+    throw new UnimplementedMethodError('getUsedAddresses not implemented.')
   }
 
   getUnusedAddress () {
-    throw new Error('getUnusedAddress not implemented.')
+    throw new UnimplementedMethodError('getUnusedAddress not implemented.')
   }
 
   signMessage () {
-    throw new Error('signMessage not implemented.')
+    throw new UnimplementedMethodError('signMessage not implemented.')
   }
 
   async getConnectedNetwork () {
-    throw new Error('getConnectedNetwork not implemented.')
+    throw new UnimplementedMethodError('getConnectedNetwork not implemented.')
   }
 }
 
