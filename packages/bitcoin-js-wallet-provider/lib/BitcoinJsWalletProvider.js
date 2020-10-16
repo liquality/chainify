@@ -118,20 +118,23 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
-  async signP2SHTransaction (inputTxHex, tx, address, prevout, outputScript, lockTime = 0, segwit = false) {
+  async signP2SHTransaction (inputTxHex, txHex, address, vout, outputScript, lockTime = 0, segwit = false) {
     const wallet = await this.getWalletAddress(address)
     const keyPair = await this.keyPair(wallet.derivationPath)
+
+    const inputTx = bitcoin.Transaction.fromHex(inputTxHex)
+    const tx = bitcoin.Transaction.fromHex(txHex)
 
     let sigHash
 
     if (segwit) {
-      sigHash = tx.hashForWitnessV0(0, outputScript, prevout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+      sigHash = tx.hashForWitnessV0(0, Buffer.from(outputScript, 'hex'), inputTx.outs[vout].value, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
     } else {
-      sigHash = tx.hashForSignature(0, outputScript, bitcoin.Transaction.SIGHASH_ALL)
+      sigHash = tx.hashForSignature(0, Buffer.from(outputScript, 'hex'), bitcoin.Transaction.SIGHASH_ALL)
     }
 
     const sig = bitcoin.script.signature.encode(keyPair.sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
-    return sig
+    return sig.toString('hex')
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]

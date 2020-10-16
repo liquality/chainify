@@ -160,16 +160,16 @@ export default class BitcoinSwapProvider extends Provider {
 
     const sig = await this.getMethod('signP2SHTransaction')(
       initiationTxRaw, // TODO: Why raw? can't it be a bitcoinjs-lib TX like the next one?
-      tx,
+      tx.toHex(),
       address,
-      swapVout,
-      isSegwit ? swapPaymentVariants.p2wsh.redeem.output : swapPaymentVariants.p2sh.redeem.output,
+      swapVout.n,
+      (isSegwit ? swapPaymentVariants.p2wsh.redeem.output : swapPaymentVariants.p2sh.redeem.output).toString('hex'),
       isRedeem ? 0 : expiration,
       isSegwit
     )
 
     const walletAddress = await this.getMethod('getWalletAddress')(address)
-    const swapInput = this.getSwapInput(sig, walletAddress.publicKey, isRedeem, secret)
+    const swapInput = this.getSwapInput(Buffer.from(sig, 'hex'), walletAddress.publicKey, isRedeem, secret)
     const paymentParams = { redeem: { output: swapOutput, input: swapInput, network }, network }
     const paymentWithInput = isSegwit
       ? bitcoin.payments.p2wsh(paymentParams)
@@ -197,15 +197,14 @@ export default class BitcoinSwapProvider extends Provider {
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     if (transaction.vin.length === 1 && transaction.vout.length === 1) {
       const inputTx = (await this.getMethod('getTransactionByHash')(transaction.vin[0].txid))._raw
-      const vout = inputTx.vout[transaction.vin[0].vout]
-      const voutType = vout.scriptPubKey.type
+      const prevout = inputTx.vout[transaction.vin[0].vout]
+      const voutType = prevout.scriptPubKey.type
       if (['scripthash', 'witness_v0_scripthash'].includes(voutType)) {
         const segwit = voutType === 'witness_v0_scripthash'
         const inputTxHex = inputTx.hex
         const tx = bitcoin.Transaction.fromHex(transaction.hex)
 
         const address = transaction.vout[0].scriptPubKey.addresses[0]
-        const prevout = inputTx.vout[transaction.vin[0].vout]
         prevout.vSat = BigNumber(prevout.value).times(1e8).toNumber()
 
         const txfee = calculateFee(1, 1, newFeePerByte)
@@ -227,14 +226,15 @@ export default class BitcoinSwapProvider extends Provider {
         }
         const lockTime = transaction.lockTime
 
-        const sig = await this.getMethod('signP2SHTransaction')(inputTxHex, tx, address, prevout, outputScript, lockTime, segwit)
+        const unsignedTxHex = tx.toHex()
+        const sig = await this.getMethod('signP2SHTransaction')(inputTxHex, unsignedTxHex, address, prevout.n, outputScript.toString('hex'), lockTime, segwit)
         if (segwit) {
-          const witness = [sig, ...tx.ins[0].witness.slice(1)]
+          const witness = [Buffer.from(sig, 'hex'), ...tx.ins[0].witness.slice(1)]
           tx.setWitness(0, witness)
         } else {
           const scriptSig = transaction.vin[0].scriptSig.hex
           const script = bitcoin.script.decompile(Buffer.from(scriptSig, 'hex'))
-          const inputScript = bitcoin.script.compile([sig, ...script.slice(1)])
+          const inputScript = bitcoin.script.compile([Buffer.from(sig, 'hex'), ...script.slice(1)])
           tx.setInputScript(0, inputScript)
         }
         const hex = tx.toHex()
