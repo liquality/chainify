@@ -68,7 +68,7 @@ export default class LiquidJsWalletProvider extends LiquidWalletProvider(WalletP
    */
   createPset () {
     const pset = new Psbt({ network: this.network })
-    return pset
+    return pset.toBase64()
   }
 
   decodePset (psetBase64) {
@@ -84,31 +84,32 @@ export default class LiquidJsWalletProvider extends LiquidWalletProvider(WalletP
 
   /**
    * Update the given PSET transaction and adds given inputs and outputs
-   * @param {string} pset
+   * @param {string} psetBae64
    * @param {Array} inputs
    * @param {Array} outputs
-   * @returns {liquid.Psbt}
+   * @returns {string}
    */
-  updatePset (pset, inputs, outputs) {
+  updatePset (psetBase64, inputs, outputs) {
     // TODO proper implements going from explorer utxos, checking witness and nonWitnessUtxos and so on
-    // let pset = this.decodePset(psetBase64)
+    let pset = this.decodePset(psetBase64)
 
     pset.addInputs(inputs)
     pset.addOutputs(outputs)
 
-    return pset
+    return pset.toBase64()
   }
 
   /**
    * Blinds a complete pset (with explicit fee output). The confidential addresses of the inputs and outputs should be given as ordered array.
    * NOTICE: The order of the addresses should reflect the one in the PSET.UnsignedTx
    *
-   * @param {liquid.Psbt} pset
+   * @param {psetBase64} psetBase64
    * @param {Array} inputAddresses
    * @param {Array} outputAddresses
+   * @returns {string}
    */
-  async blindPset (pset, inputAddresses = [], outputAddresses = []) {
-    // const pset = this.decodePset(psetBase64)
+  async blindPset (psetBase64, inputAddresses = [], outputAddresses = []) {
+    const pset = this.decodePset(psetBase64)
 
     const blindingPrivKeysOfInputs = await Promise.all(inputAddresses.map(async addr => {
       const wallet = await this.getWalletAddress(addr)
@@ -119,32 +120,41 @@ export default class LiquidJsWalletProvider extends LiquidWalletProvider(WalletP
       return (address.fromConfidential(addr)).blindingKey
     })
 
-    try {
-      pset.blindOutputs(blindingPrivKeysOfInputs, blindingPubKeysOfOutputs)
-    } catch (e) {
-      console.error(e)
-    }
+    pset.blindOutputs(blindingPrivKeysOfInputs, blindingPubKeysOfOutputs)
 
-    return pset
+    return pset.toBase64()
   }
 
   /**
    * Returns a pset with inputs signed with the keys of the given addresses
-   * @param {liquid.Psbt} pset
+   * @param {string} psetBase64
    * @param {Array} addresses
    * @returns {string}
    */
-  async signPset (pset, addresses = []) {
-    // const pset = this.decodePset(psetBase64)
+  async signPset (psetBase64, addresses = []) {
+    const pset = this.decodePset(psetBase64)
 
     await Promise.all(addresses.map(async addr => {
       const wallet = await this.getWalletAddress(addr)
       const keyPair = await this.keyPair(wallet.derivationPath)
       pset.data.inputs.forEach((p, i) => {
-        try { pset.signInput(i, keyPair) } catch (ignore) { return undefined }
+        try { pset.signInput(i, keyPair) } catch (ignore) { console.warn(ignore) }
       })
     }))
 
-    return pset
+    return pset.toBase64()
+  }
+
+  /**
+   * Returns the hex encoded finalized pset transaction.
+   * @param {string} psetBase64
+   * @returns {string}
+   */
+  finalizePset (psetBase64) {
+    const decoded = this.decodePset(psetBase64)
+    decoded.validateSignaturesOfAllInputs()
+    decoded.finalizeAllInputs()
+
+    return decoded.extractTransaction().toHex()
   }
 }

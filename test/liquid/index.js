@@ -91,9 +91,8 @@ describe('liquid-wallet-provider', () => {
       [alicePayment.confidentialAddress]
     )
 
-    signedPset.validateSignaturesOfAllInputs()
-    signedPset.finalizeAllInputs()
+    const finalized = provider.finalizePset(signedPset)
 
-    expect(signedPset.extractTransaction().toHex().length).to.greaterThan(0)
+    expect(finalized.length).to.greaterThan(0)
   })
 })
