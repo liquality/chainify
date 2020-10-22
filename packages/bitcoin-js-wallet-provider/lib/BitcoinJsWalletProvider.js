@@ -79,7 +79,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       if (needsWitness) {
         psbtInput.witnessUtxo = {
           script: paymentVariant.output,
-          value: inputs[i].value // TODO check this
+          value: inputs[i].value
         }
       } else {
         const inputTx = await this.getMethod('getRawTransactionByHash')(inputs[i].txid, true)
@@ -131,23 +131,13 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
-  async signP2SHTransaction (inputTxHex, txHex, address, vout, outputScript, lockTime = 0, segwit = false) {
+  async signPSBT (psbtHex, address) {
+    const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: this._network })
     const wallet = await this.getWalletAddress(address)
     const keyPair = await this.keyPair(wallet.derivationPath)
 
-    const inputTx = bitcoin.Transaction.fromHex(inputTxHex)
-    const tx = bitcoin.Transaction.fromHex(txHex)
-
-    let sigHash
-
-    if (segwit) {
-      sigHash = tx.hashForWitnessV0(0, Buffer.from(outputScript, 'hex'), inputTx.outs[vout].value, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
-    } else {
-      sigHash = tx.hashForSignature(0, Buffer.from(outputScript, 'hex'), bitcoin.Transaction.SIGHASH_ALL)
-    }
-
-    const sig = bitcoin.script.signature.encode(keyPair.sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
-    return sig.toString('hex')
+    psbt.signInput(0, keyPair) // TODO: SIGN ALL OUTPUTS
+    return psbt.data.inputs[0].partialSig[0].signature.toString('hex') // TODO: return all sigs
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]

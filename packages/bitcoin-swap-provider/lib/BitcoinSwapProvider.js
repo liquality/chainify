@@ -146,26 +146,39 @@ export default class BitcoinSwapProvider extends Provider {
     }
 
     const txb = new bitcoin.TransactionBuilder(network)
+    const psbt = new bitcoin.Psbt({ network })
 
-    if (!isRedeem) txb.setLockTime(expiration)
-
-    const prevOutScript = paymentVariant.output
-
-    txb.addInput(swapVout.txid, swapVout.n, 0, prevOutScript)
-    txb.addOutput(addressToString(address), swapVout.vSat - txfee)
-
-    const tx = txb.buildIncomplete()
+    if (!isRedeem) {
+      psbt.setLocktime(expiration)
+    }
 
     const isSegwit = paymentVariantName === 'p2wsh' || paymentVariantName === 'p2shSegwit'
 
-    const sig = await this.getMethod('signP2SHTransaction')(
-      initiationTxRaw, // TODO: Why raw? can't it be a bitcoinjs-lib TX like the next one?
-      tx.toHex(),
-      address,
-      swapVout.n,
-      (isSegwit ? swapPaymentVariants.p2wsh.redeem.output : swapPaymentVariants.p2sh.redeem.output).toString('hex'),
-      isRedeem ? 0 : expiration,
-      isSegwit
+    const input = {
+      hash: swapVout.txid,
+      index: swapVout.n,
+      sequence: 0
+    }
+
+    if(isSegwit) {
+      psbtInput.witnessUtxo = {
+        script: paymentVariant.output,
+        value: swapVout.value
+      }
+      psbtInput.witnessScript = swapPaymentVariants.p2wsh.output // ? correcT? is it without 0020 ? how? 
+    } else {
+      psbtInput.nonWitnessUtxo = Buffer.from(initiationTxRaw, 'hex')
+    }
+
+    psbt.addInput(input)
+    psbt.addOutput({
+      address: addressToString(address),
+      value: swapVout.vSat - txfee
+    })
+//https://bitcoinjs-guide.bitcoin-studio.com/bitcoinjs-guide/v5/part-three-pay-to-script-hash/submarine_swaps/swap_on2off_p2wsh.html
+    const sig = await this.getMethod('signPSBT')(
+      psbt.toHex(),
+      address
     )
 
     const walletAddress = await this.getMethod('getWalletAddress')(address)
