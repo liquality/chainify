@@ -114,10 +114,10 @@ function normalizeTransactionObject (tx, currentHeight) {
 
 function buildTransaction (from, to, value, data, gasPrice, nonce) {
   const tx = {
-    from: ensure0x(addressToString(from)),
-    value: ensure0x(BigNumber(value).toString(16))
+    from: ensure0x(addressToString(from))
   }
 
+  if (value) tx.value = ensure0x(BigNumber(value).toString(16))
   if (gasPrice) tx.gasPrice = ensure0x(BigNumber(gasPrice).times(GWEI).toString(16))
   if (to) tx.to = ensure0x(addressToString(to))
   if (data) tx.data = ensure0x(data)
