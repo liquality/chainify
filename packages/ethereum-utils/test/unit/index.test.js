@@ -41,7 +41,8 @@ describe('Ethereum Util', () => {
       expect(txData).to.deep.equal({
         from: '0x322d4959c911520645c0638204b42ce0689236e9',
         to: '0x635d7d148054b9471d79084b80b864a166956139',
-        data: '0x55'
+        data: '0x55',
+        value: '0x0'
       })
     })
   })
