@@ -1,11 +1,13 @@
-name: test
+name: test-publish
 
-on: push
+on:
+  push:
+    tags:
+      - v*
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: contains(github.ref, 'refs/tags/') != true
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -21,7 +23,12 @@ jobs:
       - run: sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev
       - run: export NODE_OPTIONS="--max_old_space_size=4096"
       - run: npm ci
-      - run: npm run bootstrap
-      - run: npm run lint
-      - run: npm run build
-      - run: npm test
+      - name: Dist tag name
+        id: disttag
+        uses: actions/github-script@v3
+        with:
+          script: |
+            return context.payload.includes('-next.') ? 'next' : 'latest'
+      - name: Echo tag and disttag
+        run: echo ${{ steps.disttag.outputs.result }}
+      - run: ./node_modules/.bin/lerna publish from-package --dist-tag ${{ steps.disttag.outputs.result }} --yes
