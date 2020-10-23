@@ -322,6 +322,10 @@ export default class BitcoinSwapProvider extends Provider {
     return refundSwapTransaction
   }
 
+  async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.getMethod('getTransactionByHash')(initiationTxHash)
+  }
+
   async getSwapSecret (claimTxHash) {
     const claimTx = await this.getMethod('getTransactionByHash')(claimTxHash)
     const inputScript = this.getInputScriptFromTransaction(claimTx)
