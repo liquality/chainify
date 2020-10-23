@@ -31,4 +31,5 @@ jobs:
             return context.payload.ref.includes('-next.') ? 'next' : 'latest'
       - name: Echo tag and disttag
         run: echo ${{ steps.disttag.outputs.result }}
+      - run: echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}" > ~/.npmrc
       - run: ./node_modules/.bin/lerna publish from-package --dist-tag ${{ steps.disttag.outputs.result }} --yes
