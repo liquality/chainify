@@ -60,6 +60,26 @@ export default class Swap {
   }
 
   /**
+   * Find funding transaction
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!number} value - The amount of native value locked in the swap.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @param {!number} blockNumber - The block number to find the transaction in
+   * @return {Promise<string, TypeError>} Resolves with the funding transaction if found, otherwise null.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    return this.client.getMethod('findFundSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
+  }
+
+  /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
    * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
