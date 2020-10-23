@@ -19,6 +19,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}-${{ hashFiles('**/package-lock.json') }}
       - run: export NODE_OPTIONS="--max_old_space_size=4096"
+      - run: npm ci
       - run: npm run bootstrap
       - run: npm run lint
       - run: npm run build
