@@ -14,7 +14,7 @@ module.exports = (config = { target: 'web' }) => {
   ]
 
   if (config.target === 'web') {
-    targets.browsers = [ 'last 2 versions', 'safari >= 7' ]
+    targets.browsers = [ 'last 2 versions', 'safari >= 7', 'not bb >= 0', 'not op_mini all', 'not ie <= 11', 'not ie_mob <= 11' ]
 
     if (process.env.NODE_ENV === 'production') {
       plugins.push('lodash')
