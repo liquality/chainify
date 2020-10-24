@@ -16,7 +16,7 @@ export default class ClientFactory {
 
       if (item.requires) {
         item.requires.forEach(cnf => {
-          if (config[cnf] === undefined) throw new Error(`Preset network:${network} asset:${asset} requires config.${cnf}`)
+          if (config[cnf] === undefined) throw new Error(`Preset requires config.${cnf}`)
         })
       }
 
