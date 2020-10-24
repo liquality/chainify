@@ -1,4 +1,3 @@
-
 import Provider from '@liquality/provider'
 import _ from 'lodash'
 
