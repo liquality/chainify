@@ -14,6 +14,8 @@ import { padHexStart } from '@liquality/crypto'
 
 import { version } from '../package.json'
 
+const GAS_LIMIT_MULTIPLIER = 1.5
+
 export default class EthereumRpcProvider extends JsonRpcProvider {
   async rpc (method, ...params) {
     const result = await this.jsonrpc(method, ...params)
@@ -64,7 +66,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
 
     const gas = await this.getMethod('estimateGas')(txData)
-    txData.gas = ensure0x((gas + 20000).toString(16))
+    txData.gas = ensure0x((gas).toString(16))
 
     const newTxHash = await this.rpc('eth_sendTransaction', txData)
 
@@ -160,9 +162,12 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async estimateGas (transaction) {
+    const hasValue = transaction.value && transaction.value !== '0x0'
+    if (hasValue && !transaction.data) { return 21000 }
+
     const estimatedGas = await this.rpc('eth_estimateGas', transaction)
 
-    return parseInt(estimatedGas, '16')
+    return Math.ceil(parseInt(estimatedGas, '16') * GAS_LIMIT_MULTIPLIER)
   }
 
   async isAddressUsed (address) {

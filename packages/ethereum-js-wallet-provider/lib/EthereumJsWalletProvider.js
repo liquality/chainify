@@ -125,8 +125,7 @@ export default class EthereumJsWalletProvider extends Provider {
     const transaction = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
     const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
-    const gas = await this.getMethod('estimateGas')(txData)
-    txData.gasLimit = gas + 20000 // Gas estimation on pending blocks incorrect
+    txData.gasLimit = await this.getMethod('estimateGas')(txData)
 
     const serializedTx = await this.signTransaction(txData)
     const newTxHash = await this.getMethod('sendRawTransaction')(serializedTx)
