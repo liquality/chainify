@@ -39,7 +39,7 @@ export default class EthereumJsWalletProvider extends Provider {
 
     const { v, r, s } = ethUtil.ecsign(hex, hdKey._privateKey)
 
-    return { v, r: r.toString('hex'), s: s.toString('hex') }
+    return remove0x(ethUtil.toRpcSig(v, r, s))
   }
 
   async getAddresses () {
