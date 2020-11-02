@@ -28,7 +28,7 @@
     "@liquality/utils": "^0.7.2",
     "bignumber.js": "^8.1.1",
     "bip32": "^1.0.2",
-    "bitcoinjs-lib": "^5.1.2",
+    "bitcoinjs-lib": "^5.2.0",
     "lodash": "^4.17.20"
   },
   "engines": {

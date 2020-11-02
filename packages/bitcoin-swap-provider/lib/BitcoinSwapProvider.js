@@ -1,5 +1,6 @@
 import * as bitcoin from 'bitcoinjs-lib'
 import * as classify from 'bitcoinjs-lib/src/classify'
+import * as varuint from 'bip174/src/lib/converter/varint';
 import BigNumber from 'bignumber.js'
 import Provider from '@liquality/provider'
 import {
@@ -11,6 +12,38 @@ import { addressToString } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
 
 import { version } from '../package.json'
+
+// TODO: This is copy pasta because it's not exported from bitcoinjs-lib
+// https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/test/integration/csv.spec.ts#L477
+function witnessStackToScriptWitness(witness) {
+  let buffer = Buffer.allocUnsafe(0);
+
+  function writeSlice(slice) {
+    buffer = Buffer.concat([buffer, Buffer.from(slice)]);
+  }
+
+  function writeVarInt(i) {
+    const currentLen = buffer.length;
+    const varintLen = varuint.encodingLength(i);
+
+    buffer = Buffer.concat([buffer, Buffer.allocUnsafe(varintLen)]);
+    varuint.encode(i, buffer, currentLen);
+  }
+
+  function writeVarSlice(slice) {
+    writeVarInt(slice.length);
+    writeSlice(slice);
+  }
+
+  function writeVector(vector) {
+    writeVarInt(vector.length);
+    vector.forEach(writeVarSlice);
+  }
+
+  writeVector(witness);
+
+  return buffer;
+}
 
 export default class BitcoinSwapProvider extends Provider {
   constructor (network = networks.bitcoin, mode = 'p2wsh') {
@@ -145,7 +178,6 @@ export default class BitcoinSwapProvider extends Provider {
       throw new Error('Transaction amount does not cover fee.')
     }
 
-    const txb = new bitcoin.TransactionBuilder(network)
     const psbt = new bitcoin.Psbt({ network })
 
     if (!isRedeem) {
@@ -161,46 +193,65 @@ export default class BitcoinSwapProvider extends Provider {
     }
 
     if(isSegwit) {
-      psbtInput.witnessUtxo = {
+      input.witnessUtxo = {
         script: paymentVariant.output,
-        value: swapVout.value
+        value: swapVout.vSat 
       }
-      psbtInput.witnessScript = swapPaymentVariants.p2wsh.output // ? correcT? is it without 0020 ? how? 
+      input.witnessScript = swapPaymentVariants.p2wsh.redeem.output // Strip the push bytes (0020) off the script
     } else {
-      psbtInput.nonWitnessUtxo = Buffer.from(initiationTxRaw, 'hex')
+      input.nonWitnessUtxo = Buffer.from(initiationTxRaw, 'hex')
+    }
+    
+    const output = {
+      address: addressToString(address),
+      value: swapVout.vSat - txfee
     }
 
     psbt.addInput(input)
-    psbt.addOutput({
-      address: addressToString(address),
-      value: swapVout.vSat - txfee
-    })
-//https://bitcoinjs-guide.bitcoin-studio.com/bitcoinjs-guide/v5/part-three-pay-to-script-hash/submarine_swaps/swap_on2off_p2wsh.html
-    const sig = await this.getMethod('signPSBT')(
+    psbt.addOutput(output)
+
+    const signedPSBTHex = await this.getMethod('signPSBT')(
       psbt.toHex(),
       address
     )
 
+    const signedPSBT = bitcoin.Psbt.fromHex(signedPSBTHex, { network })
+
+    const sig = signedPSBT.data.inputs[0].partialSig[0].signature
+
     const walletAddress = await this.getMethod('getWalletAddress')(address)
-    const swapInput = this.getSwapInput(Buffer.from(sig, 'hex'), walletAddress.publicKey, isRedeem, secret)
+    const swapInput = this.getSwapInput(sig, walletAddress.publicKey, isRedeem, secret)
     const paymentParams = { redeem: { output: swapOutput, input: swapInput, network }, network }
     const paymentWithInput = isSegwit
       ? bitcoin.payments.p2wsh(paymentParams)
       : bitcoin.payments.p2sh(paymentParams)
 
-    if (isSegwit) {
-      tx.setWitness(0, paymentWithInput.witness)
+    const getFinalScripts = () => {
+      let finalScriptSig;
+      let finalScriptWitness;
+
+      // create witness stack
+      if (isSegwit) {
+        finalScriptWitness = witnessStackToScriptWitness(paymentWithInput.witness)
+      }
+
+      if (paymentVariantName === 'p2shSegwit') {
+        // Adds the necessary push OP (PUSH34 (00 + witness script hash))
+        const inputScript = bitcoin.script.compile([swapPaymentVariants.p2shSegwit.redeem.output])
+        finalScriptSig = inputScript
+      } else if (paymentVariantName === 'p2sh') {
+        finalScriptSig = paymentWithInput.input
+      }
+
+      return {
+        finalScriptSig,
+        finalScriptWitness
+      }
     }
 
-    if (paymentVariantName === 'p2shSegwit') {
-      // Adds the necessary push OP (PUSH34 (00 + witness script hash))
-      const inputScript = bitcoin.script.compile([swapPaymentVariants.p2shSegwit.redeem.output])
-      tx.setInputScript(0, inputScript)
-    } else if (paymentVariantName === 'p2sh') {
-      tx.setInputScript(0, paymentWithInput.input)
-    }
+    psbt.finalizeInput(0, getFinalScripts)
 
-    const hex = tx.toHex()
+    const hex = psbt.extractTransaction().toHex()
     await this.getMethod('sendRawTransaction')(hex)
     return normalizeTransactionObject(decodeRawTransaction(hex), txfee)
   }

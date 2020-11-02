@@ -137,7 +137,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     const keyPair = await this.keyPair(wallet.derivationPath)
 
     psbt.signInput(0, keyPair) // TODO: SIGN ALL OUTPUTS
-    return psbt.data.inputs[0].partialSig[0].signature.toString('hex') // TODO: return all sigs
+    return psbt.toHex() // TODO: return all sigs
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]
