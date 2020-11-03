@@ -200,6 +200,7 @@ export default class BitcoinSwapProvider extends Provider {
       input.witnessScript = swapPaymentVariants.p2wsh.redeem.output // Strip the push bytes (0020) off the script
     } else {
       input.nonWitnessUtxo = Buffer.from(initiationTxRaw, 'hex')
+      input.redeemScript = paymentVariant.redeem.output
     }
     
     const output = {
@@ -267,6 +268,7 @@ export default class BitcoinSwapProvider extends Provider {
         const segwit = voutType === 'witness_v0_scripthash'
         const inputTxHex = inputTx.hex
         const tx = bitcoin.Transaction.fromHex(transaction.hex)
+        const psbt = bitcoin.Psbt({ network: this._network })
 
         const address = transaction.vout[0].scriptPubKey.addresses[0]
         prevout.vSat = BigNumber(prevout.value).times(1e8).toNumber()
