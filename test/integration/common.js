@@ -90,7 +90,7 @@ bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwo
 const ethereumNetwork = {
   ...ethereumNetworks[config.ethereum.network],
   name: 'mainnet',
-  chainId: 1337, // Default geth dev mode - * Needs to be <= 255 for ledger *
+  chainId: 1337, // Default geth dev mode - * Needs to be <= 255 for ledger * https://github.com/ethereum/go-ethereum/issues/21120
   networkId: 1337
 }
 

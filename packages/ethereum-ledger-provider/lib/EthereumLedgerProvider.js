@@ -96,7 +96,7 @@ export default class EthereumLedgerProvider extends LedgerProvider {
 
     const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)
 
-    const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
+    const txHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
 
     txData.hash = txHash
     return normalizeTransactionObject(formatEthResponse(txData))
