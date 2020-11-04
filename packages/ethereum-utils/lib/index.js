@@ -79,7 +79,9 @@ function formatEthResponse (obj) {
 }
 
 function normalizeTransactionObject (tx, currentHeight) {
-  if (!tx) return
+  if (!(typeof tx === 'object' && tx !== null)) {
+    throw new Error(`Invalid transaction object: "${tx}"`)
+  }
 
   const normalizedTx = {
     ..._.pick(tx, ['blockNumber', 'blockHash', 'hash', 'value', 'confirmations']),
