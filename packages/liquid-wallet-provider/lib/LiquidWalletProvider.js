@@ -2,6 +2,8 @@ import * as liquid from 'liquidjs-lib'
 
 import { LiquidAddressTypes } from './utils'
 import { ConfidentialAddress, UnconfidentialAddress, asyncSetImmediate } from './confidentialAddress'
+import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
+import WalletProvider from '@liquality/wallet-provider'
 
 const ADDRESS_TYPE_TO_PREFIX = {
   'legacy': 44,
@@ -12,7 +14,7 @@ const ADDRESS_TYPE_TO_PREFIX = {
   'blech32': 84
 }
 
-export default superclass => class LiquidWalletProvider extends superclass {
+export default class LiquidWalletProvider extends BitcoinWalletProvider(WalletProvider) {
   constructor (network, addressType = 'blech32', superArgs = []) {
     if (!LiquidAddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${LiquidAddressTypes.join(',')}`)
@@ -28,12 +30,8 @@ export default superclass => class LiquidWalletProvider extends superclass {
     this._addressesCache = {}
   }
 
-  async getConfidentialAddresses (startingIndex = 0, numAddresses = 1, change = false) {
-    return this._getAddresses(startingIndex, numAddresses, change, true)
-  }
-
   async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
-    return this._getAddresses(startingIndex, numAddresses, change, false)
+    return this._getAddresses(startingIndex, numAddresses, change, true)
   }
 
   async _getAddresses (startingIndex, numAddresses, change, isConfidential = true) {

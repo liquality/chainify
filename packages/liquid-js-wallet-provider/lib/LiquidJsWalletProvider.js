@@ -1,12 +1,11 @@
-import LiquidWalletProvider from '../../liquid-wallet-provider/lib/index'
-import WalletProvider from '@liquality/wallet-provider'
+import LiquidWalletProvider from '@liquality/liquid-wallet-provider'
 
 import { address, ECPair, Psbt } from 'liquidjs-lib'
 import * as slip77 from 'slip77'
 import * as bip32 from 'bip32'
 import { mnemonicToSeed } from 'bip39'
 
-export default class LiquidJsWalletProvider extends LiquidWalletProvider(WalletProvider) {
+export default class LiquidJsWalletProvider extends LiquidWalletProvider {
   constructor (network, mnemonic, addressType = 'blech32') {
     super(network, addressType, [network])
 
