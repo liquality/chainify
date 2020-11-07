@@ -37,7 +37,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     const keyPair = bitcoin.ECPair.fromWIF(wif, this._network)
 
     psbt.signInput(0, keyPair) // TODO: SIGN ALL OUTPUTS
-    return psbt.toHex() // TODO: return all sigs
+    return psbt.toHex()
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]

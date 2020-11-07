@@ -94,10 +94,13 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     }
 
     for (const output of outputs) {
-      const to = output.to.address === undefined ? output.to : addressToString(output.to) // Allow for OP_RETURN
+      const isScript = Buffer.isBuffer(output.to)
+      const address = !isScript ? addressToString(output.to) : undefined
+      const script = isScript ? output.to : undefined // Allow for OP_RETURN
       psbt.addOutput({
         value: output.value,
-        address: to
+        address,
+        script
       })
     }
 
@@ -105,10 +108,10 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       const wallet = await this.getWalletAddress(inputs[i].address)
       const keyPair = await this.keyPair(wallet.derivationPath)
       psbt.signInput(i, keyPair)
-      psbt.validateSignaturesOfInput(i);
+      psbt.validateSignaturesOfInput(i)
     }
 
-    psbt.finalizeAllInputs();
+    psbt.finalizeAllInputs()
 
     return { hex: psbt.extractTransaction().toHex(), fee }
   }
@@ -137,7 +140,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     const keyPair = await this.keyPair(wallet.derivationPath)
 
     psbt.signInput(0, keyPair) // TODO: SIGN ALL OUTPUTS
-    return psbt.toHex() // TODO: return all sigs
+    return psbt.toHex()
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]

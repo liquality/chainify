@@ -69,7 +69,6 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
   }
 
   async signPSBT (psbtHex, address) {
-  // async signP2SHTransaction (inputTxHex, txHex, address, vout, outputScript, lockTime = 0, segwit = false) {
     const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: this._network })
     const app = await this.getApp()
     const walletAddress = await this.getWalletAddress(address)
@@ -80,11 +79,10 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const isSegwit = Boolean(input.witnessScript)
 
     const ledgerInputTx = await app.splitTransaction(inputTxHex, true)
-    
+
     const ledgerTx = await app.splitTransaction(psbt.__CACHE.__TX.toHex(), true)
     const ledgerOutputs = await app.serializeTransactionOutputs(ledgerTx)
 
-    // path param for multiple inpu
     const signer = {
       network: this._network,
       publicKey: walletAddress.publicKey,
@@ -99,10 +97,10 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
           2
         )
         const finalSig = isSegwit ? ledgerSig[0] : ledgerSig[0] + '01' // Is this a ledger bug? Why non segwit signs need the sighash appended?
-        const { signature } = bitcoin.script.signature.decode(Buffer.from(finalSig, 'hex'));
-        return signature;
+        const { signature } = bitcoin.script.signature.decode(Buffer.from(finalSig, 'hex'))
+        return signature
       }
-    };
+    }
 
     await psbt.signInputAsync(0, signer)
 
