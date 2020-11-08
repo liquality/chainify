@@ -183,12 +183,8 @@ export default class BitcoinSwapProvider extends Provider {
     psbt.addInput(input)
     psbt.addOutput(output)
 
-    const signedPSBTHex = await this.getMethod('signPSBT')(
-      psbt.toHex(),
-      address
-    )
-
-    const signedPSBT = bitcoin.Psbt.fromHex(signedPSBTHex, { network })
+    const signedPSBTHex = await this.getMethod('signPSBT')(psbt.toBase64(), 0, address)
+    const signedPSBT = bitcoin.Psbt.fromBase64(signedPSBTHex, { network })
 
     const sig = signedPSBT.data.inputs[0].partialSig[0].signature
 

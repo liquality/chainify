@@ -133,11 +133,8 @@ function testSignPSBT (chain) {
     psbt.addInput(input)
     psbt.addOutput(output)
 
-    const signedPSBTHex = await chain.client.getMethod('signPSBT')(
-      psbt.toHex(),
-      unusedAddressOne
-    )
-    const signedPSBT = bitcoin.Psbt.fromHex(signedPSBTHex, { network })
+    const signedPSBTHex = await chain.client.getMethod('signPSBT')(psbt.toBase64(), 0, unusedAddressOne)
+    const signedPSBT = bitcoin.Psbt.fromBase64(signedPSBTHex, { network })
     signedPSBT.finalizeInput(0)
 
     const hex = signedPSBT.extractTransaction().toHex()

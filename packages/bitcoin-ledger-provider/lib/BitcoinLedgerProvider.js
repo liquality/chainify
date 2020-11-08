@@ -68,15 +68,16 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     fee }
   }
 
-  async signPSBT (psbtHex, address) {
-    const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: this._network })
+  async signPSBT (data, input, address) {
+    const psbt = bitcoin.Psbt.fromBase64(data, { network: this._network })
     const app = await this.getApp()
     const walletAddress = await this.getWalletAddress(address)
-    const input = psbt.data.inputs[0]
+    const { witnessScript, redeemScript } = psbt.data.inputs[input]
+    const { hash: inputHash, index: inputIndex } = psbt.txInputs[input]
 
-    const inputTxHex = await this.getMethod('getRawTransactionByHash')(psbt.txInputs[0].hash.reverse().toString('hex'))
-    const outputScript = input.witnessScript || input.redeemScript
-    const isSegwit = Boolean(input.witnessScript)
+    const inputTxHex = await this.getMethod('getRawTransactionByHash')(inputHash.reverse().toString('hex'))
+    const outputScript = witnessScript || redeemScript
+    const isSegwit = Boolean(witnessScript)
 
     const ledgerInputTx = await app.splitTransaction(inputTxHex, true)
 
@@ -88,7 +89,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       publicKey: walletAddress.publicKey,
       sign: async () => {
         const ledgerSig = await app.signP2SHTransaction(
-          [[ledgerInputTx, psbt.txInputs[0].index, outputScript.toString('hex'), 0]],
+          [[ledgerInputTx, inputIndex, outputScript.toString('hex'), 0]],
           [walletAddress.derivationPath],
           ledgerOutputs.toString('hex'),
           psbt.locktime,
@@ -102,9 +103,8 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       }
     }
 
-    await psbt.signInputAsync(0, signer)
-
-    return psbt.toHex()
+    await psbt.signInputAsync(input, signer)
+    return psbt.toBase64()
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]
