@@ -22,7 +22,7 @@
     "@liquality/crypto": "^0.7.9",
     "@liquality/utils": "^0.7.9",
     "bignumber.js": "^9.0.0",
-    "bitcoinjs-lib": "^5.1.10",
+    "bitcoinjs-lib": "^5.2.0",
     "coinselect": "^3.1.11",
     "lodash": "^4.17.20"
   },

@@ -31,22 +31,13 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return this._rpc.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
   }
 
-  async signP2SHTransaction (inputTxHex, txHex, address, vout, outputScript, lockTime = 0, segwit = false) {
+  async signPSBT (data, input, address) {
+    const psbt = bitcoin.Psbt.fromBase64(data, { network: this._network })
     const wif = await this.dumpPrivKey(address)
-    const wallet = bitcoin.ECPair.fromWIF(wif, this._network)
+    const keyPair = bitcoin.ECPair.fromWIF(wif, this._network)
 
-    const inputTx = bitcoin.Transaction.fromHex(inputTxHex)
-    const tx = bitcoin.Transaction.fromHex(txHex)
-
-    let sigHash
-    if (segwit) {
-      sigHash = tx.hashForWitnessV0(0, Buffer.from(outputScript, 'hex'), inputTx.outs[vout].value, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
-    } else {
-      sigHash = tx.hashForSignature(0, Buffer.from(outputScript, 'hex'), bitcoin.Transaction.SIGHASH_ALL)
-    }
-
-    const sig = bitcoin.script.signature.encode(wallet.sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
-    return sig.toString('hex')
+    psbt.signInput(input, keyPair)
+    return psbt.toBase64()
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]
