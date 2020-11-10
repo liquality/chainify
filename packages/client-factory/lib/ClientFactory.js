@@ -45,4 +45,5 @@ export default class ClientFactory {
   }
 }
 
+ClientFactory.presets = presets
 ClientFactory.version = version
