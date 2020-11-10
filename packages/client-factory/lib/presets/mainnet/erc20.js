@@ -35,7 +35,7 @@ export default [
   {
     provider: EthereumErc20ScraperSwapFindProvider,
     args: [
-      'https://liquality.io/eth-mainnet-api'
+      'https://liquality.io/eth-mainnet-api/'
     ]
   },
   {
