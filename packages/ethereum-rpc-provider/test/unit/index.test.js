@@ -88,7 +88,7 @@ describe('Ethereum RPC provider', () => {
         totalDifficulty: '0',
         extraData: '',
         size: 1000,
-        gasLimit: '6691b7',
+        gas: '6691b7',
         gasUsed: '5208',
         timestamp: 1547632949,
         transactions: [
