@@ -10,6 +10,7 @@ import {
   buildTransaction
 } from '@liquality/ethereum-utils'
 import { addressToString, Address, sleep } from '@liquality/utils'
+import { InvalidDestinationAddressError } from '@liquality/errors'
 import { padHexStart } from '@liquality/crypto'
 
 import { version } from '../package.json'
@@ -184,6 +185,11 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     block = typeof (block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
     const code = await this.rpc('eth_getCode', address, block)
     return remove0x(code)
+  }
+
+  async assertContractExists (address) {
+    const code = await this.getCode(address, 'latest')
+    if (code === '') throw new InvalidDestinationAddressError(`Contract does not exist at given address: ${address}`)
   }
 
   async stopMiner () {

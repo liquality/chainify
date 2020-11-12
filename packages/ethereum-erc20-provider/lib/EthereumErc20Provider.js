@@ -7,7 +7,6 @@ import {
   ensure0x,
   remove0x
 } from '@liquality/ethereum-utils'
-import { InvalidDestinationAddressError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
@@ -19,12 +18,6 @@ export default class EthereumErc20Provider extends Provider {
   constructor (contractAddress) {
     super()
     this._contractAddress = remove0x(contractAddress)
-  }
-
-  async assertContractExists (address) {
-    if (!address) address = this._contractAddress
-    const code = await this.getMethod('getCode')(address, 'latest')
-    if (code === '') throw new InvalidDestinationAddressError(`Contract does not exist at given address: ${address}`)
   }
 
   generateErc20Transfer (to, value) {
@@ -43,7 +36,7 @@ export default class EthereumErc20Provider extends Provider {
   async sendTransaction (to, value, data, gasPrice) {
     if (!data) {
       // erc20 transfer
-      await this.assertContractExists()
+      await this.getMethod('assertContractExists')(this._contractAddress)
 
       data = this.generateErc20Transfer(to, value)
       value = 0
@@ -66,7 +59,7 @@ export default class EthereumErc20Provider extends Provider {
   }
 
   async getBalance (addresses) {
-    await this.assertContractExists()
+    await this.getMethod('assertContractExists')(this._contractAddress)
 
     if (!isArray(addresses)) {
       addresses = [ addresses ]
