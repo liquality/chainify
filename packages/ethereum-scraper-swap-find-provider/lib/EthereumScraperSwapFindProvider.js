@@ -25,16 +25,17 @@ export default class EthereumScraperSwapFindProvider extends Provider {
     return normalizedTx
   }
 
-  async findAddressTransaction (address, predicate) {
+  async findAddressTransaction (address, predicate, fromBlock, toBlock, limit = 250, sort = 'desc') {
     address = ensure0x(addressToString(address))
 
-    const limit = 250
     for (let page = 1; ; page++) {
       const response = await this._axios(`/txs/${address}`, {
         params: {
           limit,
           page,
-          sort: 'desc'
+          sort,
+          fromBlock,
+          toBlock
         }
       })
 

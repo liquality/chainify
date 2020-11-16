@@ -281,6 +281,7 @@ describe('Swap Single Chain Flow', function () {
       testFee(chains.ethereumWithNode)
     })
 
+    // Local ledger tests do not work with geth https://github.com/ethereum/go-ethereum/issues/21120
     describeExternal('Ethereum - Ledger', () => {
       before(async function () {
         await fundWallet(chains.ethereumWithLedger)

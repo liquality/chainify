@@ -25,6 +25,28 @@ describe('Ethereum Util', () => {
     })
   })
 
+  describe('buildTransaction', () => {
+    it('should return transaction', () => {
+      const txData = EthereumUtil.buildTransaction('322d4959c911520645c0638204b42ce0689236e9', '635d7d148054b9471d79084b80b864a166956139', 1000000000, '55')
+      expect(txData).to.deep.equal({
+        from: '0x322d4959c911520645c0638204b42ce0689236e9',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        data: '0x55',
+        value: '0x3b9aca00'
+      })
+    })
+
+    it('should not include null value', () => {
+      const txData = EthereumUtil.buildTransaction('322d4959c911520645c0638204b42ce0689236e9', '635d7d148054b9471d79084b80b864a166956139', null, '55')
+      expect(txData).to.deep.equal({
+        from: '0x322d4959c911520645c0638204b42ce0689236e9',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        data: '0x55',
+        value: '0x0'
+      })
+    })
+  })
+
   describe('normalizeTransactionObject', () => {
     it('should remove blockNumber key if it is null', () => {
       expect(EthereumUtil.normalizeTransactionObject({

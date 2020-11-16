@@ -92,11 +92,11 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     ])
 
     const txData = buildTransaction(from, to, value, data, gasPrice, nonce)
-    txData.gasLimit = await this.getMethod('estimateGas')(txData) // TODO: shouldn't these be 0x?
+    txData.gas = await this.getMethod('estimateGas')(txData) // TODO: shouldn't these be 0x?
 
     const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)
 
-    const txHash = this.getMethod('sendRawTransaction')(signedSerializedTx)
+    const txHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
 
     txData.hash = txHash
     return normalizeTransactionObject(formatEthResponse(txData))
@@ -106,8 +106,7 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const transaction = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
     const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
-    const gas = await this.getMethod('estimateGas')(txData)
-    txData.gasLimit = gas + 20000 // Gas estimation on pending blocks incorrect
+    txData.gas = await this.getMethod('estimateGas')(txData)
 
     const signedSerializedTx = await this.signTransaction(txData)
     const newTxHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)

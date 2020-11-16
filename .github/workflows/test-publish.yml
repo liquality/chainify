@@ -1,0 +1,36 @@
+name: test-publish
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 8
+      - uses: actions/cache@v1
+        env:
+          node-version: 8
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}-${{ hashFiles('**/package-lock.json') }}
+      - run: sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev
+      - name: Dist tag name
+        id: disttag
+        uses: actions/github-script@v3
+        with:
+          script: |
+            return context.payload.ref.includes('-next.') ? 'next' : 'latest'
+      - name: Echo disttag
+        run: echo ${{ steps.disttag.outputs.result }}
+      - run: export NODE_OPTIONS="--max_old_space_size=4096"
+      - run: npm ci
+      - run: npm run bootstrap
+      - run: echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}" > ~/.npmrc
+      - run: ./node_modules/.bin/lerna publish from-package --dist-tag ${{ steps.disttag.outputs.result }} --yes

@@ -62,7 +62,7 @@ module.exports = {
         totalDifficulty: '0x0',
         extraData: '0x',
         size: '0x03e8',
-        gasLimit: '0x6691b7',
+        gas: '0x6691b7',
         gasUsed: '0x5208',
         timestamp: '0x5c3f0135',
         transactions: [

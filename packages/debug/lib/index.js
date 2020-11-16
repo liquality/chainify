@@ -16,7 +16,7 @@ debug.formatArgs = function (args) {
   }
 
   try {
-    throw Error('')
+    throw new Error('')
   } catch (error) {
     log.stack = error.stack.split('\n')
 

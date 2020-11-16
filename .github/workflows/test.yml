@@ -1,0 +1,27 @@
+name: test
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: contains(github.ref, 'refs/tags/') != true
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 8
+      - uses: actions/cache@v1
+        env:
+          node-version: 8
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}-${{ hashFiles('**/package-lock.json') }}
+      - run: sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev
+      - run: export NODE_OPTIONS="--max_old_space_size=4096"
+      - run: npm ci
+      - run: npm run bootstrap
+      - run: npm run lint
+      - run: npm run build
+      - run: npm test

@@ -79,7 +79,9 @@ function formatEthResponse (obj) {
 }
 
 function normalizeTransactionObject (tx, currentHeight) {
-  if (!tx) return
+  if (!(typeof tx === 'object' && tx !== null)) {
+    throw new Error(`Invalid transaction object: "${tx}"`)
+  }
 
   const normalizedTx = {
     ..._.pick(tx, ['blockNumber', 'blockHash', 'hash', 'value', 'confirmations']),
@@ -115,10 +117,10 @@ function normalizeTransactionObject (tx, currentHeight) {
 function buildTransaction (from, to, value, data, gasPrice, nonce) {
   const tx = {
     from: ensure0x(addressToString(from)),
-    value: ensure0x(BigNumber(value).toString(16))
+    value: value ? ensure0x(BigNumber(value).toString(16)) : '0x0'
   }
 
-  if (gasPrice) tx.gasPrice = ensure0x(BigNumber(gasPrice).times(GWEI).toString(16))
+  if (gasPrice) tx.gasPrice = ensure0x(BigNumber(gasPrice).times(GWEI).dp(0, BigNumber.ROUND_CEIL).toString(16))
   if (to) tx.to = ensure0x(addressToString(to))
   if (data) tx.data = ensure0x(data)
   if (nonce !== null && nonce !== undefined) tx.nonce = ensure0x(nonce.toString(16))

@@ -41,30 +41,26 @@ function testWallet (chain) {
   })
 
   describe('signMessage', () => {
-    it('should return v, r, s with v as a number, and r, s as hex', async () => {
+    // TODO: this whole test suite should be combined with `bitcoinWallet.js`
+    it('should return hex of signed message', async () => {
       const addresses = await chain.client.wallet.getAddresses()
       const { address } = addresses[0]
 
-      const { v, r, s } = await chain.client.wallet.signMessage('secret', address)
+      const signedMessage = await chain.client.wallet.signMessage('secret', address)
 
-      const rBuffer = Buffer.from(r, 'hex')
-      const sBuffer = Buffer.from(s, 'hex')
+      const signedMessageBuffer = Buffer.from(signedMessage, 'hex')
 
-      expect(Number.isInteger(v)).to.equal(true)
-      expect(r).to.equal(rBuffer.toString('hex'))
-      expect(s).to.equal(sBuffer.toString('hex'))
+      expect(signedMessage).to.equal(signedMessageBuffer.toString('hex'))
     })
 
-    it('should return the same v, r, s values if signed twice', async () => {
+    it('should return the same hex if signed twice', async () => {
       const addresses = await chain.client.wallet.getAddresses()
       const { address } = addresses[0]
 
-      const { v: v1, r: r1, s: s1 } = await chain.client.wallet.signMessage('secret', address)
-      const { v: v2, r: r2, s: s2 } = await chain.client.wallet.signMessage('secret', address)
+      const signedMessage1 = await chain.client.wallet.signMessage('secret', address)
+      const signedMessage2 = await chain.client.wallet.signMessage('secret', address)
 
-      expect(v1).to.equal(v2)
-      expect(r1).to.equal(r2)
-      expect(s1).to.equal(s2)
+      expect(signedMessage1).to.equal(signedMessage2)
     })
   })
 }
