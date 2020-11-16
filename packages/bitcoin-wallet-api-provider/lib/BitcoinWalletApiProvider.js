@@ -26,15 +26,15 @@ export default class BitcoinWalletApiProvider extends BitcoinWalletProvider(Wall
   }
 
   async signMessage (message, address) {
-    return this.request('wallet_signMessage', message, address.toObject())
+    return this.request('wallet_signMessage', message, address.address)
   }
 
   async sendTransaction (to, value) {
     return this.request('wallet_sendTransaction', to, value)
   }
   
-  async signP2SHTransaction (inputTxHex, txHex, address, vout, outputScript, lockTime, segwit) {
-    return this.request('wallet_signP2SHTransaction', inputTxHex, txHex, address, vout, outputScript, lockTime, segwit)
+  async signPSBT (data, input, address) {
+    return this.request('wallet_signPSBT', data, input, address)
   }
 
   async getConnectedNetwork () {
