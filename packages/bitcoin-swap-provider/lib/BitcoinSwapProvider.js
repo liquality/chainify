@@ -341,7 +341,7 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.getMethod('getTransactionByHash')(initiationTxHash)
+    return null
   }
 
   async getSwapSecret (claimTxHash) {

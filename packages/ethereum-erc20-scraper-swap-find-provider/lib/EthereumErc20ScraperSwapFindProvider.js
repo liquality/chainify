@@ -2,7 +2,7 @@ import axios from 'axios'
 import EthereumScraperSwapFindProvider from '@liquality/ethereum-scraper-swap-find-provider'
 import EthereumErc20SwapProvider from '@liquality/ethereum-erc20-swap-provider'
 import { remove0x } from '@liquality/ethereum-utils'
-import { PendingTxError } from '@liquality/errors'
+import { PendingTxError, TxNotFoundError } from '@liquality/errors'
 
 import { version } from '../package.json'
 
@@ -29,7 +29,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     const erc20TokenContractAddress = await this.getMethod('getContractAddress')()
     const contractData = await this.getMethod('generateErc20Transfer')(initiationTransactionReceipt.contractAddress, value)
 
-    return this.findAddressTransaction(
+    const tx = await this.findAddressTransaction(
       refundAddress,
       transaction => this.getMethod('doesTransactionMatchFunding')(transaction, erc20TokenContractAddress, contractData),
       initiationTransactionReceipt.blockNumber,
@@ -37,6 +37,10 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
       10,
       'asc'
     )
+
+    if (!tx) throw new TxNotFoundError(`Funding transaction is not available for ${initiationTxHash}`)
+
+    return this.getMethod('getTransactionByHash')(tx.hash)
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
