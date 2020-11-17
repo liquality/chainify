@@ -40,12 +40,12 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
 
     if (!tx) throw new TxNotFoundError(`Funding transaction is not available for ${initiationTxHash}`)
 
-    return this.getMethod('getTransactionByHash')(tx.hash)
+    return tx
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
+    if (!initiationTransactionReceipt) throw new PendingTxError(`Initiation transaction receipt is not available for ${initiationTxHash}`)
 
     const transaction = await this.findAddressTransaction(
       initiationTransactionReceipt.contractAddress,

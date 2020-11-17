@@ -2,6 +2,7 @@ import axios from 'axios'
 import Provider from '@liquality/provider'
 import { ensure0x, normalizeTransactionObject, formatEthResponse } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
+import { PendingTxError } from '@liquality/errors'
 
 import { version } from '../package.json'
 
@@ -44,7 +45,20 @@ export default class EthereumScraperSwapFindProvider extends Provider {
 
       const normalizedTransactions = transactions.map(this.normalizeTransactionResponse)
       const tx = normalizedTransactions.find(predicate)
-      if (tx) return tx
+
+      if (tx) {
+        if (!(tx.fee && tx.feePrice)) {
+          const { fee, feePrice, _raw } = await this.getMethod('getTransactionByHash')(tx.hash)
+
+          tx._raw.gas = _raw.gas
+          tx._raw.gasPrice = _raw.gasPrice
+
+          tx.fee = fee
+          tx.feePrice = feePrice
+        }
+
+        return tx
+      }
 
       if (transactions.length < limit) return
     }
@@ -58,7 +72,7 @@ export default class EthereumScraperSwapFindProvider extends Provider {
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
+    if (!initiationTransactionReceipt) throw new PendingTxError(`Initiation transaction receipt is not available for ${initiationTxHash}`)
 
     const transaction = await this.findAddressTransaction(initiationTransactionReceipt.contractAddress,
       tx => this.getMethod('doesTransactionMatchClaim', false)(tx, initiationTransactionReceipt))
@@ -72,7 +86,7 @@ export default class EthereumScraperSwapFindProvider extends Provider {
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new Error('Transaction receipt is not available')
+    if (!initiationTransactionReceipt) throw new PendingTxError(`Initiation transaction receipt is not available for ${initiationTxHash}`)
 
     const transaction = await this.findAddressTransaction(
       initiationTransactionReceipt.contractAddress,
