@@ -1,7 +1,7 @@
 {
   "name": "@liquality/ethereum-utils",
   "umdName": "EthereumUtils",
-  "version": "0.7.13",
+  "version": "0.7.14",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -18,9 +18,9 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "@liquality/crypto": "^0.7.13",
-    "@liquality/schema": "^0.7.13",
-    "@liquality/utils": "^0.7.13",
+    "@liquality/crypto": "^0.7.14",
+    "@liquality/schema": "^0.7.14",
+    "@liquality/utils": "^0.7.14",
     "eip55": "^1.0.3",
     "lodash": "^4.17.20"
   },
