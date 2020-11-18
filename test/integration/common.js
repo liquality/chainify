@@ -7,8 +7,6 @@ import Client from '../../packages/client/lib'
 import * as crypto from '../../packages/crypto/lib'
 import * as errors from '../../packages/errors/lib'
 import * as utils from '../../packages/utils/lib'
-import bitcoinNetworks from '../../packages/bitcoin-networks/lib'
-import ethereumNetworks from '../../packages/ethereum-networks/lib'
 import BitcoinLedgerProvider from '../../packages/bitcoin-ledger-provider/lib'
 import BitcoinSwapProvider from '../../packages/bitcoin-swap-provider/lib'
 import BitcoinNodeWalletProvider from '../../packages/bitcoin-node-wallet-provider/lib'
@@ -63,8 +61,6 @@ console.warn = () => {} // Silence warnings
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 
-const bitcoinNetwork = bitcoinNetworks[config.bitcoin.network]
-
 function mockedBitcoinRpcProvider () {
   const bitcoinRpcProvider = new providers.bitcoin.BitcoinRpcProvider(config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password)
   // Mock Fee Per Byte to prevent from changing
@@ -74,29 +70,22 @@ function mockedBitcoinRpcProvider () {
 
 const bitcoinWithLedger = new Client()
 bitcoinWithLedger.addProvider(mockedBitcoinRpcProvider())
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider(bitcoinNetwork, 'bech32'))
-bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwork, 'p2wsh'))
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinLedgerProvider(config.bitcoin.network, 'bech32'))
+bitcoinWithLedger.addProvider(new providers.bitcoin.BitcoinSwapProvider(config.bitcoin.network, 'p2wsh'))
 
 const bitcoinWithNode = new Client()
 bitcoinWithNode.addProvider(mockedBitcoinRpcProvider())
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(bitcoinNetwork, config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, 'bech32'))
-bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwork, 'p2wsh'))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinNodeWalletProvider(config.bitcoin.network, config.bitcoin.rpc.host, config.bitcoin.rpc.username, config.bitcoin.rpc.password, 'bech32'))
+bitcoinWithNode.addProvider(new providers.bitcoin.BitcoinSwapProvider(config.bitcoin.network, 'p2wsh'))
 
 const bitcoinWithJs = new Client()
 bitcoinWithJs.addProvider(mockedBitcoinRpcProvider())
-bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(bitcoinNetwork, generateMnemonic(256), 'bech32'))
-bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider(bitcoinNetwork, 'p2wsh'))
-
-const ethereumNetwork = {
-  ...ethereumNetworks[config.ethereum.network],
-  name: 'mainnet',
-  chainId: 1337, // Default geth dev mode - * Needs to be <= 255 for ledger * https://github.com/ethereum/go-ethereum/issues/21120
-  networkId: 1337
-}
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinJsWalletProvider(config.bitcoin.network, generateMnemonic(256), 'bech32'))
+bitcoinWithJs.addProvider(new providers.bitcoin.BitcoinSwapProvider(config.bitcoin.network, 'p2wsh'))
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumWalletApiProvider(metaMaskConnector.getProvider(), ethereumNetwork))
+ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumWalletApiProvider(metaMaskConnector.getProvider(), config.ethereum.network))
 ethereumWithMetaMask.addProvider(new providers.ethereum.EthereumSwapProvider())
 
 const ethereumWithNode = new Client()
@@ -105,17 +94,17 @@ ethereumWithNode.addProvider(new providers.ethereum.EthereumSwapProvider())
 
 const ethereumWithLedger = new Client()
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider(ethereumNetwork))
+ethereumWithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider(config.ethereum.network))
 ethereumWithLedger.addProvider(new providers.ethereum.EthereumSwapProvider())
 
 const ethereumWithJs = new Client()
 ethereumWithJs.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-ethereumWithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(ethereumNetwork, generateMnemonic(256)))
+ethereumWithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(config.ethereum.network, generateMnemonic(256)))
 ethereumWithJs.addProvider(new providers.ethereum.EthereumSwapProvider())
 
 const erc20WithMetaMask = new Client()
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithMetaMask.addProvider(new providers.ethereum.EthereumWalletApiProvider(metaMaskConnector.getProvider(), ethereumNetwork))
+erc20WithMetaMask.addProvider(new providers.ethereum.EthereumWalletApiProvider(metaMaskConnector.getProvider(), config.ethereum.network))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithMetaMask.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 
@@ -126,20 +115,20 @@ erc20WithNode.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 
 const erc20WithLedger = new Client()
 erc20WithLedger.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider(ethereumNetwork))
+erc20WithLedger.addProvider(new providers.ethereum.EthereumLedgerProvider(config.ethereum.network))
 erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithLedger.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 
 const erc20WithJs = new Client()
 erc20WithJs.addProvider(new providers.ethereum.EthereumRpcProvider(config.ethereum.rpc.host))
-erc20WithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(ethereumNetwork, generateMnemonic(256)))
+erc20WithJs.addProvider(new providers.ethereum.EthereumJsWalletProvider(config.ethereum.network, generateMnemonic(256)))
 erc20WithJs.addProvider(new providers.ethereum.EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithJs.addProvider(new providers.ethereum.EthereumErc20SwapProvider())
 
 const chains = {
-  bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: bitcoinNetwork },
-  bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: bitcoinNetwork, segwitFeeImplemented: true },
-  bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: bitcoinNetwork },
+  bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: config.bitcoin.network },
+  bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: config.bitcoin.network, segwitFeeImplemented: true },
+  bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: config.bitcoin.network },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
@@ -357,14 +346,13 @@ function findProvider (client, type) {
   )
 }
 
-function stopEthAutoMining (chain) {
+function clearEthMiner (chain) {
   beforeEach(async () => {
-    findProvider(chain.client, providers.ethereum.EthereumRpcProvider).stopMiner()
+    await mineBlock(chain)
   })
 
   afterEach(async () => {
-    findProvider(chain.client, providers.ethereum.EthereumRpcProvider).startMiner()
-    await sleep(1000) // Give pending transactions time to clear
+    await mineBlock(chain)
   })
 }
 
@@ -424,7 +412,7 @@ export {
   expectBalance,
   expectFee,
   sleep,
-  stopEthAutoMining,
+  clearEthMiner,
   mineUntilTimestamp,
   mineBlock,
   deployERC20Token,

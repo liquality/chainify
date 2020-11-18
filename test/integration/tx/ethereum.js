@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { chains, fundWallet, describeExternal, connectMetaMask, deployERC20Token, stopEthAutoMining, getRandomAddress, mineBlock } from '../common'
+import { chains, fundWallet, describeExternal, connectMetaMask, deployERC20Token, clearEthMiner, getRandomAddress, mineBlock } from '../common'
 import { testTransaction } from './common'
 import config from '../config'
 
@@ -30,7 +30,7 @@ function testSweepTransaction (chain) {
 describe('Transactions', function () {
   this.timeout(config.timeout)
 
-  stopEthAutoMining(chains.ethereumWithNode)
+  clearEthMiner(chains.ethereumWithNode)
 
   describe('Ethereum - Node', () => {
     testTransaction(chains.ethereumWithNode)

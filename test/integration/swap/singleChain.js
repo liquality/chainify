@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import * as crypto from '../../../packages/crypto/lib'
 import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, stopEthAutoMining, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, clearEthMiner, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -263,7 +263,7 @@ describe('Swap Single Chain Flow', function () {
   })
 
   describe('Ethereum', () => {
-    stopEthAutoMining(chains.ethereumWithNode)
+    clearEthMiner(chains.ethereumWithNode)
 
     describeExternal('Ethereum - MetaMask', () => {
       connectMetaMask()

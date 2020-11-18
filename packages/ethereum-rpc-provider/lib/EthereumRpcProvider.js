@@ -200,13 +200,22 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     await this.rpc('miner_start')
   }
 
+  async evmMine () {
+    await this.rpc('evm_mine')
+  }
+
   async generateBlock (numberOfBlocks) {
     if (numberOfBlocks && numberOfBlocks > 1) {
       throw new Error('Ethereum generation limited to 1 block at a time.')
     }
-    await this.startMiner()
-    await sleep(500) // Give node a chance to mine
-    await this.stopMiner()
+    try {
+      await this.startMiner()
+      await sleep(500) // Give node a chance to mine
+      await this.stopMiner()
+    } catch (e) {
+      await this.evmMine()
+      await sleep(500) // Give node a chance to mine
+    }
   }
 }
 
