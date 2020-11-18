@@ -4,6 +4,7 @@ import { addressToString, sleep } from '@liquality/utils'
 import { remove0x } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
+  TxNotFoundError,
   BlockNotFoundError
 } from '@liquality/errors'
 
@@ -92,7 +93,7 @@ export default class EthereumErc20SwapProvider extends Provider {
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
-    if (!initiationTransaction) throw new PendingTxError(`Initiation transaction is not available for ${initiationTxHash}`)
+    if (!initiationTransaction) throw new TxNotFoundError(`Initiation transaction is not available for ${initiationTxHash}`)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Initiation transaction receipt is not available for ${initiationTxHash}`)
