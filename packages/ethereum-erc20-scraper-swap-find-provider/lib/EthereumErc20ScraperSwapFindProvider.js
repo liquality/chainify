@@ -12,7 +12,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
 
   async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new PendingTxError(`Initiation transaction receipt is not available for ${initiationTxHash}`)
+    if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const erc20TokenContractAddress = await this.getMethod('getContractAddress')()
     const contractData = await this.getMethod('generateErc20Transfer')(initiationTransactionReceipt.contractAddress, value)
@@ -33,7 +33,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new PendingTxError(`Initiation transaction receipt is not available for ${initiationTxHash}`)
+    if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const transaction = await this.findAddressTransaction(
       initiationTransactionReceipt.contractAddress,

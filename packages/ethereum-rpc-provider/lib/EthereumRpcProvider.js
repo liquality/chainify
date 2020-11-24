@@ -104,7 +104,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     const block = await this.rpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
 
     if (!block) {
-      throw new BlockNotFoundError(`Block not found ${blockNumber}`)
+      throw new BlockNotFoundError(`Block not found: ${blockNumber}`)
     }
 
     if (block && includeTx) {
@@ -128,7 +128,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     const tx = await this.rpc('eth_getTransactionByHash', txHash)
 
     if (!tx) {
-      throw new TxNotFoundError(`Transaction not found ${txHash}`)
+      throw new TxNotFoundError(`Transaction not found: ${txHash}`)
     }
 
     return normalizeTransactionObject(tx, currentBlock)

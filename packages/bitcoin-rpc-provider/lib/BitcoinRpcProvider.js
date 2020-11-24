@@ -140,7 +140,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     } catch (e) {
       if (e.name === 'NodeError' && e.message.includes('Block not found')) {
         const { name, message, ...attrs } = e
-        throw new BlockNotFoundError(message, attrs)
+        throw new BlockNotFoundError(`Block not found: ${blockHash}`, attrs)
       }
 
       throw e
@@ -184,7 +184,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     } catch (e) {
       if (e.name === 'NodeError' && e.message.includes('Block height out of range')) {
         const { name, message, ...attrs } = e
-        throw new BlockNotFoundError(message, attrs)
+        throw new BlockNotFoundError(`Block not found: ${blockNumber}`, attrs)
       }
 
       throw e
@@ -204,7 +204,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     } catch (e) {
       if (e.name === 'NodeError' && e.message.includes('No such mempool transaction')) {
         const { name, message, ...attrs } = e
-        throw new TxNotFoundError(message, attrs)
+        throw new TxNotFoundError(`Transaction not found: ${transactionHash}`, attrs)
       }
 
       throw e
