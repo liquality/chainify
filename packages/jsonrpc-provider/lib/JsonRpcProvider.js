@@ -37,13 +37,9 @@ export default class JsonRpcProvider extends NodeProvider {
   }
 
   _parseResponse (response) {
-    let { data, headers } = response
+    let { data } = response
 
     debug('raw jsonrpc response', data)
-
-    if (headers['content-type'] !== 'application/json') {
-      throw new NodeError(`Invalid response content-type: ${headers['content-type']}`, { response })
-    }
 
     data = parse(data)
 

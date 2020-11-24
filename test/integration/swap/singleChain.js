@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import * as crypto from '../../../packages/crypto/lib'
 import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, stopEthAutoMining, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, clearEthMiner, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -103,7 +103,8 @@ function testSwap (chain) {
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = parseInt(Date.now() / 1000) + 10
+    const latestBlock = await chain.client.chain.getBlockByNumber(await chain.client.chain.getBlockHeight())
+    swapParams.expiration = latestBlock.timestamp + 10
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expect(refundAndVerify(chain, initiationTxId, secretHash, swapParams)).to.be.rejected
     await mineUntilTimestamp(chain, swapParams.expiration)
@@ -263,7 +264,7 @@ describe('Swap Single Chain Flow', function () {
   })
 
   describe('Ethereum', () => {
-    stopEthAutoMining(chains.ethereumWithNode)
+    clearEthMiner(chains.ethereumWithNode)
 
     describeExternal('Ethereum - MetaMask', () => {
       connectMetaMask()
