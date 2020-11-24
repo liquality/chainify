@@ -21,12 +21,10 @@
     "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-networks": "^0.7.15",
     "@liquality/bitcoin-utils": "^0.7.15",
-    "@liquality/crypto": "^0.7.15",
     "@liquality/provider": "^0.7.15",
     "@liquality/utils": "^0.7.15",
-    "bignumber.js": "^8.1.1",
-    "bitcoinjs-lib": "^5.2.0",
-    "lodash": "^4.17.20"
+    "bignumber.js": "^9.0.0",
+    "bitcoinjs-lib": "^5.2.0"
   },
   "engines": {
     "node": "~8.12.0"

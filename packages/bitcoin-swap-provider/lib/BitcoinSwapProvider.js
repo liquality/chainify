@@ -1,6 +1,3 @@
-import * as bitcoin from 'bitcoinjs-lib'
-import * as classify from 'bitcoinjs-lib/src/classify'
-import BigNumber from 'bignumber.js'
 import Provider from '@liquality/provider'
 import {
   calculateFee,
@@ -10,6 +7,10 @@ import {
 } from '@liquality/bitcoin-utils'
 import { addressToString } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
+
+import * as bitcoin from 'bitcoinjs-lib'
+import * as classify from 'bitcoinjs-lib/src/classify'
+import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
 

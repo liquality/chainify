@@ -1,6 +1,6 @@
-import { isArray } from 'lodash'
-
 import { InvalidProviderResponseError, UnimplementedMethodError } from '@liquality/errors'
+
+import { isArray } from 'lodash'
 
 export default class Wallet {
   constructor (client) {

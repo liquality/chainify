@@ -1,6 +1,7 @@
 import { AddressTypes, selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
-import * as bitcoin from 'bitcoinjs-lib'
 import { Address, addressToString, asyncSetImmediate } from '@liquality/utils'
+
+import * as bitcoin from 'bitcoinjs-lib'
 import { BigNumber } from 'bignumber.js'
 
 const ADDRESS_GAP = 20

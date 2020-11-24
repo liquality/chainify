@@ -1,7 +1,7 @@
-import { isNumber, isString } from 'lodash'
-
 import { sha256 } from '@liquality/crypto'
 import { UnimplementedMethodError } from '@liquality/errors'
+
+import { isNumber, isString } from 'lodash'
 
 export default class Swap {
   constructor (client) {

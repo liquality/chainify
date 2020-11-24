@@ -19,8 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.3",
-    "debug": "^4.1.1",
-    "lodash": "^4.17.20"
+    "debug": "^4.1.1"
   },
   "engines": {
     "node": "~8.12.0"

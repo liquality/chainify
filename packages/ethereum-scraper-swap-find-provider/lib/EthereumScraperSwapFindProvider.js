@@ -1,17 +1,13 @@
-import axios from 'axios'
-import Provider from '@liquality/provider'
+import NodeProvider from '@liquality/node-provider'
 import { ensure0x, normalizeTransactionObject, formatEthResponse } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 
 import { version } from '../package.json'
 
-export default class EthereumScraperSwapFindProvider extends Provider {
+export default class EthereumScraperSwapFindProvider extends NodeProvider {
   constructor (url) {
-    super()
-    this.url = url
-
-    this._axios = axios.create({
+    super({
       baseURL: url,
       responseType: 'text',
       transformResponse: undefined // https://github.com/axios/axios/issues/907,
@@ -30,17 +26,15 @@ export default class EthereumScraperSwapFindProvider extends Provider {
     address = ensure0x(addressToString(address))
 
     for (let page = 1; ; page++) {
-      const response = await this._axios(`/txs/${address}`, {
-        params: {
-          limit,
-          page,
-          sort,
-          fromBlock,
-          toBlock
-        }
+      const data = await this.nodeGet(`/txs/${address}`, {
+        limit,
+        page,
+        sort,
+        fromBlock,
+        toBlock
       })
 
-      const transactions = response.data.data.txs
+      const transactions = data.data.txs
       if (transactions.length === 0) return
 
       const normalizedTransactions = transactions.map(this.normalizeTransactionResponse)

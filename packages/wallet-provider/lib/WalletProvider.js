@@ -1,10 +1,10 @@
-import { isEqual } from 'lodash'
-
 import Provider from '@liquality/provider'
 import {
   WalletError,
   UnimplementedMethodError
 } from '@liquality/errors'
+
+import { isEqual } from 'lodash'
 
 import { version } from '../package.json'
 

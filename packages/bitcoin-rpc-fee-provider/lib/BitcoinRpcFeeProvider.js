@@ -1,5 +1,6 @@
 import Provider from '@liquality/provider'
-import _ from 'lodash'
+
+import { zipObject } from 'lodash'
 
 import { version } from '../package.json'
 
@@ -23,7 +24,7 @@ export default class BitcoinRpcFeeProvider extends Provider {
   }
 
   async getFees () {
-    return _.zipObject(['slow', 'average', 'fast'], await Promise.all([
+    return zipObject(['slow', 'average', 'fast'], await Promise.all([
       this.getFee(this._slowTargetBlocks),
       this.getFee(this._averageTargetBlocks),
       this.getFee(this._fastTargetBlocks)

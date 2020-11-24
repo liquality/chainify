@@ -22,7 +22,8 @@
     "@liquality/schema": "^0.7.15",
     "@liquality/utils": "^0.7.15",
     "eip55": "^1.0.3",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "bignumber.js": "^9.0.0"
   },
   "engines": {
     "node": "~8.12.0"

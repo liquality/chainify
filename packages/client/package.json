@@ -23,7 +23,7 @@
     "@liquality/errors": "^0.7.15",
     "@liquality/schema": "^0.7.15",
     "ajv": "^6.10.0",
-    "bignumber.js": "^8.1.1",
+    "bignumber.js": "^9.0.0",
     "debug": "^4.1.1",
     "lodash": "^4.17.20"
   },

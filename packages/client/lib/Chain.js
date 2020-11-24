@@ -1,7 +1,7 @@
+import { InvalidProviderResponseError } from '@liquality/errors'
+
 import { isArray, isBoolean, isNumber, isString, isObject } from 'lodash'
 import { BigNumber } from 'bignumber.js'
-
-import { InvalidProviderResponseError } from '@liquality/errors'
 
 export default class Chain {
   /**

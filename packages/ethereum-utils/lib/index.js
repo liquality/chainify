@@ -1,9 +1,10 @@
 import { Block, Transaction } from '@liquality/schema'
 import { padHexStart } from '@liquality/crypto'
 import { addressToString } from '@liquality/utils'
-import BigNumber from 'bignumber.js'
+
 import eip55 from 'eip55'
-import _ from 'lodash'
+import { pick } from 'lodash'
+import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
 
@@ -84,7 +85,7 @@ function normalizeTransactionObject (tx, currentHeight) {
   }
 
   const normalizedTx = {
-    ..._.pick(tx, ['blockNumber', 'blockHash', 'hash', 'value', 'confirmations']),
+    ...pick(tx, ['blockNumber', 'blockHash', 'hash', 'value', 'confirmations']),
     _raw: tx
   }
 

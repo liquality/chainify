@@ -1,9 +1,4 @@
-import { find, findLast, findLastIndex, isFunction } from 'lodash'
-import debug from 'debug'
-import Ajv from 'ajv'
-
 import { Block, Transaction } from '@liquality/schema'
-
 import {
   DuplicateProviderError,
   InvalidProviderError,
@@ -12,6 +7,10 @@ import {
   UnsupportedMethodError,
   InvalidProviderResponseError
 } from '@liquality/errors'
+
+import { find, findLast, findLastIndex, isFunction } from 'lodash'
+import debug from 'debug'
+import Ajv from 'ajv'
 
 import Chain from './Chain'
 import Wallet from './Wallet'

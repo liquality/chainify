@@ -1,10 +1,5 @@
-import { BigNumber } from 'bignumber.js'
-import bip32 from 'bip32'
-import * as bitcoin from 'bitcoinjs-lib'
-
 import LedgerProvider from '@liquality/ledger-provider'
 import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
-import HwAppBitcoin from '@ledgerhq/hw-app-btc'
 
 import {
   padHexStart
@@ -15,6 +10,11 @@ import {
 } from '@liquality/bitcoin-utils'
 import networks from '@liquality/bitcoin-networks'
 import { addressToString } from '@liquality/utils'
+
+import HwAppBitcoin from '@ledgerhq/hw-app-btc'
+import { BigNumber } from 'bignumber.js'
+import bip32 from 'bip32'
+import * as bitcoin from 'bitcoinjs-lib'
 
 import { version } from '../package.json'
 

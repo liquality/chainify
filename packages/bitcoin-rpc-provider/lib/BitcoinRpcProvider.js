@@ -1,9 +1,10 @@
-import { isArray, flatten, isString } from 'lodash'
-import BigNumber from 'bignumber.js'
-
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
+import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
+
+import { isArray, flatten, isString } from 'lodash'
+import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
 
@@ -132,7 +133,19 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getBlockByHash (blockHash, includeTx = false) {
-    const data = await this.jsonrpc('getblock', blockHash)
+    let data
+
+    try {
+      data = await this.jsonrpc('getblock', blockHash)
+    } catch (e) {
+      if (e.name === 'NodeError' && e.message.includes('Block not found')) {
+        const { name, message, ...attrs } = e
+        throw new BlockNotFoundError(message, attrs)
+      }
+
+      throw e
+    }
+
     const {
       hash,
       height: number,
@@ -164,7 +177,20 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getBlockByNumber (blockNumber, includeTx) {
-    return this.getBlockByHash(await this.jsonrpc('getblockhash', blockNumber), includeTx)
+    let blockHash
+
+    try {
+      blockHash = await this.jsonrpc('getblockhash', blockNumber)
+    } catch (e) {
+      if (e.name === 'NodeError' && e.message.includes('Block height out of range')) {
+        const { name, message, ...attrs } = e
+        throw new BlockNotFoundError(message, attrs)
+      }
+
+      throw e
+    }
+
+    return this.getBlockByHash(blockHash, includeTx)
   }
 
   async getBlockHeight () {
@@ -172,7 +198,17 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async getTransactionByHash (transactionHash) {
-    return this.getRawTransactionByHash(transactionHash, true, true)
+    try {
+      const tx = await this.getRawTransactionByHash(transactionHash, true, true)
+      return tx
+    } catch (e) {
+      if (e.name === 'NodeError' && e.message.includes('No such mempool transaction')) {
+        const { name, message, ...attrs } = e
+        throw new TxNotFoundError(message, attrs)
+      }
+
+      throw e
+    }
   }
 
   async getTransactionFee (tx) {

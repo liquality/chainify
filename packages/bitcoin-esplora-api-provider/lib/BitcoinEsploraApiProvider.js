@@ -1,31 +1,29 @@
-import axios from 'axios'
-import Provider from '@liquality/provider'
-import { isArray, flatten } from 'lodash'
+import NodeProvider from '@liquality/node-provider'
 import { decodeRawTransaction, normalizeTransactionObject } from '@liquality/bitcoin-utils'
-import BigNumber from 'bignumber.js'
-
 import { addressToString } from '@liquality/utils'
+import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
+
+import { isArray, flatten } from 'lodash'
+import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
 
-export default class BitcoinEsploraApiProvider extends Provider {
+export default class BitcoinEsploraApiProvider extends NodeProvider {
   constructor (url, network, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
-    super()
-    this.url = url
-    this._network = network
-    this._numberOfBlockConfirmation = numberOfBlockConfirmation
-    this._defaultFeePerByte = defaultFeePerByte
-
-    this._axios = axios.create({
+    super({
       baseURL: url,
       responseType: 'text',
       transformResponse: undefined // https://github.com/axios/axios/issues/907,
     })
+
+    this._network = network
+    this._numberOfBlockConfirmation = numberOfBlockConfirmation
+    this._defaultFeePerByte = defaultFeePerByte
   }
 
   async getFeePerByte (numberOfBlocks = this._numberOfBlockConfirmation) {
     try {
-      const feeEstimates = (await this._axios('/fee-estimates')).data
+      const feeEstimates = await this.nodeGet('/fee-estimates')
       const blockOptions = Object.keys(feeEstimates)
       const closestBlockOption = blockOptions.reduce((prev, curr) => {
         return Math.abs(prev - numberOfBlocks) < Math.abs(curr - numberOfBlocks) ? prev : curr
@@ -60,8 +58,8 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async _getUnspentTransactions (address) {
-    const response = await this._axios.get(`/address/${addressToString(address)}/utxo`)
-    return response.data.map(utxo => ({
+    const data = await this.nodeGet(`/address/${addressToString(address)}/utxo`)
+    return data.map(utxo => ({
       ...utxo,
       address: addressToString(address),
       satoshis: utxo.value,
@@ -77,8 +75,8 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async _getAddressTransactionCount (address) {
-    const response = await this._axios.get(`/address/${addressToString(address)}`)
-    return response.data.chain_stats.tx_count + response.data.mempool_stats.tx_count
+    const data = await this.nodeGet(`/address/${addressToString(address)}`)
+    return data.chain_stats.tx_count + data.mempool_stats.tx_count
   }
 
   async getAddressTransactionCounts (addresses) {
@@ -91,14 +89,25 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async getTransactionHex (transactionHash) {
-    const response = await this._axios.get(`/tx/${transactionHash}/hex`)
-    return response.data
+    return this.nodeGet(`/tx/${transactionHash}/hex`)
   }
 
   async getTransaction (transactionHash) {
-    const response = await this._axios.get(`/tx/${transactionHash}`)
+    let data
+
+    try {
+      data = await this.nodeGet(`/tx/${transactionHash}`)
+    } catch (e) {
+      if (e.name === 'NodeError' && e.message.includes('Transaction not found')) {
+        const { name, message, ...attrs } = e
+        throw new TxNotFoundError(`Transaction not found: ${transactionHash}`, attrs)
+      }
+
+      throw e
+    }
+
     const currentHeight = await this.getBlockHeight()
-    return this.formatTransaction(response.data, currentHeight)
+    return this.formatTransaction(data, currentHeight)
   }
 
   async formatTransaction (tx, currentHeight) {
@@ -110,13 +119,23 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async getBlockByHash (blockHash) {
-    const response = await this._axios.get(`/block/${blockHash}`)
-    const data = response.data
+    let data
+
+    try {
+      data = await this.nodeGet(`/block/${blockHash}`)
+    } catch (e) {
+      if (e.name === 'NodeError' && e.message.includes('Block not found')) {
+        const { name, message, ...attrs } = e
+        throw new BlockNotFoundError(`Block not found: ${blockHash}`, attrs)
+      }
+
+      throw e
+    }
+
     const {
       id: hash,
       height: number,
       timestamp,
-      // difficulty,
       size,
       previousblockhash: parentHash,
       nonce
@@ -133,8 +152,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async getBlockHash (blockNumber) {
-    const response = await this._axios.get(`/block-height/${blockNumber}`)
-    return response.data
+    return this.nodeGet(`/block-height/${blockNumber}`)
   }
 
   async getBlockByNumber (blockNumber) {
@@ -142,8 +160,8 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async getBlockHeight () {
-    const response = await this._axios.get('/blocks/tip/height')
-    return parseInt(response.data)
+    const data = await this.nodeGet('/blocks/tip/height')
+    return parseInt(data)
   }
 
   async getTransactionByHash (transactionHash) {
@@ -155,8 +173,7 @@ export default class BitcoinEsploraApiProvider extends Provider {
   }
 
   async sendRawTransaction (rawTransaction) {
-    const response = await this._axios.post('/tx', rawTransaction)
-    return response.data
+    return this.nodePost('/tx', rawTransaction)
   }
 }
 

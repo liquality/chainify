@@ -1,9 +1,4 @@
-import { BigNumber } from 'bignumber.js'
-import EthereumJsTx from 'ethereumjs-tx'
-
 import LedgerProvider from '@liquality/ledger-provider'
-import Ethereum from '@ledgerhq/hw-app-eth'
-
 import networks from '@liquality/ethereum-networks'
 import {
   ensure0x,
@@ -13,6 +8,10 @@ import {
   normalizeTransactionObject
 } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
+
+import Ethereum from '@ledgerhq/hw-app-eth'
+import { BigNumber } from 'bignumber.js'
+import EthereumJsTx from 'ethereumjs-tx'
 
 import { version } from '../package.json'
 

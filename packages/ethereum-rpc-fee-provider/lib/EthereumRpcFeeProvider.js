@@ -1,5 +1,5 @@
-
 import Provider from '@liquality/provider'
+
 import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'

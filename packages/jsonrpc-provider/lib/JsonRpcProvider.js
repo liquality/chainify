@@ -1,10 +1,9 @@
-import axios from 'axios'
-import JSONBigInt from 'json-bigint'
-import { get, has } from 'lodash'
-
-import Provider from '@liquality/provider'
+import NodeProvider from '@liquality/node-provider'
 import Debug from '@liquality/debug'
-import { NodeError, RpcError } from '@liquality/errors'
+import { NodeError } from '@liquality/errors'
+
+import JSONBigInt from 'json-bigint'
+import { has } from 'lodash'
 
 import { version } from '../package.json'
 
@@ -12,62 +11,61 @@ const debug = Debug('jsonrpc')
 
 const { parse } = JSONBigInt({ storeAsString: true, strict: true })
 
-export default class JsonRpcProvider extends Provider {
+export default class JsonRpcProvider extends NodeProvider {
   constructor (uri, username, password) {
-    super()
-
-    this._uri = uri
-
-    this._axios = axios.create({
+    const config = {
       baseURL: uri,
       responseType: 'text',
       transformResponse: undefined, // https://github.com/axios/axios/issues/907,
-      validateStatus: (status) => true
-    })
+      validateStatus: status => true
+    }
 
     if (username || password) {
-      this._axios.defaults.auth = { username, password }
+      config.auth = { username, password }
     }
+
+    super(config)
   }
 
   _prepareRequest (method, params) {
     const id = Date.now()
     const req = { id, method, params }
+
     debug('jsonrpc request', req)
+
     return req
   }
 
-  _parseResponse ({ data, status, statusText, headers }) {
+  _parseResponse (response) {
+    let { data, headers } = response
+
+    debug('raw jsonrpc response', data)
+
     if (headers['content-type'] !== 'application/json') {
-      throw new RpcError(status, statusText, { data })
+      throw new NodeError(`Invalid response content-type: ${headers['content-type']}`, { response })
     }
 
     data = parse(data)
+
     debug('parsed jsonrpc response', data)
-    if (data.error != null) {
-      throw new RpcError(
-        get(data, 'error.code', -32603),
-        get(data, 'error.message', 'An error occurred while processing the RPC call')
-      )
+
+    const { error } = data
+
+    if (error != null) {
+      throw new NodeError(error.message || error, { response })
     }
 
     if (!has(data, 'result')) {
-      throw new RpcError(-32700, 'Missing `result` on the RPC call result')
+      throw new NodeError('Missing `result` on the RPC call result', { response })
     }
 
     return data.result
   }
 
-  jsonrpc (method, ...params) {
-    return this._axios.post(
-      '',
-      this._prepareRequest(method, params)
-    )
-      .then(this._parseResponse)
-      .catch(e => {
-        const { name, message, ...errorNoNameNoMessage } = e
-        throw new NodeError(`${this._uri} - ${e.toString()}`, errorNoNameNoMessage)
-      })
+  async jsonrpc (method, ...params) {
+    const response = await this.nodePost('', this._prepareRequest(method, params))
+
+    return this._parseResponse(response)
   }
 }
 

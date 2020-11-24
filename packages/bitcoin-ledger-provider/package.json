@@ -26,10 +26,9 @@
     "@liquality/crypto": "^0.7.15",
     "@liquality/ledger-provider": "^0.7.15",
     "@liquality/utils": "^0.7.15",
-    "bignumber.js": "^8.1.1",
+    "bignumber.js": "^9.0.0",
     "bip32": "^1.0.2",
-    "bitcoinjs-lib": "^5.2.0",
-    "lodash": "^4.17.20"
+    "bitcoinjs-lib": "^5.2.0"
   },
   "engines": {
     "node": "~8.12.0"

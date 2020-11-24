@@ -1,11 +1,12 @@
-import { findKey } from 'lodash'
-
 import WalletProvider from '@liquality/wallet-provider'
 import networks from '@liquality/ethereum-networks'
 import { WalletError } from '@liquality/errors'
 import { ensure0x, buildTransaction, formatEthResponse, normalizeTransactionObject } from '@liquality/ethereum-utils'
 import { Address, addressToString } from '@liquality/utils'
 import Debug from '@liquality/debug'
+
+import { findKey } from 'lodash'
+
 import { version } from '../package.json'
 
 const debug = Debug('ethereum')

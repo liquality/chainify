@@ -1,13 +1,10 @@
-import axios from 'axios'
-import Provider from '@liquality/provider'
+import NodeProvider from '@liquality/node-provider'
 
 import { version } from '../package.json'
 
-export default class BitcoinEsploraSwapFindProvider extends Provider {
+export default class BitcoinEsploraSwapFindProvider extends NodeProvider {
   constructor (url) {
-    super()
-    this.url = url
-    this._axios = axios.create({
+    super({
       baseURL: url,
       responseType: 'text',
       transformResponse: undefined // https://github.com/axios/axios/issues/907,
@@ -17,8 +14,8 @@ export default class BitcoinEsploraSwapFindProvider extends Provider {
   async findAddressTransaction (address, currentHeight, predicate) {
     // TODO: This does not go through pages as swap addresses have at most 2 transactions
     // Investigate whether retrieving more transactions is required.
-    const response = await this._axios.get(`/address/${address}/txs`)
-    const transactions = response.data
+    const transactions = await this.nodeGet(`/address/${address}/txs`)
+
     for (const transaction of transactions) {
       const formattedTransaction = await this.getMethod('formatTransaction')(transaction, currentHeight)
       if (predicate(formattedTransaction)) {

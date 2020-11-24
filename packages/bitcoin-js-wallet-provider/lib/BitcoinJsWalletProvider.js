@@ -1,8 +1,9 @@
 import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
 import WalletProvider from '@liquality/wallet-provider'
+import { addressToString } from '@liquality/utils'
+
 import * as bitcoin from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
-import { addressToString } from '@liquality/utils'
 import { mnemonicToSeed } from 'bip39'
 import bip32 from 'bip32'
 

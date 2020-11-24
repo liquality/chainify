@@ -20,9 +20,10 @@
   "dependencies": {
     "@babel/runtime": "^7.4.3",
     "@liquality/bitcoin-utils": "^0.7.15",
+    "@liquality/errors": "^0.7.15",
     "@liquality/jsonrpc-provider": "^0.7.15",
     "@liquality/utils": "^0.7.15",
-    "bignumber.js": "^8.1.1",
+    "bignumber.js": "^9.0.0",
     "lodash": "^4.17.20"
   },
   "engines": {

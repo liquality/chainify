@@ -1,12 +1,14 @@
+import { base58, padHexStart } from '@liquality/crypto'
+import networks from '@liquality/bitcoin-networks'
+
 import { findKey } from 'lodash'
 import BigNumber from 'bignumber.js'
-import { base58, padHexStart } from '@liquality/crypto'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as classify from 'bitcoinjs-lib/src/classify'
 import * as varuint from 'bip174/src/lib/converter/varint'
-import networks from '@liquality/bitcoin-networks'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
+
 import { version } from '../package.json'
 
 function calculateFee (numInputs, numOutputs, feePerByte) {

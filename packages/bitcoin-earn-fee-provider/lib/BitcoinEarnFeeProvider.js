@@ -1,18 +1,16 @@
-
-import Provider from '@liquality/provider'
-import axios from 'axios'
+import NodeProvider from '@liquality/node-provider'
 
 import { version } from '../package.json'
 
-export default class BitcoinEarnFeeProvider extends Provider {
+export default class BitcoinEarnFeeProvider extends NodeProvider {
   constructor (endpoint = 'https://bitcoinfees.earn.com/api/v1/fees/recommended') {
-    super()
-    this._endpoint = endpoint
+    super({
+      baseURL: endpoint
+    })
   }
 
   async getFees () {
-    const result = await axios.get(this._endpoint)
-    const data = result.data
+    const data = await this.nodeGet('')
 
     return {
       slow: {

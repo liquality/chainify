@@ -1,9 +1,8 @@
-import axios from 'axios'
+import NodeProvider from '@liquality/node-provider'
 import BitcoinEsploraApiProvider from '@liquality/bitcoin-esplora-api-provider'
+import { addressToString } from '@liquality/utils'
 import { flatten, uniq } from 'lodash'
 import BigNumber from 'bignumber.js'
-
-import { addressToString } from '@liquality/utils'
 
 import { version } from '../package.json'
 
@@ -11,9 +10,7 @@ export default class BitcoinEsploraBatchApiProvider extends BitcoinEsploraApiPro
   constructor (batchUrl, url, network, numberOfBlockConfirmation = 1, defaultFeePerByte = 3) {
     super(url, network, numberOfBlockConfirmation, defaultFeePerByte)
 
-    this.batchUrl = batchUrl
-
-    this._batchAxios = axios.create({
+    this._batchAxios = new NodeProvider({
       baseURL: batchUrl,
       responseType: 'text',
       transformResponse: undefined // https://github.com/axios/axios/issues/907,
@@ -21,7 +18,7 @@ export default class BitcoinEsploraBatchApiProvider extends BitcoinEsploraApiPro
   }
 
   async getUnspentTransactions (addresses) {
-    const { data } = await this._batchAxios.post('/addresses/utxo', {
+    const data = await this._batchAxios.nodePost('/addresses/utxo', {
       addresses: uniq(addresses.map(addressToString))
     })
 
@@ -39,7 +36,7 @@ export default class BitcoinEsploraBatchApiProvider extends BitcoinEsploraApiPro
   }
 
   async getAddressTransactionCounts (addresses) {
-    const { data } = await this._batchAxios.post('/addresses', {
+    const data = await this._batchAxios.nodePost('/addresses', {
       addresses: uniq(addresses.map(addressToString))
     })
 

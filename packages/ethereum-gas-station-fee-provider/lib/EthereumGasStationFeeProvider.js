@@ -1,19 +1,17 @@
-
-import Provider from '@liquality/provider'
+import NodeProvider from '@liquality/node-provider'
 import BigNumber from 'bignumber.js'
-import axios from 'axios'
 
 import { version } from '../package.json'
 
-export default class EthereumGasStationFeeProvider extends Provider {
+export default class EthereumGasStationFeeProvider extends NodeProvider {
   constructor (endpoint = 'https://ethgasstation.info/api/ethgasAPI.json') {
-    super()
-    this._endpoint = endpoint
+    super({
+      baseURL: endpoint
+    })
   }
 
   async getFees () {
-    const result = await axios.get(this._endpoint)
-    const data = result.data
+    const data = await this.nodeGet('')
 
     return {
       slow: {

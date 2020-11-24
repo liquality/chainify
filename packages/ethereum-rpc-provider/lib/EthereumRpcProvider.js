@@ -1,6 +1,3 @@
-import { isArray } from 'lodash'
-import { BigNumber } from 'bignumber.js'
-
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import {
   formatEthResponse,
@@ -10,8 +7,11 @@ import {
   buildTransaction
 } from '@liquality/ethereum-utils'
 import { addressToString, Address, sleep } from '@liquality/utils'
-import { InvalidDestinationAddressError } from '@liquality/errors'
+import { InvalidDestinationAddressError, TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { padHexStart } from '@liquality/crypto'
+
+import { isArray } from 'lodash'
+import { BigNumber } from 'bignumber.js'
 
 import { version } from '../package.json'
 
@@ -77,9 +77,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   }
 
   async sendRawTransaction (hash) {
-    const txHash = await this.rpc('eth_sendRawTransaction', ensure0x(hash))
-
-    return txHash
+    return this.rpc('eth_sendRawTransaction', ensure0x(hash))
   }
 
   async signMessage (message, from) {
@@ -103,6 +101,10 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   async getBlockByNumber (blockNumber, includeTx) {
     const block = await this.rpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
 
+    if (!block) {
+      throw new BlockNotFoundError(`Block not found ${blockNumber}`)
+    }
+
     if (block && includeTx) {
       const currentHeight = await this.getBlockHeight()
       block.transactions = block.transactions.map(tx => normalizeTransactionObject(tx, currentHeight))
@@ -122,6 +124,10 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
 
     const currentBlock = await this.getBlockHeight()
     const tx = await this.rpc('eth_getTransactionByHash', txHash)
+
+    if (!tx) {
+      throw new TxNotFoundError(`Transaction not found ${txHash}`)
+    }
 
     return normalizeTransactionObject(tx, currentBlock)
   }
