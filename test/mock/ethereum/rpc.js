@@ -24,12 +24,24 @@ module.exports = {
       result: '0x2540be400'
     }
   ],
+  'eth_estimateGas': [
+    {
+      params: [{
+        from: '0x322d4959c911520645c0638204b42ce0689236e9',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: '0x3e8',
+        data: '0x1234'
+      }],
+      result: '0x9c40'
+    }
+  ],
   'eth_sendTransaction': [
     {
       params: [{
         from: '0x322d4959c911520645c0638204b42ce0689236e9',
         to: '0x635d7d148054b9471d79084b80b864a166956139',
-        value: '0x3e8'
+        value: '0x3e8',
+        gas: '0x5208'
       }],
       result: '7968d7929845cf0b32e8c8e65f363ba764420bcfe70e4eeef63312e42218d6b2'
     },
@@ -38,7 +50,8 @@ module.exports = {
         from: '0x322d4959c911520645c0638204b42ce0689236e9',
         to: '0x635d7d148054b9471d79084b80b864a166956139',
         value: '0x3e8',
-        data: '0x1234'
+        data: '0x1234',
+        gas: '0xea60'
       }],
       result: '0xf5acc7ff066f33c9b6fb53105d24bb0e89940afaf1bddf47632d79cef2da617a'
     }

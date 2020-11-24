@@ -103,7 +103,8 @@ function testSwap (chain) {
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = parseInt(Date.now() / 1000) + 10
+    const latestBlock = await chain.client.chain.getBlockByNumber(await chain.client.chain.getBlockHeight())
+    swapParams.expiration = latestBlock.timestamp + 10
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expect(refundAndVerify(chain, initiationTxId, secretHash, swapParams)).to.be.rejected
     await mineUntilTimestamp(chain, swapParams.expiration)
