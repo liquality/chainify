@@ -76,6 +76,7 @@
     "build:browser": "cross-env NODE_ENV=production npm run build:dev:browser",
     "build": "cross-env NODE_ENV=production npm run build:dev",
     "build:with-pkg-stats": "cross-env BUILD_PKG_STATS=true npm run build",
+    "clean": "lerna clean",
     "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && lerna bootstrap",
     "publish:all": "lerna publish from-package",
     "prepublishOnly": "npm run lint && npm run build:dev:browser && npm run build && npm run test"
