@@ -368,7 +368,7 @@ async function withInternalSendMineHook (chain, provider, func) {
   let originalSendTransaction = provider.sendTransaction
   provider.sendTransaction = async (to, value, data, gasPrice) => {
     const txHash = await originalSendTransaction.bind(provider)(to, value, data, gasPrice)
-    if (data !== null) {
+    if (data !== null && !to) { // Only mine for contract deploy
       await mineBlock(chain)
     }
     return txHash

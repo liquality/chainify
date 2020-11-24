@@ -51,13 +51,15 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
     const addresses = await this.getAddresses()
     const from = addressToString(addresses[0])
 
-    const tx = await buildTransaction(from, to, value, data, gasPrice)
+    const txData = await buildTransaction(from, to, value, data, gasPrice)
+    const gas = await this.estimateGas(txData)
+    txData.gas = ensure0x(gas.toString(16))
 
-    const txHash = await this.rpc('eth_sendTransaction', tx)
+    const txHash = await this.rpc('eth_sendTransaction', txData)
 
-    tx.hash = txHash
+    txData.hash = txHash
 
-    return normalizeTransactionObject(formatEthResponse(tx))
+    return normalizeTransactionObject(formatEthResponse(txData))
   }
 
   async updateTransactionFee (tx, newGasPrice) {
@@ -209,12 +211,11 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
       throw new Error('Ethereum generation limited to 1 block at a time.')
     }
     try {
+      await this.evmMine()
+    } catch (e) { // Fallback onto geth way of triggering mine
       await this.startMiner()
       await sleep(500) // Give node a chance to mine
       await this.stopMiner()
-    } catch (e) {
-      await this.evmMine()
-      await sleep(500) // Give node a chance to mine
     }
   }
 }
