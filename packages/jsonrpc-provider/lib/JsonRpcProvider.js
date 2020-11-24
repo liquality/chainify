@@ -36,9 +36,7 @@ export default class JsonRpcProvider extends NodeProvider {
     return req
   }
 
-  _parseResponse (response) {
-    let { data } = response
-
+  _parseResponse (data) {
     debug('raw jsonrpc response', data)
 
     data = parse(data)
@@ -48,20 +46,20 @@ export default class JsonRpcProvider extends NodeProvider {
     const { error } = data
 
     if (error != null) {
-      throw new NodeError(error.message || error, { response })
+      throw new NodeError(error.message || error)
     }
 
     if (!has(data, 'result')) {
-      throw new NodeError('Missing `result` on the RPC call result', { response })
+      throw new NodeError('Missing `result` on the RPC call result')
     }
 
     return data.result
   }
 
   async jsonrpc (method, ...params) {
-    const response = await this.nodePost('', this._prepareRequest(method, params))
+    const data = await this.nodePost('', this._prepareRequest(method, params))
 
-    return this._parseResponse(response)
+    return this._parseResponse(data)
   }
 }
 
