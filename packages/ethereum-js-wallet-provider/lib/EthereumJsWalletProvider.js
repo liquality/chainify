@@ -8,6 +8,7 @@ import { fromMasterSeed } from 'hdkey'
 import * as ethUtil from 'ethereumjs-util'
 import { Transaction } from 'ethereumjs-tx'
 import Common from 'ethereumjs-common'
+import { chains as BaseChains } from 'ethereumjs-common/dist/chains'
 
 import { version } from '../package.json'
 
@@ -72,11 +73,9 @@ export default class EthereumJsWalletProvider extends Provider {
 
     let common
     if (!(this._network.name === 'local')) {
-      const baseChain = this._network.name
+      const baseChain = (this._network.name in BaseChains) ? this._network.name : 'mainnet'
       common = Common.forCustomChain(baseChain, {
-        name: this._network.name,
-        chainId: this._network.chainId,
-        networkId: this._network.networkId
+        ...this._network
       }, this._hardfork)
     }
 

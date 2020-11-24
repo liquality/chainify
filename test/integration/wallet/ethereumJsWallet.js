@@ -13,7 +13,7 @@ chai.use(require('chai-bignumber')())
 function testWallet (chain) {
   describe('getAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/60'/0'/0/0`
+      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
       const addresses = await chain.client.wallet.getAddresses()
 
       expect(addresses.length).to.equal(1)
@@ -23,7 +23,7 @@ function testWallet (chain) {
 
   describe('getUnusedAddress', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/60'/0'/0/0`
+      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
       const address = await chain.client.wallet.getUnusedAddress()
 
       expect(address.derivationPath).to.equal(expectedAddress0DerivationPath)
@@ -32,7 +32,7 @@ function testWallet (chain) {
 
   describe('getUsedAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/60'/0'/0/0`
+      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
       const addresses = await chain.client.wallet.getUsedAddresses()
 
       expect(addresses.length).to.equal(1)

@@ -43,6 +43,26 @@ export default {
     chainId: 5,
     isTestnet: true
   },
+  rsk_mainnet: {
+    name: 'rsk_mainnet',
+    coinType: '137',
+    networkId: 30,
+    chainId: 30
+  },
+  rsk_testnet: {
+    name: 'rsk_testnet',
+    coinType: '37310',
+    networkId: 31,
+    chainId: 31,
+    isTestnet: true
+  },
+  rsk_regtest: {
+    name: 'rsk_regtest',
+    coinType: '37310',
+    networkId: 33,
+    chainId: 33,
+    isTestnet: true
+  },
   local: {
     name: 'local',
     coinType: '60',

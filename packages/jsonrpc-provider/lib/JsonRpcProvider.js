@@ -38,11 +38,12 @@ export default class JsonRpcProvider extends Provider {
   }
 
   _parseResponse ({ data, status, statusText, headers }) {
-    if (headers['content-type'] !== 'application/json') {
+    try {
+      data = parse(data)
+    } catch (e) {
       throw new RpcError(status, statusText, { data })
     }
 
-    data = parse(data)
     debug('parsed jsonrpc response', data)
     if (data.error != null) {
       throw new RpcError(
