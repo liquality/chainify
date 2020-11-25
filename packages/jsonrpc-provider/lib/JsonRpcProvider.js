@@ -9,7 +9,7 @@ import { version } from '../package.json'
 
 const debug = Debug('jsonrpc')
 
-const { parse } = JSONBigInt({ storeAsString: true, strict: true })
+const { parse, stringify } = JSONBigInt({ storeAsString: true, strict: true })
 
 export default class JsonRpcProvider extends NodeProvider {
   constructor (uri, username, password) {
@@ -38,6 +38,8 @@ export default class JsonRpcProvider extends NodeProvider {
 
   _parseResponse (data) {
     debug('raw jsonrpc response', data)
+
+    if (typeof data !== 'string') data = stringify(data)
 
     data = parse(data)
 
