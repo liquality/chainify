@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-wallet-api-provider",
   "umdName": "EthereumWalletApiProvider",
   "umdExport": "default",
-  "version": "0.7.15",
+  "version": "0.8.0",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,12 +19,12 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/debug": "^0.7.15",
-    "@liquality/errors": "^0.7.15",
-    "@liquality/ethereum-networks": "^0.7.15",
-    "@liquality/ethereum-utils": "^0.7.15",
-    "@liquality/utils": "^0.7.15",
-    "@liquality/wallet-provider": "^0.7.15",
+    "@liquality/debug": "^0.8.0",
+    "@liquality/errors": "^0.8.0",
+    "@liquality/ethereum-networks": "^0.8.0",
+    "@liquality/ethereum-utils": "^0.8.0",
+    "@liquality/utils": "^0.8.0",
+    "@liquality/wallet-provider": "^0.8.0",
     "lodash": "^4.17.20"
   },
   "engines": {
