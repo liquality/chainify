@@ -319,7 +319,7 @@ async function expectBitcoinFee (chain, txHash, expectedFeePerByte, payToScript)
   if (payToScript && (chain.id.includes('Ledger') || chain.id.includes('Js'))) {
     size -= 10 // Coin select fee calculation is off by 10 bytes as it does not consider pay to script
   }
-  const maxFeePerByte = BigNumber(BigNumber(expectedFeePerByte).times(size + 2)).div(size).dp(0).toNumber() // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
+  const maxFeePerByte = BigNumber(BigNumber(expectedFeePerByte).times(size + 4)).div(size).dp(0).toNumber() // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40
   const feePerByte = BigNumber(fee).div(size).dp(0).toNumber()
 
   expect(feePerByte).gte(expectedFeePerByte)
