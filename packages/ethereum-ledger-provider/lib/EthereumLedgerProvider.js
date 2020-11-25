@@ -10,15 +10,17 @@ import {
 import { Address, addressToString } from '@liquality/utils'
 
 import Ethereum from '@ledgerhq/hw-app-eth'
-import { BigNumber } from 'bignumber.js'
-import EthereumJsTx from 'ethereumjs-tx'
+import { Transaction } from 'ethereumjs-tx'
+import Common from 'ethereumjs-common'
+import { chains as BaseChains } from 'ethereumjs-common/dist/chains'
 
 import { version } from '../package.json'
 
 export default class EthereumLedgerProvider extends LedgerProvider {
-  constructor (network = networks.mainnet) {
+  constructor (network = networks.mainnet, hardfork = 'istanbul') {
     super(Ethereum, network, 'w0w') // srs!
     this._baseDerivationPath = `44'/${network.coinType}'/0'`
+    this._hardfork = hardfork
   }
 
   async signMessage (message, from) {
@@ -60,13 +62,17 @@ export default class EthereumLedgerProvider extends LedgerProvider {
   }
 
   async signTransaction (txData, path) {
-    const chainId = ensure0x(BigNumber(this._network.chainId).toString(16))
-    txData.chainId = chainId
-    txData.v = chainId
+    let common
+    if (!(this._network.name === 'local')) {
+      const baseChain = (this._network.name in BaseChains) ? this._network.name : 'mainnet'
+      common = Common.forCustomChain(baseChain, {
+        ...this._network
+      }, this._hardfork)
+    }
 
-    const app = await this.getApp()
-    const tx = new EthereumJsTx(txData)
+    const tx = new Transaction(txData, { common })
     const serializedTx = tx.serialize().toString('hex')
+    const app = await this.getApp()
     const txSig = await app.signTransaction(path, serializedTx)
     const signedTxData = {
       ...txData,
@@ -75,9 +81,8 @@ export default class EthereumLedgerProvider extends LedgerProvider {
       s: ensure0x(txSig.s)
     }
 
-    const signedTx = new EthereumJsTx(signedTxData)
-    const signedSerializedTx = signedTx.serialize().toString('hex')
-    return signedSerializedTx
+    const signedTx = new Transaction(signedTxData, { common })
+    return signedTx.serialize().toString('hex')
   }
 
   async sendTransaction (to, value, data, _gasPrice) {

@@ -16,8 +16,8 @@ import { version } from '../package.json'
 export default class EthereumJsWalletProvider extends Provider {
   constructor (network, mnemonic, hardfork = 'istanbul') {
     super()
-    const derivationPath = `m/44'/${network.coinType}'/0'/`
-    this._derivationPath = derivationPath
+
+    this._derivationPath = `m/44'/${network.coinType}'/0'/`
     this._mnemonic = mnemonic
     this._network = network
     this._hardfork = hardfork
@@ -82,9 +82,8 @@ export default class EthereumJsWalletProvider extends Provider {
 
     const tx = new Transaction(txData, { common })
     tx.sign(hdKey._privateKey)
-    const serializedTx = tx.serialize().toString('hex')
 
-    return serializedTx
+    return tx.serialize().toString('hex')
   }
 
   async sendTransaction (to, value, data, _gasPrice) {
