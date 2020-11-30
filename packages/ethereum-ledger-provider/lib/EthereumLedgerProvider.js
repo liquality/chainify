@@ -10,17 +10,14 @@ import {
 import { Address, addressToString } from '@liquality/utils'
 
 import Ethereum from '@ledgerhq/hw-app-eth'
-import { Transaction } from 'ethereumjs-tx'
-import Common from 'ethereumjs-common'
-import { chains as BaseChains } from 'ethereumjs-common/dist/chains'
+import EthereumJsTx from 'ethereumjs-tx'
 
 import { version } from '../package.json'
 
 export default class EthereumLedgerProvider extends LedgerProvider {
-  constructor (network = networks.mainnet, hardfork = 'istanbul') {
+  constructor (network = networks.mainnet) {
     super(Ethereum, network, 'w0w') // srs!
     this._baseDerivationPath = `44'/${network.coinType}'/0'`
-    this._hardfork = hardfork
   }
 
   async signMessage (message, from) {
@@ -62,17 +59,13 @@ export default class EthereumLedgerProvider extends LedgerProvider {
   }
 
   async signTransaction (txData, path) {
-    let common
-    if (!(this._network.name === 'local')) {
-      const baseChain = (this._network.name in BaseChains) ? this._network.name : 'mainnet'
-      common = Common.forCustomChain(baseChain, {
-        ...this._network
-      }, this._hardfork)
-    }
+    const chainId = ensure0x(this._network.chainId.toString(16))
+    txData.chainId = chainId
+    txData.v = chainId
 
-    const tx = new Transaction(txData, { common })
-    const serializedTx = tx.serialize().toString('hex')
     const app = await this.getApp()
+    const tx = new EthereumJsTx(txData)
+    const serializedTx = tx.serialize().toString('hex')
     const txSig = await app.signTransaction(path, serializedTx)
     const signedTxData = {
       ...txData,
@@ -81,8 +74,9 @@ export default class EthereumLedgerProvider extends LedgerProvider {
       s: ensure0x(txSig.s)
     }
 
-    const signedTx = new Transaction(signedTxData, { common })
-    return signedTx.serialize().toString('hex')
+    const signedTx = new EthereumJsTx(signedTxData)
+    const signedSerializedTx = signedTx.serialize().toString('hex')
+    return signedSerializedTx
   }
 
   async sendTransaction (to, value, data, _gasPrice) {
