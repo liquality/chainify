@@ -135,7 +135,8 @@ export default class BitcoinEsploraApiProvider extends NodeProvider {
     const {
       id: hash,
       height: number,
-      mediantime: timestamp,
+      timestamp,
+      mediantime,
       size,
       previousblockhash: parentHash,
       nonce
@@ -144,7 +145,7 @@ export default class BitcoinEsploraApiProvider extends NodeProvider {
     return {
       hash,
       number,
-      timestamp,
+      timestamp: mediantime || timestamp,
       size,
       parentHash,
       nonce
