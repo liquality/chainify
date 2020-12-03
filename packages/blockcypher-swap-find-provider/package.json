@@ -1,0 +1,45 @@
+{
+  "name": "@liquality/blockcypher-swap-find-provider",
+  "umdName": "BlockcypherSwapFindProvider",
+  "umdExport": "default",
+  "version": "0.5.0",
+  "description": "",
+  "module": "lib/index.js",
+  "main": "dist/index.cjs.js",
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
+    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.4.3",
+    "@liquality/provider": "^0.5.0",
+    "@liquality/utils": "^0.5.0",
+    "axios": "^0.19.0",
+    "bignumber.js": "^8.1.1",
+    "lodash": "^4.17.11"
+  },
+  "engines": {
+    "node": "~8.12.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "nock": "^10.0.6"
+  }
+}
