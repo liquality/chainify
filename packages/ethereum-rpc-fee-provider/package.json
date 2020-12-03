@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-rpc-fee-provider",
   "umdName": "EthereumRpcFeeProvider",
   "umdExport": "default",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/provider": "^0.8.2",
+    "@liquality/provider": "^0.8.3",
     "bignumber.js": "^9.0.0"
   },
   "engines": {
