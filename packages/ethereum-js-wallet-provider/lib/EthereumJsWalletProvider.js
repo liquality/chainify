@@ -1,7 +1,6 @@
 import Provider from '@liquality/provider'
 import { Address, addressToString } from '@liquality/utils'
 import { ensure0x, remove0x, buildTransaction, formatEthResponse, normalizeTransactionObject } from '@liquality/ethereum-utils'
-import { sha256 } from '@liquality/crypto'
 
 import { mnemonicToSeed } from 'bip39'
 import BigNumber from 'bignumber.js'

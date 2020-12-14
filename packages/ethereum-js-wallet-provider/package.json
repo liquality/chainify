@@ -19,7 +19,6 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/crypto": "^0.8.4",
     "@liquality/ethereum-utils": "^0.8.4",
     "@liquality/provider": "^0.8.4",
     "@liquality/utils": "^0.8.4",
