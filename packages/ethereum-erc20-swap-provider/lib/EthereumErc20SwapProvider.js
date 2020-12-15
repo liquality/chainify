@@ -77,7 +77,7 @@ export default class EthereumErc20SwapProvider extends Provider {
   }
 
   doesTransactionMatchFunding (transaction, erc20TokenContractAddress, contractData) {
-    return transaction._raw.to === erc20TokenContractAddress &&
+    return transaction._raw.to.toLowerCase() === erc20TokenContractAddress.toLowerCase() &&
            transaction._raw.input === contractData
   }
 
