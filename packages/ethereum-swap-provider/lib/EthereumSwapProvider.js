@@ -114,7 +114,8 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
-    return transaction._raw.to === initiationTransactionReceipt.contractAddress && transaction._raw.input.length === 64
+    return transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+           transaction._raw.input.length === 64
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
@@ -177,7 +178,7 @@ export default class EthereumSwapProvider extends Provider {
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const refundSwapTransaction = await this.findSwapTransaction(blockNumber, (transaction, block) =>
-      transaction._raw.to === initiationTransactionReceipt.contractAddress &&
+      transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
       transaction._raw.input === '' &&
       block.timestamp >= expiration
     )

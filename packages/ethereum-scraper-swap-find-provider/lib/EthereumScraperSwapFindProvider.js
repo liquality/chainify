@@ -85,7 +85,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider {
     const transaction = await this.findAddressTransaction(
       initiationTransactionReceipt.contractAddress,
       (tx) => (
-        tx._raw.to === initiationTransactionReceipt.contractAddress &&
+        tx._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
         tx._raw.input === '' &&
         tx._raw.timestamp >= expiration
       )

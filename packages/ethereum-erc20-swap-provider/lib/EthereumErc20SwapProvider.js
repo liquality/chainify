@@ -72,7 +72,7 @@ export default class EthereumErc20SwapProvider extends Provider {
   }
 
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt, recipientAddress, refundAddress, secretHash, expiration) {
-    return transaction._raw.to === initiationTransactionReceipt.contractAddress &&
+    return transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
       transaction._raw.input.startsWith(remove0x(SOL_CLAIM_FUNCTION))
   }
 
@@ -174,7 +174,7 @@ export default class EthereumErc20SwapProvider extends Provider {
 
     const SOL_REFUND_FUNCTION_WITHOUT0X = remove0x(SOL_REFUND_FUNCTION)
     return block.transactions.find(transaction =>
-      transaction._raw.to === initiationTransactionReceipt.contractAddress &&
+      transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
       transaction._raw.input === SOL_REFUND_FUNCTION_WITHOUT0X &&
       block.timestamp >= expiration
     )

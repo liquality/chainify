@@ -7,7 +7,8 @@ import { version } from '../package.json'
 
 export default class EthereumErc20ScraperSwapFindProvider extends EthereumScraperSwapFindProvider {
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
-    return transaction._raw.to === initiationTransactionReceipt.contractAddress && transaction._raw.input.startsWith(remove0x(EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION))
+    return transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+           transaction._raw.input.startsWith(remove0x(EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION))
   }
 
   async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
@@ -38,7 +39,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     const transaction = await this.findAddressTransaction(
       initiationTransactionReceipt.contractAddress,
       (tx) => (
-        tx._raw.to === initiationTransactionReceipt.contractAddress &&
+        tx._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
         tx._raw.input === remove0x(EthereumErc20SwapProvider.SOL_REFUND_FUNCTION) &&
         tx._raw.timestamp >= expiration
       )
