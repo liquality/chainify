@@ -1,6 +1,6 @@
 import Provider from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
-import { addressToString, sleep } from '@liquality/utils'
+import { addressToString, sleep, caseInsensitiveEqual } from '@liquality/utils'
 import { remove0x } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
@@ -72,12 +72,12 @@ export default class EthereumErc20SwapProvider extends Provider {
   }
 
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt, recipientAddress, refundAddress, secretHash, expiration) {
-    return transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
-      transaction._raw.input.startsWith(remove0x(SOL_CLAIM_FUNCTION))
+    return caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
+           transaction._raw.input.startsWith(remove0x(SOL_CLAIM_FUNCTION))
   }
 
   doesTransactionMatchFunding (transaction, erc20TokenContractAddress, contractData) {
-    return transaction._raw.to.toLowerCase() === erc20TokenContractAddress.toLowerCase() &&
+    return caseInsensitiveEqual(transaction._raw.to, erc20TokenContractAddress) &&
            transaction._raw.input === contractData
   }
 
@@ -174,7 +174,7 @@ export default class EthereumErc20SwapProvider extends Provider {
 
     const SOL_REFUND_FUNCTION_WITHOUT0X = remove0x(SOL_REFUND_FUNCTION)
     return block.transactions.find(transaction =>
-      transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+      caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
       transaction._raw.input === SOL_REFUND_FUNCTION_WITHOUT0X &&
       block.timestamp >= expiration
     )

@@ -1,6 +1,6 @@
 import Provider from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
-import { addressToString } from '@liquality/utils'
+import { addressToString, caseInsensitiveEqual } from '@liquality/utils'
 import { remove0x } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
@@ -114,7 +114,7 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
-    return transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+    return caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
            transaction._raw.input.length === 64
   }
 
@@ -178,7 +178,7 @@ export default class EthereumSwapProvider extends Provider {
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const refundSwapTransaction = await this.findSwapTransaction(blockNumber, (transaction, block) =>
-      transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+      caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
       transaction._raw.input === '' &&
       block.timestamp >= expiration
     )

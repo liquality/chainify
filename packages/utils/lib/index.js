@@ -86,11 +86,19 @@ function asyncSetImmediate () {
   return new Promise(resolve => setImmediate(resolve))
 }
 
+function caseInsensitiveEqual (left, right) {
+  left = left && left.toLowerCase()
+  right = right && right.toLowerCase()
+
+  return left === right
+}
+
 export {
   Address,
   addressToString,
   sleep,
   asyncSetImmediate,
+  caseInsensitiveEqual,
 
   version
 }

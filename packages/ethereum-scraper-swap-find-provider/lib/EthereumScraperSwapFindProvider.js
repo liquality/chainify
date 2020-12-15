@@ -1,6 +1,6 @@
 import NodeProvider from '@liquality/node-provider'
 import { ensure0x, normalizeTransactionObject, formatEthResponse } from '@liquality/ethereum-utils'
-import { addressToString } from '@liquality/utils'
+import { addressToString, caseInsensitiveEqual } from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 
 import { version } from '../package.json'
@@ -84,8 +84,8 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider {
 
     const transaction = await this.findAddressTransaction(
       initiationTransactionReceipt.contractAddress,
-      (tx) => (
-        tx._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+      tx => (
+        caseInsensitiveEqual(tx._raw.to, initiationTransactionReceipt.contractAddress) &&
         tx._raw.input === '' &&
         tx._raw.timestamp >= expiration
       )

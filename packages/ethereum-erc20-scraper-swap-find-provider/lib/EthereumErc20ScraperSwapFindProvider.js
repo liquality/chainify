@@ -2,12 +2,13 @@ import EthereumScraperSwapFindProvider from '@liquality/ethereum-scraper-swap-fi
 import EthereumErc20SwapProvider from '@liquality/ethereum-erc20-swap-provider'
 import { remove0x } from '@liquality/ethereum-utils'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
+import { caseInsensitiveEqual } from '@liquality/utils'
 
 import { version } from '../package.json'
 
 export default class EthereumErc20ScraperSwapFindProvider extends EthereumScraperSwapFindProvider {
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
-    return transaction._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+    return caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
            transaction._raw.input.startsWith(remove0x(EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION))
   }
 
@@ -39,7 +40,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     const transaction = await this.findAddressTransaction(
       initiationTransactionReceipt.contractAddress,
       (tx) => (
-        tx._raw.to.toLowerCase() === initiationTransactionReceipt.contractAddress.toLowerCase() &&
+        caseInsensitiveEqual(tx._raw.to, initiationTransactionReceipt.contractAddress) &&
         tx._raw.input === remove0x(EthereumErc20SwapProvider.SOL_REFUND_FUNCTION) &&
         tx._raw.timestamp >= expiration
       )
