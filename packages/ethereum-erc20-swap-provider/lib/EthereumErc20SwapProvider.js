@@ -157,7 +157,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     if (!transaction) return
 
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-    if (!transactionReceipt) throw new PendingTxError(`Claim transaction receipt is not available for ${transaction.hash}`)
+    if (!transactionReceipt) throw new PendingTxError(`Claim transaction receipt is not available: ${transaction.hash}`)
 
     if (transactionReceipt.status === '1') {
       transaction.secret = await this.getSwapSecret(transaction.hash)
