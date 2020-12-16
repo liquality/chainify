@@ -18,7 +18,7 @@ Query different blockchains with account management using a single and simple in
 
 |Package|Version|
 |---|---|
-|[@liquality/bitcoin-bitcoinjs-lib-swap-provider](./packages/bitcoin-bitcoinjs-lib-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-bitcoinjs-lib-swap-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-bitcoinjs-lib-swap-provider)|
+|[@liquality/bitcoin-js-wallet-provider](./packages/bitcoin-js-wallet-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-js-wallet-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-js-wallet-provider)|
 |[@liquality/bitcoin-ledger-provider](./packages/bitcoin-ledger-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-ledger-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-ledger-provider)|
 |[@liquality/bitcoin-networks](./packages/bitcoin-networks)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-networks.svg)](https://npmjs.com/package/@liquality/bitcoin-networks)|
 |[@liquality/bitcoin-rpc-provider](./packages/bitcoin-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/bitcoin-rpc-provider.svg)](https://npmjs.com/package/@liquality/bitcoin-rpc-provider)|
@@ -37,6 +37,7 @@ Query different blockchains with account management using a single and simple in
 |[@liquality/ethereum-wallet-api-provider](./packages/ethereum-wallet-api-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-wallet-api-provider.svg)](https://npmjs.com/package/@liquality/ethereum-wallet-api-provider)|
 |[@liquality/ethereum-networks](./packages/ethereum-networks)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-networks.svg)](https://npmjs.com/package/@liquality/ethereum-networks)|
 |[@liquality/ethereum-rpc-provider](./packages/ethereum-rpc-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-rpc-provider.svg)](https://npmjs.com/package/@liquality/ethereum-rpc-provider)|
+|[@liquality/ethereum-js-wallet-provider](./packages/ethereum-js-wallet-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-js-wallet-provider.svg)](https://npmjs.com/package/@liquality/ethereum-js-wallet-provider)|
 |[@liquality/ethereum-swap-provider](./packages/ethereum-swap-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-swap-provider.svg)](https://npmjs.com/package/@liquality/ethereum-swap-provider)|
 |[@liquality/ethereum-scraper-swap-find-provider](./packages/ethereum-scraper-swap-find-provider)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-scraper-swap-find-provider.svg)](https://npmjs.com/package/@liquality/ethereum-scraper-swap-find-provider)|
 |[@liquality/ethereum-utils](./packages/ethereum-utils)|[![ChainAbstractionLayer](https://img.shields.io/npm/v/@liquality/ethereum-utils.svg)](https://npmjs.com/package/@liquality/ethereum-utils)|
