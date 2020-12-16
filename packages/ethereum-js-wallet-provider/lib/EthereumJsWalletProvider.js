@@ -5,7 +5,7 @@ import { ensure0x, remove0x, buildTransaction, formatEthResponse, normalizeTrans
 import { mnemonicToSeed } from 'bip39'
 import BigNumber from 'bignumber.js'
 import { fromMasterSeed } from 'hdkey'
-import { hashPersonalMessage, ecsign, toRpcSig, privateToAddress } from 'ethereumjs-util'
+import { hashPersonalMessage, ecsign, toRpcSig, privateToAddress, privateToPublic } from 'ethereumjs-util'
 import { Transaction } from 'ethereumjs-tx'
 import Common from 'ethereumjs-common'
 import { chains as BaseChains } from 'ethereumjs-common/dist/chains'
@@ -46,7 +46,7 @@ export default class EthereumJsWalletProvider extends Provider {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
     const address = privateToAddress(hdKey._privateKey).toString('hex')
-    const publicKey = privateToAddress(hdKey._privateKey).toString('hex')
+    const publicKey = privateToPublic(hdKey._privateKey).toString('hex')
     return [
       new Address({
         address,
