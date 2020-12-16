@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
-import * as ethUtil from 'ethereumjs-util'
+import { hashPersonalMessage, fromRpcSig, ecrecover, publicToAddress } from 'ethereumjs-util'
 import EthereumNetworks from '../../../ethereum-networks/lib'
 import EthereumJsWalletProvider from '../../lib'
 
@@ -13,10 +13,10 @@ describe('Ethereum Js Wallet Provider', () => {
       const msg = 'bitcoin'
       const addresses = await provider.getAddresses()
       const sig = await provider.signMessage(msg)
-      const msgHash = ethUtil.hashPersonalMessage(Buffer.from(msg))
-      const sigObj = ethUtil.fromRpcSig(`0x${sig}`)
-      const publicKey = ethUtil.ecrecover(msgHash, sigObj.v, sigObj.r, sigObj.s)
-      expect(addresses[0].address).to.equal(ethUtil.publicToAddress(publicKey).toString('hex'))
+      const msgHash = hashPersonalMessage(Buffer.from(msg))
+      const sigObj = fromRpcSig(`0x${sig}`)
+      const publicKey = ecrecover(msgHash, sigObj.v, sigObj.r, sigObj.s)
+      expect(addresses[0].address).to.equal(publicToAddress(publicKey).toString('hex'))
       expect(addresses[0].publicKey.toString('hex')).to.equal(publicKey.toString('hex'))
     })
   })

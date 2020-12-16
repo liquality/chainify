@@ -5,7 +5,7 @@ import { ensure0x, remove0x, buildTransaction, formatEthResponse, normalizeTrans
 import { mnemonicToSeed } from 'bip39'
 import BigNumber from 'bignumber.js'
 import { fromMasterSeed } from 'hdkey'
-import * as ethUtil from 'ethereumjs-util'
+import { hashPersonalMessage, ecsign, toRpcSig, privateToAddress } from 'ethereumjs-util'
 import { Transaction } from 'ethereumjs-tx'
 import Common from 'ethereumjs-common'
 import { chains as BaseChains } from 'ethereumjs-common/dist/chains'
@@ -35,18 +35,18 @@ export default class EthereumJsWalletProvider extends Provider {
   async signMessage (message) {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
-    const msgHash = ethUtil.hashPersonalMessage(Buffer.from(message))
+    const msgHash = hashPersonalMessage(Buffer.from(message))
 
-    const { v, r, s } = ethUtil.ecsign(msgHash, hdKey._privateKey)
+    const { v, r, s } = ecsign(msgHash, hdKey._privateKey)
 
-    return remove0x(ethUtil.toRpcSig(v, r, s))
+    return remove0x(toRpcSig(v, r, s))
   }
 
   async getAddresses () {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
-    const address = ethUtil.privateToAddress(hdKey._privateKey).toString('hex')
-    const publicKey = ethUtil.privateToPublic(hdKey._privateKey).toString('hex')
+    const address = privateToAddress(hdKey._privateKey).toString('hex')
+    const publicKey = privateToAddress(hdKey._privateKey).toString('hex')
     return [
       new Address({
         address,
