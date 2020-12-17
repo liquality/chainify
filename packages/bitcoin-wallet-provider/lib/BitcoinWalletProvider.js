@@ -271,6 +271,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
 
     const feePerBytePromise = this.getMethod('getFeePerByte')()
     let feePerByte = _feePerByte || false
+    let utxos = []
 
     while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
       let addrList = []
@@ -289,17 +290,16 @@ export default superclass => class BitcoinWalletProvider extends superclass {
         addrList = addrList.concat(nonChangeAddresses)
       }
 
-      let utxos
-      if (sweep === false || fixedInputs.length === 0) {
-        utxos = await this.getMethod('getUnspentTransactions')(addrList)
-        utxos = utxos.map(utxo => {
+      if (!sweep || fixedInputs.length === 0) {
+        const _utxos = await this.getMethod('getUnspentTransactions')(addrList)
+        utxos.push(..._utxos.map(utxo => {
           const addr = addrList.find(a => a.equals(utxo.address))
           return {
             ...utxo,
             value: BigNumber(utxo.amount).times(1e8).toNumber(),
             derivationPath: addr.derivationPath
           }
-        })
+        }))
       } else {
         utxos = fixedInputs
       }
@@ -314,7 +314,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
         throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
       }
 
-      if (fixedInputs.length) {
+      if (fixedInputs.length > 0) {
         for (const input of fixedInputs) {
           const txHex = await this.getMethod('getRawTransactionByHash')(input.txid)
           const tx = decodeRawTransaction(txHex, this._network)
