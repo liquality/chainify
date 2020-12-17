@@ -28,7 +28,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
       'asc'
     )
 
-    if (!tx) throw new TxNotFoundError(`Funding transaction is not available for ${initiationTxHash}`)
+    if (!tx) throw new TxNotFoundError(`Funding transaction is not available: ${initiationTxHash}`)
 
     return tx
   }
