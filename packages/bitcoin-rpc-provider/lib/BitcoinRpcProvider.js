@@ -13,6 +13,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
     super(uri, username, password)
     this._numberOfBlockConfirmation = numberOfBlockConfirmation
     this._defaultFeePerByte = defaultFeePerByte
+    this._usedAddressCache = {}
   }
 
   async decodeRawTransaction (rawTransaction) {
@@ -79,9 +80,16 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async isAddressUsed (address) {
-    const amountReceived = await this.getReceivedByAddress(address)
+    address = addressToString(address)
 
-    return amountReceived > 0
+    if (this._usedAddressCache[address]) return true
+
+    const amountReceived = await this.getReceivedByAddress(address)
+    const isUsed = amountReceived > 0
+
+    if (isUsed) this._usedAddressCache[address] = true
+
+    return isUsed
   }
 
   async getBalance (addresses) {
@@ -104,13 +112,12 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
 
   async getAddressTransactionCounts (addresses) {
     const receivedAddresses = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
-    const transactionCountsArray = addresses.map(addr => {
+    return addresses.reduce((acc, addr) => {
       const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addressToString(addr))
       const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
-      return { [addressToString(addr)]: transactionCount }
+      acc[addressToString(addr)] = transactionCount
+      return acc
     })
-    const transactionCounts = Object.assign({}, ...transactionCountsArray)
-    return transactionCounts
   }
 
   async getReceivedByAddress (address) {

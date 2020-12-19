@@ -18,6 +18,11 @@ import { version } from '../package.json'
 const GAS_LIMIT_MULTIPLIER = 1.5
 
 export default class EthereumRpcProvider extends JsonRpcProvider {
+  constructor () {
+    super()
+    this._usedAddressCache = {}
+  }
+
   async rpc (method, ...params) {
     const result = await this.jsonrpc(method, ...params)
     return formatEthResponse(result)
@@ -182,10 +187,16 @@ export default class EthereumRpcProvider extends JsonRpcProvider {
   async isAddressUsed (address) {
     address = ensure0x(addressToString(address))
 
+    if (this._usedAddressCache[address]) return true
+
     let transactionCount = await this.rpc('eth_getTransactionCount', address, 'latest')
     transactionCount = parseInt(transactionCount, '16')
 
-    return transactionCount > 0
+    const isUsed = transactionCount > 0
+
+    if (isUsed) this._usedAddressCache[address] = true
+
+    return isUsed
   }
 
   async getCode (address, block) {

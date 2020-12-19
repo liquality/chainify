@@ -19,6 +19,7 @@ export default class BitcoinEsploraApiProvider extends NodeProvider {
     this._network = network
     this._numberOfBlockConfirmation = numberOfBlockConfirmation
     this._defaultFeePerByte = defaultFeePerByte
+    this._usedAddressCache = {}
   }
 
   async getFeePerByte (numberOfBlocks = this._numberOfBlockConfirmation) {
@@ -40,9 +41,16 @@ export default class BitcoinEsploraApiProvider extends NodeProvider {
   }
 
   async isAddressUsed (address) {
-    const amountReceived = await this.getReceivedByAddress(address)
+    address = addressToString(address)
 
-    return amountReceived > 0
+    if (this._usedAddressCache[address]) return true
+
+    const amountReceived = await this.getReceivedByAddress(address)
+    const isUsed = amountReceived > 0
+
+    if (isUsed) this._usedAddressCache[address] = true
+
+    return isUsed
   }
 
   async getBalance (addresses) {
