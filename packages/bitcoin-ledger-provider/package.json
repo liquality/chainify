@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@ledgerhq/hw-app-btc": "^4.68.2",
+    "@ledgerhq/hw-app-btc": "^5.36.0",
     "@liquality/bitcoin-networks": "^0.8.7",
     "@liquality/bitcoin-utils": "^0.8.7",
     "@liquality/bitcoin-wallet-provider": "^0.8.7",
