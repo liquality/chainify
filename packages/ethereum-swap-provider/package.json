@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-swap-provider",
   "umdName": "EthereumSwapProvider",
   "umdExport": "default",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/crypto": "^0.8.7",
-    "@liquality/errors": "^0.8.7",
-    "@liquality/ethereum-utils": "^0.8.7",
-    "@liquality/provider": "^0.8.7",
-    "@liquality/utils": "^0.8.7"
+    "@liquality/crypto": "^0.8.8",
+    "@liquality/errors": "^0.8.8",
+    "@liquality/ethereum-utils": "^0.8.8",
+    "@liquality/provider": "^0.8.8",
+    "@liquality/utils": "^0.8.8"
   },
   "engines": {
     "node": "~8.12.0"
