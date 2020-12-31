@@ -2,7 +2,7 @@
   "name": "@liquality/wallet-provider",
   "umdName": "WalletProvider",
   "umdExport": "default",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,8 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^0.8.7",
-    "@liquality/provider": "^0.8.7",
+    "@liquality/errors": "^0.8.8",
+    "@liquality/provider": "^0.8.8",
     "lodash": "^4.17.20"
   },
   "engines": {
