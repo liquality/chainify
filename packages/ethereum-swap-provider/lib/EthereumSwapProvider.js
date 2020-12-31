@@ -110,7 +110,7 @@ export default class EthereumSwapProvider extends Provider {
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    return transaction._raw.input === data && transaction._raw.value === value
+    return transaction._raw.to === null && transaction._raw.input === data && transaction._raw.value === value
   }
 
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
@@ -134,7 +134,9 @@ export default class EthereumSwapProvider extends Provider {
       expiration
     )
 
-    return transactionMatchesSwapParams && initiationTransactionReceipt.status === '1'
+    return transactionMatchesSwapParams &&
+           initiationTransactionReceipt.contractAddress &&
+           initiationTransactionReceipt.status === '1'
   }
 
   async findSwapTransaction (blockNumber, predicate) {
