@@ -5,7 +5,9 @@ import { remove0x } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
   TxNotFoundError,
-  BlockNotFoundError
+  BlockNotFoundError,
+  InvalidSecretError,
+  InvalidAddressError
 } from '@liquality/errors'
 
 import { version } from '../package.json'
@@ -15,8 +17,22 @@ const SOL_REFUND_FUNCTION = '0x590e1ae3' // refund()
 
 export default class EthereumErc20SwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
+    if (secretHash.length !== 64) throw new Error('Invalid Secret Size')
+
     recipientAddress = remove0x(addressToString(recipientAddress))
     refundAddress = remove0x(addressToString(refundAddress))
+
+    if (Buffer.byteLength(recipientAddress, 'hex') !== 20) {
+      throw new InvalidAddressError(`Invalid recipient address: ${recipientAddress}`)
+    }
+
+    if (Buffer.byteLength(refundAddress, 'hex') !== 20) {
+      throw new InvalidAddressError(`Invalid refund address: ${refundAddress}`)
+    }
+
+    if (Buffer.byteLength(secretHash, 'hex') !== 32) {
+      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
+    }
 
     const tokenAddress = remove0x(this.getMethod('getContractAddress')())
     const expirationEncoded = padHexStart(expiration.toString(16), 64)

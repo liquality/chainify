@@ -7,6 +7,9 @@ import {
 } from '@liquality/bitcoin-utils'
 import { addressToString } from '@liquality/utils'
 import networks from '@liquality/bitcoin-networks'
+import {
+  InvalidSecretError
+} from '@liquality/errors'
 
 import * as bitcoin from 'bitcoinjs-lib'
 import * as classify from 'bitcoinjs-lib/src/classify'
@@ -41,6 +44,11 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   getSwapOutput (recipientAddress, refundAddress, secretHash, nLockTime) {
+    const secretHashBuff = Buffer.from(secretHash, 'hex')
+    if (secretHashBuff.length !== 32) {
+      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
+    }
+
     const recipientPubKeyHash = this.getPubKeyHash(recipientAddress)
     const refundPubKeyHash = this.getPubKeyHash(refundAddress)
     const OPS = bitcoin.script.OPS
@@ -51,7 +59,7 @@ export default class BitcoinSwapProvider extends Provider {
       bitcoin.script.number.encode(32),
       OPS.OP_EQUALVERIFY,
       OPS.OP_SHA256,
-      Buffer.from(secretHash, 'hex'),
+      secretHashBuff,
       OPS.OP_EQUALVERIFY,
       OPS.OP_DUP,
       OPS.OP_HASH160,

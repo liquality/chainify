@@ -22,5 +22,7 @@ export const BlockNotFoundError = createError('BlockNotFoundError')
 export const InvalidDestinationAddressError = createError('InvalidDestinationAddressError')
 export const WalletError = createError('WalletError')
 export const NodeError = createError('NodeError')
+export const InvalidSecretError = createError('InvalidSecretError')
+export const InvalidAddressError = createError('InvalidAddressError')
 
 export const version = v

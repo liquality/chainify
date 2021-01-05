@@ -5,7 +5,9 @@ import { remove0x } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
   TxNotFoundError,
-  BlockNotFoundError
+  BlockNotFoundError,
+  InvalidSecretError,
+  InvalidAddressError
 } from '@liquality/errors'
 
 import { version } from '../package.json'
@@ -14,6 +16,18 @@ export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
     recipientAddress = remove0x(addressToString(recipientAddress))
     refundAddress = remove0x(addressToString(refundAddress))
+
+    if (Buffer.byteLength(recipientAddress, 'hex') !== 20) {
+      throw new InvalidAddressError(`Invalid recipient address: ${recipientAddress}`)
+    }
+
+    if (Buffer.byteLength(refundAddress, 'hex') !== 20) {
+      throw new InvalidAddressError(`Invalid refund address: ${refundAddress}`)
+    }
+
+    if (Buffer.byteLength(secretHash, 'hex') !== 32) {
+      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
+    }
 
     const dataSizeBase = 112
     const redeemDestinationBase = 66
