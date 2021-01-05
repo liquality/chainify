@@ -84,7 +84,7 @@ export default class EthereumErc20SwapProvider extends Provider {
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
     const data = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    return transaction._raw.input === data
+    return transaction._raw.to === null && transaction._raw.input === data
   }
 
   doesTransactionMatchClaim (transaction, initiationTransactionReceipt, recipientAddress, refundAddress, secretHash, expiration) {
@@ -125,6 +125,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     const balanceMatchValue = await this.doesBalanceMatchValue(initiationTransactionReceipt.contractAddress, value)
 
     return transactionMatchesSwapParams &&
+           initiationTransactionReceipt.contractAddress &&
            initiationTransactionReceipt.status === '1' &&
            balanceMatchValue
   }
