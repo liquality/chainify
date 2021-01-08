@@ -18,8 +18,8 @@ import { version } from '../package.json'
 const GAS_LIMIT_MULTIPLIER = 1.5
 
 export default class EthereumRpcProvider extends JsonRpcProvider {
-  constructor () {
-    super()
+  constructor (uri, username, password) {
+    super(uri, username, password)
     this._usedAddressCache = {}
   }
 
