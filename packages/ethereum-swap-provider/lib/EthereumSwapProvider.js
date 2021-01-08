@@ -7,7 +7,8 @@ import {
   TxNotFoundError,
   BlockNotFoundError,
   InvalidSecretError,
-  InvalidAddressError
+  InvalidAddressError,
+  InvalidExpirationError
 } from '@liquality/errors'
 
 import { version } from '../package.json'
