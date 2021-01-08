@@ -153,7 +153,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
 
   getAmountBuffer (amount) {
     let hexAmount = BigNumber(Math.round(amount)).toString(16)
-    hexAmount = padHexStart(hexAmount, 16)
+    hexAmount = padHexStart(hexAmount, 8)
     const valueBuffer = Buffer.from(hexAmount, 'hex')
     return valueBuffer.reverse()
   }

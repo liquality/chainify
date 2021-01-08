@@ -72,15 +72,15 @@ function ripemd160 (message) {
 /**
  * Pad a hex string with '0'
  * @param {string} hex - The hex string to pad.
- * @param {number} [length] - The length of the final string.
+ * @param {number} [length] - The length of the final string in bytes
  * @return Returns a padded string with length greater or equal to the given length
  *  rounded up to the nearest even number.
  */
-function padHexStart (hex, length) {
-  let len = length || hex.length
-  len += len % 2
+function padHexStart (hex, lengthBytes) {
+  let lengthString = lengthBytes * 2 || hex.length
+  lengthString += lengthString % 2
 
-  return hex.padStart(len, '0')
+  return hex.padStart(lengthString, '0')
 }
 
 export {

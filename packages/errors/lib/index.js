@@ -24,5 +24,6 @@ export const WalletError = createError('WalletError')
 export const NodeError = createError('NodeError')
 export const InvalidSecretError = createError('InvalidSecretError')
 export const InvalidAddressError = createError('InvalidAddressError')
+export const InvalidExpirationError = createError('InvalidExpirationError')
 
 export const version = v

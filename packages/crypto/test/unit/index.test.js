@@ -56,10 +56,12 @@ describe('Crypto library', () => {
     })
 
     it('should return hex with 0-prefix if length is less than 2 ', () => {
-      expect(crypto.padHexStart('1', 2)).to.equal('01')
-      expect(crypto.padHexStart('12', 2)).to.equal('12')
-      expect(crypto.padHexStart('caab', 2)).to.equal('caab')
-      expect(crypto.padHexStart('4c4951', 2)).to.equal('4c4951')
+      expect(crypto.padHexStart('1', 1)).to.equal('01')
+      expect(crypto.padHexStart('12', 1)).to.equal('12')
+      expect(crypto.padHexStart('caab', 1)).to.equal('caab')
+      expect(crypto.padHexStart('4c4951', 1)).to.equal('4c4951')
+      expect(crypto.padHexStart('c4951', 3)).to.equal('0c4951')
+      expect(crypto.padHexStart('4c4951', 16)).to.equal('000000000000000000000000004c4951')
     })
   })
 })

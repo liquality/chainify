@@ -43,8 +43,8 @@ function getAddressNetwork (address) {
   if (!networkKey) {
     const prefix = base58.decode(address).toString('hex').substring(0, 2)
     networkKey = findKey(networks, network => {
-      const pubKeyHashPrefix = padHexStart((network.pubKeyHash).toString(16), 2)
-      const scriptHashPrefix = padHexStart((network.scriptHash).toString(16), 2)
+      const pubKeyHashPrefix = padHexStart((network.pubKeyHash).toString(16), 1)
+      const scriptHashPrefix = padHexStart((network.scriptHash).toString(16), 1)
       return [pubKeyHashPrefix, scriptHashPrefix].includes(prefix)
     })
   }

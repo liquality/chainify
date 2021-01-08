@@ -7,7 +7,8 @@ import {
   TxNotFoundError,
   BlockNotFoundError,
   InvalidSecretError,
-  InvalidAddressError
+  InvalidAddressError,
+  InvalidExpirationError
 } from '@liquality/errors'
 
 import { version } from '../package.json'
@@ -34,8 +35,12 @@ export default class EthereumErc20SwapProvider extends Provider {
       throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
     }
 
+    const expirationEncoded = padHexStart(expiration.toString(16), 32)
+    if (Buffer.byteLength(expirationEncoded, 'hex') > 32) {
+      throw new InvalidExpirationError(`Invalid expiration: ${expiration}`)
+    }
+
     const tokenAddress = remove0x(this.getMethod('getContractAddress')())
-    const expirationEncoded = padHexStart(expiration.toString(16), 64)
 
     return [
       '6080604052600080546001600160a01b031990811673',

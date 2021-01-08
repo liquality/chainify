@@ -29,20 +29,17 @@ export default class EthereumSwapProvider extends Provider {
       throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
     }
 
-    const dataSizeBase = 112
-    const redeemDestinationBase = 66
-    const refundDestinationBase = 89
     const expirationHex = expiration.toString(16)
-    const expirationEncoded = padHexStart(expirationHex) // Pad with 0
-    const expirationSize = expirationEncoded.length / 2
-    const expirationPushOpcode = (0x60 - 1 + expirationSize).toString(16)
-    const redeemDestinationEncoded = (redeemDestinationBase + expirationSize).toString(16)
-    const refundDestinationEncoded = (refundDestinationBase + expirationSize).toString(16)
-    const dataSizeEncoded = (dataSizeBase + expirationSize).toString(16)
+    const expirationSize = 5
+    const expirationEncoded = padHexStart(expirationHex, expirationSize) // Pad with 0. string length
+
+    if (Buffer.byteLength(expirationEncoded, 'hex') > expirationSize) {
+      throw new InvalidExpirationError(`Invalid expiration: ${expiration}`)
+    }
 
     return [
       // Constructor
-      '60', dataSizeEncoded, // PUSH1 {dataSizeEncoded}
+      '60', '75', // PUSH1 {contractSize}
       '80', // DUP1
       '60', '0b', // PUSH1 0b
       '60', '00', // PUSH1 00
@@ -75,16 +72,15 @@ export default class EthereumSwapProvider extends Provider {
       '14', // EQ
       '16', // AND (to make sure CALL succeeded)
       // Redeem if secret is valid
-      '60', redeemDestinationEncoded, // PUSH1 {redeemDestinationEncoded}
+      '60', '47', // PUSH1 {redeemDestination}
       '57', // JUMPI
 
       // Check time lock
-      expirationPushOpcode, // PUSH{expirationSize}
-      expirationEncoded, // {expirationEncoded}
+      '64', expirationEncoded, // PUSH5 {expirationEncoded}
       '42', // TIMESTAMP
       '11', // GT
       // Refund if timelock passed
-      '60', refundDestinationEncoded, // PUSH1 {refundDestinationEncoded}
+      '60', '5e', // PUSH1 {refundDestination}
       '57',
 
       'fe', // INVALID

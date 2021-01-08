@@ -23,8 +23,8 @@ export default class EthereumErc20Provider extends Provider {
   generateErc20Transfer (to, value) {
     value = BigNumber(value).toString(16)
 
-    const encodedAddress = padHexStart(remove0x(addressToString(to)), 64)
-    const encodedValue = padHexStart(value, 64)
+    const encodedAddress = padHexStart(remove0x(addressToString(to)), 32)
+    const encodedValue = padHexStart(value, 32)
 
     return [
       remove0x(SOL_TRANSFER_FUNCTION),
@@ -75,7 +75,7 @@ export default class EthereumErc20Provider extends Provider {
         {
           data: [
             SOL_BALACE_OF_FUNCTION,
-            padHexStart(remove0x(address), 64)
+            padHexStart(remove0x(address), 32)
           ].join('').toLowerCase(),
           to: ensure0x(this._contractAddress).toLowerCase()
         },
