@@ -1,5 +1,5 @@
 import Provider from '@liquality/provider'
-import { padHexStart } from '@liquality/crypto'
+import { padHexStart, sha256 } from '@liquality/crypto'
 import { addressToString, caseInsensitiveEqual } from '@liquality/utils'
 import { remove0x } from '@liquality/ethereum-utils'
 import {
@@ -28,6 +28,10 @@ export default class EthereumSwapProvider extends Provider {
 
     if (Buffer.byteLength(secretHash, 'hex') !== 32) {
       throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
+    }
+
+    if (sha256('0000000000000000000000000000000000000000000000000000000000000000') === secretHash) {
+      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}. Secret 0 detected.`)
     }
 
     const expirationHex = expiration.toString(16)

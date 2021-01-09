@@ -57,10 +57,26 @@ describe('Ethereum ERC20 Swap provider', () => {
         .to.throw()
     })
 
-    it('should throw error when secret hash invalid', () => {
+    it('should throw error when secret hash longer than 32 bytes', () => {
       return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
         '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
         '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e13371337',
+        6016519))
+        .to.throw()
+    })
+
+    it('should throw error when secret hash shorter than 32 bytes', () => {
+      return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386',
+        6016519))
+        .to.throw()
+    })
+
+    it('should throw error when secret hash is hash of secret 0', () => {
+      return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925',
         6016519))
         .to.throw()
     })
