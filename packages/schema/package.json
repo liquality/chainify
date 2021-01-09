@@ -1,7 +1,7 @@
 {
   "name": "@liquality/schema",
   "umdName": "Schema",
-  "version": "0.8.10",
+  "version": "0.8.11",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
