@@ -117,7 +117,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
       const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
       acc[addressToString(addr)] = transactionCount
       return acc
-    })
+    }, {})
   }
 
   async getReceivedByAddress (address) {

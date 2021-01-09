@@ -299,7 +299,6 @@ describe('Transactions', function () {
     testBatchTransaction(chains.bitcoinWithNode)
     testSignPSBT(chains.bitcoinWithNode)
     testSignBatchP2SHTransaction(chains.bitcoinWithNode)
-    testSignBatchP2SHTransaction(chains.bitcoinWithNode)
   })
 
   describe('Bitcoin - Js', () => {
@@ -310,7 +309,6 @@ describe('Transactions', function () {
     testTransaction(chains.bitcoinWithJs)
     testBatchTransaction(chains.bitcoinWithJs)
     testSignPSBT(chains.bitcoinWithJs)
-    testSignBatchP2SHTransaction(chains.bitcoinWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs)
     testSweepTransaction(chains.bitcoinWithJs)
   })
