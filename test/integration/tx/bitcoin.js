@@ -70,16 +70,13 @@ function testSweepTransaction (chain) {
 function testSignPSBTSimple (chain) {
   it('should sign psbt a simple send', async () => {
     const network = chain.network
-    const value = config[chain.name].value
 
     const unusedAddressOne = await getNewAddress(chain)
-    const tx1 = await fundAddress(chain, unusedAddressOne.address, value)
+    const tx1 = await fundAddress(chain, unusedAddressOne.address, 2000000)
     const utxo1 = tx1._raw.vout.find(vout => unusedAddressOne.address === vout.scriptPubKey.addresses[0])
 
-    await mineBlock(chain)
-
     const unusedAddressTwo = await getNewAddress(chain)
-    const tx2 = await fundAddress(chain, unusedAddressTwo.address, value)
+    const tx2 = await fundAddress(chain, unusedAddressTwo.address, 1000000)
     const utxo2 = tx2._raw.vout.find(vout => unusedAddressTwo.address === vout.scriptPubKey.addresses[0])
 
     const psbt = new bitcoin.Psbt({ network })
@@ -91,7 +88,7 @@ function testSignPSBTSimple (chain) {
       sequence: 0,
       witnessUtxo: {
         script: Buffer.from(utxo1.scriptPubKey.hex, 'hex'),
-        value
+        value: 2000000
       }
     })
 
@@ -101,13 +98,13 @@ function testSignPSBTSimple (chain) {
       sequence: 0,
       witnessUtxo: {
         script: Buffer.from(utxo2.scriptPubKey.hex, 'hex'),
-        value
+        value: 1000000
       }
     })
 
     psbt.addOutput({
       address: addressToString(await getNewAddress(chain)),
-      value: (value * 2) - txfee
+      value: 3000000 - txfee
     })
 
     const signedPSBTHex = await chain.client.getMethod('signPSBT')(psbt.toBase64(), [
