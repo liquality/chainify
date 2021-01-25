@@ -135,12 +135,13 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
-  async signPSBT (data, input, address) {
+  // inputs consists of [{ index, derivationPath }]
+  async signPSBT (data, inputs) {
     const psbt = bitcoin.Psbt.fromBase64(data, { network: this._network })
-    const wallet = await this.getWalletAddress(address)
-    const keyPair = await this.keyPair(wallet.derivationPath)
-
-    psbt.signInput(input, keyPair)
+    for (const input of inputs) {
+      const keyPair = await this.keyPair(input.derivationPath)
+      psbt.signInput(input.index, keyPair)
+    }
     return psbt.toBase64()
   }
 

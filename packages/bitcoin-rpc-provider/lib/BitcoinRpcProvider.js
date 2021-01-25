@@ -3,7 +3,7 @@ import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 
-import { isArray, flatten, isString } from 'lodash'
+import { isArray, flatten } from 'lodash'
 import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
@@ -41,42 +41,6 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   async getMinRelayFee () {
     const { relayfee } = await this.jsonrpc('getnetworkinfo')
     return relayfee * 1e8 / 1000
-  }
-
-  async withTxFee (func, feePerByte) {
-    const feePerKB = BigNumber(feePerByte).div(1e8).times(1000).toNumber()
-    const originalTxFee = (await this.jsonrpc('getwalletinfo')).paytxfee
-    await this.jsonrpc('settxfee', feePerKB)
-
-    const result = await func()
-
-    await this.jsonrpc('settxfee', originalTxFee)
-
-    return result
-  }
-
-  async sendTransaction (to, value, data, feePerByte) {
-    to = addressToString(to)
-    value = BigNumber(value).dividedBy(1e8).toNumber()
-
-    const send = async () => {
-      const hash = await this.jsonrpc('sendtoaddress', to, value, '', '', false, true)
-      const transaction = await this.jsonrpc('gettransaction', hash, true)
-      const fee = BigNumber(transaction.fee).abs().times(1e8).toNumber()
-      return normalizeTransactionObject(decodeRawTransaction(transaction.hex), fee)
-    }
-
-    return feePerByte ? this.withTxFee(send, feePerByte) : send()
-  }
-
-  async updateTransactionFee (tx, newFeePerByte) {
-    const txHash = isString(tx) ? tx : tx.hash
-    return this.withTxFee(async () => {
-      const result = await this.jsonrpc('bumpfee', txHash)
-      const transaction = await this.jsonrpc('gettransaction', result.txid, true)
-      const fee = BigNumber(transaction.fee).abs().times(1e8).toNumber()
-      return normalizeTransactionObject(decodeRawTransaction(transaction.hex), fee)
-    }, newFeePerByte)
   }
 
   async isAddressUsed (address) {
@@ -135,8 +99,15 @@ export default class BitcoinRpcProvider extends JsonRpcProvider {
   }
 
   async generateBlock (numberOfBlocks) {
-    const newAddress = await this.jsonrpc('getnewaddress')
-    return this.jsonrpc('generatetoaddress', numberOfBlocks, newAddress)
+    const miningAddressLabel = 'miningAddress'
+    let address
+    try { // Avoid creating 100s of addresses for mining
+      const labelAddresses = await this._rpc.jsonrpc('getaddressesbylabel', miningAddressLabel)
+      address = Object.keys(labelAddresses)[0]
+    } catch (e) { // Label does not exist
+      address = await this.jsonrpc('getnewaddress', miningAddressLabel)
+    }
+    return this.jsonrpc('generatetoaddress', numberOfBlocks, address)
   }
 
   async getBlockByHash (blockHash, includeTx = false) {

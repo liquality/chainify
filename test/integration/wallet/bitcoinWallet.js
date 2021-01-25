@@ -83,9 +83,10 @@ function testWallet (chain) {
 
   describe('getUnusedAddress', () => {
     it('should return next derivation path address', async () => {
-      const { index: firstIndex, address: firstAddress } = await chain.client.wallet.getUnusedAddress()
+      const firstAddress = await chain.client.wallet.getUnusedAddress()
+      const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop())
 
-      await fundAddress(chain, firstAddress)
+      await fundAddress(chain, firstAddress.address)
 
       const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress()
 
@@ -100,7 +101,9 @@ function testWallet (chain) {
 
     it('should return next derivation path change address', async () => {
       const change = true
-      const { address: firstAddress, index: firstIndex } = await chain.client.wallet.getUnusedAddress(change)
+      const firstAddress = await chain.client.wallet.getUnusedAddress(change)
+      const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop())
+
       await fundAddress(chain, firstAddress)
 
       const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress(change)

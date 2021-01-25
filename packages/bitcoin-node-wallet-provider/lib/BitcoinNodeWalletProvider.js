@@ -1,12 +1,12 @@
+import * as bitcoin from 'bitcoinjs-lib'
+import { uniq, flatten, isString } from 'lodash'
+import BigNumber from 'bignumber.js'
 import WalletProvider from '@liquality/wallet-provider'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import BitcoinNetworks from '@liquality/bitcoin-networks'
-import { AddressTypes } from '@liquality/bitcoin-utils'
+import { AddressTypes, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { sha256 } from '@liquality/crypto'
 import { Address, addressToString } from '@liquality/utils'
-
-import * as bitcoin from 'bitcoinjs-lib'
-import { uniq, flatten } from 'lodash'
 
 import { version } from '../package.json'
 
@@ -25,6 +25,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     this._addressType = addressType
     this._network = network
     this._rpc = new JsonRpcProvider(uri, username, password)
+    this._addressInfoCache = {}
   }
 
   async signMessage (message, from) {
@@ -32,12 +33,54 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return this._rpc.jsonrpc('signmessage', from, message).then(result => Buffer.from(result, 'base64').toString('hex'))
   }
 
-  async signPSBT (data, input, address) {
-    const psbt = bitcoin.Psbt.fromBase64(data, { network: this._network })
-    const wif = await this.dumpPrivKey(address)
-    const keyPair = bitcoin.ECPair.fromWIF(wif, this._network)
+  async withTxFee (func, feePerByte) {
+    const feePerKB = BigNumber(feePerByte).div(1e8).times(1000).toNumber()
+    const originalTxFee = (await this._rpc.jsonrpc('getwalletinfo')).paytxfee
+    await this._rpc.jsonrpc('settxfee', feePerKB)
 
-    psbt.signInput(input, keyPair)
+    const result = await func()
+
+    await this._rpc.jsonrpc('settxfee', originalTxFee)
+
+    return result
+  }
+
+  async sendTransaction (to, value, data, feePerByte) {
+    to = addressToString(to)
+    value = BigNumber(value).dividedBy(1e8).toNumber()
+
+    const send = async () => {
+      const hash = await this._rpc.jsonrpc('sendtoaddress', to, value, '', '', false, true)
+      const transaction = await this._rpc.jsonrpc('gettransaction', hash, true)
+      const fee = BigNumber(transaction.fee).abs().times(1e8).toNumber()
+      return normalizeTransactionObject(decodeRawTransaction(transaction.hex, this._network), fee)
+    }
+
+    return feePerByte ? this.withTxFee(send, feePerByte) : send()
+  }
+
+  async updateTransactionFee (tx, newFeePerByte) {
+    const txHash = isString(tx) ? tx : tx.hash
+    return this.withTxFee(async () => {
+      const result = await this._rpc.jsonrpc('bumpfee', txHash)
+      const transaction = await this._rpc.jsonrpc('gettransaction', result.txid, true)
+      const fee = BigNumber(transaction.fee).abs().times(1e8).toNumber()
+      return normalizeTransactionObject(decodeRawTransaction(transaction.hex, this._network), fee)
+    }, newFeePerByte)
+  }
+
+  // inputs consists of [{ index, derivationPath }]
+  async signPSBT (data, inputs) {
+    const psbt = bitcoin.Psbt.fromBase64(data, { network: this._network })
+
+    for (const input of inputs) {
+      const usedAddresses = await this.getUsedAddresses()
+      const address = usedAddresses.find(address => address.derivationPath === input.derivationPath)
+      const wif = await this.dumpPrivKey(addressToString(address))
+      const keyPair = bitcoin.ECPair.fromWIF(wif, this._network)
+      psbt.signInput(input.index, keyPair)
+    }
+
     return psbt.toBase64()
   }
 
@@ -77,7 +120,27 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
     if (!newAddress) return null
 
-    return new Address(newAddress)
+    const addressInfo = await this.getAddressInfo(newAddress)
+
+    return new Address(addressInfo)
+  }
+
+  async getAddressInfo (address) {
+    if (address in this._addressInfoCache) {
+      return this._addressInfoCache[address]
+    }
+
+    const addressInfo = await this._rpc.jsonrpc('getaddressinfo', address)
+
+    let publicKey, derivationPath
+
+    if (!addressInfo.iswatchonly) {
+      publicKey = Buffer.from(addressInfo.pubkey, 'hex')
+      derivationPath = addressInfo.hdkeypath
+    }
+    const infoObject = { address, publicKey, derivationPath }
+    this._addressInfoCache[address] = infoObject
+    return infoObject
   }
 
   async getAddresses () {
@@ -90,25 +153,35 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   async getUsedAddresses () {
     const usedAddresses = await this._rpc.jsonrpc('listaddressgroupings')
-    const emptyAddresses = await this._rpc.jsonrpc('listreceivedbyaddress', 0, true)
+    const emptyAddresses = await this._rpc.jsonrpc('listreceivedbyaddress', 0, true, false)
 
-    const addrs = [
+    const addrs = uniq([
       ...flatten(usedAddresses).map(addr => addr[0]),
       ...emptyAddresses.map(a => a.address)
-    ]
+    ])
 
-    return uniq(addrs).map(addr => new Address({ address: addr }))
+    const getAddress = async (address) => {
+      const addressInfo = await this.getAddressInfo(address)
+      return new Address(addressInfo)
+    }
+
+    const addressObjects = await Promise.all(addrs.map(address => getAddress(address)))
+
+    return addressObjects
   }
 
   async getWalletAddress (address) {
-    const wif = await this.dumpPrivKey(address)
-    const wallet = bitcoin.ECPair.fromWIF(wif, this._network)
-    return new Address(address, null, wallet.publicKey, null)
+    const addressInfo = await this.getAddressInfo(address)
+    return new Address(addressInfo)
   }
 
   async isWalletAvailable () {
-    const newAddress = await this.getNewAddress()
-    return !!newAddress
+    try {
+      await this.this._rpc.jsonrpc('getwalletinfo')
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
   async getConnectedNetwork () {

@@ -28,7 +28,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     this._baseDerivationPath = baseDerivationPath
     this._network = network
     this._addressType = addressType
-    this._addressesCache = {}
+    this._derivationCache = {}
   }
 
   async buildTransaction (to, value, data, feePerByte) {
@@ -138,10 +138,27 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     await this.getMethod('importAddresses')(all)
   }
 
-  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
-    if (numAddresses < 1) { throw new Error('You must return at least one address') }
+  async getDerivationPathAddress (path) {
+    if (path in this._derivationCache) {
+      return this._derivationCache[path]
+    }
 
     const baseDerivationNode = await this.baseDerivationNode()
+    const subPath = path.replace(this._baseDerivationPath + '/', '')
+    const publicKey = baseDerivationNode.derivePath(subPath).publicKey
+    const address = this.getAddressFromPublicKey(publicKey)
+    const addressObject = new Address({
+      address,
+      publicKey,
+      derivationPath: path
+    })
+
+    this._derivationCache[path] = addressObject
+    return addressObject
+  }
+
+  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    if (numAddresses < 1) { throw new Error('You must return at least one address') }
 
     const addresses = []
     const lastIndex = startingIndex + numAddresses
@@ -150,22 +167,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const subPath = changeVal + '/' + currentIndex
       const path = this._baseDerivationPath + '/' + subPath
-
-      if (path in this._addressesCache) {
-        addresses.push(this._addressesCache[path])
-        continue
-      }
-
-      const publicKey = baseDerivationNode.derivePath(subPath).publicKey
-      const address = this.getAddressFromPublicKey(publicKey)
-      const addressObject = new Address({
-        address,
-        publicKey,
-        derivationPath: path,
-        index: currentIndex
-      })
-
-      this._addressesCache[path] = addressObject
+      const addressObject = await this.getDerivationPathAddress(path)
       addresses.push(addressObject)
 
       await asyncSetImmediate()

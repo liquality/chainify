@@ -50,13 +50,6 @@ describe('Bitcoin RPC provider', () => {
     })
   })
 
-  describe('sendTransaction', () => {
-    it('should return transaction', async () => {
-      const tx = await provider.sendTransaction('2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23', 1000)
-      expect(tx.hash).to.equal('8d2ef62766cb1c15744228335483d37a7addc2a2f88d47413527e55e212ef8cd')
-    })
-  })
-
   describe('decodeRawTransaction', () => {
     it('should return decoded transaction', async () => {
       const tx = await provider.decodeRawTransaction('01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000')

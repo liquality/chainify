@@ -51,7 +51,7 @@ chai.use(chaiAsPromised)
 
 const CONSTANTS = {
   BITCOIN_FEE_PER_BYTE: 3,
-  BITCOIN_ADDRESS_DEFAULT_BALANCE: 50 * 1e8,
+  BITCOIN_ADDRESS_DEFAULT_BALANCE: 10 * 1e8,
   ETHEREUM_ADDRESS_DEFAULT_BALANCE: 10 * 1e18,
   ETHEREUM_NON_EXISTING_CONTRACT: '0000000000000000000000000000000000000000',
   GWEI: 1e9
@@ -157,13 +157,15 @@ async function importBitcoinAddresses (chain) {
   return chain.client.getMethod('importAddresses')()
 }
 
-async function fundAddress (chain, address) {
+async function fundAddress (chain, address, value = null) {
+  let tx
   if (chain.name === 'bitcoin') {
-    await chains.bitcoinWithNode.client.chain.sendTransaction(address, CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE)
+    tx = await chains.bitcoinWithNode.client.chain.sendTransaction(address, value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE)
   } else if (chain.name === 'ethereum') {
-    await chains.ethereumWithNode.client.chain.sendTransaction(address, CONSTANTS.ETHEREUM_ADDRESS_DEFAULT_BALANCE)
+    tx = await chains.ethereumWithNode.client.chain.sendTransaction(address, value || CONSTANTS.ETHEREUM_ADDRESS_DEFAULT_BALANCE)
   }
   await mineBlock(chain)
+  return tx
 }
 
 async function fundWallet (chain) {

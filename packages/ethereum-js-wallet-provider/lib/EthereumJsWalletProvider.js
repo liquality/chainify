@@ -51,8 +51,7 @@ export default class EthereumJsWalletProvider extends Provider {
       new Address({
         address,
         derivationPath,
-        publicKey,
-        index: 0
+        publicKey
       })
     ]
   }

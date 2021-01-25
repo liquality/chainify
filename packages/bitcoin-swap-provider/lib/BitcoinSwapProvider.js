@@ -192,12 +192,12 @@ export default class BitcoinSwapProvider extends Provider {
     psbt.addInput(input)
     psbt.addOutput(output)
 
-    const signedPSBTHex = await this.getMethod('signPSBT')(psbt.toBase64(), 0, address)
+    const walletAddress = await this.getMethod('getWalletAddress')(address)
+    const signedPSBTHex = await this.getMethod('signPSBT')(psbt.toBase64(), [{ index: 0, derivationPath: walletAddress.derivationPath }])
     const signedPSBT = bitcoin.Psbt.fromBase64(signedPSBTHex, { network })
 
     const sig = signedPSBT.data.inputs[0].partialSig[0].signature
 
-    const walletAddress = await this.getMethod('getWalletAddress')(address)
     const swapInput = this.getSwapInput(sig, walletAddress.publicKey, isClaim, secret)
     const paymentParams = { redeem: { output: swapOutput, input: swapInput, network }, network }
     const paymentWithInput = isSegwit
