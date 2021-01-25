@@ -99,8 +99,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
         outputs: psbt.txOutputs.map(output => ({ script: output.script, amount: this.getAmountBuffer(output.value) }))
       }).toString('hex')
       const isSegwit = ['bech32', 'p2sh-segwit'].includes(this._addressType)
-      const changeAddresses = await this.getAddresses(0, 500, true)
-      const changeAddress = changeAddresses.find(address => psbt.txOutputs.map(output => output.address).includes(addressToString(address)))
+      const changeAddress = await this.findAddress(psbt.txOutputs.map(output => output.address), true)
 
       const txHex = await app.createPaymentTransactionNew({
         inputs: ledgerInputs,
