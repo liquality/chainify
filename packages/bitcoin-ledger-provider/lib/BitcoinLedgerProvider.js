@@ -94,23 +94,18 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       }
 
       const inputDetails = await Promise.all(psbt.txInputs.map(getInputDetails))
-
       const paths = inputDetails.map(i => i.derivationPath)
-
       const outputScriptHex = app.serializeTransactionOutputs({
         outputs: psbt.txOutputs.map(output => ({ script: output.script, amount: this.getAmountBuffer(output.value) }))
       }).toString('hex')
-
       const isSegwit = ['bech32', 'p2sh-segwit'].includes(this._addressType)
-
       const changeAddresses = await this.getAddresses(0, 500, true)
-
       const changeAddress = changeAddresses.find(address => psbt.txOutputs.map(output => output.address).includes(addressToString(address)))
 
       const txHex = await app.createPaymentTransactionNew({
         inputs: ledgerInputs,
         associatedKeysets: paths,
-        changePath: changeAddress ? changeAddress.derivationPath : undefined, // Find the change address - get all change addresses (faster) - or scan chain for unused change addresses
+        changePath: changeAddress && changeAddress.derivationPath,
         outputScriptHex,
         segwit: isSegwit,
         useTrustedInputForSegwit: isSegwit,
