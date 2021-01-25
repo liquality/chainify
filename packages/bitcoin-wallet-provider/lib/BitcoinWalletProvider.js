@@ -92,8 +92,8 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     const addressesPerCall = 50
     let index = 0
     while (index < maxAddresses) {
-      const walletAddresses = (await this.getAddresses(index, addressesPerCall, change))
-      const walletAddress = walletAddresses.find(a => addresses.includes(a.address))
+      const walletAddresses = await this.getAddresses(index, addressesPerCall, change)
+      const walletAddress = walletAddresses.find(walletAddr => addresses.find(addr => walletAddr.equals(addr)))
       if (walletAddress) return walletAddress
       index += addressesPerCall
     }
@@ -102,7 +102,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
   async getWalletAddress (address) {
     const externalAddress = await this.findAddress([address], false)
     if (externalAddress) return externalAddress
-    const changeAddress = this.findAddress([address], true)
+    const changeAddress = await this.findAddress([address], true)
     if (changeAddress) return changeAddress
 
     throw new Error('Wallet does not contain address')
