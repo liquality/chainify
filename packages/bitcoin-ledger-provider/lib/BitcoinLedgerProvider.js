@@ -132,33 +132,40 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       return psbt.toBase64()
     }
 
+    const ledgerInputs = []
+    const walletAddresses = []
+    let isSegwit = false
+
     for (const input of inputs) {
       const walletAddress = await this.getDerivationPathAddress(input.derivationPath)
+      walletAddresses.push(walletAddress)
       const { witnessScript, redeemScript } = psbt.data.inputs[input.index]
       const { hash: inputHash, index: inputIndex } = psbt.txInputs[input.index]
-
-      const inputTxHex = await this.getMethod('getRawTransactionByHash')(inputHash.reverse().toString('hex'))
       const outputScript = witnessScript || redeemScript
-      const isSegwit = Boolean(witnessScript)
-
+      const inputTxHex = await this.getMethod('getRawTransactionByHash')(inputHash.reverse().toString('hex'))
       const ledgerInputTx = await app.splitTransaction(inputTxHex, true)
+      ledgerInputs.push([ledgerInputTx, inputIndex, outputScript.toString('hex'), 0])
+      if (witnessScript) isSegwit = true
+    }
 
-      const ledgerTx = await app.splitTransaction(psbt.__CACHE.__TX.toHex(), true)
-      const ledgerOutputs = await app.serializeTransactionOutputs(ledgerTx)
+    const ledgerTx = await app.splitTransaction(psbt.__CACHE.__TX.toHex(), true)
+    const ledgerOutputs = await app.serializeTransactionOutputs(ledgerTx)
 
+    const ledgerSigs = await app.signP2SHTransaction({
+      inputs: ledgerInputs,
+      associatedKeysets: walletAddresses.map(address => address.derivationPath),
+      outputScriptHex: ledgerOutputs.toString('hex'),
+      lockTime: psbt.locktime,
+      segwit: isSegwit,
+      transactionVersion: 2
+    })
+
+    for (const input of inputs) {
       const signer = {
         network: this._network,
-        publicKey: walletAddress.publicKey,
+        publicKey: walletAddresses[input.index].publicKey,
         sign: async () => {
-          const ledgerSig = await app.signP2SHTransaction({
-            inputs: [[ledgerInputTx, inputIndex, outputScript.toString('hex'), 0]],
-            associatedKeysets: [walletAddress.derivationPath],
-            outputScriptHex: ledgerOutputs.toString('hex'),
-            lockTime: psbt.locktime,
-            segwit: isSegwit,
-            transactionVersion: 2
-          })
-          const finalSig = isSegwit ? ledgerSig[0] : ledgerSig[0] + '01' // Is this a ledger bug? Why non segwit signs need the sighash appended?
+          const finalSig = isSegwit ? ledgerSigs[input.index] : ledgerSigs[input.index] + '01' // Is this a ledger bug? Why non segwit signs need the sighash appended?
           const { signature } = bitcoin.script.signature.decode(Buffer.from(finalSig, 'hex'))
           return signature
         }
