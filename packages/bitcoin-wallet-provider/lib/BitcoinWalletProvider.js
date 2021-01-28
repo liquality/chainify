@@ -28,7 +28,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     this._baseDerivationPath = baseDerivationPath
     this._network = network
     this._addressType = addressType
-    this._addressesCache = {}
+    this._derivationCache = {}
   }
 
   async buildTransaction (to, value, data, feePerByte) {
@@ -68,14 +68,9 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     const transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
 
-    const addressesPerCall = 50
-    let changeOutput
-    let index = 0
-    while (index < 1000 && !changeOutput) {
-      const changeAddresses = (await this.getAddresses(index, addressesPerCall, true)).map(a => a.address)
-      changeOutput = transaction.vout.find(vout => changeAddresses.includes(vout.scriptPubKey.addresses[0]))
-      index += addressesPerCall
-    }
+    const lookupAddresses = transaction.vout.map(vout => vout.scriptPubKey.addresses[0])
+    const changeAddress = await this.findAddress(lookupAddresses, true)
+    const changeOutput = transaction.vout.find(vout => vout.scriptPubKey.addresses[0] === changeAddress.address)
 
     let outputs = transaction.vout
     if (changeOutput) {
@@ -91,26 +86,24 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
 
-  async getWalletAddress (address) {
-    let index = 0
-    let change = false
-
-    // A maximum number of addresses to lookup after which it is deemed
-    // that the wallet does not contain this address
+  async findAddress (addresses, change = false) {
+    // A maximum number of addresses to lookup after which it is deemed that the wallet does not contain this address
     const maxAddresses = 1000
     const addressesPerCall = 50
-
+    let index = 0
     while (index < maxAddresses) {
-      const addrs = await this.getAddresses(index, addressesPerCall, change)
-      const addr = addrs.find(addr => addr.equals(address))
-      if (addr) return addr
-
+      const walletAddresses = await this.getAddresses(index, addressesPerCall, change)
+      const walletAddress = walletAddresses.find(walletAddr => addresses.find(addr => walletAddr.equals(addr)))
+      if (walletAddress) return walletAddress
       index += addressesPerCall
-      if (index === maxAddresses && change === false) {
-        index = 0
-        change = true
-      }
     }
+  }
+
+  async getWalletAddress (address) {
+    const externalAddress = await this.findAddress([address], false)
+    if (externalAddress) return externalAddress
+    const changeAddress = await this.findAddress([address], true)
+    if (changeAddress) return changeAddress
 
     throw new Error('Wallet does not contain address')
   }
@@ -138,10 +131,27 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     await this.getMethod('importAddresses')(all)
   }
 
-  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
-    if (numAddresses < 1) { throw new Error('You must return at least one address') }
+  async getDerivationPathAddress (path) {
+    if (path in this._derivationCache) {
+      return this._derivationCache[path]
+    }
 
     const baseDerivationNode = await this.baseDerivationNode()
+    const subPath = path.replace(this._baseDerivationPath + '/', '')
+    const publicKey = baseDerivationNode.derivePath(subPath).publicKey
+    const address = this.getAddressFromPublicKey(publicKey)
+    const addressObject = new Address({
+      address,
+      publicKey,
+      derivationPath: path
+    })
+
+    this._derivationCache[path] = addressObject
+    return addressObject
+  }
+
+  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+    if (numAddresses < 1) { throw new Error('You must return at least one address') }
 
     const addresses = []
     const lastIndex = startingIndex + numAddresses
@@ -150,22 +160,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     for (let currentIndex = startingIndex; currentIndex < lastIndex; currentIndex++) {
       const subPath = changeVal + '/' + currentIndex
       const path = this._baseDerivationPath + '/' + subPath
-
-      if (path in this._addressesCache) {
-        addresses.push(this._addressesCache[path])
-        continue
-      }
-
-      const publicKey = baseDerivationNode.derivePath(subPath).publicKey
-      const address = this.getAddressFromPublicKey(publicKey)
-      const addressObject = new Address({
-        address,
-        publicKey,
-        derivationPath: path,
-        index: currentIndex
-      })
-
-      this._addressesCache[path] = addressObject
+      const addressObject = await this.getDerivationPathAddress(path)
       addresses.push(addressObject)
 
       await asyncSetImmediate()

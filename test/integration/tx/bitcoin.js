@@ -6,7 +6,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 import { hash160 } from '../../../packages/crypto/lib'
 import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
 import { addressToString } from '../../../packages/utils/lib'
-import { chains, importBitcoinAddresses, getNewAddress, getRandomBitcoinAddress, mineBlock, fundWallet, describeExternal } from '../common'
+import { chains, importBitcoinAddresses, getNewAddress, getRandomBitcoinAddress, mineBlock, fundWallet, fundAddress, describeExternal } from '../common'
 import { testTransaction } from './common'
 import config from '../config'
 
@@ -67,13 +67,73 @@ function testSweepTransaction (chain) {
   })
 }
 
-function testSignPSBT (chain) {
-  it('should redeem one P2SH', async () => {
+function testSignPSBTSimple (chain) {
+  it('should sign psbt a simple send', async () => {
+    const network = chain.network
+
+    const unusedAddressOne = await getNewAddress(chain)
+    const tx1 = await fundAddress(chain, unusedAddressOne.address, 2000000)
+    const utxo1 = tx1._raw.vout.find(vout => unusedAddressOne.address === vout.scriptPubKey.addresses[0])
+
+    const unusedAddressTwo = await getNewAddress(chain)
+    const tx2 = await fundAddress(chain, unusedAddressTwo.address, 1000000)
+    const utxo2 = tx2._raw.vout.find(vout => unusedAddressTwo.address === vout.scriptPubKey.addresses[0])
+
+    const psbt = new bitcoin.Psbt({ network })
+    const txfee = BitcoinUtils.calculateFee(1, 1, 5)
+
+    psbt.addInput({
+      hash: tx1.hash,
+      index: utxo1.n,
+      sequence: 0,
+      witnessUtxo: {
+        script: Buffer.from(utxo1.scriptPubKey.hex, 'hex'),
+        value: 2000000
+      }
+    })
+
+    psbt.addInput({
+      hash: tx2.hash,
+      index: utxo2.n,
+      sequence: 0,
+      witnessUtxo: {
+        script: Buffer.from(utxo2.scriptPubKey.hex, 'hex'),
+        value: 1000000
+      }
+    })
+
+    psbt.addOutput({
+      address: addressToString(await getNewAddress(chain)),
+      value: 3000000 - txfee
+    })
+
+    const signedPSBTHex = await chain.client.getMethod('signPSBT')(psbt.toBase64(), [
+      { index: 0, derivationPath: unusedAddressOne.derivationPath },
+      { index: 1, derivationPath: unusedAddressTwo.derivationPath }
+    ])
+    const signedPSBT = bitcoin.Psbt.fromBase64(signedPSBTHex, { network })
+    signedPSBT.finalizeAllInputs()
+
+    const hex = signedPSBT.extractTransaction().toHex()
+
+    const payment3TxHash = await chain.client.getMethod('sendRawTransaction')(hex)
+
+    await mineBlock(chain)
+
+    const payment3 = await chain.client.getMethod('getTransactionByHash')(payment3TxHash)
+
+    expect(payment3._raw.vin.length).to.equal(2)
+    expect(payment3._raw.vout.length).to.equal(1)
+  })
+}
+
+function testSignPSBTScript (chain) {
+  it('should send p2sh and sign PSBT to redeem', async () => {
     const network = chain.network
     const value = config[chain.name].value
     const OPS = bitcoin.script.OPS
 
-    const { address: unusedAddressOne } = await getNewAddress(chain)
+    const { address: unusedAddressOne, derivationPath: unusedAddressOneDerivationPath } = await getNewAddress(chain)
     await chain.client.chain.sendTransaction(unusedAddressOne, value)
     await mineBlock(chain)
 
@@ -133,7 +193,7 @@ function testSignPSBT (chain) {
     psbt.addInput(input)
     psbt.addOutput(output)
 
-    const signedPSBTHex = await chain.client.getMethod('signPSBT')(psbt.toBase64(), 0, unusedAddressOne)
+    const signedPSBTHex = await chain.client.getMethod('signPSBT')(psbt.toBase64(), [{ index: 0, derivationPath: unusedAddressOneDerivationPath }])
     const signedPSBT = bitcoin.Psbt.fromBase64(signedPSBTHex, { network })
     signedPSBT.finalizeInput(0)
 
@@ -290,14 +350,16 @@ describe('Transactions', function () {
     })
     testTransaction(chains.bitcoinWithLedger)
     testBatchTransaction(chains.bitcoinWithLedger)
-    testSignPSBT(chains.bitcoinWithLedger)
+    testSignPSBTSimple(chains.bitcoinWithLedger)
+    testSignPSBTScript(chains.bitcoinWithLedger)
     testSignBatchP2SHTransaction(chains.bitcoinWithLedger)
   })
 
   describe('Bitcoin - Node', () => {
     testTransaction(chains.bitcoinWithNode)
     testBatchTransaction(chains.bitcoinWithNode)
-    testSignPSBT(chains.bitcoinWithNode)
+    testSignPSBTSimple(chains.bitcoinWithNode)
+    testSignPSBTScript(chains.bitcoinWithNode)
     testSignBatchP2SHTransaction(chains.bitcoinWithNode)
   })
 
@@ -308,7 +370,8 @@ describe('Transactions', function () {
     })
     testTransaction(chains.bitcoinWithJs)
     testBatchTransaction(chains.bitcoinWithJs)
-    testSignPSBT(chains.bitcoinWithJs)
+    testSignPSBTSimple(chains.bitcoinWithJs)
+    testSignPSBTScript(chains.bitcoinWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs)
     testSweepTransaction(chains.bitcoinWithJs)
   })

@@ -5,17 +5,15 @@ function sleep (ms) {
 }
 
 class Address {
-  constructor (address, derivationPath, publicKey, index) {
+  constructor (address, derivationPath, publicKey) {
     if (address instanceof Address || typeof address !== 'string') {
       this._address = address.address
       this._derivationPath = address.derivationPath
       this._publicKey = address.publicKey
-      this._index = address.index
     } else {
       this._address = address
       this._derivationPath = derivationPath
       this._publicKey = publicKey
-      this._index = index
     }
   }
 
@@ -29,10 +27,6 @@ class Address {
 
   get publicKey () {
     return this._publicKey
-  }
-
-  get index () {
-    return this._index
   }
 
   toLocaleString () {
@@ -62,10 +56,6 @@ class Address {
 
     if (this._publicKey) {
       obj.publicKey = this._publicKey
-    }
-
-    if (this._index !== undefined && this._index !== null) {
-      obj.index = this._index
     }
 
     return obj
