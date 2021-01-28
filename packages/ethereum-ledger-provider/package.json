@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-ledger-provider",
   "umdName": "EthereumLedgerProvider",
   "umdExport": "default",
-  "version": "0.8.12",
+  "version": "0.8.13",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -20,10 +20,10 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@ledgerhq/hw-app-eth": "^5.37.0",
-    "@liquality/ethereum-networks": "^0.8.12",
-    "@liquality/ethereum-utils": "^0.8.12",
-    "@liquality/ledger-provider": "^0.8.12",
-    "@liquality/utils": "^0.8.12",
+    "@liquality/ethereum-networks": "^0.8.13",
+    "@liquality/ethereum-utils": "^0.8.13",
+    "@liquality/ledger-provider": "^0.8.13",
+    "@liquality/utils": "^0.8.13",
     "ethereumjs-tx": "^1.3.7"
   },
   "engines": {
