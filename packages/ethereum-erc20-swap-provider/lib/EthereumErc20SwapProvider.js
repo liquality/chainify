@@ -5,6 +5,7 @@ import { remove0x } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
   TxNotFoundError,
+  TxFailedError,
   BlockNotFoundError,
   InvalidSecretError,
   InvalidAddressError,
@@ -63,6 +64,10 @@ export default class EthereumErc20SwapProvider extends Provider {
 
     while (initiationTransactionReceipt === null) {
       initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(deployTx.hash)
+      const initiationSuccessful = initiationTransactionReceipt.contractAddress && initiationTransactionReceipt.status === '1'
+      if (!initiationSuccessful) {
+        throw new TxFailedError(`ERC20 Swap Initiation Transaction Failed: ${initiationTransactionReceipt.transactionHash}`)
+      }
       await sleep(5000)
     }
 
