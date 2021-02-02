@@ -19,7 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/provider": "^0.8.11"
+    "@liquality/provider": "^0.8.11",
+    "@liquality/utils": "^0.8.11",
+    "near-api-js": "^0.36.3",
+    "near-seed-phrase": "^0.1.0"
   },
   "engines": {
     "node": "~8.12.0"
