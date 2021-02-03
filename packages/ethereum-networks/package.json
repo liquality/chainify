@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-networks",
   "umdName": "EthereumNetworks",
   "umdExport": "default",
-  "version": "0.8.13",
+  "version": "0.8.14",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",

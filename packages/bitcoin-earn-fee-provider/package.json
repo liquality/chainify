@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-earn-fee-provider",
   "umdName": "BitcoinEarnFeeProvider",
   "umdExport": "default",
-  "version": "0.8.13",
+  "version": "0.8.14",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/node-provider": "^0.8.13"
+    "@liquality/node-provider": "^0.8.14"
   },
   "engines": {
     "node": "~8.12.0"
