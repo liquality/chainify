@@ -1,33 +1,63 @@
+import NodeProvider from '@liquality/node-provider'
+import { addressToString } from '@liquality/utils'
+
+import { providers, Account } from 'near-api-js'
 import { get, isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
-
 import { version } from '../package.json'
 
-export default class NearRpcProvider extends JsonRpcProvider {
-  constructor (uri) {
-    super(uri)
+export default class NearRpcProvider extends NodeProvider {
+  constructor (network) {
+    super({
+      baseURL: network.helperUrl,
+      responseType: 'text',
+      transformResponse: undefined
+    })
+    this._jsonRpc = new providers.JsonRpcProvider(network.nodeUrl)
+    this._network = network
     this._usedAddressCache = {}
   }
 
-  async rpc (method, params) {
-    const id = Date.now()
-    const req = { id, method, params, jsonrpc: '2.0' }
-    const data = await this.nodePost('', req)
-    return this._parseResponse(data)
-  }
-
   async sendRawTransaction (hash) {
-    return this.rpc('broadcast_tx_commit', [hash])
+    // base64
+    return this._jsonRpc.sendJsonRpc('broadcast_tx_commit', [hash])
+    // return this.sendJsonRpc('broadcast_tx_commit', [Buffer.from(bytes).toString('base64')]);
   }
 
-  async getBlockByHash (blockHash, includeTx) {}
+  async _getBlockById (blockId, includeTx) {
+    const block = await this._jsonRpc.block({ blockId })
 
-  async getBlockByNumber (blockNumber, includeTx) {}
+    if (includeTx) {
+      if (!block.transactions) {
+        if (isArray(block.chunks)) {
+          const chunks = await Promise.all(
+            block.chunks.map((c) => this._jsonRpc.chunk(c.chunk_hash))
+          )
+
+          const transactions = chunks.reduce((p, c) => {
+            p.push(...c.transactions)
+            return p
+          }, [])
+
+          return { ...block, transactions }
+        }
+      }
+    }
+
+    return block
+  }
+
+  async getBlockByHash (blockHash, includeTx) {
+    return this._getBlockById(blockHash, includeTx)
+  }
+
+  async getBlockByNumber (blockNumber, includeTx) {
+    return this._getBlockById(blockNumber, includeTx)
+  }
 
   async getBlockHeight () {
-    const result = await this.rpc('block', { finality: 'final' })
+    const result = await this._jsonRpc.block({ finality: 'final' })
     return get(result, 'header.height')
   }
 
@@ -36,7 +66,7 @@ export default class NearRpcProvider extends JsonRpcProvider {
   async getTransactionReceipt (txHash) {}
 
   async getGasPrice () {
-    const result = await this.rpc('gas_price', [null])
+    const result = await this._jsonRpc.sendJsonRpc('gas_price', [null])
     return get(result, 'gas_price')
   }
 
@@ -47,10 +77,10 @@ export default class NearRpcProvider extends JsonRpcProvider {
 
     const promiseBalances = await Promise.all(
       addresses.map((address) =>
-        this.rpc('query', {
+        this._jsonRpc.query({
           request_type: 'view_account',
           finality: 'final',
-          account_id: address
+          account_id: addressToString(address)
         })
       )
     )
@@ -72,8 +102,66 @@ export default class NearRpcProvider extends JsonRpcProvider {
   }
 
   async isAddressUsed (address) {
+    address = addressToString(address)
+
+    if (this._usedAddressCache[address]) {
+      return true
+    }
+
     const activity = await this.getMethod('getAccountActivity')(address)
-    return activity.length > 0
+    const isUsed = activity.length > 0
+
+    if (isUsed) {
+      this._usedAddressCache[address] = true
+    }
+
+    return isUsed
+  }
+
+  async getAccount (accountId) {
+    const signer = this.getMethod('getSigner')
+    return new Account(
+      {
+        networkId: this._network.networkId,
+        provider: this._jsonRpc,
+        signer
+      },
+      accountId
+    )
+  }
+
+  async getAccounts (publicKey, index) {
+    const accounts = await this.nodeGet(
+      `/publicKey/${publicKey.toString()}/accounts`
+    )
+
+    if (accounts[index]) {
+      return accounts[index]
+    }
+
+    throw new Error(`Account with index ${index} not found`)
+  }
+
+  async getAccountActivity (accountId, offset, limit = 10) {
+    return this.nodeGet(
+      `/account/${accountId}?offset=${offset}&limit=${limit}`
+    )
+  }
+
+  async createAccount (newAccountId, publicKey) {
+    try {
+      this._jsonRpc.query(
+        `account/${newAccountId}.${this._network.accountSuffix}`,
+        ''
+      )
+      throw new Error('Account already exists.')
+    } catch (e) {
+      // account does not exist and we can craete it.
+      return this.nodePost('/account', {
+        newAccountId,
+        newAccountPublicKey: publicKey.toString()
+      })
+    }
   }
 
   async assertContractExists (address) {}
