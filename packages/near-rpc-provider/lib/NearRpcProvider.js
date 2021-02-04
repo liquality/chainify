@@ -20,9 +20,7 @@ export default class NearRpcProvider extends NodeProvider {
   }
 
   async sendRawTransaction (hash) {
-    // base64
     return this._jsonRpc.sendJsonRpc('broadcast_tx_commit', [hash])
-    // return this.sendJsonRpc('broadcast_tx_commit', [Buffer.from(bytes).toString('base64')]);
   }
 
   async _getBlockById (blockId, includeTx) {
@@ -61,9 +59,16 @@ export default class NearRpcProvider extends NodeProvider {
     return get(result, 'header.height')
   }
 
-  async getTransactionByHash (txHash) {}
+  async getTransactionByHash (txHash, accoutnId) {
+    return this._jsonRpc.sendJsonRpc('tx', [txHash, accoutnId])
+  }
 
-  async getTransactionReceipt (txHash) {}
+  async getTransactionReceipt (txHash, accountId) {
+    return this._jsonRpc.sendJsonRpc('EXPERIMENTAL_tx_status', [
+      txHash,
+      accountId
+    ])
+  }
 
   async getGasPrice () {
     const result = await this._jsonRpc.sendJsonRpc('gas_price', [null])
@@ -163,8 +168,6 @@ export default class NearRpcProvider extends NodeProvider {
       })
     }
   }
-
-  async assertContractExists (address) {}
 }
 
 NearRpcProvider.version = version
