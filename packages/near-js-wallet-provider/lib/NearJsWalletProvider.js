@@ -2,6 +2,7 @@ import Provider from '@liquality/provider'
 import { Address } from '@liquality/utils'
 import { InMemorySigner, KeyPair } from 'near-api-js'
 import { InMemoryKeyStore } from 'near-api-js/lib/key_stores'
+import { transfer } from 'near-api-js/lib/transaction'
 import { parseSeedPhrase } from 'near-seed-phrase'
 
 import { version } from '../package.json'
@@ -37,13 +38,31 @@ export default class NearJsWalletProvider extends Provider {
     return this.getAddresses()
   }
 
-  async signMessage (message) {
-    return new InMemorySigner(this._keyStore).signMessage(Buffer.from(message))
+  getSigner () {
+    return new InMemorySigner(this._keyStore)
   }
 
-  async sendTransaction (to, value, data, _gasPrice) {}
+  async signMessage (message) {
+    return this.getSigner().signMessage(Buffer.from(message))
+  }
 
-  async sendSweepTransaction (address, _gasPrice) {}
+  async sendTransaction (to, value, _data, _gasPrice) {
+    const addresses = await this.getAddresses()
+    const from = await this.getMethod('getAccount')(
+      addresses[0].address,
+      this.getSigner()
+    )
+
+    const [, signedTx] = await from.signTransaction(to, [transfer(value)])
+    const rawSignedTx = signedTx.encode().toString('base64')
+    return this.getMethod('sendRawTransaction')(rawSignedTx)
+  }
+
+  async sendSweepTransaction (address, _gasPrice) {
+    // TODO: find a way to calculate the required amount
+    const value = 5
+    return this.sendTransaction(address, value)
+  }
 
   async isWalletAvailable () {
     const addresses = await this.getAddresses()
