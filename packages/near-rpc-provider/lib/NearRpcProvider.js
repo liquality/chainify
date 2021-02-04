@@ -17,6 +17,7 @@ export default class NearRpcProvider extends NodeProvider {
     this._jsonRpc = new providers.JsonRpcProvider(network.nodeUrl)
     this._network = network
     this._usedAddressCache = {}
+    this._accountsCache = {}
   }
 
   async sendRawTransaction (hash) {
@@ -123,8 +124,7 @@ export default class NearRpcProvider extends NodeProvider {
     return isUsed
   }
 
-  async getAccount (accountId) {
-    const signer = this.getMethod('getSigner')
+  async getAccount (accountId, signer) {
     return new Account(
       {
         networkId: this._network.networkId,
@@ -136,11 +136,16 @@ export default class NearRpcProvider extends NodeProvider {
   }
 
   async getAccounts (publicKey, index) {
+    if (this._accountsCache[index]) {
+      return this._accountsCache[index]
+    }
+    
     const accounts = await this.nodeGet(
       `/publicKey/${publicKey.toString()}/accounts`
     )
 
     if (accounts[index]) {
+      this._accountsCache[index] = accounts[index]
       return accounts[index]
     }
 
