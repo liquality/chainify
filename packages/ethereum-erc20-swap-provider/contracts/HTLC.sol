@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.7;
+// optimize=true&runs=200&evmVersion=null&version=soljson-v0.7.4+commit.3f05b770.js
+pragma solidity ^0.7.4;
 
 interface ERC20 {
   function balanceOf(address tokenOwner) external view returns (uint balance);
@@ -12,13 +13,17 @@ contract HTLC {
   address tokenAddress = 0x3333333333333333333333333333333333333333;
   ERC20 token = ERC20(tokenAddress);
   bytes32 hashedSecret = 0x4444444444444444444444444444444444444444444444444444444444444444;
+
   function claim(bytes32 secret) public {
     require(sha256(abi.encodePacked(secret)) == hashedSecret);
-    _callOptionalReturn(abi.encodeWithSelector(token.transfer.selector, recipientAddress, token.balanceOf(address(this))));
+    uint balance = token.balanceOf(address(this));
+    require(balance > 0);
+    _callOptionalReturn(abi.encodeWithSelector(token.transfer.selector, recipientAddress, balance));
     selfdestruct(recipientAddress);
   }
+
   function refund () public {
-    require(now > 0x5555555555555555555555555555555555555555555555555555555555555555);
+    require(block.timestamp > 0x5555555555555555555555555555555555555555555555555555555555555555);
     _callOptionalReturn(abi.encodeWithSelector(token.transfer.selector, refundAddress, token.balanceOf(address(this))));
     selfdestruct(refundAddress);
   }
