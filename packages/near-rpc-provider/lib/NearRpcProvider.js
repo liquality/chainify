@@ -27,21 +27,17 @@ export default class NearRpcProvider extends NodeProvider {
   async _getBlockById (blockId, includeTx) {
     const block = await this._jsonRpc.block({ blockId })
 
-    if (includeTx) {
-      if (!block.transactions) {
-        if (isArray(block.chunks)) {
-          const chunks = await Promise.all(
-            block.chunks.map((c) => this._jsonRpc.chunk(c.chunk_hash))
-          )
+    if (includeTx && !block.transactions && isArray(block.chunks)) {
+      const chunks = await Promise.all(
+        block.chunks.map((c) => this._jsonRpc.chunk(c.chunk_hash))
+      )
 
-          const transactions = chunks.reduce((p, c) => {
-            p.push(...c.transactions)
-            return p
-          }, [])
+      const transactions = chunks.reduce((p, c) => {
+        p.push(...c.transactions)
+        return p
+      }, [])
 
-          return { ...block, transactions }
-        }
-      }
+      return { ...block, transactions }
     }
 
     return block
@@ -114,7 +110,7 @@ export default class NearRpcProvider extends NodeProvider {
       return true
     }
 
-    const activity = await this.getMethod('getAccountActivity')(address)
+    const activity = await this.getAccountActivity(address)
     const isUsed = activity.length > 0
 
     if (isUsed) {
@@ -139,7 +135,7 @@ export default class NearRpcProvider extends NodeProvider {
     if (this._accountsCache[index]) {
       return this._accountsCache[index]
     }
-    
+
     const accounts = await this.nodeGet(
       `/publicKey/${publicKey.toString()}/accounts`
     )
