@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-scraper-swap-find-provider",
   "umdName": "EthereumScraperSwapFindProvider",
   "umdExport": "default",
-  "version": "0.8.14",
+  "version": "0.8.15",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,10 +19,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^0.8.14",
-    "@liquality/ethereum-utils": "^0.8.14",
-    "@liquality/node-provider": "^0.8.14",
-    "@liquality/utils": "^0.8.14"
+    "@liquality/errors": "^0.8.15",
+    "@liquality/ethereum-utils": "^0.8.15",
+    "@liquality/node-provider": "^0.8.15",
+    "@liquality/utils": "^0.8.15"
   },
   "engines": {
     "node": "~8.12.0"
