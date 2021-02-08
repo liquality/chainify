@@ -46,14 +46,18 @@ export default class NearJsWalletProvider extends Provider {
     return this.getSigner().signMessage(Buffer.from(message))
   }
 
-  async sendTransaction (to, value, _data, _gasPrice) {
+  async sendTransaction (to, value, actions, _gasPrice) {
     const addresses = await this.getAddresses()
     const from = await this.getMethod('getAccount')(
       addresses[0].address,
       this.getSigner()
     )
 
-    const [, signedTx] = await from.signTransaction(to, [transfer(value)])
+    if (!actions) {
+      actions = [transfer(value)]
+    }
+
+    const [, signedTx] = await from.signTransaction(to, actions)
     const rawSignedTx = signedTx.encode().toString('base64')
     return this.getMethod('sendRawTransaction')(rawSignedTx)
   }
