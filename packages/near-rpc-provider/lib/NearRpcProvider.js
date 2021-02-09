@@ -1,7 +1,7 @@
 import NodeProvider from '@liquality/node-provider'
 import { addressToString } from '@liquality/utils'
 
-import { providers, Account } from 'near-api-js'
+import { providers, Account, transactions } from 'near-api-js'
 import { get, isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
@@ -21,7 +21,27 @@ export default class NearRpcProvider extends NodeProvider {
   }
 
   async sendRawTransaction (hash) {
-    return this._jsonRpc.sendJsonRpc('broadcast_tx_commit', [hash])
+    const result = await this._jsonRpc.sendJsonRpc('broadcast_tx_commit', [
+      hash
+    ])
+    // TODO: normalize tx result
+    return result
+  }
+
+  async sendTransaction (to, value, actions, _gasPrice) {
+    const addresses = await this.getAddresses()
+    const signer = this.getMethod('getSigner')()
+    const from = this.getAccount(addresses[0].address, signer)
+
+    if (!actions) {
+      actions = [transactions.transfer(value)]
+    }
+
+    const [, signedTx] = await from.signTransaction(to, actions)
+    const rawSignedTx = signedTx.encode().toString('base64')
+    const result = await this.getMethod('sendRawTransaction')(rawSignedTx)
+    // TODO: normalize transaction
+    return result
   }
 
   async _getBlockById (blockId, includeTx) {
@@ -56,15 +76,14 @@ export default class NearRpcProvider extends NodeProvider {
     return get(result, 'header.height')
   }
 
-  async getTransactionByHash (txHash, accoutnId) {
-    return this._jsonRpc.sendJsonRpc('tx', [txHash, accoutnId])
+  async getTransactionByHash (txHash) {
+    const args = txHash.split('_')
+    return this._jsonRpc.sendJsonRpc('tx', args)
   }
 
-  async getTransactionReceipt (txHash, accountId) {
-    return this._jsonRpc.sendJsonRpc('EXPERIMENTAL_tx_status', [
-      txHash,
-      accountId
-    ])
+  async getTransactionReceipt (txHash) {
+    const args = txHash.split('_')
+    return this._jsonRpc.sendJsonRpc('EXPERIMENTAL_tx_status', args)
   }
 
   async getGasPrice () {
@@ -76,31 +95,8 @@ export default class NearRpcProvider extends NodeProvider {
     if (!isArray(addresses)) {
       addresses = [addresses]
     }
-
-    const promiseBalances = await Promise.all(
-      addresses.map((address) =>
-        this._jsonRpc.query({
-          request_type: 'view_account',
-          finality: 'final',
-          account_id: addressToString(address)
-        })
-      )
-    )
-
-    return promiseBalances
-      .map((balance) => {
-        const costPerByte = new BigNumber(1)
-        const stateStaked = new BigNumber(balance.storage_usage).multipliedBy(
-          costPerByte
-        )
-        const staked = new BigNumber(balance.locked)
-        const totalBalance = new BigNumber(balance.amount).plus(staked)
-        const availableBalance = totalBalance.minus(
-          BigNumber.max(staked, stateStaked)
-        )
-        return new BigNumber(availableBalance)
-      })
-      .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
+    const balance = await this.getAccount(addresses[0]).getAccountBalance()
+    return new BigNumber(balance.available)
   }
 
   async isAddressUsed (address) {
@@ -120,7 +116,7 @@ export default class NearRpcProvider extends NodeProvider {
     return isUsed
   }
 
-  async getAccount (accountId, signer) {
+  getAccount (accountId, signer) {
     return new Account(
       {
         networkId: this._network.networkId,
