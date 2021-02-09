@@ -46,7 +46,7 @@ export default class NearJsWalletProvider extends Provider {
     return this.getSigner().signMessage(Buffer.from(message))
   }
 
-  async sendTransaction (to, value, actions, _gasPrice) {
+  async sendTransaction (to, value, actions) {
     const addresses = await this.getAddresses()
     const from = await this.getMethod('getAccount')(
       addresses[0].address,
@@ -57,15 +57,21 @@ export default class NearJsWalletProvider extends Provider {
       actions = [transfer(value)]
     }
 
-    const [, signedTx] = await from.signTransaction(to, actions)
-    const rawSignedTx = signedTx.encode().toString('base64')
-    return this.getMethod('sendRawTransaction')(rawSignedTx)
+    const result = await from.signAndSendTransaction(to, actions)
+    // TODO: normalize transaction
+    return result
   }
 
-  async sendSweepTransaction (address, _gasPrice) {
-    // TODO: find a way to calculate the required amount
-    const value = 5
-    return this.sendTransaction(address, value)
+  async sendSweepTransaction (address) {
+    const addresses = await this.getAddresses()
+    const from = await this.getMethod('getAccount')(
+      addresses[0].address,
+      this.getSigner()
+    )
+
+    const result = await from.deleteAccount(address)
+    // TODO: normalize transaction
+    return result
   }
 
   async isWalletAvailable () {
