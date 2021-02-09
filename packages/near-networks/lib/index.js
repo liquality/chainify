@@ -1,4 +1,4 @@
-import {version} from '../package.json'
+import { version } from '../package.json'
 
 export default {
   mainnet: {
@@ -9,7 +9,7 @@ export default {
     helperUrl: 'https://helper.mainnet.near.org',
     explorerUrl: 'https://explorer.mainnet.near.org',
     coinType: '397',
-    isTestnet: false,
+    isTestnet: false
   },
   testnet: {
     name: 'testnet',
@@ -18,7 +18,8 @@ export default {
     walletUrl: 'https://wallet.testnet.near.org',
     helperUrl: 'https://helper.testnet.near.org',
     explorerUrl: 'https://explorer.testnet.near.org',
-    isTestnet: true,
+    coinType: '397',
+    isTestnet: true
   },
   betanet: {
     name: 'betanet',
@@ -27,7 +28,8 @@ export default {
     walletUrl: 'https://wallet.betanet.near.org',
     helperUrl: 'https://helper.betanet.near.org',
     explorerUrl: 'https://explorer.betanet.near.org',
-    isTestnet: true,
+    coinType: '397',
+    isTestnet: true
   },
   local: {
     name: 'local',
@@ -35,8 +37,9 @@ export default {
     nodeUrl: 'http://localhost:3030',
     keyPath: `${process.env.HOME}/.near/validator_key.json`,
     walletUrl: 'http://localhost:4000/wallet',
-    isTestnet: true,
+    coinType: '397',
+    isTestnet: true
   },
 
-  version,
+  version
 }
