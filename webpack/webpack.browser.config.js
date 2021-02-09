@@ -27,6 +27,9 @@ module.exports = {
   module: {
     rules: [ babelRule({ target: 'web' }) ]
   },
+  node: {
+    fs: 'empty'
+  },
   mode: isProdEnv ? 'production' : 'development',
   plugins: plugins({ target: 'web' }),
   watch: isWatchEnv
