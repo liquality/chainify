@@ -7,12 +7,16 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/register": "^7.12.1",
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.25",
     "babel-loader": "^8.0.6",
     "babel-plugin-istanbul": "^5.2.0",
     "babel-plugin-lodash": "^3.3.4",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
     "bitcoinjs-lib": "^5.2.0",
+    "buffer": "^6.0.3",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
     "coininfo": "^5.1.0",
@@ -36,7 +40,11 @@
     "pre-commit": "^1.2.2",
     "should": "^13.2.3",
     "standard": "^12.0.1",
-    "webpack": "^4.41.0",
+    "stream-browserify": "^3.0.0",
+    "ts-loader": "^8.0.16",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3",
+    "webpack": "^5.21.2",
     "webpack-bundle-analyzer": "^3.5.2",
     "webpack-cli": "^3.3.9"
   },
@@ -59,6 +67,7 @@
     "bootstrap": "lerna bootstrap --hoist --force-local",
     "test": "run-s test:unit env:integration env:integration:bootup test:integration",
     "test:unit": "cross-env NODE_ENV=test mocha packages/*/test/unit $npm_package_options_mocha",
+    "test:ts:unit": "cross-env NODE_ENV=test mocha packages/*/test/unit/*.test.ts $npm_package_options_mocha",
     "env:integration": "docker-compose -f test/integration/environment/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
     "env:integration:bootup": "sleep 10",
     "test:integration:api": "cross-env NODE_ENV=test mocha test/integration/api $npm_package_options_mocha",
@@ -72,6 +81,7 @@
     "build:dev:node": "lerna run build:node --stream",
     "build:dev:browser": "lerna run build:browser --stream",
     "build:dev": "lerna run build --stream",
+    "build:ts": "lerna run build --scope=@liquality/bitcoin-networks",
     "build:node": "cross-env NODE_ENV=production npm run build:dev:node",
     "build:browser": "cross-env NODE_ENV=production npm run build:dev:browser",
     "build": "cross-env NODE_ENV=production npm run build:dev",
@@ -83,7 +93,7 @@
   },
   "options": {
     "coverage": "--reporter=text-lcov",
-    "mocha": "--require ./babel.test.js --timeout 20000 --recursive"
+    "mocha": "--require ts-node/register --timeout 20000 --recursive"
   },
   "nyc": {
     "include": [
