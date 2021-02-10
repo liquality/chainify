@@ -84,13 +84,6 @@ export default class NearSwapProvider extends Provider {
     )
   }
 
-  doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
-    return (
-      transaction.receiver === initiationTransactionReceipt.receiver &&
-      transaction.swap.method === ABI.claim.method
-    )
-  }
-
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(
       initiationTxHash
@@ -102,16 +95,6 @@ export default class NearSwapProvider extends Provider {
 
     return this.doesTransactionMatchInitiation(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
-
-  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {}
-
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {}
-
-  async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
-    return null
-  }
-
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {}
 
   async getSwapSecret (claimTxHash) {
     const tx = await this.getMethod('getTransactionByHash')(claimTxHash)
