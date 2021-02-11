@@ -1,7 +1,9 @@
 import NodeProvider from '@liquality/node-provider'
 import { addressToString } from '@liquality/utils'
+import { normalizeTransactionObject } from '@liquality/near-utils'
+import { NodeError } from '@liquality/errors'
 
-import { providers, Account, transactions } from 'near-api-js'
+import { providers, Account } from 'near-api-js'
 import { get, isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
 
@@ -21,46 +23,8 @@ export default class NearRpcProvider extends NodeProvider {
   }
 
   async sendRawTransaction (hash) {
-    const result = await this._jsonRpc.sendJsonRpc('broadcast_tx_commit', [
-      hash
-    ])
-    // TODO: normalize tx result
-    return result
-  }
-
-  async sendTransaction (to, value, actions, _gasPrice) {
-    const addresses = await this.getAddresses()
-    const signer = this.getMethod('getSigner')()
-    const from = this.getAccount(addresses[0].address, signer)
-
-    if (!actions) {
-      actions = [transactions.transfer(value)]
-    }
-
-    const [, signedTx] = await from.signTransaction(to, actions)
-    const rawSignedTx = signedTx.encode().toString('base64')
-    const result = await this.getMethod('sendRawTransaction')(rawSignedTx)
-    // TODO: normalize transaction
-    return result
-  }
-
-  async _getBlockById (blockId, includeTx) {
-    const block = await this._jsonRpc.block({ blockId })
-
-    if (includeTx && !block.transactions && isArray(block.chunks)) {
-      const chunks = await Promise.all(
-        block.chunks.map((c) => this._jsonRpc.chunk(c.chunk_hash))
-      )
-
-      const transactions = chunks.reduce((p, c) => {
-        p.push(...c.transactions)
-        return p
-      }, [])
-
-      return { ...block, transactions }
-    }
-
-    return block
+    const result = await this._sendRawTransaction(hash)
+    get(result, 'transaction.hash')
   }
 
   async getBlockByHash (blockHash, includeTx) {
@@ -72,22 +36,30 @@ export default class NearRpcProvider extends NodeProvider {
   }
 
   async getBlockHeight () {
-    const result = await this._jsonRpc.block({ finality: 'final' })
+    const result = await this._rpc('block', { finality: 'final' })
     return get(result, 'header.height')
   }
 
   async getTransactionByHash (txHash) {
     const args = txHash.split('_')
-    return this._jsonRpc.sendJsonRpc('tx', args)
+    const tx = await this._rpcQuery('tx', args)
+    return normalizeTransactionObject({
+      ...tx.transaction,
+      ...tx.transaction_outcome
+    })
   }
 
   async getTransactionReceipt (txHash) {
     const args = txHash.split('_')
-    return this._jsonRpc.sendJsonRpc('EXPERIMENTAL_tx_status', args)
+    const tx = await this._rpcQuery('EXPERIMENTAL_tx_status', args)
+    return normalizeTransactionObject({
+      ...tx.transaction,
+      ...tx.transaction_outcome
+    })
   }
 
   async getGasPrice () {
-    const result = await this._jsonRpc.sendJsonRpc('gas_price', [null])
+    const result = await this._rpcQuery('gas_price', [null])
     return get(result, 'gas_price')
   }
 
@@ -106,14 +78,17 @@ export default class NearRpcProvider extends NodeProvider {
       return true
     }
 
-    const activity = await this.getAccountActivity(address)
-    const isUsed = activity.length > 0
-
-    if (isUsed) {
+    try {
+      await this._rpc('query', {
+        request_type: 'view_account',
+        finality: 'final',
+        account_id: address
+      })
       this._usedAddressCache[address] = true
+      return true
+    } catch (err) {
+      return false
     }
-
-    return isUsed
   }
 
   getAccount (accountId, signer) {
@@ -144,25 +119,49 @@ export default class NearRpcProvider extends NodeProvider {
     throw new Error(`Account with index ${index} not found`)
   }
 
-  async getAccountActivity (accountId, offset, limit = 10) {
-    return this.nodeGet(
-      `/account/${accountId}?offset=${offset}&limit=${limit}`
-    )
+  async _sendRawTransaction (hash) {
+    return this._rpcQuery('broadcast_tx_commit', [hash])
   }
 
-  async createAccount (newAccountId, publicKey) {
-    try {
-      this._jsonRpc.query(
-        `account/${newAccountId}.${this._network.accountSuffix}`,
-        ''
+  async _getBlockById (blockId, includeTx) {
+    const block = await this._rpc('block', { blockId })
+    const blockHash = get(block, 'header.hash')
+
+    if (includeTx && !block.transactions && isArray(block.chunks)) {
+      const chunks = await Promise.all(
+        block.chunks.map((c) => this._rpc('chunk', c.chunk_hash))
       )
-      throw new Error('Account already exists.')
-    } catch (e) {
-      // account does not exist and we can craete it.
-      return this.nodePost('/account', {
-        newAccountId,
-        newAccountPublicKey: publicKey.toString()
-      })
+
+      const transactions = chunks.reduce((p, c) => {
+        p.push(
+          ...c.transactions.map((t) =>
+            normalizeTransactionObject({ ...t, block_hash: blockHash })
+          )
+        )
+        return p
+      }, [])
+
+      return { ...block, transactions }
+    }
+
+    return block
+  }
+
+  async _rpc (method, args) {
+    try {
+      const data = await this._jsonRpc[method](args)
+      return data
+    } catch (error) {
+      throw new NodeError(`${error.type} ${error.message}` || error)
+    }
+  }
+
+  async _rpcQuery (method, args) {
+    try {
+      const data = await this._jsonRpc.sendJsonRpc(method, args)
+      return data
+    } catch (error) {
+      throw new NodeError(`${error.type} ${error.message}` || error)
     }
   }
 }
