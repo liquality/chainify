@@ -1,48 +1,48 @@
-import NodeProvider from "@liquality/node-provider";
-import { PendingTxError } from "@liquality/errors";
+import NodeProvider from '@liquality/node-provider'
+import { PendingTxError } from '@liquality/errors'
 
-import { version } from "../package.json";
+import { version } from '../package.json'
 
-const ONE_HOUR_IN_NS = 60 * 60 * 1000 * 1000 * 1000;
+const ONE_HOUR_IN_NS = 60 * 60 * 1000 * 1000 * 1000
 
 export default class NearSwapFindProvider extends NodeProvider {
-  constructor(url) {
+  constructor (url) {
     super({
       baseURL: url,
-      responseType: "text",
-      transformResponse: undefined, // https://github.com/axios/axios/issues/907,
-    });
+      responseType: 'text',
+      transformResponse: undefined // https://github.com/axios/axios/issues/907,
+    })
   }
 
-  normalizeTransactionResponse(tx) {}
+  normalizeTransactionResponse (tx) {}
 
-  async findAddressTransaction(address, predicate, limit = 250) {
-    let offset = this.getCurrentTimeInNs();
+  async findAddressTransaction (address, predicate, limit = 250) {
+    let offset = this.getCurrentTimeInNs()
 
     for (let page = 1; ; page++) {
-      const activity = await this.nodeGet(
+      const transactions = await this.nodeGet(
         `account/${address}/activity?offset=${offset}&limit=${limit}`
-      );
+      )
 
-      if (activity.length === 0) {
-        return;
+      if (transactions.length === 0) {
+        return
       }
 
       const normalizedTransactions = transactions.map(
         this.normalizeTransactionResponse
-      );
+      )
 
-      const tx = normalizedTransactions.find(predicate);
+      const tx = normalizedTransactions.find(predicate)
 
       if (tx) {
-        return tx;
+        return tx
       }
 
-      offset = offset - ONE_HOUR_IN_NS;
+      offset = offset - ONE_HOUR_IN_NS
     }
   }
 
-  async findInitiateSwapTransaction(
+  async findInitiateSwapTransaction (
     value,
     recipientAddress,
     refundAddress,
@@ -50,7 +50,7 @@ export default class NearSwapFindProvider extends NodeProvider {
     expiration
   ) {
     return this.findAddressTransaction(refundAddress, (tx) =>
-      this.getMethod("doesTransactionMatchInitiation")(
+      this.getMethod('doesTransactionMatchInitiation')(
         tx,
         value,
         recipientAddress,
@@ -58,10 +58,10 @@ export default class NearSwapFindProvider extends NodeProvider {
         secretHash,
         expiration
       )
-    );
+    )
   }
 
-  async findClaimSwapTransaction(
+  async findClaimSwapTransaction (
     initiationTxHash,
     recipientAddress,
     refundAddress,
@@ -70,17 +70,17 @@ export default class NearSwapFindProvider extends NodeProvider {
     blockNumber
   ) {
     const initiationTransactionReceipt = await this.getMethod(
-      "getTransactionReceipt"
-    )(initiationTxHash);
+      'getTransactionReceipt'
+    )(initiationTxHash)
 
     if (!initiationTransactionReceipt) {
       throw new PendingTxError(
         `Transaction receipt is not available: ${initiationTxHash}`
-      );
+      )
     }
   }
 
-  async findRefundSwapTransaction(
+  async findRefundSwapTransaction (
     initiationTxHash,
     recipientAddress,
     refundAddress,
@@ -89,22 +89,23 @@ export default class NearSwapFindProvider extends NodeProvider {
     blockNumber
   ) {
     const initiationTransactionReceipt = await this.getMethod(
-      "getTransactionReceipt"
-    )(initiationTxHash);
+      'getTransactionReceipt'
+    )(initiationTxHash)
 
-    if (!initiationTransactionReceipt)
+    if (!initiationTransactionReceipt) {
       throw new PendingTxError(
         `Transaction receipt is not available: ${initiationTxHash}`
-      );
+      )
+    }
   }
 
-  getCurrentTimeInNs() {
-    return new Date().valueOf() * 1000 * 1000;
+  getCurrentTimeInNs () {
+    return new Date().valueOf() * 1000 * 1000
   }
 
-  doesBlockScan() {
-    return false;
+  doesBlockScan () {
+    return false
   }
 }
 
-NearSwapFindProvider.version = version;
+NearSwapFindProvider.version = version
