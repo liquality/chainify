@@ -19,6 +19,10 @@ function fromBase64 (str, encoding) {
 }
 
 function normalizeTransactionObject (tx, currentHeight) {
+  if (tx.transaction && tx.transaction_outcome) {
+    tx = { ...tx.transaction, ...tx.transaction_outcome }
+  }
+
   const normalizedTx = { swap: {}, raw: {} }
   if (tx) {
     normalizedTx.value = 0

@@ -43,19 +43,13 @@ export default class NearRpcProvider extends NodeProvider {
   async getTransactionByHash (txHash) {
     const args = txHash.split('_')
     const tx = await this._rpcQuery('tx', args)
-    return normalizeTransactionObject({
-      ...tx.transaction,
-      ...tx.transaction_outcome
-    })
+    return normalizeTransactionObject(tx)
   }
 
   async getTransactionReceipt (txHash) {
     const args = txHash.split('_')
     const tx = await this._rpcQuery('EXPERIMENTAL_tx_status', args)
-    return normalizeTransactionObject({
-      ...tx.transaction,
-      ...tx.transaction_outcome
-    })
+    return normalizeTransactionObject(tx)
   }
 
   async getGasPrice () {
