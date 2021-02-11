@@ -1,5 +1,7 @@
 import Provider from '@liquality/provider'
-import { Address } from '@liquality/utils'
+import { Address, addressToString } from '@liquality/utils'
+import { normalizeTransactionObject } from '@liquality/near-utils'
+
 import { InMemorySigner, KeyPair } from 'near-api-js'
 import { InMemoryKeyStore } from 'near-api-js/lib/key_stores'
 import { transfer } from 'near-api-js/lib/transaction'
@@ -43,13 +45,21 @@ export default class NearJsWalletProvider extends Provider {
   }
 
   async signMessage (message) {
-    return this.getSigner().signMessage(Buffer.from(message))
+    const addresses = await this.getAddresses()
+
+    const signed = await this.getSigner().signMessage(
+      Buffer.from(message),
+      addressToString(addresses[0]),
+      this._network.networkId
+    )
+
+    return Buffer.from(signed.signature).toString('hex')
   }
 
   async sendTransaction (to, value, actions) {
     const addresses = await this.getAddresses()
     const from = await this.getMethod('getAccount')(
-      addresses[0].address,
+      addressToString(addresses[0]),
       this.getSigner()
     )
 
@@ -57,9 +67,8 @@ export default class NearJsWalletProvider extends Provider {
       actions = [transfer(value)]
     }
 
-    const result = await from.signAndSendTransaction(to, actions)
-    // TODO: normalize transaction
-    return result
+    const tx = await from.signAndSendTransaction(to, actions)
+    return normalizeTransactionObject(tx)
   }
 
   async sendSweepTransaction (address) {
@@ -69,9 +78,8 @@ export default class NearJsWalletProvider extends Provider {
       this.getSigner()
     )
 
-    const result = await from.deleteAccount(address)
-    // TODO: normalize transaction
-    return result
+    const tx = await from.deleteAccount(address)
+    return normalizeTransactionObject(tx)
   }
 
   async isWalletAvailable () {
