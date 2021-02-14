@@ -19,6 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@liquality/errors": "^0.8.11",
+    "@liquality/near-utils": "^0.8.11",
     "@liquality/node-provider": "^0.8.11",
     "@liquality/utils": "^0.8.11",
     "bignumber.js": "^9.0.1",
