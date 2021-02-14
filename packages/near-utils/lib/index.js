@@ -1,7 +1,11 @@
 import { version } from '../package.json'
 
 function toBase64 (str, encoding = 'hex') {
-  return Buffer.from(str, encoding).toString('base64')
+  try {
+    return Buffer.from(str, encoding).toString('base64')
+  } catch (e) {
+    return str
+  }
 }
 
 function fromBase64 (str, encoding) {
@@ -9,21 +13,28 @@ function fromBase64 (str, encoding) {
     return {}
   }
 
-  const decoded = Buffer.from(str, 'base64').toString(encoding)
-
   try {
-    return JSON.parse(decoded)
+    const decoded = Buffer.from(str, 'base64').toString(encoding)
+    try {
+      return JSON.parse(decoded)
+    } catch (e) {
+      return decoded
+    }
   } catch (e) {
-    return decoded
+    return str
   }
 }
 
-function normalizeTransactionObject (tx, currentHeight) {
+function normalizeTransactionObject (tx, confirmations) {
   if (tx.transaction && tx.transaction_outcome) {
     tx = { ...tx.transaction, ...tx.transaction_outcome }
   }
 
-  const normalizedTx = { swap: {}, raw: {} }
+  const normalizedTx = { confirmations: 0, swap: {} }
+
+  if (confirmations) {
+    normalizedTx.confirmations = confirmations
+  }
   if (tx) {
     normalizedTx.value = 0
     normalizedTx.hash = `${tx.hash}_${tx.signer_id}`
@@ -43,10 +54,11 @@ function normalizeTransactionObject (tx, currentHeight) {
         }
 
         if (a.FunctionCall) {
-          normalizedTx.swap.method = a.FunctionCall.method_name
+          const method = a.FunctionCall.method_name
 
           switch (normalizedTx.swap.method) {
             case 'init': {
+              normalizedTx.swap.method = method
               const args = fromBase64(a.FunctionCall.args)
               normalizedTx.swap.secretHash = fromBase64(args.secretHash, 'hex')
               normalizedTx.swap.expiration = args.expiration
@@ -55,18 +67,20 @@ function normalizeTransactionObject (tx, currentHeight) {
             }
 
             case 'claim': {
+              normalizedTx.swap.method = method
               const args = fromBase64(a.FunctionCall.args)
               normalizedTx.swap.secret = fromBase64(args.secret, 'hex')
               break
             }
 
             case 'refund': {
+              normalizedTx.swap.method = method
               break
             }
 
             default: {
               const args = fromBase64(a.FunctionCall.args)
-              normalizedTx.raw = { ...args }
+              normalizedTx.raw = { ...args, method }
               break
             }
           }

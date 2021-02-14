@@ -35,21 +35,32 @@ export default class NearRpcProvider extends NodeProvider {
     return this._getBlockById(blockNumber, includeTx)
   }
 
-  async getBlockHeight () {
-    const result = await this._rpc('block', { finality: 'final' })
+  async getBlockHeight (txHash) {
+    const result = await this._rpc(
+      'block',
+      txHash ? { blockId: txHash } : { finality: 'final' }
+    )
     return get(result, 'header.height')
   }
 
   async getTransactionByHash (txHash) {
+    const currentBlockHeight = await this.getBlockHeight()
     const args = txHash.split('_')
     const tx = await this._rpcQuery('tx', args)
-    return normalizeTransactionObject(tx)
+    const blockHeight = await this.getBlockHeight(
+      tx.transaction_outcome.block_hash
+    )
+    return normalizeTransactionObject(tx, currentBlockHeight - blockHeight)
   }
 
   async getTransactionReceipt (txHash) {
+    const currentBlockHeight = await this.getBlockHeight()
     const args = txHash.split('_')
     const tx = await this._rpcQuery('EXPERIMENTAL_tx_status', args)
-    return normalizeTransactionObject(tx)
+    const blockHeight = await this.getBlockHeight(
+      tx.transaction_outcome.block_hash
+    )
+    return normalizeTransactionObject(tx, currentBlockHeight - blockHeight)
   }
 
   async getGasPrice () {
