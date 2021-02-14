@@ -1,9 +1,10 @@
 import NodeProvider from '@liquality/node-provider'
 import { PendingTxError } from '@liquality/errors'
+import { fromBase64, toBase64 } from '@liquality/near-utils'
 
 import { version } from '../package.json'
 
-const ONE_HOUR_IN_NS = 60 * 60 * 1000 * 1000 * 1000
+const ONE_DAY_IN_NS = 24 * 60 * 60 * 1000 * 1000 * 1000
 
 export default class NearSwapFindProvider extends NodeProvider {
   constructor (url) {
@@ -14,9 +15,69 @@ export default class NearSwapFindProvider extends NodeProvider {
     })
   }
 
-  normalizeTransactionResponse (tx) {}
+  normalizeTransactionResponse (tx) {
+    const normalizedTx = {
+      hash: `${tx.hash}_${tx.signer_id}`,
+      blockHash: tx.block_hash,
+      sender: tx.signer_id,
+      receiver: tx.receiver_id,
+      rawHash: tx.hash,
+      swap: {}
+    }
 
-  async findAddressTransaction (address, predicate, limit = 250) {
+    switch (tx.action_kind) {
+      case 'DEPLOY_CONTRACT': {
+        const code = toBase64(tx.args.code_sha256)
+        normalizedTx.code = code
+        break
+      }
+
+      case 'TRANSFER': {
+        const value = tx.args.deposit
+        normalizedTx.value = value
+        break
+      }
+
+      case 'FUNCTION_CALL': {
+        const method = tx.args.method_name
+        const args = fromBase64(tx.args.args_base64)
+
+        switch (method) {
+          case 'init': {
+            normalizedTx.swap.method = method
+            normalizedTx.swap.secretHash = fromBase64(args.secretHash, 'hex')
+            normalizedTx.swap.expiration = args.expiration
+            normalizedTx.swap.recipient = args.buyer
+            break
+          }
+
+          case 'claim': {
+            normalizedTx.swap.method = method
+            normalizedTx.swap.secret = fromBase64(args.secret, 'hex')
+            break
+          }
+
+          case 'refund': {
+            normalizedTx.swap.method = method
+            break
+          }
+
+          default: {
+            normalizedTx.raw = { method, ...args }
+            break
+          }
+        }
+        break
+      }
+
+      default: {
+        break
+      }
+    }
+    return normalizedTx
+  }
+
+  async findAddressTransaction (address, predicate, limit = 1024) {
     let offset = this.getCurrentTimeInNs()
 
     for (let page = 1; ; page++) {
@@ -28,17 +89,26 @@ export default class NearSwapFindProvider extends NodeProvider {
         return
       }
 
-      const normalizedTransactions = transactions.map(
-        this.normalizeTransactionResponse
-      )
+      const normalizedTransactions = {}
 
-      const tx = normalizedTransactions.find(predicate)
+      for (const tx of transactions) {
+        normalizedTransactions[tx.hash] = {
+          ...normalizedTransactions[tx.hash],
+          ...this.normalizeTransactionResponse(tx)
+        }
+      }
+
+      const tx = Object.values(normalizedTransactions).find(predicate)
 
       if (tx) {
+        const currentHeight = await this.getMethod('getBlockHeight')()
+        const txBlockHeight = await this.getMethod('getBlockHeight')(tx.rawHash)
+
+        tx.confirmations = currentHeight - txBlockHeight
         return tx
       }
 
-      offset = offset - ONE_HOUR_IN_NS
+      offset = offset - ONE_DAY_IN_NS
     }
   }
 
@@ -78,6 +148,13 @@ export default class NearSwapFindProvider extends NodeProvider {
         `Transaction receipt is not available: ${initiationTxHash}`
       )
     }
+
+    return this.findAddressTransaction(
+      initiationTransactionReceipt.receiver,
+      (tx) => {
+        return tx.swap.method === 'claim'
+      }
+    )
   }
 
   async findRefundSwapTransaction (
@@ -97,6 +174,13 @@ export default class NearSwapFindProvider extends NodeProvider {
         `Transaction receipt is not available: ${initiationTxHash}`
       )
     }
+
+    return this.findAddressTransaction(
+      initiationTransactionReceipt.receiver,
+      (tx) => {
+        return tx.swap.method === 'refund'
+      }
+    )
   }
 
   getCurrentTimeInNs () {

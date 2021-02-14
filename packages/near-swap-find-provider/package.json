@@ -20,7 +20,8 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/errors": "^0.8.11",
-    "@liquality/node-provider": "^0.8.11"
+    "@liquality/node-provider": "^0.8.11",
+    "@liquality/near-utils": "^0.8.11"
   },
   "engines": {
     "node": "~8.12.0"
