@@ -1,0 +1,5 @@
+{
+  "editor.formatOnSave": true,
+  "editor.minimap.maxColumn": 200,
+  "prettier.printWidth": 200
+}
