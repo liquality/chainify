@@ -20,7 +20,7 @@ const SOL_REFUND_FUNCTION = '0x590e1ae3' // refund()
 
 export default class EthereumErc20SwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    if (secretHash.length !== 64) throw new Error('Invalid Secret Size')
+    if (secretHash.length !== 64) throw new InvalidSecretError('Invalid secret size')
 
     recipientAddress = remove0x(addressToString(recipientAddress))
     refundAddress = remove0x(addressToString(refundAddress))
