@@ -17,7 +17,8 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.12.1"
+    "@babel/runtime": "^7.12.1",
+    "setimmediate": "^1.0.5"
   },
   "engines": {
     "node": "~8.12.0"
