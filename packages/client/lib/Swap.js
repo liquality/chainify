@@ -124,6 +124,26 @@ export default class Swap {
   }
 
   /**
+   * Funds a swap
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!number} value - The amount of native value to lock for the swap.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
+   * @return {Promise<Transaction, TypeError>} Resolves with the funding transaction if found, otherwise null.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
+   */
+  async fundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee) {
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
+    }
+
+    return this.client.getMethod('fundSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee)
+  }
+
+  /**
    * Create swap script.
    * @param {!string} bytecode - Bytecode to be used for swap.
    * @return {Promise<string, null>} Resolves with swap bytecode.

@@ -112,6 +112,10 @@ export default class BitcoinSwapProvider extends Provider {
     return this.getMethod('sendTransaction')(address, value, undefined, feePerByte)
   }
 
+  async fundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
+    return null
+  }
+
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, feePerByte) {
     const secretHash = bitcoin.crypto.sha256(Buffer.from(secret, 'hex')).toString('hex')
     return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte)

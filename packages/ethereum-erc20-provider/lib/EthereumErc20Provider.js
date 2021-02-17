@@ -5,6 +5,9 @@ import {
   remove0x
 } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
+import {
+  InsufficientBalanceError
+} from '@liquality/errors'
 
 import { isArray } from 'lodash'
 import { BigNumber } from 'bignumber.js'
@@ -37,6 +40,13 @@ export default class EthereumErc20Provider extends Provider {
     if (!data) {
       // erc20 transfer
       await this.getMethod('assertContractExists')(this._contractAddress)
+
+      // check for erc20 balance
+      const addresses = await this.getMethod('getAddresses')()
+      const balance = await this.getBalance(addresses)
+      if (balance.isLessThan(value)) {
+        throw new InsufficientBalanceError(`${addresses[0]} doesn't have enough balance (has: ${balance}, want: ${value})`)
+      }
 
       data = this.generateErc20Transfer(to, value)
       value = 0

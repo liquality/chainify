@@ -1,6 +1,6 @@
 import Provider from '@liquality/provider'
 import { padHexStart, sha256 } from '@liquality/crypto'
-import { addressToString, sleep, caseInsensitiveEqual } from '@liquality/utils'
+import { addressToString, caseInsensitiveEqual } from '@liquality/utils'
 import { remove0x } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
@@ -10,7 +10,8 @@ import {
   InvalidSecretError,
   InvalidAddressError,
   InvalidExpirationError,
-  InvalidDestinationAddressError
+  InvalidDestinationAddressError,
+  InsufficientBalanceError
 } from '@liquality/errors'
 
 import { version } from '../package.json'
@@ -20,7 +21,7 @@ const SOL_REFUND_FUNCTION = '0x590e1ae3' // refund()
 
 export default class EthereumErc20SwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    if (secretHash.length !== 64) throw new Error('Invalid Secret Size')
+    if (secretHash.length !== 64) throw new InvalidSecretError('Invalid secret size')
 
     recipientAddress = remove0x(addressToString(recipientAddress))
     refundAddress = remove0x(addressToString(refundAddress))
@@ -64,18 +65,40 @@ export default class EthereumErc20SwapProvider extends Provider {
   }
 
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
-    const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
-    const deployTx = await this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
-    let initiationTransactionReceipt = null
+    const addresses = await this.getMethod('getAddresses')()
+    const balance = await this.getMethod('getBalance')(addresses)
 
-    while (initiationTransactionReceipt === null) {
-      initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(deployTx.hash)
-      await sleep(5000)
+    if (balance.isLessThan(value)) {
+      throw new InsufficientBalanceError(`${addresses[0]} doesn't have enough balance (has: ${balance}, want: ${value})`)
     }
+
+    const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
+    return this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
+  }
+
+  async fundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
+    const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    if (!initiationTransaction) throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
+
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const initiationSuccessful = initiationTransactionReceipt.contractAddress && initiationTransactionReceipt.status === '1'
     if (!initiationSuccessful) {
-      throw new TxFailedError(`ERC20 Swap Initiation Transaction Failed: ${initiationTransactionReceipt.transactionHash}`)
+      throw new TxFailedError(`ERC20 swap initiation transaction failed: ${initiationTransactionReceipt.transactionHash}`)
+    }
+
+    const transactionMatchesSwapParams = this.doesTransactionMatchInitiation(
+      initiationTransaction,
+      value,
+      recipientAddress,
+      refundAddress,
+      secretHash,
+      expiration
+    )
+
+    if (!transactionMatchesSwapParams) {
+      throw new InvalidDestinationAddressError(`Contract creation does not match initiation parameters: ${initiationTxHash}`)
     }
 
     await this.getMethod('assertContractExists')(initiationTransactionReceipt.contractAddress)
@@ -85,11 +108,7 @@ export default class EthereumErc20SwapProvider extends Provider {
       throw new InvalidDestinationAddressError(`Contract is not empty: ${initiationTransactionReceipt.contractAddress}`)
     }
 
-    const fundingTx = await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value, undefined, gasPrice)
-
-    deployTx.secondaryTx = fundingTx
-
-    return deployTx
+    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, value, undefined, gasPrice)
   }
 
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, gasPrice) {
@@ -187,9 +206,13 @@ export default class EthereumErc20SwapProvider extends Provider {
     const erc20TokenContractAddress = await this.getMethod('getContractAddress')()
     const contractData = await this.getMethod('generateErc20Transfer')(initiationTransactionReceipt.contractAddress, value)
 
-    return block.transactions.find(
+    const tx = block.transactions.find(
       transaction => this.doesTransactionMatchFunding(transaction, erc20TokenContractAddress, contractData)
     )
+
+    if (!tx) throw new TxNotFoundError(`Funding transaction is not available: ${initiationTxHash}`)
+
+    return tx
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {

@@ -20,6 +20,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/crypto": "^0.8.15",
+    "@liquality/errors": "^0.8.15",
     "@liquality/ethereum-utils": "^0.8.15",
     "@liquality/provider": "^0.8.15",
     "@liquality/utils": "^0.8.15",
