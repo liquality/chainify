@@ -10,8 +10,8 @@ import bip32 from 'bip32'
 import { version } from '../package.json'
 
 export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider) {
-  constructor (network, mnemonic, addressType = 'bech32') {
-    super(network, addressType, [network])
+  constructor (network, mnemonic, addressType = 'bech32', derivationCache = {}) {
+    super(network, addressType, [network], derivationCache)
 
     if (!mnemonic) throw new Error('Mnemonic should not be empty')
 

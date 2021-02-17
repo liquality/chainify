@@ -19,8 +19,8 @@ import * as bitcoin from 'bitcoinjs-lib'
 import { version } from '../package.json'
 
 export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerProvider) {
-  constructor (network = networks.bitcoin, addressType = 'bech32') {
-    super(network, addressType, [HwAppBitcoin, network, 'BTC'])
+  constructor (network = networks.bitcoin, addressType = 'bech32', derivationCache = {}) {
+    super(network, addressType, [HwAppBitcoin, network, 'BTC'], derivationCache)
     this._walletPublicKeyCache = {}
   }
 
