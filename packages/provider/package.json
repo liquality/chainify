@@ -2,7 +2,7 @@
   "name": "@liquality/provider",
   "umdName": "Provider",
   "umdExport": "default",
-  "version": "0.8.15",
+  "version": "0.9.0-next.0",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
