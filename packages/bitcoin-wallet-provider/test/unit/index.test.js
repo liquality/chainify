@@ -62,7 +62,9 @@ describe('Bitcoin Wallet provider', () => {
         BitcoinNetworks.bitcoin_regtest, generateMnemonic(256), 'bech32'
       )
       newClient.addProvider(newProvider)
-      expect(newProvider.getMethod('setDerivationCache')(addressesFromDerivationCacheExpected)).to.eventually.be.rejected
+      await expect(
+        newProvider.getMethod('setDerivationCache')(addressesFromDerivationCacheExpected)
+      ).to.eventually.be.rejected
     })
   })
 })
