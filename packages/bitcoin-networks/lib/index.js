@@ -1,22 +1,22 @@
-import * as bitcoinjs from 'bitcoinjs-lib'
+import { networks } from 'bitcoinjs-lib'
 import { version } from '../package.json'
 
 export default {
   bitcoin: {
     name: 'bitcoin',
-    ...bitcoinjs.networks.bitcoin,
+    ...networks.bitcoin,
     coinType: '0',
     isTestnet: false
   },
   bitcoin_testnet: {
     name: 'bitcoin_testnet',
-    ...bitcoinjs.networks.testnet,
+    ...networks.testnet,
     coinType: '1',
     isTestnet: true
   },
   bitcoin_regtest: {
     name: 'bitcoin_regtest',
-    ...bitcoinjs.networks.regtest,
+    ...networks.regtest,
     coinType: '1',
     isTestnet: true
   },
