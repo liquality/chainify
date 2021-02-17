@@ -16,7 +16,7 @@ const ADDRESS_TYPE_TO_PREFIX = {
 }
 
 export default superclass => class BitcoinWalletProvider extends superclass {
-  constructor (network, addressType = 'bech32', superArgs = [], derivationCache = {}) {
+  constructor (network, addressType = 'bech32', superArgs = []) {
     if (!AddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
     }
@@ -28,11 +28,19 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     this._baseDerivationPath = baseDerivationPath
     this._network = network
     this._addressType = addressType
-    this._derivationCache = derivationCache
+    this._derivationCache = {}
   }
 
-  async getDerivationCache () {
+  getDerivationCache () {
     return this._derivationCache
+  }
+
+  async setDerivationCache (derivationCache) {
+    const address = (await this.getAddresses(0, 1))[0]
+    if (derivationCache[address.derivationPath].address !== address.address) {
+      throw new Error(`derivationCache at ${address.derivationPath} does not match`)
+    }
+    this._derivationCache = derivationCache
   }
 
   async buildTransaction (to, value, data, feePerByte) {

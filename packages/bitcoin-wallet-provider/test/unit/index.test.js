@@ -28,22 +28,41 @@ describe('Bitcoin Wallet provider', () => {
 
       expect(addresses[0]).to.equal(addressesFromDerivationCache[addresses[0].derivationPath])
     })
+  })
 
-    it('should be importable to new client', async () => {
-      const addressesActual = await provider.getMethod('getAddresses')(0, 1)
-      const addressesFromDerivationCacheExpected = await provider.getMethod('getDerivationCache')()
+  describe('setDerivationCache', () => {
+    let addressesActual
+    let addressesFromDerivationCacheExpected
+    let newClient
+    let newProvider
 
-      const newClient = new Client()
-      const newProvider = new BitcoinJsWalletProvider(
-        BitcoinNetworks.bitcoin_regtest, mnemonic, 'bech32', addressesFromDerivationCacheExpected
+    beforeEach(async () => {
+      addressesActual = await provider.getMethod('getAddresses')(0, 1)
+      addressesFromDerivationCacheExpected = provider.getMethod('getDerivationCache')()
+
+      newClient = new Client()
+    })
+
+    it('should import to new client', async () => {
+      newProvider = new BitcoinJsWalletProvider(
+        BitcoinNetworks.bitcoin_regtest, mnemonic, 'bech32'
       )
       newClient.addProvider(newProvider)
+      await newProvider.getMethod('setDerivationCache')(addressesFromDerivationCacheExpected)
 
-      const addressesFromDerivationCacheActual = await provider.getMethod('getDerivationCache')()
+      const addressesFromDerivationCacheActual = provider.getMethod('getDerivationCache')()
       const addressesExpected = await newProvider.getMethod('getAddresses')(0, 1)
 
       expect(addressesExpected[0]).to.equal(addressesActual[0])
       expect(addressesFromDerivationCacheExpected).to.equal(addressesFromDerivationCacheActual)
+    })
+
+    it('should fail if mnemonic doesn\'t match', async () => {
+      newProvider = new BitcoinJsWalletProvider(
+        BitcoinNetworks.bitcoin_regtest, generateMnemonic(256), 'bech32'
+      )
+      newClient.addProvider(newProvider)
+      expect(newProvider.getMethod('setDerivationCache')(addressesFromDerivationCacheExpected)).to.eventually.be.rejected
     })
   })
 })
