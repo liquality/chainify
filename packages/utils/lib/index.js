@@ -1,3 +1,4 @@
+import 'setimmediate'
 import { version } from '../package.json'
 
 function sleep (ms) {

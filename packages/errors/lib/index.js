@@ -26,5 +26,6 @@ export const NodeError = createError('NodeError')
 export const InvalidSecretError = createError('InvalidSecretError')
 export const InvalidAddressError = createError('InvalidAddressError')
 export const InvalidExpirationError = createError('InvalidExpirationError')
+export const InsufficientBalanceError = createError('InsufficientBalanceError')
 
 export const version = v

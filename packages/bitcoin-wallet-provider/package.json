@@ -20,6 +20,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/bitcoin-utils": "^0.8.15",
+    "@liquality/errors": "^0.8.15",
     "@liquality/utils": "^0.8.15",
     "bignumber.js": "^9.0.0",
     "bitcoinjs-lib": "^5.2.0"

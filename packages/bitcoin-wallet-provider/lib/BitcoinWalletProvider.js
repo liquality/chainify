@@ -1,5 +1,8 @@
 import { AddressTypes, selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { Address, addressToString, asyncSetImmediate } from '@liquality/utils'
+import {
+  InsufficientBalanceError
+} from '@liquality/errors'
 
 import * as bitcoin from 'bitcoinjs-lib'
 import { BigNumber } from 'bignumber.js'
@@ -364,6 +367,6 @@ export default superclass => class BitcoinWalletProvider extends superclass {
       addressIndex += numAddressPerCall
     }
 
-    throw new Error('Not enough balance')
+    throw new InsufficientBalanceError('Not enough balance')
   }
 }
