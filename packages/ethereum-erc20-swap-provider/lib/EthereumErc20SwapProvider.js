@@ -76,7 +76,7 @@ export default class EthereumErc20SwapProvider extends Provider {
     return this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
   }
 
-  async fundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
+  async fundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     if (!initiationTransaction) throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
 

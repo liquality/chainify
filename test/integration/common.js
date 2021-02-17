@@ -237,7 +237,7 @@ async function initiateAndVerify (chain, secretHash, swapParams, fee) {
 
     const currentBlock = await chain.client.chain.getBlockHeight()
 
-    const fundingTx = await chain.client.swap.fundSwapTransaction(initiationTx.hash, ...initiationParams, fee)
+    const fundingTx = await chain.client.swap.fundSwap(initiationTx.hash, ...initiationParams, fee)
     if (isERC20) {
       await mineBlock(chain)
     }

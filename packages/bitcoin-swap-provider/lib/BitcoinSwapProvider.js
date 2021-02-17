@@ -112,7 +112,7 @@ export default class BitcoinSwapProvider extends Provider {
     return this.getMethod('sendTransaction')(address, value, undefined, feePerByte)
   }
 
-  async fundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
+  async fundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
     return null
   }
 

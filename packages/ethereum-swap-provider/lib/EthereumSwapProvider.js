@@ -105,7 +105,7 @@ export default class EthereumSwapProvider extends Provider {
     return this.getMethod('sendTransaction')(null, value, bytecode, gasPrice)
   }
 
-  async fundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
+  async fundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     return null
   }
 

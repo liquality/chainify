@@ -135,12 +135,12 @@ export default class Swap {
    * @return {Promise<Transaction, TypeError>} Resolves with the funding transaction if found, otherwise null.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async fundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee) {
+  async fundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    return this.client.getMethod('fundSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee)
+    return this.client.getMethod('fundSwap')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee)
   }
 
   /**
