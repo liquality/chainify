@@ -30,7 +30,6 @@ function testTransaction (chain) {
     expect(balBefore.plus(value).toString()).to.equal(balAfter.toString())
     await expectFee(chain, tx.hash, 100)
   })
-
   ;(chain.client.wallet.canUpdateFee ? it : it.skip)('Update transaction fee', async () => {
     const addr = await getRandomAddress(chain)
     const value = config[chain.name].value
@@ -49,6 +48,4 @@ function testTransaction (chain) {
   })
 }
 
-export {
-  testTransaction
-}
+export { testTransaction }
