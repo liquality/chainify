@@ -11,11 +11,19 @@ chai.use(chaiAsPromised)
 
 describe('Secret generation', function () {
   this.timeout(config.timeout)
+
   describe('Secret is the same when generated multiple times', () => {
     it('Bitcoin Node', async () => {
       const message = 'message'
       const secret1 = await chains.bitcoinWithNode.client.swap.generateSecret(message)
       const secret2 = await chains.bitcoinWithNode.client.swap.generateSecret(message)
+      expect(secret1).to.be.equal(secret2)
+    })
+
+    it('Near JS', async () => {
+      const message = 'message'
+      const secret1 = await chains.nearWithJs.client.swap.generateSecret(message)
+      const secret2 = await chains.nearWithJs.client.swap.generateSecret(message)
       expect(secret1).to.be.equal(secret2)
     })
   })
