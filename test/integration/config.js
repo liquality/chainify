@@ -1,5 +1,6 @@
 import BitcoinNetworks from '../../packages/bitcoin-networks/lib'
 import EthereumNetworks from '../../packages/ethereum-networks/lib'
+import NearNetworks from '../../packages/near-networks/lib'
 
 export default {
   bitcoin: {
@@ -26,6 +27,13 @@ export default {
     metaMaskConnector: {
       port: 3333
     }
+  },
+  near: {
+    network: NearNetworks.testnet,
+    value: '5000000000000000000000000',
+    // liqualitysender
+    mnemonic: 'engine monster galaxy obey lawsuit culture tool scan eternal math august humble'
+    // liqualityreceiver: chicken concert congress gun language bottom invest powder gadget exile saddle menu
   },
   // ethereum: { // RSK
   //   rpc: {
