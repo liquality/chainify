@@ -7,8 +7,7 @@
   "properties": {
     "hash": {
       "type": "string",
-      "title": "Hash",
-      "pattern": "^([A-Fa-f0-9]{64})$"
+      "title": "Hash"
     },
     "number": {
       "type": "number",
@@ -32,8 +31,7 @@
     },
     "parentHash": {
       "type": "string",
-      "title": "Parent Hash",
-      "pattern": "^([A-Fa-f0-9]{64})$"
+      "title": "Parent Hash"
     },
     "nonce": {
       "type": "number",
