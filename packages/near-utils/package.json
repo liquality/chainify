@@ -1,7 +1,6 @@
 {
   "name": "@liquality/near-utils",
   "umdName": "NearUtils",
-  "umdExport": "default",
   "version": "0.8.11",
   "description": "",
   "module": "lib/index.js",

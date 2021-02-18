@@ -19,10 +19,7 @@ export default class NearJsWalletProvider extends Provider {
   }
 
   async getAddresses () {
-    const { publicKey, secretKey } = parseSeedPhrase(
-      this._mnemonic,
-      this._derivationPath
-    )
+    const { publicKey, secretKey } = parseSeedPhrase(this._mnemonic, this._derivationPath)
 
     const keyPair = KeyPair.fromString(secretKey)
     const address = await this.getMethod('getAccounts')(publicKey, 0)
@@ -47,38 +44,28 @@ export default class NearJsWalletProvider extends Provider {
   async signMessage (message) {
     const addresses = await this.getAddresses()
 
-    const signed = await this.getSigner().signMessage(
-      Buffer.from(message),
-      addressToString(addresses[0]),
-      this._network.networkId
-    )
+    const signed = await this.getSigner().signMessage(Buffer.from(message), addressToString(addresses[0]), this._network.networkId)
 
     return Buffer.from(signed.signature).toString('hex')
   }
 
   async sendTransaction (to, value, actions) {
     const addresses = await this.getAddresses()
-    const from = await this.getMethod('getAccount')(
-      addressToString(addresses[0]),
-      this.getSigner()
-    )
+    const from = await this.getMethod('getAccount')(addressToString(addresses[0]), this.getSigner())
 
     if (!actions) {
       actions = [transfer(value)]
     }
 
-    const tx = await from.signAndSendTransaction(to, actions)
+    const tx = await from.signAndSendTransaction(addressToString(to), actions)
     return normalizeTransactionObject(tx)
   }
 
   async sendSweepTransaction (address) {
     const addresses = await this.getAddresses()
-    const from = await this.getMethod('getAccount')(
-      addresses[0].address,
-      this.getSigner()
-    )
+    const from = await this.getMethod('getAccount')(addressToString(addresses[0]), this.getSigner())
 
-    const tx = await from.deleteAccount(address)
+    const tx = await from.deleteAccount(addressToString(address))
     return normalizeTransactionObject(tx)
   }
 

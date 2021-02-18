@@ -36,10 +36,7 @@ export default class NearRpcProvider extends NodeProvider {
   }
 
   async getBlockHeight (txHash) {
-    const result = await this._rpc(
-      'block',
-      txHash ? { blockId: txHash } : { finality: 'final' }
-    )
+    const result = await this._rpc('block', txHash ? { blockId: txHash } : { finality: 'final' })
     return get(result, 'header.height')
   }
 
@@ -47,9 +44,7 @@ export default class NearRpcProvider extends NodeProvider {
     const currentBlockHeight = await this.getBlockHeight()
     const args = txHash.split('_')
     const tx = await this._rpcQuery('tx', args)
-    const blockHeight = await this.getBlockHeight(
-      tx.transaction_outcome.block_hash
-    )
+    const blockHeight = await this.getBlockHeight(tx.transaction_outcome.block_hash)
     return normalizeTransactionObject(tx, currentBlockHeight - blockHeight)
   }
 
@@ -57,9 +52,7 @@ export default class NearRpcProvider extends NodeProvider {
     const currentBlockHeight = await this.getBlockHeight()
     const args = txHash.split('_')
     const tx = await this._rpcQuery('EXPERIMENTAL_tx_status', args)
-    const blockHeight = await this.getBlockHeight(
-      tx.transaction_outcome.block_hash
-    )
+    const blockHeight = await this.getBlockHeight(tx.transaction_outcome.block_hash)
     return normalizeTransactionObject(tx, currentBlockHeight - blockHeight)
   }
 
@@ -72,6 +65,8 @@ export default class NearRpcProvider extends NodeProvider {
     if (!isArray(addresses)) {
       addresses = [addresses]
     }
+    addresses = addresses.map(addressToString)
+
     const balance = await this.getAccount(addresses[0]).getAccountBalance()
     return new BigNumber(balance.available)
   }
@@ -96,6 +91,10 @@ export default class NearRpcProvider extends NodeProvider {
     }
   }
 
+  async generateBlock (numberOfBlocks) {
+    return new Promise(resolve => setTimeout(resolve, numberOfBlocks * 10000))
+  }
+
   getAccount (accountId, signer) {
     return new Account(
       {
@@ -112,9 +111,7 @@ export default class NearRpcProvider extends NodeProvider {
       return this._accountsCache[index]
     }
 
-    const accounts = await this.nodeGet(
-      `/publicKey/${publicKey.toString()}/accounts`
-    )
+    const accounts = await this.nodeGet(`/publicKey/${publicKey.toString()}/accounts`)
 
     if (accounts[index]) {
       this._accountsCache[index] = accounts[index]
@@ -133,16 +130,10 @@ export default class NearRpcProvider extends NodeProvider {
     const blockHash = get(block, 'header.hash')
 
     if (includeTx && !block.transactions && isArray(block.chunks)) {
-      const chunks = await Promise.all(
-        block.chunks.map((c) => this._rpc('chunk', c.chunk_hash))
-      )
+      const chunks = await Promise.all(block.chunks.map(c => this._rpc('chunk', c.chunk_hash)))
 
       const transactions = chunks.reduce((p, c) => {
-        p.push(
-          ...c.transactions.map((t) =>
-            normalizeTransactionObject({ ...t, block_hash: blockHash })
-          )
-        )
+        p.push(...c.transactions.map(t => normalizeTransactionObject({ ...t, block_hash: blockHash })))
         return p
       }, [])
 
