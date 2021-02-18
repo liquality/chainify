@@ -124,32 +124,23 @@ export default class Swap {
   }
 
   /**
-   * Create swap script.
-   * @param {!string} bytecode - Bytecode to be used for swap.
-   * @return {Promise<string, null>} Resolves with swap bytecode.
+   * Funds a swap
+   * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!number} value - The amount of native value to lock for the swap.
+   * @param {!string} recipientAddress - Recepient address for the swap in hex.
+   * @param {!string} refundAddress - Refund address for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
+   * @param {!number} expiration - Expiration time for the swap.
+   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
+   * @return {Promise<Transaction, TypeError>} Resolves with the funding transaction if found, otherwise null.
+   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    if (!isString(recipientAddress)) {
-      throw new TypeError('Recipient address should be a string')
+  async fundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee) {
+    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+      throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    if (!isString(refundAddress)) {
-      throw new TypeError('Refund address should be a string')
-    }
-
-    if (!isString(secretHash)) {
-      throw new TypeError('Secret hash should be a string')
-    }
-
-    if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {
-      throw new TypeError('Secret hash should be a valid hex string')
-    }
-
-    if (!isNumber(expiration)) {
-      throw new TypeError('Invalid expiration time')
-    }
-
-    return this.client.getMethod('createSwapScript')(recipientAddress, refundAddress, secretHash, expiration)
+    return this.client.getMethod('fundSwap')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee)
   }
 
   /**

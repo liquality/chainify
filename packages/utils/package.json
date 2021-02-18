@@ -1,6 +1,6 @@
 {
   "name": "@liquality/utils",
-  "version": "0.8.14",
+  "version": "0.9.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -19,7 +19,8 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.12.1"
+    "@babel/runtime": "^7.12.1",
+    "setimmediate": "^1.0.5"
   },
   "engines": {
     "node": "~8.12.0"

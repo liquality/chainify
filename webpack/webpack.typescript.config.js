@@ -4,7 +4,7 @@ const pkg = require(path.join(cwd, 'package.json'))
 
 const isProdEnv = process.env.NODE_ENV === 'production'
 const isWatchEnv = process.env.WEBPACK_WATCH === 'true'
-const isCIEnv = process.env.CI === 'true'
+// const isCIEnv = process.env.CI === 'true'
 
 module.exports = {
   entry: './lib/index.ts',
@@ -15,15 +15,15 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       }
     ]
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     fallback: {
-      "buffer": require.resolve("buffer"),
-      "stream": require.resolve("stream-browserify")
+      'buffer': require.resolve('buffer'),
+      'stream': require.resolve('stream-browserify')
     }
   },
   output: {
