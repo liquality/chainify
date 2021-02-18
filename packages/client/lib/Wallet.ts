@@ -62,14 +62,6 @@ export default class Wallet {
   }
 
   /**
-   * Retrieve the network id of the connected network
-   * @return {Promise<Number>} The network id of the connected network
-   */
-  async getWalletNetworkId () {
-    return this.client.getMethod('getWalletNetworkId')()
-  }
-
-  /**
    * Flag indicating if the wallet allows apps to update transaction fees
    * @return {Promise<Boolean>} True if wallet accepts fee updating
    */

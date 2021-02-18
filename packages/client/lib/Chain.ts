@@ -144,15 +144,6 @@ export default class Chain {
   }
 
   /**
-   * Check if an address has been used or not.
-   * @param {!string|Address} addresses - An address to check for.
-   * @return {Promise<boolean>} Resolves to true if provided address is used
-   */
-  async isAddressUsed (address) {
-    return this.client.getMethod('isAddressUsed')(address)
-  }
-
-  /**
    * Create & sign a transaction.
    * @param {!string} to - Recepient address.
    * @param {!string} value - Value of transaction.

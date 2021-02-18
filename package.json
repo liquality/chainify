@@ -81,7 +81,7 @@
     "build:dev:node": "lerna run build:node --stream",
     "build:dev:browser": "lerna run build:browser --stream",
     "build:dev": "lerna run build --stream",
-    "build:ts": "lerna run build --scope=@liquality/bitcoin-networks",
+    "build:ts": "lerna run build --scope={@liquality/schema,@liquality/types,@liquality/provider}",
     "build:node": "cross-env NODE_ENV=production npm run build:dev:node",
     "build:browser": "cross-env NODE_ENV=production npm run build:dev:browser",
     "build": "cross-env NODE_ENV=production npm run build:dev",

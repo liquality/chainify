@@ -33,10 +33,6 @@ export default class InjectedProvider {
       .then(balance => BigNumber(balance))
   }
 
-  async isAddressUsed (address) {
-    return this.injectedProvider.getMethod('chain.isAddressUsed')(address)
-  }
-
   async buildTransaction (to, value, data, from) {
     return this.injectedProvider.getMethod('chain.buildTransaction')(to, value, data, from)
   }
@@ -83,10 +79,6 @@ export default class InjectedProvider {
 
   async isWalletAvailable () {
     return this.injectedProvider.getMethod('wallet.isWalletAvailable')()
-  }
-
-  async getWalletNetworkId () {
-    return this.injectedProvider.getMethod('wallet.getWalletNetworkId')()
   }
 
   // </wallet>

@@ -1,23 +1,24 @@
 {
   "name": "@liquality/errors",
-  "umdName": "CALErrors",
   "version": "0.8.14",
   "description": "",
-  "module": "lib/index.js",
-  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
   "files": [
     "dist",
     "lib"
   ],
   "scripts": {
-    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
-    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
-    "build": "webpack --config ../../webpack/webpack.config.js"
+    "build": "webpack --config ../../webpack/webpack.typescript.config.js"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.12.1",
     "standard-error": "^1.1.0"
   },
   "engines": {
@@ -33,5 +34,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/standard-error": "^1.1.0"
   }
 }

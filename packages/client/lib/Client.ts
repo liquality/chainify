@@ -1,4 +1,5 @@
 import { Block, Transaction } from '@liquality/schema'
+import { Client as IClient } from '@liquality/types'
 import {
   DuplicateProviderError,
   InvalidProviderError,
@@ -16,23 +17,30 @@ import Chain from './Chain'
 import Wallet from './Wallet'
 import Swap from './Swap'
 
-import { version } from '../package.json'
-
 export default class Client {
   static debug (namespace = '*') {
     // if localStorage.DEBUG (browser)
     // or process.env.DEBUG (node) is not set
+    // @ts-ignore
     if (!debug.load()) {
       debug.enable(namespace)
     }
   }
+
+  _providers: Provider[]
+  version: string
+  validateTransaction: Ajv.ValidateFunction
+  validateBlock: Ajv.ValidateFunction
+  _chain: Chain
+  _wallet: Wallet
+  _swap: Swap
 
   /**
    * Client
    * @param {Provider} [provider] - Data source/provider for the instance
    * @param {string} [version] - Minimum blockchain node version to support
    */
-  constructor (provider, version) {
+  constructor (provider: Provider, version: string) {
     /**
      * @type {Array}
      */
@@ -63,7 +71,7 @@ export default class Client {
    * @throws {InvalidProviderError} When invalid provider is provider
    * @throws {DuplicateProviderError} When same provider is added again
    */
-  addProvider (provider) {
+  addProvider (provider: Provider) {
     if (!isFunction(provider.setClient)) {
       throw new InvalidProviderError('Provider should have "setClient" method')
     }
@@ -95,7 +103,7 @@ export default class Client {
    * @throws {UnsupportedMethodError} When requested method is not supported by
    *  version specified
    */
-  getProviderForMethod (method, requestor = false) {
+  getProviderForMethod (method: string, requestor = false) {
     if (this._providers.length === 0) {
       throw new NoProviderError('No provider provided. Add a provider to the client')
     }
@@ -133,7 +141,7 @@ export default class Client {
    *  above the requestor in the stack.
    * @return {function} Returns method from provider instance associated with the requested method
    */
-  getMethod (method, requestor) {
+  getMethod (method: string, requestor: any) {
     const provider = this.getProviderForMethod(method, requestor)
     return provider[method].bind(provider)
   }
@@ -164,5 +172,3 @@ export default class Client {
     return this._swap
   }
 }
-
-Client.version = version
