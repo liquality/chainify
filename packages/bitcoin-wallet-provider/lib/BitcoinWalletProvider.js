@@ -34,6 +34,18 @@ export default superclass => class BitcoinWalletProvider extends superclass {
     this._derivationCache = {}
   }
 
+  getDerivationCache () {
+    return this._derivationCache
+  }
+
+  async setDerivationCache (derivationCache) {
+    const address = await this.getDerivationPathAddress(Object.keys(derivationCache)[0])
+    if (derivationCache[address.derivationPath].address !== address.address) {
+      throw new Error(`derivationCache at ${address.derivationPath} does not match`)
+    }
+    this._derivationCache = derivationCache
+  }
+
   async buildTransaction (to, value, data, feePerByte) {
     return this._buildTransaction([{ to, value }], feePerByte)
   }
