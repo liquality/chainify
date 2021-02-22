@@ -21,7 +21,7 @@
     "@babel/runtime": "^7.12.1",
     "@liquality/errors": "^0.9.0",
     "@liquality/provider": "^0.9.0",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   },
   "engines": {
     "node": "~8.12.0"
