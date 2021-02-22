@@ -1,23 +1,21 @@
-import NodeProvider from '@liquality/node-provider'
+import NodeProvider, { AxiosRequestConfig, AxiosResponse } from '@liquality/node-provider'
 import Debug from '@liquality/debug'
 import { NodeError } from '@liquality/errors'
 
 import JSONBigInt from 'json-bigint'
 import { has } from 'lodash'
 
-import { version } from '../package.json'
-
 const debug = Debug('jsonrpc')
 
-const { parse, stringify } = JSONBigInt({ storeAsString: true, strict: true })
+const { parse, stringify } = JSONBigInt({ storeAsString: true, strict: true, useNativeBigInt: true })
 
 export default class JsonRpcProvider extends NodeProvider {
-  constructor (uri, username, password) {
-    const config = {
+  constructor (uri: string, username?: string, password?: string) {
+    const config: AxiosRequestConfig = {
       baseURL: uri,
       responseType: 'text',
       transformResponse: undefined, // https://github.com/axios/axios/issues/907,
-      validateStatus: status => true
+      validateStatus: () => true
     }
 
     if (username || password) {
@@ -27,7 +25,7 @@ export default class JsonRpcProvider extends NodeProvider {
     super(config)
   }
 
-  _prepareRequest (method, params) {
+  _prepareRequest (method: string, params: any[]) {
     const id = Date.now()
     const req = { id, method, params }
 
@@ -36,12 +34,12 @@ export default class JsonRpcProvider extends NodeProvider {
     return req
   }
 
-  _parseResponse (data) {
-    debug('raw jsonrpc response', data)
+  _parseResponse (_data: AxiosResponse) : any {
+    debug('raw jsonrpc response', _data)
 
-    if (typeof data !== 'string') data = stringify(data)
+    let dataString: string = (typeof _data !== 'string') ? stringify(_data) : _data
 
-    data = parse(data)
+    let data = parse(dataString)
 
     debug('parsed jsonrpc response', data)
 
@@ -58,11 +56,9 @@ export default class JsonRpcProvider extends NodeProvider {
     return data.result
   }
 
-  async jsonrpc (method, ...params) {
-    const data = await this.nodePost('', this._prepareRequest(method, params))
+  async jsonrpc (method: string, ...params: any[]) {
+    const data = await super.nodePost('', this._prepareRequest(method, params))
 
     return this._parseResponse(data)
   }
 }
-
-JsonRpcProvider.version = version

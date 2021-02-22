@@ -1,12 +1,11 @@
-import { Client, Provider as IProvider } from '@liquality/types'
 
-export default class Provider implements IProvider {
-  client: Client
+export default class Provider {
+  client: any
   /**
    * Set client to a provider instance.
    * @param {!ChainAbstractionLayer} client - The ChainAbstractionLayer instance
    */ 
-  setClient (client: Client) {
+  setClient (client: any) {
     this.client = client
   }
 
@@ -16,7 +15,7 @@ export default class Provider implements IProvider {
    * @return {function} Returns a method from a provider above current Provider
    *  in the stack.
    */
-  getMethod (method: string, requestor = this) {
+  getMethod (method: string, requestor: any = this) {
     return this.client.getMethod(method, requestor).bind(this)
   }
 }

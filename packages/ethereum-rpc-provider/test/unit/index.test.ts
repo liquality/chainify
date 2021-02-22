@@ -13,8 +13,8 @@ chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Ethereum RPC provider', () => {
-  let client
-  let provider
+  let client: Client
+  let provider: EthereumRpcProvider
 
   beforeEach(() => {
     client = new Client()
@@ -27,7 +27,7 @@ describe('Ethereum RPC provider', () => {
   describe('getAddresses', () => {
     it('should return an array of addresses without 0x', async () => {
       const addresses = await client.wallet.getAddresses()
-      expect(addresses.map(a => a.toObject())).to.deep.equal([
+      expect(addresses.map(a => a)).to.deep.equal([
         { address: '322d4959c911520645c0638204b42ce0689236e9' },
         { address: '635d7d148054b9471d79084b80b864a166956139' },
         { address: 'a17fe13ab28477f17fc7f1ec99a4385c95a5356b' },
@@ -45,19 +45,26 @@ describe('Ethereum RPC provider', () => {
   describe('getUnusedAddress', () => {
     it('should return first address without 0x', async () => {
       const unusedAddress = await client.wallet.getUnusedAddress()
-      expect(unusedAddress.toObject()).to.deep.equal({ address: '322d4959c911520645c0638204b42ce0689236e9' })
+      expect(unusedAddress).to.deep.equal({ address: '322d4959c911520645c0638204b42ce0689236e9' })
     })
   })
 
   describe('sendTransaction', () => {
     it('should return a txid without 0x', async () => {
-      const tx = await client.chain.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000)
+      const tx = await client.chain.sendTransaction({
+        to: '635d7d148054b9471d79084b80b864a166956139',
+        value: new BigNumber(1000)
+      })
       expect(tx.hash).to.match(/^[A-Fa-f0-9]+$/)
       expect(tx.value).equal(1000)
     })
 
     it('returned tx object should have input field', async () => {
-      const tx = await client.chain.sendTransaction('635d7d148054b9471d79084b80b864a166956139', 1000, '1234')
+      const tx = await client.chain.sendTransaction({
+        to: '635d7d148054b9471d79084b80b864a166956139',
+        value: new BigNumber(1000),
+        data: '1234'
+      })
       expect(tx._raw.input).equal('1234')
     })
   })
@@ -153,7 +160,7 @@ describe('Ethereum RPC provider', () => {
   describe('getBalance', () => {
     it('should return correct balance', async () => {
       const balance = await client.chain.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ])
-      expect(balance)
+      expect(balance) // @ts-ignore
         .to.be.bignumber
         .equal(new BigNumber(99995379999999890000))
     })

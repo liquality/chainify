@@ -76,7 +76,7 @@ function ripemd160 (message : string | Buffer) {
  * @return {string} Returns a padded string with length greater or equal to the given length
  *  rounded up to the nearest even number.
  */
-function padHexStart (hex: string, lengthBytes: number) {
+function padHexStart (hex: string, lengthBytes?: number) {
   let lengthString = lengthBytes * 2 || hex.length
   lengthString += lengthString % 2
 

@@ -1,22 +1,16 @@
 import { InvalidProviderResponseError } from '@liquality/errors'
-
+import { SendOptions, Block, Transaction, FeeDetails, ChainProvider, FeeProvider, BigNumber } from '@liquality/types'
 import { isArray, isBoolean, isNumber, isString, isObject } from 'lodash'
-import { BigNumber } from 'bignumber.js'
 
-export default class Chain {
-  /**
-   * ChainProvider
-   */
-  constructor (client) {
+export default class Chain implements ChainProvider, FeeProvider {
+  client: any
+
+  constructor (client: any) {
     this.client = client
   }
 
-  /**
-   * Generate a block
-   * @param {!number} numberOfBlocks - Number of blocks to be generated
-   * @return {<Promise>}
-   */
-  async generateBlock (numberOfBlocks) {
+  /** @inheritdoc */
+  async generateBlock (numberOfBlocks: number) : Promise<void> {
     if (!isNumber(numberOfBlocks)) {
       throw new TypeError('First argument should be a number')
     }
@@ -24,19 +18,8 @@ export default class Chain {
     return this.client.getMethod('generateBlock')(numberOfBlocks)
   }
 
-  /**
-   * Get a block given its hash.
-   * @param {!string} blockHash - A hexadecimal string that represents the
-   *  *hash* of the desired block.
-   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
-   * @return {Promise<ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError>}
-   *  Resolves with a Block with the same hash as the given input.
-   *  If `includeTx` is true, the transaction property is an array of Transactions;
-   *  otherwise, it is a list of transaction hashes.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getBlockByHash (blockHash, includeTx = false) {
+  /** @inheritdoc */
+  async getBlockByHash (blockHash: string, includeTx: boolean = false) : Promise<Block> {
     if (!isString(blockHash)) {
       throw new TypeError('Block hash should be a string')
     }
@@ -54,18 +37,8 @@ export default class Chain {
     return block
   }
 
-  /**
-   * Get a block given its number.
-   * @param {!number} blockNumber - The number of the desired block.
-   * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
-   * @return {Promise<ChainAbstractionLayer.schemas.Block, TypeError|InvalidProviderResponseError>}
-   *  Resolves with a Block with the same number as the given input.
-   *  If `includeTx` is true, the transaction property is an array of Transactions;
-   *  otherwise, it is a list of transaction hashes.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getBlockByNumber (blockNumber, includeTx = false) {
+  /** @inheritdoc */
+  async getBlockByNumber (blockNumber: number, includeTx: boolean = false) : Promise<Block> {
     if (!isNumber(blockNumber)) {
       throw new TypeError('Invalid Block number')
     }
@@ -79,13 +52,8 @@ export default class Chain {
     return block
   }
 
-  /**
-   * Get current block height of the chain.
-   * @return {Promise<number, InvalidProviderResponseError>} Resolves with
-   *  chain height.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getBlockHeight () {
+  /** @inheritdoc */
+  async getBlockHeight () : Promise<number> {
     const blockHeight = await this.client.getMethod('getBlockHeight')()
 
     if (!isNumber(blockHeight)) {
@@ -95,16 +63,8 @@ export default class Chain {
     return blockHeight
   }
 
-  /**
-   * Get a transaction given its hash.
-   * @param {!string} txHash - A hexadecimal string that represents the *hash* of the
-   *  desired transaction.
-   * @return {Promise<ChainAbstractionLayer.schemas.Transaction, TypeError|InvalidProviderResponseError>}
-   *  Resolves with a Transaction with the same hash as the given input.
-   *  Rejects with TypeError if input is invalid.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getTransactionByHash (txHash) {
+  /** @inheritdoc */
+  async getTransactionByHash (txHash: string) : Promise<Transaction> {
     if (!isString(txHash)) {
       throw new TypeError('Transaction hash should be a string')
     }
@@ -121,19 +81,8 @@ export default class Chain {
     return transaction
   }
 
-  /**
-   * Get the balance of an account given its addresses.
-   * @param {!string|string[]|Address|Address[]} addresses - An address or a list of addresses.
-   * @return {Promise<number, InvalidProviderResponseError>} If addresses is given,
-   *  returns the cumulative balance of the given addresses. Otherwise returns the balance
-   *  of the addresses that the signing provider controls.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getBalance (addresses) {
-    if (!isArray(addresses)) {
-      addresses = [ addresses ]
-    }
-
+  /** @inheritdoc */
+  async getBalance (addresses: string[]) : Promise<BigNumber> {
     const balance = await this.client.getMethod('getBalance')(addresses)
 
     if (!BigNumber.isBigNumber(balance)) {
@@ -143,58 +92,25 @@ export default class Chain {
     return balance
   }
 
-  /**
-   * Create & sign a transaction.
-   * @param {!string} to - Recepient address.
-   * @param {!string} value - Value of transaction.
-   * @param {!string} data - Data to be passed to the transaction.
-   * @param {!string} from - The address from which the message is signed.
-   * @return {Promise<string>} Resolves with a signed transaction object.
-   */
-  async buildTransaction (to, value, data, from) {
-    return this.client.getMethod('buildTransaction')(to, value, data, from)
+  /** @inheritdoc */
+  async isAddressUsed (address: string) {
+    return this.client.getMethod('isAddressUsed')(address)
   }
 
-  /**
-   * Create & sign a transaction with multiple outputs.
-   * @param {string[]} transactions - to, value, data, from.
-   * @return {Promise<string>} Resolves with a signed transaction object.
-   */
-  async buildBatchTransaction (transactions) {
-    return this.client.getMethod('buildBatchTransaction')(transactions)
-  }
-
-  /**
-   * Create, sign & broadcast a transaction.
-   * @param {!string} to - Recepient address.
-   * @param {!string} value - Value of transaction.
-   * @param {!string} data - Data to be passed to the transaction.
-   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, wei)
-   * @return {Promise<Transaction>} Resolves with a signed transaction.
-   */
-  async sendTransaction (to, value, data, fee) {
-    const transaction = await this.client.getMethod('sendTransaction')(to, value, data, fee)
+  /** @inheritdoc */
+  async sendTransaction (options: SendOptions) : Promise<Transaction> {
+    const transaction = await this.client.getMethod('sendTransaction')(options)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
 
-  /**
-   * Create, sign & broadcast a sweep transaction.
-   * @param {!string} address - External address.
-   * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
-   * @return {Promise<Transaction>} Resolves with a signed transaction.
-   */
-  async sendSweepTransaction (address, fee) {
+  /** @inheritdoc */
+  async sendSweepTransaction (address: string, fee: number) : Promise<Transaction> {
     return this.client.getMethod('sendSweepTransaction')(address, fee)
   }
 
-  /**
-   * Update the fee of a transaction.
-   * @param {(string|Transaction)} tx - Transaction object or hash of the transaction to update
-   * @param {!string} newFee - New fee price in native unit (e.g. sat/b, wei)
-   * @return {Promise<Transaction>} Resolves with the new transaction
-   */
-  async updateTransactionFee (tx, newFee) {
+  /** @inheritdoc */
+  async updateTransactionFee (tx: string | Transaction, newFee: BigNumber) : Promise<Transaction> {
     if (isString(tx)) {
       if (!(/^[A-Fa-f0-9]+$/.test(tx))) {
         throw new TypeError('Transaction hash should be a valid hex string')
@@ -210,24 +126,13 @@ export default class Chain {
     return transaction
   }
 
-  /**
-   * Create, sign & broad a transaction with multiple outputs.
-   * @param {string[]} transactions - to, value, data, from.
-   * @return {Promise<Transaction>} Resolves with a signed transaction.
-   */
-  async sendBatchTransaction (transactions) {
+  /** @inheritdoc */
+  async sendBatchTransaction (transactions: SendOptions[]) : Promise<Transaction> {
     return this.client.getMethod('sendBatchTransaction')(transactions)
   }
 
-  /**
-   * Broadcast a signed transaction to the network.
-   * @param {!string} rawTransaction - A raw transaction usually in the form of a
-   *  hexadecimal string that represents the serialized transaction.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with an
-   *  identifier for the broadcasted transaction.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async sendRawTransaction (rawTransaction) {
+  /** @inheritdoc */
+  async sendRawTransaction (rawTransaction: string) : Promise <string> {
     const txHash = await this.client.getMethod('sendRawTransaction')(rawTransaction)
 
     if (!isString(txHash)) {
@@ -237,11 +142,8 @@ export default class Chain {
     return txHash
   }
 
-  async getConnectedNetwork () {
-    return this.client.getMethod('getConnectedNetwork')()
-  }
-
-  async getFees () {
+  /** @inheritdoc */
+  async getFees () : Promise<FeeDetails> {
     return this.client.getMethod('getFees')()
   }
 }

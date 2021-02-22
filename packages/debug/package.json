@@ -1,28 +1,27 @@
 {
   "name": "@liquality/debug",
-  "umdName": "Debug",
-  "umdExport": "default",
   "version": "0.9.0",
   "description": "",
-  "module": "lib/index.js",
-  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
   "files": [
     "dist",
     "lib"
   ],
   "scripts": {
-    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
-    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
-    "build": "webpack --config ../../webpack/webpack.config.js"
+    "build": "webpack --config ../../webpack/webpack.typescript.config.js"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@types/debug": "^4.1.5",
     "debug": "^4.1.1"
-  },
-  "engines": {
-    "node": "~8.12.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

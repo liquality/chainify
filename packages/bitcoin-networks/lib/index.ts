@@ -1,6 +1,7 @@
-import { networks } from 'bitcoinjs-lib'
-import pkg from '../package.json'
-import { BitcoinNetwork } from './types'
+import { networks, Network as BitcoinJsLibNetwork } from 'bitcoinjs-lib'
+import { Network } from '@liquality/types'
+
+export interface BitcoinNetwork extends Network, BitcoinJsLibNetwork {}
 
 const bitcoin: BitcoinNetwork = {
   name: 'bitcoin',
@@ -23,10 +24,10 @@ const bitcoin_regtest: BitcoinNetwork = {
   isTestnet: true
 }
 
-export const BitcoinNetworks = {
+const BitcoinNetworks = {
   bitcoin,
   bitcoin_testnet,
   bitcoin_regtest
 }
 
-export const version = pkg.version
+export default BitcoinNetworks

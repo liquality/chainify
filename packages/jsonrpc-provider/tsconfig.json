@@ -3,8 +3,7 @@
     "compilerOptions": {
         "outDir": "./dist",
         "baseUrl": "./",
-        "rootDir": "./",
-        "esModuleInterop": true
+        "rootDir": "./"
     },
     "include": ["lib"]
 }

@@ -1,18 +1,17 @@
 import Provider from '@liquality/provider'
 import { NodeError } from '@liquality/errors'
 
-import axios from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { get } from 'lodash'
 
-import { version } from '../package.json'
-
 export default class NodeProvider extends Provider {
-  constructor (config) {
+  _node: AxiosInstance
+  constructor (config: AxiosRequestConfig) {
     super()
     this._node = axios.create(config)
   }
 
-  _handleNodeError (e) {
+  _handleNodeError (e: Error) {
     let { name, message, ...attrs } = e
 
     const data = get(e, 'response.data')
@@ -21,17 +20,16 @@ export default class NodeProvider extends Provider {
     throw new NodeError(message, attrs)
   }
 
-  nodeGet (url, params) {
+  nodeGet (url: string, params: AxiosRequestConfig) : Promise<AxiosResponse> {
     return this._node.get(url, { params })
       .then(response => response.data)
       .catch(this._handleNodeError)
   }
 
-  nodePost (url, data) {
+  nodePost (url: string, data: any) : Promise<AxiosResponse>  {
     return this._node.post(url, data)
       .then(response => response.data)
       .catch(this._handleNodeError)
   }
 }
 
-NodeProvider.version = version

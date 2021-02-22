@@ -1,6 +1,6 @@
-import { Address } from './address'
+import { Address } from "./address";
 
-export interface Wallet {
+export interface WalletProvider {
   /**
    * Get addresses/accounts of the user.
    * @param {number} [startingIndex] - Index to start
@@ -53,6 +53,7 @@ export interface Wallet {
 
   /**
    * Flag indicating if the wallet allows apps to update transaction fees
+   * @return {Promise<Boolean>} True if wallet accepts fee updating
    */
   canUpdateFee: boolean
 }

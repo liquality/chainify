@@ -1,16 +1,15 @@
 import BigNumber from 'bignumber.js'
-import { Block } from './block'
-import { Transaction } from './transaction'
-import { FeeDetails } from './fees'
+import { Block } from './block';
+import { Transaction } from './transaction';
 
 export interface SendOptions {
   to: string
-  value: number
+  value: BigNumber
   data?: string
-  fee?: number
+  fee?: BigNumber
 }
 
-export interface Chain {
+export interface ChainProvider {
   /**
    * Generate a block
    * @param {!number} numberOfBlocks - Number of blocks to be generated
@@ -65,6 +64,13 @@ export interface Chain {
   getTransactionByHash (txHash: string) : Promise<Transaction>
 
   /**
+   * Check if an address has been used or not.
+   * @param {!string} addresses - An address to check for.
+   * @return {Promise<boolean>} Resolves to true if provided address is used
+   */
+  isAddressUsed (address: string) : Promise<boolean>
+
+  /**
    * Get the balance of an account given its addresses.
    * @param {string[]} addresses - A list of addresses.
    * @return {Promise<BigNumber, InvalidProviderResponseError>} If addresses is given,
@@ -98,7 +104,7 @@ export interface Chain {
    * @param {!number} newFee - New fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with the new transaction
    */
-  updateTransactionFee (tx: string | Transaction, newFee: number) : Promise<Transaction>
+  updateTransactionFee (tx: string | Transaction, newFee: BigNumber) : Promise<Transaction>
 
   /**
    * Create, sign & broad a transaction with multiple outputs.
@@ -116,11 +122,4 @@ export interface Chain {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   sendRawTransaction (rawTransaction: string) : Promise <string>
-
-  /**
-   * @return {Promise<FeeDetails>} Resolves with an
-   *  identifier for the broadcasted transaction.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  getFees () : FeeDetails
 }

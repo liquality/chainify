@@ -1,4 +1,11 @@
 import Client from './Client'
-import { version } from '../package.json'
+import Chain from './Chain'
+import Swap from './Swap'
+import Wallet from './Wallet'
 
-export { Client, version }
+export default Client
+export {
+  Chain,
+  Wallet,
+  Swap
+}

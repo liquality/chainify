@@ -1,6 +1,3 @@
-import { version } from '../package.json'
-import { Address } from './types'
-
 function sleep (ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -17,9 +14,7 @@ function caseInsensitiveEqual (left: string, right: string) {
 }
 
 export {
-  Address,
   sleep,
   asyncSetImmediate,
-  caseInsensitiveEqual,
-  version
+  caseInsensitiveEqual
 }

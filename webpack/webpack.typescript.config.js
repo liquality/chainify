@@ -10,6 +10,7 @@ module.exports = {
   entry: './lib/index.ts',
   mode: isProdEnv ? 'production' : 'development',
   watch: isWatchEnv,
+  target: 'node',
   module: {
     rules: [
       {

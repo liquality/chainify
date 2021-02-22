@@ -1,5 +1,6 @@
-import { Block, Transaction } from '@liquality/schema'
-import { Client as IClient } from '@liquality/types'
+import { Block as BlockSchema, Transaction as TransactionSchema } from '@liquality/schema'
+import { Block, Transaction } from '@liquality/types'
+import Provider from '@liquality/provider'
 import {
   DuplicateProviderError,
   InvalidProviderError,
@@ -23,7 +24,7 @@ export default class Client {
     // or process.env.DEBUG (node) is not set
     // @ts-ignore
     if (!debug.load()) {
-      debug.enable(namespace)
+      (debug as any).enable(namespace)
     }
   }
 
@@ -40,7 +41,7 @@ export default class Client {
    * @param {Provider} [provider] - Data source/provider for the instance
    * @param {string} [version] - Minimum blockchain node version to support
    */
-  constructor (provider: Provider, version: string) {
+  constructor (provider?: Provider, version?: string) {
     /**
      * @type {Array}
      */
@@ -56,8 +57,8 @@ export default class Client {
     }
 
     const ajv = new Ajv()
-    this.validateTransaction = ajv.compile(Transaction)
-    this.validateBlock = ajv.compile(Block)
+    this.validateTransaction = ajv.compile(TransactionSchema)
+    this.validateBlock = ajv.compile(BlockSchema)
 
     this._chain = new Chain(this)
     this._wallet = new Wallet(this)
@@ -118,17 +119,17 @@ export default class Client {
 
     const provider = findLast(
       this._providers,
-      provider => isFunction(provider[method]), indexOfRequestor - 1
+      provider => isFunction((<any>provider)[method]), indexOfRequestor - 1
     )
+
+    if (isFunction((<any>provider)._checkMethodVersionSupport)) {
+      if (!(<any>provider)._checkMethodVersionSupport(method, this.version)) {
+        throw new UnsupportedMethodError(`Method "${method}" is not supported by version "${this.version}"`)
+      }
+    }
 
     if (provider == null) {
       throw new UnimplementedMethodError(`Unimplemented method "${method}"`)
-    }
-
-    if (isFunction(provider._checkMethodVersionSupport)) {
-      if (!provider._checkMethodVersionSupport(method, this.version)) {
-        throw new UnsupportedMethodError(`Method "${method}" is not supported by version "${this.version}"`)
-      }
     }
 
     return provider
@@ -143,17 +144,17 @@ export default class Client {
    */
   getMethod (method: string, requestor: any) {
     const provider = this.getProviderForMethod(method, requestor)
-    return provider[method].bind(provider)
+    return (<any>provider)[method].bind(provider)
   }
 
-  assertValidTransaction (transaction) {
+  assertValidTransaction (transaction: Transaction) {
     if (!this.validateTransaction(transaction)) {
       const { errors } = this.validateTransaction
       throw new InvalidProviderResponseError(`Provider returned an invalid transaction, "${errors[0].dataPath}" ${errors[0].message}`)
     }
   }
 
-  assertValidBlock (block) {
+  assertValidBlock (block: Block) {
     if (!this.validateBlock(block)) {
       const { errors } = this.validateBlock
       throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)

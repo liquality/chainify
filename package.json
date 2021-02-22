@@ -48,9 +48,6 @@
     "webpack-bundle-analyzer": "^3.5.2",
     "webpack-cli": "^3.3.9"
   },
-  "engines": {
-    "node": "~8.12.0"
-  },
   "standard": {
     "plugins": [
       "html",
@@ -78,10 +75,11 @@
     "test:integration": "cross-env NODE_ENV=test mocha test/integration $npm_package_options_mocha",
     "test:integration:external": "cross-env NODE_ENV=test RUN_EXTERNAL=true mocha test/integration $npm_package_options_mocha",
     "watch": "cross-env NODE_ENV=production WEBPACK_WATCH=true lerna run build --parallel",
+    "watch:ts": "cross-env NODE_ENV=production WEBPACK_WATCH=true lerna run build --scope={@liquality/schema,@liquality/types,@liquality/provider,@liquality/bitcoin-networks,@liquality/crypto,@liquality/utils,@liquality/client,@liquality/errors,@liquality/debug,@liquality/node-provider,@liquality/jsonrpc-provider,@liquality/ethereum-utils} --parallel",
     "build:dev:node": "lerna run build:node --stream",
     "build:dev:browser": "lerna run build:browser --stream",
     "build:dev": "lerna run build --stream",
-    "build:ts": "lerna run build --scope={@liquality/schema,@liquality/types,@liquality/provider}",
+    "build:ts": "lerna run build --scope={@liquality/schema,@liquality/types,@liquality/provider,@liquality/bitcoin-networks,@liquality/ethereum-networks,@liquality/crypto,@liquality/utils,@liquality/client,@liquality/errors,@liquality/debug,@liquality/node-provider,@liquality/jsonrpc-provider,@liquality/ethereum-utils,@liquality/ethereum-rpc-provider}",
     "build:node": "cross-env NODE_ENV=production npm run build:dev:node",
     "build:browser": "cross-env NODE_ENV=production npm run build:dev:browser",
     "build": "cross-env NODE_ENV=production npm run build:dev",

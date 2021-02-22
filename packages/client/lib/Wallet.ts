@@ -1,19 +1,24 @@
 import { InvalidProviderResponseError, UnimplementedMethodError } from '@liquality/errors'
-
+import { Address, WalletProvider } from '@liquality/types'
 import { isArray } from 'lodash'
 
-export default class Wallet {
-  constructor (client) {
+export default class Wallet implements WalletProvider {
+  client: any
+
+  constructor (client: any) {
     this.client = client
   }
 
   /**
    * Get addresses/accounts of the user.
-   * @return {Promise<Address, InvalidProviderResponseError>} Resolves with a list
-   *  of accounts.
+   * @param {number} [startingIndex] - Index to start
+   * @param {number} [numAddresses] - Number of addresses to retrieve
+   * @param {boolean} [change] - True for change addresses
+   * @return {Promise<Address[], InvalidProviderResponseError>} Resolves with a list
+   *  of addresses.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddresses (startingIndex = 0, numAddresses = 1, change = false) {
+  async getAddresses (startingIndex?: number, numAddresses?: number, change?: boolean) : Promise<Address[]> {
     const addresses = await this.client.getMethod('getAddresses')(startingIndex, numAddresses, change)
 
     if (!isArray(addresses)) {
@@ -25,21 +30,24 @@ export default class Wallet {
 
   /**
    * Get used addresses/accounts of the user.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
-   *  object.
+   * @param {number} [numAddressPerCall] - Number of addresses to retrieve per call
+   * @return {Promise<Address[], InvalidProviderResponseError>} Resolves with a list
+   *  of addresses.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUsedAddresses (numAddressPerCall) {
+  async getUsedAddresses (numAddressPerCall?: number) : Promise<Address[]> {
     return this.client.getMethod('getUsedAddresses')(numAddressPerCall)
   }
 
   /**
    * Get unused address/account of the user.
-   * @return {Promise<string, InvalidProviderResponseError>} Resolves with a address
+   * @param {boolean} [change] - True for change addresses
+   * @param {number} [numAddressPerCall] - Number of addresses to retrieve per call
+   * @return {Promise<Address, InvalidProviderResponseError>} Resolves with a address
    *  object.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUnusedAddress (change, numAddressPerCall) {
+  async getUnusedAddress (change?: boolean, numAddressPerCall?: number) : Promise<Address> {
     return this.client.getMethod('getUnusedAddress')(change, numAddressPerCall)
   }
 
@@ -49,15 +57,23 @@ export default class Wallet {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed message.
    */
-  async signMessage (message, from) {
+  async signMessage (message: string, from: string) : Promise<string> {
     return this.client.getMethod('signMessage')(message, from)
+  }
+
+  /**
+   * Retrieve the network connected to by the wallet
+   * @return {Promise<any>} Resolves with the network object
+   */
+  async getConnectedNetwork () : Promise<any> {
+    return this.client.getMethod('getConnectedNetwork')()
   }
 
   /**
    * Retrieve the availability status of the wallet
    * @return {Promise<Boolean>} True if the wallet is available to use
    */
-  async isWalletAvailable () {
+  async isWalletAvailable () : Promise<boolean> {
     return this.client.getMethod('isWalletAvailable')()
   }
 
@@ -65,7 +81,7 @@ export default class Wallet {
    * Flag indicating if the wallet allows apps to update transaction fees
    * @return {Promise<Boolean>} True if wallet accepts fee updating
    */
-  get canUpdateFee () {
+  get canUpdateFee () : boolean {
     try {
       return this.client.getMethod('canUpdateFee')()
     } catch (e) {

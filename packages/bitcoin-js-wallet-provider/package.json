@@ -27,9 +27,6 @@
     "bitcoinjs-lib": "^5.2.0",
     "bitcoinjs-message": "^2.1.0"
   },
-  "engines": {
-    "node": "~8.12.0"
-  },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
     "type": "git",
