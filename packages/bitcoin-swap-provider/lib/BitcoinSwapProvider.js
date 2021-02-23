@@ -116,22 +116,22 @@ export default class BitcoinSwapProvider extends Provider {
     return null
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, feePerByte, swapFees) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, feePerByte) {
     const secretHash = bitcoin.crypto.sha256(Buffer.from(secret, 'hex')).toString('hex')
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte, swapFees)
+    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte)
   }
 
   async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
     return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, false, undefined, secretHash, feePerByte)
   }
 
-  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isClaim, secret, secretHash, feePerByte, swapFees) {
+  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isClaim, secret, secretHash, feePerByte) {
     const address = isClaim ? recipientAddress : refundAddress
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
-    return this._redeemSwapOutput(initiationTxHash, address, swapOutput, expiration, isClaim, secret, feePerByte, swapFees)
+    return this._redeemSwapOutput(initiationTxHash, address, swapOutput, expiration, isClaim, secret, feePerByte)
   }
 
-  async _redeemSwapOutput (initiationTxHash, address, swapOutput, expiration, isClaim, secret, _feePerByte, swapFees = []) {
+  async _redeemSwapOutput (initiationTxHash, address, swapOutput, expiration, isClaim, secret, _feePerByte) {
     const network = this._network
     const swapPaymentVariants = this.getSwapPaymentVariants(swapOutput)
 
@@ -154,18 +154,12 @@ export default class BitcoinSwapProvider extends Provider {
     const feePerByte = _feePerByte || await this.getMethod('getFeePerByte')()
 
     // TODO: Implement proper fee calculation that counts bytes in inputs and outputs
-    const txfee = calculateFee(1, 1 + swapFees.length, feePerByte)
+    const txfee = calculateFee(1, 1, feePerByte)
 
     swapVout.txid = initiationTxHash
     swapVout.vSat = BigNumber(swapVout.value).times(1e8).toNumber()
 
-    // TODO: Test high value swaps
-    let totalFees = txfee
-    if (swapFees.length) {
-      totalFees += swapFees.reduce((total, fee) => total + fee.value, 0)
-    }
-
-    if (swapVout.vSat - totalFees < 0) {
+    if (swapVout.vSat - txfee < 0) {
       throw new Error('Transaction amount does not cover fee.')
     }
 
@@ -194,19 +188,13 @@ export default class BitcoinSwapProvider extends Provider {
       input.redeemScript = paymentVariant.redeem.output
     }
 
-    const redeemOutput = {
+    const output = {
       address: addressToString(address),
-      value: swapVout.vSat - totalFees
+      value: swapVout.vSat - txfee
     }
 
     psbt.addInput(input)
-    psbt.addOutput(redeemOutput)
-    for (const fee of swapFees) {
-      psbt.addOutput({
-        address: addressToString(fee.address),
-        value: fee.value
-      })
-    }
+    psbt.addOutput(output)
 
     const walletAddress = await this.getMethod('getWalletAddress')(address)
     const signedPSBTHex = await this.getMethod('signPSBT')(psbt.toBase64(), [{ index: 0, derivationPath: walletAddress.derivationPath }])
