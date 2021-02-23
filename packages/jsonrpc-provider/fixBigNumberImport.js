@@ -9,4 +9,4 @@ function replaceInFile (path, before, after) {
 }
 
 replaceInFile('./node_modules/json-bigint/lib/parse.js', `require('bignumber.js');`, `require('bignumber.js').default;`)
-replaceInFile('./node_modules/json-bigint/lib/stringify.js', `require('bignumber.js')\n`, `require('bignumber.js').default\n`)
+replaceInFile('./node_modules/json-bigint/lib/stringify.js', `require('bignumber.js');`, `require('bignumber.js').default;`)

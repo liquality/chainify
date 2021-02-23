@@ -1,10 +1,7 @@
-import { Block as BlockSchema, Transaction as TransactionSchema } from '@liquality/schema'
-import { ethereum, Transaction } from '@liquality/types'
+import { ethereum, Transaction, BigNumber } from '@liquality/types'
 import { padHexStart } from '@liquality/crypto'
 
 import eip55 from 'eip55'
-import { pick } from 'lodash'
-import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
 
@@ -22,16 +19,20 @@ function ensure0x (hash: string) {
  * Converts an ethereum hex string to the standard format
  * @param {*} hash
  */
-function remove0x (hash: string) {
+function remove0x (hash: ethereum.Hex) {
   return hash.replace(/^0x/, '')
 }
 
 /**
- * Converts an ethereum address to the standard format
- * @param {*} address
+ * Converts an ethereum hex string to number
+ * @param hex 
  */
-function removeAddress0x (address: string) {
-  return remove0x(address).toLowerCase()
+function hexToNumber (hex: ethereum.Hex) : number {
+  return parseInt(remove0x(hex), 16)
+}
+
+function numberToHex (number: BigNumber | number) : string {
+  return ensure0x(number.toString(16))
 }
 
 function checksumEncode (hash: string) {
@@ -46,78 +47,40 @@ function ensureBlockFormat (block?: number) {
   }
 }
 
-// TODO: is this really needed? Why not return original response?
-function formatEthResponse (obj: any): any {
-  if (typeof obj === 'string' || obj instanceof String) {
-    obj = remove0x(obj as string)
-  } else if (Array.isArray(obj) && typeof obj[0] === 'object') {
-    for (let i = 0; i < obj.length; i++) {
-      obj[i] = formatEthResponse(obj[i])
-    }
-  } else if (Array.isArray(obj)) {
-    obj = obj.map(remove0x)
-  } else {
-    for (let key in obj) {
-      if (obj[key] === null) continue
-      if (Array.isArray(obj[key])) {
-        obj[key] = formatEthResponse(obj[key])
-      } else {
-        if ((BlockSchema.properties[key] &&
-          BlockSchema.properties[key].type === 'number') ||
-          (TransactionSchema.properties[key] &&
-          TransactionSchema.properties[key].type === 'number')) {
-          obj[key] = parseInt(obj[key])
-        } else {
-          if (obj[key]) {
-            obj[key] = remove0x(obj[key])
-          }
-        }
-      }
-    }
-  }
-  return obj
-}
-
-function normalizeTransactionObject (tx: ethereum.TransactionResponse, currentHeight?: number) : Transaction<ethereum.TransactionResponse> {
+function normalizeTransactionObject <TxType extends ethereum.PartialTransaction = ethereum.Transaction> (tx: TxType, currentHeight?: number) : Transaction<TxType> {
   if (!(typeof tx === 'object' && tx !== null)) {
     throw new Error(`Invalid transaction object: "${tx}"`)
   }
 
-  const normalizedTx : Transaction<ethereum.TransactionResponse> = {
-    ...pick(tx, ['blockNumber', 'blockHash', 'hash', 'value', 'confirmations']),
+  const normalizedTx : Transaction<TxType> = {
+    hash: remove0x(tx.hash),
+    value: hexToNumber(tx.value),
     _raw: tx
   }
 
-  // TODO: TS NORMALIZE OUTSIDE Normalize data field. Called `data` in `sendTransaction` calls. `input` everywhere else
-  // if ('data' in normalizedTx._raw) {
-  //   normalizedTx._raw.input = normalizedTx._raw.data
-  //   delete normalizedTx._raw.data
-  // }
-
-  if (normalizedTx.blockNumber === null) {
-    delete normalizedTx.blockNumber
-  } else if (!isNaN(normalizedTx.blockNumber) && !('confirmations' in normalizedTx)) {
-    normalizedTx.confirmations = currentHeight - normalizedTx.blockNumber + 1
-  }
-  if (normalizedTx.blockHash === null) {
-    delete normalizedTx.blockHash
+  if (tx.blockNumber) {
+    normalizedTx.blockNumber = hexToNumber(tx.blockNumber)
+    normalizedTx.blockHash = remove0x(tx.blockHash)
+    if (currentHeight) {
+      normalizedTx.confirmations = currentHeight - normalizedTx.blockNumber + 1
+    }
   }
 
-  if (tx.gasLimit && tx.gasPrice) {
-    const gas = tx.gasLimit
-    const gasPrice = tx.gasPrice
+  if (tx.gas && tx.gasPrice) {
+    const gas = new BigNumber(tx.gas)
+    const gasPrice = new BigNumber(tx.gasPrice)
 
-    normalizedTx.fee = gas.times(gasPrice)
-    normalizedTx.feePrice = gasPrice.div(GWEI)
+    normalizedTx.fee = gas.times(gasPrice).toNumber()
+    normalizedTx.feePrice = gasPrice.div(GWEI).toNumber()
   }
 
   return normalizedTx
 }
 
-function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.RawTransaction {
-  const tx : ethereum.RawTransaction = {
+function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.TransactionRequest {
+  const tx : ethereum.TransactionRequest = {
     from: ensure0x(txOptions.from),
-    value: txOptions.value ? ensure0x(txOptions.value.toString(16)) : '0x0'
+    value: txOptions.value ? numberToHex(txOptions.value) : '0x0'
   }
 
   if (txOptions.gasPrice) tx.gasPrice = ensure0x(txOptions.gasPrice.times(GWEI).dp(0, BigNumber.ROUND_CEIL).toString(16))
@@ -131,9 +94,9 @@ function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.R
 export {
   ensure0x,
   remove0x,
-  removeAddress0x,
+  hexToNumber,
+  numberToHex,
   checksumEncode,
-  formatEthResponse,
   normalizeTransactionObject,
   ensureBlockFormat,
   buildTransaction,

@@ -19,7 +19,6 @@
     "buffer": "^6.0.3",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
-    "coininfo": "^5.1.0",
     "copy": "^0.3.2",
     "coveralls": "^3.0.6",
     "cross-env": "^5.2.1",
@@ -61,7 +60,7 @@
   "scripts": {
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
     "lint": "standard $npm_package_options_standard",
-    "bootstrap": "lerna bootstrap --hoist --force-local",
+    "bootstrap": "lerna bootstrap --force-local",
     "test": "run-s test:unit env:integration env:integration:bootup test:integration",
     "test:unit": "cross-env NODE_ENV=test mocha packages/*/test/unit $npm_package_options_mocha",
     "test:ts:unit": "cross-env NODE_ENV=test mocha packages/*/test/unit/*.test.ts $npm_package_options_mocha",
@@ -119,5 +118,6 @@
     "lint",
     "build",
     "test:unit"
-  ]
+  ],
+  "dependencies": {}
 }

@@ -56,7 +56,9 @@ describe('Ethereum RPC provider', () => {
         value: new BigNumber(1000)
       })
       expect(tx.hash).to.match(/^[A-Fa-f0-9]+$/)
-      expect(tx.value).equal(1000)
+      // @ts-ignore
+      expect(tx.value).to.be.bignumber
+      .equal(1000)
     })
 
     it('returned tx object should have input field', async () => {
@@ -65,7 +67,7 @@ describe('Ethereum RPC provider', () => {
         value: new BigNumber(1000),
         data: '1234'
       })
-      expect(tx._raw.input).equal('1234')
+      expect(tx._raw.input).equal('0x1234')
     })
   })
 
@@ -83,20 +85,9 @@ describe('Ethereum RPC provider', () => {
         number: 1,
         hash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
         parentHash: 'f119e45bfae9893ce759772e11a427d67427ceacf2bc04d11d406e4d7ad511da',
-        mixHash: '0000000000000000000000000000000000000000000000000000000000000000',
         nonce: 0,
-        sha3Uncles: '1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347',
-        logsBloom: '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-        transactionsRoot: '56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-        stateRoot: 'f9220de8a2b967110e042de4097ffb126ba09e7acc614c0f8cb963531ae301d7',
-        receiptsRoot: '56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
-        miner: '0000000000000000000000000000000000000000',
         difficulty: 0,
-        totalDifficulty: '0',
-        extraData: '',
         size: 1000,
-        gas: '6691b7',
-        gasUsed: '5208',
         timestamp: 1547632949,
         transactions: [
           {
@@ -108,21 +99,20 @@ describe('Ethereum RPC provider', () => {
             feePrice: 20,
             fee: 1800000000000000,
             _raw: {
-              hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
-              nonce: 0,
-              blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-              blockNumber: 1,
-              transactionIndex: '00',
-              from: '322d4959c911520645c0638204b42ce0689236e9',
-              to: '635d7d148054b9471d79084b80b864a166956139',
-              value: 10000,
-              gas: '015f90',
-              gasPrice: '04a817c800',
-              input: '0'
+              hash: '0xca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+              nonce: '0x0',
+              blockHash: '0x868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
+              blockNumber: '0x01',
+              transactionIndex: '0x00',
+              from: '0x322d4959c911520645c0638204b42ce0689236e9',
+              to: '0x635d7d148054b9471d79084b80b864a166956139',
+              value: '0x2710',
+              gas: '0x015f90',
+              gasPrice: '0x04a817c800',
+              input: '0x0'
             }
           }
-        ],
-        uncles: [] })
+        ]})
     })
   })
 
@@ -141,17 +131,17 @@ describe('Ethereum RPC provider', () => {
           feePrice: 20,
           fee: 1800000000000000,
           _raw: {
-            hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
-            nonce: 0,
-            blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-            blockNumber: 1,
-            transactionIndex: '00',
-            from: '322d4959c911520645c0638204b42ce0689236e9',
-            to: '635d7d148054b9471d79084b80b864a166956139',
-            value: 10000,
-            gas: '015f90',
-            gasPrice: '04a817c800',
-            input: '0'
+            hash: '0xca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+            nonce: '0x0',
+            blockHash: '0x868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
+            blockNumber: '0x01',
+            transactionIndex: '0x00',
+            from: '0x322d4959c911520645c0638204b42ce0689236e9',
+            to: '0x635d7d148054b9471d79084b80b864a166956139',
+            value: '0x2710',
+            gas: '0x015f90',
+            gasPrice: '0x04a817c800',
+            input: '0x0'
           }
         })
     })

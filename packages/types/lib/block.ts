@@ -1,4 +1,4 @@
-export interface Block {
+export interface Block <TransactionType = any> {
   // Block number
   number: number
   // Block hash
@@ -13,6 +13,6 @@ export interface Block {
   parentHash: string
   // Nonce
   nonce: number
-  // Raw block data
-  _raw: any
+  // List of transactions
+  transactions?: TransactionType[]
 }

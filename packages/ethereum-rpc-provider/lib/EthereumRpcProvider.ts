@@ -1,6 +1,7 @@
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import {
-  formatEthResponse,
+  numberToHex,
+  hexToNumber,
   ensure0x,
   normalizeTransactionObject,
   remove0x,
@@ -21,15 +22,15 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     this._usedAddressCache = {}
   }
 
-  async rpc (method: string, ...params: any[]) {
+  async rpc <TResponse> (method: string, ...params: any[]) : Promise<TResponse> {
     const result = await this.jsonrpc(method, ...params)
-    return formatEthResponse(result)
+    return result
   }
 
   async getAddresses () : Promise<Address[]> {
-    const addresses = await this.rpc('eth_accounts')
+    const addresses = await this.rpc<string[]>('eth_accounts')
 
-    return addresses.map((address: string) => <Address> { address })
+    return addresses.map((address: string) => <Address> { address: remove0x(address) })
   }
 
   async getUnusedAddress () : Promise<Address> {
@@ -45,12 +46,12 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   }
 
   async isWalletAvailable () : Promise<boolean> {
-    const addresses = await this.rpc('eth_accounts')
+    const addresses = await this.rpc<ethereum.Address[]>('eth_accounts')
 
     return addresses.length > 0
   }
 
-  async sendTransaction (options: SendOptions) : Promise<Transaction<ethereum.TransactionResponse>> {
+  async sendTransaction (options: SendOptions) : Promise<Transaction<ethereum.PartialTransaction>> {
     const addresses = await this.getAddresses()
     const from = addresses[0].address
 
@@ -63,34 +64,46 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     }
     const txData = buildTransaction(txOptions)
     const gas = await this.estimateGas(txData)
-    txData.gasLimit = ensure0x(gas.toString(16))
+    txData.gas = numberToHex(gas)
 
-    const txHash = await this.rpc('eth_sendTransaction', txData)
+    const txHash = await this.rpc<ethereum.Hex>('eth_sendTransaction', txData)
 
-    return normalizeTransactionObject(formatEthResponse({ ...txData, hash: txHash }))
+    const txWithHash : ethereum.PartialTransaction = {
+      ...txData,
+      input: txData.data,
+      hash: txHash
+    }
+
+    return normalizeTransactionObject<ethereum.PartialTransaction>(txWithHash)
   }
 
-  async updateTransactionFee (tx: Transaction<ethereum.TransactionResponse> | string, newGasPrice: BigNumber) {
+  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: BigNumber) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = await this.getTransactionByHash(txHash)
 
     const txOptions : ethereum.UnsignedTransaction = {
       from: transaction._raw.from,
       to: transaction._raw.to,
-      value: transaction._raw.value,
+      value: new BigNumber(transaction._raw.value),
       gasPrice: newGasPrice,
-      data: transaction._raw.data,
-      nonce: transaction._raw.nonce
+      data: transaction._raw.input,
+      nonce: hexToNumber(transaction._raw.nonce)
     }
 
     const txData = buildTransaction(txOptions)
 
     const gas = await this.getMethod('estimateGas')(txData)
-    txData.gasLimit = ensure0x((gas).toString(16))
+    txData.gas = ensure0x((gas).toString(16))
 
-    const newTxHash = await this.rpc('eth_sendTransaction', txData)
+    const newTxHash = await this.rpc<ethereum.Hex>('eth_sendTransaction', txData)
 
-    return normalizeTransactionObject(formatEthResponse({ ...txData, hash: newTxHash }))
+    const txWithHash : ethereum.PartialTransaction = {
+      ...txData,
+      input: txData.data,
+      hash: newTxHash
+    }
+
+    return normalizeTransactionObject<ethereum.PartialTransaction>(txWithHash)
   }
 
   async sendRawTransaction (hash: string) : Promise<string> {
@@ -100,47 +113,66 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   async signMessage (message: string, from: string) : Promise<string> {
     from = ensure0x(from)
     message = ensure0x(Buffer.from(message).toString('hex'))
+    const sig = await this.rpc<ethereum.Hex>('eth_sign', from, message)
+    return remove0x(sig)
+  }
 
-    return this.rpc('eth_sign', from, message)
+  normalizeBlock (block: ethereum.Block) {
+    const normalizedBlock: Block = {
+      hash: remove0x(block.hash),
+      parentHash: remove0x(block.parentHash),
+      timestamp: hexToNumber(block.timestamp),
+      size: hexToNumber(block.size),
+      nonce: hexToNumber(block.nonce),
+      number: hexToNumber(block.number),
+      difficulty: hexToNumber(block.difficulty)
+    }
+
+    return normalizedBlock
+  }
+
+  async parseBlock (block: ethereum.Block, includeTx: boolean) : Promise<Block> {
+    const normalizedBlock = this.normalizeBlock(block)
+    if (block && includeTx) {
+      const currentHeight = await this.getBlockHeight()
+      normalizedBlock.transactions = block.transactions.map((tx: ethereum.Transaction) => normalizeTransactionObject(tx, currentHeight))
+    }
+    else {
+      normalizedBlock.transactions = block.transactions
+    }
+    return normalizedBlock
   }
 
   async getBlockByHash (blockHash: string, includeTx: boolean = false) : Promise<Block> {
-    const block = await this.rpc('eth_getBlockByHash', ensure0x(blockHash), includeTx)
-
-    if (block && includeTx) {
-      const currentHeight = await this.getBlockHeight()
-      block.transactions = block.transactions.map((tx: ethereum.TransactionResponse) => normalizeTransactionObject(tx, currentHeight))
+    const block = await this.rpc<ethereum.Block>('eth_getBlockByHash', ensure0x(blockHash), includeTx)
+    if (!block) {
+      throw new BlockNotFoundError(`Block not found: ${blockHash}`)
     }
-
-    return block
+    
+    return this.parseBlock(block, includeTx)
   }
 
   async getBlockByNumber (blockNumber: number, includeTx: boolean = false) : Promise<Block> {
-    const block = await this.rpc('eth_getBlockByNumber', '0x' + blockNumber.toString(16), includeTx)
+    const block = await this.rpc<ethereum.Block>('eth_getBlockByNumber', numberToHex(blockNumber), includeTx)
 
     if (!block) {
       throw new BlockNotFoundError(`Block not found: ${blockNumber}`)
     }
 
-    if (block && includeTx) {
-      const currentHeight = await this.getBlockHeight()
-      block.transactions = block.transactions.map((tx: ethereum.TransactionResponse) => normalizeTransactionObject(tx, currentHeight))
-    }
-
-    return block
+    return this.parseBlock(block, includeTx)
   }
 
   async getBlockHeight () {
-    const hexHeight = await this.rpc('eth_blockNumber')
+    const hexHeight = await this.rpc<ethereum.Hex>('eth_blockNumber')
 
-    return parseInt(hexHeight, 16)
+    return hexToNumber(hexHeight)
   }
 
   async getTransactionByHash (txHash: string) {
     txHash = ensure0x(txHash)
 
     const currentBlock = await this.getBlockHeight()
-    const tx = await this.rpc('eth_getTransactionByHash', txHash)
+    const tx = await this.rpc<ethereum.Transaction>('eth_getTransactionByHash', txHash)
 
     if (!tx) {
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
@@ -157,14 +189,14 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   async getTransactionCount (address: string, block = 'latest') {
     address = ensure0x(address)
 
-    const count = await this.rpc('eth_getTransactionCount', address, block)
+    const count = await this.rpc<ethereum.Hex>('eth_getTransactionCount', address, block)
 
-    return parseInt(count, 16)
+    return hexToNumber(count)
   }
 
   async getGasPrice () {
-    const gasPrice = await this.rpc('eth_gasPrice')
-    return new BigNumber(parseInt(gasPrice, 16)).div(1e9) // Gwei
+    const gasPrice = await this.rpc<ethereum.Hex>('eth_gasPrice')
+    return new BigNumber(gasPrice).div(1e9) // Gwei
   }
 
   async getBalance (addresses: string[]) {
@@ -172,19 +204,19 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
       .map(ensure0x)
 
     const promiseBalances = await Promise.all(addresses.map(
-      address => this.rpc('eth_getBalance', address, 'latest')
+      address => this.rpc<ethereum.Hex>('eth_getBalance', address, 'latest')
     ))
 
     return promiseBalances
-      .map(balance => new BigNumber(balance, 16))
+      .map(balance => new BigNumber(balance))
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
-  async estimateGas (transaction: ethereum.RawTransaction) {
+  async estimateGas (transaction: ethereum.TransactionRequest) {
     const hasValue = transaction.value && transaction.value !== '0x0'
-    if (hasValue && !transaction.data) { return 21000 }
+    if (hasValue && !transaction.data) { return 21000 } // TODO: Also has to be estimated - payable functions
 
-    const estimatedGas = await this.rpc('eth_estimateGas', transaction)
+    const estimatedGas = await this.rpc<ethereum.Hex>('eth_estimateGas', transaction)
 
     return Math.ceil(parseInt(estimatedGas, 16) * GAS_LIMIT_MULTIPLIER)
   }
@@ -194,10 +226,9 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
 
     if (this._usedAddressCache[address]) return true
 
-    let transactionCount = await this.rpc('eth_getTransactionCount', address, 'latest')
-    transactionCount = parseInt(transactionCount, 16)
+    const transactionCount = await this.rpc<ethereum.Hex>('eth_getTransactionCount', address, 'latest')
 
-    const isUsed = transactionCount > 0
+    const isUsed = hexToNumber(transactionCount) > 0
 
     if (isUsed) this._usedAddressCache[address] = true
 
@@ -207,7 +238,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   async getCode (address: string, block: string | number) {
     address = ensure0x(String(address))
     block = typeof (block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
-    const code = await this.rpc('eth_getCode', address, block)
+    const code = await this.rpc<ethereum.Hex>('eth_getCode', address, block)
     return remove0x(code)
   }
 

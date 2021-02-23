@@ -4,7 +4,7 @@ export interface Transaction <T = any> {
   // Transaction hash
   hash: string,
   // The value of the transaction
-  value: BigNumber,
+  value: number,
   // Hash of the block containing the transaction
   blockHash?: string,
   // The block number containing the trnasaction
@@ -12,9 +12,9 @@ export interface Transaction <T = any> {
   // The number of confirmations of the transaction
   confirmations?: number,
   // The price per unit of fee
-  feePrice?: BigNumber,
+  feePrice?: number,
   // The total fee paid for the transaction
-  fee?: BigNumber,
+  fee?: number,
   // The raw transaction object
   _raw: T
 }
