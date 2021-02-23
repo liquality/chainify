@@ -68,6 +68,19 @@ export default {
     coinType: '60',
     isTestnet: true
   },
+  bsc_mainnet: {
+    name: 'bsc_mainnet',
+    coinType: '60',
+    networkId: 56,
+    chainId: 56
+  },
+  bsc_testnet: {
+    name: 'bsc_testnet',
+    coinType: '60',
+    networkId: 97,
+    chainId: 97,
+    isTestnet: true
+  }
 
   version
 }
