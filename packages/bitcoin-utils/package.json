@@ -25,7 +25,7 @@
     "bip174": "^2.0.1",
     "bitcoinjs-lib": "^5.2.0",
     "coinselect": "^3.1.11",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   },
   "engines": {
     "node": "~8.12.0"
