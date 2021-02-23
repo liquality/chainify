@@ -80,7 +80,7 @@ export default {
     networkId: 97,
     chainId: 97,
     isTestnet: true
-  }
+  },
 
   version
 }
