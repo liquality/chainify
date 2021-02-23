@@ -265,10 +265,10 @@ async function initiateAndVerify (chain, secretHash, swapParams, fee) {
   }
 }
 
-async function claimAndVerify (chain, initiationTxId, secret, swapParams, fee) {
+async function claimAndVerify (chain, initiationTxId, secret, swapParams, fee, swapFees) {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const secretHash = crypto.sha256(secret)
-  const claimTx = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration, fee)
+  const claimTx = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secret, swapParams.expiration, fee, swapFees)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
   const foundClaimTx = await chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)

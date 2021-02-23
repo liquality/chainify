@@ -202,7 +202,7 @@ export default class Swap {
    * @return {Promise<Transaction, TypeError>} Resolves with swap claim transaction.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee) {
+  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee, swapFees) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
@@ -211,7 +211,7 @@ export default class Swap {
       throw new TypeError('Secret should be a 32 byte hex string')
     }
 
-    const transaction = await this.client.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee)
+    const transaction = await this.client.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee, swapFees)
     this.client.assertValidTransaction(transaction)
     return transaction
   }

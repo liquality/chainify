@@ -6,7 +6,7 @@ import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import * as crypto from '../../../packages/crypto/lib'
 import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
-import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, clearEthMiner, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee } from '../common'
+import { chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, clearEthMiner, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee, getRandomBitcoinAddress } from '../common'
 import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
@@ -15,6 +15,64 @@ chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
 const mockSecret = _.repeat('ff', 32)
+
+function testSwapWithFee (chain) {
+  it('Initiate and claim 😊', async () => {
+    if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
+    const secret = await chain.client.swap.generateSecret('secret')
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+
+    const swapFees = [
+      { address: await getRandomBitcoinAddress(chain), value: 1000 },
+      { address: await getRandomBitcoinAddress(chain), value: 1500 }
+    ]
+
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    let claimTx
+    await expectBalance(chain, swapParams.recipientAddress,
+      async () => { claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams, undefined, swapFees) },
+      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
+    const revealedSecret = claimTx.secret
+    expect(revealedSecret).to.equal(secret)
+  })
+
+  it('Balance - Claim', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain)
+    const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
+    const swapFees = [
+      { address: await getRandomBitcoinAddress(chain), value: 1000 },
+      { address: await getRandomBitcoinAddress(chain), value: 1500 }
+    ]
+    const txfee = BitcoinUtils.calculateFee(1, 1 + swapFees.length, CONSTANTS.BITCOIN_FEE_PER_BYTE)
+    const totalfee = txfee + swapFees.reduce((total, fee) => total + fee.value, 0)
+
+    // Check swap recipient
+    const checkRecipientBalance = async () => expectBalance(chain, swapParams.recipientAddress,
+      async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams, undefined, swapFees) },
+      (before, after) => {
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapParams.value)).minus(BigNumber(totalfee))
+        expect(after).to.be.bignumber.equal(expectedBalance)
+      })
+
+    // Check fee #1
+    const checkFeeOne = async () => expectBalance(chain, swapFees[0].address,
+      checkRecipientBalance,
+      (before, after) => {
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapFees[0].value))
+        expect(after).to.be.bignumber.equal(expectedBalance)
+      })
+
+    // Check fee #2
+    await expectBalance(chain, swapFees[1].address,
+      checkFeeOne,
+      (before, after) => {
+        const expectedBalance = BigNumber(before).plus(BigNumber(swapFees[1].value))
+        expect(after).to.be.bignumber.equal(expectedBalance)
+      })
+  })
+}
 
 function testSwap (chain) {
   it('Generated secrets are different', async () => {
@@ -237,6 +295,14 @@ function testFee (chain) {
 describe('Swap Single Chain Flow', function () {
   this.timeout(config.timeout)
 
+  describeExternal('Bitcoin - Ledger (With Fees)', () => {
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinWithLedger)
+      await fundWallet(chains.bitcoinWithLedger)
+    })
+    testSwapWithFee(chains.bitcoinWithLedger)
+  })
+
   describeExternal('Bitcoin - Ledger', () => {
     before(async function () {
       await importBitcoinAddresses(chains.bitcoinWithLedger)
@@ -253,6 +319,10 @@ describe('Swap Single Chain Flow', function () {
     testFee(chains.bitcoinWithNode)
   })
 
+  describe('Bitcoin - Node (With Fees)', () => {
+    testSwapWithFee(chains.bitcoinWithNode)
+  })
+
   describe('Bitcoin - Js', () => {
     before(async function () {
       await importBitcoinAddresses(chains.bitcoinWithJs)
@@ -261,6 +331,14 @@ describe('Swap Single Chain Flow', function () {
     testSwap(chains.bitcoinWithJs)
     testBitcoinBalance(chains.bitcoinWithJs)
     testFee(chains.bitcoinWithJs)
+  })
+
+  describe('Bitcoin - Js (With Fees)', () => {
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinWithJs)
+      await fundWallet(chains.bitcoinWithJs)
+    })
+    testSwapWithFee(chains.bitcoinWithJs)
   })
 
   describe('Ethereum', () => {
