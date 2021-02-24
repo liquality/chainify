@@ -2,7 +2,7 @@
   "name": "@liquality/ethereum-erc20-scraper-swap-find-provider",
   "umdName": "EthereumErc20ScraperSwapFindProvider",
   "umdExport": "default",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,11 +19,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^0.9.0",
-    "@liquality/ethereum-erc20-swap-provider": "^0.9.0",
-    "@liquality/ethereum-scraper-swap-find-provider": "^0.9.0",
-    "@liquality/ethereum-utils": "^0.9.0",
-    "@liquality/utils": "^0.9.0"
+    "@liquality/errors": "^0.9.1",
+    "@liquality/ethereum-erc20-swap-provider": "^0.9.1",
+    "@liquality/ethereum-scraper-swap-find-provider": "^0.9.1",
+    "@liquality/ethereum-utils": "^0.9.1",
+    "@liquality/utils": "^0.9.1"
   },
   "engines": {
     "node": "~8.12.0"
