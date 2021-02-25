@@ -9,11 +9,10 @@ import { version } from '../package.json'
 
 const CONTRACT_CODE = 'wnGY4a+YYkfbkBqYqyhdQjjtHRl9Auyh7yxCGtXL8JI='
 
-// TODO: measure gas limit
 const ABI = {
-  init: { method: 'init', gas: '100000000000000' },
-  claim: { method: 'claim', gas: '100000000000000' },
-  refund: { method: 'refund', gas: '100000000000000' }
+  init: { method: 'init', gas: '10000000000000' },
+  claim: { method: 'claim', gas: '10000000000000' },
+  refund: { method: 'refund', gas: '8000000000000' }
 }
 
 export default class NearSwapProvider extends Provider {
