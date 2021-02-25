@@ -150,7 +150,7 @@ function testNearRefund (chain) {
     swapParams.expiration = parseInt(Date.now() / 1000) + 40
     const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
     await expect(refundAndVerify(chain, initiationTxId, secretHash, swapParams)).to.be.rejected
-    await mineBlock(chain, 2)
+    await mineBlock(chain, 3)
     await refundAndVerify(chain, initiationTxId, secretHash, swapParams)
   })
 }
