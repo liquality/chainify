@@ -176,10 +176,31 @@ async function importBitcoinAddresses (chain) {
 }
 
 async function fundAddress (chain, address) {
-  if (chain.name === 'bitcoin') {
-    await chains.bitcoinWithNode.client.chain.sendTransaction(address, CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE)
-  } else if (chain.name === 'ethereum') {
-    await chains.ethereumWithNode.client.chain.sendTransaction(address, CONSTANTS.ETHEREUM_ADDRESS_DEFAULT_BALANCE)
+  switch (chain.name) {
+    case 'bitcoin': {
+      await chains.bitcoinWithNode.client.chain.sendTransaction(address, CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE)
+      break
+    }
+
+    case 'ethereum': {
+      await chains.ethereumWithNode.client.chain.sendTransaction(address, CONSTANTS.ETHEREUM_ADDRESS_DEFAULT_BALANCE)
+      break
+    }
+
+    case 'near': {
+      const tempNearJsClient = new Client()
+      tempNearJsClient.addProvider(new providers.near.NearRpcProvider(config.near.network))
+      tempNearJsClient.addProvider(new providers.near.NearJsWalletProvider(config.near.network, config.near.receiverMnemonic))
+      const balance = await tempNearJsClient.chain.getBalance('liqualityreceiver.testnet')
+      if (balance.gt(0)) {
+        await tempNearJsClient.chain.sendTransaction('liqualitysender.testnet', balance.toFixed())
+      }
+      break
+    }
+
+    default: {
+      break
+    }
   }
   await mineBlock(chain)
 }

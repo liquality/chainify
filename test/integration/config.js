@@ -32,8 +32,9 @@ export default {
     network: NearNetworks.testnet,
     value: '5000000000000000000000000',
     // liqualitysender
-    mnemonic: 'engine monster galaxy obey lawsuit culture tool scan eternal math august humble'
-    // liqualityreceiver: chicken concert congress gun language bottom invest powder gadget exile saddle menu
+    mnemonic: 'engine monster galaxy obey lawsuit culture tool scan eternal math august humble',
+    // liqualityreceiver
+    receiverMnemonic: 'chicken concert congress gun language bottom invest powder gadget exile saddle menu'
   },
   // ethereum: { // RSK
   //   rpc: {
