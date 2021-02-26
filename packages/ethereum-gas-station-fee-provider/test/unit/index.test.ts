@@ -12,7 +12,7 @@ chai.config.truncateThreshold = 0
 const MINUTE = 60
 
 describe('Ethereum Gas Station Fee provider', () => {
-  let client
+  let client: Client
 
   beforeEach(() => {
     client = new Client()

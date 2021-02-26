@@ -1,9 +1,8 @@
 import NodeProvider from '@liquality/node-provider'
 import BigNumber from 'bignumber.js'
+import { FeeProvider } from '@liquality/types'
 
-import { version } from '../package.json'
-
-export default class EthereumGasStationFeeProvider extends NodeProvider {
+export default class EthereumGasStationFeeProvider extends NodeProvider implements FeeProvider {
   constructor (endpoint = 'https://ethgasstation.info/api/ethgasAPI.json') {
     super({
       baseURL: endpoint
@@ -15,19 +14,17 @@ export default class EthereumGasStationFeeProvider extends NodeProvider {
 
     return {
       slow: {
-        fee: BigNumber(data.safeLow).div(10).toNumber(),
+        fee: new BigNumber(data.safeLow).div(10).toNumber(),
         wait: data.safeLowWait * 60
       },
       average: {
-        fee: BigNumber(data.average).div(10).toNumber(),
+        fee: new BigNumber(data.average).div(10).toNumber(),
         wait: data.avgWait * 60
       },
       fast: {
-        fee: BigNumber(data.fast).div(10).toNumber(),
+        fee: new BigNumber(data.fast).div(10).toNumber(),
         wait: data.fastWait * 60
       }
     }
   }
 }
-
-EthereumGasStationFeeProvider.version = version
