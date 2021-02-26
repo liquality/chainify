@@ -32,7 +32,7 @@ function hexToNumber (hex: ethereum.Hex) : number {
 }
 
 function numberToHex (number: BigNumber | number) : string {
-  return ensure0x(number.toString(16))
+  return ensure0x(new BigNumber(number).toString(16))
 }
 
 function checksumEncode (hash: string) {

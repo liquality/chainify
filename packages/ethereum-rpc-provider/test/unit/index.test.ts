@@ -18,7 +18,7 @@ describe('Ethereum RPC provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    provider = new EthereumRpcProvider('http://localhost:8545')
+    provider = new EthereumRpcProvider({ uri: 'http://localhost:8545' })
     client.addProvider(provider)
 
     mockJsonRpc('http://localhost:8545', ethereumRpc, 100)

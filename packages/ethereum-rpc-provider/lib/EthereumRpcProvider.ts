@@ -17,8 +17,8 @@ const GAS_LIMIT_MULTIPLIER = 1.5
 export default class EthereumRpcProvider extends JsonRpcProvider implements Partial<ChainProvider> {
   _usedAddressCache: {[key: string]: boolean}
 
-  constructor (uri: string, username?: string, password?: string) {
-    super(uri, username, password)
+  constructor (options: { uri: string, username?: string, password?: string }) {
+    super(options.uri, options.username, options.password)
     this._usedAddressCache = {}
   }
 

@@ -20,7 +20,7 @@ export default class NodeProvider extends Provider {
     throw new NodeError(message, attrs)
   }
 
-  nodeGet (url: string, params: AxiosRequestConfig) : Promise<AxiosResponse> {
+  nodeGet (url: string, params: any) : Promise<AxiosResponse> {
     return this._node.get(url, { params })
       .then(response => response.data)
       .catch(this._handleNodeError)

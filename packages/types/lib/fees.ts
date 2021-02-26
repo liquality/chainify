@@ -2,7 +2,7 @@ export interface FeeDetail {
   // Fee price
   fee: number
   // Estimated time to confirmation
-  wait: number
+  wait?: number
 }
 
 export interface FeeDetails {

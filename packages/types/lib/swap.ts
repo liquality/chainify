@@ -129,5 +129,5 @@ export interface SwapProvider {
   /**
    * True if the client must provide block numbers to find swap transactions
    */
-  doesBlockScan: boolean
+  doesBlockScan: boolean | (() => boolean)
 }
