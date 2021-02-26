@@ -1,10 +1,11 @@
+import BigNumber from 'bignumber.js'
 import { Transaction } from "./transaction"
 
 export interface SwapParams {
   /**
    * The amount of native value locked in the swap
    */
-  value: number,
+  value: BigNumber,
   /**
    * Recepient address of the swap
    */
@@ -79,21 +80,21 @@ export interface SwapProvider {
   /**
    * Initiate a swap
    * @param {!SwapParams} swapParams - The parameters of the swap
-   * @param {!number} [fee] - Fee price in native unit (e.g. sat/b, gwei)
+   * @param {!BigNumber} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<Transaction, TypeError>} Resolves with swap initiation transaction.
    * Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  initiateSwap (swapParams: SwapParams, fee: number) : Promise<Transaction>
+  initiateSwap (swapParams: SwapParams, fee: BigNumber) : Promise<Transaction>
 
   /**
    * Funds a swap
    * @param {!SwapParams} swapParams - The parameters of the swap
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
-   * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
+   * @param {!BigNumber} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<Transaction, TypeError>} Resolves with the funding transaction if found, otherwise null.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  fundSwap (swapParams: SwapParams, initiationTxHash: string, fee: number) : Promise<Transaction>
+  fundSwap (swapParams: SwapParams, initiationTxHash: string, fee: BigNumber) : Promise<Transaction>
 
   /**
    * Verifies that the given initiation transaction matches the given swap params
@@ -109,21 +110,21 @@ export interface SwapProvider {
    * @param {!SwapParams} swapParams - The parameters of the swap
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
    * @param {!string} secret - 32 byte secret for the swap in hex.
-   * @param {!number} [fee] - Fee price in native unit (e.g. sat/b, gwei)
+   * @param {!BigNumber} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<Transaction, TypeError>} Resolves with swap claim transaction.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number) : Promise <Transaction>
+  claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, fee: BigNumber) : Promise <Transaction>
 
   /**
    * Refund the swap
    * @param {!SwapParams} swapParams - The parameters of the swap
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
-   * @param {!number} [fee] - Fee price in native unit (e.g. sat/b, gwei)
+   * @param {!BigNumber} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  refundSwap (swapParams: SwapParams, initiationTxHash: string, fee: number) : Promise<Transaction>
+  refundSwap (swapParams: SwapParams, initiationTxHash: string, fee: BigNumber) : Promise<Transaction>
 
   /**
    * True if the client must provide block numbers to find swap transactions
