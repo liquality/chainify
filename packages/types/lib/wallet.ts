@@ -55,5 +55,5 @@ export interface WalletProvider {
    * Flag indicating if the wallet allows apps to update transaction fees
    * @return {Promise<Boolean>} True if wallet accepts fee updating
    */
-  canUpdateFee: boolean | (() => boolean)
+  canUpdateFee?: boolean | (() => boolean)
 }

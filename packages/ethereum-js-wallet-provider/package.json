@@ -20,8 +20,10 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@liquality/types": "^0.9.0",
     "@liquality/ethereum-utils": "^0.9.0",
-    "@liquality/provider": "^0.9.0",
+    "@liquality/wallet-provider": "^0.9.0",
+    "@liquality/ethereum-networks": "^0.9.0",
     "@liquality/utils": "^0.9.0",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
@@ -30,7 +32,6 @@
     "ethereumjs-util": "^6.1.0",
     "hdkey": "^1.1.1"
   },
-
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
     "type": "git",
@@ -41,5 +42,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/hdkey": "^0.7.1"
   }
 }

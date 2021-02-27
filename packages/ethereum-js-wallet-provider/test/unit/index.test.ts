@@ -9,7 +9,7 @@ const MNEMONIC = 'number legend weasel whip trip silent victory taste hawk battl
 describe('Ethereum Js Wallet Provider', () => {
   describe('sign', () => {
     it('should return valid sig', async () => {
-      const provider = new EthereumJsWalletProvider(EthereumNetworks.mainnet, MNEMONIC)
+      const provider = new EthereumJsWalletProvider(EthereumNetworks.ethereum_mainnet, MNEMONIC)
       const msg = 'bitcoin'
       const addresses = await provider.getAddresses()
       const sig = await provider.signMessage(msg)
@@ -17,7 +17,7 @@ describe('Ethereum Js Wallet Provider', () => {
       const sigObj = fromRpcSig(`0x${sig}`)
       const publicKey = ecrecover(msgHash, sigObj.v, sigObj.r, sigObj.s)
       expect(addresses[0].address).to.equal(publicToAddress(publicKey).toString('hex'))
-      expect(addresses[0].publicKey.toString('hex')).to.equal(publicKey.toString('hex'))
+      expect(addresses[0].publicKey).to.equal(publicKey.toString('hex'))
     })
   })
 })
