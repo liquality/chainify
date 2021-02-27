@@ -74,7 +74,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
       hash: txHash
     }
 
-    return normalizeTransactionObject<ethereum.PartialTransaction>(txWithHash)
+    return normalizeTransactionObject(txWithHash)
   }
 
   async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: BigNumber) {

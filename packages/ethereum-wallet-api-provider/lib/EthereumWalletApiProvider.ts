@@ -1,31 +1,42 @@
 import WalletProvider from '@liquality/wallet-provider'
-import networks from '@liquality/ethereum-networks'
+import EthereumNetworks, { EthereumNetwork } from '@liquality/ethereum-networks'
 import { WalletError } from '@liquality/errors'
-import { ensure0x, buildTransaction, formatEthResponse, normalizeTransactionObject } from '@liquality/ethereum-utils'
-import { Address, addressToString } from '@liquality/utils'
+import { ensure0x, buildTransaction, normalizeTransactionObject, remove0x, hexToNumber } from '@liquality/ethereum-utils'
+import { Address, SendOptions, ethereum } from '@liquality/types'
 import Debug from '@liquality/debug'
 
 import { findKey } from 'lodash'
 
-import { version } from '../package.json'
-
 const debug = Debug('ethereum')
+
+interface RequestArguments {
+  method: string;
+  params?: any[] | object;
+}
+
+interface EthereumProvider {
+  request (req: RequestArguments) : Promise<any>
+  enable () : Promise<ethereum.Address[]>
+}
 
 // EIP1193
 export default class EthereumWalletApiProvider extends WalletProvider {
-  constructor (ethereumProvider, network) {
+  _ethereumProvider: EthereumProvider
+  _network: EthereumNetwork
+
+  constructor (ethereumProvider: EthereumProvider, network: EthereumNetwork) {
     super(network)
     this._ethereumProvider = ethereumProvider
     this._network = network
   }
 
-  async request (method, ...params) {
+  async request (method: string, ...params: any) {
     await this._ethereumProvider.enable()
 
     try {
       const result = await this._ethereumProvider.request({ method, params })
       debug('got success', result)
-      return formatEthResponse(result)
+      return result
     } catch (e) {
       debug('got error', e.message)
       throw new WalletError(e.toString(), e)
@@ -33,7 +44,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
   }
 
   async isWalletAvailable () {
-    const addresses = await this.request('eth_accounts')
+    const addresses : string[] = await this.request('eth_accounts')
     return addresses.length > 0
   }
 
@@ -44,10 +55,10 @@ export default class EthereumWalletApiProvider extends WalletProvider {
       throw new WalletError('Wallet: No addresses available')
     }
 
-    return addresses.map((address) => { return new Address({ address: address }) })
+    return addresses.map((address: string) => { <Address>{ address: remove0x(address) } })
   }
 
-  async getUsedAddresses (startingIndex, numAddresses) {
+  async getUsedAddresses () {
     return this.getAddresses()
   }
 
@@ -56,16 +67,16 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     return addresses[0]
   }
 
-  async signMessage (message) {
+  async signMessage (message: string) {
     const hex = Buffer.from(message).toString('hex')
 
     const addresses = await this.getAddresses()
-    const address = addressToString(addresses[0])
+    const address = addresses[0]
 
     return this.request('personal_sign', ensure0x(hex), ensure0x(address))
   }
 
-  async sendTransaction (to, value, data, fee) {
+  async sendTransaction (options: SendOptions) {
     const networkId = await this.getWalletNetworkId()
 
     if (this._network) {
@@ -75,13 +86,27 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     }
 
     const addresses = await this.getAddresses()
-    const from = addressToString(addresses[0])
+    const from = addresses[0]
 
-    const tx = await buildTransaction(from, to, value, data, fee)
+    const txOptions : ethereum.UnsignedTransaction = {
+      from,
+      to: options.to,
+      value: options.value,
+      data: options.data,
+      gasPrice: options.fee
+    }
 
-    const txHash = await this.request('eth_sendTransaction', tx)
+    const txData = await buildTransaction(txOptions)
 
-    return normalizeTransactionObject(formatEthResponse({ ...tx, hash: txHash }))
+    const txHash = await this.request('eth_sendTransaction', txData)
+
+    const txWithHash : ethereum.PartialTransaction = {
+      ...txData,
+      input: txData.data,
+      hash: txHash
+    }
+
+    return normalizeTransactionObject(txWithHash)
   }
 
   canUpdateFee () {
@@ -91,12 +116,12 @@ export default class EthereumWalletApiProvider extends WalletProvider {
   async getWalletNetworkId () {
     const networkId = await this.request('net_version')
 
-    return parseInt(networkId)
+    return hexToNumber(networkId)
   }
 
   async getConnectedNetwork () {
     const networkId = await this.getWalletNetworkId()
-    const network = findKey(networks, network => network.networkId === networkId)
+    const network = findKey(EthereumNetworks, network => network.networkId === networkId)
 
     if (networkId && !network) {
       return {
@@ -105,8 +130,6 @@ export default class EthereumWalletApiProvider extends WalletProvider {
       }
     }
 
-    return networks[network]
+    return (EthereumNetworks as { [key: string]: EthereumNetwork })[network]
   }
 }
-
-EthereumWalletApiProvider.version = version

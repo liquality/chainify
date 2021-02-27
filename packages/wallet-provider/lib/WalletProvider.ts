@@ -1,4 +1,5 @@
 import Provider from '@liquality/provider'
+import { Network, WalletProvider as IWalletProvider, Address } from '@liquality/types'
 import {
   WalletError,
   UnimplementedMethodError
@@ -6,10 +7,11 @@ import {
 
 import { isEqual } from 'lodash'
 
-import { version } from '../package.json'
+export default abstract class WalletProvider extends Provider implements IWalletProvider {
+  _network: Network
+  _methods: string[]
 
-export default class WalletProvider extends Provider {
-  constructor (network) {
+  constructor (network: Network) {
     super()
     this._network = network
     this._methods = Object.getOwnPropertyNames(WalletProvider.prototype)
@@ -23,10 +25,10 @@ export default class WalletProvider extends Provider {
     return network ? new Proxy(this, { get: this._networkMatchProxy.bind(this) }) : this
   }
 
-  _networkMatchProxy (target, func) {
+  _networkMatchProxy (target: any, func: string) {
     const method = target[func]
     if (this._methods.includes(func)) {
-      return async (...args) => {
+      return async (...args: any[]) => {
         await this.assertNetworkMatch()
         return method.bind(target)(...args)
       }
@@ -42,29 +44,17 @@ export default class WalletProvider extends Provider {
     }
   }
 
-  isWalletAvailable () {
-    throw new UnimplementedMethodError('isWalletAvailable not implemented.')
-  }
+  abstract isWalletAvailable () : Promise<boolean>
 
-  getAddresses () {
-    throw new UnimplementedMethodError('getAddresses not implemented.')
-  }
+  abstract getAddresses (startingIndex?: number, numAddresses?: number, change?: boolean) : Promise<Address[]>
 
-  getUsedAddresses () {
-    throw new UnimplementedMethodError('getUsedAddresses not implemented.')
-  }
+  abstract getUsedAddresses (numAddressPerCall?: number) : Promise<Address[]>
 
-  getUnusedAddress () {
-    throw new UnimplementedMethodError('getUnusedAddress not implemented.')
-  }
+  abstract getUnusedAddress (change?: boolean, numAddressPerCall?: number) : Promise<Address>
 
-  signMessage () {
-    throw new UnimplementedMethodError('signMessage not implemented.')
-  }
+  abstract signMessage (message: string, from: string) : Promise<string>
 
-  async getConnectedNetwork () {
-    throw new UnimplementedMethodError('getConnectedNetwork not implemented.')
-  }
+  abstract getConnectedNetwork () : Promise<any>
+
+  abstract canUpdateFee () : boolean
 }
-
-WalletProvider.version = version

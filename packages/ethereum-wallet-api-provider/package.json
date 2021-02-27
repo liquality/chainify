@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@liquality/types": "^0.9.0",
     "@liquality/debug": "^0.9.0",
     "@liquality/errors": "^0.9.0",
     "@liquality/ethereum-networks": "^0.9.0",
@@ -28,7 +29,6 @@
     "@liquality/wallet-provider": "^0.9.0",
     "lodash": "^4.17.20"
   },
-
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
     "type": "git",
@@ -39,5 +39,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168"
   }
 }
