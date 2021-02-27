@@ -20,5 +20,6 @@ export class NodeError extends BaseError {}
 export class InvalidSecretError extends BaseError {}
 export class InvalidAddressError extends BaseError {}
 export class InvalidExpirationError extends BaseError {}
+export class InsufficientBalanceError extends BaseError {}
 
 export { version }

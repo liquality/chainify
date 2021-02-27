@@ -96,7 +96,7 @@ export interface ChainProvider {
    * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  sendSweepTransaction (address: string, fee: number) : Promise<Transaction>
+  sendSweepTransaction (address: string, fee: BigNumber) : Promise<Transaction>
 
   /**
    * Update the fee of a transaction.

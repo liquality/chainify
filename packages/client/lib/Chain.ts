@@ -105,7 +105,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async sendSweepTransaction (address: string, fee: number) : Promise<Transaction> {
+  async sendSweepTransaction (address: string, fee: BigNumber) : Promise<Transaction> {
     return this.client.getMethod('sendSweepTransaction')(address, fee)
   }
 
