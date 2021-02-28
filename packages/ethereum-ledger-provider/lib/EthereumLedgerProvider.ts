@@ -10,7 +10,6 @@ import {
   hexToNumber
 } from '@liquality/ethereum-utils'
 
-// @ts-ignore
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
 import EthereumJsTx, { TransactionProperties } from 'ethereumjs-tx'
 
