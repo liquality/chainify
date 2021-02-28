@@ -1,53 +1,39 @@
 import WalletProvider from '@liquality/wallet-provider'
 import { WalletError } from '@liquality/errors'
+import { Network, Address } from '@liquality/types'
+import HwTransport from '@ledgerhq/hw-transport'
 import Debug from '@liquality/debug'
-
-import getTransport from './LedgerNodeTransport'
-import { version } from '../package.json'
 
 const debug = Debug('ledger')
 
-export default class LedgerProvider extends WalletProvider {
-  static getTransport (config = { useWebBle: false, useU2F: false }) {
-    return getTransport(config)
-  }
+interface IApp {
+  transport: any
+} 
 
-  static isSupported (config) {
-    return getTransport(config).isSupported()
-  }
+export default abstract class LedgerProvider<TApp extends IApp> extends WalletProvider {
+  _App: any
+  _network: Network
+  _ledgerScrambleKey: string
+  _transport: HwTransport
+  _Transport: any
+  _appInstance: TApp
 
-  constructor (App, network, ledgerScrambleKey) {
+  constructor (App: TApp, Transport: any, network: Network, ledgerScrambleKey: string) {
     super(network)
 
     this._App = App
+    this._Transport = Transport
     this._network = network
     // The ledger scramble key is required to be set on the ledger transport
     // if communicating with the device using `transport.send` for the first time
     this._ledgerScrambleKey = ledgerScrambleKey
-    this._addressCache = {}
-  }
-
-  useWebBle () {
-    this._useWebBle = true
-    return this
-  }
-
-  useU2F () {
-    this._useU2F = true
-    return this
   }
 
   async createTransport () {
     if (!this._transport) {
       debug('creating ledger transport')
-      debug('useWebBle', this._useWebBle)
-      debug('useU2F', this._useU2F)
-      const Transport = LedgerProvider.getTransport({
-        useWebBle: this._useWebBle,
-        useU2F: this._useU2F
-      })
-
-      this._transport = await Transport.create()
+      // @ts-ignore _Transport is class and is dynamically assigned
+      this._transport = await this._Transport.create()
       debug('ledger transport created')
 
       this._transport.on('disconnect', () => {
@@ -58,11 +44,11 @@ export default class LedgerProvider extends WalletProvider {
     }
   }
 
-  errorProxy (target, func) {
+  errorProxy (target: any, func: string) {
     const method = target[func]
     const ctx = this
     if (Object.getOwnPropertyNames(target).includes(func) && typeof method === 'function') {
-      return async (...args) => {
+      return async (...args: any[]) => {
         debug(`calling "${func}" on ledger object`, args)
 
         try {
@@ -117,7 +103,7 @@ export default class LedgerProvider extends WalletProvider {
     return this._network
   }
 
-  async getWalletAddress (address) {
+  async getWalletAddress (address: string) : Promise<Address> {
     let index = 0
     let change = false
 
@@ -128,7 +114,7 @@ export default class LedgerProvider extends WalletProvider {
 
     while (index < maxAddresses) {
       const addrs = await this.getAddresses(index, addressesPerCall, change)
-      const addr = addrs.find(addr => addr.equals(address))
+      const addr = addrs.find(addr => addr.address === address)
       if (addr) return addr
 
       index += addressesPerCall
@@ -141,5 +127,3 @@ export default class LedgerProvider extends WalletProvider {
     throw new Error('Ledger: Wallet does not contain address')
   }
 }
-
-LedgerProvider.version = version

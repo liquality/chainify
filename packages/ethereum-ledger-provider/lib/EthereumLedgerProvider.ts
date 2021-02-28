@@ -1,26 +1,28 @@
 import LedgerProvider from '@liquality/ledger-provider'
-import networks from '@liquality/ethereum-networks'
+import { Address, ethereum, SendOptions, Transaction, BigNumber } from '@liquality/types'
+import { EthereumNetwork } from '@liquality/ethereum-networks'
 import {
   ensure0x,
   remove0x,
+  numberToHex,
   buildTransaction,
-  formatEthResponse,
-  normalizeTransactionObject
+  normalizeTransactionObject,
+  hexToNumber
 } from '@liquality/ethereum-utils'
-import { Address, addressToString } from '@liquality/utils'
 
-import Ethereum from '@ledgerhq/hw-app-eth'
-import EthereumJsTx from 'ethereumjs-tx'
+// @ts-ignore
+import HwAppEthereum from '@ledgerhq/hw-app-eth'
+import EthereumJsTx, { TransactionProperties } from 'ethereumjs-tx'
 
-import { version } from '../package.json'
+export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
+  _baseDerivationPath: string
 
-export default class EthereumLedgerProvider extends LedgerProvider {
-  constructor (network = networks.mainnet) {
-    super(Ethereum, network, 'w0w') // srs!
+  constructor (network: EthereumNetwork, Transport: any) {
+    super(HwAppEthereum, Transport, network, 'w0w') // srs!
     this._baseDerivationPath = `44'/${network.coinType}'/0'`
   }
 
-  async signMessage (message, from) {
+  async signMessage (message: string, from: string) {
     const app = await this.getApp()
     const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
@@ -32,11 +34,11 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     const path = this._baseDerivationPath + '/0/0'
     const address = await app.getAddress(path)
     return [
-      new Address({
+      <Address>{
         address: address.address,
         derivationPath: path,
         publicKey: address.publicKey
-      })
+      }
     ]
   }
 
@@ -58,13 +60,17 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     return this.getAddresses()
   }
 
-  async signTransaction (txData, path) {
-    const chainId = ensure0x(this._network.chainId.toString(16))
-    txData.chainId = chainId
-    txData.v = chainId
+  async signTransaction (txData: ethereum.TransactionRequest, path: string) {
+    const chainId = numberToHex((this._network as EthereumNetwork).chainId)
+    const txProps : TransactionProperties = {
+      ...txData,
+      chainId: hexToNumber(chainId), // HEY Could be incorrect
+      v: chainId
+    }
+    
 
     const app = await this.getApp()
-    const tx = new EthereumJsTx(txData)
+    const tx = new EthereumJsTx(txProps)
     const serializedTx = tx.serialize().toString('hex')
     const txSig = await app.signTransaction(path, serializedTx)
     const signedTxData = {
@@ -79,39 +85,66 @@ export default class EthereumLedgerProvider extends LedgerProvider {
     return signedSerializedTx
   }
 
-  async sendTransaction (to, value, data, _gasPrice) {
+  async sendTransaction (options: SendOptions) {
     const addresses = await this.getAddresses()
     const address = addresses[0]
-    const from = addressToString(address)
+    const from = address.address
 
     const [ nonce, gasPrice ] = await Promise.all([
       this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
-      _gasPrice ? Promise.resolve(_gasPrice) : this.getMethod('getGasPrice')()
+      options.fee ? Promise.resolve(options.fee) : this.getMethod('getGasPrice')()
     ])
 
-    const txData = buildTransaction(from, to, value, data, gasPrice, nonce)
-    txData.gas = await this.getMethod('estimateGas')(txData) // TODO: shouldn't these be 0x?
+    const txOptions : ethereum.UnsignedTransaction = {
+      from,
+      to: options.to,
+      value: options.value,
+      data: options.data,
+      gasPrice,
+      nonce
+    }
+
+    const txData = buildTransaction(txOptions)
+    const gas = await this.getMethod('estimateGas')(txData)
+    txData.gas = numberToHex(gas)
 
     const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)
-
     const txHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
 
-    txData.hash = txHash
-    return normalizeTransactionObject(formatEthResponse(txData))
+    const txWithHash : ethereum.PartialTransaction = {
+      ...txData,
+      input: txData.data,
+      hash: txHash
+    }
+    return normalizeTransactionObject(txWithHash)
   }
 
-  async updateTransactionFee (tx, newGasPrice) {
-    const transaction = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
+  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: BigNumber) {
+    const transaction : Transaction<ethereum.Transaction> = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
-    const txData = await buildTransaction(transaction._raw.from, transaction._raw.to, transaction._raw.value, transaction._raw.input, newGasPrice, transaction._raw.nonce)
-    txData.gas = await this.getMethod('estimateGas')(txData)
+    const txOptions : ethereum.UnsignedTransaction = {
+      from: transaction._raw.from,
+      to: transaction._raw.to,
+      value: new BigNumber(transaction._raw.value),
+      gasPrice: newGasPrice,
+      data: transaction._raw.input,
+      nonce: hexToNumber(transaction._raw.nonce)
+    }
 
-    const signedSerializedTx = await this.signTransaction(txData)
+    const txData = await buildTransaction(txOptions)
+    const gas = await this.getMethod('estimateGas')(txData)
+    txData.gas = numberToHex(gas)
+
+    const address = await this.getWalletAddress(txData.from)
+    const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)
     const newTxHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
 
-    txData.hash = newTxHash
-    return normalizeTransactionObject(formatEthResponse(txData))
+    const txWithHash : ethereum.PartialTransaction = {
+      ...txData,
+      input: txData.data,
+      hash: newTxHash
+    }
+
+    return normalizeTransactionObject(txWithHash)
   }
 }
-
-EthereumLedgerProvider.version = version
