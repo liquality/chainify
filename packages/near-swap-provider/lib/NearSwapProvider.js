@@ -1,6 +1,6 @@
 import Provider from '@liquality/provider'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
-import { toNearTimestampFormat } from '@liquality/near-utils'
+import { toNearTimestampFormat, parseReceipt } from '@liquality/near-utils'
 
 import { transactions } from 'near-api-js'
 
@@ -46,7 +46,9 @@ export default class NearSwapProvider extends Provider {
     if (!initiationTransactionReceipt) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
-    return this.getMethod('sendTransaction')(initiationTransactionReceipt.receiver, null, [
+
+    const parsedInitiationTx = parseReceipt(initiationTransactionReceipt)
+    return this.getMethod('sendTransaction')(parsedInitiationTx.receiver, null, [
       transactions.functionCall(
         ABI.claim.method,
         {
@@ -63,8 +65,8 @@ export default class NearSwapProvider extends Provider {
     if (!initiationTransactionReceipt) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
-
-    return this.getMethod('sendTransaction')(initiationTransactionReceipt.receiver, null, [transactions.functionCall(ABI.refund.method, {}, ABI.refund.gas)])
+    const parsedInitiationTx = parseReceipt(initiationTransactionReceipt)
+    return this.getMethod('sendTransaction')(parsedInitiationTx.receiver, null, [transactions.functionCall(ABI.refund.method, {}, ABI.refund.gas)])
   }
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
@@ -81,21 +83,23 @@ export default class NearSwapProvider extends Provider {
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
-    const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
 
     if (!initiationTransaction) {
       throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
     }
 
-    return this.doesTransactionMatchInitiation(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
+    const parsedInitiationTx = parseReceipt(initiationTransaction)
+    return this.doesTransactionMatchInitiation(parsedInitiationTx, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   async getSwapSecret (claimTxHash) {
-    const tx = await this.getMethod('getTransactionByHash')(claimTxHash)
+    const tx = await this.getMethod('getTransactionReceipt')(claimTxHash)
     if (!tx) {
       throw new TxNotFoundError(`Transaction not found: ${claimTxHash}`)
     }
-    return tx.swap.secret
+    const parsedTx = parseReceipt(tx)
+    return parsedTx.swap.secret
   }
 
   generateUniqueString (prefix = 'liquality-htlc') {

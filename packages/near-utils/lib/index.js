@@ -33,24 +33,36 @@ function fromNearTimestamp (ts) {
   return ts / (1000 * 1000 * 1000)
 }
 
-function normalizeTransactionObject (tx, confirmations) {
+function normalizeTransactionObject (tx, currentHeight) {
   if (tx.transaction && tx.transaction_outcome) {
     tx = { ...tx.transaction, ...tx.transaction_outcome }
   }
 
   const normalizedTx = { confirmations: 0 }
 
-  if (confirmations) {
-    normalizedTx.confirmations = confirmations
+  if (tx.blockNumber) {
+    if (currentHeight) {
+      normalizedTx.confirmations = tx.blockNumber - currentHeight
+    }
+
+    normalizedTx.blockNumber = tx.blockNumber
   }
 
+  normalizedTx.blockHash = tx.block_hash
+  normalizedTx.hash = `${tx.hash}_${tx.signer_id}`
+  normalizedTx.value = 0
+  normalizedTx._raw = tx
+
+  return normalizedTx
+}
+
+function parseReceipt (_tx) {
+  const normalizedTx = normalizeTransactionObject(_tx)
+  const tx = normalizedTx._raw
+
   if (tx) {
-    normalizedTx.value = 0
-    normalizedTx.hash = `${tx.hash}_${tx.signer_id}`
-    normalizedTx.blockHash = tx.block_hash
     normalizedTx.sender = tx.signer_id
     normalizedTx.receiver = tx.receiver_id
-    normalizedTx.rawHash = tx.hash
 
     if (tx.actions) {
       tx.actions.forEach(a => {
@@ -103,5 +115,4 @@ function normalizeTransactionObject (tx, confirmations) {
   }
   return normalizedTx
 }
-
-export { toBase64, fromBase64, normalizeTransactionObject, toNearTimestampFormat, fromNearTimestamp, version }
+export { toBase64, fromBase64, normalizeTransactionObject, parseReceipt, toNearTimestampFormat, fromNearTimestamp, version }

@@ -1,6 +1,6 @@
 import NodeProvider from '@liquality/node-provider'
 import { PendingTxError } from '@liquality/errors'
-import { fromBase64, toBase64, fromNearTimestamp } from '@liquality/near-utils'
+import { fromBase64, toBase64, fromNearTimestamp, parseReceipt } from '@liquality/near-utils'
 
 import { version } from '../package.json'
 
@@ -125,7 +125,7 @@ export default class NearSwapFindProvider extends NodeProvider {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
 
-    const tx = await this.findAddressTransaction(initiationTransactionReceipt.receiver, tx => {
+    const tx = await this.findAddressTransaction(parseReceipt(initiationTransactionReceipt).receiver, tx => {
       if (tx.swap) {
         return tx.swap.method === 'claim'
       }
@@ -143,7 +143,7 @@ export default class NearSwapFindProvider extends NodeProvider {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
 
-    return this.findAddressTransaction(initiationTransactionReceipt.receiver, tx => {
+    return this.findAddressTransaction(parseReceipt(initiationTransactionReceipt).receiver, tx => {
       if (tx.swap) {
         return tx.swap.method === 'refund'
       }
