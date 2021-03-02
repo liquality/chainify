@@ -5,12 +5,12 @@ import EthereumErc20SwapProvider from '../../lib'
 const { expect } = require('chai').use(require('chai-as-promised'))
 
 describe('Ethereum ERC20 Swap provider', () => {
-  let provider
+  let provider: EthereumErc20SwapProvider
 
   beforeEach(() => {
     provider = new EthereumErc20SwapProvider()
     provider.setClient({
-      getMethod (name) {
+      getMethod (name: string) {
         if (name === 'getContractAddress') { return () => '89d24A6b4CcB1B6fAA2625fE562bDD9a23260359' } else { throw new Error('method not mocked') }
       }
     })

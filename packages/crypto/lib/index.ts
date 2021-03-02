@@ -17,7 +17,7 @@ function isHex (hex: string) {
  * @param {string} message - any string.
  * @return {string} Returns Buffer.
  */
-function ensureBuffer (message: string | Buffer) {
+function ensureBuffer (message: string | Buffer | any) {
   if (Buffer.isBuffer(message)) return message
 
   switch (typeof message) {

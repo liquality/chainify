@@ -64,7 +64,7 @@
     "bootstrap": "lerna bootstrap --force-local",
     "test": "run-s test:unit env:integration env:integration:bootup test:integration",
     "test:unit": "cross-env NODE_ENV=test mocha packages/*/test/unit $npm_package_options_mocha",
-    "test:ts:unit": "cross-env NODE_ENV=test mocha packages/*/test/unit/*.test.ts $npm_package_options_mocha",
+    "test:ts:unit": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha packages/*/test/unit/*.test.ts $npm_package_options_mocha",
     "env:integration": "docker-compose -f test/integration/environment/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
     "env:integration:bootup": "sleep 10",
     "test:integration:api": "cross-env NODE_ENV=test mocha test/integration/api $npm_package_options_mocha",

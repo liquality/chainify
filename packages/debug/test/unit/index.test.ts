@@ -10,7 +10,7 @@ describe('debug library', () => {
   it('should not add logs to the console.history if disabled', () => {
     const debug = Debug('test')
     debug('test')
-    expect(console.history).to.equal(undefined)
+    expect((console as any).history).to.equal(undefined)
   })
 
   it('should add logs to the console.history if enabled', () => {
@@ -18,7 +18,7 @@ describe('debug library', () => {
 
     const debug = Debug('test')
     debug('test')
-    expect(console.history.length).to.equal(2)
+    expect((console as any).length).to.equal(2)
 
     dbg.disable()
   })

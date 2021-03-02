@@ -5,7 +5,7 @@ import Client from '../../lib'
 const { expect } = require('chai').use(require('chai-as-promised'))
 
 describe('Client methods without providers', () => {
-  let client
+  let client: Client
 
   beforeEach(() => {
     client = new Client()
