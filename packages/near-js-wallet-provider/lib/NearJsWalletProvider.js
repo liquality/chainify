@@ -9,6 +9,11 @@ import { parseSeedPhrase } from 'near-seed-phrase'
 
 import { version } from '../package.json'
 
+// TODO: remove when migrating to v14
+global.URL = function (a, b) {
+  return a
+}
+
 export default class NearJsWalletProvider extends Provider {
   constructor (network, mnemonic) {
     super()

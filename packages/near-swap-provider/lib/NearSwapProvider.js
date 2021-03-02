@@ -7,6 +7,10 @@ import { transactions } from 'near-api-js'
 import Bytecode from './bytecode'
 import { version } from '../package.json'
 
+global.URL = function (a, b) {
+  return a
+}
+
 const CONTRACT_CODE = 'wnGY4a+YYkfbkBqYqyhdQjjtHRl9Auyh7yxCGtXL8JI='
 
 const ABI = {
