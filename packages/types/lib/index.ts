@@ -9,6 +9,7 @@ import { Block } from './block'
 import { Address } from './address'
 import { Network } from './network'
 
+import * as bitcoin from './bitcoin'
 import * as ethereum from './ethereum'
 
 export {
@@ -24,5 +25,6 @@ export {
   Network,
   SendOptions,
   SwapParams,
+  bitcoin,
   ethereum
 }
