@@ -7,6 +7,7 @@ import { transactions } from 'near-api-js'
 import Bytecode from './bytecode'
 import { version } from '../package.json'
 
+// TODO: remove when migrating to v14
 global.URL = function (a, b) {
   return a
 }
