@@ -10,9 +10,9 @@ interface ProviderOptions {
   // RPC URI
   uri: string,
   // Authentication username
-  username: string,
+  username?: string,
   // Authentication password
-  password: string,
+  password?: string,
   // Bitcoin network
   network: BitcoinNetwork,
   // Number of block confirmations to target for fee

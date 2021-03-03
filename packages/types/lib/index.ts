@@ -3,7 +3,7 @@ import { SwapProvider, SwapParams } from './swap'
 import { ChainProvider, SendOptions } from './chain'
 import { WalletProvider } from './wallet'
 
-import { FeeProvider, FeeDetails } from './fees'
+import { FeeProvider, FeeDetails, FeeDetail } from './fees'
 import { Transaction } from './transaction'
 import { Block } from './block'
 import { Address } from './address'
@@ -21,6 +21,7 @@ export {
   Transaction,
   Block,
   FeeDetails,
+  FeeDetail,
   Address,
   Network,
   SendOptions,
