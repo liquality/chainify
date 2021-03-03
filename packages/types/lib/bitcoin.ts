@@ -25,7 +25,8 @@ export interface Input {
     hex: string
   },
   txinwitness: string[],
-  sequence: number
+  sequence: number,
+  coinbase?: string
 }
 
 export interface Transaction {

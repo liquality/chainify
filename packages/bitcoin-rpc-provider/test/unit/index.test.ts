@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 
 import Client from '../../../client/lib'
+import BitcoinNetworks from '../../../bitcoin-networks/lib'
 import BitcoinRpcProvider from '../../lib'
 
 const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
@@ -13,12 +14,17 @@ chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Bitcoin RPC provider', () => {
-  let client
-  let provider
+  let client: Client
+  let provider: BitcoinRpcProvider
 
   beforeEach(() => {
     client = new Client()
-    provider = new BitcoinRpcProvider('http://localhost:18443', 'bitcoin', 'local321')
+    provider = new BitcoinRpcProvider({ 
+      uri: 'http://localhost:18443',
+      username: 'bitcoin',
+      password: 'local321',
+      network: BitcoinNetworks.bitcoin_testnet
+    })
     client.addProvider(provider)
 
     mockJsonRpc('http://localhost:18443', bitcoinRpc, 100)
@@ -55,36 +61,31 @@ describe('Bitcoin RPC provider', () => {
       const tx = await provider.decodeRawTransaction('01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000')
 
       expect(tx).to.deep.equal({
-        'hash': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
-        'value': 50,
-        '_raw': {
-          'hex': '01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0401660101ffffffff010001062a01000000232103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac00000000',
-          'txid': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
-          'size': 99,
-          'version': 1,
-          'locktime': 0,
-          'vin': [
-            {
-              'coinbase': '01660101',
-              'sequence': 4294967295
+        'txid': 'cb14f7e8a9b7838a2f9057a19f1eebcccaf3a3aaf1b2b4802924ae41b1fc5dc4',
+        'size': 99,
+        'version': 1,
+        'locktime': 0,
+        'vin': [
+          {
+            'coinbase': '01660101',
+            'sequence': 4294967295
+          }
+        ],
+        'vout': [
+          {
+            'value': 50.0000384,
+            'n': 0,
+            'scriptPubKey': {
+              'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
+              'hex': '2103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac',
+              'reqSigs': 1,
+              'type': 'pubkey',
+              'addresses': [
+                'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'
+              ]
             }
-          ],
-          'vout': [
-            {
-              'value': 50.0000384,
-              'n': 0,
-              'scriptPubKey': {
-                'asm': '03106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deff OP_CHECKSIG',
-                'hex': '2103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac',
-                'reqSigs': 1,
-                'type': 'pubkey',
-                'addresses': [
-                  'mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'
-                ]
-              }
-            }
-          ]
-        }
+          }
+        ]
       })
     })
   })
@@ -103,8 +104,7 @@ describe('Bitcoin RPC provider', () => {
         transactions: [
           '9f4d7c7e4e42ebf11e3985c9c4057c47b0513039ea437a33c390164bcd00bb5a',
           '504fc23592b61c262902e8574d5a053e8eb3f7d9d80d3c49f20ef4cd9167d2fd'
-        ],
-        confirmations: 30
+        ]
       })
     })
   })
@@ -112,13 +112,14 @@ describe('Bitcoin RPC provider', () => {
   describe('getBalance', () => {
     it('should return correct balance in sats', async () => {
       const balance = await provider.getBalance(['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'])
+      // @ts-ignore
       expect(balance).to.be.bignumber.equal(new BigNumber(20000000))
     })
   })
 
   describe('getRawTransactionByHash', () => {
     it('should return a raw transaction', async () => {
-      const tx = await provider.getRawTransactionByHash('504fc23592b61c262902e8574d5a053e8eb3f7d9d80d3c49f20ef4cd9167d2fd', false)
+      const tx = await provider.getRawTransactionByHash('504fc23592b61c262902e8574d5a053e8eb3f7d9d80d3c49f20ef4cd9167d2fd')
       expect(tx).to.equal('0200000001ff1157410fd0fe4363c96331565ea039a581fffd444297238014b61c22e120a4000000004847304402206797722ab2d452a41d3dbccbe046712218a3263596db92c432cdfade9d06355f02200b3c68caad6906d01eb589686d725551de1c3b3adb7874cb11271a91a323f12301feffffff0200e1f5050000000017a91448f1346b4453d0a208cef9d6b1722d87c6b3f11e87a4ce4a1f0000000017a9143acc14bffd075dcaeff623d4c4ac11472a1fcff78775020000')
     })
   })

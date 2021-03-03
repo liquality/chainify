@@ -21,6 +21,8 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/bitcoin-utils": "^0.9.0",
+    "@liquality/bitcoin-networks": "^0.9.0",
+    "@liquality/types": "^0.9.0",
     "@liquality/errors": "^0.9.0",
     "@liquality/jsonrpc-provider": "^0.9.0",
     "@liquality/utils": "^0.9.0",
@@ -37,5 +39,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168"
   }
 }
