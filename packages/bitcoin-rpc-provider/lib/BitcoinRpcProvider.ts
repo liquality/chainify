@@ -15,73 +15,10 @@ interface ProviderOptions {
   password?: string,
   // Bitcoin network
   network: BitcoinNetwork,
-  // Number of block confirmations to target for fee
+  // Number of block confirmations to target for fee. Defaul: 1
   feeBlockConfirmations?: number,
-  // Default fee per byte for transactions
+  // Default fee per byte for transactions. Default: 3
   defaultFeePerByte?: number
-}
-
-namespace rpc {
-  export interface UTXO {
-    txid: string,
-    vout: number,
-    address: string,
-    label: string,
-    scriptPubKey: string,
-    amount: number,
-    confirmations: number,
-    redeemScript: string,
-    witnessScript: string,
-    spendable: boolean,
-    solvable: boolean,
-    desc: string,
-    safe: boolean
-  }
-
-  export interface ReceivedByAddress {
-    involvesWatchOnly: boolean,
-    address: string,
-    account: string,
-    amount: number,
-    cofirmations: number,
-    label: string,
-    txids: string[]
-  }
-
-  export interface Transaction extends bitcoin.Transaction {
-    blockhash: string,
-    confirmations: number,
-    blocktime: number,
-    number: number
-  }
-
-  export interface FundRawResponse {
-    hex: string,
-    fee: number,
-    changepos: number
-  }
-
-  export interface Block {
-    hash: string,
-    confirmations: number,
-    size: number,
-    strippedSize: number,
-    weight: number,
-    height: number,
-    version: number,
-    versionHex: string,
-    merkleroot: string,
-    tx: string[],
-    time: number,
-    mediantime: number,
-    nonce: number,
-    bits: string,
-    difficulty: number,
-    chainwork: string,
-    nTx: number,
-    previousblockhash: string,
-    nextblockhash?: string
-  }
 }
 
 export default class BitcoinRpcProvider extends JsonRpcProvider implements Partial<ChainProvider> {
@@ -142,12 +79,12 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   }
 
   async getUnspentTransactions (addresses: string[]) {
-    const utxos : rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
+    const utxos : bitcoin.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
     return utxos.map(utxo => ({ ...utxo, satoshis: new BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
   async getAddressTransactionCounts (addresses: string[]) {
-    const receivedAddresses : rpc.ReceivedByAddress[] = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
+    const receivedAddresses : bitcoin.rpc.ReceivedByAddress[] = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
     return addresses.reduce((acc: { [index: string]: number }, addr) => {
       const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addr)
       const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
@@ -182,7 +119,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   }
 
   async getBlockByHash (blockHash: string, includeTx = false) : Promise<Block> {
-    let data: rpc.Block
+    let data: bitcoin.rpc.Block
 
     try {
       data = await this.jsonrpc('getblock', blockHash) // TODO: This doesn't fit the interface?: https://chainquery.com/bitcoin-cli/getblock
@@ -260,7 +197,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     }
   }
 
-  async getTransactionFee (tx: rpc.Transaction) {
+  async getTransactionFee (tx: bitcoin.rpc.Transaction) {
     const isCoinbaseTx = tx.vin.find(vin => vin.coinbase)
     if (isCoinbaseTx) return // Coinbase transactions do not have a fee
 
@@ -281,7 +218,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   }
 
   async getParsedTransactionByHash(transactionHash: string, addFees = false) : Promise <Transaction<bitcoin.Transaction>> {
-    const tx: rpc.Transaction = await this.jsonrpc('getrawtransaction', transactionHash, 1)
+    const tx: bitcoin.rpc.Transaction = await this.jsonrpc('getrawtransaction', transactionHash, 1)
     return normalizeTransactionObject(
       tx,
       addFees ? (await this.getTransactionFee(tx)) : undefined,
@@ -319,7 +256,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return this.jsonrpc('createrawtransaction', transactions, outputs)
   }
 
-  async fundRawTransaction (hexstring: string) : Promise<rpc.FundRawResponse> {
+  async fundRawTransaction (hexstring: string) : Promise<bitcoin.rpc.FundRawResponse> {
     return this.jsonrpc('fundrawtransaction', hexstring)
   }
 }
