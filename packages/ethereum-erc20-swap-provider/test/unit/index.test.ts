@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+import BigNumber from 'bignumber.js'
 import EthereumErc20SwapProvider from '../../lib'
 
 const { expect } = require('chai').use(require('chai-as-promised'))
@@ -18,66 +19,90 @@ describe('Ethereum ERC20 Swap provider', () => {
 
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
-        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
-        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
-        255))
+      return expect(provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
+        expiration: 255
+      }))
         .to.equal('6080604052600080546001600160a01b0319908116735acbf79d0cf4139a6c3eca85b41ce2bd23ced04f17909155600180548216730a81e8be41b21f651a71aab1a85c6813b8bbccf81790556002805482167389d24a6b4ccb1b6faa2625fe562bdd9a232603591790819055600380549092166001600160a01b03919091161790557f91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e6004553480156100b157600080fd5b5061045c806100c16000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c8063590e1ae31461003b578063bd66528a14610045575b600080fd5b610043610062565b005b6100436004803603602081101561005b57600080fd5b503561017c565b7f00000000000000000000000000000000000000000000000000000000000000ff421161008e57600080fd5b600154600354604080516370a0823160e01b8152306004820152905161016e9363a9059cbb60e01b936001600160a01b03918216939116916370a0823191602480820192602092909190829003018186803b1580156100ec57600080fd5b505afa158015610100573d6000803e3d6000fd5b505050506040513d602081101561011657600080fd5b5051604080516001600160a01b0390931660248401526044808401929092528051808403909201825260649092019091526020810180516001600160e01b03166001600160e01b031990931692909217909152610314565b6001546001600160a01b0316ff5b600454600282604051602001808281526020019150506040516020818303038152906040526040518082805190602001908083835b602083106101d05780518252601f1990920191602091820191016101b1565b51815160209384036101000a60001901801990921691161790526040519190930194509192505080830381855afa15801561020f573d6000803e3d6000fd5b5050506040513d602081101561022457600080fd5b50511461023057600080fd5b600354604080516370a0823160e01b815230600482015290516000926001600160a01b0316916370a08231916024808301926020929190829003018186803b15801561027b57600080fd5b505afa15801561028f573d6000803e3d6000fd5b505050506040513d60208110156102a557600080fd5b50519050806102b357600080fd5b600054604080516001600160a01b039092166024830152604480830184905281518084039091018152606490920190526020810180516001600160e01b031663a9059cbb60e01b17905261030690610314565b6000546001600160a01b0316ff5b606061031f8261034d565b8051909150156103495780806020019051602081101561033e57600080fd5b505161034957600080fd5b5050565b600254604051825160609260009284926001600160a01b0390921691869190819060208401908083835b602083106103965780518252601f199092019160209182019101610377565b6001836020036101000a0380198251168184511680821785525050505050509050019150506000604051808303816000865af19150503d80600081146103f8576040519150601f19603f3d011682016040523d82523d6000602084013e6103fd565b606091505b509150915081156104115791506104219050565b8051156100365780518082602001fd5b91905056fea264697066735822122050b5f386e31422b38dc8c7ced527086554a1af89418786893a391e07a57802ae64736f6c63430007040033')
     })
 
     it('should throw error when recipient address too long', () => {
-      return expect(() => provider.createSwapScript('13375acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
-        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
-        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
-        6016519))
+      return expect(() => provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '13375acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
+        expiration: 6016519
+      }))
         .to.throw()
     })
 
     it('should throw error when recipient address too short', () => {
-      return expect(() => provider.createSwapScript('39a6c3eca85b41ce2bd23ced04f',
-        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
-        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
-        6016519))
+      return expect(() => provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '39a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
+        expiration: 6016519
+      }))
         .to.throw()
     })
 
     it('should throw error when refund address too long', () => {
-      return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
-        '13370a81e8be41b21f651a71aab1a85c6813b8bbccf8',
-        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
-        6016519))
+      return expect(() => provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '13370a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
+        expiration: 6016519
+      }))
         .to.throw()
     })
 
     it('should throw error when refund address too short', () => {
-      return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
-        '8be41b21f651a71aab1a85c6813b8bbccf8',
-        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
-        6016519))
+      return expect(() => provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e',
+        expiration: 6016519
+      }))
         .to.throw()
     })
 
     it('should throw error when secret hash longer than 32 bytes', () => {
-      return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
-        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
-        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e13371337',
-        6016519))
+      return expect(() => provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386d71e13371337',
+        expiration: 6016519
+      }))
         .to.throw()
     })
 
     it('should throw error when secret hash shorter than 32 bytes', () => {
-      return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
-        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
-        '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386',
-        6016519))
+      return expect(() => provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '91d6a24697ed31932537ae598d3de3131e1fcd0641b9ac4be7afcb376386',
+        expiration: 6016519
+      }))
         .to.throw()
     })
 
     it('should throw error when secret hash is hash of secret 0', () => {
-      return expect(() => provider.createSwapScript('5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
-        '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
-        '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925',
-        6016519))
+      return expect(() => provider.createSwapScript({
+        value: new BigNumber(0),
+        recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
+        refundAddress: '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
+        secretHash: '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925',
+        expiration: 6016519
+      }))
         .to.throw()
     })
   })

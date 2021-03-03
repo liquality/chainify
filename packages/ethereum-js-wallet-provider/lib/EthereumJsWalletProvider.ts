@@ -1,12 +1,13 @@
 import WalletProvider from '@liquality/wallet-provider'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { Network, Address, SendOptions, ethereum, Transaction, BigNumber } from '@liquality/types'
-import { ensure0x, remove0x, buildTransaction, numberToHex, hexToNumber, normalizeTransactionObject } from '@liquality/ethereum-utils'
+import { remove0x, buildTransaction, numberToHex, hexToNumber, normalizeTransactionObject } from '@liquality/ethereum-utils'
 
 import { mnemonicToSeed } from 'bip39'
 import hdkey from 'hdkey'
 import { hashPersonalMessage, ecsign, toRpcSig, privateToAddress, privateToPublic } from 'ethereumjs-util'
-import { Transaction as EthJsTransaction, TxData } from 'ethereumjs-tx'
+/// <reference path="../node_modules/ethereumjs-tx/dist/index.d.ts" />
+import { Transaction as EthJsTransaction } from 'ethereumjs-tx'
 import Common from 'ethereumjs-common'
 import { chains as BaseChains } from 'ethereumjs-common/dist/chains'
 

@@ -18,7 +18,7 @@ describe('debug library', () => {
 
     const debug = Debug('test')
     debug('test')
-    expect((console as any).length).to.equal(2)
+    expect((console as any).history.length).to.equal(2)
 
     dbg.disable()
   })

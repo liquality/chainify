@@ -142,14 +142,14 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     if (!initiationTransaction) throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
 
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    const initiationTransactionReceipt : ethereum.TransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const transactionMatchesSwapParams = this.doesTransactionMatchInitiation(swapParams, initiationTransaction)
 
     return transactionMatchesSwapParams &&
            initiationTransactionReceipt.contractAddress &&
-           initiationTransactionReceipt.status === '1'
+           initiationTransactionReceipt.status === '0x1'
   }
 
   async findSwapTransaction (blockNumber: number, predicate: (tx: Transaction<any>, block: Block) => boolean) {

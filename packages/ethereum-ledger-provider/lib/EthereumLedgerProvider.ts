@@ -11,7 +11,7 @@ import {
 } from '@liquality/ethereum-utils'
 
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
-import EthereumJsTx, { TransactionProperties } from 'ethereumjs-tx'
+import * as EthereumJsTx from 'ethereumjs-tx'
 
 export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
   _baseDerivationPath: string
@@ -61,15 +61,12 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
 
   async signTransaction (txData: ethereum.TransactionRequest, path: string) {
     const chainId = numberToHex((this._network as EthereumNetwork).chainId)
-    const txProps : TransactionProperties = {
+    const app = await this.getApp()
+    const tx = new EthereumJsTx({
       ...txData,
       chainId: hexToNumber(chainId), // HEY Could be incorrect
       v: chainId
-    }
-    
-
-    const app = await this.getApp()
-    const tx = new EthereumJsTx(txProps)
+    })
     const serializedTx = tx.serialize().toString('hex')
     const txSig = await app.signTransaction(path, serializedTx)
     const signedTxData = {
