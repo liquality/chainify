@@ -19,7 +19,7 @@
       "title": "Transaction Hash"
     },
     "value": {
-      "type": ["number", "string"],
+      "type": "number",
       "title": "Value",
       "minimum": 0
     },
