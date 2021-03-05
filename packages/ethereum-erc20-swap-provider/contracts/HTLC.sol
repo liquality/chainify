@@ -14,20 +14,28 @@ contract HTLC {
   ERC20 token = ERC20(tokenAddress);
   bytes32 hashedSecret = 0x4444444444444444444444444444444444444444444444444444444444444444;
 
+  event Claim(bytes32 _secret);
+  event Refund();
+
   function claim(bytes32 secret) public {
+    require(msg.data.length == 32 + 4);
     require(sha256(abi.encodePacked(secret)) == hashedSecret);
     uint balance = token.balanceOf(address(this));
     require(balance > 0);
     _callOptionalReturn(abi.encodeWithSelector(token.transfer.selector, recipientAddress, balance));
+    emit Claim(secret);
     selfdestruct(recipientAddress);
   }
 
   function refund () public {
+    require(msg.data.length == 4);
     require(block.timestamp > 0x5555555555555555555555555555555555555555555555555555555555555555);
+    uint balance = token.balanceOf(address(this));
+    require(balance > 0);
     _callOptionalReturn(abi.encodeWithSelector(token.transfer.selector, refundAddress, token.balanceOf(address(this))));
+    emit Refund();
     selfdestruct(refundAddress);
   }
-
   /**
     * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement
     * on the return value: the return value is optional (but if data is returned, it must not be false).
@@ -37,7 +45,6 @@ contract HTLC {
       // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since
       // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
       // the target address contains contract code and also asserts for success in the low-level call.
-
     bytes memory returndata = _functionCall(data);
     if (returndata.length > 0) { // Return data is optional
         // solhint-disable-next-line max-line-length
@@ -54,7 +61,6 @@ contract HTLC {
         // Look for revert reason and bubble it up if present
       if (returndata.length > 0) {
         // The easiest way to bubble the revert reason is using memory via assembly
-
         // solhint-disable-next-line no-inline-assembly
         assembly {
           let returndata_size := mload(returndata)
