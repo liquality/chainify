@@ -4,7 +4,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import * as crypto from '../../../packages/crypto/lib'
 import { keccak256 } from 'ethereumjs-util'
-import { chains, fundWallet, describeExternal, connectMetaMask, deployERC20Token, clearEthMiner, getRandomAddress, mineBlock, getSwapParams } from '../common'
+import { chains, deployERC20Token, mineBlock, getSwapParams } from '../common'
 import EthereumErc20SwapProvider from '../../../packages/ethereum-erc20-swap-provider/lib'
 import config from '../config'
 
@@ -34,11 +34,11 @@ describe('Ethereum Contract', function () {
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
     const contractAddress = await createContract(chain, swapParams, secretHash)
-    
+
     const claimTx = await chain.client.chain.sendTransaction(contractAddress, 0, secret)
     await mineBlock(chain)
     const claimTxReceipt = await chain.client.getMethod('getTransactionReceipt')(claimTx.hash)
-    
+
     expect(claimTxReceipt.logs[0].topics[0]).to.equal(CLAIM_TOPIC)
     expect(claimTxReceipt.logs[0].data).to.equal(secret)
     expect(claimTxReceipt.logs[0].address).to.equal(contractAddress)
@@ -50,11 +50,11 @@ describe('Ethereum Contract', function () {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = 100000 // Already expired
     const contractAddress = await createContract(chain, swapParams, secretHash)
-    
+
     const refundTx = await chain.client.chain.sendTransaction(contractAddress, 0, '')
     await mineBlock(chain)
     const refundTxReceipt = await chain.client.getMethod('getTransactionReceipt')(refundTx.hash)
-    
+
     expect(refundTxReceipt.logs[0].topics[0]).to.equal(REFUND_TOPIC)
     expect(refundTxReceipt.logs[0].address).to.equal(contractAddress)
   })
@@ -71,7 +71,7 @@ describe('Ethereum Contract', function () {
 
 describe('ERC20 Contract', function () {
   this.timeout(config.timeout)
-  
+
   before(async function () {
     await deployERC20Token(chains.erc20WithNode)
   })
@@ -91,7 +91,7 @@ describe('ERC20 Contract', function () {
     const claimTx = await chain.client.chain.sendTransaction(contractAddress, 0, input)
     await mineBlock(chain)
     const claimTxReceipt = await chain.client.getMethod('getTransactionReceipt')(claimTx.hash)
-    
+
     expect(claimTxReceipt.logs[1].topics[0]).to.equal(CLAIM_TOPIC)
     expect(claimTxReceipt.logs[1].data).to.equal(secret)
     expect(claimTxReceipt.logs[1].address).to.equal(contractAddress)
@@ -103,14 +103,14 @@ describe('ERC20 Contract', function () {
     const swapParams = await getSwapParams(chain)
     swapParams.expiration = 100000 // Already expired
     const contractAddress = await createContract(chain, { ...swapParams, value: 0 }, secretHash)
-    
+
     await chain.client.chain.sendTransaction(contractAddress, swapParams.value, undefined)
     await mineBlock(chain)
 
     const refundTx = await chain.client.chain.sendTransaction(contractAddress, 0, EthereumErc20SwapProvider.SOL_REFUND_FUNCTION)
     await mineBlock(chain)
     const refundTxReceipt = await chain.client.getMethod('getTransactionReceipt')(refundTx.hash)
-    
+
     expect(refundTxReceipt.logs[1].topics[0]).to.equal(REFUND_TOPIC)
     expect(refundTxReceipt.logs[1].address).to.equal(contractAddress)
   })
