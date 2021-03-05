@@ -33,10 +33,6 @@ export default class Swap {
    * @return {Promise<string>} Resolves with the claim transaction if found, otherwise null.
    */
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
   }
 
@@ -52,10 +48,6 @@ export default class Swap {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('findRefundSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
   }
 
@@ -72,7 +64,7 @@ export default class Swap {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
+    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
@@ -141,7 +133,7 @@ export default class Swap {
       throw new TypeError('Secret hash should be a string')
     }
 
-    if (!(/^[A-Fa-f0-9]+$/.test(secretHash))) {
+    if (!/^[A-Fa-f0-9]+$/.test(secretHash)) {
       throw new TypeError('Secret hash should be a valid hex string')
     }
 
@@ -164,10 +156,6 @@ export default class Swap {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
-    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('verifyInitiateSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
@@ -183,11 +171,7 @@ export default class Swap {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee) {
-    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
-    if (!(/[A-Fa-f0-9]{64}/.test(secret))) {
+    if (!/[A-Fa-f0-9]{64}/.test(secret)) {
       throw new TypeError('Secret should be a 32 byte hex string')
     }
 
@@ -208,10 +192,6 @@ export default class Swap {
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
   async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, fee) {
-    if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     const transaction = await this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, fee)
     this.client.assertValidTransaction(transaction)
     return transaction

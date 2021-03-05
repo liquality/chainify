@@ -25,26 +25,47 @@ function fromBase64 (str, encoding) {
   }
 }
 
-function normalizeTransactionObject (tx, confirmations) {
+function toNearTimestampFormat (ts) {
+  return ts * 1000 * 1000 * 1000
+}
+
+function fromNearTimestamp (ts) {
+  return ts / (1000 * 1000 * 1000)
+}
+
+function normalizeTransactionObject (tx, currentHeight) {
   if (tx.transaction && tx.transaction_outcome) {
     tx = { ...tx.transaction, ...tx.transaction_outcome }
   }
 
-  const normalizedTx = { confirmations: 0, swap: {} }
+  const normalizedTx = { confirmations: 0 }
 
-  if (confirmations) {
-    normalizedTx.confirmations = confirmations
+  if (tx.blockNumber) {
+    if (currentHeight) {
+      normalizedTx.confirmations = tx.blockNumber - currentHeight
+    }
+
+    normalizedTx.blockNumber = tx.blockNumber
   }
+
+  normalizedTx.blockHash = tx.block_hash
+  normalizedTx.hash = `${tx.hash}_${tx.signer_id}`
+  normalizedTx.value = 0
+  normalizedTx._raw = tx
+
+  return normalizedTx
+}
+
+function parseReceipt (_tx) {
+  const normalizedTx = normalizeTransactionObject(_tx)
+  const tx = normalizedTx._raw
+
   if (tx) {
-    normalizedTx.value = 0
-    normalizedTx.hash = `${tx.hash}_${tx.signer_id}`
-    normalizedTx.blockHash = tx.block_hash
     normalizedTx.sender = tx.signer_id
     normalizedTx.receiver = tx.receiver_id
-    normalizedTx.rawHash = tx.hash
 
     if (tx.actions) {
-      tx.actions.forEach((a) => {
+      tx.actions.forEach(a => {
         if (a.Transfer) {
           normalizedTx.value = a.Transfer.deposit
         }
@@ -56,25 +77,29 @@ function normalizeTransactionObject (tx, confirmations) {
         if (a.FunctionCall) {
           const method = a.FunctionCall.method_name
 
-          switch (normalizedTx.swap.method) {
+          switch (method) {
             case 'init': {
-              normalizedTx.swap.method = method
               const args = fromBase64(a.FunctionCall.args)
-              normalizedTx.swap.secretHash = fromBase64(args.secretHash, 'hex')
-              normalizedTx.swap.expiration = args.expiration
-              normalizedTx.swap.recipient = args.buyer
+              normalizedTx.swap = {
+                method,
+                secretHash: fromBase64(args.secretHash, 'hex'),
+                expiration: fromNearTimestamp(args.expiration),
+                recipient: args.buyer
+              }
               break
             }
 
             case 'claim': {
-              normalizedTx.swap.method = method
               const args = fromBase64(a.FunctionCall.args)
-              normalizedTx.swap.secret = fromBase64(args.secret, 'hex')
+              normalizedTx.swap = {
+                method,
+                secret: fromBase64(args.secret, 'hex')
+              }
               break
             }
 
             case 'refund': {
-              normalizedTx.swap.method = method
+              normalizedTx.swap = { method }
               break
             }
 
@@ -90,5 +115,4 @@ function normalizeTransactionObject (tx, confirmations) {
   }
   return normalizedTx
 }
-
-export { toBase64, fromBase64, normalizeTransactionObject, version }
+export { toBase64, fromBase64, normalizeTransactionObject, parseReceipt, toNearTimestampFormat, fromNearTimestamp, version }

@@ -10,10 +10,10 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-function testWallet (chain) {
+function testWallet (chain, derivationPath) {
   describe('getAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+      const expectedAddress0DerivationPath = derivationPath
       const addresses = await chain.client.wallet.getAddresses()
 
       expect(addresses.length).to.equal(1)
@@ -23,7 +23,7 @@ function testWallet (chain) {
 
   describe('getUnusedAddress', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+      const expectedAddress0DerivationPath = derivationPath
       const address = await chain.client.wallet.getUnusedAddress()
 
       expect(address.derivationPath).to.equal(expectedAddress0DerivationPath)
@@ -32,7 +32,7 @@ function testWallet (chain) {
 
   describe('getUsedAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+      const expectedAddress0DerivationPath = derivationPath
       const addresses = await chain.client.wallet.getUsedAddresses()
 
       expect(addresses.length).to.equal(1)
@@ -69,6 +69,10 @@ describe('Wallet Interaction', function () {
   this.timeout(config.timeout)
 
   describe('Ethereum - Js', () => {
-    testWallet(chains.ethereumWithJs)
+    testWallet(chains.ethereumWithJs, `m/44'/${config.ethereum.network.coinType}'/0'/0/0`)
+  })
+
+  describe('Near - Js', () => {
+    testWallet(chains.nearWithJs, `m/44'/${config.near.network.coinType}'/0'`)
   })
 })

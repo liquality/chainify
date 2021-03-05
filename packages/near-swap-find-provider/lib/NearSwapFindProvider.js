@@ -1,6 +1,6 @@
 import NodeProvider from '@liquality/node-provider'
 import { PendingTxError } from '@liquality/errors'
-import { fromBase64, toBase64 } from '@liquality/near-utils'
+import { fromBase64, toBase64, fromNearTimestamp, parseReceipt } from '@liquality/near-utils'
 
 import { version } from '../package.json'
 
@@ -21,8 +21,7 @@ export default class NearSwapFindProvider extends NodeProvider {
       blockHash: tx.block_hash,
       sender: tx.signer_id,
       receiver: tx.receiver_id,
-      rawHash: tx.hash,
-      swap: {}
+      rawHash: tx.hash
     }
 
     switch (tx.action_kind) {
@@ -44,21 +43,26 @@ export default class NearSwapFindProvider extends NodeProvider {
 
         switch (method) {
           case 'init': {
-            normalizedTx.swap.method = method
-            normalizedTx.swap.secretHash = fromBase64(args.secretHash, 'hex')
-            normalizedTx.swap.expiration = args.expiration
-            normalizedTx.swap.recipient = args.buyer
+            normalizedTx.swap = {
+              method,
+              secretHash: fromBase64(args.secretHash, 'hex'),
+              expiration: fromNearTimestamp(args.expiration),
+              recipient: args.buyer
+            }
             break
           }
 
           case 'claim': {
-            normalizedTx.swap.method = method
-            normalizedTx.swap.secret = fromBase64(args.secret, 'hex')
+            normalizedTx.swap = {
+              method,
+              secret: fromBase64(args.secret, 'hex')
+            }
+
             break
           }
 
           case 'refund': {
-            normalizedTx.swap.method = method
+            normalizedTx.swap = { method }
             break
           }
 
@@ -81,9 +85,7 @@ export default class NearSwapFindProvider extends NodeProvider {
     let offset = this.getCurrentTimeInNs()
 
     for (let page = 1; ; page++) {
-      const transactions = await this.nodeGet(
-        `account/${address}/activity?offset=${offset}&limit=${limit}`
-      )
+      const transactions = await this.nodeGet(`account/${address}/activity?offset=${offset}&limit=${limit}`)
 
       if (transactions.length === 0) {
         return
@@ -102,7 +104,7 @@ export default class NearSwapFindProvider extends NodeProvider {
 
       if (tx) {
         const currentHeight = await this.getMethod('getBlockHeight')()
-        const txBlockHeight = await this.getMethod('getBlockHeight')(tx.rawHash)
+        const txBlockHeight = await this.getMethod('getBlockHeight')(tx.blockHash)
 
         tx.confirmations = currentHeight - txBlockHeight
         return tx
@@ -112,75 +114,40 @@ export default class NearSwapFindProvider extends NodeProvider {
     }
   }
 
-  async findInitiateSwapTransaction (
-    value,
-    recipientAddress,
-    refundAddress,
-    secretHash,
-    expiration
-  ) {
-    return this.findAddressTransaction(refundAddress, (tx) =>
-      this.getMethod('doesTransactionMatchInitiation')(
-        tx,
-        value,
-        recipientAddress,
-        refundAddress,
-        secretHash,
-        expiration
-      )
-    )
+  async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.findAddressTransaction(refundAddress, tx => this.getMethod('doesTransactionMatchInitiation')(tx, value, recipientAddress, refundAddress, secretHash, expiration))
   }
 
-  async findClaimSwapTransaction (
-    initiationTxHash,
-    recipientAddress,
-    refundAddress,
-    secretHash,
-    expiration,
-    blockNumber
-  ) {
-    const initiationTransactionReceipt = await this.getMethod(
-      'getTransactionReceipt'
-    )(initiationTxHash)
+  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
 
     if (!initiationTransactionReceipt) {
-      throw new PendingTxError(
-        `Transaction receipt is not available: ${initiationTxHash}`
-      )
+      throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
 
-    return this.findAddressTransaction(
-      initiationTransactionReceipt.receiver,
-      (tx) => {
+    const tx = await this.findAddressTransaction(parseReceipt(initiationTransactionReceipt).receiver, tx => {
+      if (tx.swap) {
         return tx.swap.method === 'claim'
       }
-    )
+    })
+
+    if (tx && tx.swap) {
+      return { ...tx, secret: tx.swap.secret }
+    }
   }
 
-  async findRefundSwapTransaction (
-    initiationTxHash,
-    recipientAddress,
-    refundAddress,
-    secretHash,
-    expiration,
-    blockNumber
-  ) {
-    const initiationTransactionReceipt = await this.getMethod(
-      'getTransactionReceipt'
-    )(initiationTxHash)
+  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
 
     if (!initiationTransactionReceipt) {
-      throw new PendingTxError(
-        `Transaction receipt is not available: ${initiationTxHash}`
-      )
+      throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
 
-    return this.findAddressTransaction(
-      initiationTransactionReceipt.receiver,
-      (tx) => {
+    return this.findAddressTransaction(parseReceipt(initiationTransactionReceipt).receiver, tx => {
+      if (tx.swap) {
         return tx.swap.method === 'refund'
       }
-    )
+    })
   }
 
   getCurrentTimeInNs () {

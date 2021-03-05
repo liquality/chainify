@@ -1,5 +1,6 @@
 import BitcoinNetworks from '../../packages/bitcoin-networks/lib'
 import EthereumNetworks from '../../packages/ethereum-networks/lib'
+import NearNetworks from '../../packages/near-networks/lib'
 
 export default {
   bitcoin: {
@@ -26,6 +27,20 @@ export default {
     metaMaskConnector: {
       port: 3333
     }
+  },
+  near: {
+    network: NearNetworks.testnet,
+    value: '5000000000000000000000000',
+
+    // Both of the accounts are used for the tests.
+    // liqualitysender is used as the initiator of the swaps.
+    // liqualityreceiver is used as the recipient of the swaps.
+    // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
+
+    // liqualitysender
+    mnemonic: 'engine monster galaxy obey lawsuit culture tool scan eternal math august humble',
+    // liqualityreceiver
+    receiverMnemonic: 'chicken concert congress gun language bottom invest powder gadget exile saddle menu'
   },
   // ethereum: { // RSK
   //   rpc: {
