@@ -66,6 +66,7 @@
     "test:integration:swap": "cross-env NODE_ENV=test mocha test/integration/swap $npm_package_options_mocha",
     "test:integration:tx": "cross-env NODE_ENV=test mocha test/integration/tx $npm_package_options_mocha",
     "test:integration:wallet": "cross-env NODE_ENV=test mocha test/integration/wallet $npm_package_options_mocha",
+    "test:integration:contract": "cross-env NODE_ENV=test mocha test/integration/contract $npm_package_options_mocha",
     "test:integration": "cross-env NODE_ENV=test mocha test/integration $npm_package_options_mocha",
     "test:integration:external": "cross-env NODE_ENV=test RUN_EXTERNAL=true mocha test/integration $npm_package_options_mocha",
     "watch": "cross-env NODE_ENV=production WEBPACK_WATCH=true lerna run build --parallel",

@@ -111,7 +111,7 @@ export default class EthereumSwapProvider extends Provider {
       '60', '00', // PUSH1 00 (log length - 0)
       '80', // DUP 1 (log offset)
       'a1', // LOG 1
-      
+
       '73', refundAddress, // PUSH20 {refundAddressEncoded}
       'ff' // SELF-DESTRUCT
     ].join('').toLowerCase()
@@ -132,7 +132,7 @@ export default class EthereumSwapProvider extends Provider {
 
     await this.getMethod('assertContractExists')(initiationTransactionReceipt.contractAddress)
 
-    return await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, secret, gasPrice)
+    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, secret, gasPrice)
   }
 
   async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
@@ -141,7 +141,7 @@ export default class EthereumSwapProvider extends Provider {
 
     await this.getMethod('assertContractExists')(initiationTransactionReceipt.contractAddress)
 
-    return await this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, '', gasPrice)
+    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, '', gasPrice)
   }
 
   doesTransactionMatchInitiation (transaction, value, recipientAddress, refundAddress, secretHash, expiration) {
