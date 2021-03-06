@@ -44,7 +44,7 @@ export default class EthereumSwapProvider extends Provider {
 
     return [
       // Constructor
-      '60', '75', // PUSH1 {contractSize}
+      '60', 'c8', // PUSH1 {contractSize}
       '80', // DUP1
       '60', '0b', // PUSH1 0b
       '60', '00', // PUSH1 00
@@ -70,31 +70,51 @@ export default class EthereumSwapProvider extends Provider {
       '60', '48', // PUSH1 48
       'f1', // CALL
 
+      // Validate input size
+      '36', // CALLDATASIZE
+      '60', '20', // PUSH1 20 (32 bytes)
+      '14', // EQ
+      '16', // AND (input valid size AND sha256 success)
+
       // Validate with secretHash
       '7f', secretHash, // PUSH32 {secretHashEncoded}
       '60', '21', // PUSH1 21
       '51', // MLOAD
       '14', // EQ
-      '16', // AND (to make sure CALL succeeded)
+      '16', // AND (input valid size AND sha256 success) AND secret valid
       // Redeem if secret is valid
-      '60', '47', // PUSH1 {redeemDestination}
+      '60', '4f', // PUSH1 {redeemDestination}
       '57', // JUMPI
 
+      // Validate input size
+      '36', // CALLDATASIZE
+      '15', // ISZERO (input empty)
       // Check time lock
       '64', expirationEncoded, // PUSH5 {expirationEncoded}
       '42', // TIMESTAMP
       '11', // GT
+      '16', // AND (input size 0 AND time lock expired)
       // Refund if timelock passed
-      '60', '5e', // PUSH1 {refundDestination}
+      '60', '8c', // PUSH1 {refundDestination}
       '57',
 
       'fe', // INVALID
 
       '5b', // JUMPDEST
+      // emit Claim(bytes32 _secret)
+      '7f', '8c1d64e3bd87387709175b9ef4e7a1d7a8364559fc0e2ad9d77953909a0d1eb3', // PUSH32 topic Keccak-256(Claim(bytes32))
+      '60', '20', // PUSH1 20 (log length - 32)
+      '60', '00', // PUSH1 00 (log offset - 0)
+      'a1', // LOG 1
       '73', recipientAddress, // PUSH20 {recipientAddressEncoded}
       'ff', // SELF-DESTRUCT
 
       '5b', // JUMPDEST
+      // emit Refund()
+      '7f', '5d26862916391bf49478b2f5103b0720a842b45ef145a268f2cd1fb2aed55178', // PUSH32 topic Keccak-256(Refund())
+      '60', '00', // PUSH1 00 (log length - 0)
+      '80', // DUP 1 (log offset)
+      'a1', // LOG 1
       '73', refundAddress, // PUSH20 {refundAddressEncoded}
       'ff' // SELF-DESTRUCT
     ].join('').toLowerCase()

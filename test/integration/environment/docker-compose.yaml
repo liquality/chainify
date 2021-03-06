@@ -13,7 +13,7 @@ services:
       -rpcallowip=0.0.0.0/0
       -rpcbind=0.0.0.0
       -server
-      -rpcworkqueue=200
+      -rpcworkqueue=400
   ethereum:
     image: ethereum/client-go:v1.9.22
     ports:
@@ -21,7 +21,7 @@ services:
     command:
       --dev
       --rpc
-      --rpcapi eth,net,web3,miner
+      --rpcapi eth,net,web3,miner,debug
       --rpcport 8545
       --rpccorsdomain "*"
       --rpcaddr "0.0.0.0"
