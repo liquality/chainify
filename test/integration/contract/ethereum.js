@@ -59,13 +59,23 @@ describe('Ethereum Contract', function () {
     expect(refundTxReceipt.logs[0].address).to.equal(contractAddress)
   })
 
-  it('claim fails with padded secret', async () => {
+  it('claim fails with extra bytes', async () => {
     const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
     const contractAddress = await createContract(chain, swapParams, secretHash)
 
-    expect(chain.client.chain.sendTransaction(contractAddress, 0, secret + '66')).to.be.rejected
+    await expect(chain.client.chain.sendTransaction(contractAddress, 0, secret + '66')).to.be.rejected
+  })
+
+  it('refund fails with extra bytes', async () => {
+    const secret = await chain.client.swap.generateSecret('secret')
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    swapParams.expiration = 100000 // Already expired
+    const contractAddress = await createContract(chain, swapParams, secretHash)
+
+    await expect(chain.client.chain.sendTransaction(contractAddress, 0, '66')).to.be.rejected
   })
 })
 
@@ -115,7 +125,7 @@ describe('ERC20 Contract', function () {
     expect(refundTxReceipt.logs[1].address).to.equal(contractAddress)
   })
 
-  it('claim fails with padded secret', async () => {
+  it('claim fails with extra bytes', async () => {
     const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
@@ -125,6 +135,19 @@ describe('ERC20 Contract', function () {
     await mineBlock(chain)
 
     const input = EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION + secret + '66'
-    expect(chain.client.chain.sendTransaction(contractAddress, 0, input)).to.be.rejected
+    await expect(chain.client.chain.sendTransaction(contractAddress, 0, input)).to.be.rejected
+  })
+
+
+  it('refund fails with extra bytes', async () => {
+    const secret = await chain.client.swap.generateSecret('secret')
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain)
+    swapParams.expiration = 100000 // Already expired
+    const contractAddress = await createContract(chain, { ...swapParams, value: 0 }, secretHash)
+
+    await chain.client.chain.sendTransaction(contractAddress, swapParams.value, undefined)
+    await mineBlock(chain)
+    await expect(chain.client.chain.sendTransaction(contractAddress, 0, EthereumErc20SwapProvider.SOL_REFUND_FUNCTION + '66')).to.be.rejected
   })
 })
