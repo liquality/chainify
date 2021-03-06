@@ -138,7 +138,6 @@ describe('ERC20 Contract', function () {
     await expect(chain.client.chain.sendTransaction(contractAddress, 0, input)).to.be.rejected
   })
 
-
   it('refund fails with extra bytes', async () => {
     const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
