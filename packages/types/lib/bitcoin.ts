@@ -50,12 +50,16 @@ export interface UTXO {
   address: string
 }
 
-export enum AddressTypes {
+export enum AddressType {
   LEGACY = 'legacy',
   P2SH_SEGWIT = 'p2sh-segwit',
   BECH32 = 'bech32'
 }
 
+export interface PsbtInputTarget {
+  index: number,
+  derivationPath: string
+}
 
 export namespace rpc {
   export interface UTXO {
@@ -95,6 +99,25 @@ export namespace rpc {
     hex: string,
     fee: number,
     changepos: number
+  }
+
+  export interface AddressInfo {
+    iswatchonly: boolean,
+    pubkey: string,
+    hdkeypath: string
+    // ...
+  }
+
+  export type AddressGrouping = string[][]
+
+  export interface ReceivedByAddress {
+    involvesWatchonly: boolean,
+    address: string,
+    account: string,
+    amount: number,
+    confirmations: number,
+    label: string,
+    txids: string[]
   }
 
   export interface Block {

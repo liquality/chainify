@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 import chai, { expect } from 'chai'
+import BigNumber from 'bignumber.js'
 
 import Client from '../../../client/lib'
 import BitcoinNetworks from '../../../bitcoin-networks/lib'
@@ -13,12 +14,17 @@ chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Bitcoin RPC provider', () => {
-  let client
-  let provider
+  let client: Client
+  let provider: BitcoinNodeWalletProvider
 
   beforeEach(() => {
     client = new Client()
-    provider = new BitcoinNodeWalletProvider(BitcoinNetworks.bitcoin_testnet, 'http://localhost:18443', 'bitcoin', 'local321')
+    provider = new BitcoinNodeWalletProvider({
+      network: BitcoinNetworks.bitcoin_testnet,
+      uri: 'http://localhost:18443',
+      username: 'bitcoin',
+      password: 'local321'
+    })
     client.addProvider(provider)
 
     mockJsonRpc('http://localhost:18443', bitcoinRpc, 100)
@@ -33,7 +39,10 @@ describe('Bitcoin RPC provider', () => {
 
   describe('sendTransaction', () => {
     it('should return transaction', async () => {
-      const tx = await provider.sendTransaction('2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23', 1000)
+      const tx = await provider.sendTransaction({
+        to: '2MxxsHz5Y9KM847ttEoZNcmmaKSCQDa5Z23',
+        value: new BigNumber(1000)
+      })
       expect(tx.hash).to.equal('8d2ef62766cb1c15744228335483d37a7addc2a2f88d47413527e55e212ef8cd')
     })
   })

@@ -197,7 +197,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     }
   }
 
-  async getTransactionFee (tx: bitcoin.rpc.Transaction) {
+  async getTransactionFee (tx: bitcoin.Transaction) {
     const isCoinbaseTx = tx.vin.find(vin => vin.coinbase)
     if (isCoinbaseTx) return // Coinbase transactions do not have a fee
 
@@ -218,7 +218,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   }
 
   async getParsedTransactionByHash(transactionHash: string, addFees = false) : Promise <Transaction<bitcoin.Transaction>> {
-    const tx: bitcoin.rpc.Transaction = await this.jsonrpc('getrawtransaction', transactionHash, 1)
+    const tx: bitcoin.rpc.MinedTransaction = await this.jsonrpc('getrawtransaction', transactionHash, 1)
     return normalizeTransactionObject(
       tx,
       addFees ? (await this.getTransactionFee(tx)) : undefined,
