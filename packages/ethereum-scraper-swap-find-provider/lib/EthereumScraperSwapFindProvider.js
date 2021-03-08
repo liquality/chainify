@@ -1,6 +1,6 @@
 import NodeProvider from '@liquality/node-provider'
 import { ensure0x, normalizeTransactionObject, formatEthResponse } from '@liquality/ethereum-utils'
-import { addressToString, caseInsensitiveEqual } from '@liquality/utils'
+import { addressToString } from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 
 import { version } from '../package.json'
@@ -16,10 +16,30 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider {
 
   normalizeTransactionResponse (tx) {
     const normalizedTx = normalizeTransactionObject(formatEthResponse(tx))
+
     if (normalizedTx._raw.contractAddress) {
       normalizedTx._raw.contractAddress = normalizedTx._raw.contractAddress.toLowerCase()
     }
+
+    if (normalizedTx._raw.secret) {
+      normalizedTx.secret = normalizedTx._raw.secret
+    }
+
     return normalizedTx
+  }
+
+  async ensureFeeInfo (tx) {
+    if (!(tx.fee && tx.feePrice)) {
+      const { fee, feePrice, _raw } = await this.getMethod('getTransactionByHash')(tx.hash)
+
+      tx._raw.gas = _raw.gas
+      tx._raw.gasPrice = _raw.gasPrice
+
+      tx.fee = fee
+      tx.feePrice = feePrice
+    }
+
+    return tx
   }
 
   async findAddressTransaction (address, predicate, fromBlock, toBlock, limit = 250, sort = 'desc') {
@@ -37,61 +57,48 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider {
       const transactions = data.data.txs
       if (transactions.length === 0) return
 
-      const normalizedTransactions = transactions.map(this.normalizeTransactionResponse)
+      const normalizedTransactions = transactions
+        .filter(tx => tx.status === true)
+        .map(this.normalizeTransactionResponse)
       const tx = normalizedTransactions.find(predicate)
-
-      if (tx) {
-        if (!(tx.fee && tx.feePrice)) {
-          const { fee, feePrice, _raw } = await this.getMethod('getTransactionByHash')(tx.hash)
-
-          tx._raw.gas = _raw.gas
-          tx._raw.gasPrice = _raw.gasPrice
-
-          tx.fee = fee
-          tx.feePrice = feePrice
-        }
-
-        return tx
-      }
+      if (tx) return this.ensureFeeInfo(tx)
 
       if (transactions.length < limit) return
     }
   }
 
+  async findAddressEvent (type, contractAddress) {
+    contractAddress = ensure0x(addressToString(contractAddress))
+
+    const data = await this.nodeGet(`/events/${type}/${contractAddress}`)
+    const { tx } = data.data
+
+    if (tx && tx.status === true) {
+      return this.ensureFeeInfo(this.normalizeTransactionResponse(tx))
+    }
+  }
+
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.findAddressTransaction(refundAddress, tx => this.getMethod('doesTransactionMatchInitiation')(
-      tx, value, recipientAddress, refundAddress, secretHash, expiration
-    ))
+    return this.findAddressTransaction(
+      refundAddress,
+      tx => this.getMethod('doesTransactionMatchInitiation')(
+        tx, value, recipientAddress, refundAddress, secretHash, expiration
+      )
+    )
   }
 
   async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
-    const transaction = await this.findAddressTransaction(initiationTransactionReceipt.contractAddress,
-      tx => this.getMethod('doesTransactionMatchClaim', false)(tx, initiationTransactionReceipt))
-    if (!transaction) return
-
-    if (transaction._raw.status === true) {
-      transaction.secret = await this.getMethod('getSwapSecret')(transaction.hash)
-      return transaction
-    }
+    return this.findAddressEvent('swapClaim', initiationTransactionReceipt.contractAddress)
   }
 
   async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
-    const transaction = await this.findAddressTransaction(
-      initiationTransactionReceipt.contractAddress,
-      tx => (
-        caseInsensitiveEqual(tx._raw.to, initiationTransactionReceipt.contractAddress) &&
-        tx._raw.input === '' &&
-        tx._raw.timestamp >= expiration
-      )
-    )
-
-    return transaction
+    return this.findAddressEvent('swapRefund', initiationTransactionReceipt.contractAddress)
   }
 
   doesBlockScan () {
