@@ -1,11 +1,11 @@
-import { AddressTypes, selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
-import { Address, addressToString, asyncSetImmediate } from '@liquality/utils'
+import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
+import { AddressType, bitcoin, Address, BigNumber } from '@liquality/types'
+import { asyncSetImmediate } from '@liquality/utils'
 import {
   InsufficientBalanceError
 } from '@liquality/errors'
 
-import * as bitcoin from 'bitcoinjs-lib'
-import { BigNumber } from 'bignumber.js'
+import { payments } from 'bitcoinjs-lib'
 
 const ADDRESS_GAP = 20
 const NONCHANGE_ADDRESS = 0
@@ -18,7 +18,9 @@ const ADDRESS_TYPE_TO_PREFIX = {
   'bech32': 84
 }
 
-export default superclass => class BitcoinWalletProvider extends superclass {
+type Constructor = new (...args: any[]) => {};
+
+export default <T extends Constructor>(superclass: T) => class BitcoinWalletProvider extends superclass {
   constructor (network, addressType = 'bech32', superArgs = []) {
     if (!AddressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${AddressTypes.join(',')}`)
