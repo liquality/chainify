@@ -45,7 +45,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
       erc20TokenContractAddress,
       contractAddress,
       tx =>
-        caseInsensitiveEqual(remove0x(tx.to), remove0x(contractAddress)) &&
+        caseInsensitiveEqual(remove0x(tx._raw.to), remove0x(contractAddress)) &&
         BigNumber(tx.value).isEqualTo(value)
     )
 
