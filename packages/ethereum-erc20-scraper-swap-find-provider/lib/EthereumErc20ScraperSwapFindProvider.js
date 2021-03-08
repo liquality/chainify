@@ -7,11 +7,6 @@ import { caseInsensitiveEqual } from '@liquality/utils'
 import { version } from '../package.json'
 
 export default class EthereumErc20ScraperSwapFindProvider extends EthereumScraperSwapFindProvider {
-  doesTransactionMatchClaim (transaction, initiationTransactionReceipt) {
-    return caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
-           transaction._raw.input.startsWith(remove0x(EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION))
-  }
-
   async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
@@ -19,8 +14,9 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     const erc20TokenContractAddress = await this.getMethod('getContractAddress')()
     const contractData = await this.getMethod('generateErc20Transfer')(initiationTransactionReceipt.contractAddress, value)
 
-    const tx = await this.findAddressTransaction(
-      refundAddress,
+    const tx = await this.findAddressEvents(
+      'swapClaim',
+      initiationTransactionReceipt.contractAddress,
       transaction => this.getMethod('doesTransactionMatchFunding')(transaction, erc20TokenContractAddress, contractData),
       initiationTransactionReceipt.blockNumber,
       null,
@@ -37,7 +33,8 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
-    const transaction = await this.findAddressTransaction(
+    const transaction = await this.findAddressEvents(
+      'swapRefund',
       initiationTransactionReceipt.contractAddress,
       (tx) => (
         caseInsensitiveEqual(tx._raw.to, initiationTransactionReceipt.contractAddress) &&
