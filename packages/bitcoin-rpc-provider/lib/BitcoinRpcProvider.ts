@@ -75,17 +75,17 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     const utxos = flatten(_utxos)
 
     return utxos
-      .reduce((acc, utxo) => acc.plus(utxo.satoshis), new BigNumber(0))
+      .reduce((acc, utxo) => acc.plus(utxo.value), new BigNumber(0))
   }
 
-  async getUnspentTransactions (addresses: string[]) {
+  async getUnspentTransactions (addresses: string[]) : Promise<bitcoin.UTXO[]> {
     const utxos : bitcoin.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
-    return utxos.map(utxo => ({ ...utxo, satoshis: new BigNumber(utxo.amount).times(1e8).toNumber() }))
+    return utxos.map(utxo => ({ ...utxo, value: new BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
   async getAddressTransactionCounts (addresses: string[]) {
     const receivedAddresses : bitcoin.rpc.ReceivedByAddress[] = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
-    return addresses.reduce((acc: { [index: string]: number }, addr) => {
+    return addresses.reduce((acc: bitcoin.AddressTxCounts, addr) => {
       const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addr)
       const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
       acc[addr] = transactionCount

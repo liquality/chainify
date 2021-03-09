@@ -47,7 +47,8 @@ export interface UTXO {
   txid: string,
   vout: number,
   value: number,
-  address: string
+  address: string,
+  derivationPath?: string
 }
 
 export enum AddressType {
@@ -55,6 +56,8 @@ export enum AddressType {
   P2SH_SEGWIT = 'p2sh-segwit',
   BECH32 = 'bech32'
 }
+
+export type AddressTxCounts = { [index: string]: number }
 
 export interface PsbtInputTarget {
   index: number,

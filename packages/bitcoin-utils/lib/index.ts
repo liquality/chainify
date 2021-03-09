@@ -50,14 +50,28 @@ function getAddressNetwork (address: string) {
   return (BitcoinNetworks as { [key: string]: BitcoinNetwork })[networkKey]
 }
 
-function selectCoins (utxos: bT.UTXO[], targets: bT.OutputTarget[], feePerByte: number, fixedInputs: bT.UTXO[] = []) {
+type CoinSelectTarget = {
+  value: number,
+  id?: string
+}
+
+type CoinSelectResponse = {
+  inputs: bT.UTXO[]
+  outputs: CoinSelectTarget[]
+  change: CoinSelectTarget
+  fee: number
+}
+
+type CoinSelectFunction = (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number) => CoinSelectResponse
+
+function selectCoins (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs: bT.UTXO[] = []) {
   let selectUtxos = utxos
   let inputs, outputs
   let fee = 0
 
   // Default coinselect won't accumulate some inputs
   // TODO: does coinselect need to be modified to ABSOLUTELY not skip an input?
-  const coinselectStrat = fixedInputs.length ? coinselectAccumulative : coinselect
+  const coinselectStrat : CoinSelectFunction = fixedInputs.length ? coinselectAccumulative : coinselect
   if (fixedInputs.length) {
     selectUtxos = [ // Order fixed inputs to the start of the list so they are used
       ...fixedInputs,
@@ -67,7 +81,12 @@ function selectCoins (utxos: bT.UTXO[], targets: bT.OutputTarget[], feePerByte: 
 
   ({ inputs, outputs, fee } = coinselectStrat(selectUtxos, targets, Math.ceil(feePerByte)))
 
-  return { inputs, outputs, fee }
+  let change
+  if (inputs && outputs) {
+    change = outputs.find(output => output.id !== 'main')
+  }
+
+  return { inputs, outputs, fee, change }
 }
 
 const OUTPUT_TYPES_MAP = {

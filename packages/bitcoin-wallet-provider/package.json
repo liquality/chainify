@@ -24,6 +24,8 @@
     "@liquality/errors": "^0.9.0",
     "@liquality/utils": "^0.9.0",
     "@liquality/types": "^0.9.0",
+    "@liquality/bitcoin-networks": "^0.9.0",
+    "@liquality/provider": "^0.9.0",
     "bignumber.js": "^9.0.0",
     "bitcoinjs-lib": "^5.2.0"
   },
