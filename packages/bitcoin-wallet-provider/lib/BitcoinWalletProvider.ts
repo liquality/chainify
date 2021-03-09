@@ -11,7 +11,7 @@ import { BIP32Interface, payments } from 'bitcoinjs-lib'
 
 const ADDRESS_GAP = 20
 
-enum AddressSearchType {
+export enum AddressSearchType {
   EXTERNAL,
   CHANGE,
   EXTERNAL_OR_CHANGE

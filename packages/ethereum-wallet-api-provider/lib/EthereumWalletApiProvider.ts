@@ -25,7 +25,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
   _network: EthereumNetwork
 
   constructor (ethereumProvider: EthereumProvider, network: EthereumNetwork) {
-    super(network)
+    super({ network })
     this._ethereumProvider = ethereumProvider
     this._network = network
   }

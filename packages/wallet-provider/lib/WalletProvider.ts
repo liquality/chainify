@@ -11,9 +11,9 @@ export default abstract class WalletProvider extends Provider implements IWallet
   _network: Network
   _methods: string[]
 
-  constructor (network: Network) {
+  constructor (options: { network: Network }) {
     super()
-    this._network = network
+    this._network = options.network
     this._methods = Object.getOwnPropertyNames(WalletProvider.prototype)
       .filter(method => ![
         'constructor',
@@ -22,7 +22,7 @@ export default abstract class WalletProvider extends Provider implements IWallet
         'assertNetworkMatch',
         'isWalletAvailable'
       ].includes(method))
-    return network ? new Proxy(this, { get: this._networkMatchProxy.bind(this) }) : this
+    return this._network ? new Proxy(this, { get: this._networkMatchProxy.bind(this) }) : this
   }
 
   _networkMatchProxy (target: any, func: string) {

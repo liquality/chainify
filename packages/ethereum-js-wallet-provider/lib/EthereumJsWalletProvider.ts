@@ -18,7 +18,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
   _hardfork: string
 
   constructor (network: EthereumNetwork, mnemonic: string, hardfork = 'istanbul') {
-    super(network)
+    super({ network })
 
     this._derivationPath = `m/44'/${network.coinType}'/0'/`
     this._mnemonic = mnemonic

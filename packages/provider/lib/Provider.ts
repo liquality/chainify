@@ -1,5 +1,5 @@
 
-export default class Provider {
+export default abstract class Provider {
   client: any
   /**
    * Set client to a provider instance.

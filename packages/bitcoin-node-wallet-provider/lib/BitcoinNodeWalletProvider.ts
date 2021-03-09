@@ -34,7 +34,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   constructor (opts: ProviderOptions) {
     const { uri, username, password, network, addressType = bitcoin.AddressType.BECH32 } = opts
-    super(network)
+    super({ network })
     const addressTypes = Object.values(bitcoin.AddressType)
     if (!addressTypes.includes(addressType)) {
       throw new Error(`addressType must be one of ${addressTypes.join(',')}`)

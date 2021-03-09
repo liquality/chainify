@@ -19,7 +19,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
   _appInstance: TApp
 
   constructor (App: TApp, Transport: any, network: Network, ledgerScrambleKey: string) {
-    super(network)
+    super({ network })
 
     this._App = App
     this._Transport = Transport
