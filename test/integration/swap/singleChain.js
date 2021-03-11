@@ -213,7 +213,7 @@ function testFee (chain) {
       const swapParams = await getSwapParams(chain)
       const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
       await mineBlock(chain)
-      const claimTx = await chain.client.swap.claimSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, mockSecret, swapParams.expiration, 25)
+      const claimTx = await chain.client.swap.claimSwap(initiationTxId, swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, mockSecret, 25)
       const expectedFee = 50
       const newClaimTx = await chain.client.chain.updateTransactionFee(claimTx.hash, expectedFee)
       await expectFee(chain, newClaimTx.hash, expectedFee, false, true)
@@ -226,7 +226,7 @@ function testFee (chain) {
       const initiationTxId = await initiateAndVerify(chain, secretHash, swapParams)
       await mineBlock(chain)
       await mineUntilTimestamp(chain, swapParams.expiration)
-      const refundTx = await chain.client.swap.refundSwap(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, 25)
+      const refundTx = await chain.client.swap.refundSwap(initiationTxId, swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, 25)
       const expectedFee = 50
       const newRefundTx = await chain.client.chain.updateTransactionFee(refundTx.hash, expectedFee)
       await expectFee(chain, newRefundTx.hash, expectedFee, false, true)

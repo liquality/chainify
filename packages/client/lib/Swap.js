@@ -194,15 +194,17 @@ export default class Swap {
   /**
    * Claim the swap
    * @param {!string} initiationTxHash - The transaction hash of the swap initiation.
+   * @param {!number} value - The amount of native value locked in the swap.
    * @param {!string} recipientAddress - Recepient address for the swap in hex.
    * @param {!string} refundAddress - Refund address for the swap in hex.
-   * @param {!string} secret - 32 byte secret for the swap in hex.
+   * @param {!string} secretHash - Secret hash for the swap in hex.
    * @param {!number} expiration - Expiration time for the swap.
+   * @param {!string} secret - 32 byte secret for the swap in hex.
    * @param {!string} [fee] - Fee price in native unit (e.g. sat/b, gwei)
    * @return {Promise<Transaction, TypeError>} Resolves with swap claim transaction.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee) {
+  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret, fee) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
@@ -211,7 +213,7 @@ export default class Swap {
       throw new TypeError('Secret should be a 32 byte hex string')
     }
 
-    const transaction = await this.client.getMethod('claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration, fee)
+    const transaction = await this.client.getMethod('claimSwap')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret, fee)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
@@ -227,12 +229,12 @@ export default class Swap {
    * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, fee) {
+  async refundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee) {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
 
-    const transaction = await this.client.getMethod('refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, fee)
+    const transaction = await this.client.getMethod('refundSwap')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, fee)
     this.client.assertValidTransaction(transaction)
     return transaction
   }

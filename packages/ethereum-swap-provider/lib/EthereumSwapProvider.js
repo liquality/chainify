@@ -129,7 +129,7 @@ export default class EthereumSwapProvider extends Provider {
     return null
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, gasPrice) {
+  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret, gasPrice) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
@@ -138,7 +138,7 @@ export default class EthereumSwapProvider extends Provider {
     return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, secret, gasPrice)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
+  async refundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
