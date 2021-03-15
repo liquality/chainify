@@ -1,7 +1,7 @@
 {
   "name": "@liquality/utils",
   "umdName": "Utils",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -17,9 +17,9 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@liquality/errors": "^0.10.0",
-    "@liquality/crypto": "^0.10.0",
     "@babel/runtime": "^7.12.1",
+    "@liquality/crypto": "^0.10.1",
+    "@liquality/errors": "^0.10.1",
     "setimmediate": "^1.0.5"
   },
   "engines": {
