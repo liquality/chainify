@@ -21,6 +21,7 @@
     "@liquality/crypto": "^0.10.0",
     "@liquality/schema": "^0.10.0",
     "@liquality/utils": "^0.10.0",
+    "@liquality/errors": "^0.10.0",
     "bignumber.js": "^9.0.0",
     "eip55": "^1.0.3",
     "lodash": "^4.17.20"

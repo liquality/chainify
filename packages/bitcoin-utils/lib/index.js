@@ -1,4 +1,5 @@
 import { base58, padHexStart } from '@liquality/crypto'
+import { InvalidAddressError } from '@liquality/errors'
 import networks from '@liquality/bitcoin-networks'
 
 import { findKey } from 'lodash'
@@ -10,6 +11,10 @@ import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
 
 import { version } from '../package.json'
+
+const AddressTypes = [
+  'legacy', 'p2sh-segwit', 'bech32'
+]
 
 function calculateFee (numInputs, numOutputs, feePerByte) {
   return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
@@ -189,9 +194,38 @@ function witnessStackToScriptWitness (witness) {
   return buffer
 }
 
-const AddressTypes = [
-  'legacy', 'p2sh-segwit', 'bech32'
-]
+function getPubKeyHash (address, network) {
+  const outputScript = bitcoin.address.toOutputScript(address, network)
+  const type = classify.output(outputScript)
+  if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
+    throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`)
+  }
+
+  try {
+    const bech32 = bitcoin.address.fromBech32(address)
+    return bech32.data
+  } catch (e) {
+    const base58 = bitcoin.address.fromBase58Check(address)
+    return base58.hash
+  }
+}
+
+function validateAddress (address, network) {
+  if (typeof address !== 'string') {
+    throw new InvalidAddressError(`Invalid address: ${address}`)
+  }
+
+  let pubKeyHash
+  try {
+    pubKeyHash = getPubKeyHash(address, network)
+  } catch (e) {
+    throw new InvalidAddressError(`Invalid Address. Failed to parse: ${address}`)
+  }
+
+  if (!pubKeyHash) {
+    throw new InvalidAddressError(`Invalid Address: ${address}`)
+  }
+}
 
 export {
   calculateFee,
@@ -202,5 +236,7 @@ export {
   normalizeTransactionObject,
   witnessStackToScriptWitness,
   AddressTypes,
+  getPubKeyHash,
+  validateAddress,
   version
 }

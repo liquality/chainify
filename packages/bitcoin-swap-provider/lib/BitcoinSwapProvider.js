@@ -3,19 +3,21 @@ import {
   calculateFee,
   decodeRawTransaction,
   normalizeTransactionObject,
-  witnessStackToScriptWitness
+  witnessStackToScriptWitness,
+  getPubKeyHash,
+  validateAddress
 } from '@liquality/bitcoin-utils'
-import { sha256 } from '@liquality/crypto'
-import { addressToString } from '@liquality/utils'
-import networks from '@liquality/bitcoin-networks'
 import {
-  InvalidSecretError,
-  InvalidExpirationError,
-  InvalidAddressError
-} from '@liquality/errors'
+  addressToString,
+  validateValue,
+  validateSecret,
+  validateSecretHash,
+  validateSecretAndHash,
+  validateExpiration
+} from '@liquality/utils'
+import networks from '@liquality/bitcoin-networks'
 
 import * as bitcoin from 'bitcoinjs-lib'
-import * as classify from 'bitcoinjs-lib/src/classify'
 import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
@@ -30,95 +32,15 @@ export default class BitcoinSwapProvider extends Provider {
     this._mode = mode
   }
 
-  getPubKeyHash (address) {
-    const outputScript = bitcoin.address.toOutputScript(address, this._network)
-    const type = classify.output(outputScript)
-    if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
-      throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`)
-    }
-
-    try {
-      const bech32 = bitcoin.address.fromBech32(address)
-      return bech32.data
-    } catch (e) {
-      const base58 = bitcoin.address.fromBase58Check(address)
-      return base58.hash
-    }
-  }
-
-  validateValue (value) {
-    if (isNaN(value)) {
-      throw new Error(`Invalid value: ${value}`)
-    }
-
-    if (!(value > 0)) {
-      throw new Error(`Invalid value: ${value}`)
-    }
-  }
-
-  validateAddress (address) {
-    if (typeof address !== 'string') {
-      throw new InvalidAddressError(`Invalid address: ${address}`)
-    }
-
-    let pubKeyHash
-    try {
-      pubKeyHash = this.getPubKeyHash(address)
-    } catch (e) {
-      throw new InvalidAddressError(`Invalid Address. Failed to parse: ${address}`)
-    }
-
-    if (!pubKeyHash) {
-      throw new InvalidAddressError(`Invalid Address: ${address}`)
-    }
-  }
-
-  validateSecretHash (secretHash) {
-    const secretHashBuff = Buffer.from(secretHash, 'hex')
-    if (secretHashBuff.length !== 32) {
-      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
-    }
-  }
-
-  validateExpiration (expiration) {
-    if (isNaN(expiration)) {
-      throw new InvalidExpirationError(`Invalid expiration. NaN: ${expiration}`)
-    }
-
-    if (expiration < 500000000 || expiration > 5000000000000) {
-      throw new InvalidExpirationError(`Invalid expiration. Out of bounds: ${expiration}`)
-    }
-  }
-
-  validateSecret (secret) {
-    if (typeof secret !== 'string') {
-      throw new InvalidSecretError(`Invalid secret type`)
-    }
-
-    const secretBuff = Buffer.from(secret, 'hex')
-    if (secretBuff.length !== 32) {
-      throw new InvalidSecretError(`Invalid secret size`)
-    }
-  }
-
-  validateSecretAndHash (secret, secretHash) {
-    this.validateSecret(secret)
-
-    const computedSecretHash = Buffer.from(sha256(secret), 'hex')
-    if (!computedSecretHash.equals(Buffer.from(secretHash, 'hex'))) {
-      throw new InvalidSecretError(`Invalid secret: Does not match expected secret hash: ${secretHash}`)
-    }
-  }
-
   getSwapOutput (recipientAddress, refundAddress, secretHash, nLockTime) {
-    this.validateAddress(recipientAddress)
-    this.validateAddress(refundAddress)
-    this.validateSecretHash(secretHash)
-    this.validateExpiration(nLockTime)
+    validateAddress(recipientAddress, this._network)
+    validateAddress(refundAddress, this._network)
+    validateSecretHash(secretHash)
+    validateExpiration(nLockTime)
 
     const secretHashBuff = Buffer.from(secretHash, 'hex')
-    const recipientPubKeyHash = this.getPubKeyHash(recipientAddress)
-    const refundPubKeyHash = this.getPubKeyHash(refundAddress)
+    const recipientPubKeyHash = getPubKeyHash(recipientAddress, this._network)
+    const refundPubKeyHash = getPubKeyHash(refundAddress, this._network)
     const OPS = bitcoin.script.OPS
 
     const script = bitcoin.script.compile([
@@ -180,12 +102,16 @@ export default class BitcoinSwapProvider extends Provider {
     return { p2wsh, p2shSegwit, p2sh }
   }
 
+  validateSwapParams (value, recipientAddress, refundAddress, secretHash, expiration) {
+    validateValue(value)
+    validateAddress(recipientAddress, this._network)
+    validateAddress(refundAddress, this._network)
+    validateSecretHash(secretHash)
+    validateExpiration(expiration)
+  }
+
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
-    this.validateValue(value)
-    this.validateAddress(recipientAddress)
-    this.validateAddress(refundAddress)
-    this.validateSecretHash(secretHash)
-    this.validateExpiration(expiration)
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
 
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
     const address = this.getSwapPaymentVariants(swapOutput)[this._mode].address
@@ -197,22 +123,17 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret, feePerByte) {
-    this.validateValue(value)
-    this.validateAddress(recipientAddress)
-    this.validateAddress(refundAddress)
-    this.validateSecretHash(secretHash)
-    this.validateExpiration(expiration)
-    this.validateSecretAndHash(secret, secretHash)
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+    validateSecret(secret)
+    validateSecretAndHash(secret, secretHash)
+    await this.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
 
     return this._redeemSwap(initiationTxHash, value, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte)
   }
 
   async refundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
-    this.validateValue(value)
-    this.validateAddress(recipientAddress)
-    this.validateAddress(refundAddress)
-    this.validateSecretHash(secretHash)
-    this.validateExpiration(expiration)
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+    await this.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
 
     return this._redeemSwap(initiationTxHash, value, recipientAddress, refundAddress, expiration, false, undefined, secretHash, feePerByte)
   }
@@ -415,6 +336,8 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     return this.doesTransactionMatchInitiation(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
@@ -427,22 +350,15 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    this.validateValue(value)
-    this.validateAddress(recipientAddress)
-    this.validateAddress(refundAddress)
-    this.validateSecretHash(secretHash)
-    this.validateExpiration(expiration)
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
 
     return this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
       tx => this.doesTransactionMatchInitiation(tx, value, recipientAddress, refundAddress, secretHash, expiration)
     )
   }
 
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    this.validateAddress(recipientAddress)
-    this.validateAddress(refundAddress)
-    this.validateSecretHash(secretHash)
-    this.validateExpiration(expiration)
+  async findClaimSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
 
     const claimSwapTransaction = await this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
       tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, false)
@@ -455,7 +371,7 @@ export default class BitcoinSwapProvider extends Provider {
       }
       const inputScript = this.getInputScript(swapInput)
       const secret = inputScript[2]
-      this.validateSecretAndHash(secret, secretHash)
+      validateSecretAndHash(secret, secretHash)
       return {
         ...claimSwapTransaction,
         secret
@@ -463,11 +379,8 @@ export default class BitcoinSwapProvider extends Provider {
     }
   }
 
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    this.validateAddress(recipientAddress)
-    this.validateAddress(refundAddress)
-    this.validateSecretHash(secretHash)
-    this.validateExpiration(expiration)
+  async findRefundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
 
     const refundSwapTransaction = await this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
       tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, true)

@@ -1,6 +1,18 @@
 import NodeProvider from '@liquality/node-provider'
-import { ensure0x, normalizeTransactionObject, formatEthResponse } from '@liquality/ethereum-utils'
-import { addressToString } from '@liquality/utils'
+import {
+  remove0x,
+  ensure0x,
+  normalizeTransactionObject,
+  formatEthResponse,
+  validateAddress,
+  validateExpiration
+} from '@liquality/ethereum-utils'
+import {
+  addressToString,
+  validateValue,
+  validateSecretHash,
+  validateSecretAndHash
+} from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 
 import { version } from '../package.json'
@@ -78,7 +90,20 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider {
     }
   }
 
+  validateSwapParams (value, recipientAddress, refundAddress, secretHash, expiration) {
+    recipientAddress = remove0x(recipientAddress)
+    refundAddress = remove0x(refundAddress)
+
+    validateValue(value)
+    validateAddress(recipientAddress)
+    validateAddress(refundAddress)
+    validateSecretHash(secretHash)
+    validateExpiration(expiration)
+  }
+
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     return this.findAddressTransaction(
       refundAddress,
       tx => this.getMethod('doesTransactionMatchInitiation')(
@@ -87,14 +112,23 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider {
     )
   }
 
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+  async findClaimSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
-    return this.findAddressEvent('swapClaim', initiationTransactionReceipt.contractAddress)
+    const tx = await this.findAddressEvent('swapClaim', initiationTransactionReceipt.contractAddress)
+
+    if (tx) {
+      validateSecretAndHash(tx.secret, secretHash)
+      return tx
+    }
   }
 
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+  async findRefundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 

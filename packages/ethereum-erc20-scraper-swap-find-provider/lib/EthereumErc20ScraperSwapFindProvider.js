@@ -1,7 +1,7 @@
 import EthereumScraperSwapFindProvider from '@liquality/ethereum-scraper-swap-find-provider'
-import { ensure0x, remove0x } from '@liquality/ethereum-utils'
+import { ensure0x, remove0x, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
-import { caseInsensitiveEqual, addressToString } from '@liquality/utils'
+import { caseInsensitiveEqual, addressToString, validateValue, validateSecretHash } from '@liquality/utils'
 import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
@@ -34,7 +34,20 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     }
   }
 
+  validateSwapParams (value, recipientAddress, refundAddress, secretHash, expiration) {
+    recipientAddress = remove0x(recipientAddress)
+    refundAddress = remove0x(refundAddress)
+
+    validateValue(value)
+    validateAddress(recipientAddress)
+    validateAddress(refundAddress)
+    validateSecretHash(secretHash)
+    validateExpiration(expiration)
+  }
+
   async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 

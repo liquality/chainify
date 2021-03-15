@@ -6,15 +6,15 @@ import BitcoinNetworks from '@liquality/bitcoin-networks'
 const { expect } = require('chai').use(require('chai-as-promised'))
 
 describe('Bitcoin Swap provider', () => {
-  let lib
+  let provider
 
   beforeEach(() => {
-    lib = new BitcoinSwapProvider(BitcoinNetworks.bitcoin_testnet)
+    provider = new BitcoinSwapProvider(BitcoinNetworks.bitcoin_testnet)
   })
 
   describe('Generate swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+      return expect(provider.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         1468194353).toString('hex'))
@@ -22,7 +22,7 @@ describe('Bitcoin Swap provider', () => {
     })
 
     it('should generate correct bytecode with big expiration', () => {
-      return expect(lib.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+      return expect(provider.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         1468194353000).toString('hex'))
@@ -31,11 +31,11 @@ describe('Bitcoin Swap provider', () => {
   })
   describe('Swap contract expiration validation', () => {
     function testExpirationInvalid (expiration) {
-      return expect(() => lib.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+      return expect(() => provider.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-        expiration).toString('hex'))
-        .to.throw()
+        expiration))
+        .to.throw().property('name', 'InvalidExpirationError')
     }
 
     it('should throw error with 0 expiration', () => {
@@ -57,19 +57,19 @@ describe('Bitcoin Swap provider', () => {
 
   describe('Swap contract address validation', () => {
     function testRecipientAddress (recipientAddress) {
-      return expect(() => lib.getSwapOutput(recipientAddress,
+      return expect(() => provider.getSwapOutput(recipientAddress,
         'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-        1468194353).toString('hex'))
-        .to.throw()
+        1468194353))
+        .to.throw().property('name', 'InvalidAddressError')
     }
 
     function testRefundAddress (refundAddress) {
-      return expect(() => lib.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+      return expect(() => provider.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         refundAddress,
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-        1468194353).toString('hex'))
-        .to.throw()
+        1468194353))
+        .to.throw().property('name', 'InvalidAddressError')
     }
 
     it('should throw error with address wrong type', () => {
@@ -89,19 +89,12 @@ describe('Bitcoin Swap provider', () => {
   })
 
   describe('Swap contract secretHash validation', () => {
-    it('should accept valid secretHash', () => {
-      lib.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
-        'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
-        'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
-        1468194353)
-    })
-
     function testSecretHash (secretHash) {
-      return expect(() => lib.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
+      return expect(() => provider.getSwapOutput('tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         'tb1qwuv45ncnrmgaazjmzr8zxmcknvh43jagag3958',
         secretHash,
-        1468194353).toString('hex'))
-        .to.throw()
+        1468194353))
+        .to.throw().property('name', 'InvalidSecretError')
     }
 
     it('should throw when secretHash too small', () => {
@@ -115,11 +108,15 @@ describe('Bitcoin Swap provider', () => {
     it('should throw when secretHash not hex', () => {
       testSecretHash('OPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOPOP')
     })
+
+    it('should throw error when secret hash is hash of secret 0', () => {
+      testSecretHash('66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925')
+    })
   })
 
   describe('Redeem swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.getSwapInput(
+      return expect(provider.getSwapInput(
         Buffer.from('3045022041b51d5980e4d319ff05291fcf9049a10b86cc54c5836f2de8ea6bb8ecf419a60221006013a4da68758f2738bfbb9598697758c51dfb96c60a3182517ed8751c603c0c01', 'hex'),
         Buffer.from('04edde15dab6b611928fd34406dd465e369a616d789ee42a97f69fe0dcac6399871e7085925dcd012da78ecda5836f616c010afbcd3a8292b62ea6963281a65a9d', 'hex'),
         true,
@@ -130,7 +127,7 @@ describe('Bitcoin Swap provider', () => {
 
   describe('Refund swap', () => {
     it('should generate correct bytecode', () => {
-      return expect(lib.getSwapInput(
+      return expect(provider.getSwapInput(
         Buffer.from('3045022041b51d5980e4d319ff05291fcf9049a10b86cc54c5836f2de8ea6bb8ecf419a60221006013a4da68758f2738bfbb9598697758c51dfb96c60a3182517ed8751c603c0c01', 'hex'),
         Buffer.from('04edde15dab6b611928fd34406dd465e369a616d789ee42a97f69fe0dcac6399871e7085925dcd012da78ecda5836f616c010afbcd3a8292b62ea6963281a65a9d', 'hex'),
         false).toString('hex'))
@@ -140,7 +137,7 @@ describe('Bitcoin Swap provider', () => {
 
   describe('doesTransactionMatchRedeem', () => {
     it('true when additional inputs used', () => {
-      return expect(lib.doesTransactionMatchRedeem(
+      return expect(provider.doesTransactionMatchRedeem(
         '73a88ee970cc6a5b66b95671fa846185afc21fe16094c987a677c66dd07d42c0',
         {
           hash: '081baec82b2f4b1c4e9881a45aca67e93434a069feacc25b1b01832a9d8c67a6',

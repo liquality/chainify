@@ -48,7 +48,7 @@ describe('Ethereum Contract', function () {
     const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = 100000 // Already expired
+    swapParams.expiration = 1000000000 // Already expired
     const contractAddress = await createContract(chain, swapParams, secretHash)
 
     const refundTx = await chain.client.chain.sendTransaction(contractAddress, 0, '')
@@ -72,7 +72,7 @@ describe('Ethereum Contract', function () {
     const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = 100000 // Already expired
+    swapParams.expiration = 1000000000 // Already expired
     const contractAddress = await createContract(chain, swapParams, secretHash)
 
     await expect(chain.client.chain.sendTransaction(contractAddress, 0, '66')).to.be.rejected
@@ -111,7 +111,7 @@ describe('ERC20 Contract', function () {
     const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = 100000 // Already expired
+    swapParams.expiration = 1000000000 // Already expired
     const contractAddress = await createContract(chain, { ...swapParams, value: 0 }, secretHash)
 
     await chain.client.chain.sendTransaction(contractAddress, swapParams.value, undefined)
@@ -142,7 +142,7 @@ describe('ERC20 Contract', function () {
     const secret = await chain.client.swap.generateSecret('secret')
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain)
-    swapParams.expiration = 100000 // Already expired
+    swapParams.expiration = 1000000000 // Already expired
     const contractAddress = await createContract(chain, { ...swapParams, value: 0 }, secretHash)
 
     await chain.client.chain.sendTransaction(contractAddress, swapParams.value, undefined)

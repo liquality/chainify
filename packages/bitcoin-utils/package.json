@@ -21,6 +21,7 @@
     "@liquality/bitcoin-networks": "^0.10.0",
     "@liquality/crypto": "^0.10.0",
     "@liquality/utils": "^0.10.0",
+    "@liquality/errors": "^0.10.0",
     "bignumber.js": "^9.0.0",
     "bip174": "^2.0.1",
     "bitcoinjs-lib": "^5.2.0",

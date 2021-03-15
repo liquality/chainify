@@ -1,48 +1,36 @@
 import Provider from '@liquality/provider'
-import { padHexStart, sha256 } from '@liquality/crypto'
-import { addressToString, caseInsensitiveEqual } from '@liquality/utils'
-import { remove0x } from '@liquality/ethereum-utils'
+import { padHexStart } from '@liquality/crypto'
+import {
+  caseInsensitiveEqual,
+  validateValue,
+  validateSecret,
+  validateSecretHash,
+  validateSecretAndHash
+} from '@liquality/utils'
+import { remove0x, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
 import {
   PendingTxError,
   TxNotFoundError,
-  BlockNotFoundError,
-  InvalidSecretError,
-  InvalidAddressError,
-  InvalidExpirationError
+  BlockNotFoundError
 } from '@liquality/errors'
 
 import { version } from '../package.json'
 
 export default class EthereumSwapProvider extends Provider {
   createSwapScript (recipientAddress, refundAddress, secretHash, expiration) {
-    recipientAddress = remove0x(addressToString(recipientAddress))
-    refundAddress = remove0x(addressToString(refundAddress))
+    recipientAddress = remove0x(recipientAddress)
+    refundAddress = remove0x(refundAddress)
 
-    if (Buffer.byteLength(recipientAddress, 'hex') !== 20) {
-      throw new InvalidAddressError(`Invalid recipient address: ${recipientAddress}`)
-    }
-
-    if (Buffer.byteLength(refundAddress, 'hex') !== 20) {
-      throw new InvalidAddressError(`Invalid refund address: ${refundAddress}`)
-    }
-
-    if (Buffer.byteLength(secretHash, 'hex') !== 32) {
-      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
-    }
-
-    if (sha256('0000000000000000000000000000000000000000000000000000000000000000') === secretHash) {
-      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}. Secret 0 detected.`)
-    }
+    validateAddress(recipientAddress)
+    validateAddress(refundAddress)
+    validateSecretHash(secretHash)
+    validateExpiration(expiration)
 
     const expirationHex = expiration.toString(16)
     const expirationSize = 5
     const expirationEncoded = padHexStart(expirationHex, expirationSize) // Pad with 0. string length
 
-    if (Buffer.byteLength(expirationEncoded, 'hex') > expirationSize) {
-      throw new InvalidExpirationError(`Invalid expiration: ${expiration}`)
-    }
-
-    return [
+    const bytecode = [
       // Constructor
       '60', 'c8', // PUSH1 {contractSize}
       '80', // DUP1
@@ -118,9 +106,28 @@ export default class EthereumSwapProvider extends Provider {
       '73', refundAddress, // PUSH20 {refundAddressEncoded}
       'ff' // SELF-DESTRUCT
     ].join('').toLowerCase()
+
+    if (Buffer.byteLength(bytecode) !== 422) {
+      throw new Error('Invalid swap script. Bytecode length incorrect.')
+    }
+
+    return bytecode
+  }
+
+  validateSwapParams (value, recipientAddress, refundAddress, secretHash, expiration) {
+    recipientAddress = remove0x(recipientAddress)
+    refundAddress = remove0x(refundAddress)
+
+    validateValue(value)
+    validateAddress(recipientAddress)
+    validateAddress(refundAddress)
+    validateSecretHash(secretHash)
+    validateExpiration(expiration)
   }
 
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const bytecode = this.createSwapScript(recipientAddress, refundAddress, secretHash, expiration)
     return this.getMethod('sendTransaction')(null, value, bytecode, gasPrice)
   }
@@ -130,6 +137,11 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret, gasPrice) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+    validateSecret(secret)
+    validateSecretAndHash(secret, secretHash)
+    await this.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
@@ -139,6 +151,9 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   async refundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, gasPrice) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+    await this.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
@@ -158,6 +173,8 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     if (!initiationTransaction) throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
 
@@ -188,10 +205,14 @@ export default class EthereumSwapProvider extends Provider {
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     return this.findSwapTransaction(blockNumber, transaction => this.doesTransactionMatchInitiation(transaction, value, recipientAddress, refundAddress, secretHash, expiration))
   }
 
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+  async findClaimSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
@@ -200,7 +221,9 @@ export default class EthereumSwapProvider extends Provider {
 
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
     if (transactionReceipt && transactionReceipt.status === '1') {
-      transaction.secret = await this.getSwapSecret(transaction.hash)
+      const secret = await this.getSwapSecret(transaction.hash)
+      validateSecretAndHash(secret, secretHash)
+      transaction.secret = secret
       return transaction
     }
   }
@@ -214,7 +237,9 @@ export default class EthereumSwapProvider extends Provider {
     return claimTransaction._raw.input
   }
 
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+  async findRefundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 

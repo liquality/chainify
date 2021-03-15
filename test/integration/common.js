@@ -271,7 +271,7 @@ async function claimAndVerify (chain, initiationTxId, secret, swapParams, fee) {
   const claimTx = await chain.client.swap.claimSwap(initiationTxId, swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, crypto.sha256(secret), swapParams.expiration, secret, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
-  const foundClaimTx = await chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
+  const foundClaimTx = await chain.client.swap.findClaimSwapTransaction(initiationTxId, swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
   expect(foundClaimTx.hash).to.equal(claimTx.hash)
   return foundClaimTx
 }
@@ -281,7 +281,7 @@ async function refundAndVerify (chain, initiationTxId, secretHash, swapParams, f
   const refundTx = await chain.client.swap.refundSwap(initiationTxId, swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, fee)
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
-  const foundRefundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
+  const foundRefundTx = await chain.client.swap.findRefundSwapTransaction(initiationTxId, swapParams.value, swapParams.recipientAddress, swapParams.refundAddress, secretHash, swapParams.expiration, currentBlock)
   expect(foundRefundTx.hash).to.equal(refundTx.hash)
   return foundRefundTx
 }
