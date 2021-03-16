@@ -30,7 +30,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
 
     const recipientAddress = remove0x(swapParams.recipientAddress)
     const refundAddress = remove0x(swapParams.refundAddress)
-    const expirationEncoded = padHexStart(expiration.toString(16), 32)
+    const expirationEncoded = padHexStart(swapParams.expiration.toString(16), 32)
     const tokenAddress = remove0x(this.getMethod('getContractAddress')())
 
     const bytecode = [
@@ -123,9 +123,9 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, SOL_CLAIM_FUNCTION + secret, gasPrice)
   }
 
-  async refundSwap (swapParam: SwapParams, initiationTxHash: string, gasPrice: BigNumber) {
-    this.validateSwapParams(swapParam)
-    await this.verifyInitiateSwapTransaction(swapParam, initiationTxHash)
+  async refundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) {
+    this.validateSwapParams(swapParams)
+    await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
@@ -195,7 +195,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
   async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {
     this.validateSwapParams(swapParams)
 
-    const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
+    const block: Block<Transaction<ethereum.Transaction>> = await this.getMethod('getBlockByNumber')(blockNumber, true)
     if (!block) throw new BlockNotFoundError(`Block #${blockNumber} is not available`)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
@@ -232,7 +232,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
 
     if (transactionReceipt.status === '0x1') {
       const secret = await this.getSwapSecret(transaction.hash)
-      validateSecretAndHash(secret, secretHash)
+      validateSecretAndHash(secret, swapParams.secretHash)
       // @ts-ignore secret is non standard field
       transaction.secret = secret
       return transaction
@@ -240,7 +240,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
   }
 
   async findRefundSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {
-    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+    this.validateSwapParams(swapParams)
 
     const block : Block<Transaction<ethereum.Transaction>> = await this.getMethod('getBlockByNumber')(blockNumber, true)
     if (!block) throw new BlockNotFoundError(`Block #${blockNumber} is not available`)

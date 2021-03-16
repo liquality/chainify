@@ -4,6 +4,7 @@ import {
   InvalidExpirationError
 } from '@liquality/errors'
 import { sha256 } from '@liquality/crypto'
+import { BigNumber } from '@liquality/types'
 
 function sleep (ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -20,17 +21,17 @@ function caseInsensitiveEqual (left: string, right: string) {
   return left === right
 }
 
-function validateValue (value) {
-  if (isNaN(value)) {
+function validateValue (value: BigNumber) {
+  if (!BigNumber.isBigNumber(value)) {
     throw new Error(`Invalid value: ${value}`)
   }
 
-  if (!(value > 0)) {
+  if (value.lte(0)) {
     throw new Error(`Invalid value: ${value}`)
   }
 }
 
-function validateSecretHash (secretHash) {
+function validateSecretHash (secretHash: string) {
   if (typeof secretHash !== 'string') {
     throw new InvalidSecretError(`Invalid secret hash type`)
   }
@@ -48,7 +49,7 @@ function validateSecretHash (secretHash) {
   }
 }
 
-function validateSecret (secret) {
+function validateSecret (secret: string) {
   if (typeof secret !== 'string') {
     throw new InvalidSecretError(`Invalid secret type`)
   }
@@ -63,7 +64,7 @@ function validateSecret (secret) {
   }
 }
 
-function validateSecretAndHash (secret, secretHash) {
+function validateSecretAndHash (secret: string, secretHash: string) {
   validateSecret(secret)
   validateSecretHash(secretHash)
 
@@ -73,7 +74,7 @@ function validateSecretAndHash (secret, secretHash) {
   }
 }
 
-function validateExpiration (expiration) {
+function validateExpiration (expiration: number) {
   if (isNaN(expiration)) {
     throw new InvalidExpirationError(`Invalid expiration. NaN: ${expiration}`)
   }

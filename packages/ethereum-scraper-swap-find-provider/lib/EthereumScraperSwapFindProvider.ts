@@ -1,8 +1,8 @@
 import NodeProvider from '@liquality/node-provider'
 import { hexToNumber,
+  remove0x,
   numberToHex,
   normalizeTransactionObject,
-  formatEthResponse,
   validateAddress,
   validateExpiration
 } from '@liquality/ethereum-utils'
@@ -24,6 +24,7 @@ export namespace scraper {
     gas?: ethereum.Hex
     gasPrice?: ethereum.Hex
     input?: ethereum.Hex
+    secret?: ethereum.Hex
     blockHash: ethereum.Hex256
     blockNumber: ethereum.Hex
     status: ethereum.TransactionReceiptStatus
@@ -58,24 +59,20 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
     const normalizedTransaction = normalizeTransactionObject(txRaw)
     normalizedTransaction.confirmations = txRaw.confirmations
+
+    if (normalizedTransaction._raw.contractAddress) {
+      normalizedTransaction._raw.contractAddress = normalizedTransaction._raw.contractAddress.toLowerCase()
+    }
+
+    if (normalizedTransaction._raw.secret) {
+      // @ts-ignore
+      normalizedTransaction.secret = normalizedTransaction._raw.secret
+    }
+
     return normalizedTransaction
   }
 
-  normalizeTransactionResponse (tx) {
-    const normalizedTx = normalizeTransactionObject(formatEthResponse(tx))
-
-    if (normalizedTx._raw.contractAddress) {
-      normalizedTx._raw.contractAddress = normalizedTx._raw.contractAddress.toLowerCase()
-    }
-
-    if (normalizedTx._raw.secret) {
-      normalizedTx.secret = normalizedTx._raw.secret
-    }
-
-    return normalizedTx
-  }
-
-  async ensureFeeInfo (tx) {
+  async ensureFeeInfo (tx: Transaction<scraper.Transaction>) {
     if (!(tx.fee && tx.feePrice)) {
       const { fee, feePrice, _raw } = await this.getMethod('getTransactionByHash')(tx.hash)
 
@@ -90,8 +87,6 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
   }
 
   async findAddressTransaction (address: string, predicate: (tx: Transaction<scraper.Transaction>) => boolean, fromBlock?: number, toBlock?: number, limit = 250, sort = 'desc') {
-    address = ensure0x(addressToString(address))
-
     for (let page = 1; ; page++) {
       const data = await this.nodeGet(`/txs/${address}`, {
         limit,
@@ -114,9 +109,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
   }
 
-  async findAddressEvent (type, contractAddress) {
-    contractAddress = ensure0x(addressToString(contractAddress))
-
+  async findAddressEvent (type: string, contractAddress: string) {
     const data = await this.nodeGet(`/events/${type}/${contractAddress}`)
     const { tx } = data.data
 

@@ -1,6 +1,6 @@
 import { ethereum, Transaction, BigNumber } from '@liquality/types'
 import { padHexStart } from '@liquality/crypto'
-import { addressToString, validateExpiration as _validateExpiration } from '@liquality/utils'
+import { validateExpiration as _validateExpiration } from '@liquality/utils'
 import { InvalidAddressError, InvalidExpirationError } from '@liquality/errors'
 
 import eip55 from 'eip55'
@@ -22,7 +22,7 @@ function ensure0x (hash: string) {
  * @param {*} hash
  */
 function remove0x (hash: ethereum.Hex) {
-  return hash.startsWith('0x') ? hash.slice(2) : hash
+  return (typeof hash === 'string' && hash.startsWith('0x')) ? hash.slice(2) : hash
 }
 
 /**
@@ -93,7 +93,7 @@ function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.T
   return tx
 }
 
-function validateAddress (address) {
+function validateAddress (address: string) {
   if (typeof address !== 'string') {
     throw new InvalidAddressError(`Invalid address: ${address}`)
   }
@@ -107,7 +107,7 @@ function validateAddress (address) {
   }
 }
 
-function validateExpiration (expiration) {
+function validateExpiration (expiration: number) {
   _validateExpiration(expiration)
 
   const expirationHex = expiration.toString(16)

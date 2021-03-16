@@ -212,7 +212,7 @@ function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
   return buffer
 }
 
-function getPubKeyHash (address, network) {
+function getPubKeyHash (address: string, network: BitcoinNetwork) {
   const outputScript = bitcoin.address.toOutputScript(address, network)
   const type = classify.output(outputScript)
   if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
@@ -228,7 +228,7 @@ function getPubKeyHash (address, network) {
   }
 }
 
-function validateAddress (address, network) {
+function validateAddress (address: string, network: BitcoinNetwork) {
   if (typeof address !== 'string') {
     throw new InvalidAddressError(`Invalid address: ${address}`)
   }

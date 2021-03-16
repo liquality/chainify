@@ -110,15 +110,15 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     return bytecode
   }
 
-  validateSwapParams (value, recipientAddress, refundAddress, secretHash, expiration) {
-    recipientAddress = remove0x(recipientAddress)
-    refundAddress = remove0x(refundAddress)
+  validateSwapParams (swapParams: SwapParams) {
+    const recipientAddress = remove0x(swapParams.recipientAddress)
+    const refundAddress = remove0x(swapParams.refundAddress)
 
-    validateValue(value)
+    validateValue(swapParams.value)
     validateAddress(recipientAddress)
     validateAddress(refundAddress)
-    validateSecretHash(secretHash)
-    validateExpiration(expiration)
+    validateSecretHash(swapParams.secretHash)
+    validateExpiration(swapParams.expiration)
   }
 
   async initiateSwap (swapParams: SwapParams, gasPrice: BigNumber) {
@@ -213,7 +213,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
     if (transactionReceipt && transactionReceipt.status === '1') {
       const secret = await this.getSwapSecret(transaction.hash)
-      validateSecretAndHash(secret, secretHash)
+      validateSecretAndHash(secret, swapParams.secretHash)
       // @ts-ignore
       transaction.secret = secret
       return transaction
