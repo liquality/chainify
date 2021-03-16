@@ -23,6 +23,8 @@ const ADDRESS_TYPE_TO_PREFIX = {
   'bech32': 84
 }
 
+type DerivationCache = {[index: string]: Address}
+
 type Constructor<T = {}> = new (...args: any[]) => T
 
 interface BitcoinWalletProviderOptions {
@@ -34,7 +36,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
   _baseDerivationPath: string
   _network: BitcoinNetwork
   _addressType: bitcoin.AddressType
-  _derivationCache: {[index: string]: Address}
+  _derivationCache: DerivationCache
 
   constructor (...args: any[]) {
     const options = args[0] as BitcoinWalletProviderOptions
@@ -57,6 +59,18 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
   abstract baseDerivationNode() : BIP32Interface
   abstract _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) : { hex: string, fee: number }
   abstract _buildSweepTransaction(externalChangeAddress: string, feePerByte?: BigNumber) : { hex: string, fee: number }
+
+  getDerivationCache () {
+    return this._derivationCache
+  }
+
+  async setDerivationCache (derivationCache: DerivationCache) {
+    const address = await this.getDerivationPathAddress(Object.keys(derivationCache)[0])
+    if (derivationCache[address.derivationPath].address !== address.address) {
+      throw new Error(`derivationCache at ${address.derivationPath} does not match`)
+    }
+    this._derivationCache = derivationCache
+  }
 
   async buildTransaction (output: bitcoin.OutputTarget, feePerByte: BigNumber) {
     return this._buildTransaction([output], feePerByte)

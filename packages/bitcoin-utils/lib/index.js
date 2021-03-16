@@ -1,6 +1,7 @@
 import { base58, padHexStart } from '@liquality/crypto'
 import BitcoinNetworks, { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { Transaction, Block, bitcoin as bT } from '@liquality/types'
+import { InvalidAddressError } from '@liquality/errors'
 
 import { findKey } from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -9,6 +10,10 @@ import * as classify from 'bitcoinjs-lib/src/classify'
 import * as varuint from 'bip174/src/lib/converter/varint'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
+
+const AddressTypes = [
+  'legacy', 'p2sh-segwit', 'bech32'
+]
 
 function calculateFee (numInputs: number, numOutputs: number, feePerByte: number) {
   return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
@@ -207,6 +212,39 @@ function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
   return buffer
 }
 
+function getPubKeyHash (address, network) {
+  const outputScript = bitcoin.address.toOutputScript(address, network)
+  const type = classify.output(outputScript)
+  if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
+    throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`)
+  }
+
+  try {
+    const bech32 = bitcoin.address.fromBech32(address)
+    return bech32.data
+  } catch (e) {
+    const base58 = bitcoin.address.fromBase58Check(address)
+    return base58.hash
+  }
+}
+
+function validateAddress (address, network) {
+  if (typeof address !== 'string') {
+    throw new InvalidAddressError(`Invalid address: ${address}`)
+  }
+
+  let pubKeyHash
+  try {
+    pubKeyHash = getPubKeyHash(address, network)
+  } catch (e) {
+    throw new InvalidAddressError(`Invalid Address. Failed to parse: ${address}`)
+  }
+
+  if (!pubKeyHash) {
+    throw new InvalidAddressError(`Invalid Address: ${address}`)
+  }
+}
+
 export {
   calculateFee,
   compressPubKey,
@@ -214,5 +252,8 @@ export {
   selectCoins,
   decodeRawTransaction,
   normalizeTransactionObject,
-  witnessStackToScriptWitness
+  witnessStackToScriptWitness,
+  AddressTypes,
+  getPubKeyHash,
+  validateAddress
 }

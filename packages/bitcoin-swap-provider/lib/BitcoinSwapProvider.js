@@ -3,16 +3,21 @@ import {
   calculateFee,
   decodeRawTransaction,
   normalizeTransactionObject,
-  witnessStackToScriptWitness
+  witnessStackToScriptWitness,
+  getPubKeyHash,
+  validateAddress
 } from '@liquality/bitcoin-utils'
-import { addressToString } from '@liquality/utils'
-import networks from '@liquality/bitcoin-networks'
 import {
-  InvalidSecretError
-} from '@liquality/errors'
+  addressToString,
+  validateValue,
+  validateSecret,
+  validateSecretHash,
+  validateSecretAndHash,
+  validateExpiration
+} from '@liquality/utils'
+import networks from '@liquality/bitcoin-networks'
 
 import * as bitcoin from 'bitcoinjs-lib'
-import * as classify from 'bitcoinjs-lib/src/classify'
 import BigNumber from 'bignumber.js'
 
 import { version } from '../package.json'
@@ -27,33 +32,18 @@ export default class BitcoinSwapProvider extends Provider {
     this._mode = mode
   }
 
-  getPubKeyHash (address) {
-    const outputScript = bitcoin.address.toOutputScript(address, this._network)
-    const type = classify.output(outputScript)
-    if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
-      throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`)
-    }
-
-    try {
-      const bech32 = bitcoin.address.fromBech32(address)
-      return bech32.data
-    } catch (e) {
-      const base58 = bitcoin.address.fromBase58Check(address)
-      return base58.hash
-    }
-  }
-
   getSwapOutput (recipientAddress, refundAddress, secretHash, nLockTime) {
-    const secretHashBuff = Buffer.from(secretHash, 'hex')
-    if (secretHashBuff.length !== 32) {
-      throw new InvalidSecretError(`Invalid secret hash: ${secretHash}`)
-    }
+    validateAddress(recipientAddress, this._network)
+    validateAddress(refundAddress, this._network)
+    validateSecretHash(secretHash)
+    validateExpiration(nLockTime)
 
-    const recipientPubKeyHash = this.getPubKeyHash(recipientAddress)
-    const refundPubKeyHash = this.getPubKeyHash(refundAddress)
+    const secretHashBuff = Buffer.from(secretHash, 'hex')
+    const recipientPubKeyHash = getPubKeyHash(recipientAddress, this._network)
+    const refundPubKeyHash = getPubKeyHash(refundAddress, this._network)
     const OPS = bitcoin.script.OPS
 
-    return bitcoin.script.compile([
+    const script = bitcoin.script.compile([
       OPS.OP_IF,
       OPS.OP_SIZE,
       bitcoin.script.number.encode(32),
@@ -75,6 +65,12 @@ export default class BitcoinSwapProvider extends Provider {
       OPS.OP_EQUALVERIFY,
       OPS.OP_CHECKSIG
     ])
+
+    if (![97, 98].includes(Buffer.byteLength(script))) {
+      throw new Error('Invalid swap script')
+    }
+
+    return script
   }
 
   getSwapInput (sig, pubKey, isClaim, secret) {
@@ -106,7 +102,17 @@ export default class BitcoinSwapProvider extends Provider {
     return { p2wsh, p2shSegwit, p2sh }
   }
 
+  validateSwapParams (value, recipientAddress, refundAddress, secretHash, expiration) {
+    validateValue(value)
+    validateAddress(recipientAddress, this._network)
+    validateAddress(refundAddress, this._network)
+    validateSecretHash(secretHash)
+    validateExpiration(expiration)
+  }
+
   async initiateSwap (value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
     const address = this.getSwapPaymentVariants(swapOutput)[this._mode].address
     return this.getMethod('sendTransaction')(address, value, undefined, feePerByte)
@@ -116,22 +122,29 @@ export default class BitcoinSwapProvider extends Provider {
     return null
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration, feePerByte) {
-    const secretHash = bitcoin.crypto.sha256(Buffer.from(secret, 'hex')).toString('hex')
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte)
+  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret, feePerByte) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+    validateSecret(secret)
+    validateSecretAndHash(secret, secretHash)
+    await this.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
+
+    return this._redeemSwap(initiationTxHash, value, recipientAddress, refundAddress, expiration, true, secret, secretHash, feePerByte)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
-    return this._redeemSwap(initiationTxHash, recipientAddress, refundAddress, expiration, false, undefined, secretHash, feePerByte)
+  async refundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, feePerByte) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+    await this.verifyInitiateSwapTransaction(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
+
+    return this._redeemSwap(initiationTxHash, value, recipientAddress, refundAddress, expiration, false, undefined, secretHash, feePerByte)
   }
 
-  async _redeemSwap (initiationTxHash, recipientAddress, refundAddress, expiration, isClaim, secret, secretHash, feePerByte) {
+  async _redeemSwap (initiationTxHash, value, recipientAddress, refundAddress, expiration, isClaim, secret, secretHash, feePerByte) {
     const address = isClaim ? recipientAddress : refundAddress
     const swapOutput = this.getSwapOutput(recipientAddress, refundAddress, secretHash, expiration)
-    return this._redeemSwapOutput(initiationTxHash, address, swapOutput, expiration, isClaim, secret, feePerByte)
+    return this._redeemSwapOutput(initiationTxHash, value, address, swapOutput, expiration, isClaim, secret, feePerByte)
   }
 
-  async _redeemSwapOutput (initiationTxHash, address, swapOutput, expiration, isClaim, secret, _feePerByte) {
+  async _redeemSwapOutput (initiationTxHash, value, address, swapOutput, expiration, isClaim, secret, _feePerByte) {
     const network = this._network
     const swapPaymentVariants = this.getSwapPaymentVariants(swapOutput)
 
@@ -141,14 +154,18 @@ export default class BitcoinSwapProvider extends Provider {
     let swapVout
     let paymentVariantName
     let paymentVariant
-    for (const voutIndex in initiationTx._raw.vout) {
-      const vout = initiationTx._raw.vout[voutIndex]
+    for (const vout of initiationTx._raw.vout) {
       const paymentVariantEntry = Object.entries(swapPaymentVariants).find(([, payment]) => payment.output.toString('hex') === vout.scriptPubKey.hex)
-      if (paymentVariantEntry) {
+      const voutValue = BigNumber(vout.value).times(1e8)
+      if (paymentVariantEntry && voutValue.eq(BigNumber(value))) {
         paymentVariantName = paymentVariantEntry[0]
         paymentVariant = paymentVariantEntry[1]
         swapVout = vout
       }
+    }
+
+    if (!swapVout) {
+      throw new Error('Valid swap output not found')
     }
 
     const feePerByte = _feePerByte || await this.getMethod('getFeePerByte')()
@@ -248,9 +265,14 @@ export default class BitcoinSwapProvider extends Provider {
     return { recipientPublicKey, refundPublicKey, secretHash, expiration }
   }
 
-  async isSwapRedeemTransaction (transaction) {
+  /**
+   * Only to be used for situations where transaction is trusted. e.g to bump fee
+   * DO NOT USE THIS TO VERIFY THE REDEEM
+   */
+  async UNSAFE_isSwapRedeemTransaction (transaction) { // eslint-disable-line
     if (transaction._raw.vin.length === 1 && transaction._raw.vout.length === 1) {
-      const inputScript = this.getInputScriptFromTransaction(transaction)
+      const swapInput = transaction._raw.vin[0]
+      const inputScript = this.getInputScript(swapInput)
       const initiationTransaction = await this.getMethod('getTransactionByHash')(transaction._raw.vin[0].txid)
       const scriptType = initiationTransaction._raw.vout[transaction._raw.vin[0].vout].scriptPubKey.type
       if (
@@ -264,41 +286,40 @@ export default class BitcoinSwapProvider extends Provider {
   async updateTransactionFee (tx, newFeePerByte) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = await this.getMethod('getTransactionByHash')(txHash)
-    if (await this.isSwapRedeemTransaction(transaction)) {
-      const inputScript = this.getInputScriptFromTransaction(transaction)
-      const initiationTxHash = transaction._raw.vin[0].txid
+    if (await this.UNSAFE_isSwapRedeemTransaction(transaction)) {
+      const swapInput = transaction._raw.vin[0]
+      const inputScript = this.getInputScript(swapInput)
+      const initiationTxHash = swapInput.txid
+      const initiationTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
+      const swapOutput = initiationTx._raw.vout[swapInput.vout]
+      const value = BigNumber(swapOutput.value).times(1e8)
       const address = transaction._raw.vout[0].scriptPubKey.addresses[0]
       const isClaim = inputScript.length === 5
       const secret = isClaim ? inputScript[2] : undefined
       const outputScript = isClaim ? inputScript[4] : inputScript[3]
       const { expiration } = this.extractSwapParams(outputScript)
-      return this._redeemSwapOutput(initiationTxHash, address, Buffer.from(outputScript, 'hex'), expiration, isClaim, secret, newFeePerByte)
+      return this._redeemSwapOutput(initiationTxHash, value, address, Buffer.from(outputScript, 'hex'), expiration, isClaim, secret, newFeePerByte)
     }
     return this.getMethod('updateTransactionFee')(tx, newFeePerByte)
   }
 
-  getInputScriptFromTransaction (tx) {
-    const vin = tx._raw.vin[0]
-    if (!vin.scriptSig) return null
-
+  getInputScript (vin) {
     const inputScript = vin.txinwitness ? vin.txinwitness
       : bitcoin.script.decompile(Buffer.from(vin.scriptSig.hex, 'hex'))
         .map(b => Buffer.isBuffer(b) ? b.toString('hex') : b)
     return inputScript
   }
 
-  doesTransactionMatchRedeem (initiationTxHash, tx, address, isRefund) {
-    if (tx._raw.vin[0].txid !== initiationTxHash) return false
-    const inputScript = this.getInputScriptFromTransaction(tx)
+  doesTransactionMatchRedeem (initiationTxHash, tx, isRefund) {
+    const swapInput = tx._raw.vin.find((vin) => vin.txid === initiationTxHash)
+    if (!swapInput) return false
+    const inputScript = this.getInputScript(swapInput)
     if (!inputScript) return false
     if (isRefund) {
       if (inputScript.length !== 4) return false
     } else {
       if (inputScript.length !== 5) return false
     }
-    const vout = tx._raw.vout.find(vout => vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.includes(address))
-    if (!vout) return false
-
     return true
   }
 
@@ -315,6 +336,8 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async verifyInitiateSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
     return this.doesTransactionMatchInitiation(initiationTransaction, value, recipientAddress, refundAddress, secretHash, expiration)
   }
@@ -327,18 +350,28 @@ export default class BitcoinSwapProvider extends Provider {
   }
 
   async findInitiateSwapTransaction (value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     return this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
       tx => this.doesTransactionMatchInitiation(tx, value, recipientAddress, refundAddress, secretHash, expiration)
     )
   }
 
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+  async findClaimSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const claimSwapTransaction = await this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
-      tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, recipientAddress, false)
+      tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, false)
     )
 
     if (claimSwapTransaction) {
-      const secret = await this.getSwapSecret(claimSwapTransaction.hash)
+      const swapInput = claimSwapTransaction._raw.vin.find((vin) => vin.txid === initiationTxHash)
+      if (!swapInput) {
+        throw new Error('Claim input missing')
+      }
+      const inputScript = this.getInputScript(swapInput)
+      const secret = inputScript[2]
+      validateSecretAndHash(secret, secretHash)
       return {
         ...claimSwapTransaction,
         secret
@@ -346,21 +379,17 @@ export default class BitcoinSwapProvider extends Provider {
     }
   }
 
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+  async findRefundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    this.validateSwapParams(value, recipientAddress, refundAddress, secretHash, expiration)
+
     const refundSwapTransaction = await this.getMethod('findSwapTransaction', false)(recipientAddress, refundAddress, secretHash, expiration, blockNumber,
-      tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, refundAddress, true)
+      tx => this.doesTransactionMatchRedeem(initiationTxHash, tx, true)
     )
     return refundSwapTransaction
   }
 
   async findFundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
     return null
-  }
-
-  async getSwapSecret (claimTxHash) {
-    const claimTx = await this.getMethod('getTransactionByHash')(claimTxHash)
-    const inputScript = this.getInputScriptFromTransaction(claimTx)
-    return inputScript[2]
   }
 }
 

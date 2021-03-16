@@ -89,12 +89,12 @@ export default class InjectedProvider {
     return this.injectedProvider.getMethod('swap.findInitiateSwapTransaction')(value, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
   }
 
-  async findClaimSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    return this.injectedProvider.getMethod('swap.findClaimSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
+  async findClaimSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    return this.injectedProvider.getMethod('swap.findClaimSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
   }
 
-  async findRefundSwapTransaction (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
-    return this.injectedProvider.getMethod('swap.findRefundSwapTransaction')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
+  async findRefundSwapTransaction (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber) {
+    return this.injectedProvider.getMethod('swap.findRefundSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, blockNumber)
   }
 
   async generateSecret (message) {
@@ -117,12 +117,12 @@ export default class InjectedProvider {
     return this.injectedProvider.getMethod('swap.verifyInitiateSwapTransaction')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
-  async claimSwap (initiationTxHash, recipientAddress, refundAddress, secret, expiration) {
-    return this.injectedProvider.getMethod('swap.claimSwap')(initiationTxHash, recipientAddress, refundAddress, secret, expiration)
+  async claimSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret) {
+    return this.injectedProvider.getMethod('swap.claimSwap')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration, secret)
   }
 
-  async refundSwap (initiationTxHash, recipientAddress, refundAddress, secretHash, expiration) {
-    return this.injectedProvider.getMethod('swap.refundSwap')(initiationTxHash, recipientAddress, refundAddress, secretHash, expiration)
+  async refundSwap (initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration) {
+    return this.injectedProvider.getMethod('swap.refundSwap')(initiationTxHash, value, recipientAddress, refundAddress, secretHash, expiration)
   }
 
   async doesBlockScan () {

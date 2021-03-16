@@ -11,25 +11,28 @@ export default class NodeProvider extends Provider {
     this._node = axios.create(config)
   }
 
-  _handleNodeError (e: Error) {
+  _handleNodeError (e: Error, context: any) {
     let { name, message, ...attrs } = e
 
     const data = get(e, 'response.data')
     if (data) message = data
 
-    throw new NodeError(message, attrs)
+    throw new NodeError(message, {
+      ...context,
+      ...attrs
+    })
   }
 
   nodeGet (url: string, params: any = {}) : Promise<any> {
     return this._node.get(url, { params })
       .then(response => response.data)
-      .catch(this._handleNodeError)
+      .catch(e => this._handleNodeError(e, { url, params }))
   }
 
   nodePost (url: string, data: any) : Promise<any>  {
     return this._node.post(url, data)
       .then(response => response.data)
-      .catch(this._handleNodeError)
+      .catch(e => this._handleNodeError(e, { url, data }))
   }
 }
 

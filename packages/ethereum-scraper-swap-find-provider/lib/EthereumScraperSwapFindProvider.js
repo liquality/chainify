@@ -1,6 +1,17 @@
 import NodeProvider from '@liquality/node-provider'
-import { hexToNumber, normalizeTransactionObject, numberToHex } from '@liquality/ethereum-utils'
-import { caseInsensitiveEqual } from '@liquality/utils'
+import { hexToNumber,
+  numberToHex,
+  normalizeTransactionObject,
+  formatEthResponse,
+  validateAddress,
+  validateExpiration
+} from '@liquality/ethereum-utils'
+import {
+  caseInsensitiveEqual,
+  validateValue,
+  validateSecretHash,
+  validateSecretAndHash
+} from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 import { SwapProvider, SwapParams, Transaction, ethereum } from '@liquality/types'
 
@@ -50,7 +61,37 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     return normalizedTransaction
   }
 
+  normalizeTransactionResponse (tx) {
+    const normalizedTx = normalizeTransactionObject(formatEthResponse(tx))
+
+    if (normalizedTx._raw.contractAddress) {
+      normalizedTx._raw.contractAddress = normalizedTx._raw.contractAddress.toLowerCase()
+    }
+
+    if (normalizedTx._raw.secret) {
+      normalizedTx.secret = normalizedTx._raw.secret
+    }
+
+    return normalizedTx
+  }
+
+  async ensureFeeInfo (tx) {
+    if (!(tx.fee && tx.feePrice)) {
+      const { fee, feePrice, _raw } = await this.getMethod('getTransactionByHash')(tx.hash)
+
+      tx._raw.gas = _raw.gas
+      tx._raw.gasPrice = _raw.gasPrice
+
+      tx.fee = fee
+      tx.feePrice = feePrice
+    }
+
+    return tx
+  }
+
   async findAddressTransaction (address: string, predicate: (tx: Transaction<scraper.Transaction>) => boolean, fromBlock?: number, toBlock?: number, limit = 250, sort = 'desc') {
+    address = ensure0x(addressToString(address))
+
     for (let page = 1; ; page++) {
       const data = await this.nodeGet(`/txs/${address}`, {
         limit,
@@ -63,60 +104,71 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
       const transactions: any[] = data.data.txs
       if (transactions.length === 0) return
 
-      const normalizedTransactions = transactions.map(this.normalizeTransactionResponse)
-      const tx = normalizedTransactions.find(ntx => predicate(ntx))
-
-      if (tx) {
-        if (!(tx.fee && tx.feePrice)) {
-          const rpcTransaction : Transaction<ethereum.Transaction> = await this.getMethod('getTransactionByHash')(tx.hash)
-
-          tx._raw.gas = rpcTransaction._raw.gas
-          tx._raw.gasPrice = rpcTransaction._raw.gasPrice
-
-          tx.fee = rpcTransaction.fee
-          tx.feePrice = rpcTransaction.feePrice
-        }
-
-        return tx
-      }
+      const normalizedTransactions = transactions
+        .filter(tx => tx.status === true)
+        .map(this.normalizeTransactionResponse)
+      const tx = normalizedTransactions.find(predicate)
+      if (tx) return this.ensureFeeInfo(tx)
 
       if (transactions.length < limit) return
     }
   }
 
-  async findInitiateSwapTransaction (swapParams: SwapParams) {
-    return this.findAddressTransaction(swapParams.refundAddress, tx => this.getMethod('doesTransactionMatchInitiation')(swapParams, tx))
+  async findAddressEvent (type, contractAddress) {
+    contractAddress = ensure0x(addressToString(contractAddress))
+
+    const data = await this.nodeGet(`/events/${type}/${contractAddress}`)
+    const { tx } = data.data
+
+    if (tx && tx.status === true) {
+      return this.ensureFeeInfo(this.normalizeTransactionResponse(tx))
+    }
   }
 
-  async findClaimSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {
+  async findInitiateSwapTransaction (swapParams: SwapParams) {
+    this.validateSwapParams(swapParams)
+
+    return this.findAddressTransaction(
+      swapParams.refundAddress,
+      tx => this.getMethod('doesTransactionMatchInitiation')(swapParams, tx)
+    )
+  }
+
+  validateSwapParams (swapParams: SwapParams) {
+    const recipientAddress = remove0x(swapParams.recipientAddress)
+    const refundAddress = remove0x(swapParams.refundAddress)
+
+    validateValue(swapParams.value)
+    validateAddress(recipientAddress)
+    validateAddress(refundAddress)
+    validateSecretHash(swapParams.secretHash)
+    validateExpiration(swapParams.expiration)
+  }
+
+
+  
+  async findClaimSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {   
+    this.validateSwapParams(swapParams)
+
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
-    const transaction = await this.findAddressTransaction(initiationTransactionReceipt.contractAddress,
-      tx => this.getMethod('doesTransactionMatchClaim', false)(tx, initiationTransactionReceipt))
-    if (!transaction) return
+    const tx = await this.findAddressEvent('swapClaim', initiationTransactionReceipt.contractAddress)
 
-    if (transaction._raw.status === '0x1') {
+    if (tx) {
       // @ts-ignore secret is non standard field
-      transaction.secret = await this.getMethod('getSwapSecret')(transaction.hash)
-      return transaction
+      validateSecretAndHash(tx.secret, secretHash)
+      return tx
     }
   }
 
   async findRefundSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {
+    this.validateSwapParams(swapParams)
+
     const initiationTransactionReceipt : ethereum.TransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
-    const transaction = await this.findAddressTransaction(
-      initiationTransactionReceipt.contractAddress,
-      tx => (
-        caseInsensitiveEqual(tx._raw.to, initiationTransactionReceipt.contractAddress) &&
-        tx._raw.input === '0x' &&
-        hexToNumber(tx._raw.timestamp) >= swapParams.expiration
-      )
-    )
-
-    return transaction
+    return this.findAddressEvent('swapRefund', initiationTransactionReceipt.contractAddress)
   }
 
   doesBlockScan () {
