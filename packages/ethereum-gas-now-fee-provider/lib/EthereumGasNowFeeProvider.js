@@ -28,7 +28,7 @@ export default class EthereumGasNowFeeProvider extends NodeProvider {
       }
     }
 
-    if (Object.entries(fees).find(([,fee]) => fee.fee > 1000)) { // Guard against fees higher than 1000 GWEI
+    if (Object.entries(fees).find(([, fee]) => fee.fee > 1000)) { // Guard against fees higher than 1000 GWEI
       throw new Error('Fee over 1000 Gwei detected.')
     }
 
