@@ -2,7 +2,7 @@
   "name": "@liquality/bitcoin-rpc-fee-provider",
   "umdName": "BitcoinRpcFeeProvider",
   "umdExport": "default",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/provider": "^0.10.1",
+    "@liquality/provider": "^0.10.2",
     "lodash": "^4.17.20"
   },
   "engines": {
