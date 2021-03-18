@@ -55,7 +55,7 @@ module.exports = {
       params: [{
         from: '0x635d7d148054b9471d79084b80b864a166956139',
         to: '0x635d7d148054b9471d79084b80b864a166956139',
-        value: '0x1111',
+        value: '0x1111'
       }],
       result: '0x5208'
     }
