@@ -18,13 +18,13 @@ export default class EthereumGasNowFeeProvider extends NodeProvider {
 
     const fees = {
       slow: {
-        fee: BigNumber(data.slow).div(GWEI).toNumber()
+        fee: BigNumber(data.slow).div(GWEI).dp(0).toNumber()
       },
       average: {
-        fee: BigNumber(data.standard).div(GWEI).toNumber()
+        fee: BigNumber(data.standard).div(GWEI).dp(0).toNumber()
       },
       fast: {
-        fee: BigNumber(data.fast).div(GWEI).toNumber()
+        fee: BigNumber(data.fast).div(GWEI).dp(0).toNumber()
       }
     }
 

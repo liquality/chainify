@@ -9,7 +9,7 @@ import EthereumGasNowFeeProvider from '../../lib'
 chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
-describe.only('Ethereum Gas Station Fee provider', () => {
+describe('Ethereum Gas Station Fee provider', () => {
   let client
 
   beforeEach(() => {
