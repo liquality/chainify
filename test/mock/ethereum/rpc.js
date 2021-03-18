@@ -29,10 +29,35 @@ module.exports = {
       params: [{
         from: '0x322d4959c911520645c0638204b42ce0689236e9',
         to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: '0x3e8'
+      }],
+      result: '0x5208'
+    },
+    {
+      params: [{
+        from: '0x322d4959c911520645c0638204b42ce0689236e9',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
         value: '0x3e8',
         data: '0x1234'
       }],
       result: '0x9c40'
+    },
+    {
+      params: [{
+        from: '0x635d7d148054b9471d79084b80b864a166956139',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: '0x1111',
+        data: '0x5555'
+      }],
+      result: '0x5228'
+    },
+    {
+      params: [{
+        from: '0x635d7d148054b9471d79084b80b864a166956139',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: '0x1111',
+      }],
+      result: '0x5208'
     }
   ],
   'eth_sendTransaction': [
