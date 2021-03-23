@@ -71,6 +71,27 @@ describe('Ethereum RPC provider', () => {
     })
   })
 
+  describe('estimateGas', () => {
+    it('should return 21000 when estimate returns 21000', async () => {
+      const gas = await provider.estimateGas({
+        from: '0x635d7d148054b9471d79084b80b864a166956139',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: '0x1111'
+      })
+      expect(gas).to.equal(21000)
+    })
+
+    it('should multiply gas by 1.5 when tx not simple send', async () => {
+      const gas = await provider.estimateGas({
+        from: '0x635d7d148054b9471d79084b80b864a166956139',
+        to: '0x635d7d148054b9471d79084b80b864a166956139',
+        value: '0x1111',
+        data: '0x5555'
+      })
+      expect(gas).to.equal(31548)
+    })
+  })
+
   describe('getBlockHeight', () => {
     it('should return block height', async () => {
       const height = await client.chain.getBlockHeight()

@@ -213,12 +213,10 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   }
 
   async estimateGas (transaction: ethereum.TransactionRequest) {
-    const hasValue = transaction.value && transaction.value !== '0x0'
-    if (hasValue && !transaction.data) { return 21000 } // TODO: Also has to be estimated - payable functions
-
-    const estimatedGas = await this.rpc<ethereum.Hex>('eth_estimateGas', transaction)
-
-    return Math.ceil(parseInt(estimatedGas, 16) * GAS_LIMIT_MULTIPLIER)
+    const result = await this.rpc<ethereum.Hex>('eth_estimateGas', transaction)
+    const gas = hexToNumber(result)
+    if (gas === 21000) return gas
+    return Math.ceil(gas * GAS_LIMIT_MULTIPLIER)
   }
 
   async isAddressUsed (address: string) {
