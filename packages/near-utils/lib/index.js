@@ -35,14 +35,14 @@ function fromNearTimestamp (ts) {
 
 function normalizeTransactionObject (tx, currentHeight) {
   if (tx.transaction && tx.transaction_outcome) {
-    tx = { ...tx.transaction, ...tx.transaction_outcome }
+    tx = { ...tx, ...tx.transaction, ...tx.transaction_outcome }
   }
 
   const normalizedTx = { confirmations: 0 }
 
   if (tx.blockNumber) {
     if (currentHeight) {
-      normalizedTx.confirmations = tx.blockNumber - currentHeight
+      normalizedTx.confirmations = currentHeight - tx.blockNumber
     }
 
     normalizedTx.blockNumber = tx.blockNumber

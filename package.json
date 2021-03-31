@@ -44,14 +44,8 @@
     "node": "~8.12.0"
   },
   "standard": {
-    "plugins": [
-      "html",
-      "markdown"
-    ],
-    "ignore": [
-      "**/packages/**/dist/**",
-      "docs/**"
-    ]
+    "plugins": ["html", "markdown"],
+    "ignore": ["**/packages/**/dist/**", "docs/**"]
   },
   "scripts": {
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
@@ -63,8 +57,8 @@
     "env:integration:bootup": "sleep 10",
     "test:integration:api": "cross-env NODE_ENV=test mocha test/integration/api $npm_package_options_mocha",
     "test:integration:chain": "cross-env NODE_ENV=test mocha test/integration/chain $npm_package_options_mocha",
-    "test:integration:swap": "cross-env NODE_ENV=test mocha test/integration/swap $npm_package_options_mocha",
-    "test:integration:tx": "cross-env NODE_ENV=test mocha test/integration/tx $npm_package_options_mocha",
+    "test:integration:swap": "cross-env NODE_ENV=test mocha test/integration/swap/singleChain.js $npm_package_options_mocha",
+    "test:integration:tx": "cross-env NODE_ENV=test mocha test/integration/tx/near.js $npm_package_options_mocha",
     "test:integration:wallet": "cross-env NODE_ENV=test mocha test/integration/wallet $npm_package_options_mocha",
     "test:integration": "cross-env NODE_ENV=test mocha test/integration $npm_package_options_mocha",
     "test:integration:external": "cross-env NODE_ENV=test RUN_EXTERNAL=true mocha test/integration $npm_package_options_mocha",
@@ -86,30 +80,13 @@
     "mocha": "--require ./babel.test.js --timeout 20000 --recursive"
   },
   "nyc": {
-    "include": [
-      "packages/**/lib/**"
-    ],
-    "exclude": [
-      "**/bin/**",
-      "**/coverage/**",
-      "**/dist/**",
-      "**/html/assets/**",
-      "**/test/**"
-    ],
-    "reporter": [
-      "text",
-      "lcov"
-    ],
+    "include": ["packages/**/lib/**"],
+    "exclude": ["**/bin/**", "**/coverage/**", "**/dist/**", "**/html/assets/**", "**/test/**"],
+    "reporter": ["text", "lcov"],
     "all": true,
-    "require": [
-      "./babel.test.js"
-    ],
+    "require": ["./babel.test.js"],
     "sourceMap": false,
     "instrument": false
   },
-  "pre-commit": [
-    "lint",
-    "build",
-    "test:unit"
-  ]
+  "pre-commit": ["lint", "build", "test:unit"]
 }

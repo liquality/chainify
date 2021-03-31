@@ -1,7 +1,7 @@
 import Provider from '@liquality/provider'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
 import { toNearTimestampFormat, parseReceipt } from '@liquality/near-utils'
-
+import BigNumber from 'bignumber.js'
 import { transactions } from 'near-api-js'
 
 import Bytecode from './bytecode'
@@ -31,7 +31,7 @@ export default class NearSwapProvider extends Provider {
 
     return this.getMethod('sendTransaction')(contractId, null, [
       transactions.createAccount(),
-      transactions.transfer(value),
+      transactions.transfer(new BigNumber(value).toFixed().toString()),
       transactions.deployContract(bytecode),
       transactions.functionCall(
         ABI.init.method,
@@ -78,7 +78,7 @@ export default class NearSwapProvider extends Provider {
     if (transaction.swap) {
       return (
         transaction.code === CONTRACT_CODE &&
-        transaction.value === value &&
+        new BigNumber(transaction.value).eq(value) &&
         transaction.swap.recipient === recipientAddress &&
         transaction.swap.secretHash === secretHash &&
         transaction.swap.expiration === expiration &&

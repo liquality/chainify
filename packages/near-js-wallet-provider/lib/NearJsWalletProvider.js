@@ -1,6 +1,7 @@
 import Provider from '@liquality/provider'
 import { Address, addressToString } from '@liquality/utils'
 import { normalizeTransactionObject } from '@liquality/near-utils'
+import BigNumber from 'bignumber.js'
 
 import { InMemorySigner, KeyPair } from 'near-api-js'
 import { InMemoryKeyStore } from 'near-api-js/lib/key_stores'
@@ -25,9 +26,8 @@ export default class NearJsWalletProvider extends Provider {
 
   async getAddresses () {
     const { publicKey, secretKey } = parseSeedPhrase(this._mnemonic, this._derivationPath)
-
     const keyPair = KeyPair.fromString(secretKey)
-    const address = await this.getMethod('getAccounts')(publicKey, 0)
+    const address = Buffer.from(keyPair.publicKey.data).toString('hex')
     await this._keyStore.setKey(this._network.networkId, address, keyPair)
 
     return [new Address(address, this._derivationPath, publicKey, 0)]
@@ -59,7 +59,7 @@ export default class NearJsWalletProvider extends Provider {
     const from = await this.getMethod('getAccount')(addressToString(addresses[0]), this.getSigner())
 
     if (!actions) {
-      actions = [transfer(value)]
+      actions = [transfer(new BigNumber(value).toFixed().toString())]
     }
 
     const tx = await from.signAndSendTransaction(addressToString(to), actions)
