@@ -44,14 +44,8 @@
     "node": "~8.12.0"
   },
   "standard": {
-    "plugins": [
-      "html",
-      "markdown"
-    ],
-    "ignore": [
-      "**/packages/**/dist/**",
-      "docs/**"
-    ]
+    "plugins": ["html", "markdown"],
+    "ignore": ["**/packages/**/dist/**", "docs/**"]
   },
   "scripts": {
     "coverage": "nyc report $npm_package_options_coverage | coveralls",
@@ -86,30 +80,13 @@
     "mocha": "--require ./babel.test.js --timeout 20000 --recursive"
   },
   "nyc": {
-    "include": [
-      "packages/**/lib/**"
-    ],
-    "exclude": [
-      "**/bin/**",
-      "**/coverage/**",
-      "**/dist/**",
-      "**/html/assets/**",
-      "**/test/**"
-    ],
-    "reporter": [
-      "text",
-      "lcov"
-    ],
+    "include": ["packages/**/lib/**"],
+    "exclude": ["**/bin/**", "**/coverage/**", "**/dist/**", "**/html/assets/**", "**/test/**"],
+    "reporter": ["text", "lcov"],
     "all": true,
-    "require": [
-      "./babel.test.js"
-    ],
+    "require": ["./babel.test.js"],
     "sourceMap": false,
     "instrument": false
   },
-  "pre-commit": [
-    "lint",
-    "build",
-    "test:unit"
-  ]
+  "pre-commit": ["lint", "build", "test:unit"]
 }

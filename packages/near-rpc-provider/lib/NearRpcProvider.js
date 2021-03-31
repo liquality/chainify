@@ -110,19 +110,21 @@ export default class NearRpcProvider extends NodeProvider {
     )
   }
 
-  async getAccounts (publicKey, index) {
-    if (this._accountsCache[index]) {
-      return this._accountsCache[index]
+  async getFees () {
+    return {
+      slow: {
+        fee: 0.0001,
+        wait: 1
+      },
+      average: {
+        fee: 0.0001,
+        wait: 1
+      },
+      fast: {
+        fee: 0.0001,
+        wait: 1
+      }
     }
-
-    const accounts = await this.nodeGet(`/publicKey/${publicKey.toString()}/accounts`)
-
-    if (accounts[index]) {
-      this._accountsCache[index] = accounts[index]
-      return accounts[index]
-    }
-
-    throw new Error(`Account with index ${index} not found`)
   }
 
   async _sendRawTransaction (hash) {

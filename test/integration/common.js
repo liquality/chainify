@@ -191,9 +191,9 @@ async function fundAddress (chain, address) {
       const tempNearJsClient = new Client()
       tempNearJsClient.addProvider(new providers.near.NearRpcProvider(config.near.network))
       tempNearJsClient.addProvider(new providers.near.NearJsWalletProvider(config.near.network, config.near.receiverMnemonic))
-      const balance = await tempNearJsClient.chain.getBalance('liqualityreceiver.testnet')
+      const balance = await tempNearJsClient.chain.getBalance('c2724256be76d3ff3569e8996e564329a9450f81501b69cb7011d77a044670a8')
       if (balance.gt(0)) {
-        await tempNearJsClient.chain.sendTransaction('liqualitysender.testnet', balance.toFixed())
+        await tempNearJsClient.chain.sendTransaction('e9f034f2692e6bb7e50a237a016bb09c1573a17a40da97db3caef4f9dc35b027', balance.toFixed())
       }
       break
     }
@@ -217,9 +217,9 @@ async function getNewAddress (chain, refund = false) {
   switch (chain.name) {
     case 'near': {
       if (refund) {
-        return { address: 'liqualitysender.testnet' }
+        return { address: 'e9f034f2692e6bb7e50a237a016bb09c1573a17a40da97db3caef4f9dc35b027' }
       }
-      return { address: 'liqualityreceiver.testnet' }
+      return { address: 'c2724256be76d3ff3569e8996e564329a9450f81501b69cb7011d77a044670a8' }
     }
 
     case 'ethereum': {
@@ -235,7 +235,7 @@ async function getNewAddress (chain, refund = false) {
 async function getRandomAddress (chain) {
   switch (chain.name) {
     case 'near': {
-      return { address: 'liqualityreceiver.testnet' }
+      return { address: 'c2724256be76d3ff3569e8996e564329a9450f81501b69cb7011d77a044670a8' }
     }
 
     case 'ethereum': {
