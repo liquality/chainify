@@ -107,7 +107,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
 
-  async updateTransactionFee (tx: Transaction<bitcoin.Transaction>, newFeePerByte: BigNumber) {
+  async updateTransactionFee (tx: Transaction<bitcoin.Transaction> | string, newFeePerByte: BigNumber) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction: bitcoin.Transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it

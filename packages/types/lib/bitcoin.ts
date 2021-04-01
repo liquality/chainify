@@ -57,6 +57,12 @@ export enum AddressType {
   BECH32 = 'bech32'
 }
 
+export enum SwapMode {
+  P2SH = 'p2sh',
+  P2SH_SEGWIT = 'p2shSegwit',
+  P2WSH = 'p2wsh'
+}
+
 export type AddressTxCounts = { [index: string]: number }
 
 export interface PsbtInputTarget {
