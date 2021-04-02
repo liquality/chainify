@@ -10,6 +10,8 @@ interface IApp {
   transport: any
 } 
 
+export type Newable<T> = { new (...args: any[]): T; };
+
 export default abstract class LedgerProvider<TApp extends IApp> extends WalletProvider {
   _App: any
   _network: Network
@@ -18,7 +20,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
   _Transport: any
   _appInstance: TApp
 
-  constructor (options: { App: TApp, Transport: any, network: Network, ledgerScrambleKey: string }) {
+  constructor (options: { App: Newable<TApp>, Transport: any, network: Network, ledgerScrambleKey: string }) {
     super({ network: options.network })
 
     this._App = options.App

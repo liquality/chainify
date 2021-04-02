@@ -9,6 +9,7 @@ import {
   normalizeTransactionObject,
   hexToNumber
 } from '@liquality/ethereum-utils'
+import { toRpcSig } from 'ethereumjs-util'
 
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
 import * as EthereumJsTx from 'ethereumjs-tx'
@@ -25,7 +26,9 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     const app = await this.getApp()
     const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
-    return app.signPersonalMessage(address.derivationPath, hex)
+    const { v, r, s } = await app.signPersonalMessage(address.derivationPath, hex)
+
+    return remove0x(toRpcSig(v, Buffer.from(r, 'hex'), Buffer.from(s, 'hex')))
   }
 
   async getAddresses () { // TODO: Retrieve given num addresses?
