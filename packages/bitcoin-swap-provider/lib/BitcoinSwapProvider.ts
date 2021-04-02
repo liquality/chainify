@@ -1,4 +1,4 @@
-import { Transaction, Address, bitcoin, BigNumber, SwapParams } from '@liquality/types'
+import { Transaction, Address, bitcoin, BigNumber, SwapParams, SwapProvider } from '@liquality/types'
 import Provider from '@liquality/provider'
 import {
   calculateFee,
@@ -15,7 +15,7 @@ import {
   validateSecretAndHash,
   validateExpiration
 } from '@liquality/utils'
-import BitcoinNetworks, { BitcoinNetwork } from '@liquality/bitcoin-networks'
+import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 
 import { Psbt, script as bScript, payments } from 'bitcoinjs-lib'
 
@@ -24,7 +24,7 @@ interface BitcoinSwapProviderOptions {
   mode?: bitcoin.SwapMode
 }
 
-export default class BitcoinSwapProvider extends Provider {
+export default class BitcoinSwapProvider extends Provider implements Partial<SwapProvider> {
   _network: BitcoinNetwork
   _mode: bitcoin.SwapMode
 
@@ -127,7 +127,7 @@ export default class BitcoinSwapProvider extends Provider {
     })
   }
 
-  async fundSwap (swapParams: SwapParams, initiationTxHash: string, feePerByte: BigNumber) : Promise<void> {
+  async fundSwap (swapParams: SwapParams, initiationTxHash: string, feePerByte: BigNumber) : Promise<null> {
     return null
   }
 
@@ -392,12 +392,12 @@ export default class BitcoinSwapProvider extends Provider {
     this.validateSwapParams(swapParams)
 
     const refundSwapTransaction = await this.getMethod('findSwapTransaction', false)(swapParams, blockNumber,
-      (tx: Transaction<bitcoin.Transaction>) => this.doesTransactionMatchRedeem(initiationTxHash, tx, true)
+      (tx: Transaction<bitcoin.Transaction>) => this.doesTransactionMatchRedeem(initiationTxHash, tx , true)
     )
     return refundSwapTransaction
   }
 
-  async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) : Promise<void> {
+  async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) : Promise<null> {
     return null
   }
 }

@@ -18,15 +18,15 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
   _Transport: any
   _appInstance: TApp
 
-  constructor (App: TApp, Transport: any, network: Network, ledgerScrambleKey: string) {
-    super({ network })
+  constructor (options: { App: TApp, Transport: any, network: Network, ledgerScrambleKey: string }) {
+    super({ network: options.network })
 
-    this._App = App
-    this._Transport = Transport
-    this._network = network
+    this._App = options.App
+    this._Transport = options.Transport
+    this._network = options.network
     // The ledger scramble key is required to be set on the ledger transport
     // if communicating with the device using `transport.send` for the first time
-    this._ledgerScrambleKey = ledgerScrambleKey
+    this._ledgerScrambleKey = options.ledgerScrambleKey
   }
 
   async createTransport () {

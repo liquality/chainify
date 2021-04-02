@@ -7,7 +7,7 @@ import {
   InsufficientBalanceError
 } from '@liquality/errors'
 
-import { BIP32Interface, payments } from 'bitcoinjs-lib'
+import { BIP32Interface, payments, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib'
 
 const ADDRESS_GAP = 20
 
@@ -56,9 +56,11 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     this._derivationCache = {}
   }
 
-  abstract baseDerivationNode() : BIP32Interface
-  abstract _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) : { hex: string, fee: number }
-  abstract _buildSweepTransaction(externalChangeAddress: string, feePerByte?: BigNumber) : { hex: string, fee: number }
+  abstract baseDerivationNode() : Promise<BIP32Interface>
+  abstract _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) : Promise<{ hex: string, fee: number }>
+  abstract _buildSweepTransaction(externalChangeAddress: string, feePerByte?: BigNumber) : Promise<{ hex: string, fee: number }>
+  abstract signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) : Promise<string>
+  abstract signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }] , addresses: string, tx: any, lockTime?: number, segwit?: boolean) : Promise<Buffer[]>
 
   getDerivationCache () {
     return this._derivationCache
@@ -291,7 +293,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
       .then(({ unusedAddress }) => unusedAddress[key])
   }
 
-  async getInputsForAmount (_targets: bitcoin.OutputTarget[], _feePerByte?: BigNumber, fixedInputs: bitcoin.UTXO[] = [], numAddressPerCall = 100, sweep = false) {
+  async getInputsForAmount (_targets: bitcoin.OutputTarget[], _feePerByte?: BigNumber, fixedInputs: bitcoin.Input[] = [], numAddressPerCall = 100, sweep = false) {
     let addressIndex = 0
     let changeAddresses: Address[]  = []
     let externalAddresses: Address[] = []
@@ -321,7 +323,20 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
         addrList = addrList.concat(externalAddresses)
       }
 
-      if (!sweep || fixedInputs.length === 0) {
+      const fixedUtxos: bitcoin.UTXO[] = []
+      if (fixedInputs.length > 0) {
+        for (const input of fixedInputs) {
+          const txHex = await this.getMethod('getRawTransactionByHash')(input.txid)
+          const tx = decodeRawTransaction(txHex, this._network)
+          const value = new BigNumber(tx.vout[input.vout].value).times(1e8).toNumber()
+          const address = tx.vout[input.vout].scriptPubKey.addresses[0]
+          const walletAddress = await this.getWalletAddress(address)
+          const utxo = { ...input, value, address, derivationPath: walletAddress.derivationPath}
+          fixedUtxos.push(utxo)
+        }
+      }
+
+      if (!sweep || fixedUtxos.length === 0) {
         const _utxos : bitcoin.UTXO[] = await this.getMethod('getUnspentTransactions')(addrList)
         utxos.push(..._utxos.map(utxo => {
           const addr = addrList.find(a => a.address === utxo.address)
@@ -331,7 +346,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
           }
         }))
       } else {
-        utxos = fixedInputs
+        utxos = fixedUtxos
       }
 
       const utxoBalance = utxos.reduce((a, b) => a + (b.value || 0), 0)
@@ -342,17 +357,6 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
       const minRelayFee = await this.getMethod('getMinRelayFee')()
       if (feePerByte < minRelayFee) {
         throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
-      }
-
-      if (fixedInputs.length > 0) {
-        for (const input of fixedInputs) {
-          const txHex = await this.getMethod('getRawTransactionByHash')(input.txid)
-          const tx = decodeRawTransaction(txHex, this._network)
-          input.value = new BigNumber(tx.vout[input.vout].value).times(1e8).toNumber()
-          input.address = tx.vout[input.vout].scriptPubKey.addresses[0]
-          const walletAddress = await this.getWalletAddress(input.address)
-          input.derivationPath = walletAddress.derivationPath
-        }
       }
 
       let targets
@@ -367,7 +371,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
         targets = _targets.map((target) => ({ id: 'main', value: target.value }))
       }
 
-      const { inputs, outputs, change, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte.toNumber()), fixedInputs)
+      const { inputs, outputs, change, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte.toNumber()), fixedUtxos)
 
       if (inputs && outputs) {
         return {

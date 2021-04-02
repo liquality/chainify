@@ -85,7 +85,6 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     }, newFeePerByte)
   }
 
-  // inputs consists of [{ index, derivationPath }]
   async signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) {
     const psbt = Psbt.fromBase64(data, { network: this._network })
 
@@ -101,7 +100,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   // inputs consists of 
-  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }] , addresses: string, tx: BitcoinJsTransaction, lockTime = 0, segwit = false) {
+  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }] , addresses: string, tx: any, lockTime = 0, segwit = false) {
     let wallets = []
     for (const address of addresses) {
       const wif = await this.dumpPrivKey(address)

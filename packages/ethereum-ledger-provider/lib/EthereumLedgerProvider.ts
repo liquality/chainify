@@ -17,7 +17,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
   _baseDerivationPath: string
 
   constructor (network: EthereumNetwork, Transport: any) {
-    super(HwAppEthereum, Transport, network, 'w0w') // srs!
+    super({ App: HwAppEthereum, Transport, network, ledgerScrambleKey: 'w0w' }) // srs!
     this._baseDerivationPath = `44'/${network.coinType}'/0'`
   }
 
