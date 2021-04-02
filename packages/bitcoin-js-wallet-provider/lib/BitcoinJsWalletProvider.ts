@@ -1,21 +1,33 @@
 import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
 import WalletProvider from '@liquality/wallet-provider'
-import { addressToString } from '@liquality/utils'
+import { BitcoinNetwork } from '@liquality/bitcoin-networks'
+import { bitcoin, BigNumber } from '@liquality/types'
 
-import * as bitcoin from 'bitcoinjs-lib'
+import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
-import bip32 from 'bip32'
+import bip32, { BIP32Interface } from 'bip32'
 
-import { version } from '../package.json'
+type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 
-export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider) {
-  constructor (network, mnemonic, addressType = 'bech32') {
-    super(network, addressType, [network])
+interface BitcoinJsWalletProviderOptions {
+  network: BitcoinNetwork,
+  addressType: bitcoin.AddressType,
+  mnemonic: string
+}
 
-    if (!mnemonic) throw new Error('Mnemonic should not be empty')
+export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider as WalletProviderConstructor) {
+  _mnemonic: string
+  _seedNode: BIP32Interface
+  _baseDerivationNode: BIP32Interface
 
-    this._mnemonic = mnemonic
+  constructor (options: BitcoinJsWalletProviderOptions) {
+    const { network, addressType = bitcoin.AddressType.BECH32 } = options
+    super({ network, addressType })
+
+    if (!options.mnemonic) throw new Error('Mnemonic should not be empty')
+
+    this._mnemonic = options.mnemonic
   }
 
   async seedNode () {
@@ -36,33 +48,33 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return this._baseDerivationNode
   }
 
-  async keyPair (derivationPath) {
+  async keyPair (derivationPath: string): Promise<ECPairInterface> {
     const node = await this.seedNode()
     const wif = node.derivePath(derivationPath).toWIF()
-    return bitcoin.ECPair.fromWIF(wif, this._network)
+    return ECPair.fromWIF(wif, this._network)
   }
 
-  async signMessage (message, from) {
+  async signMessage (message: string, from: string) {
     const address = await this.getWalletAddress(from)
     const keyPair = await this.keyPair(address.derivationPath)
     const signature = bitcoinMessage.sign(message, keyPair.privateKey, keyPair.compressed)
     return signature.toString('hex')
   }
 
-  async _buildTransaction (outputs, feePerByte, fixedInputs) {
+  async _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) {
     const network = this._network
 
     const unusedAddress = await this.getUnusedAddress(true)
-    const { inputs, change, fee } = await this.getInputsForAmount(outputs, feePerByte, fixedInputs)
+    const { inputs, change, fee } = await this.getInputsForAmount(targets, feePerByte, fixedInputs)
 
     if (change) {
-      outputs.push({
-        to: unusedAddress,
+      targets.push({
+        address: unusedAddress.address,
         value: change.value
       })
     }
 
-    const psbt = new bitcoin.Psbt({ network })
+    const psbt = new Psbt({ network })
 
     const needsWitness = this._addressType === 'bech32' || this._addressType === 'p2sh-segwit'
 
@@ -71,7 +83,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       const keyPair = await this.keyPair(wallet.derivationPath)
       const paymentVariant = this.getPaymentVariantFromPublicKey(keyPair.publicKey)
 
-      const psbtInput = {
+      const psbtInput : any = {
         hash: inputs[i].txid,
         index: inputs[i].vout,
         sequence: 0
@@ -94,15 +106,8 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       psbt.addInput(psbtInput)
     }
 
-    for (const output of outputs) {
-      const isScript = Buffer.isBuffer(output.to)
-      const address = !isScript ? addressToString(output.to) : undefined
-      const script = isScript ? output.to : undefined // Allow for OP_RETURN
-      psbt.addOutput({
-        value: output.value,
-        address,
-        script
-      })
+    for (const output of targets) {
+      psbt.addOutput(output)
     }
 
     for (let i = 0; i < inputs.length; i++) {
@@ -117,9 +122,9 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return { hex: psbt.extractTransaction().toHex(), fee }
   }
 
-  async _buildSweepTransaction (externalChangeAddress, feePerByte) {
-    let _feePerByte = feePerByte || false
-    if (_feePerByte === false) _feePerByte = await this.getMethod('getFeePerByte')()
+  async _buildSweepTransaction (externalChangeAddress: string, feePerByte: BigNumber) {
+    let _feePerByte = feePerByte || null
+    if (!_feePerByte) _feePerByte = await this.getMethod('getFeePerByte')()
 
     const { inputs, outputs, change } = await this.getInputsForAmount([], _feePerByte, [], 100, true)
 
@@ -128,16 +133,17 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     }
 
     const _outputs = [{
-      to: externalChangeAddress,
+      address: externalChangeAddress,
       value: outputs[0].value
     }]
 
+    // @ts-ignore
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
   // inputs consists of [{ index, derivationPath }]
-  async signPSBT (data, inputs) {
-    const psbt = bitcoin.Psbt.fromBase64(data, { network: this._network })
+  async signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) {
+    const psbt = Psbt.fromBase64(data, { network: this._network })
     for (const input of inputs) {
       const keyPair = await this.keyPair(input.derivationPath)
       psbt.signInput(input.index, keyPair)
@@ -146,7 +152,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
   }
 
   // inputs consists of [{ inputTxHex, index, vout, outputScript }]
-  async signBatchP2SHTransaction (inputs, addresses, tx, lockTime = 0, segwit = false) {
+  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer, txInputIndex?: number }], addresses: string, tx: any, lockTime?: number, segwit?: boolean) {
     let keyPairs = []
     for (const address of addresses) {
       const wallet = await this.getWalletAddress(address)
@@ -159,12 +165,12 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       const index = inputs[i].txInputIndex ? inputs[i].txInputIndex : inputs[i].index
       let sigHash
       if (segwit) {
-        sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, bitcoin.Transaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+        sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, BitcoinJsTransaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
       } else {
-        sigHash = tx.hashForSignature(index, inputs[i].outputScript, bitcoin.Transaction.SIGHASH_ALL)
+        sigHash = tx.hashForSignature(index, inputs[i].outputScript, BitcoinJsTransaction.SIGHASH_ALL)
       }
 
-      const sig = bitcoin.script.signature.encode(keyPairs[i].sign(sigHash), bitcoin.Transaction.SIGHASH_ALL)
+      const sig = script.signature.encode(keyPairs[i].sign(sigHash), BitcoinJsTransaction.SIGHASH_ALL)
       sigs.push(sig)
     }
 
@@ -172,9 +178,9 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
   }
 
   getScriptType () {
-    if (this._addressType === 'legacy') return 'p2pkh'
-    else if (this._addressType === 'p2sh-segwit') return 'p2sh-p2wpkh'
-    else if (this._addressType === 'bech32') return 'p2wpkh'
+    if (this._addressType === bitcoin.AddressType.LEGACY) return 'p2pkh'
+    else if (this._addressType === bitcoin.AddressType.P2SH_SEGWIT) return 'p2sh-p2wpkh'
+    else if (this._addressType === bitcoin.AddressType.BECH32) return 'p2wpkh'
   }
 
   async getConnectedNetwork () {
@@ -186,4 +192,3 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
   }
 }
 
-BitcoinJsWalletProvider.version = version

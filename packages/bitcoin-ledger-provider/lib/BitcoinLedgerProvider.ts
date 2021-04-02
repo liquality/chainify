@@ -63,7 +63,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
 
     const outputScriptHex = app.serializeTransactionOutputs({ outputs }).toString('hex')
 
-    const isSegwit = ['bech32', 'p2sh-segwit'].includes(this._addressType)
+    const isSegwit = [bitcoin.AddressType.BECH32, bitcoin.AddressType.P2SH_SEGWIT].includes(this._addressType)
 
     const txHex = await app.createPaymentTransactionNew({
       // @ts-ignore
@@ -73,7 +73,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       outputScriptHex,
       segwit: isSegwit,
       useTrustedInputForSegwit: isSegwit,
-      additionals: this._addressType === 'bech32' ? ['bech32'] : []
+      additionals: this._addressType === bitcoin.AddressType.BECH32 ? ['bech32'] : []
     })
 
     return { hex: txHex, fee }
@@ -107,7 +107,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       const outputScriptHex = app.serializeTransactionOutputs({
         outputs: psbt.txOutputs.map(output => ({ script: output.script, amount: this.getAmountBuffer(output.value) }))
       }).toString('hex')
-      const isSegwit = ['bech32', 'p2sh-segwit'].includes(this._addressType)
+      const isSegwit = [bitcoin.AddressType.BECH32, bitcoin.AddressType.P2SH_SEGWIT].includes(this._addressType)
       const changeAddress = await this.findAddress(psbt.txOutputs.map(output => output.address), true)
 
       const txHex = await app.createPaymentTransactionNew({
@@ -251,7 +251,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
 
   async _getWalletPublicKey (path: string) {
     const app = await this.getApp()
-    const format = this._addressType === 'p2sh-segwit' ? 'p2sh' : this._addressType
+    const format = this._addressType === bitcoin.AddressType.P2SH_SEGWIT ? 'p2sh' : this._addressType
     return app.getWalletPublicKey({ path, format })
   }
 
