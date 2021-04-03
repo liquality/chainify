@@ -64,13 +64,6 @@ export interface ChainProvider {
   getTransactionByHash (txHash: string) : Promise<Transaction>
 
   /**
-   * Check if an address has been used or not.
-   * @param {!string} addresses - An address to check for.
-   * @return {Promise<boolean>} Resolves to true if provided address is used
-   */
-  isAddressUsed (address: string) : Promise<boolean>
-
-  /**
    * Get the balance of an account given its addresses.
    * @param {string[]} addresses - A list of addresses.
    * @return {Promise<BigNumber, InvalidProviderResponseError>} If addresses is given,

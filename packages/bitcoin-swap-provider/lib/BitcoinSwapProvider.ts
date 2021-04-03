@@ -158,12 +158,12 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     const swapPaymentVariants = this.getSwapPaymentVariants(swapOutput)
 
     const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
-    const initiationTx = await this.getMethod('getRawTransactionByHash')(initiationTxHash, true)
+    const initiationTx = decodeRawTransaction(initiationTxRaw, this._network)
 
     let swapVout
     let paymentVariantName: string
     let paymentVariant: payments.Payment
-    for (const vout of initiationTx._raw.vout) {
+    for (const vout of initiationTx.vout) {
       const paymentVariantEntry = Object.entries(swapPaymentVariants).find(([, payment]) => payment.output.toString('hex') === vout.scriptPubKey.hex)
       const voutValue = new BigNumber(vout.value).times(1e8)
       if (paymentVariantEntry && voutValue.eq(new BigNumber(value))) {
@@ -181,11 +181,9 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
 
     // TODO: Implement proper fee calculation that counts bytes in inputs and outputs
     const txfee = calculateFee(1, 1, feePerByte)
+    const swapValue = new BigNumber(swapVout.value).times(1e8).toNumber()
 
-    swapVout.txid = initiationTxHash
-    swapVout.vSat = new BigNumber(swapVout.value).times(1e8).toNumber()
-
-    if (swapVout.vSat - txfee < 0) {
+    if (swapValue - txfee < 0) {
       throw new Error('Transaction amount does not cover fee.')
     }
 
@@ -198,7 +196,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     const isSegwit = paymentVariantName === 'p2wsh' || paymentVariantName === 'p2shSegwit'
 
     const input: any = {
-      hash: swapVout.txid,
+      hash: initiationTxHash,
       index: swapVout.n,
       sequence: 0
     }
@@ -206,7 +204,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     if (isSegwit) {
       input.witnessUtxo = {
         script: paymentVariant.output,
-        value: swapVout.vSat
+        value: swapValue
       }
       input.witnessScript = swapPaymentVariants.p2wsh.redeem.output // Strip the push bytes (0020) off the script
     } else {
@@ -216,7 +214,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
 
     const output = {
       address: address,
-      value: swapVout.vSat - txfee
+      value: swapValue - txfee
     }
 
     psbt.addInput(input)

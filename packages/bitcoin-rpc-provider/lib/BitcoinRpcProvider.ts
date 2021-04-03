@@ -59,17 +59,6 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return relayfee * 1e8 / 1000
   }
 
-  async isAddressUsed (address: string) {
-    if (this._usedAddressCache[address]) return true
-
-    const amountReceived = await this.getReceivedByAddress(address)
-    const isUsed = amountReceived > 0
-
-    if (isUsed) this._usedAddressCache[address] = true
-
-    return isUsed
-  }
-
   async getBalance (addresses: string[]) {
     const _utxos = await this.getUnspentTransactions(addresses)
     const utxos = flatten(_utxos)

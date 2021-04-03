@@ -152,7 +152,7 @@ function decodeRawTransaction (hex: string, network: BitcoinNetwork) : bT.Transa
   }
 }
 
-function normalizeTransactionObject (tx: bT.Transaction, fee: number, block?: Block) : Transaction<bT.Transaction> {
+function normalizeTransactionObject (tx: bT.Transaction, fee: number, block?: { number: number, hash: string }) : Transaction<bT.Transaction> {
   const value = tx.vout.reduce((p, n) => p.plus(new BigNumber(n.value).times(1e8)), new BigNumber(0))
   const result = {
     hash: tx.txid,

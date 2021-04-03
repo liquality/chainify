@@ -76,7 +76,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
 
     const psbt = new Psbt({ network })
 
-    const needsWitness = this._addressType === 'bech32' || this._addressType === 'p2sh-segwit'
+    const needsWitness = [bitcoin.AddressType.BECH32, bitcoin.AddressType.P2SH_SEGWIT].includes(this._addressType)
 
     for (let i = 0; i < inputs.length; i++) {
       const wallet = await this.getWalletAddress(inputs[i].address)
@@ -95,11 +95,11 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
           value: inputs[i].value
         }
       } else {
-        const inputTx = await this.getMethod('getRawTransactionByHash')(inputs[i].txid, true)
-        psbtInput.nonWitnessUtxo = Buffer.from(inputTx._raw.hex, 'hex')
+        const inputTxRaw = await this.getMethod('getRawTransactionByHash')(inputs[i].txid)
+        psbtInput.nonWitnessUtxo = Buffer.from(inputTxRaw, 'hex')
       }
 
-      if (this._addressType === 'p2sh-segwit') {
+      if (this._addressType === bitcoin.AddressType.P2SH_SEGWIT) {
         psbtInput.redeemScript = paymentVariant.redeem.output
       }
 
@@ -141,7 +141,6 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
-  // inputs consists of [{ index, derivationPath }]
   async signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) {
     const psbt = Psbt.fromBase64(data, { network: this._network })
     for (const input of inputs) {
@@ -151,7 +150,6 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return psbt.toBase64()
   }
 
-  // inputs consists of [{ inputTxHex, index, vout, outputScript }]
   async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer, txInputIndex?: number }], addresses: string, tx: any, lockTime?: number, segwit?: boolean) {
     let keyPairs = []
     for (const address of addresses) {
@@ -165,7 +163,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       const index = inputs[i].txInputIndex ? inputs[i].txInputIndex : inputs[i].index
       let sigHash
       if (segwit) {
-        sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, BitcoinJsTransaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+        sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, BitcoinJsTransaction.SIGHASH_ALL)
       } else {
         sigHash = tx.hashForSignature(index, inputs[i].outputScript, BitcoinJsTransaction.SIGHASH_ALL)
       }

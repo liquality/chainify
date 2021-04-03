@@ -177,15 +177,6 @@ describe('Ethereum RPC provider', () => {
     })
   })
 
-  describe('isAddressUsed', () => {
-    it('should return true for a used address', async () => {
-      const isUsed = await client.chain.isAddressUsed('322d4959c911520645c0638204b42ce0689236e9')
-      expect(isUsed)
-        .to
-        .equal(true)
-    })
-  })
-
   describe('signMessage', () => {
     it('should return a signature', async () => {
       const sig = await client.wallet.signMessage('liquality', '322d4959c911520645c0638204b42ce0689236e9')

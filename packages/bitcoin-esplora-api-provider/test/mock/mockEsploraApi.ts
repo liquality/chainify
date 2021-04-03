@@ -30,7 +30,7 @@ function mockEsploraApi () {
 
   nock('https://blockstream.info:443', { 'encodedQueryParams': true })
     .get('/testnet/api/blocks/tip/height')
-    .reply(200, 1808100, [
+    .reply(200, '1808100', [
       'Server',
       'nginx',
       'Date',

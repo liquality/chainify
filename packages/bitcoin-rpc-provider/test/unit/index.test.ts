@@ -30,18 +30,6 @@ describe('Bitcoin RPC provider', () => {
     mockJsonRpc('http://localhost:18443', bitcoinRpc, 100)
   })
 
-  describe('isAddressUsed', () => {
-    it('should return false for an unused address', async () => {
-      const isUsed = await provider.isAddressUsed('n187i8H1sA5RcFPESf2sgzufirnKcxBfhg')
-      expect(isUsed).to.equal(false)
-    })
-
-    it('should return true for a used address', async () => {
-      const isUsed = await provider.isAddressUsed('mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc')
-      expect(isUsed).to.equal(true)
-    })
-  })
-
   describe('getFeePerByte', () => {
     it('should return default value 3 sat per byte', async () => {
       const fee = await provider.getFeePerByte(null)

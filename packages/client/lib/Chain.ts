@@ -93,11 +93,6 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async isAddressUsed (address: string) {
-    return this.client.getMethod('isAddressUsed')(address)
-  }
-
-  /** @inheritdoc */
   async sendTransaction (options: SendOptions) : Promise<Transaction> {
     const transaction = await this.client.getMethod('sendTransaction')(options)
     this.client.assertValidTransaction(transaction)

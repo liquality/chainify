@@ -3,21 +3,21 @@
 import chai, { expect } from 'chai'
 import Client from '../../../client/lib'
 import BitcoinEsploraApiProvider from '../../lib'
-import Networks from '../../../bitcoin-networks/lib'
+import BitcoinNetworks from '../../../bitcoin-networks/lib'
 import mockEsploraApi from '../mock/mockEsploraApi'
 chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Bitcoin Esplora Api Provider', () => {
-  let client
-  let provider
+  let client: Client
+  let provider: BitcoinEsploraApiProvider
   before(() => {
     mockEsploraApi()
   })
 
   beforeEach(() => {
     client = new Client()
-    provider = new BitcoinEsploraApiProvider('https://blockstream.info/testnet/api', Networks.bitcoin_testnet)
+    provider = new BitcoinEsploraApiProvider({ url: 'https://blockstream.info/testnet/api', network: BitcoinNetworks.bitcoin_testnet })
     client.addProvider(provider)
   })
 

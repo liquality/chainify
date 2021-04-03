@@ -219,20 +219,6 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return Math.ceil(gas * GAS_LIMIT_MULTIPLIER)
   }
 
-  async isAddressUsed (address: string) {
-    address = ensure0x(address)
-
-    if (this._usedAddressCache[address]) return true
-
-    const transactionCount = await this.rpc<ethereum.Hex>('eth_getTransactionCount', address, 'latest')
-
-    const isUsed = hexToNumber(transactionCount) > 0
-
-    if (isUsed) this._usedAddressCache[address] = true
-
-    return isUsed
-  }
-
   async getCode (address: string, block: string | number) {
     address = ensure0x(String(address))
     block = typeof (block) === 'number' ? ensure0x(padHexStart(block.toString(16))) : block
