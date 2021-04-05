@@ -21,6 +21,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/errors": "^0.9.0",
+    "@liquality/types": "^0.9.0",
     "@liquality/ethereum-erc20-swap-provider": "^0.9.0",
     "@liquality/ethereum-scraper-swap-find-provider": "^0.9.0",
     "@liquality/ethereum-utils": "^0.9.0",

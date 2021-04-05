@@ -216,7 +216,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const ledgerSigs = await app.signP2SHTransaction({
       // @ts-ignore
       inputs: ledgerInputs,
-      associatedKeySets: walletAddressDerivationPaths,
+      associatedKeysets: walletAddressDerivationPaths,
       outputScriptHex: ledgerOutputs,
       lockTime,
       segwit,

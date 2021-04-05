@@ -6,7 +6,7 @@ import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 
 import { flatten } from 'lodash'
 
-interface EsploraApiProviderOptions {
+export interface EsploraApiProviderOptions {
   url: string,
   network: BitcoinNetwork,
   // Default 1

@@ -6,8 +6,9 @@ module.exports = (endpoint, mockDataObject, times = 1) => {
     .post('/', body => !!mockDataObject[body.method])
     .times(times)
     .reply(200, (uri, requestBody) => {
-      const { method, params } = JSON.parse(requestBody)
-      const { result } = mockDataObject[method].find(req => _.isEqual(req.params, params))
+      const { method, params } = requestBody
+      const mockData = mockDataObject[method].find(req => _.isEqual(req.params, params))
+      const result = mockData ? mockData.result : undefined
       return { result }
     })
 }

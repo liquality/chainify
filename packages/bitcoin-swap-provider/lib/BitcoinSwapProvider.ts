@@ -111,7 +111,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
       network: this._network
     })
 
-    return { p2wsh, p2shSegwit, p2sh }
+    return { [bitcoin.SwapMode.P2WSH]: p2wsh, [bitcoin.SwapMode.P2SH_SEGWIT]: p2shSegwit, [bitcoin.SwapMode.P2SH]: p2sh }
   }
 
 
@@ -193,7 +193,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
       psbt.setLocktime(expiration)
     }
 
-    const isSegwit = paymentVariantName === 'p2wsh' || paymentVariantName === 'p2shSegwit'
+    const isSegwit = paymentVariantName === bitcoin.SwapMode.P2WSH || paymentVariantName === bitcoin.SwapMode.P2SH_SEGWIT
 
     const input: any = {
       hash: initiationTxHash,
@@ -241,11 +241,11 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
         finalScriptWitness = witnessStackToScriptWitness(paymentWithInput.witness)
       }
 
-      if (paymentVariantName === 'p2shSegwit') {
+      if (paymentVariantName === bitcoin.SwapMode.P2SH_SEGWIT) {
         // Adds the necessary push OP (PUSH34 (00 + witness script hash))
         const inputScript = bScript.compile([swapPaymentVariants.p2shSegwit.redeem.output])
         finalScriptSig = inputScript
-      } else if (paymentVariantName === 'p2sh') {
+      } else if (paymentVariantName === bitcoin.SwapMode.P2SH) {
         finalScriptSig = paymentWithInput.input
       }
 

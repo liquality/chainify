@@ -22,6 +22,7 @@
     "@babel/runtime": "^7.12.1",
     "@liquality/bitcoin-esplora-api-provider": "^0.9.0",
     "@liquality/node-provider": "^0.9.0",
+    "@liquality/types": "^0.9.0",
     "@liquality/utils": "^0.9.0",
     "bignumber.js": "^9.0.0",
     "lodash": "^4.17.20"
@@ -38,6 +39,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.168",
     "nock": "^10.0.6"
   }
 }

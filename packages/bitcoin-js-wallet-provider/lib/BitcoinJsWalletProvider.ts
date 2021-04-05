@@ -6,14 +6,14 @@ import { bitcoin, BigNumber } from '@liquality/types'
 import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 import * as bitcoinMessage from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
-import bip32, { BIP32Interface } from 'bip32'
+import { BIP32Interface, fromSeed } from 'bip32'
 
 type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 
 interface BitcoinJsWalletProviderOptions {
-  network: BitcoinNetwork,
-  addressType: bitcoin.AddressType,
+  network: BitcoinNetwork
   mnemonic: string
+  addressType?: bitcoin.AddressType
 }
 
 export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider as WalletProviderConstructor) {
@@ -22,19 +22,19 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
   _baseDerivationNode: BIP32Interface
 
   constructor (options: BitcoinJsWalletProviderOptions) {
-    const { network, addressType = bitcoin.AddressType.BECH32 } = options
+    const { network, mnemonic, addressType = bitcoin.AddressType.BECH32 } = options
     super({ network, addressType })
 
-    if (!options.mnemonic) throw new Error('Mnemonic should not be empty')
+    if (!mnemonic) throw new Error('Mnemonic should not be empty')
 
-    this._mnemonic = options.mnemonic
+    this._mnemonic = mnemonic
   }
 
   async seedNode () {
     if (this._seedNode) return this._seedNode
 
     const seed = await mnemonicToSeed(this._mnemonic)
-    this._seedNode = bip32.fromSeed(seed, this._network)
+    this._seedNode = fromSeed(seed, this._network)
 
     return this._seedNode
   }
