@@ -66,13 +66,20 @@ export default class NearRpcProvider extends NodeProvider {
   }
 
   async getBalance (addresses) {
-    if (!isArray(addresses)) {
-      addresses = [addresses]
-    }
-    addresses = addresses.map(addressToString)
+    try {
+      if (!isArray(addresses)) {
+        addresses = [addresses]
+      }
+      addresses = addresses.map(addressToString)
 
-    const balance = await this.getAccount(addresses[0]).getAccountBalance()
-    return new BigNumber(balance.available)
+      const balance = await this.getAccount(addresses[0]).getAccountBalance()
+      return new BigNumber(balance.available)
+    } catch (err) {
+      if (err.message && err.message.includes('does not exist while viewing')) {
+        return new BigNumber(0)
+      }
+      throw err
+    }
   }
 
   async isAddressUsed (address) {
