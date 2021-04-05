@@ -1,5 +1,6 @@
 /* eslint-env mocha */
-import chai from 'chai'
+import BigNumber from 'bignumber.js'
+import chai, { expect } from 'chai'
 
 import Client from '../../../client/lib'
 import NearRpcProvider from '../../lib'
@@ -34,6 +35,13 @@ describe('Near RPC provider', () => {
     it('should return correct balance', async () => {
       const balance = await client.chain.getBalance(['krasi'])
       console.log('balance: ', balance)
+    })
+  })
+
+  describe('getBalance', () => {
+    it('should return correct balance', async () => {
+      const balance = await client.chain.getBalance(['non-existing-account'])
+      expect(balance).to.be.bignumber.equal(new BigNumber(0))
     })
   })
 
