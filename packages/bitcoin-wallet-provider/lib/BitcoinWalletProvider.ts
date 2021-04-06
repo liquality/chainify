@@ -1,13 +1,13 @@
 import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { bitcoin, Transaction, Address, BigNumber, SendOptions } from '@liquality/types'
-import { asyncSetImmediate } from '@liquality/utils'
+import { asyncSetImmediate, addressToString } from '@liquality/utils'
 import Provider from '@liquality/provider'
 import {
   InsufficientBalanceError
 } from '@liquality/errors'
 
-import { BIP32Interface, payments, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib'
+import { BIP32Interface, payments } from 'bitcoinjs-lib'
 
 const ADDRESS_GAP = 20
 
@@ -90,7 +90,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
 
   async sendTransaction (options: SendOptions) {
     return this._sendTransaction([{
-      address: options.to,
+      address: addressToString(options.to),
       value: options.value.toNumber()
     }], options.fee)
   }
@@ -103,8 +103,8 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     return this._buildSweepTransaction(externalChangeAddress, feePerByte)
   }
 
-  async sendSweepTransaction (externalChangeAddress: string, feePerByte: BigNumber) {
-    const { hex, fee } = await this._buildSweepTransaction(externalChangeAddress, feePerByte)
+  async sendSweepTransaction (externalChangeAddress: Address | string, feePerByte: BigNumber) {
+    const { hex, fee } = await this._buildSweepTransaction(addressToString(externalChangeAddress), feePerByte)
     await this.getMethod('sendRawTransaction')(hex)
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
@@ -186,11 +186,11 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     const subPath = path.replace(this._baseDerivationPath + '/', '')
     const publicKey = baseDerivationNode.derivePath(subPath).publicKey
     const address = this.getAddressFromPublicKey(publicKey)
-    const addressObject = <Address>{
+    const addressObject = new Address({
       address,
       publicKey: publicKey.toString('hex'),
       derivationPath: path
-    }
+    })
 
     this._derivationCache[path] = addressObject
     return addressObject

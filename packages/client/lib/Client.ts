@@ -122,14 +122,14 @@ export default class Client {
       provider => isFunction((<any>provider)[method]), indexOfRequestor - 1
     )
 
+    if (provider == null) {
+      throw new UnimplementedMethodError(`Unimplemented method "${method}"`)
+    }
+
     if (isFunction((<any>provider)._checkMethodVersionSupport)) {
       if (!(<any>provider)._checkMethodVersionSupport(method, this.version)) {
         throw new UnsupportedMethodError(`Method "${method}" is not supported by version "${this.version}"`)
       }
-    }
-
-    if (provider == null) {
-      throw new UnimplementedMethodError(`Unimplemented method "${method}"`)
     }
 
     return provider
@@ -142,7 +142,7 @@ export default class Client {
    *  above the requestor in the stack.
    * @return {function} Returns method from provider instance associated with the requested method
    */
-  getMethod (method: string, requestor: any) {
+  getMethod (method: string, requestor?: any) {
     const provider = this.getProviderForMethod(method, requestor)
     return (<any>provider)[method].bind(provider)
   }

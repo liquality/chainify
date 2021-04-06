@@ -40,7 +40,7 @@ export default class BitcoinWalletApiProvider extends BitcoinWalletProvider(Wall
   }
 
   async sendTransaction (sendOptions: SendOptions) {
-    return this.request('wallet_sendTransaction', sendOptions.to, sendOptions.value, sendOptions.data, sendOptions.fee)
+    return this.request('wallet_sendTransaction', sendOptions)
   }
 
   async signPSBT (data: string, inputs: PsbtInputTarget[]) {

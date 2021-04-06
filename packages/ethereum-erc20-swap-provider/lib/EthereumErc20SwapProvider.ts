@@ -1,6 +1,7 @@
 import Provider from '@liquality/provider'
-import { padHexStart, sha256 } from '@liquality/crypto'
+import { padHexStart } from '@liquality/crypto'
 import {
+  addressToString,
   caseInsensitiveEqual,
   validateValue,
   validateSecret,
@@ -8,7 +9,7 @@ import {
   validateSecretAndHash
 } from '@liquality/utils'
 import { remove0x, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
-import { SwapProvider, SwapParams, Block, Transaction, BigNumber, ethereum } from '@liquality/types'
+import { SwapProvider, SwapParams, Block, Transaction, BigNumber, Address, ethereum } from '@liquality/types'
 import {
   PendingTxError,
   TxNotFoundError,
@@ -28,8 +29,8 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
   createSwapScript (swapParams: SwapParams) {
     this.validateSwapParams(swapParams)
 
-    const recipientAddress = remove0x(swapParams.recipientAddress)
-    const refundAddress = remove0x(swapParams.refundAddress)
+    const recipientAddress = remove0x(addressToString(swapParams.recipientAddress))
+    const refundAddress = remove0x(addressToString(swapParams.refundAddress))
     const expirationEncoded = padHexStart(swapParams.expiration.toString(16), 32)
     const tokenAddress = remove0x(this.getMethod('getContractAddress')())
 
@@ -55,12 +56,9 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
   }
 
   validateSwapParams (swapParams: SwapParams) {
-    const recipientAddress = remove0x(swapParams.recipientAddress)
-    const refundAddress = remove0x(swapParams.refundAddress)
-
     validateValue(swapParams.value)
-    validateAddress(recipientAddress)
-    validateAddress(refundAddress)
+    validateAddress(swapParams.recipientAddress)
+    validateAddress(swapParams.refundAddress)
     validateSecretHash(swapParams.secretHash)
     validateExpiration(swapParams.expiration)
   }
@@ -68,8 +66,8 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
   async initiateSwap (swapParams: SwapParams, gasPrice: BigNumber) {
     this.validateSwapParams(swapParams)
 
-    const addresses = await this.getMethod('getAddresses')()
-    const balance = await this.getMethod('getBalance')(addresses)
+    const addresses: Address[] = await this.getMethod('getAddresses')()
+    const balance = await this.getMethod('getBalance')(addresses.map(address => address.address))
 
     if (balance.isLessThan(swapParams.value)) {
       throw new InsufficientBalanceError(`${addresses[0]} doesn't have enough balance (has: ${balance}, want: ${swapParams.value})`)

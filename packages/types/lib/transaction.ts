@@ -1,5 +1,3 @@
-import BigNumber from 'bignumber.js'
-
 export interface Transaction <T = any> {
   // Transaction hash
   hash: string,

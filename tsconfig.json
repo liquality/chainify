@@ -4,6 +4,7 @@
     "declaration": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
+    "noImplicitThis": true,
     "target": "es5",
     "sourceMap": true,
     "moduleResolution": "node",
@@ -12,5 +13,5 @@
     "lib": ["es2017", "es7", "es6", "dom"],
     "baseUrl": "./packages"
   },
-  "exclude": ["node_modules", "**/*.spec.ts", "**/test/"]
+  "exclude": ["node_modules"]
 }

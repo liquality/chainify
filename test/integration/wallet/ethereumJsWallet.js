@@ -66,7 +66,7 @@ function testWallet (chain) {
 }
 
 describe('Wallet Interaction', function () {
-  this.timeout(config.timeout)
+  this.timeout(TEST_TIMEOUT)
 
   describe('Ethereum - Js', () => {
     testWallet(chains.ethereumWithJs)

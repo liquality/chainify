@@ -1,7 +1,8 @@
 import Provider from '@liquality/provider'
-import { padHexStart, sha256 } from '@liquality/crypto'
+import { padHexStart } from '@liquality/crypto'
 import { SwapProvider, SwapParams, BigNumber, Transaction, Block, ethereum } from '@liquality/types'
 import {
+  addressToString,
   caseInsensitiveEqual,
   validateValue,
   validateSecret,
@@ -17,10 +18,10 @@ import {
 
 export default class EthereumSwapProvider extends Provider implements Partial<SwapProvider> {
   createSwapScript (swapParams: SwapParams) {
-    const recipientAddress = remove0x(swapParams.recipientAddress)
-    const refundAddress = remove0x(swapParams.refundAddress)
-
     this.validateSwapParams(swapParams)
+
+    const recipientAddress = remove0x(addressToString(swapParams.recipientAddress))
+    const refundAddress = remove0x(addressToString(swapParams.refundAddress))
 
     const expirationHex = swapParams.expiration.toString(16)
     const expirationSize = 5
@@ -111,12 +112,9 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
   }
 
   validateSwapParams (swapParams: SwapParams) {
-    const recipientAddress = remove0x(swapParams.recipientAddress)
-    const refundAddress = remove0x(swapParams.refundAddress)
-
     validateValue(swapParams.value)
-    validateAddress(recipientAddress)
-    validateAddress(refundAddress)
+    validateAddress(swapParams.recipientAddress)
+    validateAddress(swapParams.refundAddress)
     validateSecretHash(swapParams.secretHash)
     validateExpiration(swapParams.expiration)
   }

@@ -1,3 +1,4 @@
+
 import BaseError from 'standard-error'
 
 import { version } from '../package.json'

@@ -2,6 +2,7 @@ import WalletProvider from '@liquality/wallet-provider'
 import EthereumNetworks, { EthereumNetwork } from '@liquality/ethereum-networks'
 import { WalletError } from '@liquality/errors'
 import { ensure0x, buildTransaction, normalizeTransactionObject, remove0x, hexToNumber } from '@liquality/ethereum-utils'
+import { addressToString } from '@liquality/utils'
 import { Address, SendOptions, ethereum } from '@liquality/types'
 import Debug from '@liquality/debug'
 
@@ -55,7 +56,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
       throw new WalletError('Wallet: No addresses available')
     }
 
-    return addresses.map((address: string) => { <Address>{ address: remove0x(address) } })
+    return addresses.map((address: string) => { new Address({ address: remove0x(address) }) })
   }
 
   async getUsedAddresses () {
@@ -90,7 +91,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
 
     const txOptions : ethereum.UnsignedTransaction = {
       from,
-      to: options.to,
+      to: addressToString(options.to),
       value: options.value,
       data: options.data,
       gasPrice: options.fee

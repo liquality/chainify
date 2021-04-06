@@ -1,6 +1,6 @@
-import { ethereum, Transaction, BigNumber } from '@liquality/types'
+import { ethereum, Transaction, BigNumber, Address } from '@liquality/types'
 import { padHexStart } from '@liquality/crypto'
-import { validateExpiration as _validateExpiration } from '@liquality/utils'
+import { addressToString, validateExpiration as _validateExpiration } from '@liquality/utils'
 import { InvalidAddressError, InvalidExpirationError } from '@liquality/errors'
 
 import eip55 from 'eip55'
@@ -93,7 +93,9 @@ function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.T
   return tx
 }
 
-function validateAddress (address: string) {
+function validateAddress (_address: Address | string) {
+  const address = remove0x(addressToString(_address))
+
   if (typeof address !== 'string') {
     throw new InvalidAddressError(`Invalid address: ${address}`)
   }

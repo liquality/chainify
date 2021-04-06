@@ -1,8 +1,9 @@
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
+import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { bitcoin, Transaction, Block, ChainProvider, SendOptions, BigNumber } from '@liquality/types'
+import { bitcoin, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types'
 
 import { flatten } from 'lodash'
 
@@ -59,7 +60,8 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return relayfee * 1e8 / 1000
   }
 
-  async getBalance (addresses: string[]) {
+  async getBalance (_addresses: (string | Address)[]) {
+    const addresses = _addresses.map(addressToString)
     const _utxos = await this.getUnspentTransactions(addresses)
     const utxos = flatten(_utxos)
 
@@ -67,12 +69,14 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
       .reduce((acc, utxo) => acc.plus(utxo.value), new BigNumber(0))
   }
 
-  async getUnspentTransactions (addresses: string[]) : Promise<bitcoin.UTXO[]> {
+  async getUnspentTransactions (_addresses: (Address | string)[]) : Promise<bitcoin.UTXO[]> {
+    const addresses = _addresses.map(addressToString)
     const utxos : bitcoin.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
     return utxos.map(utxo => ({ ...utxo, value: new BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
-  async getAddressTransactionCounts (addresses: string[]) {
+  async getAddressTransactionCounts (_addresses: (Address | string)[]) {
+    const addresses = _addresses.map(addressToString)
     const receivedAddresses : bitcoin.rpc.ReceivedByAddress[] = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
     return addresses.reduce((acc: bitcoin.AddressTxCounts, addr) => {
       const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addr)
@@ -227,7 +231,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   async sendBatchTransaction (transactions: SendOptions[]) {
     let outputs : { [index: string]: number } = {}
     for (const tx of transactions) {
-      outputs[tx.to] = new BigNumber(tx.value).dividedBy(1e8).toNumber()
+      outputs[addressToString(tx.to)] = new BigNumber(tx.value).dividedBy(1e8).toNumber()
     }
     const rawTxOutputs = await this.createRawTransaction([], outputs)
     const rawTxFunded = await this.fundRawTransaction(rawTxOutputs)

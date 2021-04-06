@@ -1,6 +1,7 @@
 import { base58, padHexStart } from '@liquality/crypto'
 import BitcoinNetworks, { BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { Transaction, Block, bitcoin as bT } from '@liquality/types'
+import { Address, Transaction, bitcoin as bT } from '@liquality/types'
+import { addressToString } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 
 import { findKey } from 'lodash'
@@ -228,7 +229,9 @@ function getPubKeyHash (address: string, network: BitcoinNetwork) {
   }
 }
 
-function validateAddress (address: string, network: BitcoinNetwork) {
+function validateAddress (_address: Address | string, network: BitcoinNetwork) {
+  const address = addressToString(_address)
+
   if (typeof address !== 'string') {
     throw new InvalidAddressError(`Invalid address: ${address}`)
   }

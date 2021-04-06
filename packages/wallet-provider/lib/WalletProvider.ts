@@ -1,9 +1,6 @@
 import Provider from '@liquality/provider'
 import { Network, WalletProvider as IWalletProvider, Address } from '@liquality/types'
-import {
-  WalletError,
-  UnimplementedMethodError
-} from '@liquality/errors'
+import { WalletError } from '@liquality/errors'
 
 import { isEqual } from 'lodash'
 

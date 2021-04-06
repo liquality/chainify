@@ -1,6 +1,7 @@
 import WalletProvider from '@liquality/wallet-provider'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { Network, Address, SendOptions, ethereum, Transaction, BigNumber } from '@liquality/types'
+import { addressToString } from '@liquality/utils'
 import { remove0x, buildTransaction, numberToHex, hexToNumber, normalizeTransactionObject } from '@liquality/ethereum-utils'
 
 import { mnemonicToSeed } from 'bip39'
@@ -52,11 +53,11 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     const address = privateToAddress(hdKey.privateKey).toString('hex')
     const publicKey = privateToPublic(hdKey.privateKey).toString('hex')
     return [
-      <Address> {
+      new Address({
         address,
         derivationPath,
         publicKey
-      }
+      })
     ]
   }
 
@@ -98,7 +99,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
 
     const txOptions : ethereum.UnsignedTransaction = {
       from,
-      to: options.to,
+      to: addressToString(options.to),
       value: options.value,
       data: options.data,
       gasPrice,
@@ -120,10 +121,10 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return normalizeTransactionObject(txWithHash)
   }
 
-  async sendSweepTransaction (address: ethereum.Address, _gasPrice: BigNumber) {
+  async sendSweepTransaction (address: Address | ethereum.Address, _gasPrice: BigNumber) {
     const addresses = await this.getAddresses()
 
-    const balance = await this.getMethod('getBalance')(addresses)
+    const balance = await this.getMethod('getBalance')(addresses.map(address => address.address))
 
     const [ gasPrice ] = await Promise.all([
       _gasPrice ? Promise.resolve(_gasPrice) : this.getMethod('getGasPrice')()

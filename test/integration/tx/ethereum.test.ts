@@ -2,33 +2,32 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { chains, fundWallet, describeExternal, connectMetaMask, deployERC20Token, clearEthMiner, getRandomAddress, mineBlock } from '../common'
+import { TEST_TIMEOUT, Chain, chains, fundWallet, describeExternal, connectMetaMask, deployERC20Token, clearEthMiner, getRandomAddress, mineBlock } from '../common'
 import { testTransaction } from './common'
-import config from '../config'
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-function testSweepTransaction (chain) {
+function testSweepTransaction (chain: Chain) {
   it('should sweep specific address', async () => {
     const addr = await getRandomAddress(chain)
 
-    await chain.client.getMethod('sendSweepTransaction')(addr)
+    await chain.client.chain.sendSweepTransaction(addr)
 
     await mineBlock(chain)
 
     const addresses = await chain.client.wallet.getAddresses()
 
-    const balAfter = await chain.client.chain.getBalance(addresses[0])
+    const balAfter = await chain.client.chain.getBalance([addresses[0]])
 
     expect('0').to.equal(balAfter.toString())
   })
 }
 
 describe('Transactions', function () {
-  this.timeout(config.timeout)
+  this.timeout(TEST_TIMEOUT)
 
   clearEthMiner(chains.ethereumWithNode)
 

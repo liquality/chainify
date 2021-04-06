@@ -179,7 +179,7 @@ function testWallet (chain) {
 }
 
 describe('Wallet Interaction', function () {
-  this.timeout(config.timeout)
+  this.timeout(TEST_TIMEOUT)
 
   describe('Bitcoin - JsWallet', () => {
     before(async function () {

@@ -1,7 +1,8 @@
 import Provider from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
+import { addressToString } from '@liquality/utils'
 import { ensure0x, hexToNumber, remove0x, numberToHex } from '@liquality/ethereum-utils'
-import { ChainProvider, SendOptions, BigNumber } from '@liquality/types'
+import { ChainProvider, SendOptions, BigNumber, Address } from '@liquality/types'
 import { InsufficientBalanceError } from '@liquality/errors'
 
 const SOL_TRANSFER_FUNCTION = '0xa9059cbb' // transfer(address,uint256)
@@ -17,7 +18,7 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
 
   generateErc20Transfer (to: string, value: BigNumber) {
     const encodedAddress = padHexStart(remove0x(to), 32)
-    const encodedValue = padHexStart(numberToHex(value), 32)
+    const encodedValue = padHexStart(remove0x(numberToHex(value)), 32)
 
     return [
       remove0x(SOL_TRANSFER_FUNCTION),
@@ -32,13 +33,13 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
       await this.getMethod('assertContractExists')(this._contractAddress)
 
       // check for erc20 balance
-      const addresses = await this.getMethod('getAddresses')()
-      const balance = await this.getBalance(addresses)
+      const addresses: Address[] = await this.getMethod('getAddresses')()
+      const balance = await this.getBalance(addresses.map(address => address.address))
       if (balance.isLessThan(options.value)) {
         throw new InsufficientBalanceError(`${addresses[0]} doesn't have enough balance (has: ${balance}, want: ${options.value})`)
       }
 
-      options.data = this.generateErc20Transfer(options.to, options.value)
+      options.data = this.generateErc20Transfer(addressToString(options.to), options.value)
       options.value = new BigNumber(0)
       options.to = ensure0x(this._contractAddress)
     }
@@ -46,10 +47,10 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
     return this.getMethod('sendTransaction')(options)
   }
 
-  async sendSweepTransaction (address: string, gasPrice: BigNumber) {
-    const addresses = await this.getMethod('getAddresses')()
+  async sendSweepTransaction (address: Address | string, gasPrice: BigNumber) {
+    const addresses: Address[] = await this.getMethod('getAddresses')()
 
-    const balance = await this.getBalance(addresses)
+    const balance = await this.getBalance(addresses.map(address => address.address))
 
     const sendOptions : SendOptions = {
       to: address,
@@ -65,10 +66,11 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
     return this._contractAddress
   }
 
-  async getBalance (addresses: string[]) {
+  async getBalance (_addresses: (Address | string)[]) {
     await this.getMethod('assertContractExists')(this._contractAddress)
 
-    addresses = addresses
+    const addresses = _addresses
+      .map(addressToString)
       .map(ensure0x)
 
     const promiseBalances = await Promise.all(

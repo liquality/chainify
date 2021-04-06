@@ -10,7 +10,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 chai.use(chaiAsPromised)
 
 describe('Secret generation', function () {
-  this.timeout(config.timeout)
+  this.timeout(TEST_TIMEOUT)
   describe('Secret is the same when generated multiple times', () => {
     it('Bitcoin Node', async () => {
       const message = 'message'

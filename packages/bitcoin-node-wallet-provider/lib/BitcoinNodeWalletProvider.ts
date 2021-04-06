@@ -134,9 +134,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
     if (!newAddress) return null
 
-    const addressInfo = await this.getAddressInfo(newAddress)
-
-    return <Address> { ...addressInfo }
+    return this.getAddressInfo(newAddress)
   }
 
   async getAddressInfo (address: string): Promise<Address> {
@@ -152,7 +150,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
       publicKey = addressInfo.pubkey
       derivationPath = addressInfo.hdkeypath
     }
-    const addressObject: Address = { address, publicKey, derivationPath }
+    const addressObject = new Address({ address, publicKey, derivationPath })
     this._addressInfoCache[address] = addressObject
     return addressObject
   }

@@ -1,6 +1,6 @@
 import { InvalidProviderResponseError } from '@liquality/errors'
-import { SendOptions, Block, Transaction, FeeDetails, ChainProvider, FeeProvider, BigNumber } from '@liquality/types'
-import { isArray, isBoolean, isNumber, isString, isObject } from 'lodash'
+import { SendOptions, Block, Transaction, FeeDetails, ChainProvider, FeeProvider, BigNumber, Address } from '@liquality/types'
+import { isBoolean, isNumber, isString, isObject } from 'lodash'
 
 export default class Chain implements ChainProvider, FeeProvider {
   client: any
@@ -82,7 +82,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getBalance (addresses: string[]) : Promise<BigNumber> {
+  async getBalance (addresses: (string | Address)[]) : Promise<BigNumber> {
     const balance = await this.client.getMethod('getBalance')(addresses)
 
     if (!BigNumber.isBigNumber(balance)) {
@@ -100,7 +100,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async sendSweepTransaction (address: string, fee: BigNumber) : Promise<Transaction> {
+  async sendSweepTransaction (address: Address | string, fee?: BigNumber) : Promise<Transaction> {
     return this.client.getMethod('sendSweepTransaction')(address, fee)
   }
 

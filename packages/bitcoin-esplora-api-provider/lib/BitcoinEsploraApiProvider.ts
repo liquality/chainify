@@ -1,7 +1,8 @@
 import NodeProvider from '@liquality/node-provider'
+import { addressToString } from '@liquality/utils'
 import { decodeRawTransaction, normalizeTransactionObject } from '@liquality/bitcoin-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
-import { ChainProvider, bitcoin, BigNumber } from '@liquality/types'
+import { ChainProvider, Address, bitcoin, BigNumber } from '@liquality/types'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 
 import { flatten } from 'lodash'
@@ -135,7 +136,8 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
     return 1
   }
 
-  async getBalance (addresses: string[]) {
+  async getBalance (_addresses: (string | Address)[]) {
+    const addresses = _addresses.map(addressToString)
     const _utxos = await this.getUnspentTransactions(addresses)
     const utxos = flatten(_utxos)
 

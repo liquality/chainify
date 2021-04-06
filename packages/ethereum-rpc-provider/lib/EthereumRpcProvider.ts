@@ -8,7 +8,7 @@ import {
   buildTransaction
 } from '@liquality/ethereum-utils'
 import { Address, Block, ethereum, SendOptions, Transaction, ChainProvider, BigNumber } from '@liquality/types'
-import { sleep } from '@liquality/utils'
+import { sleep, addressToString } from '@liquality/utils'
 import { InvalidDestinationAddressError, TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { padHexStart } from '@liquality/crypto'
 
@@ -30,7 +30,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   async getAddresses () : Promise<Address[]> {
     const addresses = await this.rpc<string[]>('eth_accounts')
 
-    return addresses.map((address: string) => <Address> { address: remove0x(address) })
+    return addresses.map((address: string) => new Address({ address: remove0x(address) }))
   }
 
   async getUnusedAddress () : Promise<Address> {
@@ -57,7 +57,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
 
     const txOptions : ethereum.UnsignedTransaction = {
       from,
-      to: options.to,
+      to: addressToString(options.to),
       value: options.value,
       data: options.data,
       gasPrice: options.fee
@@ -110,7 +110,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return this.rpc('eth_sendRawTransaction', ensure0x(hash))
   }
 
-  async signMessage (message: string, from: string) : Promise<string> {
+  async signMessage (message: string, from?: string) : Promise<string> {
     from = ensure0x(from)
     message = ensure0x(Buffer.from(message).toString('hex'))
     const sig = await this.rpc<ethereum.Hex>('eth_sign', from, message)
@@ -199,8 +199,9 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return new BigNumber(gasPrice).div(1e9) // Gwei
   }
 
-  async getBalance (addresses: string[]) {
-    addresses = addresses
+  async getBalance (_addresses: (Address | string)[]) {
+    const addresses = _addresses
+      .map(addressToString)
       .map(ensure0x)
 
     const promiseBalances = await Promise.all(addresses.map(

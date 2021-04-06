@@ -1,3 +1,4 @@
+import { BigNumber } from '../../packages/types/lib'
 import BitcoinNetworks from '../../packages/bitcoin-networks/lib'
 import EthereumNetworks from '../../packages/ethereum-networks/lib'
 
@@ -9,14 +10,14 @@ export default {
       password: 'local321'
     },
     network: BitcoinNetworks.bitcoin_regtest,
-    value: 1000000,
+    value: new BigNumber(1000000),
     mineBlocks: true
   },
   ethereum: {
     rpc: {
       host: 'http://localhost:8545'
     },
-    value: 10000000000000000,
+    value: new BigNumber(10000000000000000),
     network: {
       ...EthereumNetworks.local,
       name: 'mainnet',
@@ -37,5 +38,4 @@ export default {
   //     port: 3333
   //   }
   // },
-  timeout: 240000 // No timeout
 }

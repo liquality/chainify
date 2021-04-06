@@ -1,6 +1,7 @@
 import LedgerProvider from '@liquality/ledger-provider'
 import { Address, ethereum, SendOptions, Transaction, BigNumber } from '@liquality/types'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
+import { addressToString } from '@liquality/utils'
 import {
   ensure0x,
   remove0x,
@@ -17,9 +18,9 @@ import * as EthereumJsTx from 'ethereumjs-tx'
 export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
   _baseDerivationPath: string
 
-  constructor (network: EthereumNetwork, Transport: any) {
-    super({ App: HwAppEthereum, Transport, network, ledgerScrambleKey: 'w0w' }) // srs!
-    this._baseDerivationPath = `44'/${network.coinType}'/0'`
+  constructor (options: { network: EthereumNetwork, Transport: any }) {
+    super({ ...options, App: HwAppEthereum, ledgerScrambleKey: 'w0w' }) // srs!
+    this._baseDerivationPath = `44'/${options.network.coinType}'/0'`
   }
 
   async signMessage (message: string, from: string) {
@@ -36,11 +37,11 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     const path = this._baseDerivationPath + '/0/0'
     const address = await app.getAddress(path)
     return [
-      <Address>{
+      new Address({
         address: address.address,
         derivationPath: path,
         publicKey: address.publicKey
-      }
+      })
     ]
   }
 
@@ -96,7 +97,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
 
     const txOptions : ethereum.UnsignedTransaction = {
       from,
-      to: options.to,
+      to: addressToString(options.to),
       value: options.value,
       data: options.data,
       gasPrice,

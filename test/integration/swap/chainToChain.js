@@ -14,11 +14,11 @@ async function testSwap (chain1, chain2) {
   const secret = await chain1.client.swap.generateSecret('test')
   const secretHash = crypto.sha256(secret)
 
-  const chain1SwapParams = await getSwapParams(chain1)
-  const chain2SwapParams = await getSwapParams(chain2)
+  const chain1SwapParams = await getSwapParams(chain1, secretHash)
+  const chain2SwapParams = await getSwapParams(chain2, secretHash)
 
-  const chain1InitiationTxId = await initiateAndVerify(chain1, secretHash, chain1SwapParams)
-  const chain2InitiationTxId = await initiateAndVerify(chain2, secretHash, chain2SwapParams)
+  const chain1InitiationTxId = await initiateAndVerify(chain1, chain1SwapParams)
+  const chain2InitiationTxId = await initiateAndVerify(chain2, chain2SwapParams)
   const claimTx = await claimAndVerify(chain1, chain1InitiationTxId, secret, chain1SwapParams)
   const revealedSecret = claimTx.secret
   expect(revealedSecret).to.equal(secret)
@@ -26,7 +26,7 @@ async function testSwap (chain1, chain2) {
 }
 
 describe('Swap Chain to Chain', function () {
-  this.timeout(config.timeout)
+  this.timeout(TEST_TIMEOUT)
 
   describeExternal('Ledger to Node', function () {
     before(async () => {

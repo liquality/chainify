@@ -4,7 +4,12 @@ import {
   InvalidExpirationError
 } from '@liquality/errors'
 import { sha256 } from '@liquality/crypto'
-import { BigNumber } from '@liquality/types'
+import { BigNumber, Address } from '@liquality/types'
+
+function addressToString(address: Address | string): string {
+  if (typeof address === 'string') return address
+  else return address.address
+}
 
 function sleep (ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -86,6 +91,7 @@ function validateExpiration (expiration: number) {
 
 export {
   sleep,
+  addressToString,
   asyncSetImmediate,
   caseInsensitiveEqual,
   validateValue,

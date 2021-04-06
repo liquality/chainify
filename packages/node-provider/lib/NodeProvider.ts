@@ -1,7 +1,7 @@
 import Provider from '@liquality/provider'
 import { NodeError } from '@liquality/errors'
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { get } from 'lodash'
 
 export default class NodeProvider extends Provider {

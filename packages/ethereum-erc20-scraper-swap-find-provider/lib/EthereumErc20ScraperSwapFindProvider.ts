@@ -33,12 +33,9 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
   }
 
   validateSwapParams (swapParams: SwapParams) {
-    const recipientAddress = remove0x(swapParams.recipientAddress) // TODO: deduplicate and use .getMethod to use the implementation from SwapProvider?
-    const refundAddress = remove0x(swapParams.refundAddress)
-
     validateValue(swapParams.value)
-    validateAddress(recipientAddress)
-    validateAddress(refundAddress)
+    validateAddress(swapParams.recipientAddress)
+    validateAddress(swapParams.refundAddress)
     validateSecretHash(swapParams.secretHash)
     validateExpiration(swapParams.expiration)
   }

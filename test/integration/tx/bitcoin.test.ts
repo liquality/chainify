@@ -2,39 +2,40 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import * as bitcoin from 'bitcoinjs-lib'
+import * as bitcoinJs from 'bitcoinjs-lib'
 import { hash160 } from '../../../packages/crypto/lib'
+import { BigNumber, Transaction, bitcoin } from '../../../packages/types/lib'
 import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
-import { addressToString } from '../../../packages/utils/lib'
-import { chains, importBitcoinAddresses, getNewAddress, getRandomBitcoinAddress, mineBlock, fundWallet, fundAddress, describeExternal } from '../common'
+import { TEST_TIMEOUT, Chain, chains, importBitcoinAddresses, getNewAddress, getRandomBitcoinAddress, mineBlock, fundWallet, fundAddress, describeExternal } from '../common'
 import { testTransaction } from './common'
 import config from '../config'
+import { BitcoinNetwork } from '../../../packages/bitcoin-networks/lib'
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-function testBatchTransaction (chain) {
+function testBatchTransaction (chain: Chain) {
   it('Sent value to 2 addresses', async () => {
     const addr1 = await getRandomBitcoinAddress(chain)
     const addr2 = await getRandomBitcoinAddress(chain)
 
-    const value = config[chain.name].value
+    const value = config[chain.name as keyof typeof config].value
 
-    const bal1Before = await chain.client.chain.getBalance(addr1)
-    const bal2Before = await chain.client.chain.getBalance(addr2)
+    const bal1Before = await chain.client.chain.getBalance([addr1])
+    const bal2Before = await chain.client.chain.getBalance([addr2])
     await chain.client.chain.sendBatchTransaction([{ to: addr1, value }, { to: addr2, value }])
     await mineBlock(chain)
-    const bal1After = await chain.client.chain.getBalance(addr1)
-    const bal2After = await chain.client.chain.getBalance(addr2)
+    const bal1After = await chain.client.chain.getBalance([addr1])
+    const bal2After = await chain.client.chain.getBalance([addr2])
 
     expect(bal1Before.plus(value).toString()).to.equal(bal1After.toString())
     expect(bal2Before.plus(value).toString()).to.equal(bal2After.toString())
   })
 }
 
-function testSweepTransaction (chain) {
+function testSweepTransaction (chain: Chain) {
   it('should sweep wallet balance', async () => {
     await fundWallet(chains.bitcoinWithJs)
 
@@ -42,7 +43,7 @@ function testSweepTransaction (chain) {
     const changeAddresses = await chain.client.wallet.getAddresses(0, 20, true)
     const addrList = nonChangeAddresses.concat(changeAddresses)
 
-    const bal = parseInt(await chain.client.chain.getBalance(addrList))
+    const bal = (await chain.client.chain.getBalance(addrList)).toNumber()
 
     let sendTxChain
     if (bal === 0) {
@@ -51,35 +52,35 @@ function testSweepTransaction (chain) {
       sendTxChain = chain
     }
 
-    await sendTxChain.client.chain.sendTransaction(changeAddresses[1], 200000000)
-    await sendTxChain.client.chain.sendTransaction(changeAddresses[2], 200000000)
-    await sendTxChain.client.chain.sendTransaction(changeAddresses[3], 200000000)
-    await sendTxChain.client.chain.sendTransaction(changeAddresses[4], 200000000)
-    await sendTxChain.client.chain.sendTransaction(changeAddresses[5], 200000000)
-    await sendTxChain.client.chain.sendTransaction(changeAddresses[6], 200000000)
+    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[1], value: new BigNumber(200000000) })
+    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[2], value: new BigNumber(200000000) })
+    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[3], value: new BigNumber(200000000) })
+    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[4], value: new BigNumber(200000000) })
+    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[5], value: new BigNumber(200000000) })
+    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[6], value: new BigNumber(200000000) })
 
     const addr1 = await getRandomBitcoinAddress(chain)
 
-    await chain.client.getMethod('sendSweepTransaction')(addr1)
+    await chain.client.chain.sendSweepTransaction(addr1)
 
     const balanceAfter = await chain.client.chain.getBalance(changeAddresses)
     expect(balanceAfter.toString()).to.equal('0')
   })
 }
 
-function testSignPSBTSimple (chain) {
+function testSignPSBTSimple (chain: Chain) {
   it('should sign psbt a simple send', async () => {
-    const network = chain.network
+    const network = chain.network as BitcoinNetwork
 
     const unusedAddressOne = await getNewAddress(chain)
-    const tx1 = await fundAddress(chain, unusedAddressOne.address, 2000000)
+    const tx1: Transaction<bitcoin.Transaction> = await fundAddress(chain, unusedAddressOne.address, new BigNumber(2000000))
     const utxo1 = tx1._raw.vout.find(vout => unusedAddressOne.address === vout.scriptPubKey.addresses[0])
 
     const unusedAddressTwo = await getNewAddress(chain)
-    const tx2 = await fundAddress(chain, unusedAddressTwo.address, 1000000)
+    const tx2: Transaction<bitcoin.Transaction> = await fundAddress(chain, unusedAddressTwo.address, new BigNumber(1000000))
     const utxo2 = tx2._raw.vout.find(vout => unusedAddressTwo.address === vout.scriptPubKey.addresses[0])
 
-    const psbt = new bitcoin.Psbt({ network })
+    const psbt = new bitcoinJs.Psbt({ network })
     const txfee = BitcoinUtils.calculateFee(1, 1, 5)
 
     psbt.addInput({
@@ -103,7 +104,7 @@ function testSignPSBTSimple (chain) {
     })
 
     psbt.addOutput({
-      address: addressToString(await getNewAddress(chain)),
+      address: (await getNewAddress(chain)).address,
       value: 3000000 - txfee
     })
 
@@ -111,7 +112,7 @@ function testSignPSBTSimple (chain) {
       { index: 0, derivationPath: unusedAddressOne.derivationPath },
       { index: 1, derivationPath: unusedAddressTwo.derivationPath }
     ])
-    const signedPSBT = bitcoin.Psbt.fromBase64(signedPSBTHex, { network })
+    const signedPSBT = bitcoinJs.Psbt.fromBase64(signedPSBTHex, { network })
     signedPSBT.finalizeAllInputs()
 
     const hex = signedPSBT.extractTransaction().toHex()
@@ -120,21 +121,21 @@ function testSignPSBTSimple (chain) {
 
     await mineBlock(chain)
 
-    const payment3 = await chain.client.getMethod('getTransactionByHash')(payment3TxHash)
+    const payment3: Transaction<bitcoin.Transaction> = await chain.client.chain.getTransactionByHash(payment3TxHash)
 
     expect(payment3._raw.vin.length).to.equal(2)
     expect(payment3._raw.vout.length).to.equal(1)
   })
 }
 
-function testSignPSBTScript (chain) {
+function testSignPSBTScript (chain: Chain) {
   it('should send p2sh and sign PSBT to redeem', async () => {
     const network = chain.network
-    const value = config[chain.name].value
-    const OPS = bitcoin.script.OPS
+    const value = config[chain.name as keyof typeof config].value
+    const OPS = bitcoinJs.script.OPS
 
     const { address: unusedAddressOne, derivationPath: unusedAddressOneDerivationPath } = await getNewAddress(chain)
-    await chain.client.chain.sendTransaction(unusedAddressOne, value)
+    await chain.client.chain.sendTransaction({ to: unusedAddressOne, value })
     await mineBlock(chain)
 
     const { address: unusedAddressTwo } = await getNewAddress(chain)
@@ -147,7 +148,7 @@ function testSignPSBTScript (chain) {
       addresses.push(address)
     }
 
-    const multisigOutput = bitcoin.script.compile([
+    const multisigOutput = bitcoinJs.script.compile([
       OPS.OP_DUP,
       OPS.OP_HASH160,
       Buffer.from(hash160(addresses[0].publicKey), 'hex'),
@@ -155,46 +156,46 @@ function testSignPSBTScript (chain) {
       OPS.OP_CHECKSIG
     ])
 
-    const paymentVariant = bitcoin.payments.p2wsh({ redeem: { output: multisigOutput, network }, network })
+    const paymentVariant = bitcoinJs.payments.p2wsh({ redeem: { output: multisigOutput, network: network as BitcoinNetwork }, network: network as BitcoinNetwork })
 
     const address = paymentVariant.address
 
-    const initiationTx = await chain.client.chain.sendTransaction(address, value)
+    const initiationTx: Transaction<bitcoin.Transaction> = await chain.client.chain.sendTransaction({ to: address, value })
 
     await mineBlock(chain)
 
-    const multiOne = {}
+    let multiVout: bitcoin.Output
 
     for (const voutIndex in initiationTx._raw.vout) {
       const vout = initiationTx._raw.vout[voutIndex]
       const paymentVariantEntryOne = (paymentVariant.output.toString('hex') === vout.scriptPubKey.hex)
-      if (paymentVariantEntryOne) multiOne.multiVout = vout
+      if (paymentVariantEntryOne) multiVout = vout
     }
 
-    const psbt = new bitcoin.Psbt({ network })
+    const psbt = new bitcoinJs.Psbt({ network: network as BitcoinNetwork })
     const txfee = BitcoinUtils.calculateFee(3, 3, 9)
 
     const input = {
       hash: initiationTx.hash,
-      index: multiOne.multiVout.n,
+      index: multiVout.n,
       sequence: 0,
       witnessUtxo: {
         script: paymentVariant.output,
-        value
+        value: value.toNumber()
       },
       witnessScript: paymentVariant.redeem.output
     }
 
     const output = {
-      address: addressToString(unusedAddressTwo),
-      value: value - txfee
+      address: unusedAddressTwo,
+      value: value.toNumber() - txfee
     }
 
     psbt.addInput(input)
     psbt.addOutput(output)
 
     const signedPSBTHex = await chain.client.getMethod('signPSBT')(psbt.toBase64(), [{ index: 0, derivationPath: unusedAddressOneDerivationPath }])
-    const signedPSBT = bitcoin.Psbt.fromBase64(signedPSBTHex, { network })
+    const signedPSBT = bitcoinJs.Psbt.fromBase64(signedPSBTHex, { network: network as BitcoinNetwork })
     signedPSBT.finalizeInput(0)
 
     const hex = signedPSBT.extractTransaction().toHex()
@@ -206,22 +207,22 @@ function testSignPSBTScript (chain) {
     const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
     const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
 
-    const claimVouts = claimTx._raw.vout
-    const claimVins = claimTx._raw.vin
+    const claimVouts = claimTx.vout
+    const claimVins = claimTx.vin
 
     expect(claimVins.length).to.equal(1)
     expect(claimVouts.length).to.equal(1)
   })
 }
 
-function testSignBatchP2SHTransaction (chain) {
+function testSignBatchP2SHTransaction (chain: Chain) {
   it('Should redeem two P2SH\'s', async () => {
     const network = chain.network
-    const value = config[chain.name].value
-    const OPS = bitcoin.script.OPS
+    const value = config[chain.name as keyof typeof config].value
+    const OPS = bitcoinJs.script.OPS
 
     const { address: unusedAddressOne } = await getNewAddress(chain)
-    await chain.client.chain.sendTransaction(unusedAddressOne, value)
+    await chain.client.chain.sendTransaction({ to: unusedAddressOne, value })
     await mineBlock(chain)
 
     const { address: unusedAddressTwo } = await getNewAddress(chain)
@@ -234,7 +235,7 @@ function testSignBatchP2SHTransaction (chain) {
       addresses.push(address)
     }
 
-    const multisigOutputOne = bitcoin.script.compile([
+    const multisigOutputOne = bitcoinJs.script.compile([
       OPS.OP_2,
       Buffer.from(addresses[0].publicKey, 'hex'),
       Buffer.from(addresses[1].publicKey, 'hex'),
@@ -242,7 +243,7 @@ function testSignBatchP2SHTransaction (chain) {
       OPS.OP_CHECKMULTISIG
     ])
 
-    const multisigOutputTwo = bitcoin.script.compile([
+    const multisigOutputTwo = bitcoinJs.script.compile([
       OPS.OP_2,
       Buffer.from(addresses[1].publicKey, 'hex'),
       Buffer.from(addresses[0].publicKey, 'hex'),
@@ -250,8 +251,8 @@ function testSignBatchP2SHTransaction (chain) {
       OPS.OP_CHECKMULTISIG
     ])
 
-    const paymentVariantOne = bitcoin.payments.p2wsh({ redeem: { output: multisigOutputOne, network }, network })
-    const paymentVariantTwo = bitcoin.payments.p2wsh({ redeem: { output: multisigOutputTwo, network }, network })
+    const paymentVariantOne = bitcoinJs.payments.p2wsh({ redeem: { output: multisigOutputOne, network: network as BitcoinNetwork }, network: network as BitcoinNetwork })
+    const paymentVariantTwo = bitcoinJs.payments.p2wsh({ redeem: { output: multisigOutputTwo, network: network as BitcoinNetwork }, network: network as BitcoinNetwork })
 
     const addressOne = paymentVariantOne.address
     const addressTwo = paymentVariantTwo.address
@@ -259,8 +260,8 @@ function testSignBatchP2SHTransaction (chain) {
     const initiationTx = await chain.client.chain.sendBatchTransaction([{ to: addressOne, value }, { to: addressTwo, value }])
     await mineBlock(chain)
 
-    const multiOne = {}
-    const multiTwo = {}
+    const multiOne: any = {}
+    const multiTwo: any = {}
 
     for (const voutIndex in initiationTx._raw.vout) {
       const vout = initiationTx._raw.vout[voutIndex]
@@ -270,15 +271,15 @@ function testSignBatchP2SHTransaction (chain) {
       if (paymentVariantEntryTwo) multiTwo.multiVout = vout
     }
 
-    const txb = new bitcoin.TransactionBuilder(network)
+    const txb = new bitcoinJs.TransactionBuilder(network as BitcoinNetwork)
     const txfee = BitcoinUtils.calculateFee(3, 3, 9)
 
-    multiOne.multiVout.vSat = value
-    multiTwo.multiVout.vSat = value
+    multiOne.multiVout.vSat = value.toNumber()
+    multiTwo.multiVout.vSat = value.toNumber()
 
     txb.addInput(initiationTx.hash, multiOne.multiVout.n, 0, paymentVariantOne.output)
     txb.addInput(initiationTx.hash, multiTwo.multiVout.n, 0, paymentVariantTwo.output)
-    txb.addOutput(addressToString(unusedAddressTwo), (value * 2) - txfee)
+    txb.addOutput(unusedAddressTwo, (value.toNumber() * 2) - txfee)
 
     const tx = txb.buildIncomplete()
 
@@ -304,13 +305,13 @@ function testSignBatchP2SHTransaction (chain) {
       true
     )
 
-    const multiOneInput = bitcoin.script.compile([
+    const multiOneInput = bitcoinJs.script.compile([
       OPS.OP_0,
       signaturesOne[0],
       signaturesTwo[0]
     ])
 
-    const multiTwoInput = bitcoin.script.compile([
+    const multiTwoInput = bitcoinJs.script.compile([
       OPS.OP_0,
       signaturesTwo[1],
       signaturesOne[1]
@@ -319,8 +320,8 @@ function testSignBatchP2SHTransaction (chain) {
     multiOne.paymentParams = { redeem: { output: multisigOutputOne, input: multiOneInput, network }, network }
     multiTwo.paymentParams = { redeem: { output: multisigOutputTwo, input: multiTwoInput, network }, network }
 
-    multiOne.paymentWithInput = bitcoin.payments.p2wsh(multiOne.paymentParams)
-    multiTwo.paymentWithInput = bitcoin.payments.p2wsh(multiTwo.paymentParams)
+    multiOne.paymentWithInput = bitcoinJs.payments.p2wsh(multiOne.paymentParams)
+    multiTwo.paymentWithInput = bitcoinJs.payments.p2wsh(multiTwo.paymentParams)
 
     tx.setWitness(0, multiOne.paymentWithInput.witness)
     tx.setWitness(1, multiTwo.paymentWithInput.witness)
@@ -332,8 +333,8 @@ function testSignBatchP2SHTransaction (chain) {
     const claimTxRaw = await chain.client.getMethod('getRawTransactionByHash')(claimTxHash)
     const claimTx = await chain.client.getMethod('decodeRawTransaction')(claimTxRaw)
 
-    const claimVouts = claimTx._raw.vout
-    const claimVins = claimTx._raw.vin
+    const claimVouts = claimTx.vout
+    const claimVins = claimTx.vin
 
     expect(claimVins.length).to.equal(2)
     expect(claimVouts.length).to.equal(1)
@@ -341,7 +342,7 @@ function testSignBatchP2SHTransaction (chain) {
 }
 
 describe('Transactions', function () {
-  this.timeout(config.timeout)
+  this.timeout(TEST_TIMEOUT)
 
   describeExternal('Bitcoin - Ledger', () => {
     before(async function () {

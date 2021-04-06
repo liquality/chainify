@@ -9,6 +9,7 @@ import {
   validateAddress
 } from '@liquality/bitcoin-utils'
 import {
+  addressToString,
   validateValue,
   validateSecret,
   validateSecretHash,
@@ -51,8 +52,8 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     this.validateSwapParams(swapParams)
 
     const secretHashBuff = Buffer.from(swapParams.secretHash, 'hex')
-    const recipientPubKeyHash = getPubKeyHash(swapParams.recipientAddress, this._network)
-    const refundPubKeyHash = getPubKeyHash(swapParams.refundAddress, this._network)
+    const recipientPubKeyHash = getPubKeyHash(addressToString(swapParams.recipientAddress), this._network)
+    const refundPubKeyHash = getPubKeyHash(addressToString(swapParams.refundAddress), this._network)
     const OPS = bScript.OPS
 
     const script = bScript.compile([
@@ -150,7 +151,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
   async  _redeemSwap (swapParams: SwapParams, initiationTxHash: string, isClaim: boolean, secret: string, feePerByte: BigNumber) {
     const address = isClaim ? swapParams.recipientAddress : swapParams.refundAddress
     const swapOutput = this.getSwapOutput(swapParams)
-    return this._redeemSwapOutput(initiationTxHash, swapParams.value, address, swapOutput, swapParams.expiration, isClaim, secret, feePerByte)
+    return this._redeemSwapOutput(initiationTxHash, swapParams.value, addressToString(address), swapOutput, swapParams.expiration, isClaim, secret, feePerByte)
   }
 
   async _redeemSwapOutput (initiationTxHash: string, value: BigNumber, address: string, swapOutput: Buffer, expiration: number, isClaim: boolean, secret: string, _feePerByte: BigNumber) {

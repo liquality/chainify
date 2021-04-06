@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js'
 import { Block } from './block';
 import { Transaction } from './transaction';
+import { Address } from './address'
 
 export interface SendOptions {
-  to: string
+  to: Address | string
   value: BigNumber
   data?: string
   fee?: BigNumber
@@ -65,13 +66,13 @@ export interface ChainProvider {
 
   /**
    * Get the balance of an account given its addresses.
-   * @param {string[]} addresses - A list of addresses.
+   * @param {(string | Address)[]} addresses - A list of addresses.
    * @return {Promise<BigNumber, InvalidProviderResponseError>} If addresses is given,
    *  returns the cumulative balance of the given addresses. Otherwise returns the balance
    *  of the addresses that the signing provider controls.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getBalance (addresses: string[]) : Promise<BigNumber>
+  getBalance (addresses: (Address | string)[]) : Promise<BigNumber>
 
   /**
    * Create, sign & broadcast a transaction.
@@ -89,7 +90,7 @@ export interface ChainProvider {
    * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  sendSweepTransaction (address: string, fee: BigNumber) : Promise<Transaction>
+  sendSweepTransaction (address: Address | string, fee?: BigNumber) : Promise<Transaction>
 
   /**
    * Update the fee of a transaction.

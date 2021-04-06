@@ -18,9 +18,9 @@ import { address, Psbt, PsbtTxInput, Transaction as BitcoinJsTransaction, script
 type WalletProviderConstructor<T = LedgerProvider<HwAppBitcoin>> = new (...args: any[]) => T
 
 interface BitcoinLedgerProviderOptions {
-  network: BitcoinNetwork,
-  addressType: bitcoin.AddressType,
+  network: BitcoinNetwork
   Transport: any
+  addressType?: bitcoin.AddressType
 }
 
 export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerProvider as WalletProviderConstructor) {

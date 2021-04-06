@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { Transaction } from "./transaction"
+import { Address } from './address'
 
 export interface SwapParams {
   /**
@@ -9,11 +10,11 @@ export interface SwapParams {
   /**
    * Recepient address of the swap
    */
-  recipientAddress: string,
+  recipientAddress: Address | string,
   /**
    * Refund address of the swap
    */
-  refundAddress: string,
+  refundAddress: Address | string,
   /**
    * Secret Hash
    */
@@ -65,7 +66,6 @@ export interface SwapProvider {
   /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
-   * @param {!string} address - can pass address for async claim and refunds to get deterministic secret
    * @return {Promise<string>} Resolves with a 32 byte secret
    */
   generateSecret (message: string) : Promise<string>

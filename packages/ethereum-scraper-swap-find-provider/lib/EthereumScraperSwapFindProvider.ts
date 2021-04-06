@@ -1,13 +1,12 @@
 import NodeProvider from '@liquality/node-provider'
-import { hexToNumber,
-  remove0x,
+import {
   numberToHex,
   normalizeTransactionObject,
   validateAddress,
   validateExpiration
 } from '@liquality/ethereum-utils'
 import {
-  caseInsensitiveEqual,
+  addressToString,
   validateValue,
   validateSecretHash,
   validateSecretAndHash
@@ -122,18 +121,15 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     this.validateSwapParams(swapParams)
 
     return this.findAddressTransaction(
-      swapParams.refundAddress,
+      addressToString(swapParams.refundAddress),
       tx => this.getMethod('doesTransactionMatchInitiation')(swapParams, tx)
     )
   }
 
   validateSwapParams (swapParams: SwapParams) {
-    const recipientAddress = remove0x(swapParams.recipientAddress)
-    const refundAddress = remove0x(swapParams.refundAddress)
-
     validateValue(swapParams.value)
-    validateAddress(recipientAddress)
-    validateAddress(refundAddress)
+    validateAddress(swapParams.recipientAddress)
+    validateAddress(swapParams.refundAddress)
     validateSecretHash(swapParams.secretHash)
     validateExpiration(swapParams.expiration)
   }
