@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "webpack --config ../../webpack/webpack.typescript.config.js"
+    "build": "webpack --config ../../webpack/webpack.config.js"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
@@ -33,5 +33,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }

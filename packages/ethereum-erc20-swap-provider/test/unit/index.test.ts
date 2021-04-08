@@ -10,6 +10,7 @@ describe('Ethereum ERC20 Swap provider', () => {
 
   beforeEach(() => {
     provider = new EthereumErc20SwapProvider()
+    // @ts-ignore
     provider.setClient({
       getMethod (name: string) {
         if (name === 'getContractAddress') { return () => '89d24A6b4CcB1B6fAA2625fE562bDD9a23260359' } else { throw new Error('method not mocked') }

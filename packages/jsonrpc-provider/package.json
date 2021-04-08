@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "node fixBigNumberImport.js && webpack --config ../../webpack/webpack.typescript.config.js"
+    "build": "node fixBigNumberImport.js && webpack --config ../../webpack/webpack.config.js"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",

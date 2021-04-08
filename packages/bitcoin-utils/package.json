@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "webpack --config ../../webpack/webpack.typescript.config.js"
+    "build": "webpack --config ../../webpack/webpack.config.js"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
@@ -42,10 +42,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false,
   "devDependencies": {
     "@types/bitcoinjs-lib": "^5.0.0",
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.31"
-  }
+  },
+  "sideEffects": false
 }

@@ -4,7 +4,7 @@ import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { bitcoin, BigNumber } from '@liquality/types'
 
 import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
-import * as bitcoinMessage from 'bitcoinjs-message'
+import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
 
@@ -57,7 +57,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
   async signMessage (message: string, from: string) {
     const address = await this.getWalletAddress(from)
     const keyPair = await this.keyPair(address.derivationPath)
-    const signature = bitcoinMessage.sign(message, keyPair.privateKey, keyPair.compressed)
+    const signature = await signBitcoinMessage(message, keyPair.privateKey, keyPair.compressed)
     return signature.toString('hex')
   }
 

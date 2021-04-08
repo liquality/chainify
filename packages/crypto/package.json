@@ -14,7 +14,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "webpack --config ../../webpack/webpack.typescript.config.js",
+    "build": "webpack --config ../../webpack/webpack.config.js",
     "test": "TS_NODE_FILES=true mocha --require ts-node/register test/**/*.test.ts"
   },
   "author": "Liquality <info@liquality.io>",
@@ -36,9 +36,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false,
   "devDependencies": {
     "@types/bech32": "^1.1.2",
     "@types/bs58": "^4.0.1"
-  }
+  },
+  "sideEffects": false
 }
