@@ -1,26 +1,28 @@
 
 import BaseError from 'standard-error'
 
-import { version } from '../package.json'
+function createError (name: string) {
+  const Error = class extends BaseError{}
+  Error.prototype.name = name
+  return Error
+}
 
-export class StandardError extends BaseError {}
-export class ProviderNotFoundError extends BaseError {}
-export class InvalidProviderError extends BaseError {}
-export class DuplicateProviderError extends BaseError {}
-export class NoProviderError extends BaseError {}
-export class UnsupportedMethodError extends BaseError {}
-export class UnimplementedMethodError extends BaseError {}
-export class InvalidProviderResponseError extends BaseError {}
-export class PendingTxError extends BaseError {}
-export class TxNotFoundError extends BaseError {}
-export class TxFailedError extends BaseError {}
-export class BlockNotFoundError extends BaseError {}
-export class InvalidDestinationAddressError extends BaseError {}
-export class WalletError extends BaseError {}
-export class NodeError extends BaseError {}
-export class InvalidSecretError extends BaseError {}
-export class InvalidAddressError extends BaseError {}
-export class InvalidExpirationError extends BaseError {}
-export class InsufficientBalanceError extends BaseError {}
-
-export { version }
+export const StandardError = createError('StandardError')
+export const ProviderNotFoundError = createError('ProviderNotFoundError')
+export const InvalidProviderError = createError('InvalidProviderError')
+export const DuplicateProviderError = createError('DuplicateProviderError')
+export const NoProviderError = createError('NoProviderError')
+export const UnsupportedMethodError = createError('UnsupportedMethodError')
+export const UnimplementedMethodError = createError('UnimplementedMethodError')
+export const InvalidProviderResponseError = createError('InvalidProviderResponseError')
+export const PendingTxError = createError('PendingTxError')
+export const TxNotFoundError = createError('TxNotFoundError')
+export const TxFailedError = createError('TxFailedError')
+export const BlockNotFoundError = createError('BlockNotFoundError')
+export const InvalidDestinationAddressError = createError('InvalidDestinationAddressError')
+export const WalletError = createError('WalletError')
+export const NodeError = createError('NodeError')
+export const InvalidSecretError = createError('InvalidSecretError')
+export const InvalidAddressError = createError('InvalidAddressError')
+export const InvalidExpirationError = createError('InvalidExpirationError')
+export const InsufficientBalanceError = createError('InsufficientBalanceError')

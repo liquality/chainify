@@ -5,8 +5,6 @@ import { InvalidAddressError, InvalidExpirationError } from '@liquality/errors'
 
 import eip55 from 'eip55'
 
-import { version } from '../package.json'
-
 const GWEI = 1e9
 
 /**
@@ -135,6 +133,5 @@ export {
   ensureBlockFormat,
   buildTransaction,
   validateAddress,
-  validateExpiration,
-  version
+  validateExpiration
 }

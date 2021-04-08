@@ -2,8 +2,6 @@ import cryptoHash from 'crypto-hashing'
 import base58 from 'bs58'
 import bech32 from 'bech32'
 
-import { version } from '../package.json'
-
 function isHex (hex: string) {
   if (!hex.match(/([0-9]|[a-f])/gim)) return false
 
@@ -101,8 +99,5 @@ export {
   hash160,
   ensureBuffer,
   padHexStart,
-
   isHex,
-
-  version
 }

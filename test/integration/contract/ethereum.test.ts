@@ -11,7 +11,6 @@ import { SwapParams, BigNumber } from '../../../packages/types/lib'
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
-chai.use(require('chai-bignumber')())
 
 const CLAIM_TOPIC = keccak256(Buffer.from('Claim(bytes32)', 'utf-8')).toString('hex')
 const REFUND_TOPIC = keccak256(Buffer.from('Refund()', 'utf-8')).toString('hex')

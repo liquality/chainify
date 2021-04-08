@@ -10,7 +10,6 @@ import BitcoinNetworks from '../../../bitcoin-networks/lib'
 const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
 const bitcoinRpc = require('../../../../test/mock/bitcoin/rpc')
 
-chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 const MINUTE = 60

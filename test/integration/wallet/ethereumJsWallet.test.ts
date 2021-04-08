@@ -8,7 +8,6 @@ import config from '../config'
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
-chai.use(require('chai-bignumber')())
 
 function testWallet (chain: Chain) {
   describe('getAddresses', () => {

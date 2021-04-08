@@ -14,7 +14,6 @@ import { BitcoinNetwork } from '../../../packages/bitcoin-networks/lib'
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
-chai.use(require('chai-bignumber')())
 
 function testBatchTransaction (chain: Chain) {
   it('Sent value to 2 addresses', async () => {

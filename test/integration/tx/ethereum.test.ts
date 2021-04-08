@@ -8,7 +8,6 @@ import { testTransaction } from './common'
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
-chai.use(require('chai-bignumber')())
 
 function testSweepTransaction (chain: Chain) {
   it('should sweep specific address', async () => {

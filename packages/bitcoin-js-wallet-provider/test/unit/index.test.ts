@@ -7,7 +7,7 @@ import BitcoinNetworks from '../../../bitcoin-networks/lib'
 import { Address } from '../../../types/lib'
 import BitcoinJsWalletProvider from '../../lib'
 
-const { expect } = require('chai').use(require('chai-as-promised')).use(require('chai-bignumber')())
+const { expect } = require('chai').use(require('chai-as-promised'))
 import chai from 'chai'
 chai.config.truncateThreshold = 0
 

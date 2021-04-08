@@ -9,7 +9,6 @@ import EthereumRpcFeeProvider from '../../lib'
 const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
 const ethereumRpc = require('../../../../test/mock/ethereum/rpc')
 
-chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Ethereum RPC Fee provider', () => {

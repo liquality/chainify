@@ -4,7 +4,7 @@ import { mockApi, mockApiFeesTooHigh } from './mock'
 import Client from '../../../client/lib'
 import EthereumGasNowFeeProvider from '../../lib'
 
-const { expect } = require('chai').use(require('chai-as-promised')).use(require('chai-bignumber')())
+const { expect } = require('chai').use(require('chai-as-promised'))
 import chai from 'chai'
 chai.config.truncateThreshold = 0
 

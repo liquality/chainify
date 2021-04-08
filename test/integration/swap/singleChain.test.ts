@@ -11,7 +11,6 @@ import { Transaction, BigNumber } from '../../../packages/types/lib'
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
-chai.use(require('chai-bignumber')())
 
 const mockSecret = _.repeat('ff', 32)
 
@@ -31,8 +30,7 @@ function testSwap (chain: Chain) {
     let claimTx: Transaction
     await expectBalance(chain, swapParams.recipientAddress,
       async () => { claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
-      // @ts-ignore
-      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
+      (before, after) => expect(after.gt(before)).to.be.true)
     const revealedSecret = claimTx.secret
     expect(revealedSecret).to.equal(secret)
   })
@@ -76,8 +74,7 @@ function testSwap (chain: Chain) {
         await mineUntilTimestamp(chain, swapParams.expiration)
         await refundAndVerify(chain, initiationTxId, swapParams)
       },
-      // @ts-ignore
-      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
+      (before, after) => expect(after.gt(before)).to.be.true)
   })
 
   it('Refund fails after claim', async () => {
@@ -87,21 +84,18 @@ function testSwap (chain: Chain) {
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await expectBalance(chain, swapParams.recipientAddress,
       async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
-      // @ts-ignore
-      (before, after) => expect(after).to.be.bignumber.greaterThan(before))
+      (before, after) => expect(after.gt(before)).to.be.true)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
         try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) {} // Refund failing is ok
       },
-      // @ts-ignore
-      (before, after) => expect(after).to.be.bignumber.equal(before))
+      (before, after) => expect(after.eq(before)).to.be.true)
     await mineUntilTimestamp(chain, swapParams.expiration)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
         try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) {} // Refund failing is ok
       },
-      // @ts-ignore
-      (before, after) => expect(after).to.be.bignumber.equal(before))
+      (before, after) => expect(after.eq(before)).to.be.true)
   })
 
   it('Refund available after expiration', async () => {
@@ -125,8 +119,7 @@ function testEthereumBalance (chain: Chain) {
       async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value)
-        // @ts-ignore
-        expect(after.toString()).to.be.bignumber.equal(expectedBalance)
+        expect(after.eq(expectedBalance)).to.be.true
       })
   })
 
@@ -140,8 +133,7 @@ function testEthereumBalance (chain: Chain) {
       async () => refundAndVerify(chain, initiationTxId, swapParams),
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value)
-        // @ts-ignore
-        expect(after).to.be.bignumber.equal(expectedBalance)
+        expect(after.eq(expectedBalance)).to.be.true
       })
   })
 }
@@ -156,8 +148,7 @@ function testBitcoinBalance (chain: Chain) {
       async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value).minus(new BigNumber(fee))
-        // @ts-ignore
-        expect(after).to.be.bignumber.equal(expectedBalance)
+        expect(after.eq(expectedBalance)).to.be.true
       })
   })
 
@@ -172,8 +163,7 @@ function testBitcoinBalance (chain: Chain) {
       async () => refundAndVerify(chain, initiationTxId, swapParams),
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value).minus(new BigNumber(fee))
-        // @ts-ignore
-        expect(after).to.be.bignumber.equal(expectedBalance)
+        expect(after.eq(expectedBalance)).to.be.true
       })
   })
 }

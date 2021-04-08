@@ -5,7 +5,6 @@ import Client from '../../../client/lib'
 import BitcoinEsploraApiProvider from '../../lib'
 import BitcoinNetworks from '../../../bitcoin-networks/lib'
 import mockEsploraApi from '../mock/mockEsploraApi'
-chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Bitcoin Esplora Api Provider', () => {

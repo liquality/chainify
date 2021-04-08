@@ -5,7 +5,6 @@ import { chains, Chain, TEST_TIMEOUT } from '../common'
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
-chai.use(require('chai-bignumber')())
 
 function testGetBlock (chain: Chain) {
   it('Should validate block correct and return block height as number', async () => {

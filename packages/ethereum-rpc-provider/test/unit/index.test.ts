@@ -9,7 +9,6 @@ import EthereumRpcProvider from '../../lib'
 const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
 const ethereumRpc = require('../../../../test/mock/ethereum/rpc')
 
-chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 describe('Ethereum RPC provider', () => {
@@ -56,9 +55,7 @@ describe('Ethereum RPC provider', () => {
         value: new BigNumber(1000)
       })
       expect(tx.hash).to.match(/^[A-Fa-f0-9]+$/)
-      // @ts-ignore
-      expect(tx.value).to.be.bignumber
-      .equal(1000)
+      expect(tx.value).to.equal(1000)
     })
 
     it('returned tx object should have input field', async () => {
@@ -171,9 +168,7 @@ describe('Ethereum RPC provider', () => {
   describe('getBalance', () => {
     it('should return correct balance', async () => {
       const balance = await client.chain.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ])
-      expect(balance) // @ts-ignore
-        .to.be.bignumber
-        .equal(new BigNumber(99995379999999890000))
+      expect(balance.eq(99995379999999890000)).to.be.true
     })
   })
 

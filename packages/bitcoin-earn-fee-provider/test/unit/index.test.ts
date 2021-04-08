@@ -6,7 +6,6 @@ import { mockApi } from './mock'
 import Client from '../../../client/lib'
 import BitcoinEarnFeeProvider from '../../lib'
 
-chai.use(require('chai-bignumber')())
 chai.config.truncateThreshold = 0
 
 const MINUTE = 60

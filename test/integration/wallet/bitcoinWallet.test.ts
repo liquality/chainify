@@ -7,7 +7,6 @@ import { TEST_TIMEOUT, Chain, chains, importBitcoinAddresses, fundAddress, descr
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 'TEST_TIMEOUT'
 
 chai.use(chaiAsPromised)
-chai.use(require('chai-bignumber')())
 
 function testWallet (chain: Chain) {
   describe('getAddresses', () => {
