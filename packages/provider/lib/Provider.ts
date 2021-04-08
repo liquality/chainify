@@ -1,11 +1,12 @@
+import { IClient } from '@liquality/types'
 
 export default abstract class Provider {
-  client: any
+  client: IClient
   /**
    * Set client to a provider instance.
    * @param {!ChainAbstractionLayer} client - The ChainAbstractionLayer instance
    */ 
-  setClient (client: any) {
+  setClient (client: IClient) {
     this.client = client
   }
 

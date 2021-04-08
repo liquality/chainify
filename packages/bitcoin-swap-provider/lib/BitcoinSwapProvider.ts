@@ -121,7 +121,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
 
     const swapOutput = this.getSwapOutput(swapParams)
     const address = this.getSwapPaymentVariants(swapOutput)[this._mode].address
-    return this.getMethod('sendTransaction')({
+    return this.client.chain.sendTransaction({
       to: address,
       value: swapParams.value,
       fee: feePerByte

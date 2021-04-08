@@ -61,6 +61,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
           const { name, ...errorNoName } = e
           ctx._transport = null
           ctx._appInstance = null
+          console.log('error', func)
           throw new WalletError(e.toString(), errorNoName)
         }
       }

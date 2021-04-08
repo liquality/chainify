@@ -57,7 +57,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
 
     const txOptions : ethereum.UnsignedTransaction = {
       from,
-      to: addressToString(options.to),
+      to: options.to ? addressToString(options.to) : options.to as string,
       value: options.value,
       data: options.data,
       gasPrice: options.fee

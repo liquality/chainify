@@ -124,7 +124,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
 
   async _buildSweepTransaction (externalChangeAddress: string, feePerByte: BigNumber) {
     let _feePerByte = feePerByte || null
-    if (!_feePerByte) _feePerByte = await this.getMethod('getFeePerByte')()
+    if (!_feePerByte) _feePerByte = new BigNumber(await this.getMethod('getFeePerByte')())
 
     const { inputs, outputs, change } = await this.getInputsForAmount([], _feePerByte, [], 100, true)
 

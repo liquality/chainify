@@ -2,15 +2,15 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { chains } from '../common'
+import { chains, Chain, TEST_TIMEOUT } from '../common'
 import config from '../config'
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-function testWallet (chain) {
+function testWallet (chain: Chain) {
   describe('getAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
       const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`

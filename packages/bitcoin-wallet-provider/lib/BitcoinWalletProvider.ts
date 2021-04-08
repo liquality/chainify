@@ -1,6 +1,6 @@
 import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { bitcoin, Transaction, Address, BigNumber, SendOptions } from '@liquality/types'
+import { bitcoin, Transaction, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
 import Provider from '@liquality/provider'
 import {
@@ -32,7 +32,7 @@ interface BitcoinWalletProviderOptions {
   addressType: bitcoin.AddressType
 }
 
-export default <T extends Constructor<Provider>>(superclass: T) => { abstract class BitcoinWalletProvider extends superclass {
+export default <T extends Constructor<Provider>>(superclass: T) => { abstract class BitcoinWalletProvider extends superclass implements Partial<ChainProvider>, Partial<WalletProvider> {
   _baseDerivationPath: string
   _network: BitcoinNetwork
   _addressType: bitcoin.AddressType
@@ -66,6 +66,13 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     return this._derivationCache
   }
 
+  sendOptionsToOutputs (transactions: SendOptions[]) : bitcoin.OutputTarget[] {
+    return transactions.map(tx => ({
+      address: addressToString(tx.to),
+      value: tx.value.toNumber()
+    }))
+  }
+
   async setDerivationCache (derivationCache: DerivationCache) {
     const address = await this.getDerivationPathAddress(Object.keys(derivationCache)[0])
     if (derivationCache[address.derivationPath].address !== address.address) {
@@ -89,14 +96,11 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
   }
 
   async sendTransaction (options: SendOptions) {
-    return this._sendTransaction([{
-      address: addressToString(options.to),
-      value: options.value.toNumber()
-    }], options.fee)
+    return this._sendTransaction(this.sendOptionsToOutputs([options]), options.fee)
   }
 
-  async sendBatchTransaction (transactions: bitcoin.OutputTarget[]) {
-    return this._sendTransaction(transactions)
+  async sendBatchTransaction (transactions: SendOptions[]) {
+    return this._sendTransaction(this.sendOptionsToOutputs(transactions))
   }
 
   async buildSweepTransaction (externalChangeAddress: string, feePerByte: BigNumber) {
@@ -303,7 +307,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     }
 
     const feePerBytePromise = this.getMethod('getFeePerByte')()
-    let feePerByte = _feePerByte || null
+    let feePerByte = _feePerByte ? _feePerByte.toNumber() : null
     let utxos : bitcoin.UTXO[] = []
 
     while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {
@@ -353,7 +357,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
 
       const transactionCounts: bitcoin.AddressTxCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
 
-      if (!feePerByte) feePerByte = new BigNumber(await feePerBytePromise)
+      if (!feePerByte) feePerByte = await feePerBytePromise
       const minRelayFee = await this.getMethod('getMinRelayFee')()
       if (feePerByte < minRelayFee) {
         throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
@@ -363,7 +367,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
       if (sweep) {
         const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
 
-        const amountToSend = new BigNumber(utxoBalance).minus(feePerByte.times(((_targets.length + 1) * 39) + (utxos.length * 153))) // todo better calculation
+        const amountToSend = new BigNumber(utxoBalance).minus(feePerByte * (((_targets.length + 1) * 39) + (utxos.length * 153))) // todo better calculation
 
         targets = _targets.map((target) => ({ id: 'main', value: target.value }))
         targets.push({ id: 'main', value: amountToSend.minus(outputBalance).toNumber() })
@@ -371,7 +375,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
         targets = _targets.map((target) => ({ id: 'main', value: target.value }))
       }
 
-      const { inputs, outputs, change, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte.toNumber()), fixedUtxos)
+      const { inputs, outputs, change, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedUtxos)
 
       if (inputs && outputs) {
         return {

@@ -123,7 +123,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     this.validateSwapParams(swapParams)
 
     const bytecode = this.createSwapScript(swapParams)
-    return this.getMethod('sendTransaction')(null, swapParams.value, bytecode, gasPrice)
+    return this.client.chain.sendTransaction({ to: null, value: swapParams.value, data: bytecode, fee: gasPrice })
   }
 
   async fundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) : Promise<null> {
@@ -141,7 +141,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
 
     await this.getMethod('assertContractExists')(initiationTransactionReceipt.contractAddress)
 
-    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, secret, gasPrice)
+    return this.client.chain.sendTransaction({ to: initiationTransactionReceipt.contractAddress, value: new BigNumber(0), data: secret, fee: gasPrice })
   }
 
   async refundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) {
@@ -153,7 +153,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
 
     await this.getMethod('assertContractExists')(initiationTransactionReceipt.contractAddress)
 
-    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, '', gasPrice)
+    return this.client.chain.sendTransaction({ to: initiationTransactionReceipt.contractAddress, value: new BigNumber(0), data: '', fee: gasPrice })
   }
 
   doesTransactionMatchInitiation (swapParams: SwapParams, transaction: Transaction<ethereum.Transaction>) {
@@ -208,11 +208,10 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     const transaction = await this.findSwapTransaction(blockNumber, transaction => this.doesTransactionMatchClaim(transaction, initiationTransactionReceipt))
     if (!transaction) return
 
-    const transactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
-    if (transactionReceipt && transactionReceipt.status === '1') {
+    const transactionReceipt: ethereum.TransactionReceipt = await this.getMethod('getTransactionReceipt')(transaction.hash)
+    if (transactionReceipt && transactionReceipt.status === '0x1') {
       const secret = await this.getSwapSecret(transaction.hash)
       validateSecretAndHash(secret, swapParams.secretHash)
-      // @ts-ignore
       transaction.secret = secret
       return transaction
     }

@@ -8,7 +8,7 @@ import {
   validateSecretHash,
   validateSecretAndHash
 } from '@liquality/utils'
-import { remove0x, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
+import { remove0x, ensure0x, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
 import { SwapProvider, SwapParams, Block, Transaction, BigNumber, Address, ethereum } from '@liquality/types'
 import {
   PendingTxError,
@@ -67,14 +67,19 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     this.validateSwapParams(swapParams)
 
     const addresses: Address[] = await this.getMethod('getAddresses')()
-    const balance = await this.getMethod('getBalance')(addresses.map(address => address.address))
+    const balance = await this.client.chain.getBalance(addresses)
 
     if (balance.isLessThan(swapParams.value)) {
       throw new InsufficientBalanceError(`${addresses[0]} doesn't have enough balance (has: ${balance}, want: ${swapParams.value})`)
     }
 
     const bytecode = this.createSwapScript(swapParams)
-    return this.getMethod('sendTransaction')(null, 0, bytecode, gasPrice)
+    return this.client.chain.sendTransaction({
+      to: null,
+      value: new BigNumber(0),
+      data: bytecode,
+      fee: gasPrice
+    })
   }
 
   async fundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) {
@@ -104,7 +109,11 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
       throw new InvalidDestinationAddressError(`Contract is not empty: ${initiationTransactionReceipt.contractAddress}`)
     }
 
-    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, swapParams.value, undefined, gasPrice)
+    return this.client.chain.sendTransaction({
+      to: initiationTransactionReceipt.contractAddress,
+      value: swapParams.value,
+      fee: gasPrice
+    })
   }
 
   async claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: BigNumber) {
@@ -118,7 +127,12 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
 
     await this.getMethod('assertContractExists')(initiationTransactionReceipt.contractAddress)
 
-    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, SOL_CLAIM_FUNCTION + secret, gasPrice)
+    return this.client.chain.sendTransaction({
+      to: initiationTransactionReceipt.contractAddress,
+      value: new BigNumber(0),
+      data: SOL_CLAIM_FUNCTION + secret,
+      fee: gasPrice
+    })
   }
 
   async refundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) {
@@ -130,32 +144,37 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
 
     await this.getMethod('assertContractExists')(initiationTransactionReceipt.contractAddress)
 
-    return this.getMethod('sendTransaction')(initiationTransactionReceipt.contractAddress, 0, SOL_REFUND_FUNCTION, gasPrice)
+    return this.client.chain.sendTransaction({
+      to: initiationTransactionReceipt.contractAddress,
+      value: new BigNumber(0),
+      data: SOL_REFUND_FUNCTION,
+      fee: gasPrice
+    })
   }
 
   doesTransactionMatchInitiation (swapParams: SwapParams, transaction: Transaction<ethereum.Transaction>) {
     const data = this.createSwapScript(swapParams)
-    return transaction._raw.to === null && transaction._raw.input === data
+    return transaction._raw.to === null && transaction._raw.input === ensure0x(data)
   }
 
   doesTransactionMatchClaim (swapParams: SwapParams, transaction: Transaction<ethereum.Transaction>, initiationTransactionReceipt: ethereum.TransactionReceipt) {
     return caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
-           transaction._raw.input.startsWith(remove0x(SOL_CLAIM_FUNCTION))
+           transaction._raw.input.startsWith(SOL_CLAIM_FUNCTION)
   }
 
   doesTransactionMatchFunding (transaction: Transaction<ethereum.Transaction>, erc20TokenContractAddress: string, contractData: string) {
     return caseInsensitiveEqual(transaction._raw.to, erc20TokenContractAddress) &&
-           transaction._raw.input === contractData
+           transaction._raw.input === ensure0x(contractData)
   }
 
   async doesBalanceMatchValue (contractAddress: string, value: BigNumber) {
-    const balance = await this.getMethod('getBalance')(contractAddress)
+    const balance = await this.client.chain.getBalance([contractAddress])
     return balance.isEqualTo(value)
   }
 
   async getSwapSecret (claimTxHash: string) {
     const claimTransaction = await this.getMethod('getTransactionByHash')(claimTxHash)
-    return claimTransaction._raw.input.substring(8)
+    return remove0x(claimTransaction._raw.input).substring(8)
   }
 
   async verifyInitiateSwapTransaction (swapParams: SwapParams, initiationTxHash: string) {
@@ -231,7 +250,6 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     if (transactionReceipt.status === '0x1') {
       const secret = await this.getSwapSecret(transaction.hash)
       validateSecretAndHash(secret, swapParams.secretHash)
-      // @ts-ignore secret is non standard field
       transaction.secret = secret
       return transaction
     }
@@ -246,10 +264,9 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     const initiationTransactionReceipt: ethereum.TransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
-    const SOL_REFUND_FUNCTION_WITHOUT0X = remove0x(SOL_REFUND_FUNCTION)
     return block.transactions.find(transaction =>
       caseInsensitiveEqual(transaction._raw.to, initiationTransactionReceipt.contractAddress) &&
-      transaction._raw.input === SOL_REFUND_FUNCTION_WITHOUT0X &&
+      transaction._raw.input === SOL_REFUND_FUNCTION &&
       block.timestamp >= swapParams.expiration
     )
   }

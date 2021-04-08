@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "noUnusedLocals": true,
     "target": "es5",
     "sourceMap": true,
     "moduleResolution": "node",

@@ -99,7 +99,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
 
     const txOptions : ethereum.UnsignedTransaction = {
       from,
-      to: addressToString(options.to),
+      to: options.to ? addressToString(options.to) : options.to as string,
       value: options.value,
       data: options.data,
       gasPrice,
@@ -124,7 +124,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
   async sendSweepTransaction (address: Address | ethereum.Address, _gasPrice: BigNumber) {
     const addresses = await this.getAddresses()
 
-    const balance = await this.getMethod('getBalance')(addresses.map(address => address.address))
+    const balance = await this.client.chain.getBalance(addresses)
 
     const [ gasPrice ] = await Promise.all([
       _gasPrice ? Promise.resolve(_gasPrice) : this.getMethod('getGasPrice')()

@@ -2,16 +2,14 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import * as bitcoin from 'bitcoinjs-lib'
-import { chains, importBitcoinAddresses, fundAddress, describeExternal } from '../common'
-import config from '../config'
+import { TEST_TIMEOUT, Chain, chains, importBitcoinAddresses, fundAddress, describeExternal } from '../common'
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 'TEST_TIMEOUT'
 
 chai.use(chaiAsPromised)
 chai.use(require('chai-bignumber')())
 
-function testWallet (chain) {
+function testWallet (chain: Chain) {
   describe('getAddresses', () => {
     it('should return the correct number of addresses starting at the correct index and return the right derivation path', async () => {
       const startingIndex = 0
@@ -55,13 +53,12 @@ function testWallet (chain) {
 
       const addresses = await chain.client.wallet.getAddresses(startingIndex, numAddresses)
 
-      const { address, derivationPath, publicKey, index } = addresses[numAddresses - 1]
+      const { address, derivationPath, publicKey } = addresses[numAddresses - 1]
 
-      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey, index: expectedIndex } = await chain.client.getMethod('getWalletAddress')(address)
+      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey } = await chain.client.getMethod('getWalletAddress')(address)
 
       expect(derivationPath).to.equal(expectedDerivationPath)
-      expect(publicKey.toString('hex')).to.equal(expectedPublicKey.toString('hex'))
-      expect(index).to.equal(expectedIndex)
+      expect(publicKey).to.equal(expectedPublicKey.toString('hex'))
     })
 
     it('should return change address if dervaition is within 1000 address index places', async () => {
@@ -71,13 +68,12 @@ function testWallet (chain) {
 
       const addresses = await chain.client.wallet.getAddresses(startingIndex, numAddresses, change)
 
-      const { address, derivationPath, publicKey, index } = addresses[numAddresses - 1]
+      const { address, derivationPath, publicKey } = addresses[numAddresses - 1]
 
-      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey, index: expectedIndex } = await chain.client.getMethod('getWalletAddress')(address)
+      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey } = await chain.client.getMethod('getWalletAddress')(address)
 
       expect(derivationPath).to.equal(expectedDerivationPath)
-      expect(publicKey.toString('hex')).to.equal(expectedPublicKey.toString('hex'))
-      expect(index).to.equal(expectedIndex)
+      expect(publicKey).to.equal(expectedPublicKey.toString('hex'))
     })
   })
 
@@ -104,7 +100,7 @@ function testWallet (chain) {
       const firstAddress = await chain.client.wallet.getUnusedAddress(change)
       const firstIndex = parseInt(firstAddress.derivationPath.split('/').pop())
 
-      await fundAddress(chain, firstAddress)
+      await fundAddress(chain, firstAddress.address)
 
       const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress(change)
 
@@ -152,28 +148,6 @@ function testWallet (chain) {
       const signedMessage2 = await chain.client.wallet.signMessage('secret', address)
 
       expect(signedMessage1).to.equal(signedMessage2)
-    })
-  })
-
-  describe('buildBatchTransaction', () => {
-    it('should successfully create op_return tx', async () => {
-      const { address: address1 } = await chain.client.wallet.getUnusedAddress()
-
-      const data = Buffer.from(
-        `test`,
-        'utf8'
-      )
-      const dataScript = bitcoin.payments.embed({ data: [data] })
-
-      const { hex } = await chain.client.chain.buildBatchTransaction([{ to: address1, value: 50000 }, { to: dataScript.output, value: 0 }])
-
-      const tx = await chain.client.getMethod('decodeRawTransaction')(hex)
-
-      const vouts = tx._raw.vout
-      const vins = tx._raw.vin
-
-      expect(vins.length).to.equal(1)
-      expect(vouts.length).to.equal(3)
     })
   })
 }

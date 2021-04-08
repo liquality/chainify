@@ -1,5 +1,5 @@
 import { Block as BlockSchema, Transaction as TransactionSchema } from '@liquality/schema'
-import { Block, Transaction } from '@liquality/types'
+import { Block, Transaction, IClient } from '@liquality/types'
 import Provider from '@liquality/provider'
 import {
   DuplicateProviderError,
@@ -18,7 +18,7 @@ import Chain from './Chain'
 import Wallet from './Wallet'
 import Swap from './Swap'
 
-export default class Client {
+export default class Client implements IClient {
   static debug (namespace = '*') {
     // if localStorage.DEBUG (browser)
     // or process.env.DEBUG (node) is not set

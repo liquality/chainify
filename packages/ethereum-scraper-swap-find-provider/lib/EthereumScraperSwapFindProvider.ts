@@ -64,7 +64,6 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
 
     if (normalizedTransaction._raw.secret) {
-      // @ts-ignore
       normalizedTransaction.secret = normalizedTransaction._raw.secret
     }
 

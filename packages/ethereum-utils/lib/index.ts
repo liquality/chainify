@@ -80,6 +80,10 @@ function normalizeTransactionObject <TxType extends ethereum.PartialTransaction 
 }
 
 function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.TransactionRequest {
+  if (!txOptions.to && (typeof txOptions.data !== 'string' || txOptions.data.length === 0)) {
+    throw new Error('Sending to null with no data. Aborting.')
+  }
+
   const tx : ethereum.TransactionRequest = {
     from: ensure0x(txOptions.from),
     value: txOptions.value ? numberToHex(txOptions.value) : '0x0'

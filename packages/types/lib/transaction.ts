@@ -13,6 +13,8 @@ export interface Transaction <T = any> {
   feePrice?: number,
   // The total fee paid for the transaction
   fee?: number,
+  // Secret of a HTLC
+  secret?: string,
   // The raw transaction object
   _raw: T
 }

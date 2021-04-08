@@ -12,7 +12,7 @@ import {
 import BitcoinNetworks, { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { bitcoin, BigNumber } from '@liquality/types'
 import HwAppBitcoin from '@ledgerhq/hw-app-btc'
-import bip32, { BIP32Interface } from 'bip32'
+import { fromPublicKey, BIP32Interface } from 'bip32'
 import { address, Psbt, PsbtTxInput, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 
 type WalletProviderConstructor<T = LedgerProvider<HwAppBitcoin>> = new (...args: any[]) => T
@@ -175,7 +175,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     for (const input of inputs) {
       const signer = {
         network: this._network,
-        publicKey: Buffer.from(walletAddresses[input.index].publicKey),
+        publicKey: Buffer.from(walletAddresses[input.index].publicKey, 'hex'),
         sign: async () => {
           const finalSig = isSegwit ? ledgerSigs[input.index] : ledgerSigs[input.index] + '01' // Is this a ledger bug? Why non segwit signs need the sighash appended?
           const { signature } = script.signature.decode(Buffer.from(finalSig, 'hex'))
@@ -252,7 +252,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
   async _getWalletPublicKey (path: string) {
     const app = await this.getApp()
     const format = this._addressType === bitcoin.AddressType.P2SH_SEGWIT ? 'p2sh' : this._addressType
-    return app.getWalletPublicKey({ path, format })
+    return app.getWalletPublicKey(path, { format })
   }
 
   async getWalletPublicKey (path: string) {
@@ -270,7 +270,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
 
     const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
     const compressedPubKey = compressPubKey(walletPubKey.publicKey)
-    this._baseDerivationNode = bip32.fromPublicKey(
+    this._baseDerivationNode = fromPublicKey(
       Buffer.from(compressedPubKey, 'hex'),
       Buffer.from(walletPubKey.chainCode, 'hex'),
       this._network

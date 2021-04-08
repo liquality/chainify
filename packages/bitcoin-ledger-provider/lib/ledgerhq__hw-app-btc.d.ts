@@ -55,7 +55,7 @@ declare module '@ledgerhq/hw-app-btc' {
   };
 
   class HwAppBitcoin {
-    getWalletPublicKey (options: { path: string, verify?: boolean, format?: AddressFormat }): Promise<{
+    getWalletPublicKey (path: strinjg, options: { verify?: boolean, format?: AddressFormat }): Promise<{
       publicKey: string,
       bitcoinAddress: string,
       chainCode: string,
