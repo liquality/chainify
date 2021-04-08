@@ -1,6 +1,6 @@
 {
   "name": "@liquality/client-factory",
-  "version": "0.9.0",
+  "version": "0.10.3",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
