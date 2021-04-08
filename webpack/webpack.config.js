@@ -5,7 +5,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 const isProdEnv = process.env.NODE_ENV === 'production'
 const isWatchEnv = process.env.WEBPACK_WATCH === 'true'
-const isCIEnv = process.env.CI === 'true'
 
 const plugins = []
 
