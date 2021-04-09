@@ -72,8 +72,6 @@ type CoinSelectFunction = (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePer
 
 function selectCoins (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs: bT.UTXO[] = []) {
   let selectUtxos = utxos
-  let inputs, outputs
-  let fee = 0
 
   // Default coinselect won't accumulate some inputs
   // TODO: does coinselect need to be modified to ABSOLUTELY not skip an input?
@@ -85,7 +83,7 @@ function selectCoins (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte:
     ]
   }
 
-  ({ inputs, outputs, fee } = coinselectStrat(selectUtxos, targets, Math.ceil(feePerByte)))
+  const { inputs, outputs, fee } = coinselectStrat(selectUtxos, targets, Math.ceil(feePerByte))
 
   let change
   if (inputs && outputs) {
@@ -119,7 +117,7 @@ function decodeRawTransaction (hex: string, network: BitcoinNetwork) : bT.Transa
   const vout = bjsTx.outs.map((output, n) => {
     const type = classify.output(output.script)
 
-    var vout: bT.Output = {
+    const vout: bT.Output = {
       value: output.value / 1e8,
       n,
       scriptPubKey: {
@@ -134,7 +132,7 @@ function decodeRawTransaction (hex: string, network: BitcoinNetwork) : bT.Transa
     try {
       const address = bitcoin.address.fromOutputScript(output.script, network)
       vout.scriptPubKey.addresses.push(address)
-    } catch (e) {}
+    } catch (e) { /** If output script is not parasable, we just skip it */ }
 
     return vout
   })

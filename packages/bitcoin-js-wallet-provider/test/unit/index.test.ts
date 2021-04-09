@@ -6,9 +6,10 @@ import { generateMnemonic } from 'bip39'
 import BitcoinNetworks from '../../../bitcoin-networks/lib'
 import { Address } from '../../../types/lib'
 import BitcoinJsWalletProvider from '../../lib'
-
-const { expect } = require('chai').use(require('chai-as-promised'))
 import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
+const { expect } = chai.use(chaiAsPromised)
 chai.config.truncateThreshold = 0
 
 describe('Bitcoin Wallet provider', () => {

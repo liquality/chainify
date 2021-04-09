@@ -13,25 +13,7 @@ import {
 } from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 import { SwapProvider, SwapParams, Transaction, ethereum } from '@liquality/types'
-
-export namespace scraper {
-  export interface Transaction {
-    from: ethereum.Address
-    to: ethereum.Address | null
-    hash: ethereum.Hex256
-    value: ethereum.Hex
-    gas?: ethereum.Hex
-    gasPrice?: ethereum.Hex
-    input?: ethereum.Hex
-    secret?: ethereum.Hex
-    blockHash: ethereum.Hex256
-    blockNumber: ethereum.Hex
-    status: ethereum.TransactionReceiptStatus
-    contractAddress: ethereum.Address
-    timestamp: ethereum.Hex
-    confirmations: number
-  }
-}
+import * as scraper from './types'
 
 export default class EthereumScraperSwapFindProvider extends NodeProvider implements Partial<SwapProvider> {
   constructor (url: string) {
@@ -135,7 +117,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
 
 
   
-  async findClaimSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {   
+  async findClaimSwapTransaction (swapParams: SwapParams, initiationTxHash: string) {   
     this.validateSwapParams(swapParams)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
@@ -150,7 +132,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
   }
 
-  async findRefundSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {
+  async findRefundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) {
     this.validateSwapParams(swapParams)
 
     const initiationTransactionReceipt : ethereum.TransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)

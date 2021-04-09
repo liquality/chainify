@@ -12,7 +12,7 @@ const debug = Debug('ethereum')
 
 interface RequestArguments {
   method: string;
-  params?: any[] | object;
+  params?: any[] | any;
 }
 
 interface EthereumProvider {

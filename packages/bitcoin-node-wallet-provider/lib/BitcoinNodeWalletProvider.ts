@@ -99,16 +99,15 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return psbt.toBase64()
   }
 
-  // inputs consists of 
-  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }] , addresses: string, tx: any, lockTime = 0, segwit = false) {
-    let wallets = []
+  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }] , addresses: string, tx: any, locktime: number, segwit = false) {
+    const wallets = []
     for (const address of addresses) {
       const wif = await this.dumpPrivKey(address)
       const wallet = ECPair.fromWIF(wif, this._network)
       wallets.push(wallet)
     }
 
-    let sigs = []
+    const sigs = []
     for (let i = 0; i < inputs.length; i++) {
       let sigHash
       if (segwit) {

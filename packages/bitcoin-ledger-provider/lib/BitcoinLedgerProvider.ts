@@ -192,7 +192,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
   async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }], addresses: string, tx: any, lockTime?: number, segwit?: boolean) : Promise<Buffer[]> {
     const app = await this.getApp()
 
-    let walletAddressDerivationPaths = []
+    const walletAddressDerivationPaths = []
     for (const address of addresses) {
       const walletAddress = await this.getWalletAddress(address)
       walletAddressDerivationPaths.push(walletAddress.derivationPath)
@@ -207,7 +207,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const ledgerTx = await app.splitTransaction(tx.toHex(), true)
     const ledgerOutputs = (await app.serializeTransactionOutputs(ledgerTx)).toString('hex')
 
-    let ledgerInputs = []
+    const ledgerInputs = []
     for (const input of inputs) {
       const ledgerInputTx = await app.splitTransaction(input.inputTxHex, true)
       ledgerInputs.push([ledgerInputTx, input.index, input.outputScript.toString('hex'), 0])
@@ -223,7 +223,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       transactionVersion: 2
     })
 
-    let finalLedgerSigs = []
+    const finalLedgerSigs = []
     for (const ledgerSig of ledgerSigs) {
       const finalSig = segwit ? ledgerSig : ledgerSig + '01'
       finalLedgerSigs.push(Buffer.from(finalSig, 'hex'))

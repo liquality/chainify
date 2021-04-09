@@ -48,7 +48,6 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
 
   errorProxy (target: any, func: string) {
     const method = target[func]
-    const ctx = this
     if (Object.getOwnPropertyNames(target).includes(func) && typeof method === 'function') {
       return async (...args: any[]) => {
         debug(`calling "${func}" on ledger object`, args)
@@ -59,8 +58,8 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
           return result
         } catch (e) {
           const { name, ...errorNoName } = e
-          ctx._transport = null
-          ctx._appInstance = null
+          this._transport = null
+          this._appInstance = null
           console.log('error', func)
           throw new WalletError(e.toString(), errorNoName)
         }

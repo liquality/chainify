@@ -37,9 +37,9 @@ export default class JsonRpcProvider extends NodeProvider {
   _parseResponse (_data: AxiosResponse) : any {
     debug('raw jsonrpc response', _data)
 
-    let dataString: string = (typeof _data !== 'string') ? stringify(_data) : _data
+    const dataString: string = (typeof _data !== 'string') ? stringify(_data) : _data
 
-    let data = parse(dataString)
+    const data = parse(dataString)
 
     debug('parsed jsonrpc response', data)
 

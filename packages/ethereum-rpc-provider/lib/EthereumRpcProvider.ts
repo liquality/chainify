@@ -143,7 +143,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return normalizedBlock
   }
 
-  async getBlockByHash (blockHash: string, includeTx: boolean = false) : Promise<Block> {
+  async getBlockByHash (blockHash: string, includeTx = false) : Promise<Block> {
     const block = await this.rpc<ethereum.Block>('eth_getBlockByHash', ensure0x(blockHash), includeTx)
     if (!block) {
       throw new BlockNotFoundError(`Block not found: ${blockHash}`)
@@ -152,7 +152,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return this.parseBlock(block, includeTx)
   }
 
-  async getBlockByNumber (blockNumber: number, includeTx: boolean = false) : Promise<Block> {
+  async getBlockByNumber (blockNumber: number, includeTx = false) : Promise<Block> {
     const block = await this.rpc<ethereum.Block>('eth_getBlockByNumber', numberToHex(blockNumber), includeTx)
 
     if (!block) {

@@ -141,7 +141,7 @@ function testSignPSBTScript (chain: Chain) {
 
     const newAddresses = [ unusedAddressOne ]
 
-    let addresses = []
+    const addresses = []
     for (const newAddress of newAddresses) {
       const address = await chain.client.getMethod('getWalletAddress')(newAddress)
       addresses.push(address)
@@ -228,7 +228,7 @@ function testSignBatchP2SHTransaction (chain: Chain) {
 
     const newAddresses = [ unusedAddressOne, unusedAddressTwo ]
 
-    let addresses = []
+    const addresses = []
     for (const newAddress of newAddresses) {
       const address = await chain.client.getMethod('getWalletAddress')(newAddress)
       addresses.push(address)

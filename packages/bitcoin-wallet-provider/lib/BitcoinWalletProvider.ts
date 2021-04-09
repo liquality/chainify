@@ -25,7 +25,7 @@ const ADDRESS_TYPE_TO_PREFIX = {
 
 type DerivationCache = {[index: string]: Address}
 
-type Constructor<T = {}> = new (...args: any[]) => T
+type Constructor<T = unknown> = new (...args: any[]) => T
 
 interface BitcoinWalletProviderOptions {
   network: BitcoinNetwork,
@@ -258,7 +258,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
 
       const transactionCounts : bitcoin.AddressTxCounts = await this.getMethod('getAddressTransactionCounts')(addrList)
 
-      for (let address of addrList) {
+      for (const address of addrList) {
         const isUsed = transactionCounts[address.address] > 0
         const isChangeAddress = changeAddresses.find(a => address.address === a.address)
         const key = isChangeAddress ? 'change' : 'external'
@@ -301,7 +301,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     let addressIndex = 0
     let changeAddresses: Address[]  = []
     let externalAddresses: Address[] = []
-    let addressCountMap = {
+    const addressCountMap = {
       change: 0,
       nonChange: 0
     }
@@ -386,7 +386,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
         }
       }
 
-      for (let address of addrList) {
+      for (const address of addrList) {
         const isUsed = transactionCounts[address.address]
         const isChangeAddress = changeAddresses.find(a => address.address === a.address)
         const key = isChangeAddress ? 'change' : 'nonChange'

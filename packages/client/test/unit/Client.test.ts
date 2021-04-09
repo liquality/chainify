@@ -2,7 +2,10 @@
 
 import Client from '../../lib'
 
-const { expect } = require('chai').use(require('chai-as-promised'))
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
+const { expect } = chai.use(chaiAsPromised)
 
 describe('Client methods without providers', () => {
   let client: Client

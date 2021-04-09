@@ -19,7 +19,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getBlockByHash (blockHash: string, includeTx: boolean = false) : Promise<Block> {
+  async getBlockByHash (blockHash: string, includeTx = false) : Promise<Block> {
     if (!isString(blockHash)) {
       throw new TypeError('Block hash should be a string')
     }
@@ -38,7 +38,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getBlockByNumber (blockNumber: number, includeTx: boolean = false) : Promise<Block> {
+  async getBlockByNumber (blockNumber: number, includeTx = false) : Promise<Block> {
     if (!isNumber(blockNumber)) {
       throw new TypeError('Invalid Block number')
     }

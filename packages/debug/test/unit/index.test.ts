@@ -3,8 +3,10 @@
 import { expect } from 'chai'
 
 import Debug from '../../lib'
+import _dbg from 'debug'
 
-const dbg = require('debug')
+// TODO: types?
+const dbg: any = _dbg
 
 describe('debug library', () => {
   it('should not add logs to the console.history if disabled', () => {

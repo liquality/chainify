@@ -40,7 +40,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     validateExpiration(swapParams.expiration)
   }
 
-  async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber: number) {
+  async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) {
     this.validateSwapParams(swapParams)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)

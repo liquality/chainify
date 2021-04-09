@@ -4,7 +4,10 @@ import BitcoinSwapProvider from '../../lib'
 import BitcoinNetworks from '@liquality/bitcoin-networks'
 import { BigNumber } from '@liquality/types'
 
-const { expect } = require('chai').use(require('chai-as-promised'))
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
+const { expect } = chai.use(chaiAsPromised)
 
 describe('Bitcoin Swap provider', () => {
   let provider: BitcoinSwapProvider

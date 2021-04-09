@@ -1,6 +1,6 @@
 // seed phrase: crouch great grape leg maze swap urban motor have poet saddle pave
 
-module.exports = {
+export default {
   'eth_accounts': [
     {
       params: [],

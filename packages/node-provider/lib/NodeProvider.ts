@@ -12,12 +12,12 @@ export default class NodeProvider extends Provider {
   }
 
   _handleNodeError (e: Error, context: any) {
-    let { name, message, ...attrs } = e
+    const { name, message, ...attrs } = e
 
     const data = get(e, 'response.data')
-    if (data) message = data
+    const errorMessage = data || message
 
-    throw new NodeError(message, {
+    throw new NodeError(errorMessage, {
       ...context,
       ...attrs
     })

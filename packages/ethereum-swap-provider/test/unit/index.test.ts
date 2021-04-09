@@ -3,7 +3,10 @@
 import { BigNumber } from '@liquality/types'
 import EthereumSwapProvider from '../../lib'
 
-const { expect } = require('chai').use(require('chai-as-promised'))
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
+
+const { expect } = chai.use(chaiAsPromised)
 
 describe('Ethereum Swap provider', () => {
   let provider: EthereumSwapProvider

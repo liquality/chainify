@@ -126,7 +126,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     return this.client.chain.sendTransaction({ to: null, value: swapParams.value, data: bytecode, fee: gasPrice })
   }
 
-  async fundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) : Promise<null> {
+  async fundSwap () : Promise<null> {
     return null
   }
 
@@ -217,7 +217,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     }
   }
 
-  async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) : Promise<null> {
+  async findFundSwapTransaction () : Promise<null> {
     return null
   }
 

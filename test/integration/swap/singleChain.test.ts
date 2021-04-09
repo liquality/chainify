@@ -87,13 +87,13 @@ function testSwap (chain: Chain) {
       (before, after) => expect(after.gt(before)).to.be.true)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
-        try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) {} // Refund failing is ok
+        try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) { /** Refund failing is ok */ }
       },
       (before, after) => expect(after.eq(before)).to.be.true)
     await mineUntilTimestamp(chain, swapParams.expiration)
     await expectBalance(chain, swapParams.refundAddress,
       async () => {
-        try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) {} // Refund failing is ok
+        try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) { /** Refund failing is ok */ }
       },
       (before, after) => expect(after.eq(before)).to.be.true)
   })

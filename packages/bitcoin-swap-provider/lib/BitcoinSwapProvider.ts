@@ -128,7 +128,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     })
   }
 
-  async fundSwap (swapParams: SwapParams, initiationTxHash: string, feePerByte: BigNumber) : Promise<null> {
+  async fundSwap () : Promise<null> {
     return null
   }
 
@@ -396,7 +396,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     return refundSwapTransaction
   }
 
-  async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) : Promise<null> {
+  async findFundSwapTransaction () : Promise<null> {
     return null
   }
 }

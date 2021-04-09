@@ -7,8 +7,8 @@ import BitcoinRpcProvider from '../../../bitcoin-rpc-provider/lib'
 import BitcoinRpcFeeProvider from '../../lib'
 import BitcoinNetworks from '../../../bitcoin-networks/lib'
 
-const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
-const bitcoinRpc = require('../../../../test/mock/bitcoin/rpc')
+import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
+import bitcoinRpc from '../../../../test/mock/bitcoin/rpc'
 
 chai.config.truncateThreshold = 0
 

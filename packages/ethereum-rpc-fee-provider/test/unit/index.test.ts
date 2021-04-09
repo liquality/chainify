@@ -6,8 +6,8 @@ import Client from '../../../client/lib'
 import EthereumRpcProvider from '../../../ethereum-rpc-provider/lib'
 import EthereumRpcFeeProvider from '../../lib'
 
-const mockJsonRpc = require('../../../../test/mock/mockJsonRpc')
-const ethereumRpc = require('../../../../test/mock/ethereum/rpc')
+import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
+import ethereumRpc from '../../../../test/mock/ethereum/rpc'
 
 chai.config.truncateThreshold = 0
 

@@ -229,7 +229,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   }
 
   async sendBatchTransaction (transactions: SendOptions[]) {
-    let outputs : { [index: string]: number } = {}
+    const outputs : { [index: string]: number } = {}
     for (const tx of transactions) {
       outputs[addressToString(tx.to)] = new BigNumber(tx.value).dividedBy(1e8).toNumber()
     }
