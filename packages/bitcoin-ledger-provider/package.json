@@ -1,18 +1,19 @@
 {
   "name": "@liquality/bitcoin-ledger-provider",
-  "umdName": "BitcoinLedgerProvider",
-  "umdExport": "default",
   "version": "0.10.3",
   "description": "",
-  "module": "lib/index.js",
-  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
   "files": [
     "dist",
     "lib"
   ],
   "scripts": {
-    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
-    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
   "author": "Liquality <info@liquality.io>",
@@ -20,6 +21,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@ledgerhq/hw-app-btc": "^5.36.0",
+    "@liquality/types": "^0.10.3",
     "@liquality/bitcoin-networks": "^0.10.3",
     "@liquality/bitcoin-utils": "^0.10.3",
     "@liquality/bitcoin-wallet-provider": "^0.10.3",
@@ -27,11 +29,11 @@
     "@liquality/ledger-provider": "^0.10.3",
     "@liquality/utils": "^0.10.3",
     "bignumber.js": "^9.0.0",
-    "bip32": "^1.0.2",
+    "bip32": "^2.0.6",
     "bitcoinjs-lib": "^5.2.0"
   },
-  "engines": {
-    "node": "~8.12.0"
+  "devDependencies": {
+    "@types/node": "^14.14.31"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
@@ -43,5 +45,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }

@@ -16,3 +16,5 @@ testnetConfig.js
 /test.js
 
 **/.DS_Store
+
+lerna-debug.log

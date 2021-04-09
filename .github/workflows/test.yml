@@ -8,15 +8,17 @@ jobs:
     if: contains(github.ref, 'refs/tags/') != true
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 8
-      - uses: actions/cache@v1
+          node-version: '14'
+      - uses: actions/cache@v2
         env:
-          node-version: 8
+          node-version: '14'
           cache-name: cache-node-modules
         with:
-          path: ~/.npm
+          path: |
+            node_modules
+            */*/node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}-${{ hashFiles('**/package-lock.json') }}
       - run: sudo apt-get update
       - run: sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev

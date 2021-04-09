@@ -1,18 +1,19 @@
 {
   "name": "@liquality/ethereum-scraper-swap-find-provider",
-  "umdName": "EthereumScraperSwapFindProvider",
-  "umdExport": "default",
   "version": "0.10.3",
   "description": "",
-  "module": "lib/index.js",
-  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
   "files": [
     "dist",
     "lib"
   ],
   "scripts": {
-    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
-    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
   "author": "Liquality <info@liquality.io>",
@@ -22,11 +23,10 @@
     "@liquality/errors": "^0.10.3",
     "@liquality/ethereum-utils": "^0.10.3",
     "@liquality/node-provider": "^0.10.3",
-    "@liquality/utils": "^0.10.3"
+    "@liquality/utils": "^0.10.3",
+    "@liquality/types": "^0.10.3"
   },
-  "engines": {
-    "node": "~8.12.0"
-  },
+
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
     "type": "git",
@@ -37,5 +37,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "sideEffects": false
 }

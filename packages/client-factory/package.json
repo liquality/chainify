@@ -1,18 +1,19 @@
 {
   "name": "@liquality/client-factory",
-  "umdName": "ClientFactory",
-  "umdExport": "default",
   "version": "0.10.3",
-  "description": "Query different blockchains with account management using a single and simple interface.",
-  "module": "lib/index.js",
-  "main": "dist/index.cjs.js",
+  "description": "",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
   "files": [
     "dist",
     "lib"
   ],
   "scripts": {
-    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
-    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
     "build": "webpack --config ../../webpack/webpack.config.js"
   },
   "author": "Liquality <info@liquality.io>",
@@ -27,10 +28,11 @@
     "@liquality/bitcoin-rpc-fee-provider": "^0.10.3",
     "@liquality/bitcoin-swap-provider": "^0.10.3",
     "@liquality/client": "^0.10.3",
+    "@liquality/types": "^0.10.3",
     "@liquality/ethereum-erc20-provider": "^0.10.3",
     "@liquality/ethereum-erc20-scraper-swap-find-provider": "^0.10.3",
     "@liquality/ethereum-erc20-swap-provider": "^0.10.3",
-    "@liquality/ethereum-gas-station-fee-provider": "^0.10.3",
+    "@liquality/ethereum-gas-now-fee-provider": "^0.10.3",
     "@liquality/ethereum-js-wallet-provider": "^0.10.3",
     "@liquality/ethereum-networks": "^0.10.3",
     "@liquality/ethereum-rpc-fee-provider": "^0.10.3",
@@ -38,9 +40,6 @@
     "@liquality/ethereum-scraper-swap-find-provider": "^0.10.3",
     "@liquality/ethereum-swap-provider": "^0.10.3",
     "lodash": "^4.17.20"
-  },
-  "engines": {
-    "node": "~8.12.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
@@ -52,5 +51,9 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168"
+  },
+  "sideEffects": false
 }

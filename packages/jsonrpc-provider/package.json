@@ -1,19 +1,20 @@
 {
   "name": "@liquality/jsonrpc-provider",
-  "umdName": "JsonRpcProvider",
-  "umdExport": "default",
   "version": "0.10.3",
   "description": "",
-  "module": "lib/index.js",
-  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
   "files": [
     "dist",
     "lib"
   ],
   "scripts": {
-    "build:node": "webpack --config ../../webpack/webpack.node.config.js",
-    "build:browser": "webpack --config ../../webpack/webpack.browser.config.js",
-    "build": "webpack --config ../../webpack/webpack.config.js"
+    "build": "node fixBigNumberImport.js && webpack --config ../../webpack/webpack.config.js"
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
@@ -22,11 +23,9 @@
     "@liquality/debug": "^0.10.3",
     "@liquality/errors": "^0.10.3",
     "@liquality/node-provider": "^0.10.3",
+    "@types/lodash": "^4.14.168",
     "json-bigint": "^1.0.0",
     "lodash": "^4.17.20"
-  },
-  "engines": {
-    "node": "~8.12.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
@@ -38,5 +37,9 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "devDependencies": {
+    "@types/json-bigint": "^1.0.0"
+  },
+  "sideEffects": false
 }
