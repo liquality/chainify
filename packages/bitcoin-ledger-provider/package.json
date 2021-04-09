@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-ledger-provider",
-  "version": "0.10.3",
+  "version": "1.0.0-beta.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -21,13 +21,13 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@ledgerhq/hw-app-btc": "^5.36.0",
-    "@liquality/types": "^0.10.3",
-    "@liquality/bitcoin-networks": "^0.10.3",
-    "@liquality/bitcoin-utils": "^0.10.3",
-    "@liquality/bitcoin-wallet-provider": "^0.10.3",
-    "@liquality/crypto": "^0.10.3",
-    "@liquality/ledger-provider": "^0.10.3",
-    "@liquality/utils": "^0.10.3",
+    "@liquality/bitcoin-networks": "^1.0.0-beta.0",
+    "@liquality/bitcoin-utils": "^1.0.0-beta.0",
+    "@liquality/bitcoin-wallet-provider": "^1.0.0-beta.0",
+    "@liquality/crypto": "^1.0.0-beta.0",
+    "@liquality/ledger-provider": "^1.0.0-beta.0",
+    "@liquality/types": "^1.0.0-beta.0",
+    "@liquality/utils": "^1.0.0-beta.0",
     "bignumber.js": "^9.0.0",
     "bip32": "^2.0.6",
     "bitcoinjs-lib": "^5.2.0"

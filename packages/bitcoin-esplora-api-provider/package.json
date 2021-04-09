@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-esplora-api-provider",
-  "version": "0.10.3",
+  "version": "1.0.0-beta.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,12 +20,12 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-utils": "^0.10.3",
-    "@liquality/errors": "^0.10.3",
-    "@liquality/node-provider": "^0.10.3",
-    "@liquality/types": "^0.10.3",
-    "@liquality/bitcoin-networks": "^0.10.3",
-    "@liquality/utils": "^0.10.3",
+    "@liquality/bitcoin-networks": "^1.0.0-beta.0",
+    "@liquality/bitcoin-utils": "^1.0.0-beta.0",
+    "@liquality/errors": "^1.0.0-beta.0",
+    "@liquality/node-provider": "^1.0.0-beta.0",
+    "@liquality/types": "^1.0.0-beta.0",
+    "@liquality/utils": "^1.0.0-beta.0",
     "bignumber.js": "^9.0.0",
     "lodash": "^4.17.20"
   },
