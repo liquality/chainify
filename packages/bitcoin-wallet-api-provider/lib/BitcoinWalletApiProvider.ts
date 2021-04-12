@@ -23,7 +23,7 @@ type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 export default class BitcoinWalletApiProvider extends BitcoinWalletProvider(WalletProvider as WalletProviderConstructor) {
   constructor (options: BitcoinWalletApiProviderOptions) {
     const { network, addressType = bitcoin.AddressType.BECH32 } = options
-    super(network, addressType)
+    super({ network, addressType })
   }
 
   async request (method: string, ...params: any[]) {

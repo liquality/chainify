@@ -50,13 +50,13 @@ export default class EthereumWalletApiProvider extends WalletProvider {
   }
 
   async getAddresses () {
-    const addresses = await this.request('eth_accounts')
+    const addresses: string[] = await this.request('eth_accounts')
 
     if (addresses.length === 0) {
       throw new WalletError('Wallet: No addresses available')
     }
 
-    return addresses.map((address: string) => { new Address({ address: remove0x(address) }) })
+    return addresses.map((address: string) => { return new Address({ address: remove0x(address) }) })
   }
 
   async getUsedAddresses () {
@@ -74,7 +74,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     const addresses = await this.getAddresses()
     const address = addresses[0]
 
-    return this.request('personal_sign', ensure0x(hex), ensure0x(address))
+    return this.request('personal_sign', ensure0x(hex), ensure0x(addressToString(address)))
   }
 
   async sendTransaction (options: SendOptions) {
@@ -87,7 +87,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     }
 
     const addresses = await this.getAddresses()
-    const from = addresses[0]
+    const from = addressToString(addresses[0])
 
     const txOptions : ethereum.UnsignedTransaction = {
       from,
@@ -99,7 +99,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
 
     const txData = await buildTransaction(txOptions)
 
-    const txHash = await this.request('eth_sendTransaction', txData)
+    const txHash: string = await this.request('eth_sendTransaction', txData)
 
     const txWithHash : ethereum.PartialTransaction = {
       ...txData,
@@ -115,7 +115,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
   }
 
   async getWalletNetworkId () {
-    const networkId = await this.request('net_version')
+    const networkId: ethereum.Hex = await this.request('net_version')
 
     return hexToNumber(networkId)
   }

@@ -1,5 +1,6 @@
 import NodeProvider from '@liquality/node-provider'
-import { BigNumber } from '@liquality/types'
+import { BigNumber, Address } from '@liquality/types'
+import { addressToString } from '@liquality/utils'
 import BitcoinEsploraApiProvider, { EsploraApiProviderOptions, esplora } from '@liquality/bitcoin-esplora-api-provider'
 import { flatten, uniq } from 'lodash'
 
@@ -22,7 +23,8 @@ export default class BitcoinEsploraBatchApiProvider extends BitcoinEsploraApiPro
     })
   }
 
-  async getUnspentTransactions (addresses: string[]) {
+  async getUnspentTransactions (_addresses: (Address | string)[]) {
+    const addresses = _addresses.map(addressToString)
     const data: BatchUTXOs = await this._batchAxios.nodePost('/addresses/utxo', {
       addresses: uniq(addresses)
     })
@@ -40,7 +42,8 @@ export default class BitcoinEsploraBatchApiProvider extends BitcoinEsploraApiPro
     return flatten(utxos)
   }
 
-  async getAddressTransactionCounts (addresses: string[]) {
+  async getAddressTransactionCounts (_addresses: (Address | string)[]) {
+    const addresses = _addresses.map(addressToString)
     const data: esplora.Address[] = await this._batchAxios.nodePost('/addresses', {
       addresses: uniq(addresses)
     })

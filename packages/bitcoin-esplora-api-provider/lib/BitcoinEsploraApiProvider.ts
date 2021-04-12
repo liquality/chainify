@@ -74,7 +74,8 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
     }))
   }
 
-  async getUnspentTransactions (addresses: string[]) : Promise<bitcoin.UTXO[]> {
+  async getUnspentTransactions (_addresses: (Address | string)[]) : Promise<bitcoin.UTXO[]> {
+    const addresses = _addresses.map(addressToString)
     const utxoSets = await Promise.all(addresses.map(addr => this._getUnspentTransactions(addr)))
     const utxos = flatten(utxoSets)
     return utxos
@@ -85,7 +86,8 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
     return data.chain_stats.tx_count + data.mempool_stats.tx_count
   }
 
-  async getAddressTransactionCounts (addresses: string[]) {
+  async getAddressTransactionCounts (_addresses: (Address | string)[]) {
+    const addresses = _addresses.map(addressToString)
     const transactionCountsArray = await Promise.all(addresses.map(async (addr) => {
       const txCount = await this._getAddressTransactionCount(addr)
       return { [addr]: txCount }
