@@ -27,7 +27,7 @@ export default {
     metaMaskConnector: {
       port: 3333
     }
-  },
+  }
   // ethereum: { // RSK
   //   rpc: {
   //     host: 'http://localhost:4444'

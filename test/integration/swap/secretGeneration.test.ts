@@ -30,7 +30,11 @@ describe('Secret generation', function () {
 
   describeExternal('Metamask + Ledger', () => {
     it('Secrets with same message differ on different wallets', async () => {
-      console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
+      console.log(
+        '\x1b[36m',
+        'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue',
+        '\x1b[0m'
+      )
       await metaMaskConnector.start()
       const message = 'message'
       const ethSecret = await chains.ethereumWithMetaMask.client.swap.generateSecret(message)

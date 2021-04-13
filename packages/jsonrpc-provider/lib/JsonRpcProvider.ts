@@ -10,7 +10,7 @@ const debug = Debug('jsonrpc')
 const { parse, stringify } = JSONBigInt({ storeAsString: true, strict: true, useNativeBigInt: true })
 
 export default class JsonRpcProvider extends NodeProvider {
-  constructor (uri: string, username?: string, password?: string) {
+  constructor(uri: string, username?: string, password?: string) {
     const config: AxiosRequestConfig = {
       baseURL: uri,
       responseType: 'text',
@@ -25,7 +25,7 @@ export default class JsonRpcProvider extends NodeProvider {
     super(config)
   }
 
-  _prepareRequest (method: string, params: any[]) {
+  _prepareRequest(method: string, params: any[]) {
     const id = Date.now()
     const req = { id, method, params }
 
@@ -34,10 +34,10 @@ export default class JsonRpcProvider extends NodeProvider {
     return req
   }
 
-  _parseResponse (_data: AxiosResponse) : any {
+  _parseResponse(_data: AxiosResponse): any {
     debug('raw jsonrpc response', _data)
 
-    const dataString: string = (typeof _data !== 'string') ? stringify(_data) : _data
+    const dataString: string = typeof _data !== 'string' ? stringify(_data) : _data
 
     const data = parse(dataString)
 
@@ -56,7 +56,7 @@ export default class JsonRpcProvider extends NodeProvider {
     return data.result
   }
 
-  async jsonrpc (method: string, ...params: any[]) {
+  async jsonrpc(method: string, ...params: any[]) {
     const data = await super.nodePost('', this._prepareRequest(method, params))
 
     return this._parseResponse(data)

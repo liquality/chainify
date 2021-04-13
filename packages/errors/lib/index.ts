@@ -1,8 +1,7 @@
-
 import BaseError from 'standard-error'
 
-function createError (name: string) {
-  const Error = class extends BaseError{}
+function createError(name: string) {
+  const Error = class extends BaseError {}
   Error.prototype.name = name
   return Error
 }

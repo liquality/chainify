@@ -21,11 +21,11 @@ interface IClient {
    *  above the requestor in the stack.
    * @return {function} Returns method from provider instance associated with the requested method
    */
-  getMethod(method: string, requestor?: any): () => any;
+  getMethod(method: string, requestor?: any): () => any
 
-  chain: ChainProvider;
-  swap: SwapProvider;
-  wallet: WalletProvider;
+  chain: ChainProvider
+  swap: SwapProvider
+  wallet: WalletProvider
 }
 
 export {

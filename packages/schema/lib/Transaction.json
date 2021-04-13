@@ -3,7 +3,7 @@
   "title": "Transaction",
   "description": "Blockchain transaction",
   "type": "object",
-  "required": [ "hash", "value" ],
+  "required": ["hash", "value"],
   "properties": {
     "blockHash": {
       "type": "string",

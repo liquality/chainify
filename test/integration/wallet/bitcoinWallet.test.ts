@@ -8,7 +8,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 'TEST_TIMEOUT'
 
 chai.use(chaiAsPromised)
 
-function testWallet (chain: Chain) {
+function testWallet(chain: Chain) {
   describe('getAddresses', () => {
     it('should return the correct number of addresses starting at the correct index and return the right derivation path', async () => {
       const startingIndex = 0
@@ -54,7 +54,9 @@ function testWallet (chain: Chain) {
 
       const { address, derivationPath, publicKey } = addresses[numAddresses - 1]
 
-      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey } = await chain.client.getMethod('getWalletAddress')(address)
+      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey } = await chain.client.getMethod(
+        'getWalletAddress'
+      )(address)
 
       expect(derivationPath).to.equal(expectedDerivationPath)
       expect(publicKey).to.equal(expectedPublicKey.toString('hex'))
@@ -69,7 +71,9 @@ function testWallet (chain: Chain) {
 
       const { address, derivationPath, publicKey } = addresses[numAddresses - 1]
 
-      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey } = await chain.client.getMethod('getWalletAddress')(address)
+      const { derivationPath: expectedDerivationPath, publicKey: expectedPublicKey } = await chain.client.getMethod(
+        'getWalletAddress'
+      )(address)
 
       expect(derivationPath).to.equal(expectedDerivationPath)
       expect(publicKey).to.equal(expectedPublicKey.toString('hex'))
@@ -83,7 +87,10 @@ function testWallet (chain: Chain) {
 
       await fundAddress(chain, firstAddress.address)
 
-      const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress()
+      const {
+        address: actualAddress,
+        derivationPath: actualDerivationPath
+      } = await chain.client.wallet.getUnusedAddress()
 
       const expectedSecondIndex = firstIndex + 1
       const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex)
@@ -101,7 +108,10 @@ function testWallet (chain: Chain) {
 
       await fundAddress(chain, firstAddress.address)
 
-      const { address: actualAddress, derivationPath: actualDerivationPath } = await chain.client.wallet.getUnusedAddress(change)
+      const {
+        address: actualAddress,
+        derivationPath: actualDerivationPath
+      } = await chain.client.wallet.getUnusedAddress(change)
 
       const expectedSecondIndex = firstIndex + 1
       const addresses = await chain.client.wallet.getAddresses(0, 1 + expectedSecondIndex, change)

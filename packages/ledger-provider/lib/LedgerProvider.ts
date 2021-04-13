@@ -8,9 +8,9 @@ const debug = Debug('ledger')
 
 interface IApp {
   transport: any
-} 
+}
 
-export type Newable<T> = { new (...args: any[]): T; };
+export type Newable<T> = { new (...args: any[]): T }
 
 export default abstract class LedgerProvider<TApp extends IApp> extends WalletProvider {
   _App: any
@@ -20,7 +20,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
   _Transport: any
   _appInstance: TApp
 
-  constructor (options: { App: Newable<TApp>, Transport: any, network: Network, ledgerScrambleKey: string }) {
+  constructor(options: { App: Newable<TApp>; Transport: any; network: Network; ledgerScrambleKey: string }) {
     super({ network: options.network })
 
     this._App = options.App
@@ -31,7 +31,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
     this._ledgerScrambleKey = options.ledgerScrambleKey
   }
 
-  async createTransport () {
+  async createTransport() {
     if (!this._transport) {
       debug('creating ledger transport')
       // @ts-ignore _Transport is class and is dynamically assigned
@@ -46,7 +46,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
     }
   }
 
-  errorProxy (target: any, func: string) {
+  errorProxy(target: any, func: string) {
     const method = target[func]
     if (Object.getOwnPropertyNames(target).includes(func) && typeof method === 'function') {
       return async (...args: any[]) => {
@@ -69,7 +69,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
     }
   }
 
-  async getApp () {
+  async getApp() {
     try {
       await this.createTransport()
     } catch (e) {
@@ -82,9 +82,10 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
     return this._appInstance
   }
 
-  async isWalletAvailable () {
+  async isWalletAvailable() {
     const app = await this.getApp()
-    if (!app.transport.scrambleKey) { // scramble key required before calls
+    if (!app.transport.scrambleKey) {
+      // scramble key required before calls
       app.transport.setScrambleKey(this._ledgerScrambleKey)
     }
     const exchangeTimeout = app.transport.exchangeTimeout
@@ -100,12 +101,12 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
     return true
   }
 
-  async getConnectedNetwork () {
+  async getConnectedNetwork() {
     // Ledger apps do not provide connected network. It is separated in firmware.
     return this._network
   }
 
-  async getWalletAddress (address: string) : Promise<Address> {
+  async getWalletAddress(address: string): Promise<Address> {
     let index = 0
     let change = false
 
@@ -116,7 +117,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
 
     while (index < maxAddresses) {
       const addrs = await this.getAddresses(index, addressesPerCall, change)
-      const addr = addrs.find(addr => addr.address === address)
+      const addr = addrs.find((addr) => addr.address === address)
       if (addr) return addr
 
       index += addressesPerCall

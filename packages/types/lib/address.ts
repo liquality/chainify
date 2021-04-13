@@ -3,7 +3,7 @@ export class Address {
   derivationPath?: string
   publicKey?: string
 
-  constructor(fields?: { address: string, derivationPath?: string, publicKey?: string }) {
-    if (fields) Object.assign(this, fields);
+  constructor(fields?: { address: string; derivationPath?: string; publicKey?: string }) {
+    if (fields) Object.assign(this, fields)
   }
 }

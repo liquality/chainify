@@ -1,4 +1,4 @@
-export interface Block <TransactionType = any> {
+export interface Block<TransactionType = any> {
   // Block number
   number: number
   // Block hash

@@ -5,7 +5,26 @@ import chaiAsPromised from 'chai-as-promised'
 import _ from 'lodash'
 import * as crypto from '../../../packages/crypto/lib'
 import * as BitcoinUtils from '../../../packages/bitcoin-utils/lib'
-import { Chain, chains, initiateAndVerify, claimAndVerify, refundAndVerify, getSwapParams, expectBalance, deployERC20Token, connectMetaMask, fundWallet, importBitcoinAddresses, clearEthMiner, mineUntilTimestamp, CONSTANTS, describeExternal, mineBlock, expectFee, TEST_TIMEOUT } from '../common'
+import {
+  Chain,
+  chains,
+  initiateAndVerify,
+  claimAndVerify,
+  refundAndVerify,
+  getSwapParams,
+  expectBalance,
+  deployERC20Token,
+  connectMetaMask,
+  fundWallet,
+  importBitcoinAddresses,
+  clearEthMiner,
+  mineUntilTimestamp,
+  CONSTANTS,
+  describeExternal,
+  mineBlock,
+  expectFee,
+  TEST_TIMEOUT
+} from '../common'
 import { Transaction, BigNumber } from '../../../packages/types/lib'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
@@ -14,7 +33,7 @@ chai.use(chaiAsPromised)
 
 const mockSecret = _.repeat('ff', 32)
 
-function testSwap (chain: Chain) {
+function testSwap(chain: Chain) {
   it('Generated secrets are different', async () => {
     const secret1 = await chain.client.swap.generateSecret('secret1')
     const secret2 = await chain.client.swap.generateSecret('secret2')
@@ -28,9 +47,14 @@ function testSwap (chain: Chain) {
     const swapParams = await getSwapParams(chain, secretHash)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     let claimTx: Transaction
-    await expectBalance(chain, swapParams.recipientAddress,
-      async () => { claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams) },
-      (before, after) => expect(after.gt(before)).to.be.true)
+    await expectBalance(
+      chain,
+      swapParams.recipientAddress,
+      async () => {
+        claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams)
+      },
+      (before, after) => expect(after.gt(before)).to.be.true
+    )
     const revealedSecret = claimTx.secret
     expect(revealedSecret).to.equal(secret)
   })
@@ -69,12 +93,15 @@ function testSwap (chain: Chain) {
     const swapParams = await getSwapParams(chain, secretHash)
     swapParams.expiration = Math.round(Date.now() / 1000)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
-    await expectBalance(chain, swapParams.refundAddress,
+    await expectBalance(
+      chain,
+      swapParams.refundAddress,
       async () => {
         await mineUntilTimestamp(chain, swapParams.expiration)
         await refundAndVerify(chain, initiationTxId, swapParams)
       },
-      (before, after) => expect(after.gt(before)).to.be.true)
+      (before, after) => expect(after.gt(before)).to.be.true
+    )
   })
 
   it('Refund fails after claim', async () => {
@@ -82,20 +109,37 @@ function testSwap (chain: Chain) {
     const swapParams = await getSwapParams(chain, secretHash)
     swapParams.expiration = Math.round(Date.now() / 1000)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
-    await expectBalance(chain, swapParams.recipientAddress,
+    await expectBalance(
+      chain,
+      swapParams.recipientAddress,
       async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
-      (before, after) => expect(after.gt(before)).to.be.true)
-    await expectBalance(chain, swapParams.refundAddress,
+      (before, after) => expect(after.gt(before)).to.be.true
+    )
+    await expectBalance(
+      chain,
+      swapParams.refundAddress,
       async () => {
-        try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) { /** Refund failing is ok */ }
+        try {
+          await refundAndVerify(chain, initiationTxId, swapParams)
+        } catch (e) {
+          /** Refund failing is ok */
+        }
       },
-      (before, after) => expect(after.eq(before)).to.be.true)
+      (before, after) => expect(after.eq(before)).to.be.true
+    )
     await mineUntilTimestamp(chain, swapParams.expiration)
-    await expectBalance(chain, swapParams.refundAddress,
+    await expectBalance(
+      chain,
+      swapParams.refundAddress,
       async () => {
-        try { await refundAndVerify(chain, initiationTxId, swapParams) } catch (e) { /** Refund failing is ok */ }
+        try {
+          await refundAndVerify(chain, initiationTxId, swapParams)
+        } catch (e) {
+          /** Refund failing is ok */
+        }
       },
-      (before, after) => expect(after.eq(before)).to.be.true)
+      (before, after) => expect(after.eq(before)).to.be.true
+    )
   })
 
   it('Refund available after expiration', async () => {
@@ -110,17 +154,22 @@ function testSwap (chain: Chain) {
   })
 }
 
-function testEthereumBalance (chain: Chain) {
+function testEthereumBalance(chain: Chain) {
   it('Balance - Claim', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
-    await expectBalance(chain, swapParams.recipientAddress,
-      async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
+    await expectBalance(
+      chain,
+      swapParams.recipientAddress,
+      async () => {
+        await claimAndVerify(chain, initiationTxId, mockSecret, swapParams)
+      },
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value)
         expect(after.eq(expectedBalance)).to.be.true
-      })
+      }
+    )
   })
 
   it('Balance - Refund', async () => {
@@ -129,27 +178,35 @@ function testEthereumBalance (chain: Chain) {
     swapParams.expiration = Math.round(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await mineUntilTimestamp(chain, swapParams.expiration)
-    await expectBalance(chain, swapParams.refundAddress,
+    await expectBalance(
+      chain,
+      swapParams.refundAddress,
       async () => refundAndVerify(chain, initiationTxId, swapParams),
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value)
         expect(after.eq(expectedBalance)).to.be.true
-      })
+      }
+    )
   })
 }
 
-function testBitcoinBalance (chain: Chain) {
+function testBitcoinBalance(chain: Chain) {
   it('Balance - Claim', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     const fee = BitcoinUtils.calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
-    await expectBalance(chain, swapParams.recipientAddress,
-      async () => { await claimAndVerify(chain, initiationTxId, mockSecret, swapParams) },
+    await expectBalance(
+      chain,
+      swapParams.recipientAddress,
+      async () => {
+        await claimAndVerify(chain, initiationTxId, mockSecret, swapParams)
+      },
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value).minus(new BigNumber(fee))
         expect(after.eq(expectedBalance)).to.be.true
-      })
+      }
+    )
   })
 
   it('Balance - Refund', async () => {
@@ -159,21 +216,24 @@ function testBitcoinBalance (chain: Chain) {
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     const fee = BitcoinUtils.calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
     await mineUntilTimestamp(chain, swapParams.expiration)
-    await expectBalance(chain, swapParams.refundAddress,
+    await expectBalance(
+      chain,
+      swapParams.refundAddress,
       async () => refundAndVerify(chain, initiationTxId, swapParams),
       (before, after) => {
         const expectedBalance = before.plus(swapParams.value).minus(new BigNumber(fee))
         expect(after.eq(expectedBalance)).to.be.true
-      })
+      }
+    )
   })
 }
 
-function testFee (chain: Chain) {
+function testFee(chain: Chain) {
   describe('Set Fee', () => {
     it('Initiate & Claim', async () => {
       const secretHash = crypto.sha256(mockSecret)
       const swapParams = await getSwapParams(chain, secretHash)
-      const expectedFee = new BigNumber(25)
+      const expectedFee = 25
       const initiationTxId = await initiateAndVerify(chain, swapParams, expectedFee)
       await expectFee(chain, initiationTxId, expectedFee, true)
       const claimTx = await claimAndVerify(chain, initiationTxId, mockSecret, swapParams, expectedFee)
@@ -184,7 +244,7 @@ function testFee (chain: Chain) {
       const secretHash = crypto.sha256(mockSecret)
       const swapParams = await getSwapParams(chain, secretHash)
       swapParams.expiration = Math.round(Date.now() / 1000)
-      const expectedFee = new BigNumber(25)
+      const expectedFee = 25
       const initiationTxId = await initiateAndVerify(chain, swapParams, expectedFee)
       await expectFee(chain, initiationTxId, expectedFee, true)
       await mineUntilTimestamp(chain, swapParams.expiration)
@@ -192,14 +252,14 @@ function testFee (chain: Chain) {
       await expectFee(chain, refundTx.hash, expectedFee, false, true)
     })
   })
-
   ;(chain.client.wallet.canUpdateFee ? describe : describe.skip)('Update Fee', () => {
-    if (!chain.id.includes('ERC20')) { // ERC20 initiation cannot be fee bumped
+    if (!chain.id.includes('ERC20')) {
+      // ERC20 initiation cannot be fee bumped
       it('Initiate', async () => {
         const secretHash = crypto.sha256(mockSecret)
         const swapParams = await getSwapParams(chain, secretHash)
-        const initiationTx = await chain.client.swap.initiateSwap(swapParams, new BigNumber(25))
-        const expectedFee = new BigNumber(50)
+        const initiationTx = await chain.client.swap.initiateSwap(swapParams, 25)
+        const expectedFee = 50
         const newInitiationTx = await chain.client.chain.updateTransactionFee(initiationTx.hash, expectedFee)
         await expectFee(chain, newInitiationTx.hash, expectedFee, true)
       })
@@ -210,8 +270,8 @@ function testFee (chain: Chain) {
       const swapParams = await getSwapParams(chain, secretHash)
       const initiationTxId = await initiateAndVerify(chain, swapParams)
       await mineBlock(chain)
-      const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, mockSecret, new BigNumber(25))
-      const expectedFee = new BigNumber(50)
+      const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, mockSecret, 25)
+      const expectedFee = 50
       const newClaimTx = await chain.client.chain.updateTransactionFee(claimTx.hash, expectedFee)
       await expectFee(chain, newClaimTx.hash, expectedFee, false, true)
     })
@@ -223,8 +283,8 @@ function testFee (chain: Chain) {
       const initiationTxId = await initiateAndVerify(chain, swapParams)
       await mineBlock(chain)
       await mineUntilTimestamp(chain, swapParams.expiration)
-      const refundTx = await chain.client.swap.refundSwap(swapParams, initiationTxId, new BigNumber(25))
-      const expectedFee = new BigNumber(50)
+      const refundTx = await chain.client.swap.refundSwap(swapParams, initiationTxId, 25)
+      const expectedFee = 50
       const newRefundTx = await chain.client.chain.updateTransactionFee(refundTx.hash, expectedFee)
       await expectFee(chain, newRefundTx.hash, expectedFee, false, true)
     })

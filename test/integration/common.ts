@@ -40,11 +40,13 @@ const CONSTANTS = {
   GWEI: 1e9
 }
 
-console.warn = () => { /** Silence warnings */ }
+console.warn = () => {
+  /** Silence warnings */
+}
 
 const metaMaskConnector = new MetaMaskConnector({ port: config.ethereum.metaMaskConnector.port })
 
-function mockedBitcoinRpcProvider () {
+function mockedBitcoinRpcProvider() {
   const bitcoinRpcProvider = new BitcoinRpcProvider({
     network: config.bitcoin.network,
     uri: config.bitcoin.rpc.host,
@@ -58,27 +60,35 @@ function mockedBitcoinRpcProvider () {
 
 const bitcoinWithLedger = new Client()
 bitcoinWithLedger.addProvider(mockedBitcoinRpcProvider())
-bitcoinWithLedger.addProvider(new BitcoinLedgerProvider({ network: config.bitcoin.network, Transport: LedgerHwTransportNode }))
+bitcoinWithLedger.addProvider(
+  new BitcoinLedgerProvider({ network: config.bitcoin.network, Transport: LedgerHwTransportNode })
+)
 bitcoinWithLedger.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
 const bitcoinWithNode = new Client()
 bitcoinWithNode.addProvider(mockedBitcoinRpcProvider())
-bitcoinWithNode.addProvider(new BitcoinNodeWalletProvider({
-  network: config.bitcoin.network,
-  uri: config.bitcoin.rpc.host,
-  username: config.bitcoin.rpc.username,
-  password: config.bitcoin.rpc.password
-}))
+bitcoinWithNode.addProvider(
+  new BitcoinNodeWalletProvider({
+    network: config.bitcoin.network,
+    uri: config.bitcoin.rpc.host,
+    username: config.bitcoin.rpc.username,
+    password: config.bitcoin.rpc.password
+  })
+)
 bitcoinWithNode.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
 const bitcoinWithJs = new Client()
 bitcoinWithJs.addProvider(mockedBitcoinRpcProvider())
-bitcoinWithJs.addProvider(new BitcoinJsWalletProvider({ network: config.bitcoin.network, mnemonic: generateMnemonic(256) }))
+bitcoinWithJs.addProvider(
+  new BitcoinJsWalletProvider({ network: config.bitcoin.network, mnemonic: generateMnemonic(256) })
+)
 bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
-ethereumWithMetaMask.addProvider(new EthereumWalletApiProvider(metaMaskConnector.getProvider(), config.ethereum.network))
+ethereumWithMetaMask.addProvider(
+  new EthereumWalletApiProvider(metaMaskConnector.getProvider(), config.ethereum.network)
+)
 ethereumWithMetaMask.addProvider(new EthereumSwapProvider())
 
 const ethereumWithNode = new Client()
@@ -87,7 +97,9 @@ ethereumWithNode.addProvider(new EthereumSwapProvider())
 
 const ethereumWithLedger = new Client()
 ethereumWithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
-ethereumWithLedger.addProvider(new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode }))
+ethereumWithLedger.addProvider(
+  new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode })
+)
 ethereumWithLedger.addProvider(new EthereumSwapProvider())
 
 const ethereumWithJs = new Client()
@@ -108,7 +120,9 @@ erc20WithNode.addProvider(new EthereumErc20SwapProvider())
 
 const erc20WithLedger = new Client()
 erc20WithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
-erc20WithLedger.addProvider(new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode }))
+erc20WithLedger.addProvider(
+  new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode })
+)
 erc20WithLedger.addProvider(new EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithLedger.addProvider(new EthereumErc20SwapProvider())
 
@@ -128,8 +142,19 @@ interface Chain {
 }
 
 const chains: { [index: string]: Chain } = {
-  bitcoinWithLedger: { id: 'Bitcoin Ledger', name: 'bitcoin', client: bitcoinWithLedger, network: config.bitcoin.network },
-  bitcoinWithNode: { id: 'Bitcoin Node', name: 'bitcoin', client: bitcoinWithNode, network: config.bitcoin.network, segwitFeeImplemented: true },
+  bitcoinWithLedger: {
+    id: 'Bitcoin Ledger',
+    name: 'bitcoin',
+    client: bitcoinWithLedger,
+    network: config.bitcoin.network
+  },
+  bitcoinWithNode: {
+    id: 'Bitcoin Node',
+    name: 'bitcoin',
+    client: bitcoinWithNode,
+    network: config.bitcoin.network,
+    segwitFeeImplemented: true
+  },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: config.bitcoin.network },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
@@ -141,7 +166,7 @@ const chains: { [index: string]: Chain } = {
   erc20WithJs: { id: 'ERC20 Js', name: 'ethereum', client: erc20WithJs }
 }
 
-async function getSwapParams (chain: Chain, secretHash: string): Promise<SwapParams> {
+async function getSwapParams(chain: Chain, secretHash: string): Promise<SwapParams> {
   const value = new BigNumber(config[chain.name as keyof typeof config].value)
   const recipientAddress = (await getNewAddress(chain)).address
   const refundAddress = (await getNewAddress(chain)).address
@@ -156,22 +181,28 @@ async function getSwapParams (chain: Chain, secretHash: string): Promise<SwapPar
   }
 }
 
-async function importBitcoinAddresses (chain: Chain) {
+async function importBitcoinAddresses(chain: Chain) {
   return chain.client.getMethod('importAddresses')()
 }
 
-async function fundAddress (chain: Chain, address: string, value?: BigNumber) : Promise<Transaction<any>> {
+async function fundAddress(chain: Chain, address: string, value?: BigNumber): Promise<Transaction<any>> {
   let tx
   if (chain.name === 'bitcoin') {
-    tx = await chains.bitcoinWithNode.client.chain.sendTransaction({ to: address, value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE })
+    tx = await chains.bitcoinWithNode.client.chain.sendTransaction({
+      to: address,
+      value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE
+    })
   } else if (chain.name === 'ethereum') {
-    tx = await chains.ethereumWithNode.client.chain.sendTransaction({ to: address, value: value || CONSTANTS.ETHEREUM_ADDRESS_DEFAULT_BALANCE })
+    tx = await chains.ethereumWithNode.client.chain.sendTransaction({
+      to: address,
+      value: value || CONSTANTS.ETHEREUM_ADDRESS_DEFAULT_BALANCE
+    })
   }
   await mineBlock(chain)
   return tx
 }
 
-async function fundWallet (chain: Chain) {
+async function fundWallet(chain: Chain) {
   if (chain.funded) return
 
   const address = await chain.client.wallet.getUnusedAddress()
@@ -179,7 +210,7 @@ async function fundWallet (chain: Chain) {
   chain.funded = true
 }
 
-async function getNewAddress (chain: Chain): Promise<Address> {
+async function getNewAddress(chain: Chain): Promise<Address> {
   if (chain.name === 'ethereum') {
     return getRandomEthereumAddress()
   } else {
@@ -187,7 +218,7 @@ async function getNewAddress (chain: Chain): Promise<Address> {
   }
 }
 
-async function getRandomAddress (chain: Chain): Promise<Address> {
+async function getRandomAddress(chain: Chain): Promise<Address> {
   if (chain.name === 'ethereum') {
     return getRandomEthereumAddress()
   } else {
@@ -195,19 +226,19 @@ async function getRandomAddress (chain: Chain): Promise<Address> {
   }
 }
 
-function getRandomEthereumAddress () {
+function getRandomEthereumAddress() {
   const randomString = Math.round(Math.random() * 1000000000000).toString()
   const randomHash = crypto.sha256(randomString)
   const address = randomHash.substr(0, 40)
   return { address }
 }
 
-async function getRandomBitcoinAddress (chain: Chain): Promise<Address> {
+async function getRandomBitcoinAddress(chain: Chain): Promise<Address> {
   const bitcoinRpcProvider = findProvider(chain.client, BitcoinRpcProvider) as BitcoinRpcProvider
   return bitcoinRpcProvider.jsonrpc('getnewaddress')
 }
 
-async function mineBlock (chain: Chain) {
+async function mineBlock(chain: Chain) {
   try {
     await chain.client.chain.generateBlock(1)
   } catch (e) {
@@ -216,21 +247,32 @@ async function mineBlock (chain: Chain) {
   }
 }
 
-async function mineUntilTimestamp (chain: Chain, timestamp: number) {
+async function mineUntilTimestamp(chain: Chain, timestamp: number) {
   const maxNumBlocks = 100
   for (let i = 0; i < maxNumBlocks; i++) {
     const block = await chain.client.chain.getBlockByNumber(await chain.client.chain.getBlockHeight())
-    if (i === 0) console.log('\x1b[2m', `Mining until chain timestamp: ${timestamp}. Now: ${block.timestamp}. Remaining: ${timestamp - block.timestamp}s`, '\x1b[0m')
+    if (i === 0)
+      console.log(
+        '\x1b[2m',
+        `Mining until chain timestamp: ${timestamp}. Now: ${block.timestamp}. Remaining: ${
+          timestamp - block.timestamp
+        }s`,
+        '\x1b[0m'
+      )
     if (block.timestamp > timestamp) break
-    if (chain.name === 'ethereum') { // Send random tx to cause Geth to mime block
-      await chains.ethereumWithNode.client.chain.sendTransaction({ to: (await getNewAddress(chain)).address, value: new BigNumber(10000) })
+    if (chain.name === 'ethereum') {
+      // Send random tx to cause Geth to mime block
+      await chains.ethereumWithNode.client.chain.sendTransaction({
+        to: (await getNewAddress(chain)).address,
+        value: new BigNumber(10000)
+      })
     }
     await mineBlock(chain)
     await sleep(1000)
   }
 }
 
-async function initiateAndVerify (chain: Chain, swapParams: SwapParams, fee?: BigNumber) {
+async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: number) {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const isERC20 = chain.id.includes('ERC20')
 
@@ -248,7 +290,11 @@ async function initiateAndVerify (chain: Chain, swapParams: SwapParams, fee?: Bi
     const foundInitiationTx = await chain.client.swap.findInitiateSwapTransaction(swapParams, currentBlock)
     expect(foundInitiationTx.hash).to.equal(initiationTx.hash)
 
-    const foundFundingTx = await chain.client.swap.findFundSwapTransaction(swapParams, initiationTx.hash, currentBlock + 1)
+    const foundFundingTx = await chain.client.swap.findFundSwapTransaction(
+      swapParams,
+      initiationTx.hash,
+      currentBlock + 1
+    )
     if (isERC20) {
       expect(foundFundingTx.hash).to.equal(fundingTx.hash)
     }
@@ -268,7 +314,13 @@ async function initiateAndVerify (chain: Chain, swapParams: SwapParams, fee?: Bi
   }
 }
 
-async function claimAndVerify (chain: Chain, initiationTxId: string, secret: string, swapParams: SwapParams, fee?: BigNumber) : Promise<Transaction<any>> {
+async function claimAndVerify(
+  chain: Chain,
+  initiationTxId: string,
+  secret: string,
+  swapParams: SwapParams,
+  fee?: number
+): Promise<Transaction<any>> {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, secret, fee)
   await mineBlock(chain)
@@ -278,7 +330,12 @@ async function claimAndVerify (chain: Chain, initiationTxId: string, secret: str
   return foundClaimTx
 }
 
-async function refundAndVerify (chain: Chain, initiationTxId: string, swapParams: SwapParams, fee?: BigNumber) : Promise<Transaction<any>> {
+async function refundAndVerify(
+  chain: Chain,
+  initiationTxId: string,
+  swapParams: SwapParams,
+  fee?: number
+): Promise<Transaction<any>> {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const refundTx = await chain.client.swap.refundSwap(swapParams, initiationTxId, fee)
   await mineBlock(chain)
@@ -288,7 +345,12 @@ async function refundAndVerify (chain: Chain, initiationTxId: string, swapParams
   return foundRefundTx
 }
 
-async function expectBalance (chain: Chain, address: Address | string, func: any, comparison: (before: BigNumber, after: BigNumber) => void) {
+async function expectBalance(
+  chain: Chain,
+  address: Address | string,
+  func: any,
+  comparison: (before: BigNumber, after: BigNumber) => void
+) {
   const balanceBefore = await chain.client.chain.getBalance([address])
   await func()
   if (chain.name === 'bitcoin') await sleep(1000) // Node seems to need a little bit of time to process utxos
@@ -296,10 +358,10 @@ async function expectBalance (chain: Chain, address: Address | string, func: any
   comparison(balanceBefore, balanceAfter)
 }
 
-async function getBitcoinTransactionFee (chain: Chain, tx: Transaction<bitcoin.Transaction>) {
+async function getBitcoinTransactionFee(chain: Chain, tx: Transaction<bitcoin.Transaction>) {
   const inputs = tx._raw.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
   const inputTransactions: Transaction<bitcoin.Transaction>[] = await Promise.all(
-    inputs.map(input => chain.client.chain.getTransactionByHash(input.txid))
+    inputs.map((input) => chain.client.chain.getTransactionByHash(input.txid))
   )
   const inputValues = inputTransactions.map((inputTx, index) => {
     const vout = inputs[index].vout
@@ -308,25 +370,34 @@ async function getBitcoinTransactionFee (chain: Chain, tx: Transaction<bitcoin.T
   })
   const inputValue = inputValues.reduce((a, b) => a.plus(new BigNumber(b)), new BigNumber(0))
 
-  const outputValue = tx._raw.vout.reduce((a, b) => a.plus(new BigNumber(b.value).times(new BigNumber(1e8))), new BigNumber(0))
+  const outputValue = tx._raw.vout.reduce(
+    (a, b) => a.plus(new BigNumber(b.value).times(new BigNumber(1e8))),
+    new BigNumber(0)
+  )
 
   const feeValue = inputValue.minus(outputValue)
 
   return feeValue.toNumber()
 }
 
-async function expectFee (chain: Chain, txHash: string, expectedFeePerByte: BigNumber, swapInitiate = false, swapRedeem = false) {
+async function expectFee(
+  chain: Chain,
+  txHash: string,
+  expectedFeePerByte: number,
+  swapInitiate = false,
+  swapRedeem = false
+) {
   if (chain.name === 'bitcoin') {
     return swapRedeem // It's dumb because it does legacy calculation using 1 input 1 output
-      ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte.toNumber())
-      : expectBitcoinFee(chain, txHash, expectedFeePerByte.toNumber(), swapInitiate)
+      ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte)
+      : expectBitcoinFee(chain, txHash, expectedFeePerByte, swapInitiate)
   }
   if (chain.name === 'ethereum') {
-    return expectEthereumFee(chain, txHash, expectedFeePerByte.toNumber())
+    return expectEthereumFee(chain, txHash, expectedFeePerByte)
   }
 }
 
-async function expectBitcoinFee (chain: Chain, txHash: string, expectedFeePerByte: number, payToScript: boolean) {
+async function expectBitcoinFee(chain: Chain, txHash: string, expectedFeePerByte: number, payToScript: boolean) {
   const tx = await chain.client.chain.getTransactionByHash(txHash)
   const fee = await getBitcoinTransactionFee(chain, tx)
   let size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
@@ -341,7 +412,7 @@ async function expectBitcoinFee (chain: Chain, txHash: string, expectedFeePerByt
 }
 
 // A dumber fee calculation that is used in swap redeems - 1 in 1 out - legacy tx/inputs assumed
-async function expectBitcoinSwapRedeemFee (chain: Chain, txHash: string, expectedFeePerByte: number) {
+async function expectBitcoinSwapRedeemFee(chain: Chain, txHash: string, expectedFeePerByte: number) {
   const tx = await chain.client.chain.getTransactionByHash(txHash)
   const fee = await getBitcoinTransactionFee(chain, tx)
   const expectedFee = BitcoinUtils.calculateFee(1, 1, expectedFeePerByte)
@@ -349,19 +420,16 @@ async function expectBitcoinSwapRedeemFee (chain: Chain, txHash: string, expecte
   expect(fee).to.equal(expectedFee)
 }
 
-async function expectEthereumFee (chain: Chain, txHash: string, gasPrice: number) {
+async function expectEthereumFee(chain: Chain, txHash: string, gasPrice: number) {
   const tx = await chain.client.chain.getTransactionByHash(txHash)
   expect(parseInt(tx._raw.gasPrice, 16)).to.equal(new BigNumber(gasPrice).times(CONSTANTS.GWEI).toNumber())
 }
 
-function findProvider (client: Client, type: any) {
-  return findLast(
-    client._providers,
-    provider => provider instanceof type, client._providers.length
-  )
+function findProvider(client: Client, type: any) {
+  return findLast(client._providers, (provider) => provider instanceof type, client._providers.length)
 }
 
-function clearEthMiner (chain: Chain) {
+function clearEthMiner(chain: Chain) {
   beforeEach(async () => {
     await mineBlock(chain)
   })
@@ -371,19 +439,24 @@ function clearEthMiner (chain: Chain) {
   })
 }
 
-function connectMetaMask () {
+function connectMetaMask() {
   before(async () => {
-    console.log('\x1b[36m', 'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue', '\x1b[0m')
+    console.log(
+      '\x1b[36m',
+      'Starting MetaMask connector on http://localhost:3333 - Open in browser to continue',
+      '\x1b[0m'
+    )
     await metaMaskConnector.start()
   })
   after(async () => metaMaskConnector.stop())
 }
 
-async function withInternalSendMineHook (chain: Chain, provider: any, func: any) {
+async function withInternalSendMineHook(chain: Chain, provider: any, func: any) {
   const originalSendTransaction = provider.sendTransaction
   provider.sendTransaction = async (options: SendOptions) => {
     const txHash = await originalSendTransaction.bind(provider)(options)
-    if (options.data !== null && !options.to) { // Only mine for contract deploy
+    if (options.data !== null && !options.to) {
+      // Only mine for contract deploy
       await mineBlock(chain)
     }
     return txHash
@@ -393,14 +466,15 @@ async function withInternalSendMineHook (chain: Chain, provider: any, func: any)
   return result
 }
 
-async function deployERC20Token (chain: Chain) {
+async function deployERC20Token(chain: Chain) {
   const erc20Provider = findProvider(chain.client, EthereumErc20Provider) as EthereumErc20Provider
   const ethereumRpcProvider = findProvider(chain.client, EthereumRpcProvider) as EthereumRpcProvider
   const ethereumJsProvider = findProvider(chain.client, EthereumJsWalletProvider) as EthereumJsWalletProvider
   const ethereumLedgerProvider = findProvider(chain.client, EthereumLedgerProvider) as EthereumLedgerProvider
   if (erc20Provider._contractAddress !== CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT) return
   console.log('\x1b[36m', 'Deploying the ERC20 token contract', '\x1b[0m')
-  const bytecode = '608060405234801561001057600080fd5b5060408051678ac7230489e800008152905133916000917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a3336000908152602081905260409020678ac7230489e80000905561055b8061007a6000396000f3fe608060405260043610610087577c0100000000000000000000000000000000000000000000000000000000600035046306fdde03811461008c578063095ea7b31461011657806323b872dd14610163578063313ce567146101a657806370a08231146101d157806395d89b4114610216578063a9059cbb1461022b578063dd62ed3e14610264575b600080fd5b34801561009857600080fd5b506100a161029f565b6040805160208082528351818301528351919283929083019185019080838360005b838110156100db5781810151838201526020016100c3565b50505050905090810190601f1680156101085780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b34801561012257600080fd5b5061014f6004803603604081101561013957600080fd5b50600160a060020a0381351690602001356102d6565b604080519115158252519081900360200190f35b34801561016f57600080fd5b5061014f6004803603606081101561018657600080fd5b50600160a060020a0381358116916020810135909116906040013561033c565b3480156101b257600080fd5b506101bb6103ab565b6040805160ff9092168252519081900360200190f35b3480156101dd57600080fd5b50610204600480360360208110156101f457600080fd5b5035600160a060020a03166103b0565b60408051918252519081900360200190f35b34801561022257600080fd5b506100a16103c2565b34801561023757600080fd5b5061014f6004803603604081101561024e57600080fd5b50600160a060020a0381351690602001356103f9565b34801561027057600080fd5b506102046004803603604081101561028757600080fd5b50600160a060020a038135811691602001351661040f565b60408051808201909152600a81527f546f6b656e205465737400000000000000000000000000000000000000000000602082015281565b336000818152600160209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b600160a060020a038316600090815260016020908152604080832033845290915281205482111561036c57600080fd5b600160a060020a03841660009081526001602090815260408083203384529091529020805483900390556103a184848461042c565b5060019392505050565b601281565b60006020819052908152604090205481565b60408051808201909152600481527f5357415000000000000000000000000000000000000000000000000000000000602082015281565b600061040633848461042c565b50600192915050565b600160209081526000928352604080842090915290825290205481565b600160a060020a038216151561044157600080fd5b600160a060020a03831660009081526020819052604090205481111561046657600080fd5b600160a060020a038216600090815260208190526040902054818101101561048d57600080fd5b600160a060020a03808316600081815260208181526040808320805495891680855282852080548981039091559486905281548801909155815187815291519390950194927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a3600160a060020a0380841660009081526020819052604080822054928716825290205401811461052957fe5b5050505056fea165627a7a72305820db460d87e53e94fdd939b99d2a07ceb235e8a2ce62f7d320cd34a12c1c613a860029'
+  const bytecode =
+    '608060405234801561001057600080fd5b5060408051678ac7230489e800008152905133916000917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9181900360200190a3336000908152602081905260409020678ac7230489e80000905561055b8061007a6000396000f3fe608060405260043610610087577c0100000000000000000000000000000000000000000000000000000000600035046306fdde03811461008c578063095ea7b31461011657806323b872dd14610163578063313ce567146101a657806370a08231146101d157806395d89b4114610216578063a9059cbb1461022b578063dd62ed3e14610264575b600080fd5b34801561009857600080fd5b506100a161029f565b6040805160208082528351818301528351919283929083019185019080838360005b838110156100db5781810151838201526020016100c3565b50505050905090810190601f1680156101085780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b34801561012257600080fd5b5061014f6004803603604081101561013957600080fd5b50600160a060020a0381351690602001356102d6565b604080519115158252519081900360200190f35b34801561016f57600080fd5b5061014f6004803603606081101561018657600080fd5b50600160a060020a0381358116916020810135909116906040013561033c565b3480156101b257600080fd5b506101bb6103ab565b6040805160ff9092168252519081900360200190f35b3480156101dd57600080fd5b50610204600480360360208110156101f457600080fd5b5035600160a060020a03166103b0565b60408051918252519081900360200190f35b34801561022257600080fd5b506100a16103c2565b34801561023757600080fd5b5061014f6004803603604081101561024e57600080fd5b50600160a060020a0381351690602001356103f9565b34801561027057600080fd5b506102046004803603604081101561028757600080fd5b50600160a060020a038135811691602001351661040f565b60408051808201909152600a81527f546f6b656e205465737400000000000000000000000000000000000000000000602082015281565b336000818152600160209081526040808320600160a060020a038716808552908352818420869055815186815291519394909390927f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925928290030190a350600192915050565b600160a060020a038316600090815260016020908152604080832033845290915281205482111561036c57600080fd5b600160a060020a03841660009081526001602090815260408083203384529091529020805483900390556103a184848461042c565b5060019392505050565b601281565b60006020819052908152604090205481565b60408051808201909152600481527f5357415000000000000000000000000000000000000000000000000000000000602082015281565b600061040633848461042c565b50600192915050565b600160209081526000928352604080842090915290825290205481565b600160a060020a038216151561044157600080fd5b600160a060020a03831660009081526020819052604090205481111561046657600080fd5b600160a060020a038216600090815260208190526040902054818101101561048d57600080fd5b600160a060020a03808316600081815260208181526040808320805495891680855282852080548981039091559486905281548801909155815187815291519390950194927fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef929181900390910190a3600160a060020a0380841660009081526020819052604080822054928716825290205401811461052957fe5b5050505056fea165627a7a72305820db460d87e53e94fdd939b99d2a07ceb235e8a2ce62f7d320cd34a12c1c613a860029'
   const deployingProvider = ethereumJsProvider || ethereumLedgerProvider || ethereumRpcProvider
   const tx = await deployingProvider.sendTransaction({ to: null, value: new BigNumber(0), data: bytecode })
   await mineBlock(chain)

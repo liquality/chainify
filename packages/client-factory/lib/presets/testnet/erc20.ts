@@ -10,33 +10,26 @@ export default [
   {
     provider: EthereumRpcProvider,
     optional: ['infuraProjectId'],
-    args: (config: any)  => [
+    args: (config: any) => [
       `https://rinkeby.infura.io/v3/${config.infuraProjectId || '1d8f7fb6ae924886bbd1733951332eb0'}`
     ]
   },
   {
     provider: EthereumJsWalletProvider,
     onlyIf: ['mnemonic'],
-    args: (config: any)  => [
-      EthereumNetworks.rinkeby,
-      config.mnemonic
-    ]
+    args: (config: any) => [EthereumNetworks.rinkeby, config.mnemonic]
   },
   {
     provider: EthereumErc20Provider,
     requires: ['contractAddress'],
-    args: (config: any)  => [
-      config.contractAddress
-    ]
+    args: (config: any) => [config.contractAddress]
   },
   {
     provider: EthereumErc20SwapProvider
   },
   {
     provider: EthereumErc20ScraperSwapFindProvider,
-    args: [
-      'https://liquality.io/eth-rinkeby-api/'
-    ]
+    args: ['https://liquality.io/eth-rinkeby-api/']
   },
   {
     provider: EthereumRpcFeeProvider

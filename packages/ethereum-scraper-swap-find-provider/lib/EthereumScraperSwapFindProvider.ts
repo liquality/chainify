@@ -1,22 +1,12 @@
 import NodeProvider from '@liquality/node-provider'
-import {
-  numberToHex,
-  normalizeTransactionObject,
-  validateAddress,
-  validateExpiration
-} from '@liquality/ethereum-utils'
-import {
-  addressToString,
-  validateValue,
-  validateSecretHash,
-  validateSecretAndHash
-} from '@liquality/utils'
+import { numberToHex, normalizeTransactionObject, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
+import { addressToString, validateValue, validateSecretHash, validateSecretAndHash } from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 import { SwapProvider, SwapParams, Transaction, ethereum } from '@liquality/types'
 import * as scraper from './types'
 
 export default class EthereumScraperSwapFindProvider extends NodeProvider implements Partial<SwapProvider> {
-  constructor (url: string) {
+  constructor(url: string) {
     super({
       baseURL: url,
       responseType: 'text',
@@ -24,8 +14,8 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     })
   }
 
-  normalizeTransactionResponse (tx: any) : Transaction<scraper.Transaction> {
-    const txRaw : scraper.Transaction = {
+  normalizeTransactionResponse(tx: any): Transaction<scraper.Transaction> {
+    const txRaw: scraper.Transaction = {
       from: tx.from,
       to: tx.to,
       hash: tx.hash,
@@ -52,7 +42,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     return normalizedTransaction
   }
 
-  async ensureFeeInfo (tx: Transaction<scraper.Transaction>) {
+  async ensureFeeInfo(tx: Transaction<scraper.Transaction>) {
     if (!(tx.fee && tx.feePrice)) {
       const { fee, feePrice, _raw } = await this.getMethod('getTransactionByHash')(tx.hash)
 
@@ -66,7 +56,14 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     return tx
   }
 
-  async findAddressTransaction (address: string, predicate: (tx: Transaction<scraper.Transaction>) => boolean, fromBlock?: number, toBlock?: number, limit = 250, sort = 'desc') {
+  async findAddressTransaction(
+    address: string,
+    predicate: (tx: Transaction<scraper.Transaction>) => boolean,
+    fromBlock?: number,
+    toBlock?: number,
+    limit = 250,
+    sort = 'desc'
+  ) {
     for (let page = 1; ; page++) {
       const data = await this.nodeGet(`/txs/${address}`, {
         limit,
@@ -80,7 +77,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
       if (transactions.length === 0) return
 
       const normalizedTransactions = transactions
-        .filter(tx => tx.status === true)
+        .filter((tx) => tx.status === true)
         .map(this.normalizeTransactionResponse)
       const tx = normalizedTransactions.find(predicate)
       if (tx) return this.ensureFeeInfo(tx)
@@ -89,7 +86,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
   }
 
-  async findAddressEvent (type: string, contractAddress: string) {
+  async findAddressEvent(type: string, contractAddress: string) {
     const data = await this.nodeGet(`/events/${type}/${contractAddress}`)
     const { tx } = data.data
 
@@ -98,16 +95,15 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
   }
 
-  async findInitiateSwapTransaction (swapParams: SwapParams) {
+  async findInitiateSwapTransaction(swapParams: SwapParams) {
     this.validateSwapParams(swapParams)
 
-    return this.findAddressTransaction(
-      addressToString(swapParams.refundAddress),
-      tx => this.getMethod('doesTransactionMatchInitiation')(swapParams, tx)
+    return this.findAddressTransaction(addressToString(swapParams.refundAddress), (tx) =>
+      this.getMethod('doesTransactionMatchInitiation')(swapParams, tx)
     )
   }
 
-  validateSwapParams (swapParams: SwapParams) {
+  validateSwapParams(swapParams: SwapParams) {
     validateValue(swapParams.value)
     validateAddress(swapParams.recipientAddress)
     validateAddress(swapParams.refundAddress)
@@ -115,13 +111,12 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     validateExpiration(swapParams.expiration)
   }
 
-
-  
-  async findClaimSwapTransaction (swapParams: SwapParams, initiationTxHash: string) {   
+  async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string) {
     this.validateSwapParams(swapParams)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
+    if (!initiationTransactionReceipt)
+      throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const tx = await this.findAddressEvent('swapClaim', initiationTransactionReceipt.contractAddress)
 
@@ -132,16 +127,19 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
   }
 
-  async findRefundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) {
+  async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string) {
     this.validateSwapParams(swapParams)
 
-    const initiationTransactionReceipt : ethereum.TransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
+    const initiationTransactionReceipt: ethereum.TransactionReceipt = await this.getMethod('getTransactionReceipt')(
+      initiationTxHash
+    )
+    if (!initiationTransactionReceipt)
+      throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     return this.findAddressEvent('swapRefund', initiationTransactionReceipt.contractAddress)
   }
 
-  doesBlockScan () {
+  doesBlockScan() {
     return false
   }
 }

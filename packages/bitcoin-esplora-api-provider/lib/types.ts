@@ -1,4 +1,4 @@
-export type FeeEstimates = {[index: string]: number}
+export type FeeEstimates = { [index: string]: number }
 
 export type TxStatus = {
   confirmed: boolean
@@ -22,7 +22,7 @@ export type Address = {
     spent_txo_count: number
     spent_txo_sum: number
     tx_count: number
-  },
+  }
   mempool_stats: {
     funded_txo_count: number
     funded_txo_sum: number
@@ -56,9 +56,9 @@ export type Transaction = {
   locktime: number
   vin: Vin[]
   vout: Vout[]
-  size: number,
-  weight: number,
-  fee: number,
+  size: number
+  weight: number
+  fee: number
   status: TxStatus
 }
 

@@ -2,7 +2,7 @@ import cryptoHash from 'crypto-hashing'
 import base58 from 'bs58'
 import bech32 from 'bech32'
 
-function isHex (hex: string) {
+function isHex(hex: string) {
   if (!hex.match(/([0-9]|[a-f])/gim)) return false
 
   const buf = Buffer.from(hex, 'hex').toString('hex')
@@ -15,7 +15,7 @@ function isHex (hex: string) {
  * @param {string} message - any string.
  * @return {string} Returns Buffer.
  */
-function ensureBuffer (message: string | Buffer | any) {
+function ensureBuffer(message: string | Buffer | any) {
   if (Buffer.isBuffer(message)) return message
 
   switch (typeof message) {
@@ -36,7 +36,7 @@ function ensureBuffer (message: string | Buffer | any) {
  * @param {!string|Buffer} message - Message to be hashed.
  * @return {string} Returns the hash of a string.
  */
-function hashToHex (algorithm: string, message: string | Buffer) {
+function hashToHex(algorithm: string, message: string | Buffer) {
   return cryptoHash(algorithm, ensureBuffer(message)).toString('hex')
 }
 
@@ -45,7 +45,7 @@ function hashToHex (algorithm: string, message: string | Buffer) {
  * @param {!string|Buffer} message - message in string or Buffer.
  * @return {string} Returns the hash160 of a string.
  */
-function hash160 (message: Buffer) {
+function hash160(message: Buffer) {
   return hashToHex('hash160', message)
 }
 
@@ -54,7 +54,7 @@ function hash160 (message: Buffer) {
  * @param {!string|Buffer} message - message in string or Buffer.
  * @return {string} Returns the sha256 of a string.
  */
-function sha256 (message: string | Buffer) {
+function sha256(message: string | Buffer) {
   return hashToHex('sha256', message)
 }
 
@@ -63,7 +63,7 @@ function sha256 (message: string | Buffer) {
  * @param {!string|Buffer} message - message in string or Buffer.
  * @return {string} Returns the ripemd160 of a string.
  */
-function ripemd160 (message : string | Buffer) {
+function ripemd160(message: string | Buffer) {
   return hashToHex('ripemd160', message)
 }
 
@@ -74,7 +74,7 @@ function ripemd160 (message : string | Buffer) {
  * @return {string} Returns a padded string with length greater or equal to the given length
  *  rounded up to the nearest even number.
  */
-function padHexStart (hex: string, lengthBytes?: number) {
+function padHexStart(hex: string, lengthBytes?: number) {
   let lengthString = lengthBytes * 2 || hex.length
   lengthString += lengthString % 2
 
@@ -86,18 +86,16 @@ export {
    * Base58 object with decode, decodeUnsafe, and encode functions.
    */
   base58,
-
   /**
    * Get bech32 of message.
    * @param {!string} message - any string.
    * @return {string} Returns the bech32 of a string.
    */
   bech32,
-
   sha256,
   ripemd160,
   hash160,
   ensureBuffer,
   padHexStart,
-  isHex,
+  isHex
 }

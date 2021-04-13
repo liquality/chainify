@@ -9,15 +9,15 @@ import { flatten } from 'lodash'
 
 interface ProviderOptions {
   // RPC URI
-  uri: string,
+  uri: string
   // Authentication username
-  username?: string,
+  username?: string
   // Authentication password
-  password?: string,
+  password?: string
   // Bitcoin network
-  network: BitcoinNetwork,
+  network: BitcoinNetwork
   // Number of block confirmations to target for fee. Defaul: 1
-  feeBlockConfirmations?: number,
+  feeBlockConfirmations?: number
   // Default fee per byte for transactions. Default: 3
   defaultFeePerByte?: number
 }
@@ -26,9 +26,9 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
   _feeBlockConfirmations: number
   _defaultFeePerByte: number
   _network: BitcoinNetwork
-  _usedAddressCache: {[key: string]: boolean}
+  _usedAddressCache: { [key: string]: boolean }
 
-  constructor (options: ProviderOptions) {
+  constructor(options: ProviderOptions) {
     const { uri, username, password, network, feeBlockConfirmations = 1, defaultFeePerByte = 3 } = options
     super(uri, username, password)
     this._network = network
@@ -37,11 +37,11 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     this._usedAddressCache = {}
   }
 
-  async decodeRawTransaction (rawTransaction: string) : Promise<bitcoin.Transaction> {
+  async decodeRawTransaction(rawTransaction: string): Promise<bitcoin.Transaction> {
     return this.jsonrpc('decoderawtransaction', rawTransaction)
   }
 
-  async getFeePerByte (numberOfBlocks = this._feeBlockConfirmations) {
+  async getFeePerByte(numberOfBlocks = this._feeBlockConfirmations) {
     try {
       const { feerate } = await this.jsonrpc('estimatesmartfee', numberOfBlocks)
 
@@ -55,63 +55,69 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     }
   }
 
-  async getMinRelayFee () {
+  async getMinRelayFee() {
     const { relayfee } = await this.jsonrpc('getnetworkinfo')
-    return relayfee * 1e8 / 1000
+    return (relayfee * 1e8) / 1000
   }
 
-  async getBalance (_addresses: (string | Address)[]) {
+  async getBalance(_addresses: (string | Address)[]) {
     const addresses = _addresses.map(addressToString)
     const _utxos = await this.getUnspentTransactions(addresses)
     const utxos = flatten(_utxos)
 
-    return utxos
-      .reduce((acc, utxo) => acc.plus(utxo.value), new BigNumber(0))
+    return utxos.reduce((acc, utxo) => acc.plus(utxo.value), new BigNumber(0))
   }
 
-  async getUnspentTransactions (_addresses: (Address | string)[]) : Promise<bitcoin.UTXO[]> {
+  async getUnspentTransactions(_addresses: (Address | string)[]): Promise<bitcoin.UTXO[]> {
     const addresses = _addresses.map(addressToString)
-    const utxos : bitcoin.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
-    return utxos.map(utxo => ({ ...utxo, value: new BigNumber(utxo.amount).times(1e8).toNumber() }))
+    const utxos: bitcoin.rpc.UTXO[] = await this.jsonrpc('listunspent', 0, 9999999, addresses)
+    return utxos.map((utxo) => ({ ...utxo, value: new BigNumber(utxo.amount).times(1e8).toNumber() }))
   }
 
-  async getAddressTransactionCounts (_addresses: (Address | string)[]) {
+  async getAddressTransactionCounts(_addresses: (Address | string)[]) {
     const addresses = _addresses.map(addressToString)
-    const receivedAddresses : bitcoin.rpc.ReceivedByAddress[] = await this.jsonrpc('listreceivedbyaddress', 0, false, true)
+    const receivedAddresses: bitcoin.rpc.ReceivedByAddress[] = await this.jsonrpc(
+      'listreceivedbyaddress',
+      0,
+      false,
+      true
+    )
     return addresses.reduce((acc: bitcoin.AddressTxCounts, addr) => {
-      const receivedAddress = receivedAddresses.find(receivedAddress => receivedAddress.address === addr)
+      const receivedAddress = receivedAddresses.find((receivedAddress) => receivedAddress.address === addr)
       const transactionCount = receivedAddress ? receivedAddress.txids.length : 0
       acc[addr] = transactionCount
       return acc
     }, {})
   }
 
-  async getReceivedByAddress (address: string) : Promise<number> {
+  async getReceivedByAddress(address: string): Promise<number> {
     return this.jsonrpc('getreceivedbyaddress', address)
   }
 
-  async importAddresses (addresses: string[]) {
-    const request = addresses.map(address => ({ scriptPubKey: { address }, timestamp: 0 }))
+  async importAddresses(addresses: string[]) {
+    const request = addresses.map((address) => ({ scriptPubKey: { address }, timestamp: 0 }))
     return this.jsonrpc('importmulti', request)
   }
 
-  async getTransactionHex (transactionHash: string) : Promise<string> {
+  async getTransactionHex(transactionHash: string): Promise<string> {
     return this.jsonrpc('getrawtransaction', transactionHash)
   }
 
-  async generateBlock (numberOfBlocks: number) {
+  async generateBlock(numberOfBlocks: number) {
     const miningAddressLabel = 'miningAddress'
     let address
-    try { // Avoid creating 100s of addresses for mining
+    try {
+      // Avoid creating 100s of addresses for mining
       const labelAddresses = await this.jsonrpc('getaddressesbylabel', miningAddressLabel)
       address = Object.keys(labelAddresses)[0]
-    } catch (e) { // Label does not exist
+    } catch (e) {
+      // Label does not exist
       address = await this.jsonrpc('getnewaddress', miningAddressLabel)
     }
     return this.jsonrpc('generatetoaddress', numberOfBlocks, address)
   }
 
-  async getBlockByHash (blockHash: string, includeTx = false) : Promise<Block> {
+  async getBlockByHash(blockHash: string, includeTx = false): Promise<Block> {
     let data: bitcoin.rpc.Block
 
     try {
@@ -155,7 +161,7 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     }
   }
 
-  async getBlockByNumber (blockNumber: number, includeTx = false) {
+  async getBlockByNumber(blockNumber: number, includeTx = false) {
     let blockHash
 
     try {
@@ -172,11 +178,11 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return this.getBlockByHash(blockHash, includeTx)
   }
 
-  async getBlockHeight () {
+  async getBlockHeight() {
     return this.jsonrpc('getblockcount')
   }
 
-  async getTransactionByHash (transactionHash: string) {
+  async getTransactionByHash(transactionHash: string) {
     try {
       const tx = await this.getParsedTransactionByHash(transactionHash, true)
       return tx
@@ -190,14 +196,12 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     }
   }
 
-  async getTransactionFee (tx: bitcoin.Transaction) {
-    const isCoinbaseTx = tx.vin.find(vin => vin.coinbase)
+  async getTransactionFee(tx: bitcoin.Transaction) {
+    const isCoinbaseTx = tx.vin.find((vin) => vin.coinbase)
     if (isCoinbaseTx) return // Coinbase transactions do not have a fee
 
     const inputs = tx.vin.map((vin) => ({ txid: vin.txid, vout: vin.vout }))
-    const inputTransactions = await Promise.all(
-      inputs.map(input => this.jsonrpc('getrawtransaction', input.txid, 1))
-    )
+    const inputTransactions = await Promise.all(inputs.map((input) => this.jsonrpc('getrawtransaction', input.txid, 1)))
 
     const inputValues = inputTransactions.map((inputTx, index) => {
       const vout = inputs[index].vout
@@ -205,31 +209,37 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
       return output.value * 1e8
     })
     const inputValue = inputValues.reduce((a, b) => a.plus(new BigNumber(b)), new BigNumber(0))
-    const outputValue = tx.vout.reduce((a, b) => a.plus(new BigNumber(b.value).times(new BigNumber(1e8))), new BigNumber(0))
+    const outputValue = tx.vout.reduce(
+      (a, b) => a.plus(new BigNumber(b.value).times(new BigNumber(1e8))),
+      new BigNumber(0)
+    )
     const feeValue = inputValue.minus(outputValue)
     return feeValue.toNumber()
   }
 
-  async getParsedTransactionByHash(transactionHash: string, addFees = false) : Promise <Transaction<bitcoin.Transaction>> {
+  async getParsedTransactionByHash(
+    transactionHash: string,
+    addFees = false
+  ): Promise<Transaction<bitcoin.Transaction>> {
     const tx: bitcoin.rpc.MinedTransaction = await this.jsonrpc('getrawtransaction', transactionHash, 1)
     return normalizeTransactionObject(
       tx,
-      addFees ? (await this.getTransactionFee(tx)) : undefined,
-      tx.confirmations > 0 ? (await this.getBlockByHash(tx.blockhash)) : undefined
+      addFees ? await this.getTransactionFee(tx) : undefined,
+      tx.confirmations > 0 ? await this.getBlockByHash(tx.blockhash) : undefined
     )
   }
 
-  async getRawTransactionByHash (transactionHash: string) {
+  async getRawTransactionByHash(transactionHash: string) {
     const tx: string = await this.jsonrpc('getrawtransaction', transactionHash, 0)
     return tx
   }
 
-  async sendRawTransaction (rawTransaction: string) : Promise<string> {
+  async sendRawTransaction(rawTransaction: string): Promise<string> {
     return this.jsonrpc('sendrawtransaction', rawTransaction)
   }
 
-  async sendBatchTransaction (transactions: SendOptions[]) {
-    const outputs : { [index: string]: number } = {}
+  async sendBatchTransaction(transactions: SendOptions[]) {
+    const outputs: { [index: string]: number } = {}
     for (const tx of transactions) {
       outputs[addressToString(tx.to)] = new BigNumber(tx.value).dividedBy(1e8).toNumber()
     }
@@ -241,15 +251,15 @@ export default class BitcoinRpcProvider extends JsonRpcProvider implements Parti
     return normalizeTransactionObject(decodeRawTransaction(rawTxSigned.hex, this._network), fee)
   }
 
-  async signRawTransaction (hexstring: string) {
+  async signRawTransaction(hexstring: string) {
     return this.jsonrpc('signrawtransactionwithwallet', hexstring)
   }
 
-  async createRawTransaction (transactions: [], outputs: { [index: string]: number }) : Promise<string> {
+  async createRawTransaction(transactions: [], outputs: { [index: string]: number }): Promise<string> {
     return this.jsonrpc('createrawtransaction', transactions, outputs)
   }
 
-  async fundRawTransaction (hexstring: string) : Promise<bitcoin.rpc.FundRawResponse> {
+  async fundRawTransaction(hexstring: string): Promise<bitcoin.rpc.FundRawResponse> {
     return this.jsonrpc('fundrawtransaction', hexstring)
   }
 }

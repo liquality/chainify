@@ -10,7 +10,7 @@ type PaymentVariants = {
 }
 
 export default class BitcoinEsploraSwapFindProvider extends NodeProvider {
-  constructor (url: string) {
+  constructor(url: string) {
     super({
       baseURL: url,
       responseType: 'text',
@@ -18,20 +18,23 @@ export default class BitcoinEsploraSwapFindProvider extends NodeProvider {
     })
   }
 
-  async findAddressTransaction (address: string, currentHeight: number, predicate: TransactionMatchesFunction) {
+  async findAddressTransaction(address: string, currentHeight: number, predicate: TransactionMatchesFunction) {
     // TODO: This does not go through pages as swap addresses have at most 2 transactions
     // Investigate whether retrieving more transactions is required.
     const transactions = await this.nodeGet(`/address/${address}/txs`)
 
     for (const transaction of transactions) {
-      const formattedTransaction: Transaction<bitcoin.Transaction> = await this.getMethod('formatTransaction')(transaction, currentHeight)
+      const formattedTransaction: Transaction<bitcoin.Transaction> = await this.getMethod('formatTransaction')(
+        transaction,
+        currentHeight
+      )
       if (predicate(formattedTransaction)) {
         return formattedTransaction
       }
     }
   }
 
-  async findSwapTransaction (swapParams: SwapParams, blockNumber: number, predicate: TransactionMatchesFunction) {
+  async findSwapTransaction(swapParams: SwapParams, blockNumber: number, predicate: TransactionMatchesFunction) {
     const currentHeight: number = await this.getMethod('getBlockHeight')()
     const swapOutput: Buffer = this.getMethod('getSwapOutput')(swapParams)
     const paymentVariants: PaymentVariants = this.getMethod('getSwapPaymentVariants')(swapOutput)
@@ -41,7 +44,7 @@ export default class BitcoinEsploraSwapFindProvider extends NodeProvider {
     }
   }
 
-  doesBlockScan () {
+  doesBlockScan() {
     return false
   }
 }

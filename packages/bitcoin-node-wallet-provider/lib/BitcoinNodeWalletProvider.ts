@@ -7,21 +7,21 @@ import BitcoinNetworks, { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { sha256 } from '@liquality/crypto'
 
-const BIP70_CHAIN_TO_NETWORK : { [index: string]: BitcoinNetwork } = {
-  'main': BitcoinNetworks.bitcoin,
-  'test': BitcoinNetworks.bitcoin_testnet,
-  'regtest': BitcoinNetworks.bitcoin_regtest
+const BIP70_CHAIN_TO_NETWORK: { [index: string]: BitcoinNetwork } = {
+  main: BitcoinNetworks.bitcoin,
+  test: BitcoinNetworks.bitcoin_testnet,
+  regtest: BitcoinNetworks.bitcoin_regtest
 }
 
 interface ProviderOptions {
   // RPC URI
-  uri: string,
+  uri: string
   // Authentication username
-  username?: string,
+  username?: string
   // Authentication password
-  password?: string,
+  password?: string
   // Bitcoin network
-  network: BitcoinNetwork,
+  network: BitcoinNetwork
   // Address type. Default: bech32
   addressType?: bitcoin.AddressType
 }
@@ -30,9 +30,9 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   _addressType: bitcoin.AddressType
   _network: BitcoinNetwork
   _rpc: JsonRpcProvider
-  _addressInfoCache: {[key: string]: Address}
+  _addressInfoCache: { [key: string]: Address }
 
-  constructor (opts: ProviderOptions) {
+  constructor(opts: ProviderOptions) {
     const { uri, username, password, network, addressType = bitcoin.AddressType.BECH32 } = opts
     super({ network })
     const addressTypes = Object.values(bitcoin.AddressType)
@@ -45,13 +45,15 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     this._addressInfoCache = {}
   }
 
-  async signMessage (message: string, from: string) {
-    return this._rpc.jsonrpc('signmessage', from, message).then((result: string) => Buffer.from(result, 'base64').toString('hex'))
+  async signMessage(message: string, from: string) {
+    return this._rpc
+      .jsonrpc('signmessage', from, message)
+      .then((result: string) => Buffer.from(result, 'base64').toString('hex'))
   }
 
-  async withTxFee (func: () => Promise<Transaction<bitcoin.Transaction>>, feePerByte: BigNumber) {
-    const feePerKB = feePerByte.div(1e8).times(1000).toNumber()
-    const originalTxFee : number = (await this._rpc.jsonrpc('getwalletinfo')).paytxfee
+  async withTxFee(func: () => Promise<Transaction<bitcoin.Transaction>>, feePerByte: number) {
+    const feePerKB = new BigNumber(feePerByte).div(1e8).times(1000).toNumber()
+    const originalTxFee: number = (await this._rpc.jsonrpc('getwalletinfo')).paytxfee
     await this._rpc.jsonrpc('settxfee', feePerKB)
 
     const result = await func()
@@ -61,7 +63,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return result
   }
 
-  async _sendTransaction (options: SendOptions) {
+  async _sendTransaction(options: SendOptions) {
     const value = new BigNumber(options.value).dividedBy(1e8).toNumber()
     const hash = await this._rpc.jsonrpc('sendtoaddress', options.to, value, '', '', false, true)
     const transaction = await this._rpc.jsonrpc('gettransaction', hash, true)
@@ -69,13 +71,13 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return normalizeTransactionObject(decodeRawTransaction(transaction.hex, this._network), fee)
   }
 
-  async sendTransaction (options: SendOptions) {
+  async sendTransaction(options: SendOptions) {
     return options.fee
       ? this.withTxFee(async () => this._sendTransaction(options), options.fee)
       : this._sendTransaction(options)
   }
 
-  async updateTransactionFee (tx: Transaction<bitcoin.Transaction>, newFeePerByte: BigNumber) {
+  async updateTransactionFee(tx: Transaction<bitcoin.Transaction>, newFeePerByte: number) {
     const txHash = isString(tx) ? tx : tx.hash
     return this.withTxFee(async () => {
       const result = await this._rpc.jsonrpc('bumpfee', txHash)
@@ -85,12 +87,12 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     }, newFeePerByte)
   }
 
-  async signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) {
+  async signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]) {
     const psbt = Psbt.fromBase64(data, { network: this._network })
 
     for (const input of inputs) {
       const usedAddresses = await this.getUsedAddresses()
-      const address = usedAddresses.find(address => address.derivationPath === input.derivationPath)
+      const address = usedAddresses.find((address) => address.derivationPath === input.derivationPath)
       const wif = await this.dumpPrivKey(address.address)
       const keyPair = ECPair.fromWIF(wif, this._network)
       psbt.signInput(input.index, keyPair)
@@ -99,7 +101,13 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return psbt.toBase64()
   }
 
-  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }] , addresses: string, tx: any, locktime: number, segwit = false) {
+  async signBatchP2SHTransaction(
+    inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
+    addresses: string,
+    tx: any,
+    locktime: number,
+    segwit = false
+  ) {
     const wallets = []
     for (const address of addresses) {
       const wif = await this.dumpPrivKey(address)
@@ -111,7 +119,12 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     for (let i = 0; i < inputs.length; i++) {
       let sigHash
       if (segwit) {
-        sigHash = tx.hashForWitnessV0(inputs[i].index, inputs[i].outputScript, inputs[i].vout.vSat, BitcoinJsTransaction.SIGHASH_ALL) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+        sigHash = tx.hashForWitnessV0(
+          inputs[i].index,
+          inputs[i].outputScript,
+          inputs[i].vout.vSat,
+          BitcoinJsTransaction.SIGHASH_ALL
+        ) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
       } else {
         sigHash = tx.hashForSignature(inputs[i].index, inputs[i].outputScript, BitcoinJsTransaction.SIGHASH_ALL)
       }
@@ -123,11 +136,11 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return sigs
   }
 
-  async dumpPrivKey (address: string): Promise<string> {
+  async dumpPrivKey(address: string): Promise<string> {
     return this._rpc.jsonrpc('dumpprivkey', address)
   }
 
-  async getNewAddress (addressType: bitcoin.AddressType, label = '') {
+  async getNewAddress(addressType: bitcoin.AddressType, label = '') {
     const params = addressType ? [label, addressType] : [label]
     const newAddress = await this._rpc.jsonrpc('getnewaddress', ...params)
 
@@ -136,7 +149,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return this.getAddressInfo(newAddress)
   }
 
-  async getAddressInfo (address: string): Promise<Address> {
+  async getAddressInfo(address: string): Promise<Address> {
     if (address in this._addressInfoCache) {
       return this._addressInfoCache[address]
     }
@@ -154,33 +167,35 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return addressObject
   }
 
-  async getAddresses () {
+  async getAddresses() {
     return this.getUsedAddresses()
   }
 
-  async getUnusedAddress () {
+  async getUnusedAddress() {
     return this.getNewAddress(this._addressType)
   }
 
-  async getUsedAddresses () {
-    const usedAddresses : bitcoin.rpc.AddressGrouping[] = await this._rpc.jsonrpc('listaddressgroupings')
-    const emptyAddresses : bitcoin.rpc.ReceivedByAddress[] = await this._rpc.jsonrpc('listreceivedbyaddress', 0, true, false)
+  async getUsedAddresses() {
+    const usedAddresses: bitcoin.rpc.AddressGrouping[] = await this._rpc.jsonrpc('listaddressgroupings')
+    const emptyAddresses: bitcoin.rpc.ReceivedByAddress[] = await this._rpc.jsonrpc(
+      'listreceivedbyaddress',
+      0,
+      true,
+      false
+    )
 
-    const addrs = uniq([
-      ...flatten(usedAddresses).map(addr => addr[0]),
-      ...emptyAddresses.map(a => a.address)
-    ])
+    const addrs = uniq([...flatten(usedAddresses).map((addr) => addr[0]), ...emptyAddresses.map((a) => a.address)])
 
-    const addressObjects = await Promise.all(addrs.map(address => this.getAddressInfo(address)))
+    const addressObjects = await Promise.all(addrs.map((address) => this.getAddressInfo(address)))
 
     return addressObjects
   }
 
-  async getWalletAddress (address: string) {
+  async getWalletAddress(address: string) {
     return this.getAddressInfo(address)
   }
 
-  async isWalletAvailable () {
+  async isWalletAvailable() {
     try {
       await this._rpc.jsonrpc('getwalletinfo')
       return true
@@ -189,19 +204,20 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     }
   }
 
-  async getConnectedNetwork () {
+  async getConnectedNetwork() {
     const blockchainInfo = await this._rpc.jsonrpc('getblockchaininfo')
     const chain = blockchainInfo.chain
     return BIP70_CHAIN_TO_NETWORK[chain]
   }
 
-  async generateSecret (message: string) {
+  async generateSecret(message: string) {
     const secretAddressLabel = 'secretAddress'
     let address
     try {
       const labelAddresses = await this._rpc.jsonrpc('getaddressesbylabel', secretAddressLabel)
       address = Object.keys(labelAddresses)[0]
-    } catch (e) { // Label does not exist
+    } catch (e) {
+      // Label does not exist
       address = (await this.getNewAddress(bitcoin.AddressType.LEGACY, secretAddressLabel)).address // Signing only possible with legacy addresses
     }
     const signedMessage = await this.signMessage(message, address)

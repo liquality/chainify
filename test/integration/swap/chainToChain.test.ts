@@ -2,13 +2,24 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import * as crypto from '../../../packages/crypto/lib'
-import { Chain, chains, initiateAndVerify, claimAndVerify, getSwapParams, connectMetaMask, fundWallet, importBitcoinAddresses, describeExternal, TEST_TIMEOUT } from '../common'
+import {
+  Chain,
+  chains,
+  initiateAndVerify,
+  claimAndVerify,
+  getSwapParams,
+  connectMetaMask,
+  fundWallet,
+  importBitcoinAddresses,
+  describeExternal,
+  TEST_TIMEOUT
+} from '../common'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
 
-async function testSwap (chain1: Chain, chain2: Chain) {
+async function testSwap(chain1: Chain, chain2: Chain) {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
   const secret = await chain1.client.swap.generateSecret('test')
   const secretHash = crypto.sha256(secret)

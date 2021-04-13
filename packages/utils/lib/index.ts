@@ -1,8 +1,5 @@
 import 'setimmediate'
-import {
-  InvalidSecretError,
-  InvalidExpirationError
-} from '@liquality/errors'
+import { InvalidSecretError, InvalidExpirationError } from '@liquality/errors'
 import { sha256 } from '@liquality/crypto'
 import { BigNumber, Address } from '@liquality/types'
 
@@ -11,22 +8,22 @@ function addressToString(address: Address | string): string {
   else return address.address
 }
 
-function sleep (ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-function asyncSetImmediate () {
-  return new Promise(resolve => setImmediate(resolve))
+function asyncSetImmediate() {
+  return new Promise((resolve) => setImmediate(resolve))
 }
 
-function caseInsensitiveEqual (left: string, right: string) {
+function caseInsensitiveEqual(left: string, right: string) {
   left = left && left.toLowerCase()
   right = right && right.toLowerCase()
 
   return left === right
 }
 
-function validateValue (value: BigNumber) {
+function validateValue(value: BigNumber) {
   if (!BigNumber.isBigNumber(value)) {
     throw new Error(`Invalid value: ${value}`)
   }
@@ -36,7 +33,7 @@ function validateValue (value: BigNumber) {
   }
 }
 
-function validateSecretHash (secretHash: string) {
+function validateSecretHash(secretHash: string) {
   if (typeof secretHash !== 'string') {
     throw new InvalidSecretError(`Invalid secret hash type`)
   }
@@ -54,7 +51,7 @@ function validateSecretHash (secretHash: string) {
   }
 }
 
-function validateSecret (secret: string) {
+function validateSecret(secret: string) {
   if (typeof secret !== 'string') {
     throw new InvalidSecretError(`Invalid secret type`)
   }
@@ -69,7 +66,7 @@ function validateSecret (secret: string) {
   }
 }
 
-function validateSecretAndHash (secret: string, secretHash: string) {
+function validateSecretAndHash(secret: string, secretHash: string) {
   validateSecret(secret)
   validateSecretHash(secretHash)
 
@@ -79,7 +76,7 @@ function validateSecretAndHash (secret: string, secretHash: string) {
   }
 }
 
-function validateExpiration (expiration: number) {
+function validateExpiration(expiration: number) {
   if (isNaN(expiration)) {
     throw new InvalidExpirationError(`Invalid expiration. NaN: ${expiration}`)
   }

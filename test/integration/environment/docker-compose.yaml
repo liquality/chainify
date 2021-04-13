@@ -3,9 +3,8 @@ services:
   bitcoin:
     image: ruimarinho/bitcoin-core:0.18.1
     ports:
-      - "18443:18443"
-    command:
-      -regtest=1
+      - '18443:18443'
+    command: -regtest=1
       -txindex
       -deprecatedrpc=generate
       -rpcuser=bitcoin
@@ -17,9 +16,8 @@ services:
   ethereum:
     image: ethereum/client-go:v1.9.22
     ports:
-      - "8545:8545"
-    command:
-      --dev
+      - '8545:8545'
+    command: --dev
       --rpc
       --rpcapi eth,net,web3,miner,debug
       --rpcport 8545

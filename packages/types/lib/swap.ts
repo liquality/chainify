@@ -1,24 +1,24 @@
 import BigNumber from 'bignumber.js'
-import { Transaction } from "./transaction"
+import { Transaction } from './transaction'
 import { Address } from './address'
 
 export interface SwapParams {
   /**
    * The amount of native value locked in the swap
    */
-  value: BigNumber,
+  value: BigNumber
   /**
    * Recepient address of the swap
    */
-  recipientAddress: Address | string,
+  recipientAddress: Address | string
   /**
    * Refund address of the swap
    */
-  refundAddress: Address | string,
+  refundAddress: Address | string
   /**
    * Secret Hash
    */
-  secretHash: string,
+  secretHash: string
   /**
    * Expiration of the swap
    */
@@ -32,7 +32,7 @@ export interface SwapProvider {
    * @param {number} [blockNumber] - The block number to find the transaction in
    * @return {Promise<Transaction>} Resolves with the initiation transaction if found, otherwise null.
    */
-  findInitiateSwapTransaction (swapParams: SwapParams, blockNumber?: number) : Promise<Transaction>
+  findInitiateSwapTransaction(swapParams: SwapParams, blockNumber?: number): Promise<Transaction>
 
   /**
    * Find swap claim transaction from parameters
@@ -41,7 +41,7 @@ export interface SwapProvider {
    * @param {number} [blockNumber] - The block number to find the transaction in
    * @return {Promise<string>} Resolves with the claim transaction if found, otherwise null.
    */
-  findClaimSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber?: number) : Promise<Transaction>
+  findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string, blockNumber?: number): Promise<Transaction>
 
   /**
    * Refund the swap
@@ -51,7 +51,11 @@ export interface SwapProvider {
    * @return {Promise<string, TypeError>} Resolves with the refund transaction if found, otherwise null.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  findRefundSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber?: number) : Promise<Transaction>
+  findRefundSwapTransaction(
+    swapParams: SwapParams,
+    initiationTxHash: string,
+    blockNumber?: number
+  ): Promise<Transaction>
 
   /**
    * Find funding transaction
@@ -61,21 +65,21 @@ export interface SwapProvider {
    * @return {Promise<string, TypeError>} Resolves with the funding transaction if found, otherwise null.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string, blockNumber?: number) : Promise<Transaction>
+  findFundSwapTransaction(swapParams: SwapParams, initiationTxHash: string, blockNumber?: number): Promise<Transaction>
 
   /**
    * Generate a secret.
    * @param {!string} message - Message to be used for generating secret.
    * @return {Promise<string>} Resolves with a 32 byte secret
    */
-  generateSecret (message: string) : Promise<string>
+  generateSecret(message: string): Promise<string>
 
   /**
    * Get secret from claim transaction hash.
    * @param {!string} transaction hash - transaction hash of claim.
    * @return {Promise<string>} Resolves with secret
    */
-  getSwapSecret (claimTxHash: string) : Promise<string>
+  getSwapSecret(claimTxHash: string): Promise<string>
 
   /**
    * Initiate a swap
@@ -84,7 +88,7 @@ export interface SwapProvider {
    * @return {Promise<Transaction, TypeError>} Resolves with swap initiation transaction.
    * Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  initiateSwap (swapParams: SwapParams, fee: BigNumber) : Promise<Transaction>
+  initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction>
 
   /**
    * Funds a swap
@@ -94,7 +98,7 @@ export interface SwapProvider {
    * @return {Promise<Transaction, TypeError>} Resolves with the funding transaction if found, otherwise null.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  fundSwap (swapParams: SwapParams, initiationTxHash: string, fee: BigNumber) : Promise<Transaction>
+  fundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction>
 
   /**
    * Verifies that the given initiation transaction matches the given swap params
@@ -103,7 +107,7 @@ export interface SwapProvider {
    * @return {Promise<boolean, TypeError>} Resolves with true if verification has passed.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  verifyInitiateSwapTransaction (swapParams: SwapParams, initiationTxHash: string) : Promise<boolean>
+  verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean>
 
   /**
    * Claim the swap
@@ -114,7 +118,7 @@ export interface SwapProvider {
    * @return {Promise<Transaction, TypeError>} Resolves with swap claim transaction.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, fee: BigNumber) : Promise <Transaction>
+  claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number): Promise<Transaction>
 
   /**
    * Refund the swap
@@ -124,7 +128,7 @@ export interface SwapProvider {
    * @return {Promise<string, TypeError>} Resolves with refund swap transaction hash.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  refundSwap (swapParams: SwapParams, initiationTxHash: string, fee: BigNumber) : Promise<Transaction>
+  refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction>
 
   /**
    * True if the client must provide block numbers to find swap transactions

@@ -1,16 +1,25 @@
 import { InvalidProviderResponseError } from '@liquality/errors'
-import { SendOptions, Block, Transaction, FeeDetails, ChainProvider, FeeProvider, BigNumber, Address } from '@liquality/types'
+import {
+  SendOptions,
+  Block,
+  Transaction,
+  FeeDetails,
+  ChainProvider,
+  FeeProvider,
+  BigNumber,
+  Address
+} from '@liquality/types'
 import { isBoolean, isNumber, isString, isObject } from 'lodash'
 
 export default class Chain implements ChainProvider, FeeProvider {
   client: any
 
-  constructor (client: any) {
+  constructor(client: any) {
     this.client = client
   }
 
   /** @inheritdoc */
-  async generateBlock (numberOfBlocks: number) : Promise<void> {
+  async generateBlock(numberOfBlocks: number): Promise<void> {
     if (!isNumber(numberOfBlocks)) {
       throw new TypeError('First argument should be a number')
     }
@@ -19,12 +28,12 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getBlockByHash (blockHash: string, includeTx = false) : Promise<Block> {
+  async getBlockByHash(blockHash: string, includeTx = false): Promise<Block> {
     if (!isString(blockHash)) {
       throw new TypeError('Block hash should be a string')
     }
 
-    if (!(/^[A-Fa-f0-9]+$/.test(blockHash))) {
+    if (!/^[A-Fa-f0-9]+$/.test(blockHash)) {
       throw new TypeError('Block hash should be a valid hex string')
     }
 
@@ -38,7 +47,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getBlockByNumber (blockNumber: number, includeTx = false) : Promise<Block> {
+  async getBlockByNumber(blockNumber: number, includeTx = false): Promise<Block> {
     if (!isNumber(blockNumber)) {
       throw new TypeError('Invalid Block number')
     }
@@ -53,7 +62,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getBlockHeight () : Promise<number> {
+  async getBlockHeight(): Promise<number> {
     const blockHeight = await this.client.getMethod('getBlockHeight')()
 
     if (!isNumber(blockHeight)) {
@@ -64,12 +73,12 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getTransactionByHash (txHash: string) : Promise<Transaction> {
+  async getTransactionByHash(txHash: string): Promise<Transaction> {
     if (!isString(txHash)) {
       throw new TypeError('Transaction hash should be a string')
     }
 
-    if (!(/^[A-Fa-f0-9]+$/.test(txHash))) {
+    if (!/^[A-Fa-f0-9]+$/.test(txHash)) {
       throw new TypeError('Transaction hash should be a valid hex string')
     }
 
@@ -82,7 +91,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getBalance (addresses: (string | Address)[]) : Promise<BigNumber> {
+  async getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
     const balance = await this.client.getMethod('getBalance')(addresses)
 
     if (!BigNumber.isBigNumber(balance)) {
@@ -93,21 +102,21 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async sendTransaction (options: SendOptions) : Promise<Transaction> {
+  async sendTransaction(options: SendOptions): Promise<Transaction> {
     const transaction = await this.client.getMethod('sendTransaction')(options)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
 
   /** @inheritdoc */
-  async sendSweepTransaction (address: Address | string, fee?: BigNumber) : Promise<Transaction> {
+  async sendSweepTransaction(address: Address | string, fee?: number): Promise<Transaction> {
     return this.client.getMethod('sendSweepTransaction')(address, fee)
   }
 
   /** @inheritdoc */
-  async updateTransactionFee (tx: string | Transaction, newFee: BigNumber) : Promise<Transaction> {
+  async updateTransactionFee(tx: string | Transaction, newFee: number): Promise<Transaction> {
     if (isString(tx)) {
-      if (!(/^[A-Fa-f0-9]+$/.test(tx))) {
+      if (!/^[A-Fa-f0-9]+$/.test(tx)) {
         throw new TypeError('Transaction hash should be a valid hex string')
       }
     } else if (isObject(tx)) {
@@ -122,12 +131,12 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async sendBatchTransaction (transactions: SendOptions[]) : Promise<Transaction> {
+  async sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction> {
     return this.client.getMethod('sendBatchTransaction')(transactions)
   }
 
   /** @inheritdoc */
-  async sendRawTransaction (rawTransaction: string) : Promise <string> {
+  async sendRawTransaction(rawTransaction: string): Promise<string> {
     const txHash = await this.client.getMethod('sendRawTransaction')(rawTransaction)
 
     if (!isString(txHash)) {
@@ -138,7 +147,7 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async getFees () : Promise<FeeDetails> {
+  async getFees(): Promise<FeeDetails> {
     return this.client.getMethod('getFees')()
   }
 }

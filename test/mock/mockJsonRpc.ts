@@ -3,7 +3,7 @@ import nock from 'nock'
 
 export default (endpoint: string, mockDataObject: any, times = 1) => {
   return nock(endpoint)
-    .post('/', body => !!mockDataObject[body.method])
+    .post('/', (body) => !!mockDataObject[body.method])
     .times(times)
     .reply(200, (uri, requestBody) => {
       const { method, params } = requestBody as any

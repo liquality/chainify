@@ -1,7 +1,7 @@
 import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
 import WalletProvider from '@liquality/wallet-provider'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { bitcoin, BigNumber } from '@liquality/types'
+import { bitcoin } from '@liquality/types'
 
 import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
@@ -16,12 +16,14 @@ interface BitcoinJsWalletProviderOptions {
   addressType?: bitcoin.AddressType
 }
 
-export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(WalletProvider as WalletProviderConstructor) {
+export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
+  WalletProvider as WalletProviderConstructor
+) {
   _mnemonic: string
   _seedNode: BIP32Interface
   _baseDerivationNode: BIP32Interface
 
-  constructor (options: BitcoinJsWalletProviderOptions) {
+  constructor(options: BitcoinJsWalletProviderOptions) {
     const { network, mnemonic, addressType = bitcoin.AddressType.BECH32 } = options
     super({ network, addressType })
 
@@ -30,7 +32,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     this._mnemonic = mnemonic
   }
 
-  async seedNode () {
+  async seedNode() {
     if (this._seedNode) return this._seedNode
 
     const seed = await mnemonicToSeed(this._mnemonic)
@@ -39,7 +41,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return this._seedNode
   }
 
-  async baseDerivationNode () {
+  async baseDerivationNode() {
     if (this._baseDerivationNode) return this._baseDerivationNode
 
     const baseNode = await this.seedNode()
@@ -48,20 +50,20 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return this._baseDerivationNode
   }
 
-  async keyPair (derivationPath: string): Promise<ECPairInterface> {
+  async keyPair(derivationPath: string): Promise<ECPairInterface> {
     const node = await this.seedNode()
     const wif = node.derivePath(derivationPath).toWIF()
     return ECPair.fromWIF(wif, this._network)
   }
 
-  async signMessage (message: string, from: string) {
+  async signMessage(message: string, from: string) {
     const address = await this.getWalletAddress(from)
     const keyPair = await this.keyPair(address.derivationPath)
     const signature = await signBitcoinMessage(message, keyPair.privateKey, keyPair.compressed)
     return signature.toString('hex')
   }
 
-  async _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) {
+  async _buildTransaction(targets: bitcoin.OutputTarget[], feePerByte?: number, fixedInputs?: bitcoin.Input[]) {
     const network = this._network
 
     const unusedAddress = await this.getUnusedAddress(true)
@@ -83,7 +85,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       const keyPair = await this.keyPair(wallet.derivationPath)
       const paymentVariant = this.getPaymentVariantFromPublicKey(keyPair.publicKey)
 
-      const psbtInput : any = {
+      const psbtInput: any = {
         hash: inputs[i].txid,
         index: inputs[i].vout,
         sequence: 0
@@ -122,9 +124,9 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return { hex: psbt.extractTransaction().toHex(), fee }
   }
 
-  async _buildSweepTransaction (externalChangeAddress: string, feePerByte: BigNumber) {
+  async _buildSweepTransaction(externalChangeAddress: string, feePerByte: number) {
     let _feePerByte = feePerByte || null
-    if (!_feePerByte) _feePerByte = new BigNumber(await this.getMethod('getFeePerByte')())
+    if (!_feePerByte) _feePerByte = await this.getMethod('getFeePerByte')()
 
     const { inputs, outputs, change } = await this.getInputsForAmount([], _feePerByte, [], 100, true)
 
@@ -132,16 +134,18 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       throw new Error('There should not be any change for sweeping transaction')
     }
 
-    const _outputs = [{
-      address: externalChangeAddress,
-      value: outputs[0].value
-    }]
+    const _outputs = [
+      {
+        address: externalChangeAddress,
+        value: outputs[0].value
+      }
+    ]
 
     // @ts-ignore
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
-  async signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) {
+  async signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]) {
     const psbt = Psbt.fromBase64(data, { network: this._network })
     for (const input of inputs) {
       const keyPair = await this.keyPair(input.derivationPath)
@@ -150,7 +154,13 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return psbt.toBase64()
   }
 
-  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer, txInputIndex?: number }], addresses: string, tx: any, lockTime?: number, segwit?: boolean) {
+  async signBatchP2SHTransaction(
+    inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }],
+    addresses: string,
+    tx: any,
+    lockTime?: number,
+    segwit?: boolean
+  ) {
     const keyPairs = []
     for (const address of addresses) {
       const wallet = await this.getWalletAddress(address)
@@ -163,7 +173,12 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
       const index = inputs[i].txInputIndex ? inputs[i].txInputIndex : inputs[i].index
       let sigHash
       if (segwit) {
-        sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, BitcoinJsTransaction.SIGHASH_ALL)
+        sigHash = tx.hashForWitnessV0(
+          index,
+          inputs[i].outputScript,
+          inputs[i].vout.vSat,
+          BitcoinJsTransaction.SIGHASH_ALL
+        )
       } else {
         sigHash = tx.hashForSignature(index, inputs[i].outputScript, BitcoinJsTransaction.SIGHASH_ALL)
       }
@@ -175,18 +190,17 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return sigs
   }
 
-  getScriptType () {
+  getScriptType() {
     if (this._addressType === bitcoin.AddressType.LEGACY) return 'p2pkh'
     else if (this._addressType === bitcoin.AddressType.P2SH_SEGWIT) return 'p2sh-p2wpkh'
     else if (this._addressType === bitcoin.AddressType.BECH32) return 'p2wpkh'
   }
 
-  async getConnectedNetwork () {
+  async getConnectedNetwork() {
     return this._network
   }
 
-  async isWalletAvailable () {
+  async isWalletAvailable() {
     return true
   }
 }
-

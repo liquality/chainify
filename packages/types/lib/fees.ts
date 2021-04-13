@@ -17,5 +17,5 @@ export interface FeeProvider {
    *  identifier for the broadcasted transaction.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getFees () : Promise<FeeDetails>
+  getFees(): Promise<FeeDetails>
 }
