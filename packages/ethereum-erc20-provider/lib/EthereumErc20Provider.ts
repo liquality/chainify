@@ -47,7 +47,7 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
     return this.getMethod('sendTransaction')(options)
   }
 
-  async sendSweepTransaction (address: Address | string, gasPrice: BigNumber) {
+  async sendSweepTransaction (address: Address | string, gasPrice: number) {
     const addresses: Address[] = await this.getMethod('getAddresses')()
 
     const balance = await this.getBalance(addresses.map(address => address.address))

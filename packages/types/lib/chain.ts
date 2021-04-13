@@ -7,7 +7,7 @@ export interface SendOptions {
   to: Address | string
   value: BigNumber
   data?: string
-  fee?: BigNumber
+  fee?: number
 }
 
 export interface ChainProvider {
@@ -90,7 +90,7 @@ export interface ChainProvider {
    * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  sendSweepTransaction (address: Address | string, fee?: BigNumber) : Promise<Transaction>
+  sendSweepTransaction (address: Address | string, fee?: number) : Promise<Transaction>
 
   /**
    * Update the fee of a transaction.
@@ -98,7 +98,7 @@ export interface ChainProvider {
    * @param {!number} newFee - New fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with the new transaction
    */
-  updateTransactionFee (tx: string | Transaction, newFee: BigNumber) : Promise<Transaction>
+  updateTransactionFee (tx: string | Transaction, newFee: number) : Promise<Transaction>
 
   /**
    * Create, sign & broad a transaction with multiple outputs.

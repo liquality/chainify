@@ -63,7 +63,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     validateExpiration(swapParams.expiration)
   }
 
-  async initiateSwap (swapParams: SwapParams, gasPrice: BigNumber) {
+  async initiateSwap (swapParams: SwapParams, gasPrice: number) {
     this.validateSwapParams(swapParams)
 
     const addresses: Address[] = await this.getMethod('getAddresses')()
@@ -82,7 +82,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     })
   }
 
-  async fundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) {
+  async fundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: number) {
     this.validateSwapParams(swapParams)
 
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
@@ -116,7 +116,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     })
   }
 
-  async claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: BigNumber) {
+  async claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: number) {
     this.validateSwapParams(swapParams)
     validateSecret(secret)
     validateSecretAndHash(secret, swapParams.secretHash)
@@ -135,7 +135,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     })
   }
 
-  async refundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: BigNumber) {
+  async refundSwap (swapParams: SwapParams, initiationTxHash: string, gasPrice: number) {
     this.validateSwapParams(swapParams)
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 

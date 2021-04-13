@@ -3,7 +3,7 @@ import EthereumNetworks, { EthereumNetwork } from '@liquality/ethereum-networks'
 import { WalletError } from '@liquality/errors'
 import { ensure0x, buildTransaction, normalizeTransactionObject, remove0x, hexToNumber } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
-import { Address, SendOptions, ethereum } from '@liquality/types'
+import { Address, SendOptions, BigNumber, ethereum } from '@liquality/types'
 import Debug from '@liquality/debug'
 
 import { findKey } from 'lodash'
@@ -93,9 +93,9 @@ export default class EthereumWalletApiProvider extends WalletProvider {
       from,
       to: addressToString(options.to),
       value: options.value,
-      data: options.data,
-      gasPrice: options.fee
+      data: options.data
     }
+    if (options.fee) txOptions.gasPrice = new BigNumber(options.fee)
 
     const txData = await buildTransaction(txOptions)
 

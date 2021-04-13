@@ -119,14 +119,14 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return normalizeTransactionObject(txWithHash)
   }
 
-  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: BigNumber) {
+  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
     const transaction : Transaction<ethereum.Transaction> = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
     const txOptions : ethereum.UnsignedTransaction = {
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
-      gasPrice: newGasPrice,
+      gasPrice: new BigNumber(newGasPrice),
       data: transaction._raw.input,
       nonce: hexToNumber(transaction._raw.nonce)
     }

@@ -116,7 +116,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
   }
 
 
-  async initiateSwap (swapParams: SwapParams, feePerByte: BigNumber) {
+  async initiateSwap (swapParams: SwapParams, feePerByte: number) {
     this.validateSwapParams(swapParams)
 
     const swapOutput = this.getSwapOutput(swapParams)
@@ -132,7 +132,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     return null
   }
 
-  async claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, feePerByte: BigNumber) {
+  async claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, feePerByte: number) {
     this.validateSwapParams(swapParams)
     validateSecret(secret)
     validateSecretAndHash(secret, swapParams.secretHash)
@@ -141,20 +141,20 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     return this._redeemSwap(swapParams, initiationTxHash, true, secret, feePerByte)
   }
 
-  async refundSwap (swapParams: SwapParams, initiationTxHash: string, feePerByte: BigNumber) {
+  async refundSwap (swapParams: SwapParams, initiationTxHash: string, feePerByte: number) {
     this.validateSwapParams(swapParams)
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     return this._redeemSwap(swapParams, initiationTxHash, false, undefined, feePerByte)
   }
 
-  async  _redeemSwap (swapParams: SwapParams, initiationTxHash: string, isClaim: boolean, secret: string, feePerByte: BigNumber) {
+  async  _redeemSwap (swapParams: SwapParams, initiationTxHash: string, isClaim: boolean, secret: string, feePerByte: number) {
     const address = isClaim ? swapParams.recipientAddress : swapParams.refundAddress
     const swapOutput = this.getSwapOutput(swapParams)
     return this._redeemSwapOutput(initiationTxHash, swapParams.value, addressToString(address), swapOutput, swapParams.expiration, isClaim, secret, feePerByte)
   }
 
-  async _redeemSwapOutput (initiationTxHash: string, value: BigNumber, address: string, swapOutput: Buffer, expiration: number, isClaim: boolean, secret: string, _feePerByte: BigNumber) {
+  async _redeemSwapOutput (initiationTxHash: string, value: BigNumber, address: string, swapOutput: Buffer, expiration: number, isClaim: boolean, secret: string, _feePerByte: number) {
     const network = this._network
     const swapPaymentVariants = this.getSwapPaymentVariants(swapOutput)
 
@@ -291,7 +291,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     return false
   }
 
-  async updateTransactionFee (tx: Transaction<bitcoin.Transaction> | string, newFeePerByte: BigNumber) {
+  async updateTransactionFee (tx: Transaction<bitcoin.Transaction> | string, newFeePerByte: number) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction: Transaction<bitcoin.Transaction> = await this.getMethod('getTransactionByHash')(txHash)
     if (await this.UNSAFE_isSwapRedeemTransaction(transaction)) {

@@ -49,8 +49,8 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return this._rpc.jsonrpc('signmessage', from, message).then((result: string) => Buffer.from(result, 'base64').toString('hex'))
   }
 
-  async withTxFee (func: () => Promise<Transaction<bitcoin.Transaction>>, feePerByte: BigNumber) {
-    const feePerKB = feePerByte.div(1e8).times(1000).toNumber()
+  async withTxFee (func: () => Promise<Transaction<bitcoin.Transaction>>, feePerByte: number) {
+    const feePerKB = new BigNumber(feePerByte).div(1e8).times(1000).toNumber()
     const originalTxFee : number = (await this._rpc.jsonrpc('getwalletinfo')).paytxfee
     await this._rpc.jsonrpc('settxfee', feePerKB)
 
@@ -75,7 +75,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
       : this._sendTransaction(options)
   }
 
-  async updateTransactionFee (tx: Transaction<bitcoin.Transaction>, newFeePerByte: BigNumber) {
+  async updateTransactionFee (tx: Transaction<bitcoin.Transaction>, newFeePerByte: number) {
     const txHash = isString(tx) ? tx : tx.hash
     return this.withTxFee(async () => {
       const result = await this._rpc.jsonrpc('bumpfee', txHash)

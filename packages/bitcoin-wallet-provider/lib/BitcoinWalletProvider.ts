@@ -57,8 +57,8 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
   }
 
   abstract baseDerivationNode() : Promise<BIP32Interface>
-  abstract _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) : Promise<{ hex: string, fee: number }>
-  abstract _buildSweepTransaction(externalChangeAddress: string, feePerByte?: BigNumber) : Promise<{ hex: string, fee: number }>
+  abstract _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: number, fixedInputs?: bitcoin.Input[]) : Promise<{ hex: string, fee: number }>
+  abstract _buildSweepTransaction(externalChangeAddress: string, feePerByte?: number) : Promise<{ hex: string, fee: number }>
   abstract signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) : Promise<string>
   abstract signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }] , addresses: string, tx: any, lockTime?: number, segwit?: boolean) : Promise<Buffer[]>
 
@@ -81,7 +81,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     this._derivationCache = derivationCache
   }
 
-  async buildTransaction (output: bitcoin.OutputTarget, feePerByte: BigNumber) {
+  async buildTransaction (output: bitcoin.OutputTarget, feePerByte: number) {
     return this._buildTransaction([output], feePerByte)
   }
 
@@ -89,7 +89,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     return this._buildTransaction(outputs)
   }
 
-  async _sendTransaction (transactions: bitcoin.OutputTarget[], feePerByte?: BigNumber) {
+  async _sendTransaction (transactions: bitcoin.OutputTarget[], feePerByte?: number) {
     const { hex, fee } = await this._buildTransaction(transactions, feePerByte)
     await this.getMethod('sendRawTransaction')(hex)
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
@@ -103,17 +103,17 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     return this._sendTransaction(this.sendOptionsToOutputs(transactions))
   }
 
-  async buildSweepTransaction (externalChangeAddress: string, feePerByte: BigNumber) {
+  async buildSweepTransaction (externalChangeAddress: string, feePerByte: number) {
     return this._buildSweepTransaction(externalChangeAddress, feePerByte)
   }
 
-  async sendSweepTransaction (externalChangeAddress: Address | string, feePerByte: BigNumber) {
+  async sendSweepTransaction (externalChangeAddress: Address | string, feePerByte: number) {
     const { hex, fee } = await this._buildSweepTransaction(addressToString(externalChangeAddress), feePerByte)
     await this.getMethod('sendRawTransaction')(hex)
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
   }
 
-  async updateTransactionFee (tx: Transaction<bitcoin.Transaction> | string, newFeePerByte: BigNumber) {
+  async updateTransactionFee (tx: Transaction<bitcoin.Transaction> | string, newFeePerByte: number) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction: bitcoin.Transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
     const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
@@ -297,7 +297,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
       .then(({ unusedAddress }) => unusedAddress[key])
   }
 
-  async getInputsForAmount (_targets: bitcoin.OutputTarget[], _feePerByte?: BigNumber, fixedInputs: bitcoin.Input[] = [], numAddressPerCall = 100, sweep = false) {
+  async getInputsForAmount (_targets: bitcoin.OutputTarget[], feePerByte?: number, fixedInputs: bitcoin.Input[] = [], numAddressPerCall = 100, sweep = false) {
     let addressIndex = 0
     let changeAddresses: Address[]  = []
     let externalAddresses: Address[] = []
@@ -307,7 +307,6 @@ export default <T extends Constructor<Provider>>(superclass: T) => { abstract cl
     }
 
     const feePerBytePromise = this.getMethod('getFeePerByte')()
-    let feePerByte = _feePerByte ? _feePerByte.toNumber() : null
     let utxos : bitcoin.UTXO[] = []
 
     while (addressCountMap.change < ADDRESS_GAP || addressCountMap.nonChange < ADDRESS_GAP) {

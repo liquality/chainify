@@ -230,7 +230,7 @@ async function mineUntilTimestamp (chain: Chain, timestamp: number) {
   }
 }
 
-async function initiateAndVerify (chain: Chain, swapParams: SwapParams, fee?: BigNumber) {
+async function initiateAndVerify (chain: Chain, swapParams: SwapParams, fee?: number) {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Initiating ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const isERC20 = chain.id.includes('ERC20')
 
@@ -268,7 +268,7 @@ async function initiateAndVerify (chain: Chain, swapParams: SwapParams, fee?: Bi
   }
 }
 
-async function claimAndVerify (chain: Chain, initiationTxId: string, secret: string, swapParams: SwapParams, fee?: BigNumber) : Promise<Transaction<any>> {
+async function claimAndVerify (chain: Chain, initiationTxId: string, secret: string, swapParams: SwapParams, fee?: number) : Promise<Transaction<any>> {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, secret, fee)
   await mineBlock(chain)
@@ -278,7 +278,7 @@ async function claimAndVerify (chain: Chain, initiationTxId: string, secret: str
   return foundClaimTx
 }
 
-async function refundAndVerify (chain: Chain, initiationTxId: string, swapParams: SwapParams, fee?: BigNumber) : Promise<Transaction<any>> {
+async function refundAndVerify (chain: Chain, initiationTxId: string, swapParams: SwapParams, fee?: number) : Promise<Transaction<any>> {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Refunding ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const refundTx = await chain.client.swap.refundSwap(swapParams, initiationTxId, fee)
   await mineBlock(chain)
@@ -315,14 +315,14 @@ async function getBitcoinTransactionFee (chain: Chain, tx: Transaction<bitcoin.T
   return feeValue.toNumber()
 }
 
-async function expectFee (chain: Chain, txHash: string, expectedFeePerByte: BigNumber, swapInitiate = false, swapRedeem = false) {
+async function expectFee (chain: Chain, txHash: string, expectedFeePerByte: number, swapInitiate = false, swapRedeem = false) {
   if (chain.name === 'bitcoin') {
     return swapRedeem // It's dumb because it does legacy calculation using 1 input 1 output
-      ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte.toNumber())
-      : expectBitcoinFee(chain, txHash, expectedFeePerByte.toNumber(), swapInitiate)
+      ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte)
+      : expectBitcoinFee(chain, txHash, expectedFeePerByte, swapInitiate)
   }
   if (chain.name === 'ethereum') {
-    return expectEthereumFee(chain, txHash, expectedFeePerByte.toNumber())
+    return expectEthereumFee(chain, txHash, expectedFeePerByte)
   }
 }
 

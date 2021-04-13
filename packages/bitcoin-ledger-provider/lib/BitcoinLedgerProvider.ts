@@ -41,7 +41,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return sig.r + sig.s
   }
 
-  async _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) : Promise<{ hex: string, fee: number }> {
+  async _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: number, fixedInputs?: bitcoin.Input[]) : Promise<{ hex: string, fee: number }> {
     const app = await this.getApp()
 
     const unusedAddress = await this.getUnusedAddress(true)

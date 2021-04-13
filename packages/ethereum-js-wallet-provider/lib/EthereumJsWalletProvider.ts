@@ -94,7 +94,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
 
     const [ nonce, gasPrice ] = await Promise.all([
       this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
-      options.fee ? Promise.resolve(options.fee) : this.getMethod('getGasPrice')()
+      options.fee ? Promise.resolve(new BigNumber(options.fee)) : this.getMethod('getGasPrice')()
     ])
 
     const txOptions : ethereum.UnsignedTransaction = {
@@ -121,7 +121,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return normalizeTransactionObject(txWithHash)
   }
 
-  async sendSweepTransaction (address: Address | ethereum.Address, _gasPrice: BigNumber) {
+  async sendSweepTransaction (address: Address | ethereum.Address, _gasPrice: number) {
     const addresses = await this.getAddresses()
 
     const balance = await this.client.chain.getBalance(addresses)
@@ -143,14 +143,14 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return this.sendTransaction(sendOptions)
   }
 
-  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: BigNumber) {
+  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
     const transaction : Transaction<ethereum.Transaction> = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
     const txOptions : ethereum.UnsignedTransaction = {
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
-      gasPrice: newGasPrice,
+      gasPrice: new BigNumber(newGasPrice),
       data: transaction._raw.input,
       nonce: hexToNumber(transaction._raw.nonce)
     }

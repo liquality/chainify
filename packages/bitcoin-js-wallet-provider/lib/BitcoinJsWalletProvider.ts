@@ -1,7 +1,7 @@
 import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
 import WalletProvider from '@liquality/wallet-provider'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { bitcoin, BigNumber } from '@liquality/types'
+import { bitcoin } from '@liquality/types'
 
 import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
@@ -61,7 +61,7 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return signature.toString('hex')
   }
 
-  async _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: BigNumber, fixedInputs?: bitcoin.Input[]) {
+  async _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: number, fixedInputs?: bitcoin.Input[]) {
     const network = this._network
 
     const unusedAddress = await this.getUnusedAddress(true)
@@ -122,9 +122,9 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(Walle
     return { hex: psbt.extractTransaction().toHex(), fee }
   }
 
-  async _buildSweepTransaction (externalChangeAddress: string, feePerByte: BigNumber) {
+  async _buildSweepTransaction (externalChangeAddress: string, feePerByte: number) {
     let _feePerByte = feePerByte || null
-    if (!_feePerByte) _feePerByte = new BigNumber(await this.getMethod('getFeePerByte')())
+    if (!_feePerByte) _feePerByte = await this.getMethod('getFeePerByte')()
 
     const { inputs, outputs, change } = await this.getInputsForAmount([], _feePerByte, [], 100, true)
 

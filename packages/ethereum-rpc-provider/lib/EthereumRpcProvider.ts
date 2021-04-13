@@ -59,9 +59,10 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
       from,
       to: options.to ? addressToString(options.to) : options.to as string,
       value: options.value,
-      data: options.data,
-      gasPrice: options.fee
+      data: options.data
     }
+    if (options.fee) txOptions.gasPrice = new BigNumber(options.fee)
+
     const txData = buildTransaction(txOptions)
     const gas = await this.estimateGas(txData)
     txData.gas = numberToHex(gas)
@@ -77,7 +78,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return normalizeTransactionObject(txWithHash)
   }
 
-  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: BigNumber) {
+  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = await this.getTransactionByHash(txHash)
 
@@ -85,7 +86,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
-      gasPrice: newGasPrice,
+      gasPrice: new BigNumber(newGasPrice),
       data: transaction._raw.input,
       nonce: hexToNumber(transaction._raw.nonce)
     }

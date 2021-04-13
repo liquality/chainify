@@ -1,6 +1,6 @@
 import { sha256 } from '@liquality/crypto'
 import { UnimplementedMethodError } from '@liquality/errors'
-import { SwapParams, SwapProvider, Transaction, BigNumber } from '@liquality/types'
+import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 
 export default class Swap implements SwapProvider {
   client: any
@@ -60,14 +60,14 @@ export default class Swap implements SwapProvider {
   }
 
   /** @inheritdoc */
-  async initiateSwap (swapParams: SwapParams, fee: BigNumber) : Promise<Transaction> {
+  async initiateSwap (swapParams: SwapParams, fee: number) : Promise<Transaction> {
     const transaction = await this.client.getMethod('initiateSwap')(swapParams, fee)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
 
   /** @inheritdoc */
-  async fundSwap (swapParams: SwapParams, initiationTxHash: string, fee: BigNumber) : Promise<Transaction | null> {
+  async fundSwap (swapParams: SwapParams, initiationTxHash: string, fee: number) : Promise<Transaction | null> {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
@@ -85,7 +85,7 @@ export default class Swap implements SwapProvider {
   }
 
   /** @inheritdoc */
-  async claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, fee: BigNumber) : Promise <Transaction> {
+  async claimSwap (swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number) : Promise <Transaction> {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
@@ -100,7 +100,7 @@ export default class Swap implements SwapProvider {
   }
 
   /** @inheritdoc */
-  async refundSwap (swapParams: SwapParams, initiationTxHash: string, fee: BigNumber) : Promise<Transaction> {
+  async refundSwap (swapParams: SwapParams, initiationTxHash: string, fee: number) : Promise<Transaction> {
     if (!(/^[A-Fa-f0-9]+$/.test(initiationTxHash))) {
       throw new TypeError('Initiation transaction hash should be a valid hex string')
     }
