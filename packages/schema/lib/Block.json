@@ -3,7 +3,7 @@
   "title": "Block",
   "description": "Blockchain block",
   "type": "object",
-  "required": [ "number", "hash", "timestamp", "size" ],
+  "required": ["number", "hash", "timestamp", "size"],
   "properties": {
     "hash": {
       "type": "string",

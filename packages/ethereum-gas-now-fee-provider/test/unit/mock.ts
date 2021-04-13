@@ -1,6 +1,6 @@
 import nock from 'nock'
 
-function mockApi () {
+function mockApi() {
   nock('https://www.gasnow.org:443', { encodedQueryParams: true })
     .get('/api/v3/gas/price')
     .reply(
@@ -66,7 +66,7 @@ function mockApi () {
     )
 }
 
-function mockApiFeesTooHigh () {
+function mockApiFeesTooHigh() {
   nock('https://www.gasnow.org:443', { encodedQueryParams: true })
     .get('/api/v3/gas/price')
     .reply(

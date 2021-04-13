@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 
-
 import { generateMnemonic } from 'bip39'
 
 import BitcoinNetworks from '../../../bitcoin-networks/lib'
@@ -34,7 +33,7 @@ describe('Bitcoin Wallet provider', () => {
 
   describe('setDerivationCache', () => {
     let addressesActual: Address[]
-    let addressesFromDerivationCacheExpected: {[index: string]: Address}
+    let addressesFromDerivationCacheExpected: { [index: string]: Address }
     let newProvider
 
     beforeEach(async () => {
@@ -56,14 +55,12 @@ describe('Bitcoin Wallet provider', () => {
       expect(addressesFromDerivationCacheExpected).to.equal(addressesFromDerivationCacheActual)
     })
 
-    it('should fail if mnemonic doesn\'t match', async () => {
+    it("should fail if mnemonic doesn't match", async () => {
       newProvider = new BitcoinJsWalletProvider({
         network: BitcoinNetworks.bitcoin_regtest,
         mnemonic: generateMnemonic(256)
       })
-      await expect(
-        newProvider.setDerivationCache(addressesFromDerivationCacheExpected)
-      ).to.eventually.be.rejected
+      await expect(newProvider.setDerivationCache(addressesFromDerivationCacheExpected)).to.eventually.be.rejected
     })
   })
 })

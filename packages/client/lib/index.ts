@@ -4,8 +4,4 @@ import Swap from './Swap'
 import Wallet from './Wallet'
 
 export default Client
-export {
-  Chain,
-  Wallet,
-  Swap
-}
+export { Chain, Wallet, Swap }

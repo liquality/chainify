@@ -2,14 +2,25 @@
 /* eslint-disable no-unused-expressions */
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { TEST_TIMEOUT, Chain, chains, fundWallet, describeExternal, connectMetaMask, deployERC20Token, clearEthMiner, getRandomAddress, mineBlock } from '../common'
+import {
+  TEST_TIMEOUT,
+  Chain,
+  chains,
+  fundWallet,
+  describeExternal,
+  connectMetaMask,
+  deployERC20Token,
+  clearEthMiner,
+  getRandomAddress,
+  mineBlock
+} from '../common'
 import { testTransaction } from './common'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
 
-function testSweepTransaction (chain: Chain) {
+function testSweepTransaction(chain: Chain) {
   it('should sweep specific address', async () => {
     const addr = await getRandomAddress(chain)
 

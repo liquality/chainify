@@ -4,10 +4,10 @@ import { expect } from 'chai'
 import { getRandomAddress, mineBlock, expectFee, Chain } from '../common'
 import config from '../config'
 
-function testTransaction (chain: Chain) {
+function testTransaction(chain: Chain) {
   it('Sent value to 1 address', async () => {
     const addr = await getRandomAddress(chain)
-    
+
     const value = config[chain.name as keyof typeof config].value
 
     const balBefore = await chain.client.chain.getBalance([addr])
@@ -31,13 +31,12 @@ function testTransaction (chain: Chain) {
     expect(balBefore.plus(value).toString()).to.equal(balAfter.toString())
     await expectFee(chain, tx.hash, 100)
   })
-
   ;(chain.client.wallet.canUpdateFee ? it : it.skip)('Update transaction fee', async () => {
     const addr = await getRandomAddress(chain)
     const value = config[chain.name as keyof typeof config].value
 
     const balBefore = await chain.client.chain.getBalance([addr])
-    const tx = await chain.client.chain.sendTransaction({ to: addr, value, fee: 100})
+    const tx = await chain.client.chain.sendTransaction({ to: addr, value, fee: 100 })
     await expectFee(chain, tx.hash, 100)
     const newTx = await chain.client.chain.updateTransactionFee(tx.hash, 120)
     await expect(newTx.hash).to.not.equal(tx.hash)
@@ -50,6 +49,4 @@ function testTransaction (chain: Chain) {
   })
 }
 
-export {
-  testTransaction
-}
+export { testTransaction }

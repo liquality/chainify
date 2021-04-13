@@ -15,4 +15,4 @@ The are in the following format:
 }
 ```
 
-To update the mock, make a call to the RPC endpoint given the parameters and add it to the list making sure to include the same parameters passed to the RPC call. 
+To update the mock, make a call to the RPC endpoint given the parameters and add it to the list making sure to include the same parameters passed to the RPC call.

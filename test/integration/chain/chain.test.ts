@@ -6,7 +6,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
 
-function testGetBlock (chain: Chain) {
+function testGetBlock(chain: Chain) {
   it('Should validate block correct and return block height as number', async () => {
     const blockHeight = await chain.client.chain.getBlockHeight()
     const block = await chain.client.chain.getBlockByNumber(blockHeight)
@@ -16,7 +16,7 @@ function testGetBlock (chain: Chain) {
   })
 }
 
-function testGenerateBlock (chain: Chain) {
+function testGenerateBlock(chain: Chain) {
   it('should generate a new block', async () => {
     const blockHeightBefore = await chain.client.chain.getBlockHeight()
     await chain.client.chain.generateBlock(1)

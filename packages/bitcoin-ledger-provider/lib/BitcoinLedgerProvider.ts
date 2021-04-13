@@ -1,14 +1,8 @@
 import LedgerProvider from '@liquality/ledger-provider'
 import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
 
-import {
-  padHexStart
-} from '@liquality/crypto'
-import {
-  compressPubKey,
-  getAddressNetwork,
-  decodeRawTransaction
-} from '@liquality/bitcoin-utils'
+import { padHexStart } from '@liquality/crypto'
+import { compressPubKey, getAddressNetwork, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import BitcoinNetworks, { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { bitcoin, BigNumber } from '@liquality/types'
 import HwAppBitcoin from '@ledgerhq/hw-app-btc'
@@ -24,16 +18,16 @@ interface BitcoinLedgerProviderOptions {
 }
 
 export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerProvider as WalletProviderConstructor) {
-  _walletPublicKeyCache: {[index: string]: any}
+  _walletPublicKeyCache: { [index: string]: any }
   _baseDerivationNode: BIP32Interface
 
-  constructor (options: BitcoinLedgerProviderOptions) {
+  constructor(options: BitcoinLedgerProviderOptions) {
     const { network, addressType = bitcoin.AddressType.BECH32, Transport } = options
     super({ network, addressType, App: HwAppBitcoin, Transport, ledgerScrambleKey: 'BTC' })
     this._walletPublicKeyCache = {}
   }
 
-  async signMessage (message: string, from: string) {
+  async signMessage(message: string, from: string) {
     const app = await this.getApp()
     const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
@@ -41,16 +35,22 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return sig.r + sig.s
   }
 
-  async _buildTransaction (targets: bitcoin.OutputTarget[], feePerByte?: number, fixedInputs?: bitcoin.Input[]) : Promise<{ hex: string, fee: number }> {
+  async _buildTransaction(
+    targets: bitcoin.OutputTarget[],
+    feePerByte?: number,
+    fixedInputs?: bitcoin.Input[]
+  ): Promise<{ hex: string; fee: number }> {
     const app = await this.getApp()
 
     const unusedAddress = await this.getUnusedAddress(true)
     const { inputs, change, fee } = await this.getInputsForAmount(targets, feePerByte, fixedInputs)
     const ledgerInputs = await this.getLedgerInputs(inputs)
-    const paths = inputs.map(utxo => utxo.derivationPath)
+    const paths = inputs.map((utxo) => utxo.derivationPath)
 
-    const outputs = targets.map(output => {
-      const outputScript = Buffer.isBuffer(output.address) ? output.address : address.toOutputScript(output.address, this._network) // Allow for OP_RETURN
+    const outputs = targets.map((output) => {
+      const outputScript = Buffer.isBuffer(output.address)
+        ? output.address
+        : address.toOutputScript(output.address, this._network) // Allow for OP_RETURN
       return { amount: this.getAmountBuffer(output.value), script: outputScript }
     })
 
@@ -79,7 +79,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return { hex: txHex, fee }
   }
 
-  async signPSBT (data: string, inputs: bitcoin.PsbtInputTarget[]) {
+  async signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]) {
     const psbt = Psbt.fromBase64(data, { network: this._network })
     const app = await this.getApp()
 
@@ -92,7 +92,9 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     }
 
     if (inputsArePubkey) {
-      const ledgerInputs = await this.getLedgerInputs(psbt.txInputs.map(input => ({ txid: input.hash.reverse().toString('hex'), vout: input.index })))
+      const ledgerInputs = await this.getLedgerInputs(
+        psbt.txInputs.map((input) => ({ txid: input.hash.reverse().toString('hex'), vout: input.index }))
+      )
 
       const getInputDetails = async (input: PsbtTxInput) => {
         const txHex = await this.getMethod('getRawTransactionByHash')(input.hash.reverse().toString('hex'))
@@ -103,12 +105,20 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       }
 
       const inputDetails = await Promise.all(psbt.txInputs.map(getInputDetails))
-      const paths = inputDetails.map(i => i.derivationPath)
-      const outputScriptHex = app.serializeTransactionOutputs({
-        outputs: psbt.txOutputs.map(output => ({ script: output.script, amount: this.getAmountBuffer(output.value) }))
-      }).toString('hex')
+      const paths = inputDetails.map((i) => i.derivationPath)
+      const outputScriptHex = app
+        .serializeTransactionOutputs({
+          outputs: psbt.txOutputs.map((output) => ({
+            script: output.script,
+            amount: this.getAmountBuffer(output.value)
+          }))
+        })
+        .toString('hex')
       const isSegwit = [bitcoin.AddressType.BECH32, bitcoin.AddressType.P2SH_SEGWIT].includes(this._addressType)
-      const changeAddress = await this.findAddress(psbt.txOutputs.map(output => output.address), true)
+      const changeAddress = await this.findAddress(
+        psbt.txOutputs.map((output) => output.address),
+        true
+      )
 
       const txHex = await app.createPaymentTransactionNew({
         // @ts-ignore
@@ -165,7 +175,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const ledgerSigs = await app.signP2SHTransaction({
       // @ts-ignore
       inputs: ledgerInputs,
-      associatedKeysets: walletAddresses.map(address => address.derivationPath),
+      associatedKeysets: walletAddresses.map((address) => address.derivationPath),
       outputScriptHex: ledgerOutputs.toString('hex'),
       lockTime: psbt.locktime,
       segwit: isSegwit,
@@ -189,7 +199,13 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return psbt.toBase64()
   }
 
-  async signBatchP2SHTransaction (inputs: [{ inputTxHex: string, index: number, vout: any, outputScript: Buffer }], addresses: string, tx: any, lockTime?: number, segwit?: boolean) : Promise<Buffer[]> {
+  async signBatchP2SHTransaction(
+    inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
+    addresses: string,
+    tx: any,
+    lockTime?: number,
+    segwit?: boolean
+  ): Promise<Buffer[]> {
     const app = await this.getApp()
 
     const walletAddressDerivationPaths = []
@@ -232,30 +248,32 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return finalLedgerSigs
   }
 
-  getAmountBuffer (amount: number) {
+  getAmountBuffer(amount: number) {
     let hexAmount = new BigNumber(Math.round(amount)).toString(16)
     hexAmount = padHexStart(hexAmount, 8)
     const valueBuffer = Buffer.from(hexAmount, 'hex')
     return valueBuffer.reverse()
   }
 
-  async getLedgerInputs (unspentOutputs: {txid: string, vout: number}[]) {
+  async getLedgerInputs(unspentOutputs: { txid: string; vout: number }[]) {
     const app = await this.getApp()
 
-    return Promise.all(unspentOutputs.map(async utxo => {
-      const hex = await this.getMethod('getTransactionHex')(utxo.txid)
-      const tx = app.splitTransaction(hex, true)
-      return [ tx, utxo.vout, undefined, 0 ]
-    }))
+    return Promise.all(
+      unspentOutputs.map(async (utxo) => {
+        const hex = await this.getMethod('getTransactionHex')(utxo.txid)
+        const tx = app.splitTransaction(hex, true)
+        return [tx, utxo.vout, undefined, 0]
+      })
+    )
   }
 
-  async _getWalletPublicKey (path: string) {
+  async _getWalletPublicKey(path: string) {
     const app = await this.getApp()
     const format = this._addressType === bitcoin.AddressType.P2SH_SEGWIT ? 'p2sh' : this._addressType
     return app.getWalletPublicKey(path, { format })
   }
 
-  async getWalletPublicKey (path: string) {
+  async getWalletPublicKey(path: string) {
     if (path in this._walletPublicKeyCache) {
       return this._walletPublicKeyCache[path]
     }
@@ -265,7 +283,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return walletPublicKey
   }
 
-  async baseDerivationNode () {
+  async baseDerivationNode() {
     if (this._baseDerivationNode) return this._baseDerivationNode
 
     const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
@@ -278,12 +296,14 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return this._baseDerivationNode
   }
 
-  async getConnectedNetwork () {
+  async getConnectedNetwork() {
     const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
     const network = getAddressNetwork(walletPubKey.bitcoinAddress)
     // Bitcoin Ledger app does not distinguish between regtest & testnet
-    if (this._network.name === BitcoinNetworks.bitcoin_regtest.name &&
-      network.name === BitcoinNetworks.bitcoin_testnet.name) {
+    if (
+      this._network.name === BitcoinNetworks.bitcoin_regtest.name &&
+      network.name === BitcoinNetworks.bitcoin_testnet.name
+    ) {
       return BitcoinNetworks.bitcoin_regtest
     }
     return network

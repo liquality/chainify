@@ -1,20 +1,20 @@
-export interface Transaction <T = any> {
+export interface Transaction<T = any> {
   // Transaction hash
-  hash: string,
+  hash: string
   // The value of the transaction
-  value: number,
+  value: number
   // Hash of the block containing the transaction
-  blockHash?: string,
+  blockHash?: string
   // The block number containing the trnasaction
-  blockNumber?: number,
+  blockNumber?: number
   // The number of confirmations of the transaction
-  confirmations?: number,
+  confirmations?: number
   // The price per unit of fee
-  feePrice?: number,
+  feePrice?: number
   // The total fee paid for the transaction
-  fee?: number,
+  fee?: number
   // Secret of a HTLC
-  secret?: string,
+  secret?: string
   // The raw transaction object
   _raw: T
 }

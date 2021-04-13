@@ -5,7 +5,7 @@ import { isArray } from 'lodash'
 export default class Wallet implements WalletProvider {
   client: any
 
-  constructor (client: any) {
+  constructor(client: any) {
     this.client = client
   }
 
@@ -18,7 +18,7 @@ export default class Wallet implements WalletProvider {
    *  of addresses.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getAddresses (startingIndex?: number, numAddresses?: number, change?: boolean) : Promise<Address[]> {
+  async getAddresses(startingIndex?: number, numAddresses?: number, change?: boolean): Promise<Address[]> {
     const addresses = await this.client.getMethod('getAddresses')(startingIndex, numAddresses, change)
 
     if (!isArray(addresses)) {
@@ -35,7 +35,7 @@ export default class Wallet implements WalletProvider {
    *  of addresses.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUsedAddresses (numAddressPerCall?: number) : Promise<Address[]> {
+  async getUsedAddresses(numAddressPerCall?: number): Promise<Address[]> {
     return this.client.getMethod('getUsedAddresses')(numAddressPerCall)
   }
 
@@ -47,7 +47,7 @@ export default class Wallet implements WalletProvider {
    *  object.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  async getUnusedAddress (change?: boolean, numAddressPerCall?: number) : Promise<Address> {
+  async getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<Address> {
     return this.client.getMethod('getUnusedAddress')(change, numAddressPerCall)
   }
 
@@ -57,7 +57,7 @@ export default class Wallet implements WalletProvider {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed message.
    */
-  async signMessage (message: string, from: string) : Promise<string> {
+  async signMessage(message: string, from: string): Promise<string> {
     return this.client.getMethod('signMessage')(message, from)
   }
 
@@ -65,7 +65,7 @@ export default class Wallet implements WalletProvider {
    * Retrieve the network connected to by the wallet
    * @return {Promise<any>} Resolves with the network object
    */
-  async getConnectedNetwork () : Promise<any> {
+  async getConnectedNetwork(): Promise<any> {
     return this.client.getMethod('getConnectedNetwork')()
   }
 
@@ -73,7 +73,7 @@ export default class Wallet implements WalletProvider {
    * Retrieve the availability status of the wallet
    * @return {Promise<Boolean>} True if the wallet is available to use
    */
-  async isWalletAvailable () : Promise<boolean> {
+  async isWalletAvailable(): Promise<boolean> {
     return this.client.getMethod('isWalletAvailable')()
   }
 
@@ -81,7 +81,7 @@ export default class Wallet implements WalletProvider {
    * Flag indicating if the wallet allows apps to update transaction fees
    * @return {Promise<Boolean>} True if wallet accepts fee updating
    */
-  get canUpdateFee () : boolean {
+  get canUpdateFee(): boolean {
     try {
       return this.client.getMethod('canUpdateFee')()
     } catch (e) {

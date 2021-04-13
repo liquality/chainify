@@ -11,7 +11,7 @@ const GWEI = 1e9
  * Converts a hex string to the ethereum format
  * @param {*} hash
  */
-function ensure0x (hash: string) {
+function ensure0x(hash: string) {
   return hash.startsWith('0x') ? hash : `0x${hash}`
 }
 
@@ -19,27 +19,27 @@ function ensure0x (hash: string) {
  * Converts an ethereum hex string to the standard format
  * @param {*} hash
  */
-function remove0x (hash: ethereum.Hex) {
-  return (typeof hash === 'string' && hash.startsWith('0x')) ? hash.slice(2) : hash
+function remove0x(hash: ethereum.Hex) {
+  return typeof hash === 'string' && hash.startsWith('0x') ? hash.slice(2) : hash
 }
 
 /**
  * Converts an ethereum hex string to number
- * @param hex 
+ * @param hex
  */
-function hexToNumber (hex: ethereum.Hex) : number {
+function hexToNumber(hex: ethereum.Hex): number {
   return parseInt(remove0x(hex), 16)
 }
 
-function numberToHex (number: BigNumber | number) : string {
+function numberToHex(number: BigNumber | number): string {
   return ensure0x(new BigNumber(number).toString(16))
 }
 
-function checksumEncode (hash: string) {
+function checksumEncode(hash: string) {
   return eip55.encode(ensure0x(hash))
 }
 
-function ensureBlockFormat (block?: number) {
+function ensureBlockFormat(block?: number) {
   if (block === undefined) {
     return 'latest'
   } else {
@@ -47,12 +47,15 @@ function ensureBlockFormat (block?: number) {
   }
 }
 
-function normalizeTransactionObject <TxType extends ethereum.PartialTransaction = ethereum.Transaction> (tx: TxType, currentHeight?: number) : Transaction<TxType> {
+function normalizeTransactionObject<TxType extends ethereum.PartialTransaction = ethereum.Transaction>(
+  tx: TxType,
+  currentHeight?: number
+): Transaction<TxType> {
   if (!(typeof tx === 'object' && tx !== null)) {
     throw new Error(`Invalid transaction object: "${tx}"`)
   }
 
-  const normalizedTx : Transaction<TxType> = {
+  const normalizedTx: Transaction<TxType> = {
     hash: remove0x(tx.hash),
     value: hexToNumber(tx.value),
     _raw: tx
@@ -77,17 +80,18 @@ function normalizeTransactionObject <TxType extends ethereum.PartialTransaction 
   return normalizedTx
 }
 
-function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.TransactionRequest {
+function buildTransaction(txOptions: ethereum.UnsignedTransaction): ethereum.TransactionRequest {
   if (!txOptions.to && (typeof txOptions.data !== 'string' || txOptions.data.length === 0)) {
     throw new Error('Sending to null with no data. Aborting.')
   }
 
-  const tx : ethereum.TransactionRequest = {
+  const tx: ethereum.TransactionRequest = {
     from: ensure0x(txOptions.from),
     value: txOptions.value ? numberToHex(txOptions.value) : '0x0'
   }
 
-  if (txOptions.gasPrice) tx.gasPrice = ensure0x(txOptions.gasPrice.times(GWEI).dp(0, BigNumber.ROUND_CEIL).toString(16))
+  if (txOptions.gasPrice)
+    tx.gasPrice = ensure0x(txOptions.gasPrice.times(GWEI).dp(0, BigNumber.ROUND_CEIL).toString(16))
   if (txOptions.to) tx.to = ensure0x(txOptions.to)
   if (txOptions.data) tx.data = ensure0x(txOptions.data)
   if (txOptions.nonce !== null && txOptions.nonce !== undefined) tx.nonce = ensure0x(txOptions.nonce.toString(16))
@@ -95,7 +99,7 @@ function buildTransaction (txOptions: ethereum.UnsignedTransaction) : ethereum.T
   return tx
 }
 
-function validateAddress (_address: Address | string) {
+function validateAddress(_address: Address | string) {
   const address = remove0x(addressToString(_address))
 
   if (typeof address !== 'string') {
@@ -111,7 +115,7 @@ function validateAddress (_address: Address | string) {
   }
 }
 
-function validateExpiration (expiration: number) {
+function validateExpiration(expiration: number) {
   _validateExpiration(expiration)
 
   const expirationHex = expiration.toString(16)

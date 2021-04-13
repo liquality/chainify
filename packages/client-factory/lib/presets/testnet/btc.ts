@@ -20,22 +20,15 @@ export default [
   {
     provider: BitcoinJsWalletProvider,
     onlyIf: ['mnemonic'],
-    args: (config: any) => [
-      BitcoinNetworks.bitcoin_testnet,
-      config.mnemonic
-    ]
+    args: (config: any) => [BitcoinNetworks.bitcoin_testnet, config.mnemonic]
   },
   {
     provider: BitcoinSwapProvider,
-    args: [
-      BitcoinNetworks.bitcoin_testnet
-    ]
+    args: [BitcoinNetworks.bitcoin_testnet]
   },
   {
     provider: BitcoinEsploraSwapFindProvider,
-    args: [
-      'https://liquality.io/electrs'
-    ]
+    args: ['https://liquality.io/electrs']
   },
   {
     provider: BitcoinRpcFeeProvider

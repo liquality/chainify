@@ -14,7 +14,7 @@ export default class EthereumRpcFeeProvider extends Provider implements FeeProvi
   _averageMultiplier: number
   _fastMultiplier: number
 
-  constructor (opts: FeeOptions = {}) {
+  constructor(opts: FeeOptions = {}) {
     super()
     const { slowMultiplier = 1, averageMultiplier = 1.5, fastMultiplier = 2 } = opts
     this._slowMultiplier = slowMultiplier
@@ -22,11 +22,11 @@ export default class EthereumRpcFeeProvider extends Provider implements FeeProvi
     this._fastMultiplier = fastMultiplier
   }
 
-  calculateFee (base: number, multiplier: number) {
+  calculateFee(base: number, multiplier: number) {
     return new BigNumber(base).times(new BigNumber(multiplier)).toNumber()
   }
 
-  async getFees () {
+  async getFees() {
     const baseGasPrice = await this.getMethod('getGasPrice')()
     return {
       slow: {

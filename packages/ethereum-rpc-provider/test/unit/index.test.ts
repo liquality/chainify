@@ -26,7 +26,7 @@ describe('Ethereum RPC provider', () => {
   describe('getAddresses', () => {
     it('should return an array of addresses without 0x', async () => {
       const addresses = await client.wallet.getAddresses()
-      expect(addresses.map(a => a)).to.deep.equal([
+      expect(addresses.map((a) => a)).to.deep.equal([
         { address: '322d4959c911520645c0638204b42ce0689236e9' },
         { address: '635d7d148054b9471d79084b80b864a166956139' },
         { address: 'a17fe13ab28477f17fc7f1ec99a4385c95a5356b' },
@@ -130,44 +130,44 @@ describe('Ethereum RPC provider', () => {
               input: '0x0'
             }
           }
-        ]})
+        ]
+      })
     })
   })
 
   describe('getTransactionByHash', () => {
     it('should return transaction', async () => {
-      const tx = await client.chain.getTransactionByHash('ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd')
-      expect(tx)
-        .to
-        .deep
-        .equal({
-          hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
-          blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-          blockNumber: 1,
-          value: 10000,
-          confirmations: 11,
-          feePrice: 20,
-          fee: 1800000000000000,
-          _raw: {
-            hash: '0xca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
-            nonce: '0x0',
-            blockHash: '0x868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
-            blockNumber: '0x01',
-            transactionIndex: '0x00',
-            from: '0x322d4959c911520645c0638204b42ce0689236e9',
-            to: '0x635d7d148054b9471d79084b80b864a166956139',
-            value: '0x2710',
-            gas: '0x015f90',
-            gasPrice: '0x04a817c800',
-            input: '0x0'
-          }
-        })
+      const tx = await client.chain.getTransactionByHash(
+        'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd'
+      )
+      expect(tx).to.deep.equal({
+        hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+        blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
+        blockNumber: 1,
+        value: 10000,
+        confirmations: 11,
+        feePrice: 20,
+        fee: 1800000000000000,
+        _raw: {
+          hash: '0xca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
+          nonce: '0x0',
+          blockHash: '0x868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
+          blockNumber: '0x01',
+          transactionIndex: '0x00',
+          from: '0x322d4959c911520645c0638204b42ce0689236e9',
+          to: '0x635d7d148054b9471d79084b80b864a166956139',
+          value: '0x2710',
+          gas: '0x015f90',
+          gasPrice: '0x04a817c800',
+          input: '0x0'
+        }
+      })
     })
   })
 
   describe('getBalance', () => {
     it('should return correct balance', async () => {
-      const balance = await client.chain.getBalance([ '322d4959c911520645c0638204b42ce0689236e9' ])
+      const balance = await client.chain.getBalance(['322d4959c911520645c0638204b42ce0689236e9'])
       expect(balance.eq(99995379999999890000)).to.be.true
     })
   })
@@ -175,31 +175,31 @@ describe('Ethereum RPC provider', () => {
   describe('signMessage', () => {
     it('should return a signature', async () => {
       const sig = await client.wallet.signMessage('liquality', '322d4959c911520645c0638204b42ce0689236e9')
-      expect(sig)
-        .to
-        .equal('0f1f169ed203e0a8e053e060e0ba1a7da87cc37f4aa84c9329ba2a63974d0f5b5414b024d80e805418a6f315fd8185e74daaca63fc871c5568e9b18d2f899e4701')
+      expect(sig).to.equal(
+        '0f1f169ed203e0a8e053e060e0ba1a7da87cc37f4aa84c9329ba2a63974d0f5b5414b024d80e805418a6f315fd8185e74daaca63fc871c5568e9b18d2f899e4701'
+      )
     })
   })
 
   describe('Non-client methods', () => {
     describe('getTransactionReceipt', () => {
       it('should return transaction receipt for provided transaction', async () => {
-        const receipt = await provider.getTransactionReceipt('836a5e038d599454d576493f55c8000d4cce30460437b9e23718154e8f0e4298')
-        expect(receipt)
-          .to
-          .deep
-          .equal({
-            transactionHash: '836a5e038d599454d576493f55c8000d4cce30460437b9e23718154e8f0e4298',
-            transactionIndex: '0',
-            blockHash: 'bd920a2956a550501eb71e5eb634dc0219eb0830580c45136160b917c948f981',
-            blockNumber: 9,
-            gasUsed: '5208',
-            cumulativeGasUsed: '5208',
-            contractAddress: null,
-            logs: [],
-            status: '1',
-            logsBloom: '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
-          })
+        const receipt = await provider.getTransactionReceipt(
+          '836a5e038d599454d576493f55c8000d4cce30460437b9e23718154e8f0e4298'
+        )
+        expect(receipt).to.deep.equal({
+          transactionHash: '836a5e038d599454d576493f55c8000d4cce30460437b9e23718154e8f0e4298',
+          transactionIndex: '0',
+          blockHash: 'bd920a2956a550501eb71e5eb634dc0219eb0830580c45136160b917c948f981',
+          blockNumber: 9,
+          gasUsed: '5208',
+          cumulativeGasUsed: '5208',
+          contractAddress: null,
+          logs: [],
+          status: '1',
+          logsBloom:
+            '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+        })
       })
     })
   })

@@ -12,12 +12,10 @@ import * as varuint from 'bip174/src/lib/converter/varint'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
 
-const AddressTypes = [
-  'legacy', 'p2sh-segwit', 'bech32'
-]
+const AddressTypes = ['legacy', 'p2sh-segwit', 'bech32']
 
-function calculateFee (numInputs: number, numOutputs: number, feePerByte: number) {
-  return ((numInputs * 148) + (numOutputs * 34) + 10) * feePerByte
+function calculateFee(numInputs: number, numOutputs: number, feePerByte: number) {
+  return (numInputs * 148 + numOutputs * 34 + 10) * feePerByte
 }
 
 /**
@@ -25,7 +23,7 @@ function calculateFee (numInputs: number, numOutputs: number, feePerByte: number
  * @param {!string} pubKey - 65 byte string with prefix, x, y.
  * @return {string} Returns the compressed pubKey of uncompressed pubKey.
  */
-function compressPubKey (pubKey: string) {
+function compressPubKey(pubKey: string) {
   const x = pubKey.substring(2, 66)
   const y = pubKey.substring(66, 130)
   const even = parseInt(y.substring(62, 64), 16) % 2 === 0
@@ -39,17 +37,17 @@ function compressPubKey (pubKey: string) {
  * @param {string} address The bitcoin address
  * @return {Network}
  */
-function getAddressNetwork (address: string) {
+function getAddressNetwork(address: string) {
   // TODO: can this be simplified using just bitcoinjs-lib??
   let networkKey
   // bech32
-  networkKey = findKey(BitcoinNetworks, network => address.startsWith(network.bech32))
+  networkKey = findKey(BitcoinNetworks, (network) => address.startsWith(network.bech32))
   // base58
   if (!networkKey) {
     const prefix = base58.decode(address).toString('hex').substring(0, 2)
-    networkKey = findKey(BitcoinNetworks, network => {
-      const pubKeyHashPrefix = padHexStart((network.pubKeyHash).toString(16), 1)
-      const scriptHashPrefix = padHexStart((network.scriptHash).toString(16), 1)
+    networkKey = findKey(BitcoinNetworks, (network) => {
+      const pubKeyHashPrefix = padHexStart(network.pubKeyHash.toString(16), 1)
+      const scriptHashPrefix = padHexStart(network.scriptHash.toString(16), 1)
       return [pubKeyHashPrefix, scriptHashPrefix].includes(prefix)
     })
   }
@@ -57,7 +55,7 @@ function getAddressNetwork (address: string) {
 }
 
 type CoinSelectTarget = {
-  value: number,
+  value: number
   id?: string
 }
 
@@ -70,16 +68,17 @@ type CoinSelectResponse = {
 
 type CoinSelectFunction = (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number) => CoinSelectResponse
 
-function selectCoins (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs: bT.UTXO[] = []) {
+function selectCoins(utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: number, fixedInputs: bT.UTXO[] = []) {
   let selectUtxos = utxos
 
   // Default coinselect won't accumulate some inputs
   // TODO: does coinselect need to be modified to ABSOLUTELY not skip an input?
-  const coinselectStrat : CoinSelectFunction = fixedInputs.length ? coinselectAccumulative : coinselect
+  const coinselectStrat: CoinSelectFunction = fixedInputs.length ? coinselectAccumulative : coinselect
   if (fixedInputs.length) {
-    selectUtxos = [ // Order fixed inputs to the start of the list so they are used
+    selectUtxos = [
+      // Order fixed inputs to the start of the list so they are used
       ...fixedInputs,
-      ...utxos.filter(utxo => !fixedInputs.find(input => input.vout === utxo.vout && input.txid === utxo.txid))
+      ...utxos.filter((utxo) => !fixedInputs.find((input) => input.vout === utxo.vout && input.txid === utxo.txid))
     ]
   }
 
@@ -87,7 +86,7 @@ function selectCoins (utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte:
 
   let change
   if (inputs && outputs) {
-    change = outputs.find(output => output.id !== 'main')
+    change = outputs.find((output) => output.id !== 'main')
   }
 
   return { inputs, outputs, fee, change }
@@ -98,18 +97,18 @@ const OUTPUT_TYPES_MAP = {
   [classify.types.P2WSH]: 'witness_v0_scripthash'
 }
 
-function decodeRawTransaction (hex: string, network: BitcoinNetwork) : bT.Transaction {
+function decodeRawTransaction(hex: string, network: BitcoinNetwork): bT.Transaction {
   const bjsTx = bitcoin.Transaction.fromHex(hex)
 
   const vin = bjsTx.ins.map((input) => {
-    return <bT.Input> {
+    return <bT.Input>{
       txid: Buffer.from(input.hash).reverse().toString('hex'),
       vout: input.index,
       scriptSig: {
         asm: bitcoin.script.toASM(input.script),
         hex: input.script.toString('hex')
       },
-      txinwitness: input.witness.map(w => w.toString('hex')),
+      txinwitness: input.witness.map((w) => w.toString('hex')),
       sequence: input.sequence
     }
   })
@@ -132,7 +131,9 @@ function decodeRawTransaction (hex: string, network: BitcoinNetwork) : bT.Transa
     try {
       const address = bitcoin.address.fromOutputScript(output.script, network)
       vout.scriptPubKey.addresses.push(address)
-    } catch (e) { /** If output script is not parasable, we just skip it */ }
+    } catch (e) {
+      /** If output script is not parasable, we just skip it */
+    }
 
     return vout
   })
@@ -151,7 +152,11 @@ function decodeRawTransaction (hex: string, network: BitcoinNetwork) : bT.Transa
   }
 }
 
-function normalizeTransactionObject (tx: bT.Transaction, fee: number, block?: { number: number, hash: string }) : Transaction<bT.Transaction> {
+function normalizeTransactionObject(
+  tx: bT.Transaction,
+  fee: number,
+  block?: { number: number; hash: string }
+): Transaction<bT.Transaction> {
   const value = tx.vout.reduce((p, n) => p.plus(new BigNumber(n.value).times(1e8)), new BigNumber(0))
   const result = {
     hash: tx.txid,
@@ -192,7 +197,7 @@ function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
     const currentLen = buffer.length
     const varintLen = varuint.encodingLength(i)
 
-    buffer = Buffer.concat([buffer, Buffer.allocUnsafe(varintLen)]);
+    buffer = Buffer.concat([buffer, Buffer.allocUnsafe(varintLen)])
     varuint.encode(i, buffer, currentLen)
   }
 
@@ -211,11 +216,13 @@ function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
   return buffer
 }
 
-function getPubKeyHash (address: string, network: BitcoinNetwork) {
+function getPubKeyHash(address: string, network: BitcoinNetwork) {
   const outputScript = bitcoin.address.toOutputScript(address, network)
   const type = classify.output(outputScript)
   if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
-    throw new Error(`Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`)
+    throw new Error(
+      `Bitcoin swap doesn't support the address ${address} type of ${type}. Not possible to derive public key hash.`
+    )
   }
 
   try {
@@ -227,7 +234,7 @@ function getPubKeyHash (address: string, network: BitcoinNetwork) {
   }
 }
 
-function validateAddress (_address: Address | string, network: BitcoinNetwork) {
+function validateAddress(_address: Address | string, network: BitcoinNetwork) {
   const address = addressToString(_address)
 
   if (typeof address !== 'string') {

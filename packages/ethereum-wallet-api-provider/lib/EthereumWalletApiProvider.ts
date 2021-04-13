@@ -1,7 +1,13 @@
 import WalletProvider from '@liquality/wallet-provider'
 import EthereumNetworks, { EthereumNetwork } from '@liquality/ethereum-networks'
 import { WalletError } from '@liquality/errors'
-import { ensure0x, buildTransaction, normalizeTransactionObject, remove0x, hexToNumber } from '@liquality/ethereum-utils'
+import {
+  ensure0x,
+  buildTransaction,
+  normalizeTransactionObject,
+  remove0x,
+  hexToNumber
+} from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
 import { Address, SendOptions, BigNumber, ethereum } from '@liquality/types'
 import Debug from '@liquality/debug'
@@ -11,13 +17,13 @@ import { findKey } from 'lodash'
 const debug = Debug('ethereum')
 
 interface RequestArguments {
-  method: string;
-  params?: any[] | any;
+  method: string
+  params?: any[] | any
 }
 
 interface EthereumProvider {
-  request (req: RequestArguments) : Promise<any>
-  enable () : Promise<ethereum.Address[]>
+  request(req: RequestArguments): Promise<any>
+  enable(): Promise<ethereum.Address[]>
 }
 
 // EIP1193
@@ -25,13 +31,13 @@ export default class EthereumWalletApiProvider extends WalletProvider {
   _ethereumProvider: EthereumProvider
   _network: EthereumNetwork
 
-  constructor (ethereumProvider: EthereumProvider, network: EthereumNetwork) {
+  constructor(ethereumProvider: EthereumProvider, network: EthereumNetwork) {
     super({ network })
     this._ethereumProvider = ethereumProvider
     this._network = network
   }
 
-  async request (method: string, ...params: any) {
+  async request(method: string, ...params: any) {
     await this._ethereumProvider.enable()
 
     try {
@@ -44,31 +50,33 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     }
   }
 
-  async isWalletAvailable () {
-    const addresses : string[] = await this.request('eth_accounts')
+  async isWalletAvailable() {
+    const addresses: string[] = await this.request('eth_accounts')
     return addresses.length > 0
   }
 
-  async getAddresses () {
+  async getAddresses() {
     const addresses: string[] = await this.request('eth_accounts')
 
     if (addresses.length === 0) {
       throw new WalletError('Wallet: No addresses available')
     }
 
-    return addresses.map((address: string) => { return new Address({ address: remove0x(address) }) })
+    return addresses.map((address: string) => {
+      return new Address({ address: remove0x(address) })
+    })
   }
 
-  async getUsedAddresses () {
+  async getUsedAddresses() {
     return this.getAddresses()
   }
 
-  async getUnusedAddress () {
+  async getUnusedAddress() {
     const addresses = await this.getAddresses()
     return addresses[0]
   }
 
-  async signMessage (message: string) {
+  async signMessage(message: string) {
     const hex = Buffer.from(message).toString('hex')
 
     const addresses = await this.getAddresses()
@@ -77,7 +85,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     return this.request('personal_sign', ensure0x(hex), ensure0x(addressToString(address)))
   }
 
-  async sendTransaction (options: SendOptions) {
+  async sendTransaction(options: SendOptions) {
     const networkId = await this.getWalletNetworkId()
 
     if (this._network) {
@@ -89,7 +97,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     const addresses = await this.getAddresses()
     const from = addressToString(addresses[0])
 
-    const txOptions : ethereum.UnsignedTransaction = {
+    const txOptions: ethereum.UnsignedTransaction = {
       from,
       to: addressToString(options.to),
       value: options.value,
@@ -101,7 +109,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
 
     const txHash: string = await this.request('eth_sendTransaction', txData)
 
-    const txWithHash : ethereum.PartialTransaction = {
+    const txWithHash: ethereum.PartialTransaction = {
       ...txData,
       input: txData.data,
       hash: txHash
@@ -110,19 +118,19 @@ export default class EthereumWalletApiProvider extends WalletProvider {
     return normalizeTransactionObject(txWithHash)
   }
 
-  canUpdateFee () {
+  canUpdateFee() {
     return false
   }
 
-  async getWalletNetworkId () {
+  async getWalletNetworkId() {
     const networkId: ethereum.Hex = await this.request('net_version')
 
     return hexToNumber(networkId)
   }
 
-  async getConnectedNetwork () {
+  async getConnectedNetwork() {
     const networkId = await this.getWalletNetworkId()
-    const network = findKey(EthereumNetworks, network => network.networkId === networkId)
+    const network = findKey(EthereumNetworks, (network) => network.networkId === networkId)
 
     if (networkId && !network) {
       return {

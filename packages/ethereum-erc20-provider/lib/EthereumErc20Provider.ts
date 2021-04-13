@@ -11,32 +11,30 @@ const SOL_BALACE_OF_FUNCTION = '0x70a08231' // balanceOf(address)
 export default class EthereumErc20Provider extends Provider implements Partial<ChainProvider> {
   _contractAddress: string
 
-  constructor (contractAddress: string) {
+  constructor(contractAddress: string) {
     super()
     this._contractAddress = remove0x(contractAddress)
   }
 
-  generateErc20Transfer (to: string, value: BigNumber) {
+  generateErc20Transfer(to: string, value: BigNumber) {
     const encodedAddress = padHexStart(remove0x(to), 32)
     const encodedValue = padHexStart(remove0x(numberToHex(value)), 32)
 
-    return [
-      remove0x(SOL_TRANSFER_FUNCTION),
-      encodedAddress,
-      encodedValue
-    ].join('').toLowerCase()
+    return [remove0x(SOL_TRANSFER_FUNCTION), encodedAddress, encodedValue].join('').toLowerCase()
   }
 
-  async sendTransaction (options: SendOptions) {
+  async sendTransaction(options: SendOptions) {
     if (!options.data) {
       // erc20 transfer
       await this.getMethod('assertContractExists')(this._contractAddress)
 
       // check for erc20 balance
       const addresses: Address[] = await this.getMethod('getAddresses')()
-      const balance = await this.getBalance(addresses.map(address => address.address))
+      const balance = await this.getBalance(addresses.map((address) => address.address))
       if (balance.isLessThan(options.value)) {
-        throw new InsufficientBalanceError(`${addresses[0]} doesn't have enough balance (has: ${balance}, want: ${options.value})`)
+        throw new InsufficientBalanceError(
+          `${addresses[0]} doesn't have enough balance (has: ${balance}, want: ${options.value})`
+        )
       }
 
       options.data = this.generateErc20Transfer(addressToString(options.to), options.value)
@@ -47,12 +45,12 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
     return this.getMethod('sendTransaction')(options)
   }
 
-  async sendSweepTransaction (address: Address | string, gasPrice: number) {
+  async sendSweepTransaction(address: Address | string, gasPrice: number) {
     const addresses: Address[] = await this.getMethod('getAddresses')()
 
-    const balance = await this.getBalance(addresses.map(address => address.address))
+    const balance = await this.getBalance(addresses.map((address) => address.address))
 
-    const sendOptions : SendOptions = {
+    const sendOptions: SendOptions = {
       to: address,
       value: balance,
       data: null,
@@ -62,34 +60,31 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
     return this.sendTransaction(sendOptions)
   }
 
-  getContractAddress () {
+  getContractAddress() {
     return this._contractAddress
   }
 
-  async getBalance (_addresses: (Address | string)[]) {
+  async getBalance(_addresses: (Address | string)[]) {
     await this.getMethod('assertContractExists')(this._contractAddress)
 
-    const addresses = _addresses
-      .map(addressToString)
-      .map(ensure0x)
+    const addresses = _addresses.map(addressToString).map(ensure0x)
 
     const promiseBalances = await Promise.all(
-      addresses.map(address => this.getMethod('jsonrpc')(
-        'eth_call',
-        {
-          data: [
-            SOL_BALACE_OF_FUNCTION,
-            padHexStart(remove0x(address), 32)
-          ].join('').toLowerCase(),
-          to: ensure0x(this._contractAddress).toLowerCase()
-        },
-        'latest'
-      ))
+      addresses.map((address) =>
+        this.getMethod('jsonrpc')(
+          'eth_call',
+          {
+            data: [SOL_BALACE_OF_FUNCTION, padHexStart(remove0x(address), 32)].join('').toLowerCase(),
+            to: ensure0x(this._contractAddress).toLowerCase()
+          },
+          'latest'
+        )
+      )
     )
 
     return promiseBalances
-      .map(balance => new BigNumber(hexToNumber(balance)))
-      .filter(balance => !balance.isNaN())
+      .map((balance) => new BigNumber(hexToNumber(balance)))
+      .filter((balance) => !balance.isNaN())
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 }

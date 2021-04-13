@@ -19,12 +19,12 @@ import Wallet from './Wallet'
 import Swap from './Swap'
 
 export default class Client implements IClient {
-  static debug (namespace = '*') {
+  static debug(namespace = '*') {
     // if localStorage.DEBUG (browser)
     // or process.env.DEBUG (node) is not set
     // @ts-ignore
     if (!debug.load()) {
-      (debug as any).enable(namespace)
+      ;(debug as any).enable(namespace)
     }
   }
 
@@ -41,7 +41,7 @@ export default class Client implements IClient {
    * @param {Provider} [provider] - Data source/provider for the instance
    * @param {string} [version] - Minimum blockchain node version to support
    */
-  constructor (provider?: Provider, version?: string) {
+  constructor(provider?: Provider, version?: string) {
     /**
      * @type {Array}
      */
@@ -72,15 +72,12 @@ export default class Client implements IClient {
    * @throws {InvalidProviderError} When invalid provider is provider
    * @throws {DuplicateProviderError} When same provider is added again
    */
-  addProvider (provider: Provider) {
+  addProvider(provider: Provider) {
     if (!isFunction(provider.setClient)) {
       throw new InvalidProviderError('Provider should have "setClient" method')
     }
 
-    const duplicate = find(
-      this._providers,
-      _provider => provider.constructor === _provider.constructor
-    )
+    const duplicate = find(this._providers, (_provider) => provider.constructor === _provider.constructor)
 
     if (duplicate) {
       throw new DuplicateProviderError('Duplicate provider')
@@ -104,23 +101,18 @@ export default class Client implements IClient {
    * @throws {UnsupportedMethodError} When requested method is not supported by
    *  version specified
    */
-  getProviderForMethod (method: string, requestor = false) {
+  getProviderForMethod(method: string, requestor = false) {
     if (this._providers.length === 0) {
       throw new NoProviderError('No provider provided. Add a provider to the client')
     }
 
     let indexOfRequestor = requestor
-      ? findLastIndex(
-        this._providers,
-        provider => requestor.constructor === provider.constructor
-      ) : this._providers.length
+      ? findLastIndex(this._providers, (provider) => requestor.constructor === provider.constructor)
+      : this._providers.length
 
     if (indexOfRequestor === -1) indexOfRequestor = 0
 
-    const provider = findLast(
-      this._providers,
-      provider => isFunction((<any>provider)[method]), indexOfRequestor - 1
-    )
+    const provider = findLast(this._providers, (provider) => isFunction((<any>provider)[method]), indexOfRequestor - 1)
 
     if (provider == null) {
       throw new UnimplementedMethodError(`Unimplemented method "${method}"`)
@@ -142,34 +134,38 @@ export default class Client implements IClient {
    *  above the requestor in the stack.
    * @return {function} Returns method from provider instance associated with the requested method
    */
-  getMethod (method: string, requestor?: any) {
+  getMethod(method: string, requestor?: any) {
     const provider = this.getProviderForMethod(method, requestor)
     return (<any>provider)[method].bind(provider)
   }
 
-  assertValidTransaction (transaction: Transaction) {
+  assertValidTransaction(transaction: Transaction) {
     if (!this.validateTransaction(transaction)) {
       const { errors } = this.validateTransaction
-      throw new InvalidProviderResponseError(`Provider returned an invalid transaction, "${errors[0].dataPath}" ${errors[0].message}`)
+      throw new InvalidProviderResponseError(
+        `Provider returned an invalid transaction, "${errors[0].dataPath}" ${errors[0].message}`
+      )
     }
   }
 
-  assertValidBlock (block: Block) {
+  assertValidBlock(block: Block) {
     if (!this.validateBlock(block)) {
       const { errors } = this.validateBlock
-      throw new InvalidProviderResponseError(`Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`)
+      throw new InvalidProviderResponseError(
+        `Provider returned an invalid block, "${errors[0].dataPath}" ${errors[0].message}`
+      )
     }
   }
 
-  get chain () {
+  get chain() {
     return this._chain
   }
 
-  get wallet () {
+  get wallet() {
     return this._wallet
   }
 
-  get swap () {
+  get swap() {
     return this._swap
   }
 }

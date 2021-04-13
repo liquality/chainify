@@ -9,7 +9,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 chai.use(chaiAsPromised)
 
-function testWallet (chain: Chain) {
+function testWallet(chain: Chain) {
   describe('getAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
       const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`

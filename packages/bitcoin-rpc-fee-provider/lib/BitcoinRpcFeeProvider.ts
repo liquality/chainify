@@ -12,7 +12,7 @@ export default class BitcoinRpcFeeProvider extends Provider implements FeeProvid
   _averageTargetBlocks: number
   _fastTargetBlocks: number
 
-  constructor (opts: FeeOptions = {}) {
+  constructor(opts: FeeOptions = {}) {
     super()
     const { slowTargetBlocks = 6, averageTargetBlocks = 3, fastTargetBlocks = 1 } = opts
     this._slowTargetBlocks = slowTargetBlocks
@@ -20,26 +20,28 @@ export default class BitcoinRpcFeeProvider extends Provider implements FeeProvid
     this._fastTargetBlocks = fastTargetBlocks
   }
 
-  getWaitTime (numBlocks: number) {
+  getWaitTime(numBlocks: number) {
     return numBlocks * 10 // Minutes per block* 60 // Seconds per minute
   }
 
-  async getFee (targetBlocks: number) : Promise<FeeDetail> {
+  async getFee(targetBlocks: number): Promise<FeeDetail> {
     const value = await this.getMethod('getFeePerByte')(targetBlocks)
     const wait = targetBlocks * 10 * 60 // 10 minute blocks in seconds
 
     return { fee: value, wait }
   }
 
-  async getFees () {
-    const [ slow, average, fast ] = await Promise.all([
+  async getFees() {
+    const [slow, average, fast] = await Promise.all([
       this.getFee(this._slowTargetBlocks),
       this.getFee(this._averageTargetBlocks),
       this.getFee(this._fastTargetBlocks)
     ])
 
     return {
-      slow, average, fast
+      slow,
+      average,
+      fast
     }
   }
 }

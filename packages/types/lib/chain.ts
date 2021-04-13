@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { Block } from './block';
-import { Transaction } from './transaction';
+import { Block } from './block'
+import { Transaction } from './transaction'
 import { Address } from './address'
 
 export interface SendOptions {
@@ -16,7 +16,7 @@ export interface ChainProvider {
    * @param {!number} numberOfBlocks - Number of blocks to be generated
    * @return {<Promise>}
    */
-  generateBlock (numberOfBlocks: number) : Promise<void>
+  generateBlock(numberOfBlocks: number): Promise<void>
 
   /**
    * Get a block given its hash.
@@ -30,7 +30,7 @@ export interface ChainProvider {
    *  Rejects with TypeError if input is invalid.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getBlockByHash (blockHash: string, includeTx?: boolean) : Promise<Block>
+  getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block>
 
   /**
    * Get a block given its number.
@@ -43,7 +43,7 @@ export interface ChainProvider {
    *  Rejects with TypeError if input is invalid.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getBlockByNumber (blockNumber: number, includeTx?: boolean) : Promise<Block>
+  getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block>
 
   /**
    * Get current block height of the chain.
@@ -51,7 +51,7 @@ export interface ChainProvider {
    *  chain height.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getBlockHeight () : Promise<number>
+  getBlockHeight(): Promise<number>
 
   /**
    * Get a transaction given its hash.
@@ -62,7 +62,7 @@ export interface ChainProvider {
    *  Rejects with TypeError if input is invalid.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getTransactionByHash (txHash: string) : Promise<Transaction>
+  getTransactionByHash(txHash: string): Promise<Transaction>
 
   /**
    * Get the balance of an account given its addresses.
@@ -72,7 +72,7 @@ export interface ChainProvider {
    *  of the addresses that the signing provider controls.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getBalance (addresses: (Address | string)[]) : Promise<BigNumber>
+  getBalance(addresses: (Address | string)[]): Promise<BigNumber>
 
   /**
    * Create, sign & broadcast a transaction.
@@ -82,7 +82,7 @@ export interface ChainProvider {
    * @param {!number} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  sendTransaction (options: SendOptions) : Promise<Transaction>
+  sendTransaction(options: SendOptions): Promise<Transaction>
 
   /**
    * Create, sign & broadcast a sweep transaction.
@@ -90,7 +90,7 @@ export interface ChainProvider {
    * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  sendSweepTransaction (address: Address | string, fee?: number) : Promise<Transaction>
+  sendSweepTransaction(address: Address | string, fee?: number): Promise<Transaction>
 
   /**
    * Update the fee of a transaction.
@@ -98,14 +98,14 @@ export interface ChainProvider {
    * @param {!number} newFee - New fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with the new transaction
    */
-  updateTransactionFee (tx: string | Transaction, newFee: number) : Promise<Transaction>
+  updateTransactionFee(tx: string | Transaction, newFee: number): Promise<Transaction>
 
   /**
    * Create, sign & broad a transaction with multiple outputs.
    * @param {string[]} transactions - to, value, data
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  sendBatchTransaction (transactions: SendOptions[]) : Promise<Transaction>
+  sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction>
 
   /**
    * Broadcast a signed transaction to the network.
@@ -115,5 +115,5 @@ export interface ChainProvider {
    *  identifier for the broadcasted transaction.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  sendRawTransaction (rawTransaction: string) : Promise <string>
+  sendRawTransaction(rawTransaction: string): Promise<string>
 }

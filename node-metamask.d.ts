@@ -1,1 +1,1 @@
-declare module 'node-metamask';
+declare module 'node-metamask'

@@ -4,13 +4,13 @@ import { FeeProvider, FeeDetails, BigNumber } from '@liquality/types'
 const GWEI = 1e9
 
 export default class EthereumGasNowFeeProvider extends NodeProvider implements FeeProvider {
-  constructor (endpoint = 'https://www.gasnow.org/api/v3/gas/price') {
+  constructor(endpoint = 'https://www.gasnow.org/api/v3/gas/price') {
     super({
       baseURL: endpoint
     })
   }
 
-  async getFees () : Promise<FeeDetails> {
+  async getFees(): Promise<FeeDetails> {
     const result = await this.nodeGet('')
     const data = result.data
 
@@ -26,7 +26,8 @@ export default class EthereumGasNowFeeProvider extends NodeProvider implements F
       }
     }
 
-    if (Object.entries(fees).find(([, fee]) => fee.fee > 1000)) { // Guard against fees higher than 1000 GWEI
+    if (Object.entries(fees).find(([, fee]) => fee.fee > 1000)) {
+      // Guard against fees higher than 1000 GWEI
       throw new Error('Fee over 1000 Gwei detected.')
     }
 

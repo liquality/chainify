@@ -30,12 +30,10 @@ debug.formatArgs = function (args: any[]) {
   }
 
   if (!(console as any).history) {
-    (console as any).history = [
-      `@liquality/debug v${version}`
-    ]
+    ;(console as any).history = [`@liquality/debug v${version}`]
   }
 
-  (console as any).history.push(log)
+  ;(console as any).history.push(log)
 
   debug[FORMAT_ARGS_BACKUP_KEY].call(this, args)
 }

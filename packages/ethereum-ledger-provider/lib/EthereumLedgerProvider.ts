@@ -18,12 +18,12 @@ import * as EthereumJsTx from 'ethereumjs-tx'
 export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
   _baseDerivationPath: string
 
-  constructor (options: { network: EthereumNetwork, Transport: any }) {
+  constructor(options: { network: EthereumNetwork; Transport: any }) {
     super({ ...options, App: HwAppEthereum, ledgerScrambleKey: 'w0w' }) // srs!
     this._baseDerivationPath = `44'/${options.network.coinType}'/0'`
   }
 
-  async signMessage (message: string, from: string) {
+  async signMessage(message: string, from: string) {
     const app = await this.getApp()
     const address = await this.getWalletAddress(from)
     const hex = Buffer.from(message).toString('hex')
@@ -32,7 +32,8 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return remove0x(toRpcSig(v, Buffer.from(r, 'hex'), Buffer.from(s, 'hex')))
   }
 
-  async getAddresses () { // TODO: Retrieve given num addresses?
+  async getAddresses() {
+    // TODO: Retrieve given num addresses?
     const app = await this.getApp()
     const path = this._baseDerivationPath + '/0/0'
     const address = await app.getAddress(path)
@@ -45,12 +46,12 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     ]
   }
 
-  async getUnusedAddress () {
+  async getUnusedAddress() {
     const addresses = await this.getAddresses()
     return addresses[0]
   }
 
-  async isWalletAvailable () {
+  async isWalletAvailable() {
     try {
       const addresses = await this.getAddresses()
       return addresses.length > 0
@@ -59,11 +60,11 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     }
   }
 
-  async getUsedAddresses () {
+  async getUsedAddresses() {
     return this.getAddresses()
   }
 
-  async signTransaction (txData: ethereum.TransactionRequest, path: string) {
+  async signTransaction(txData: ethereum.TransactionRequest, path: string) {
     const chainId = numberToHex((this._network as EthereumNetwork).chainId)
     const app = await this.getApp()
     const tx = new EthereumJsTx({
@@ -85,17 +86,17 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return signedSerializedTx
   }
 
-  async sendTransaction (options: SendOptions) {
+  async sendTransaction(options: SendOptions) {
     const addresses = await this.getAddresses()
     const address = addresses[0]
     const from = address.address
 
-    const [ nonce, gasPrice ] = await Promise.all([
+    const [nonce, gasPrice] = await Promise.all([
       this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
       options.fee ? Promise.resolve(options.fee) : this.getMethod('getGasPrice')()
     ])
 
-    const txOptions : ethereum.UnsignedTransaction = {
+    const txOptions: ethereum.UnsignedTransaction = {
       from,
       to: addressToString(options.to),
       value: options.value,
@@ -111,7 +112,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)
     const txHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
 
-    const txWithHash : ethereum.PartialTransaction = {
+    const txWithHash: ethereum.PartialTransaction = {
       ...txData,
       input: txData.data,
       hash: txHash
@@ -119,10 +120,11 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return normalizeTransactionObject(txWithHash)
   }
 
-  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
-    const transaction : Transaction<ethereum.Transaction> = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
+  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
+    const transaction: Transaction<ethereum.Transaction> =
+      typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
-    const txOptions : ethereum.UnsignedTransaction = {
+    const txOptions: ethereum.UnsignedTransaction = {
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
@@ -139,7 +141,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)
     const newTxHash = await this.getMethod('sendRawTransaction')(signedSerializedTx)
 
-    const txWithHash : ethereum.PartialTransaction = {
+    const txWithHash: ethereum.PartialTransaction = {
       ...txData,
       input: txData.data,
       hash: newTxHash

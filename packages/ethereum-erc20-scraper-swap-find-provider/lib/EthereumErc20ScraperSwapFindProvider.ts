@@ -5,7 +5,15 @@ import { SwapParams, Transaction, BigNumber } from '@liquality/types'
 import { caseInsensitiveEqual, validateValue, validateSecretHash } from '@liquality/utils'
 
 export default class EthereumErc20ScraperSwapFindProvider extends EthereumScraperSwapFindProvider {
-  async findErc20Events (erc20ContractAddress: string, address: string, predicate: (tx: Transaction<scraper.Transaction>) => boolean, fromBlock?: number, toBlock?: number, limit = 250, sort = 'desc') {
+  async findErc20Events(
+    erc20ContractAddress: string,
+    address: string,
+    predicate: (tx: Transaction<scraper.Transaction>) => boolean,
+    fromBlock?: number,
+    toBlock?: number,
+    limit = 250,
+    sort = 'desc'
+  ) {
     erc20ContractAddress = ensure0x(erc20ContractAddress)
     address = ensure0x(address)
 
@@ -23,7 +31,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
       if (transactions.length === 0) return
 
       const normalizedTransactions = transactions
-        .filter(tx => tx.status === true)
+        .filter((tx) => tx.status === true)
         .map(this.normalizeTransactionResponse)
       const tx = normalizedTransactions.find(predicate)
       if (tx) return this.ensureFeeInfo(tx)
@@ -32,7 +40,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     }
   }
 
-  validateSwapParams (swapParams: SwapParams) {
+  validateSwapParams(swapParams: SwapParams) {
     validateValue(swapParams.value)
     validateAddress(swapParams.recipientAddress)
     validateAddress(swapParams.refundAddress)
@@ -40,11 +48,12 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     validateExpiration(swapParams.expiration)
   }
 
-  async findFundSwapTransaction (swapParams: SwapParams, initiationTxHash: string) {
+  async findFundSwapTransaction(swapParams: SwapParams, initiationTxHash: string) {
     this.validateSwapParams(swapParams)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
-    if (!initiationTransactionReceipt) throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
+    if (!initiationTransactionReceipt)
+      throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
 
     const { contractAddress } = initiationTransactionReceipt
     const erc20TokenContractAddress = await this.getMethod('getContractAddress')()
@@ -52,7 +61,7 @@ export default class EthereumErc20ScraperSwapFindProvider extends EthereumScrape
     const tx = await this.findErc20Events(
       erc20TokenContractAddress,
       contractAddress,
-      tx =>
+      (tx) =>
         caseInsensitiveEqual(remove0x(tx._raw.to), remove0x(contractAddress)) &&
         new BigNumber(tx.value).isEqualTo(swapParams.value)
     )

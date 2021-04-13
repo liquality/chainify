@@ -1,4 +1,4 @@
-import { Address } from "./address";
+import { Address } from './address'
 
 export interface WalletProvider {
   /**
@@ -10,7 +10,7 @@ export interface WalletProvider {
    *  of addresses.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getAddresses (startingIndex?: number, numAddresses?: number, change?: boolean) : Promise<Address[]>
+  getAddresses(startingIndex?: number, numAddresses?: number, change?: boolean): Promise<Address[]>
 
   /**
    * Get used addresses/accounts of the user.
@@ -19,7 +19,7 @@ export interface WalletProvider {
    *  of addresses.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getUsedAddresses (numAddressPerCall?: number) : Promise<Address[]>
+  getUsedAddresses(numAddressPerCall?: number): Promise<Address[]>
 
   /**
    * Get unused address/account of the user.
@@ -29,7 +29,7 @@ export interface WalletProvider {
    *  object.
    *  Rejects with InvalidProviderResponseError if provider's response is invalid.
    */
-  getUnusedAddress (change?: boolean, numAddressPerCall?: number) : Promise<Address>
+  getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<Address>
 
   /**
    * Sign a message.
@@ -37,19 +37,19 @@ export interface WalletProvider {
    * @param {!string} from - The address from which the message is signed.
    * @return {Promise<string>} Resolves with a signed message.
    */
-  signMessage (message: string, from: string) : Promise<string>
+  signMessage(message: string, from: string): Promise<string>
 
   /**
    * Retrieve the network connected to by the wallet
    * @return {Promise<any>} Resolves with the network object
    */
-  getConnectedNetwork () : Promise<any>
+  getConnectedNetwork(): Promise<any>
 
   /**
    * Retrieve the availability status of the wallet
    * @return {Promise<Boolean>} True if the wallet is available to use
    */
-  isWalletAvailable () : Promise<boolean>
+  isWalletAvailable(): Promise<boolean>
 
   /**
    * Flag indicating if the wallet allows apps to update transaction fees

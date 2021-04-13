@@ -2,7 +2,13 @@ import WalletProvider from '@liquality/wallet-provider'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { Network, Address, SendOptions, ethereum, Transaction, BigNumber } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
-import { remove0x, buildTransaction, numberToHex, hexToNumber, normalizeTransactionObject } from '@liquality/ethereum-utils'
+import {
+  remove0x,
+  buildTransaction,
+  numberToHex,
+  hexToNumber,
+  normalizeTransactionObject
+} from '@liquality/ethereum-utils'
 
 import { mnemonicToSeed } from 'bip39'
 import hdkey from 'hdkey'
@@ -18,7 +24,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
   _network: EthereumNetwork
   _hardfork: string
 
-  constructor (network: EthereumNetwork, mnemonic: string, hardfork = 'istanbul') {
+  constructor(network: EthereumNetwork, mnemonic: string, hardfork = 'istanbul') {
     super({ network })
 
     this._derivationPath = `m/44'/${network.coinType}'/0'/`
@@ -27,17 +33,17 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     this._hardfork = hardfork
   }
 
-  async node () {
+  async node() {
     const seed = await mnemonicToSeed(this._mnemonic)
     return hdkey.fromMasterSeed(seed)
   }
 
-  async hdKey (derivationPath: string) {
+  async hdKey(derivationPath: string) {
     const node = await this.node()
     return node.derive(derivationPath)
   }
 
-  async signMessage (message: string) {
+  async signMessage(message: string) {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
     const msgHash = hashPersonalMessage(Buffer.from(message))
@@ -47,7 +53,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return remove0x(toRpcSig(v, r, s))
   }
 
-  async getAddresses () {
+  async getAddresses() {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
     const address = privateToAddress(hdKey.privateKey).toString('hex')
@@ -61,25 +67,29 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     ]
   }
 
-  async getUnusedAddress () {
+  async getUnusedAddress() {
     const addresses = await this.getAddresses()
     return addresses[0]
   }
 
-  async getUsedAddresses () {
+  async getUsedAddresses() {
     return this.getAddresses()
   }
 
-  async signTransaction (txData: ethereum.TransactionRequest) : Promise<string> {
+  async signTransaction(txData: ethereum.TransactionRequest): Promise<string> {
     const derivationPath = this._derivationPath + '0/0'
     const hdKey = await this.hdKey(derivationPath)
 
     let common
     if (!(this._network.name === 'local')) {
-      const baseChain = (this._network.name in BaseChains) ? this._network.name : 'mainnet'
-      common = Common.forCustomChain(baseChain, {
-        ...this._network
-      }, this._hardfork)
+      const baseChain = this._network.name in BaseChains ? this._network.name : 'mainnet'
+      common = Common.forCustomChain(
+        baseChain,
+        {
+          ...this._network
+        },
+        this._hardfork
+      )
     }
 
     const tx = new EthJsTransaction(txData, { common })
@@ -88,18 +98,18 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return tx.serialize().toString('hex')
   }
 
-  async sendTransaction (options: SendOptions) {
+  async sendTransaction(options: SendOptions) {
     const addresses = await this.getAddresses()
     const from = addresses[0].address
 
-    const [ nonce, gasPrice ] = await Promise.all([
+    const [nonce, gasPrice] = await Promise.all([
       this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
       options.fee ? Promise.resolve(new BigNumber(options.fee)) : this.getMethod('getGasPrice')()
     ])
 
-    const txOptions : ethereum.UnsignedTransaction = {
+    const txOptions: ethereum.UnsignedTransaction = {
       from,
-      to: options.to ? addressToString(options.to) : options.to as string,
+      to: options.to ? addressToString(options.to) : (options.to as string),
       value: options.value,
       data: options.data,
       gasPrice,
@@ -113,7 +123,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     const serializedTx = await this.signTransaction(txData)
     const txHash = await this.getMethod('sendRawTransaction')(serializedTx)
 
-    const txWithHash : ethereum.PartialTransaction = {
+    const txWithHash: ethereum.PartialTransaction = {
       ...txData,
       input: txData.data,
       hash: txHash
@@ -121,19 +131,17 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return normalizeTransactionObject(txWithHash)
   }
 
-  async sendSweepTransaction (address: Address | ethereum.Address, _gasPrice: number) {
+  async sendSweepTransaction(address: Address | ethereum.Address, _gasPrice: number) {
     const addresses = await this.getAddresses()
 
     const balance = await this.client.chain.getBalance(addresses)
 
-    const [ gasPrice ] = await Promise.all([
-      _gasPrice ? Promise.resolve(_gasPrice) : this.getMethod('getGasPrice')()
-    ])
+    const [gasPrice] = await Promise.all([_gasPrice ? Promise.resolve(_gasPrice) : this.getMethod('getGasPrice')()])
 
     const fees = gasPrice.times(21000).times('1000000000')
     const amountToSend = balance.minus(fees)
 
-    const sendOptions : SendOptions = {
+    const sendOptions: SendOptions = {
       to: address,
       value: amountToSend,
       data: null,
@@ -143,10 +151,11 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return this.sendTransaction(sendOptions)
   }
 
-  async updateTransactionFee (tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
-    const transaction : Transaction<ethereum.Transaction> = typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
+  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
+    const transaction: Transaction<ethereum.Transaction> =
+      typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
-    const txOptions : ethereum.UnsignedTransaction = {
+    const txOptions: ethereum.UnsignedTransaction = {
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
@@ -162,7 +171,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     const serializedTx = await this.signTransaction(txData)
     const newTxHash = await this.getMethod('sendRawTransaction')(serializedTx)
 
-    const txWithHash : ethereum.PartialTransaction = {
+    const txWithHash: ethereum.PartialTransaction = {
       ...txData,
       input: txData.data,
       hash: newTxHash
@@ -171,11 +180,11 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return normalizeTransactionObject(txWithHash)
   }
 
-  async isWalletAvailable () : Promise<boolean> {
+  async isWalletAvailable(): Promise<boolean> {
     return true
   }
 
-  async getConnectedNetwork () : Promise<Network> {
+  async getConnectedNetwork(): Promise<Network> {
     return this._network
   }
 }

@@ -17,26 +17,19 @@ export default [
   {
     provider: EthereumJsWalletProvider,
     onlyIf: ['mnemonic'],
-    args: (config: any) => [
-      EthereumNetworks.ethereum_mainnet,
-      config.mnemonic
-    ]
+    args: (config: any) => [EthereumNetworks.ethereum_mainnet, config.mnemonic]
   },
   {
     provider: EthereumErc20Provider,
     requires: ['contractAddress'],
-    args: (config: any) => [
-      config.contractAddress
-    ]
+    args: (config: any) => [config.contractAddress]
   },
   {
     provider: EthereumErc20SwapProvider
   },
   {
     provider: EthereumErc20ScraperSwapFindProvider,
-    args: [
-      'https://liquality.io/eth-mainnet-api/'
-    ]
+    args: ['https://liquality.io/eth-mainnet-api/']
   },
   {
     provider: EthereumGasNowFeeProvider

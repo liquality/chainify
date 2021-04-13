@@ -15,7 +15,7 @@ chai.use(chaiAsPromised)
 const CLAIM_TOPIC = keccak256(Buffer.from('Claim(bytes32)', 'utf-8')).toString('hex')
 const REFUND_TOPIC = keccak256(Buffer.from('Refund()', 'utf-8')).toString('hex')
 
-async function createContract (chain: Chain, swapParams: SwapParams) {
+async function createContract(chain: Chain, swapParams: SwapParams) {
   const swapScript = await chain.client.getMethod('createSwapScript')({ ...swapParams, value: new BigNumber(111) }) // Avoid value validation for ERC20
   const initiationTx = await chain.client.chain.sendTransaction({ to: null, value: swapParams.value, data: swapScript })
   await mineBlock(chain)
@@ -34,7 +34,11 @@ describe('Ethereum Contract', function () {
     const swapParams = await getSwapParams(chain, secretHash)
     const contractAddress = await createContract(chain, swapParams)
 
-    const claimTx = await chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: secret })
+    const claimTx = await chain.client.chain.sendTransaction({
+      to: contractAddress,
+      value: new BigNumber(0),
+      data: secret
+    })
     await mineBlock(chain)
     const claimTxReceipt = await chain.client.getMethod('getTransactionReceipt')(claimTx.hash)
 
@@ -50,7 +54,11 @@ describe('Ethereum Contract', function () {
     swapParams.expiration = 1000000000 // Already expired
     const contractAddress = await createContract(chain, swapParams)
 
-    const refundTx = await chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: '' })
+    const refundTx = await chain.client.chain.sendTransaction({
+      to: contractAddress,
+      value: new BigNumber(0),
+      data: ''
+    })
     await mineBlock(chain)
     const refundTxReceipt = await chain.client.getMethod('getTransactionReceipt')(refundTx.hash)
 
@@ -64,7 +72,9 @@ describe('Ethereum Contract', function () {
     const swapParams = await getSwapParams(chain, secretHash)
     const contractAddress = await createContract(chain, swapParams)
 
-    await expect(chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: secret + '66' })).to.be.rejected
+    await expect(
+      chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: secret + '66' })
+    ).to.be.rejected
   })
 
   it('refund fails with extra bytes', async () => {
@@ -74,7 +84,8 @@ describe('Ethereum Contract', function () {
     swapParams.expiration = 1000000000 // Already expired
     const contractAddress = await createContract(chain, swapParams)
 
-    await expect(chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: '66' })).to.be.rejected
+    await expect(chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: '66' })).to.be
+      .rejected
   })
 })
 
@@ -97,7 +108,11 @@ describe('ERC20 Contract', function () {
     await mineBlock(chain)
 
     const input = EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION + secret
-    const claimTx = await chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: input })
+    const claimTx = await chain.client.chain.sendTransaction({
+      to: contractAddress,
+      value: new BigNumber(0),
+      data: input
+    })
     await mineBlock(chain)
     const claimTxReceipt = await chain.client.getMethod('getTransactionReceipt')(claimTx.hash)
 
@@ -112,11 +127,15 @@ describe('ERC20 Contract', function () {
     const swapParams = await getSwapParams(chain, secretHash)
     swapParams.expiration = 1000000000 // Already expired
     const contractAddress = await createContract(chain, { ...swapParams, value: new BigNumber(0) })
-    
+
     await chain.client.chain.sendTransaction({ to: contractAddress, value: swapParams.value })
     await mineBlock(chain)
 
-    const refundTx = await chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: EthereumErc20SwapProvider.SOL_REFUND_FUNCTION })
+    const refundTx = await chain.client.chain.sendTransaction({
+      to: contractAddress,
+      value: new BigNumber(0),
+      data: EthereumErc20SwapProvider.SOL_REFUND_FUNCTION
+    })
     await mineBlock(chain)
     const refundTxReceipt = await chain.client.getMethod('getTransactionReceipt')(refundTx.hash)
 
@@ -134,7 +153,8 @@ describe('ERC20 Contract', function () {
     await mineBlock(chain)
 
     const input = EthereumErc20SwapProvider.SOL_CLAIM_FUNCTION + secret + '66'
-    await expect(chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: input })).to.be.rejected
+    await expect(chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: input })).to
+      .be.rejected
   })
 
   it('refund fails with extra bytes', async () => {
@@ -146,6 +166,12 @@ describe('ERC20 Contract', function () {
 
     await chain.client.chain.sendTransaction({ to: contractAddress, value: swapParams.value })
     await mineBlock(chain)
-    await expect(chain.client.chain.sendTransaction({ to: contractAddress, value: new BigNumber(0), data: EthereumErc20SwapProvider.SOL_REFUND_FUNCTION + '66' })).to.be.rejected
+    await expect(
+      chain.client.chain.sendTransaction({
+        to: contractAddress,
+        value: new BigNumber(0),
+        data: EthereumErc20SwapProvider.SOL_REFUND_FUNCTION + '66'
+      })
+    ).to.be.rejected
   })
 })

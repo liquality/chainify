@@ -1,6 +1,5 @@
 # `@liquality/crypto` <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
 
-
 [![Build Status](https://travis-ci.com/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.com/liquality/chainabstractionlayer)
 [![Coverage Status](https://coveralls.io/repos/github/liquality/chainabstractionlayer/badge.svg?branch=master)](https://coveralls.io/github/liquality/chainabstractionlayer?branch=master)
 [![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
@@ -13,9 +12,7 @@
 
 ### :pencil: [Introductory Blog Post: The Missing Tool to Cross-Chain Development](https://medium.com/liquality/the-missing-tool-to-cross-chain-development-2ebfe898efa1)
 
-
 Query different blockchains with account management using a single and simple interface.
-
 
 ## Installation
 
@@ -31,22 +28,11 @@ or
 <!-- available as window.Crypto -->
 ```
 
-
 ## Usage
 
 ```js
-import {
-  base58,
-  bech32,
-  sha256,
-  ripemd160,
-  hash160,
-  ensureBuffer,
-  padHexStart,
-  isHex
-} from '@liquality/crypto'
+import { base58, bech32, sha256, ripemd160, hash160, ensureBuffer, padHexStart, isHex } from '@liquality/crypto'
 ```
-
 
 ## License
 

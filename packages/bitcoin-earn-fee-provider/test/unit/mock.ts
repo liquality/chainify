@@ -1,10 +1,9 @@
-
 import nock from 'nock'
 
-function mockApi () {
-  nock('https://bitcoinfees.earn.com:443', { 'encodedQueryParams': true })
+function mockApi() {
+  nock('https://bitcoinfees.earn.com:443', { encodedQueryParams: true })
     .get('/api/v1/fees/recommended')
-    .reply(200, { 'fastestFee': 200, 'halfHourFee': 100, 'hourFee': 50 }, [
+    .reply(200, { fastestFee: 200, halfHourFee: 100, hourFee: 50 }, [
       'Date',
       'Tue, 26 May 2020 20:50:00 GMT',
       'Content-Type',
