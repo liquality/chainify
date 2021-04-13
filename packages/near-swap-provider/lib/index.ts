@@ -1,7 +1,3 @@
-'use strict';
+import NearSwapProvider from './NearSwapProvider'
 
-module.exports = nearSwapProvider;
-
-function nearSwapProvider() {
-    // TODO
-}
+export default NearSwapProvider

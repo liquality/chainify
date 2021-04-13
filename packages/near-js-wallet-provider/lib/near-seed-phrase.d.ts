@@ -1,1 +1,1 @@
-declare module "near-seed-phrase";
+declare module 'near-seed-phrase'
