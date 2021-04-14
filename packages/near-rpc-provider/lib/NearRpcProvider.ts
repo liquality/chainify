@@ -148,7 +148,14 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
       const chunks = await Promise.all(block.chunks.map((c: any) => this._rpc('chunk', c.chunk_hash)))
 
       const transactions = chunks.reduce((p: any[], c: any) => {
-        p.push(...c.transactions.map((t: any) => normalizeTransactionObject({ ...t, block_hash: blockHash })))
+        p.push(
+          ...c.transactions.map((t: near.InputTransaction) =>
+            normalizeTransactionObject({
+              ...t,
+              transaction_outcome: { ...t.transaction_outcome, block_hash: blockHash }
+            })
+          )
+        )
         return p
       }, [])
 
