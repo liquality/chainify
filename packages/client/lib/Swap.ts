@@ -20,10 +20,6 @@ export default class Swap implements SwapProvider {
     initiationTxHash: string,
     blockNumber?: number
   ): Promise<Transaction> {
-    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('findClaimSwapTransaction')(swapParams, initiationTxHash, blockNumber)
   }
 
@@ -33,10 +29,6 @@ export default class Swap implements SwapProvider {
     initiationTxHash: string,
     blockNumber?: number
   ): Promise<Transaction> {
-    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('findRefundSwapTransaction')(swapParams, initiationTxHash, blockNumber)
   }
 
@@ -46,10 +38,6 @@ export default class Swap implements SwapProvider {
     initiationTxHash: string,
     blockNumber?: number
   ): Promise<Transaction | null> {
-    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('findFundSwapTransaction')(swapParams, initiationTxHash, blockNumber)
   }
 
@@ -80,28 +68,16 @@ export default class Swap implements SwapProvider {
 
   /** @inheritdoc */
   async fundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction | null> {
-    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('fundSwap')(swapParams, initiationTxHash, fee)
   }
 
   /** @inheritdoc */
   verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
-    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     return this.client.getMethod('verifyInitiateSwapTransaction')(swapParams, initiationTxHash)
   }
 
   /** @inheritdoc */
   async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number): Promise<Transaction> {
-    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     if (!/[A-Fa-f0-9]{64}/.test(secret)) {
       throw new TypeError('Secret should be a 32 byte hex string')
     }
@@ -113,10 +89,6 @@ export default class Swap implements SwapProvider {
 
   /** @inheritdoc */
   async refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction> {
-    if (!/^[A-Fa-f0-9]+$/.test(initiationTxHash)) {
-      throw new TypeError('Initiation transaction hash should be a valid hex string')
-    }
-
     const transaction = await this.client.getMethod('refundSwap')(swapParams, initiationTxHash, fee)
     this.client.assertValidTransaction(transaction)
     return transaction
