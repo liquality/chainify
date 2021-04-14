@@ -1,6 +1,7 @@
 import { BigNumber } from '../../packages/types/lib'
 import BitcoinNetworks from '../../packages/bitcoin-networks/lib'
 import EthereumNetworks from '../../packages/ethereum-networks/lib'
+import NearNetworks from '../../packages/near-networks/lib'
 
 export default {
   bitcoin: {
@@ -27,6 +28,21 @@ export default {
     metaMaskConnector: {
       port: 3333
     }
+  },
+  near: {
+    network: NearNetworks.near_testnet,
+    value: new BigNumber(5000000000000000000000000),
+
+    // Both of the accounts are used for the tests.
+    // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
+
+    // sender
+    senderAddress: '9eed84cfc2ac0068dd8fc10b8b3b71c8d0f74cfd09211e036bdb8561c2647472',
+    senderMnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
+
+    // receiver
+    receiverAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',
+    receiverMnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze'
   }
   // ethereum: { // RSK
   //   rpc: {

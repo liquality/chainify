@@ -2,6 +2,7 @@ const path = require('path')
 const cwd = process.cwd()
 const pkg = require(path.join(cwd, 'package.json'))
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const nodeExternals = require('webpack-node-externals')
 
 const isProdEnv = process.env.NODE_ENV === 'production'
 const isWatchEnv = process.env.WEBPACK_WATCH === 'true'
@@ -30,6 +31,11 @@ module.exports = {
   mode: isProdEnv ? 'production' : 'development',
   watch: isWatchEnv,
   target: 'node',
+  externals: [
+    nodeExternals({
+      allowlist: ['node-fetch']
+    })
+  ],
   module: {
     rules: [
       {

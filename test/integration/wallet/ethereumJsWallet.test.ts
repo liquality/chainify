@@ -5,14 +5,14 @@ import chaiAsPromised from 'chai-as-promised'
 import { chains, Chain, TEST_TIMEOUT } from '../common'
 import config from '../config'
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = ''
 
 chai.use(chaiAsPromised)
 
-function testWallet(chain: Chain) {
+function testWallet(chain: Chain, derivationPath: string) {
   describe('getAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+      const expectedAddress0DerivationPath = derivationPath
       const addresses = await chain.client.wallet.getAddresses()
 
       expect(addresses.length).to.equal(1)
@@ -22,7 +22,7 @@ function testWallet(chain: Chain) {
 
   describe('getUnusedAddress', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+      const expectedAddress0DerivationPath = derivationPath
       const address = await chain.client.wallet.getUnusedAddress()
 
       expect(address.derivationPath).to.equal(expectedAddress0DerivationPath)
@@ -31,7 +31,7 @@ function testWallet(chain: Chain) {
 
   describe('getUsedAddresses', () => {
     it('should return first address at index 0 derivationPath', async () => {
-      const expectedAddress0DerivationPath = `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+      const expectedAddress0DerivationPath = derivationPath
       const addresses = await chain.client.wallet.getUsedAddresses()
 
       expect(addresses.length).to.equal(1)
@@ -68,6 +68,10 @@ describe('Wallet Interaction', function () {
   this.timeout(TEST_TIMEOUT)
 
   describe('Ethereum - Js', () => {
-    testWallet(chains.ethereumWithJs)
+    testWallet(chains.ethereumWithJs, `m/44'/${config.ethereum.network.coinType}'/0'/0/0`)
+  })
+
+  describe('Near - Js', () => {
+    testWallet(chains.nearWithJs, `m/44'/${config.near.network.coinType}'/0'`)
   })
 })
