@@ -1,5 +1,5 @@
 import NodeProvider from '@liquality/node-provider'
-import { near, BigNumber, ChainProvider, FeeProvider } from '@liquality/types'
+import { near, BigNumber, ChainProvider, FeeProvider, Address } from '@liquality/types'
 import { NearNetwork } from '@liquality/near-networks'
 import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, providers, Account } from '@liquality/near-utils'
@@ -67,41 +67,26 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     return get(result, 'gas_price')
   }
 
-  async getBalance(addresses: string[]): Promise<BigNumber> {
-    try {
-      if (!isArray(addresses)) {
-        addresses = [addresses]
-      }
-      addresses = addresses.map(addressToString)
+  async getBalance(_addresses: (Address | string)[]): Promise<BigNumber> {
+    const addresses = _addresses.map(addressToString)
 
-      const balance = await this.getAccount(addresses[0]).getAccountBalance()
-      return new BigNumber(balance.available)
-    } catch (err) {
-      if (err.message && err.message.includes('does not exist while viewing')) {
-        return new BigNumber(0)
-      }
-      throw err
-    }
-  }
-
-  async isAddressUsed(address: string): Promise<boolean> {
-    address = addressToString(address)
-
-    if (this._usedAddressCache[address]) {
-      return true
-    }
-
-    try {
-      await this._rpc('query', {
-        request_type: 'view_account',
-        finality: 'final',
-        account_id: address
+    const promiseBalances = await Promise.all(
+      addresses.map(async (address) => {
+        try {
+          const balance = await this.getAccount(address).getAccountBalance()
+          return new BigNumber(balance.available)
+        } catch (err) {
+          if (err.message && err.message.includes('does not exist while viewing')) {
+            return new BigNumber(0)
+          }
+          throw err
+        }
       })
-      this._usedAddressCache[address] = true
-      return true
-    } catch (err) {
-      return false
-    }
+    )
+
+    return promiseBalances
+      .map((balance) => new BigNumber(balance))
+      .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
   async generateBlock(numberOfBlocks: number) {

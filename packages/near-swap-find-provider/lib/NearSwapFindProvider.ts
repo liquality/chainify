@@ -106,13 +106,13 @@ export default class NearSwapFindProvider extends NodeProvider implements Partia
         }
       }
 
-      const tx = Object.values(normalizedTransactions).find(predicate) as near.NearSwapTransaction
+      const tx = Object.values(normalizedTransactions).find(predicate)
 
       if (tx) {
         const currentHeight = await this.getMethod('getBlockHeight')()
         const txBlockHeight = await this.getMethod('getBlockHeight')(tx.blockHash)
         tx.confirmations = currentHeight - txBlockHeight
-        return { ...tx, secret: tx.swap.secret, _raw: tx } as Transaction<near.NearSwapTransaction>
+        return { ...tx, secret: tx.swap.secret, _raw: tx }
       }
 
       offset = offset - ONE_DAY_IN_NS
