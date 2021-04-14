@@ -35,13 +35,13 @@ export enum FinalExecutionStatusBasic {
 export interface ExecutionOutcome {
   logs: string[]
   receipt_ids: string[]
-  block_hash: string
   gas_burnt: number
   status: ExecutionStatus | ExecutionStatusBasic
 }
 
 export interface ExecutionOutcomeWithId {
   id: string
+  block_hash: string
   outcome: ExecutionOutcome
 }
 

@@ -25,8 +25,7 @@
     "@liquality/types": "^1.0.0-beta.0",
     "@liquality/utils": "^1.0.0-beta.0",
     "bignumber.js": "^9.0.1",
-    "lodash": "^4.17.20",
-    "near-api-js": "^0.39.0"
+    "lodash": "^4.17.20"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

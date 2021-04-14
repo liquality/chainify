@@ -1,24 +1,23 @@
 import NodeProvider from '@liquality/node-provider'
 import { near, BigNumber, ChainProvider, FeeProvider } from '@liquality/types'
+import { NearNetwork } from '@liquality/near-networks'
 import { addressToString } from '@liquality/utils'
-import { normalizeTransactionObject } from '@liquality/near-utils'
+import { normalizeTransactionObject, providers, Account } from '@liquality/near-utils'
 import { NodeError } from '@liquality/errors'
 
 import { get, isArray } from 'lodash'
-import { providers, Account } from 'near-api-js'
-import { JsonRpcProvider } from 'near-api-js/lib/providers'
 
-interface RpcProvider extends JsonRpcProvider {
+interface RpcProvider extends providers.JsonRpcProvider {
   [key: string]: any
 }
 
 export default class NearRpcProvider extends NodeProvider implements Partial<ChainProvider>, FeeProvider {
   _usedAddressCache: { [key: string]: boolean }
   _accountsCache: { [key: string]: boolean }
-  _network: any
+  _network: NearNetwork
   _jsonRpc: RpcProvider
 
-  constructor(network: any) {
+  constructor(network: NearNetwork) {
     super({
       baseURL: network.helperUrl,
       responseType: 'text',
@@ -106,14 +105,14 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
   }
 
   async generateBlock(numberOfBlocks: number) {
-    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 10000))
+    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
   getAccount(accountId: string, signer?: any): Account {
     return new Account(
       {
         networkId: this._network.networkId,
-        provider: this._jsonRpc instanceof JsonRpcProvider && this._jsonRpc,
+        provider: this._jsonRpc,
         signer
       },
       accountId

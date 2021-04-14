@@ -1,8 +1,7 @@
 import { SwapProvider, SwapParams, near, BigNumber, Transaction } from '@liquality/types'
 import Provider from '@liquality/provider'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
-import { toNearTimestampFormat, parseReceipt } from '@liquality/near-utils'
-import { transactions } from 'near-api-js'
+import { toNearTimestampFormat, parseReceipt, transactions } from '@liquality/near-utils'
 
 import Bytecode from './bytecode'
 
@@ -84,6 +83,14 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
       value: null,
       actions: [transactions.functionCall(ABI.refund.method, {}, ABI.refund.gas as any, 0 as any)]
     } as near.NearSendOptions)
+  }
+
+  async fundSwap(): Promise<null> {
+    return null
+  }
+
+  async findFundSwapTransaction(): Promise<null> {
+    return null
   }
 
   doesTransactionMatchInitiation(swapParams: SwapParams, transaction: near.NearSwapTransaction): boolean {

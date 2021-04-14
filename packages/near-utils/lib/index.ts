@@ -1,4 +1,5 @@
 import { near } from '@liquality/types'
+export { transactions, Account, InMemorySigner, providers, KeyPair, keyStores } from 'near-api-js'
 
 function toBase64(str: string, encoding = 'hex' as BufferEncoding): string {
   try {
@@ -44,8 +45,8 @@ function normalizeTransactionObject(tx: near.InputTransaction, currentHeight?: n
     normalizedTx.blockNumber = tx.transaction.blockNumber
   }
 
-  normalizedTx.blockHash = tx.transaction_outcome.outcome.block_hash
-  normalizedTx.hash = `${tx.transaction.blockNumber}_${tx.transaction.blockNumber}`
+  normalizedTx.blockHash = tx.transaction_outcome.block_hash
+  normalizedTx.hash = `${tx.transaction.hash}_${tx.transaction.signer_id}`
   normalizedTx.value = 0
   normalizedTx._raw = tx
 

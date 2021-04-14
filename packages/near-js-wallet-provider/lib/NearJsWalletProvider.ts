@@ -1,26 +1,22 @@
 import WalletProvider from '@liquality/wallet-provider'
 import { addressToString } from '@liquality/utils'
 import { NearNetwork } from '@liquality/near-networks'
-import { Address, near, Network, BigNumber, ChainProvider } from '@liquality/types'
-import { normalizeTransactionObject } from '@liquality/near-utils'
-
-import { InMemorySigner, KeyPair } from 'near-api-js'
-import { InMemoryKeyStore } from 'near-api-js/lib/key_stores'
-import { transfer } from 'near-api-js/lib/transaction'
+import { Address, Network, BigNumber, ChainProvider, near } from '@liquality/types'
+import { normalizeTransactionObject, keyStores, KeyPair, InMemorySigner, transactions } from '@liquality/near-utils'
 import { parseSeedPhrase } from 'near-seed-phrase'
 
 export default class NearJsWalletProvider extends WalletProvider implements Partial<ChainProvider> {
   _network: NearNetwork
   _mnemonic: string
   _derivationPath: string
-  _keyStore: InMemoryKeyStore
+  _keyStore: keyStores.InMemoryKeyStore
 
   constructor(network: NearNetwork, mnemonic: string) {
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
     this._derivationPath = `m/44'/${network.coinType}'/0'`
-    this._keyStore = new InMemoryKeyStore()
+    this._keyStore = new keyStores.InMemoryKeyStore()
   }
 
   async getAddresses(): Promise<Address[]> {
@@ -68,7 +64,7 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
     const from = await this.getMethod('getAccount')(addressToString(addresses[0]), this.getSigner())
 
     if (!options.actions) {
-      options.actions = [transfer(new BigNumber(options.value).toFixed().toString() as any)]
+      options.actions = [transactions.transfer(new BigNumber(options.value).toFixed().toString() as any)]
     }
 
     const tx = await from.signAndSendTransaction(addressToString(options.to), options.actions)
