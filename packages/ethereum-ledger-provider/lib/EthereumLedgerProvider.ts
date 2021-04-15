@@ -13,7 +13,7 @@ import {
 import { toRpcSig } from 'ethereumjs-util'
 
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
-import * as EthereumJsTx from 'ethereumjs-tx'
+import EthereumJsTx from 'ethereumjs-tx'
 
 export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
   _baseDerivationPath: string
@@ -93,12 +93,12 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
 
     const [nonce, gasPrice] = await Promise.all([
       this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
-      options.fee ? Promise.resolve(options.fee) : this.getMethod('getGasPrice')()
+      options.fee ? Promise.resolve(new BigNumber(options.fee)) : this.getMethod('getGasPrice')()
     ])
 
     const txOptions: ethereum.UnsignedTransaction = {
       from,
-      to: addressToString(options.to),
+      to: options.to ? addressToString(options.to) : (options.to as string),
       value: options.value,
       data: options.data,
       gasPrice,

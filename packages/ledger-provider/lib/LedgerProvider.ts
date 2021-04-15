@@ -1,5 +1,6 @@
 import WalletProvider from '@liquality/wallet-provider'
 import { WalletError } from '@liquality/errors'
+import { caseInsensitiveEqual } from '@liquality/utils'
 import { Network, Address } from '@liquality/types'
 import HwTransport from '@ledgerhq/hw-transport'
 import Debug from '@liquality/debug'
@@ -60,7 +61,6 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
           const { name, ...errorNoName } = e
           this._transport = null
           this._appInstance = null
-          console.log('error', func)
           throw new WalletError(e.toString(), errorNoName)
         }
       }
@@ -117,7 +117,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
 
     while (index < maxAddresses) {
       const addrs = await this.getAddresses(index, addressesPerCall, change)
-      const addr = addrs.find((addr) => addr.address === address)
+      const addr = addrs.find((addr) => caseInsensitiveEqual(addr.address, address))
       if (addr) return addr
 
       index += addressesPerCall

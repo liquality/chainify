@@ -121,8 +121,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     const tx = await this.findAddressEvent('swapClaim', initiationTransactionReceipt.contractAddress)
 
     if (tx) {
-      // @ts-ignore secret is non standard field
-      validateSecretAndHash(tx.secret, secretHash)
+      validateSecretAndHash(tx.secret, swapParams.secretHash)
       return tx
     }
   }

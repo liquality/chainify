@@ -99,7 +99,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
 
     const txOptions: ethereum.UnsignedTransaction = {
       from,
-      to: addressToString(options.to),
+      to: options.to ? addressToString(options.to) : (options.to as string),
       value: options.value,
       data: options.data
     }
