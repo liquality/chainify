@@ -95,7 +95,7 @@ function testSwap(chain: Chain) {
   it('Initiate and Refund', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Math.round(Date.now() / 1000)
+    swapParams.expiration = Math.floor(Date.now() / 1000)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await expectBalance(
       chain,
@@ -130,7 +130,7 @@ function testEthereumBalance(chain: Chain) {
   it('Balance - Refund', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Math.round(Date.now() / 1000) + 20
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await mineUntilTimestamp(chain, swapParams.expiration)
     await expectBalance(
@@ -167,7 +167,7 @@ function testBitcoinBalance(chain: Chain) {
   it('Balance - Refund', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Math.round(Date.now() / 1000) + 20
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 20
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     const fee = BitcoinUtils.calculateFee(1, 1, CONSTANTS.BITCOIN_FEE_PER_BYTE)
     await mineUntilTimestamp(chain, swapParams.expiration)
@@ -187,7 +187,7 @@ function testRefund(chain: Chain) {
   it('Refund fails after claim', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Date.now() / 1000
+    swapParams.expiration = Math.floor(Date.now() / 1000) // now
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await expectBalance(
       chain,
@@ -238,7 +238,7 @@ function testNearRefund(chain: Chain) {
     if (chain.name === 'near') {
       const secretHash = crypto.sha256(mockSecret)
       const swapParams = await getSwapParams(chain, secretHash)
-      swapParams.expiration = Date.now() / 1000 + 60
+      swapParams.expiration = Math.floor(Date.now() / 1000) + 60
 
       const initiationTxId = await initiateAndVerify(chain, swapParams)
 
@@ -269,7 +269,7 @@ function testNearRefund(chain: Chain) {
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Date.now() / 1000 + 40
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 40
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await expect(refundAndVerify(chain, initiationTxId, swapParams)).to.be.rejected
     await mineBlock(chain, 3)
@@ -292,7 +292,7 @@ function testFee(chain: Chain) {
     it('Initiate & Refund', async () => {
       const secretHash = crypto.sha256(mockSecret)
       const swapParams = await getSwapParams(chain, secretHash)
-      swapParams.expiration = Math.round(Date.now() / 1000)
+      swapParams.expiration = Math.floor(Date.now() / 1000)
       const expectedFee = 25
       const initiationTxId = await initiateAndVerify(chain, swapParams, expectedFee)
       await expectFee(chain, initiationTxId, expectedFee, true)
@@ -328,7 +328,7 @@ function testFee(chain: Chain) {
     it('Refund', async () => {
       const secretHash = crypto.sha256(mockSecret)
       const swapParams = await getSwapParams(chain, secretHash)
-      swapParams.expiration = Math.round(Date.now() / 1000)
+      swapParams.expiration = Math.floor(Date.now() / 1000) // now
       const initiationTxId = await initiateAndVerify(chain, swapParams)
       await mineBlock(chain)
       await mineUntilTimestamp(chain, swapParams.expiration)
