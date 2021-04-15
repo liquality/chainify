@@ -11,6 +11,7 @@ import { Network } from './network'
 
 import * as bitcoin from './bitcoin'
 import * as ethereum from './ethereum'
+import * as near from './near'
 
 interface IClient {
   /**
@@ -43,5 +44,6 @@ export {
   SendOptions,
   SwapParams,
   bitcoin,
-  ethereum
+  ethereum,
+  near
 }

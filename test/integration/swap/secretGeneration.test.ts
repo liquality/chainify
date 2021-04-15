@@ -17,14 +17,12 @@ describe('Secret generation', function () {
       const secret2 = await chains.bitcoinWithNode.client.swap.generateSecret(message)
       expect(secret1).to.be.equal(secret2)
     })
-  })
 
-  describe('Nodes', () => {
-    it('Secrets with same message differ on different wallets', async () => {
+    it('Near JS', async () => {
       const message = 'message'
-      const ethSecret = await chains.ethereumWithNode.client.swap.generateSecret(message)
-      const btcSecret = await chains.bitcoinWithNode.client.swap.generateSecret(message)
-      expect(ethSecret).to.not.be.equal(btcSecret)
+      const secret1 = await chains.nearWithJs.client.swap.generateSecret(message)
+      const secret2 = await chains.nearWithJs.client.swap.generateSecret(message)
+      expect(secret1).to.be.equal(secret2)
     })
   })
 
