@@ -1,5 +1,8 @@
 import { near } from '@liquality/types'
+import BN from 'bn.js'
+
 export { transactions, Account, InMemorySigner, providers, KeyPair, keyStores } from 'near-api-js'
+export { BN }
 
 function toBase64(str: string, encoding = 'hex' as BufferEncoding): string {
   try {
@@ -35,7 +38,7 @@ function fromNearTimestamp(ts: number): number {
 }
 
 function normalizeTransactionObject(tx: near.InputTransaction, currentHeight?: number): near.NormalizedTransaction {
-  const normalizedTx = { confirmations: 0 } as any
+  const normalizedTx = { confirmations: 0 } as near.NormalizedTransaction
 
   if (tx.transaction.blockNumber) {
     if (currentHeight) {
@@ -78,7 +81,7 @@ function parseReceipt(_tx: near.InputTransaction): near.NearSwapTransaction {
 
           switch (method) {
             case 'init': {
-              const args = fromBase64(a.FunctionCall.args) as any
+              const args = fromBase64(a.FunctionCall.args)
               nearSwapTx.swap = {
                 method,
                 secretHash: fromBase64(args.secretHash, 'hex') as string,
@@ -89,7 +92,7 @@ function parseReceipt(_tx: near.InputTransaction): near.NearSwapTransaction {
             }
 
             case 'claim': {
-              const args = fromBase64(a.FunctionCall.args) as any
+              const args = fromBase64(a.FunctionCall.args)
               nearSwapTx.swap = {
                 method,
                 secret: fromBase64(args.secret, 'hex') as string
@@ -103,7 +106,7 @@ function parseReceipt(_tx: near.InputTransaction): near.NearSwapTransaction {
             }
 
             default: {
-              const args = fromBase64(a.FunctionCall.args) as any
+              const args = fromBase64(a.FunctionCall.args)
               nearSwapTx._raw = { ...args, method }
               break
             }

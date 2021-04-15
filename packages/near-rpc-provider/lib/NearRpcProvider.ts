@@ -23,7 +23,7 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
       responseType: 'text',
       transformResponse: undefined
     })
-    this._jsonRpc = new providers.JsonRpcProvider(network.nodeUrl) as any
+    this._jsonRpc = new providers.JsonRpcProvider(network.nodeUrl)
     this._network = network
     this._usedAddressCache = {}
     this._accountsCache = {}

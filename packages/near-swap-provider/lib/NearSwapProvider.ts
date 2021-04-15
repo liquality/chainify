@@ -1,7 +1,7 @@
 import { SwapProvider, SwapParams, near, BigNumber, Transaction } from '@liquality/types'
 import Provider from '@liquality/provider'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
-import { toNearTimestampFormat, parseReceipt, transactions } from '@liquality/near-utils'
+import { toNearTimestampFormat, parseReceipt, transactions, BN } from '@liquality/near-utils'
 
 import Bytecode from './bytecode'
 
@@ -27,8 +27,8 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
       value: null,
       actions: [
         transactions.createAccount(),
-        transactions.transfer(new BigNumber(swapParams.value).toFixed().toString() as any),
-        transactions.deployContract(bytecode as any),
+        transactions.transfer(new BN(swapParams.value.toFixed())),
+        transactions.deployContract(new Uint8Array(bytecode)),
         transactions.functionCall(
           ABI.init.method,
           {
@@ -36,8 +36,8 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
             expiration: `${toNearTimestampFormat(swapParams.expiration)}`,
             buyer: swapParams.recipientAddress
           },
-          ABI.init.gas as any,
-          0 as any
+          new BN(ABI.init.gas),
+          new BN(0)
         )
       ]
     } as near.NearSendOptions)
@@ -64,8 +64,8 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
           {
             secret: Buffer.from(secret, 'hex').toString('base64')
           },
-          ABI.claim.gas as any,
-          0 as any
+          new BN(ABI.claim.gas),
+          new BN(0)
         )
       ]
     } as near.NearSendOptions)
@@ -81,7 +81,7 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
     return this.client.chain.sendTransaction({
       to: parsedInitiationTx.receiver,
       value: null,
-      actions: [transactions.functionCall(ABI.refund.method, {}, ABI.refund.gas as any, 0 as any)]
+      actions: [transactions.functionCall(ABI.refund.method, {}, new BN(ABI.refund.gas), new BN(0))]
     } as near.NearSendOptions)
   }
 
