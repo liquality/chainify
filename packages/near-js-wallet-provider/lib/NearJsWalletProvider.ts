@@ -1,8 +1,8 @@
 import WalletProvider from '@liquality/wallet-provider'
 import { addressToString } from '@liquality/utils'
 import { NearNetwork } from '@liquality/near-networks'
-import { Address, Network, BigNumber, ChainProvider, near } from '@liquality/types'
-import { normalizeTransactionObject, keyStores, KeyPair, InMemorySigner, transactions } from '@liquality/near-utils'
+import { Address, Network, ChainProvider, near } from '@liquality/types'
+import { normalizeTransactionObject, keyStores, KeyPair, InMemorySigner, transactions, BN } from '@liquality/near-utils'
 import { parseSeedPhrase } from 'near-seed-phrase'
 
 export default class NearJsWalletProvider extends WalletProvider implements Partial<ChainProvider> {
@@ -64,7 +64,7 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
     const from = await this.getMethod('getAccount')(addressToString(addresses[0]), this.getSigner())
 
     if (!options.actions) {
-      options.actions = [transactions.transfer(new BigNumber(options.value).toFixed().toString() as any)]
+      options.actions = [transactions.transfer(new BN(options.value.toFixed()))]
     }
 
     const tx = await from.signAndSendTransaction(addressToString(options.to), options.actions)
