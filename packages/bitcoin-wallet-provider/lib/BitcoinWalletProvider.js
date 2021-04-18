@@ -103,7 +103,7 @@ export default superclass => class BitcoinWalletProvider extends superclass {
 
   async findAddress (addresses, change = false) {
     // A maximum number of addresses to lookup after which it is deemed that the wallet does not contain this address
-    const maxAddresses = 1000
+    const maxAddresses = 2000
     const addressesPerCall = 50
     let index = 0
     while (index < maxAddresses) {
