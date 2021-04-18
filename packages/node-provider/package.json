@@ -2,7 +2,7 @@
   "name": "@liquality/node-provider",
   "umdName": "NodeProvider",
   "umdExport": "default",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "description": "",
   "module": "lib/index.js",
   "main": "dist/index.cjs.js",
@@ -19,8 +19,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^0.10.3",
-    "@liquality/provider": "^0.10.3",
+    "@liquality/errors": "^0.10.4",
+    "@liquality/provider": "^0.10.4",
     "axios": "^0.21.0",
     "lodash": "^4.17.20"
   },
