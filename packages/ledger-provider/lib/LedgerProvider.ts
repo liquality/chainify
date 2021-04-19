@@ -112,7 +112,7 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
 
     // A maximum number of addresses to lookup after which it is deemed
     // that the wallet does not contain this address
-    const maxAddresses = 1000
+    const maxAddresses = 5000
     const addressesPerCall = 50
 
     while (index < maxAddresses) {
