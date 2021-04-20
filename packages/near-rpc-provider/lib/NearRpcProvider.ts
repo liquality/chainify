@@ -1,8 +1,8 @@
 import NodeProvider from '@liquality/node-provider'
-import { near, BigNumber, ChainProvider, FeeProvider, Address } from '@liquality/types'
+import { near, BigNumber, ChainProvider, FeeProvider, Address, Block } from '@liquality/types'
 import { NearNetwork } from '@liquality/near-networks'
 import { addressToString } from '@liquality/utils'
-import { normalizeTransactionObject, providers, Account } from '@liquality/near-utils'
+import { normalizeTransactionObject, providers, Account, fromNearTimestamp } from '@liquality/near-utils'
 import { NodeError } from '@liquality/errors'
 
 import { get, isArray } from 'lodash'
@@ -51,8 +51,9 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     const currentHeight = await this.getBlockHeight()
     const args = txHash.split('_')
     const tx = await this._rpcQuery('tx', args)
-    const blockNumber = await this.getBlockHeight(tx.transaction_outcome.block_hash)
-    return normalizeTransactionObject({ ...tx, blockNumber }, currentHeight)
+    const blockHash = tx.transaction_outcome.block_hash
+    const blockNumber = await this.getBlockHeight(blockHash)
+    return normalizeTransactionObject({ ...tx, blockNumber, blockHash }, currentHeight)
   }
 
   async getTransactionReceipt(txHash: string): Promise<near.InputTransaction> {
@@ -125,29 +126,47 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     return this._rpcQuery('broadcast_tx_commit', [hash])
   }
 
+  normalizeBlock(block: near.NearInputBlockHeader) {
+    const normalizedBlock = {
+      number: block.height,
+      hash: block.hash,
+      timestamp: fromNearTimestamp(block.timestamp),
+      size: block.chunks_included,
+      transactions: []
+    } as Block
+
+    return normalizedBlock
+  }
+
   async _getBlockById(blockId: number | string, includeTx: boolean) {
     const block = await this._rpc('block', { blockId })
-    const blockHash = get(block, 'header.hash')
+    const currentHeight = await this.getBlockHeight()
+    const header = block.header
+    const normalizedBlock = this.normalizeBlock(header)
 
     if (includeTx && !block.transactions && isArray(block.chunks)) {
       const chunks = await Promise.all(block.chunks.map((c: any) => this._rpc('chunk', c.chunk_hash)))
 
       const transactions = chunks.reduce((p: any[], c: any) => {
         p.push(
-          ...c.transactions.map((t: near.InputTransaction) =>
-            normalizeTransactionObject({
-              ...t,
-              transaction_outcome: { ...t.transaction_outcome, block_hash: blockHash }
-            })
+          ...c.transactions.map((t: near.Tx) =>
+            normalizeTransactionObject(
+              {
+                transaction: t,
+                blockNumber: header.height,
+                blockHash: header.hash
+              },
+              currentHeight
+            )
           )
         )
         return p
-      }, [])
+      }, []) as near.NormalizedTransaction[]
 
-      return { ...block, transactions }
+      normalizedBlock.transactions = transactions
     }
 
-    return block
+    return normalizedBlock
   }
 
   async _rpc(method: any, args: any) {

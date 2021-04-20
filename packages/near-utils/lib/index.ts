@@ -34,21 +34,22 @@ function toNearTimestampFormat(ts: number): number {
 }
 
 function fromNearTimestamp(ts: number): number {
-  return ts / (1000 * 1000 * 1000)
+  return Math.floor(ts / (1000 * 1000 * 1000))
 }
 
 function normalizeTransactionObject(tx: near.InputTransaction, currentHeight?: number): near.NormalizedTransaction {
   const normalizedTx = { confirmations: 0 } as near.NormalizedTransaction
 
-  if (tx.transaction.blockNumber) {
+  const blockNumber = tx.transaction.blockNumber || tx.blockNumber
+  if (blockNumber) {
     if (currentHeight) {
-      normalizedTx.confirmations = currentHeight - tx.transaction.blockNumber
+      normalizedTx.confirmations = currentHeight - blockNumber
     }
 
-    normalizedTx.blockNumber = tx.transaction.blockNumber
+    normalizedTx.blockNumber = blockNumber
   }
 
-  normalizedTx.blockHash = tx.transaction_outcome.block_hash
+  normalizedTx.blockHash = tx.blockHash
   normalizedTx.hash = `${tx.transaction.hash}_${tx.transaction.signer_id}`
   normalizedTx.value = 0
   normalizedTx._raw = tx

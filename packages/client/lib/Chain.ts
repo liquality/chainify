@@ -33,10 +33,6 @@ export default class Chain implements ChainProvider, FeeProvider {
       throw new TypeError('Block hash should be a string')
     }
 
-    if (!/^[A-Fa-f0-9]+$/.test(blockHash)) {
-      throw new TypeError('Block hash should be a valid hex string')
-    }
-
     if (!isBoolean(includeTx)) {
       throw new TypeError('Second parameter should be boolean')
     }
@@ -78,10 +74,6 @@ export default class Chain implements ChainProvider, FeeProvider {
       throw new TypeError('Transaction hash should be a string')
     }
 
-    if (!/^[A-Fa-f0-9]+$/.test(txHash)) {
-      throw new TypeError('Transaction hash should be a valid hex string')
-    }
-
     const transaction = await this.client.getMethod('getTransactionByHash')(txHash)
     if (transaction) {
       this.client.assertValidTransaction(transaction)
@@ -115,11 +107,7 @@ export default class Chain implements ChainProvider, FeeProvider {
 
   /** @inheritdoc */
   async updateTransactionFee(tx: string | Transaction, newFee: number): Promise<Transaction> {
-    if (isString(tx)) {
-      if (!/^[A-Fa-f0-9]+$/.test(tx)) {
-        throw new TypeError('Transaction hash should be a valid hex string')
-      }
-    } else if (isObject(tx)) {
+    if (isObject(tx)) {
       this.client.assertValidTransaction(tx)
     } else {
       throw new TypeError('Transaction should be a string or object')
