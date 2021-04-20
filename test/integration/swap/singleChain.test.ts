@@ -269,7 +269,7 @@ function testNearRefund(chain: Chain) {
   it('Refund available after expiration', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Math.floor(Date.now() / 1000) + 40
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 60
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await expect(refundAndVerify(chain, initiationTxId, swapParams)).to.be.rejected
     await mineBlock(chain, 3)

@@ -4,48 +4,7 @@ export interface NearSendOptions extends SendOptions {
   actions?: any[]
 }
 
-export interface ExecutionError {
-  error_message: string
-  error_type: string
-}
-
-export enum ExecutionStatusBasic {
-  Unknown = 'Unknown',
-  Pending = 'Pending',
-  Failure = 'Failure'
-}
-
-export interface ExecutionStatus {
-  SuccessValue?: string
-  SuccessReceiptId?: string
-  Failure?: ExecutionError
-}
-
-export interface FinalExecutionStatus {
-  SuccessValue?: string
-  Failure?: ExecutionError
-}
-
-export enum FinalExecutionStatusBasic {
-  NotStarted = 'NotStarted',
-  Started = 'Started',
-  Failure = 'Failure'
-}
-
-export interface ExecutionOutcome {
-  logs: string[]
-  receipt_ids: string[]
-  gas_burnt: number
-  status: ExecutionStatus | ExecutionStatusBasic
-}
-
-export interface ExecutionOutcomeWithId {
-  id: string
-  block_hash: string
-  outcome: ExecutionOutcome
-}
-
-interface Tx {
+export interface Tx {
   signer_id: string
   public_key: string
   nonce: number
@@ -56,11 +15,30 @@ interface Tx {
   blockNumber?: number
 }
 
+export interface NearInputBlockHeader {
+  height: number
+  hash: string
+  timestamp: number
+  prev_hash: string
+  chunks_included: number
+}
+
+export interface NearChunk {
+  transactions: Tx[]
+}
+
+export interface NearBlockHeader {
+  number: number
+  hash: string
+  timestamp: number
+  size: number
+  transactions: NormalizedTransaction[]
+}
+
 export interface InputTransaction {
-  status: FinalExecutionStatus | FinalExecutionStatusBasic
   transaction: Tx
-  transaction_outcome: ExecutionOutcomeWithId
-  receipts_outcome: ExecutionOutcomeWithId[]
+  blockNumber: number
+  blockHash: string
 }
 
 export interface NormalizedTransaction {

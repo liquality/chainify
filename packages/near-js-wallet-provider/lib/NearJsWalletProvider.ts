@@ -59,7 +59,7 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
     return Buffer.from(signed.signature).toString('hex')
   }
 
-  async sendTransaction(options: near.NearSendOptions): Promise<near.NormalizedTransaction> {
+  async sendTransaction(options: near.NearSendOptions) {
     const addresses = await this.getAddresses()
     const from = await this.getMethod('getAccount')(addressToString(addresses[0]), this.getSigner())
 
@@ -68,15 +68,15 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
     }
 
     const tx = await from.signAndSendTransaction(addressToString(options.to), options.actions)
-    return normalizeTransactionObject(tx)
+    return normalizeTransactionObject({ ...tx, blockHash: tx.transaction_outcome.block_hash })
   }
 
-  async sendSweepTransaction(address: string): Promise<near.NormalizedTransaction> {
+  async sendSweepTransaction(address: string) {
     const addresses = await this.getAddresses()
     const from = await this.getMethod('getAccount')(addressToString(addresses[0]), this.getSigner())
 
     const tx = await from.deleteAccount(addressToString(address))
-    return normalizeTransactionObject(tx)
+    return normalizeTransactionObject({ ...tx, blockHash: tx.transaction_outcome.block_hash })
   }
 
   async isWalletAvailable(): Promise<boolean> {
