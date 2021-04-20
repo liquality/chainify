@@ -110,7 +110,9 @@ export default class Chain implements ChainProvider, FeeProvider {
     if (isObject(tx)) {
       this.client.assertValidTransaction(tx)
     } else {
-      throw new TypeError('Transaction should be a string or object')
+      if (!isString(tx)) {
+        throw new TypeError('Transaction should be a string or object')
+      }
     }
 
     const transaction = await this.client.getMethod('updateTransactionFee')(tx, newFee)
