@@ -1,4 +1,4 @@
-import { near } from '@liquality/types'
+import { near, Transaction } from '@liquality/types'
 import BN from 'bn.js'
 
 export { transactions, Account, InMemorySigner, providers, KeyPair, keyStores } from 'near-api-js'
@@ -37,8 +37,8 @@ function fromNearTimestamp(ts: number): number {
   return Math.floor(ts / (1000 * 1000 * 1000))
 }
 
-function normalizeTransactionObject(tx: near.InputTransaction, currentHeight?: number): near.NormalizedTransaction {
-  const normalizedTx = { confirmations: 0 } as near.NormalizedTransaction
+function normalizeTransactionObject(tx: near.InputTransaction, currentHeight?: number) {
+  const normalizedTx = { confirmations: 0 } as Transaction<near.InputTransaction>
 
   const blockNumber = tx.transaction.blockNumber || tx.blockNumber
   if (blockNumber) {

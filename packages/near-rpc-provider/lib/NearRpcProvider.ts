@@ -1,5 +1,5 @@
 import NodeProvider from '@liquality/node-provider'
-import { near, BigNumber, ChainProvider, FeeProvider, Address, Block } from '@liquality/types'
+import { near, BigNumber, ChainProvider, FeeProvider, Address, Block, Transaction } from '@liquality/types'
 import { NearNetwork } from '@liquality/near-networks'
 import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, providers, Account, fromNearTimestamp } from '@liquality/near-utils'
@@ -47,7 +47,7 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     return get(result, 'header.height')
   }
 
-  async getTransactionByHash(txHash: string): Promise<near.NormalizedTransaction> {
+  async getTransactionByHash(txHash: string) {
     const currentHeight = await this.getBlockHeight()
     const args = txHash.split('_')
     const tx = await this._rpcQuery('tx', args)
@@ -127,13 +127,14 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
   }
 
   normalizeBlock(block: near.NearInputBlockHeader) {
-    const normalizedBlock = {
+    const normalizedBlock: Block<Transaction<near.InputTransaction>> = {
       number: block.height,
       hash: block.hash,
       timestamp: fromNearTimestamp(block.timestamp),
       size: block.chunks_included,
-      transactions: []
-    } as Block
+      transactions: [],
+      parentHash: block.prev_hash
+    }
 
     return normalizedBlock
   }
@@ -147,10 +148,10 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     if (includeTx && !block.transactions && isArray(block.chunks)) {
       const chunks = await Promise.all(block.chunks.map((c: any) => this._rpc('chunk', c.chunk_hash)))
 
-      const transactions = chunks.reduce((p: any[], c: any) => {
-        p.push(
-          ...c.transactions.map((t: near.Tx) =>
-            normalizeTransactionObject(
+      const transactions = chunks.reduce<Transaction<near.InputTransaction>[]>(
+        (p: Transaction<near.InputTransaction>[], c: near.NearChunk) => {
+          const tx = c.transactions.map((t: near.Tx) => {
+            return normalizeTransactionObject(
               {
                 transaction: t,
                 blockNumber: header.height,
@@ -158,10 +159,12 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
               },
               currentHeight
             )
-          )
-        )
-        return p
-      }, []) as near.NormalizedTransaction[]
+          })
+          p.push(...tx)
+          return p
+        },
+        []
+      )
 
       normalizedBlock.transactions = transactions
     }

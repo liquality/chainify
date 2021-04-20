@@ -19,7 +19,12 @@ export interface NearInputBlockHeader {
   height: number
   hash: string
   timestamp: number
+  prev_hash: string
   chunks_included: number
+}
+
+export interface NearChunk {
+  transactions: Tx[]
 }
 
 export interface NearBlockHeader {
