@@ -7,12 +7,12 @@ export interface Block<TransactionType = any> {
   timestamp: number
   // The size of this block in bytes
   size: number
-  // The difficulty field
-  difficulty: number
   // Hash of the parent block
   parentHash: string
+  // The difficulty field
+  difficulty?: number
   // Nonce
-  nonce: number
+  nonce?: number
   // List of transactions
   transactions?: TransactionType[]
 }
