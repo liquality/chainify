@@ -19,6 +19,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
       from: tx.from,
       to: tx.to,
       hash: tx.hash,
+      secret: tx.secret,
       blockHash: tx.blockHash,
       blockNumber: numberToHex(tx.blockNumber),
       status: tx.status === true ? '0x1' : '0x0',
