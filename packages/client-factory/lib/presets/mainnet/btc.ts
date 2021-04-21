@@ -2,7 +2,7 @@ import BitcoinEsploraBatchApiProvider from '@liquality/bitcoin-esplora-batch-api
 import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
 import BitcoinSwapProvider from '@liquality/bitcoin-swap-provider'
 import BitcoinEsploraSwapFindProvider from '@liquality/bitcoin-esplora-swap-find-provider'
-import BitcoinEarnFeeProvider from '@liquality/bitcoin-earn-fee-provider'
+import BitcoiFeeApiProvider from '@liquality/bitcoin-fee-api-provider'
 import BitcoinNetworks from '@liquality/bitcoin-networks'
 
 export default [
@@ -31,6 +31,6 @@ export default [
     args: ['https://liquality.io/electrs']
   },
   {
-    provider: BitcoinEarnFeeProvider
+    provider: BitcoiFeeApiProvider
   }
 ]

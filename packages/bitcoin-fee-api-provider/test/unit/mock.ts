@@ -1,7 +1,7 @@
 import nock from 'nock'
 
 function mockApi() {
-  nock('https://bitcoinfees.earn.com:443', { encodedQueryParams: true })
+  nock('https://mempool.space:443', { encodedQueryParams: true })
     .get('/api/v1/fees/recommended')
     .reply(200, { fastestFee: 200, halfHourFee: 100, hourFee: 50 }, [
       'Date',
@@ -13,7 +13,7 @@ function mockApi() {
       'Connection',
       'close',
       'Set-Cookie',
-      '__cfduid=d626434aa86d8a02a15d07068a2e6ba8c1590526200; expires=Thu, 25-Jun-20 20:50:00 GMT; path=/; domain=.earn.com; HttpOnly; SameSite=Lax',
+      '__cfduid=d626434aa86d8a02a15d07068a2e6ba8c1590526200; expires=Thu, 25-Jun-20 20:50:00 GMT; path=/; domain=.mempool.space; HttpOnly; SameSite=Lax',
       'Access-Control-Allow-Credentials',
       'true',
       'Access-Control-Allow-Origin',

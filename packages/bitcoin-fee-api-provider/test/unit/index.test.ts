@@ -4,18 +4,18 @@ import chai, { expect } from 'chai'
 import { mockApi } from './mock'
 
 import Client from '../../../client/lib'
-import BitcoinEarnFeeProvider from '../../lib'
+import BitcoinFeeApiProvider from '../../lib'
 
 chai.config.truncateThreshold = 0
 
 const MINUTE = 60
 
-describe('Bitcoin Earn Fee provider', () => {
+describe('Bitcoin Fee Api provider', () => {
   let client: Client
 
   beforeEach(() => {
     client = new Client()
-    client.addProvider(new BitcoinEarnFeeProvider())
+    client.addProvider(new BitcoinFeeApiProvider())
     mockApi()
   })
 

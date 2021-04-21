@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-earn-fee-provider": "^1.0.0-beta.3",
+    "@liquality/bitcoin-fee-api-provider": "^1.0.0-beta.3",
     "@liquality/bitcoin-esplora-batch-api-provider": "^1.0.0-beta.3",
     "@liquality/bitcoin-esplora-swap-find-provider": "^1.0.0-beta.3",
     "@liquality/bitcoin-js-wallet-provider": "^1.0.0-beta.3",
