@@ -1,5 +1,11 @@
 import NodeProvider from '@liquality/node-provider'
-import { numberToHex, normalizeTransactionObject, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
+import {
+  numberToHex,
+  normalizeTransactionObject,
+  validateAddress,
+  validateExpiration,
+  remove0x
+} from '@liquality/ethereum-utils'
 import { addressToString, validateValue, validateSecretHash, validateSecretAndHash } from '@liquality/utils'
 import { PendingTxError } from '@liquality/errors'
 import { SwapProvider, SwapParams, Transaction, ethereum } from '@liquality/types'
@@ -37,7 +43,7 @@ export default class EthereumScraperSwapFindProvider extends NodeProvider implem
     }
 
     if (normalizedTransaction._raw.secret) {
-      normalizedTransaction.secret = normalizedTransaction._raw.secret
+      normalizedTransaction.secret = remove0x(normalizedTransaction._raw.secret)
     }
 
     return normalizedTransaction
