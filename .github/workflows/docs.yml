@@ -23,12 +23,13 @@ jobs:
             */*/node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}-${{ hashFiles('**/package-lock.json') }}
       - run: sudo apt-get update
-      - run: sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev xdg-utils
+      - run: sudo apt-get install -y libusb-1.0-0 libusb-1.0-0-dev libudev-dev
       - run: export NODE_OPTIONS="--max_old_space_size=4096"
       - run: npm ci
       - run: npm run bootstrap
       - run: npm run lint
-      - run: npm docs
+      - run: npm run build
+      - run: npm run docs
       - name: deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.1
         with:
