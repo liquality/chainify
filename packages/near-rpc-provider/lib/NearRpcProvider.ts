@@ -1,5 +1,5 @@
 import NodeProvider from '@liquality/node-provider'
-import { near, BigNumber, ChainProvider, FeeProvider, Address, Block, Transaction } from '@liquality/types'
+import { near, BigNumber, ChainProvider, FeeProvider, Address, Block, Transaction, FeeDetails } from '@liquality/types'
 import { NearNetwork } from '@liquality/near-networks'
 import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, providers, Account, fromNearTimestamp } from '@liquality/near-utils'
@@ -105,19 +105,17 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     )
   }
 
-  async getFees() {
+  async getFees(): Promise<FeeDetails> {
+    const fee = await this.getGasPrice()
     return {
       slow: {
-        fee: 0.0001,
-        wait: 1
+        fee
       },
       average: {
-        fee: 0.0001,
-        wait: 1
+        fee
       },
       fast: {
-        fee: 0.0001,
-        wait: 1
+        fee
       }
     }
   }
