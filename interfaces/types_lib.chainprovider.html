@@ -1,0 +1,621 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ChainProvider | root</title>
+	<meta name="description" content="Documentation for root">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">root</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">root</a>
+				</li>
+				<li>
+					<a href="../modules/types_lib.html">types/lib</a>
+				</li>
+				<li>
+					<a href="types_lib.chainprovider.html">ChainProvider</a>
+				</li>
+			</ul>
+			<h1>Interface ChainProvider</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">ChainProvider</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#generateblock" class="tsd-kind-icon">generate<wbr>Block</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#getbalance" class="tsd-kind-icon">get<wbr>Balance</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#getblockbyhash" class="tsd-kind-icon">get<wbr>Block<wbr>ByHash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#getblockbynumber" class="tsd-kind-icon">get<wbr>Block<wbr>ByNumber</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#getblockheight" class="tsd-kind-icon">get<wbr>Block<wbr>Height</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#gettransactionbyhash" class="tsd-kind-icon">get<wbr>Transaction<wbr>ByHash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#sendbatchtransaction" class="tsd-kind-icon">send<wbr>Batch<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#sendrawtransaction" class="tsd-kind-icon">send<wbr>Raw<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#sendsweeptransaction" class="tsd-kind-icon">send<wbr>Sweep<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#sendtransaction" class="tsd-kind-icon">send<wbr>Transaction</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="types_lib.chainprovider.html#updatetransactionfee" class="tsd-kind-icon">update<wbr>Transaction<wbr>Fee</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="generateblock" class="tsd-anchor"></a>
+					<h3>generate<wbr>Block</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Block<span class="tsd-signature-symbol">(</span>numberOfBlocks<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L19">packages/types/lib/chain.ts:19</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Generate a block</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>numberOfBlocks: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Number of blocks to be generated</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getbalance" class="tsd-anchor"></a>
+					<h3>get<wbr>Balance</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Balance<span class="tsd-signature-symbol">(</span>addresses<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../classes/types_lib.address.html" class="tsd-signature-type" data-tsd-kind="Class">Address</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/types_lib.bignumber-1.html" class="tsd-signature-type" data-tsd-kind="Class">BigNumber</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L75">packages/types/lib/chain.ts:75</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the balance of an account given its addresses.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>addresses: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../classes/types_lib.address.html" class="tsd-signature-type" data-tsd-kind="Class">Address</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A list of addresses.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/types_lib.bignumber-1.html" class="tsd-signature-type" data-tsd-kind="Class">BigNumber</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>If addresses is given,
+								returns the cumulative balance of the given addresses. Otherwise returns the balance
+								of the addresses that the signing provider controls.
+							Rejects with InvalidProviderResponseError if provider&#39;s response is invalid.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getblockbyhash" class="tsd-anchor"></a>
+					<h3>get<wbr>Block<wbr>ByHash</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Block<wbr>ByHash<span class="tsd-signature-symbol">(</span>blockHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, includeTx<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.block.html" class="tsd-signature-type" data-tsd-kind="Interface">Block</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L33">packages/types/lib/chain.ts:33</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a block given its hash.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>blockHash: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A hexadecimal string that represents the
+										<em>hash</em> of the desired block.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> includeTx: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.block.html" class="tsd-signature-type" data-tsd-kind="Interface">Block</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p> Resolves with a Block with the same hash as the given input.
+								If <code>includeTx</code> is true, the transaction property is an array of Transactions;
+								otherwise, it is a list of transaction hashes.
+								Rejects with TypeError if input is invalid.
+							Rejects with InvalidProviderResponseError if provider&#39;s response is invalid.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getblockbynumber" class="tsd-anchor"></a>
+					<h3>get<wbr>Block<wbr>ByNumber</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Block<wbr>ByNumber<span class="tsd-signature-symbol">(</span>blockNumber<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, includeTx<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.block.html" class="tsd-signature-type" data-tsd-kind="Interface">Block</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L46">packages/types/lib/chain.ts:46</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a block given its number.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>blockNumber: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The number of the desired block.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> includeTx: <span class="tsd-signature-type">boolean</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.block.html" class="tsd-signature-type" data-tsd-kind="Interface">Block</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p> Resolves with a Block with the same number as the given input.
+								If <code>includeTx</code> is true, the transaction property is an array of Transactions;
+								otherwise, it is a list of transaction hashes.
+								Rejects with TypeError if input is invalid.
+							Rejects with InvalidProviderResponseError if provider&#39;s response is invalid.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getblockheight" class="tsd-anchor"></a>
+					<h3>get<wbr>Block<wbr>Height</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Block<wbr>Height<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L54">packages/types/lib/chain.ts:54</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get current block height of the chain.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Resolves with
+								chain height.
+							Rejects with InvalidProviderResponseError if provider&#39;s response is invalid.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="gettransactionbyhash" class="tsd-anchor"></a>
+					<h3>get<wbr>Transaction<wbr>ByHash</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Transaction<wbr>ByHash<span class="tsd-signature-symbol">(</span>txHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L65">packages/types/lib/chain.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a transaction given its hash.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>txHash: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A hexadecimal string that represents the <em>hash</em> of the
+										desired transaction.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p> Resolves with a Transaction with the same hash as the given input.
+								Rejects with TypeError if input is invalid.
+							Rejects with InvalidProviderResponseError if provider&#39;s response is invalid.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="sendbatchtransaction" class="tsd-anchor"></a>
+					<h3>send<wbr>Batch<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">send<wbr>Batch<wbr>Transaction<span class="tsd-signature-symbol">(</span>transactions<span class="tsd-signature-symbol">: </span><a href="types_lib.sendoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SendOptions</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L108">packages/types/lib/chain.ts:108</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create, sign &amp; broad a transaction with multiple outputs.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transactions: <a href="types_lib.sendoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SendOptions</a><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>to, value, data</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Resolves with a signed transaction.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="sendrawtransaction" class="tsd-anchor"></a>
+					<h3>send<wbr>Raw<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">send<wbr>Raw<wbr>Transaction<span class="tsd-signature-symbol">(</span>rawTransaction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L118">packages/types/lib/chain.ts:118</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Broadcast a signed transaction to the network.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>rawTransaction: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A raw transaction usually in the form of a
+										hexadecimal string that represents the serialized transaction.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Resolves with an
+								identifier for the broadcasted transaction.
+							Rejects with InvalidProviderResponseError if provider&#39;s response is invalid.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="sendsweeptransaction" class="tsd-anchor"></a>
+					<h3>send<wbr>Sweep<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">send<wbr>Sweep<wbr>Transaction<span class="tsd-signature-symbol">(</span>address<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../classes/types_lib.address.html" class="tsd-signature-type" data-tsd-kind="Class">Address</a>, fee<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L93">packages/types/lib/chain.ts:93</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create, sign &amp; broadcast a sweep transaction.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>address: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../classes/types_lib.address.html" class="tsd-signature-type" data-tsd-kind="Class">Address</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>External address.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fee: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Resolves with a signed transaction.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="sendtransaction" class="tsd-anchor"></a>
+					<h3>send<wbr>Transaction</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">send<wbr>Transaction<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="types_lib.sendoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SendOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L85">packages/types/lib/chain.ts:85</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create, sign &amp; broadcast a transaction.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="types_lib.sendoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">SendOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Resolves with a signed transaction.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="updatetransactionfee" class="tsd-anchor"></a>
+					<h3>update<wbr>Transaction<wbr>Fee</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Transaction<wbr>Fee<span class="tsd-signature-symbol">(</span>tx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, newFee<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/417a454/packages/types/lib/chain.ts#L101">packages/types/lib/chain.ts:101</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Update the fee of a transaction.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tx: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Transaction object or hash of the transaction to update</p>
+									</div>
+								</li>
+								<li>
+									<h5>newFee: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>New fee price in native unit (e.g. sat/b, wei)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_lib.transaction.html" class="tsd-signature-type" data-tsd-kind="Interface">Transaction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Resolves with the new transaction</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Modules</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/types_lib.html">types/lib</a>
+						<ul>
+							<li class=" tsd-kind-namespace tsd-parent-kind-module tsd-is-external">
+								<a href="../modules/types_lib.bignumber.html">Big<wbr>Number</a>
+							</li>
+							<li class=" tsd-kind-namespace tsd-parent-kind-module">
+								<a href="../modules/types_lib.bitcoin.html">bitcoin</a>
+							</li>
+							<li class=" tsd-kind-namespace tsd-parent-kind-module">
+								<a href="../modules/types_lib.ethereum.html">ethereum</a>
+							</li>
+							<li class=" tsd-kind-namespace tsd-parent-kind-module">
+								<a href="../modules/types_lib.near.html">near</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/types_lib.address.html" class="tsd-kind-icon">Address</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-is-external">
+						<a href="../classes/types_lib.bignumber-1.html" class="tsd-kind-icon">Big<wbr>Number</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="types_lib.block.html" class="tsd-kind-icon">Block</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.chainprovider.html" class="tsd-kind-icon">Chain<wbr>Provider</a>
+						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#generateblock" class="tsd-kind-icon">generate<wbr>Block</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#getbalance" class="tsd-kind-icon">get<wbr>Balance</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#getblockbyhash" class="tsd-kind-icon">get<wbr>Block<wbr>ByHash</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#getblockbynumber" class="tsd-kind-icon">get<wbr>Block<wbr>ByNumber</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#getblockheight" class="tsd-kind-icon">get<wbr>Block<wbr>Height</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#gettransactionbyhash" class="tsd-kind-icon">get<wbr>Transaction<wbr>ByHash</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#sendbatchtransaction" class="tsd-kind-icon">send<wbr>Batch<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#sendrawtransaction" class="tsd-kind-icon">send<wbr>Raw<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#sendsweeptransaction" class="tsd-kind-icon">send<wbr>Sweep<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#sendtransaction" class="tsd-kind-icon">send<wbr>Transaction</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="types_lib.chainprovider.html#updatetransactionfee" class="tsd-kind-icon">update<wbr>Transaction<wbr>Fee</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.feedetail.html" class="tsd-kind-icon">Fee<wbr>Detail</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.feedetails.html" class="tsd-kind-icon">Fee<wbr>Details</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.feeprovider.html" class="tsd-kind-icon">Fee<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.iclient.html" class="tsd-kind-icon">IClient</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.network.html" class="tsd-kind-icon">Network</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.sendoptions.html" class="tsd-kind-icon">Send<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.swapparams.html" class="tsd-kind-icon">Swap<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.swapprovider.html" class="tsd-kind-icon">Swap<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="types_lib.transaction.html" class="tsd-kind-icon">Transaction</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.walletprovider.html" class="tsd-kind-icon">Wallet<wbr>Provider</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

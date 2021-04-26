@@ -1,154 +1,451 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="default no-js">
 <head>
-  <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">Home | chainabstractionlayer</title>
-  <link type="text/css" rel="stylesheet" href="css/style.css">
-  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
-  <script src="script/prettify/prettify.js"></script>
-  <script src="script/manual.js"></script>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>root</title>
+	<meta name="description" content="Documentation for root">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
-<body class="layout-container" data-ice="rootContainer">
-
+<body>
 <header>
-  <a href="./">Home</a>
-  
-  <a href="identifiers.html">Reference</a>
-  <a href="source.html">Source</a>
-  
-  <div class="search-box">
-  <span>
-    <img src="./image/search.png">
-    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
-  </span>
-    <ul class="search-result"></ul>
-  </div>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">root</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>root</h1>
+		</div>
+	</div>
 </header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#chain-abstraction-layer-" id="chain-abstraction-layer-" style="color: inherit; text-decoration: none;">
+					<h1>Chain Abstraction Layer <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" /></h1>
+				</a>
+				<p><img src="https://github.com/liquality/chainabstractionlayer/workflows/test/badge.svg" alt="Test Status">
+					<a href="https://coveralls.io/github/liquality/chainabstractionlayer?branch=master"><img src="https://coveralls.io/repos/github/liquality/chainabstractionlayer/badge.svg?branch=master" alt="Coverage Status"></a>
+					<a href="https://github.com/standard/standard"><img src="https://img.shields.io/badge/codestyle-standard-brightgreen.svg" alt="Standard Code Style"></a>
+					<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License"></a>
+					<a href="https://gitter.im/liquality/Lobby?source=orgpage"><img src="https://img.shields.io/gitter/room/liquality/Lobby.svg" alt="Gitter"></a>
+				<a href="https://t.me/Liquality"><img src="https://img.shields.io/badge/chat-on%20telegram-blue.svg" alt="Telegram"></a> <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/liquality/chainabstractionlayer.svg" alt="Greenkeeper badge"></a></p>
+				<blockquote>
+					<p>:warning: This project is under heavy development. Expect bugs &amp; breaking changes.</p>
+				</blockquote>
+				<a href="#pencil-introductory-blog-post-the-missing-tool-to-cross-chain-development" id="pencil-introductory-blog-post-the-missing-tool-to-cross-chain-development" style="color: inherit; text-decoration: none;">
+					<h3>:pencil: <a href="https://medium.com/liquality/the-missing-tool-to-cross-chain-development-2ebfe898efa1">Introductory Blog Post: The Missing Tool to Cross-Chain Development</a></h3>
+				</a>
+				<p>Query different blockchains with account management using a single and simple interface.</p>
+				<a href="#packages" id="packages" style="color: inherit; text-decoration: none;">
+					<h2>Packages</h2>
+				</a>
+				<table>
+					<thead>
+						<tr>
+							<th>Package</th>
+							<th>Version</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><a href="./packages/bitcoin-js-wallet-provider">@liquality/bitcoin-js-wallet-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-js-wallet-provider"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-js-wallet-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-ledger-provider">@liquality/bitcoin-ledger-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-ledger-provider"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-ledger-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-networks">@liquality/bitcoin-networks</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-networks"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-networks.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-rpc-provider">@liquality/bitcoin-rpc-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-rpc-provider"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-rpc-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-node-wallet-provider">@liquality/bitcoin-wallet-node-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-node-wallet-provider"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-node-wallet-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-swap-provider">@liquality/bitcoin-swap-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-swap-provider"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-swap-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-esplora-api-provider">@liquality/bitcoin-esplora-api-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-esplora-api-provider"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-esplora-api-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-esplora-swap-find-provider">@liquality/bitcoin-esplora-swap-find-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-esplora-swap-find-provider"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-esplora-swap-find-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/bitcoin-utils">@liquality/bitcoin-utils</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/bitcoin-utils"><img src="https://img.shields.io/npm/v/@liquality/bitcoin-utils.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/client">@liquality/client</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/client"><img src="https://img.shields.io/npm/v/@liquality/client.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/crypto">@liquality/crypto</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/crypto"><img src="https://img.shields.io/npm/v/@liquality/crypto.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/debug">@liquality/debug</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/debug"><img src="https://img.shields.io/npm/v/@liquality/debug.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/errors">@liquality/errors</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/errors"><img src="https://img.shields.io/npm/v/@liquality/errors.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-erc20-provider">@liquality/ethereum-erc20-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-erc20-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-erc20-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-erc20-swap-provider">@liquality/ethereum-erc20-swap-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-erc20-swap-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-erc20-swap-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-ledger-provider">@liquality/ethereum-ledger-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-ledger-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-ledger-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-wallet-api-provider">@liquality/ethereum-wallet-api-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-wallet-api-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-wallet-api-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-networks">@liquality/ethereum-networks</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-networks"><img src="https://img.shields.io/npm/v/@liquality/ethereum-networks.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-rpc-provider">@liquality/ethereum-rpc-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-rpc-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-rpc-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-js-wallet-provider">@liquality/ethereum-js-wallet-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-js-wallet-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-js-wallet-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-swap-provider">@liquality/ethereum-swap-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-swap-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-swap-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-scraper-swap-find-provider">@liquality/ethereum-scraper-swap-find-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-scraper-swap-find-provider"><img src="https://img.shields.io/npm/v/@liquality/ethereum-scraper-swap-find-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ethereum-utils">@liquality/ethereum-utils</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ethereum-utils"><img src="https://img.shields.io/npm/v/@liquality/ethereum-utils.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/jsonrpc-provider">@liquality/jsonrpc-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/jsonrpc-provider"><img src="https://img.shields.io/npm/v/@liquality/jsonrpc-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/ledger-provider">@liquality/ledger-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/ledger-provider"><img src="https://img.shields.io/npm/v/@liquality/ledger-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/provider">@liquality/provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/provider"><img src="https://img.shields.io/npm/v/@liquality/provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/schema">@liquality/schema</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/schema"><img src="https://img.shields.io/npm/v/@liquality/schema.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/utils">@liquality/utils</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/utils"><img src="https://img.shields.io/npm/v/@liquality/utils.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+						<tr>
+							<td><a href="./packages/wallet-provider">@liquality/wallet-provider</a></td>
+							<td><a href="https://npmjs.com/package/@liquality/wallet-provider"><img src="https://img.shields.io/npm/v/@liquality/wallet-provider.svg" alt="ChainAbstractionLayer"></a></td>
+						</tr>
+				</tbody></table>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<pre><code class="language-javascript"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">Client</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@liquality/client&#039;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">BitcoinRpcProvider</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@liquality/bitcoin-rpc-provider&#039;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">EthereumRpcProvider</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@liquality/ethereum-rpc-provider&#039;</span>
 
-<nav class="navigation" data-ice="nav"><div>
-  <ul>
-    
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Address.js~Address.html">Address</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Client.js~Client.html">Client</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Provider.js~Provider.html">Provider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-DsnParser">DsnParser</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureBuffer">ensureBuffer</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-hash160">hash160</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-padHexStart">padHexStart</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ripemd160">ripemd160</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-sha256">sha256</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-DuplicateProviderError">DuplicateProviderError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderError">InvalidProviderError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-InvalidProviderResponseError">InvalidProviderResponseError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-NoProviderError">NoProviderError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-ProviderNotFoundError">ProviderNotFoundError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-StandardError">StandardError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnimplementedMethodError">UnimplementedMethodError</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-UnsupportedMethodError">UnsupportedMethodError</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers">providers</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ApiProvider.js~ApiProvider.html">ApiProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/JsonRpcProvider.js~JsonRpcProvider.html">JsonRpcProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/LedgerProvider.js~LedgerProvider.html">LedgerProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/RpcError.js~RpcError.html">RpcError</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-bitcoin">providers/bitcoin</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinBlockchainAPIProvider.js~BitcoinBlockchainAPIProvider.html">BitcoinBlockchainAPIProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinLedgerProvider.js~BitcoinLedgerProvider.html">BitcoinLedgerProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinRPCProvider.js~BitcoinRPCProvider.html">BitcoinRPCProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/bitcoin/BitcoinSwapProvider.js~BitcoinSwapProvider.html">BitcoinSwapProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-addressToPubKeyHash">addressToPubKeyHash</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-compressPubKey">compressPubKey</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pubKeyHashToAddress">pubKeyHashToAddress</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-pubKeyToAddress">pubKeyToAddress</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-reverseBuffer">reverseBuffer</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#providers-ethereum">providers/ethereum</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumLedgerProvider.js~EthereumLedgerProvider.html">EthereumLedgerProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumMetaMaskProvider.js~EthereumMetaMaskProvider.html">EthereumMetaMaskProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumRPCProvider.js~EthereumRPCProvider.html">EthereumRPCProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/providers/ethereum/EthereumSwapProvider.js~EthereumSwapProvider.html">EthereumSwapProvider</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureHexEthFormat">ensureHexEthFormat</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ensureHexStandardFormat">ensureHexStandardFormat</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-formatEthResponse">formatEthResponse</a></span></span></li>
-</ul>
-</div>
-</nav>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">BitcoinLedgerProvider</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@liquality/bitcoin-ledger-provider&#039;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">EthereumLedgerProvider</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@liquality/ethereum-ledger-provider&#039;</span>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="chain-abstraction-layer--img--src----liquality-logo-png--height--80px----">Chain Abstraction Layer <img src="./liquality-logo.png" height="80px"></h1><p><a href="https://travis-ci.org/liquality/chainabstractionlayer"><img src="https://travis-ci.org/liquality/chainabstractionlayer.svg?branch=master" alt="ChainAbstractionLayer"></a>
-<a href="https://github.com/standard/standard"><img src="https://img.shields.io/badge/codestyle-standard-brightgreen.svg" alt="Standard Code Style"></a>
-<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License"></a>
-<a href="https://npmjs.com/package/chainabstractionlayer"><img src="https://img.shields.io/npm/dt/chainabstractionlayer.svg" alt="ChainAbstractionLayer"></a></p>
-<blockquote>
-<p>:warning: This project is under heavy development. Expect bugs &amp; breaking changes.</p>
-</blockquote>
-<p>Query different blockchains with a single and simple interface.</p>
-<h2 id="installation">Installation</h2><pre><code class="lang-bash"><code class="source-code prettyprint">npm install chainabstractionlayer</code>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">BitcoinNetworks</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@liquality/bitcoin-networks&#039;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">EthereumNetworks</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@liquality/ethereum-networks&#039;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">bitcoin</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Client</span><span style="color: #000000">()</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">ethereum</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Client</span><span style="color: #000000">()</span>
+
+<span style="color: #001080">bitcoin</span><span style="color: #000000">.</span><span style="color: #795E26">addProvider</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">BitcoinRpcProvider</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&#039;https://liquality.io/bitcointestnetrpc/&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;bitcoin&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;local321&#039;</span>
+<span style="color: #000000">))</span>
+<span style="color: #001080">ethereum</span><span style="color: #000000">.</span><span style="color: #795E26">addProvider</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">EthereumRpcProvider</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&#039;https://rinkeby.infura.io/v3/xxx&#039;</span>
+<span style="color: #000000">))</span>
+
+<span style="color: #001080">bitcoin</span><span style="color: #000000">.</span><span style="color: #795E26">addProvider</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">BitcoinLedgerProvider</span><span style="color: #000000">(</span>
+<span style="color: #000000">  { </span><span style="color: #001080">network:</span><span style="color: #000000"> </span><span style="color: #001080">BitcoinNetworks</span><span style="color: #000000">.</span><span style="color: #001080">bitcoin_testnet</span><span style="color: #000000"> }</span>
+<span style="color: #000000">))</span>
+<span style="color: #001080">ethereum</span><span style="color: #000000">.</span><span style="color: #795E26">addProvider</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">EthereumLedgerProvider</span><span style="color: #000000">(</span>
+<span style="color: #000000">  { </span><span style="color: #001080">network:</span><span style="color: #000000"> </span><span style="color: #001080">EthereumNetworks</span><span style="color: #000000">.</span><span style="color: #001080">rinkeby</span><span style="color: #000000"> }</span>
+<span style="color: #000000">))</span>
+
+<span style="color: #008000">// Fetch addresses from Ledger wallet using a single-unified API</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> [ </span><span style="color: #0070C1">bitcoinAddress</span><span style="color: #000000"> ] = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">bitcoin</span><span style="color: #000000">.</span><span style="color: #001080">wallet</span><span style="color: #000000">.</span><span style="color: #795E26">getAddresses</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">1</span><span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> [ </span><span style="color: #0070C1">ethereumAddress</span><span style="color: #000000"> ] = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ethereum</span><span style="color: #000000">.</span><span style="color: #001080">wallet</span><span style="color: #000000">.</span><span style="color: #795E26">getAddresses</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">1</span><span style="color: #000000">)</span>
+
+<span style="color: #008000">// Sign a message</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">signedMessageBitcoin</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">bitcoin</span><span style="color: #000000">.</span><span style="color: #001080">wallet</span><span style="color: #000000">.</span><span style="color: #795E26">signMessage</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&#039;The Times 3 January 2009 Chancellor on brink of second bailout for banks&#039;</span><span style="color: #000000">, </span><span style="color: #001080">bitcoinAddress</span>
+<span style="color: #000000">)</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">signedMessageEthereum</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">ethereum</span><span style="color: #000000">.</span><span style="color: #001080">wallet</span><span style="color: #000000">.</span><span style="color: #795E26">signMessage</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&#039;The Times 3 January 2009 Chancellor on brink of second bailout for banks&#039;</span><span style="color: #000000">, </span><span style="color: #001080">ethereumAddress</span>
+<span style="color: #000000">)</span>
+
+<span style="color: #008000">// Send a transaction</span>
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">bitcoin</span><span style="color: #000000">.</span><span style="color: #001080">chain</span><span style="color: #000000">.</span><span style="color: #795E26">sendTransaction</span><span style="color: #000000">(</span><span style="color: #800000">&lt;to&gt;</span><span style="color: #000000">, 1000)</span>
+<span style="color: #000000">await ethereum.chain.sendTransaction(</span><span style="color: #800000">&lt;to&gt;</span><span style="color: #000000">, 1000)</span>
 </code></pre>
-<h2 id="usage">Usage</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import { Client, providers } from &apos;chainabstractionlayer&apos;
-
-const { BitcoinRPCProvider } = providers.bitcoin
-
-const bitcoin = new Client()
-bitcoin.addProvider(new BitcoinRPCProvider(&apos;http://localhost:8080&apos;, &apos;bitcoin&apos;, &apos;local321&apos;))
-
-bitcoin
-  .generateBlock(1) // returns Promise
-  .then(console.log) // Array&lt;BlockHash&gt;</code>
+				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+					<h2>Development</h2>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">npm install</span>
+<span style="color: #000000">npm run bootstrap</span>
+<span style="color: #000000">npm run watch</span>
 </code></pre>
-<h3 id="try-chainabstractionlayer-in-browser">Try ChainAbstractionLayer in Browser</h3><p>&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Chain&lt;/th&gt;
-      &lt;th&gt;Wallet Provider&lt;/th&gt;
-      &lt;th&gt;&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td rowspan=2&gt;Ethereum&lt;/td&gt;
-      &lt;td&gt;Ledger&lt;/td&gt;
-      &lt;td&gt;
-        <a href="./examples/browser/ethereum/ledger.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/ethereum/ledger.html">Demo</a>
-      &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;MetaMask&lt;/td&gt;
-      &lt;td&gt;
-        <a href="./examples/browser/ethereum/metamask.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/ethereum/metamask.html">Demo</a>
-      &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Bitcoin&lt;/td&gt;
-      &lt;td&gt;Ledger&lt;/td&gt;
-      &lt;td&gt;
-        <a href="./examples/browser/bitcoin/ledger.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html">Demo</a>
-      &lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-</p>
-<h2 id="documentation">Documentation</h2><p>The documentation is being generated by <a href="https://www.npmjs.com/package/esdoc">esdoc</a>. Github Page hosted documentation is available at <a href="https://liquality.github.io/chainabstractionlayer/">liquality.github.io/chainabstractionlayer</a></p>
-<p>If you want to build documentation locally;</p>
-<pre><code class="lang-bash"><code class="source-code prettyprint">npm run build:docs</code>
+				<a href="#production" id="production" style="color: inherit; text-decoration: none;">
+					<h2>Production</h2>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">npm run build</span>
 </code></pre>
-<h2 id="license">License</h2><p><a href="./LICENSE.md">MIT</a></p>
+				<a href="#publish" id="publish" style="color: inherit; text-decoration: none;">
+					<h2>Publish</h2>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">npm run new:version </span><span style="color: #008000"># prepare</span>
+<span style="color: #000000">npm run publish:all </span><span style="color: #008000"># publish</span>
+</code></pre>
+				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+					<h2>License</h2>
+				</a>
+				<p><a href="./LICENSE.md">MIT</a></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_esplora_api_provider_lib.html">bitcoin-<wbr>esplora-<wbr>api-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_esplora_batch_api_provider_lib.html">bitcoin-<wbr>esplora-<wbr>batch-<wbr>api-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_esplora_swap_find_provider_lib.html">bitcoin-<wbr>esplora-<wbr>swap-<wbr>find-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_fee_api_provider_lib.html">bitcoin-<wbr>fee-<wbr>api-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_js_wallet_provider_lib.html">bitcoin-<wbr>js-<wbr>wallet-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_ledger_provider_lib.html">bitcoin-<wbr>ledger-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_networks_lib.html">bitcoin-<wbr>networks/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_node_wallet_provider_lib.html">bitcoin-<wbr>node-<wbr>wallet-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_rpc_fee_provider_lib.html">bitcoin-<wbr>rpc-<wbr>fee-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_rpc_provider_lib.html">bitcoin-<wbr>rpc-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_swap_provider_lib.html">bitcoin-<wbr>swap-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_utils_lib.html">bitcoin-<wbr>utils/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bitcoin_wallet_api_provider_lib.html">bitcoin-<wbr>wallet-<wbr>api-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/client_factory_lib.html">client-<wbr>factory/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/client_lib.html">client/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/crypto_lib.html">crypto/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/debug_lib.html">debug/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/errors_lib.html">errors/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_erc20_provider_lib.html">ethereum-<wbr>erc20-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_erc20_scraper_swap_find_provider_lib.html">ethereum-<wbr>erc20-<wbr>scraper-<wbr>swap-<wbr>find-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_erc20_swap_provider_lib.html">ethereum-<wbr>erc20-<wbr>swap-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_gas_now_fee_provider_lib.html">ethereum-<wbr>gas-<wbr>now-<wbr>fee-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_js_wallet_provider_lib.html">ethereum-<wbr>js-<wbr>wallet-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_ledger_provider_lib.html">ethereum-<wbr>ledger-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_networks_lib.html">ethereum-<wbr>networks/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_rpc_fee_provider_lib.html">ethereum-<wbr>rpc-<wbr>fee-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_rpc_provider_lib.html">ethereum-<wbr>rpc-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_scraper_swap_find_provider_lib.html">ethereum-<wbr>scraper-<wbr>swap-<wbr>find-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_swap_provider_lib.html">ethereum-<wbr>swap-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_utils_lib.html">ethereum-<wbr>utils/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ethereum_wallet_api_provider_lib.html">ethereum-<wbr>wallet-<wbr>api-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/jsonrpc_provider_lib.html">jsonrpc-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ledger_provider_lib.html">ledger-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/near_js_wallet_provider_lib.html">near-<wbr>js-<wbr>wallet-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/near_networks_lib.html">near-<wbr>networks/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/near_rpc_provider_lib.html">near-<wbr>rpc-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/near_swap_find_provider_lib.html">near-<wbr>swap-<wbr>find-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/near_swap_provider_lib.html">near-<wbr>swap-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/near_utils_lib.html">near-<wbr>utils/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/node_provider_lib.html">node-<wbr>provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/provider_lib.html">provider/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/schema_lib.html">schema/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/types_lib.html">types/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/utils_lib.html">utils/lib</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/wallet_provider_lib.html">wallet-<wbr>provider/lib</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-</div>
-
-<footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+		</div>
+	</div>
 </footer>
-
-<script src="script/search_index.js"></script>
-<script src="script/search.js"></script>
-<script src="script/pretty-print.js"></script>
-<script src="script/inherited-summary.js"></script>
-<script src="script/test-summary.js"></script>
-<script src="script/inner-link.js"></script>
-<script src="script/patch-for-local.js"></script>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
 </body>
 </html>
