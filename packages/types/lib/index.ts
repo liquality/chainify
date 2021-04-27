@@ -10,6 +10,7 @@ import { Address } from './address'
 import { Network } from './network'
 
 import * as bitcoin from './bitcoin'
+import * as bitcoinCash from './bitcoin-cash'
 import * as ethereum from './ethereum'
 import * as near from './near'
 
@@ -44,6 +45,7 @@ export {
   SendOptions,
   SwapParams,
   bitcoin,
+  bitcoinCash,
   ethereum,
   near
 }
