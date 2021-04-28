@@ -26,7 +26,7 @@ export interface Input {
     asm: string
     hex: string
   }
-  txinwitness: string[]
+  txinwitness: string[] // empty
   sequence: number
   coinbase?: string
 }

@@ -9,7 +9,7 @@ export interface UTXO {
   amount: number
   confirmations: number
   redeemScript: string
-  witnessScript: string
+  witnessScript: string // Empty
   spendable: boolean
   solvable: boolean
   desc: string
