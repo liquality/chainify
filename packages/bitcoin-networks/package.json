@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-networks",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/types": "^1.0.0-beta.4",
+    "@liquality/types": "^1.0.0-beta.5",
     "bitcoinjs-lib": "^5.2.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
