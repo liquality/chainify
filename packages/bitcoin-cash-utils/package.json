@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/bitcoin-cash-js-wallet-provider",
+  "name": "@liquality/bitcoin-cash-utils",
   "version": "1.0.0-beta.4",
   "description": "",
   "module": "dist/index.js",
@@ -21,14 +21,16 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/bitcoin-networks": "^1.0.0-beta.4",
-    "@liquality/bitcoin-wallet-provider": "^1.0.0-beta.4",
+    "@liquality/crypto": "^1.0.0-beta.4",
+    "@liquality/errors": "^1.0.0-beta.4",
     "@liquality/types": "^1.0.0-beta.4",
     "@liquality/utils": "^1.0.0-beta.4",
-    "@liquality/wallet-provider": "^1.0.0-beta.4",
-    "bip32": "^2.0.6",
-    "bip39": "^3.0.2",
+    "bignumber.js": "^9.0.0",
+    "bip174": "^2.0.1",
     "bitcoinjs-lib": "^5.2.0",
-    "bitcoinjs-message": "^2.1.0"
+    "bitcore-lib-cash": "^8.25.7",
+    "coinselect": "^3.1.11",
+    "lodash": "^4.17.20"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
@@ -40,6 +42,12 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/bitcoinjs-lib": "^5.0.0",
+    "@types/bitcore-lib-cash": "^8.23.0",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^14.14.31"
   },
   "sideEffects": false
 }

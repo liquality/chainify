@@ -1,5 +1,5 @@
 import { Network as BitcoinJsLibNetwork } from 'bitcoinjs-lib'
-import { Networks } from 'bitcore-lib-cash'
+import { bitcoreCash } from '../../bitcoin-cash-utils' // '@liquality/bitcoin-cash-utils'
 import { Network } from '@liquality/types'
 
 export interface BitcoinCashNetwork extends Network, BitcoinJsLibNetwork { }
@@ -12,12 +12,12 @@ const bitcoin_cash: BitcoinCashNetwork = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: '',
   bip32: {
-    public: (Networks as any).mainnet.xpubkey,
-    private: (Networks as any).mainnet.xprivkey,
+    public: (bitcoreCash.Networks as any).mainnet.xpubkey,
+    private: (bitcoreCash.Networks as any).mainnet.xprivkey,
   },
   pubKeyHash: 0x00,
   scriptHash: 0x05,
-  wif: (Networks as any).mainnet.privatekey,
+  wif: (bitcoreCash.Networks as any).mainnet.privatekey,
   coinType: '145',
   isTestnet: false
 }
@@ -27,12 +27,12 @@ const bitcoin_cash_testnet: BitcoinCashNetwork = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: '',
   bip32: {
-    public: (Networks as any).testnet.xpubkey,
-    private: (Networks as any).testnet.xprivkey,
+    public: (bitcoreCash.Networks as any).testnet.xpubkey,
+    private: (bitcoreCash.Networks as any).testnet.xprivkey,
   },
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
-  wif: (Networks as any).testnet.privatekey,
+  wif: (bitcoreCash.Networks as any).testnet.privatekey,
   coinType: '146',
   isTestnet: true
 }
@@ -42,12 +42,12 @@ const bitcoin_cash_regtest: BitcoinCashNetwork = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: '',
   bip32: {
-    public: (Networks as any).regtest.xpubkey,
-    private: (Networks as any).regtest.xprivkey,
+    public: (bitcoreCash.Networks as any).regtest.xpubkey,
+    private: (bitcoreCash.Networks as any).regtest.xprivkey,
   },
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
-  wif: (Networks as any).regtest.privatekey,
+  wif: (bitcoreCash.Networks as any).regtest.privatekey,
   coinType: '146',
   isTestnet: true
 }
