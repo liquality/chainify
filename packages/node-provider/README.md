@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import JsonRpcProvider from '@liquality/node-provider'
+import { JsonRpcProvider } from '@liquality/node-provider'
 
 const jsonrpc = new JsonRpcProvider('https://jsonrpc.com', 'username', 'password')
 

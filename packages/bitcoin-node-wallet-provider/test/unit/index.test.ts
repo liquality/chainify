@@ -3,9 +3,9 @@
 import chai, { expect } from 'chai'
 import BigNumber from 'bignumber.js'
 
-import Client from '../../../client/lib'
-import BitcoinNetworks from '../../../bitcoin-networks/lib'
-import BitcoinNodeWalletProvider from '../../lib'
+import { Client } from '../../../client/lib'
+import { BitcoinNetworks } from '../../../bitcoin-networks/lib'
+import { BitcoinNodeWalletProvider } from '../../lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
 import bitcoinRpc from '../../../../test/mock/bitcoin/rpc'

@@ -1,4 +1,4 @@
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
 import { addressToString } from '@liquality/utils'
 import { ensure0x, hexToNumber, remove0x, numberToHex } from '@liquality/ethereum-utils'

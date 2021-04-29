@@ -1,4 +1,4 @@
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import { FeeProvider, FeeDetail } from '@liquality/types'
 
 type FeeOptions = {

@@ -1,4 +1,4 @@
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
+import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
 import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'

@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
 import { BigNumber } from '@liquality/types'
-import EthereumSwapProvider from '../../lib'
+import { EthereumSwapProvider } from '../../lib'
 
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'

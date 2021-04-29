@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import BitcoinEsploraSwapFindProvider from '@liquality/bitcoin-esplora-swap-find-provider'
+import { BitcoinEsploraSwapFindProvider } from '@liquality/bitcoin-esplora-swap-find-provider'
 
 const apiProvider = new BitcoinEsploraSwapFindProvider('https://blockstream.info/testnet/api')
 

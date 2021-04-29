@@ -1,5 +1,5 @@
 import { Transaction, Address, bitcoin, BigNumber, SwapParams, SwapProvider } from '@liquality/types'
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import {
   calculateFee,
   decodeRawTransaction,

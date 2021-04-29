@@ -3,8 +3,8 @@
 import chai, { expect } from 'chai'
 import { mockApi } from './mock'
 
-import Client from '../../../client/lib'
-import BitcoinFeeApiProvider from '../../lib'
+import { Client } from '../../../client/lib'
+import { BitcoinFeeApiProvider } from '../../lib'
 
 chai.config.truncateThreshold = 0
 

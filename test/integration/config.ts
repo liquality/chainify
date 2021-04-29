@@ -1,7 +1,7 @@
 import { BigNumber } from '../../packages/types/lib'
-import BitcoinNetworks from '../../packages/bitcoin-networks/lib'
-import EthereumNetworks from '../../packages/ethereum-networks/lib'
-import NearNetworks from '../../packages/near-networks/lib'
+import { BitcoinNetworks } from '../../packages/bitcoin-networks/lib'
+import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
+import { NearNetworks } from '../../packages/near-networks/lib'
 
 export default {
   bitcoin: {

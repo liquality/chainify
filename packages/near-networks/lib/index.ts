@@ -24,7 +24,9 @@ const near_testnet: NearNetwork = {
   isTestnet: true
 }
 
-export default {
+const NearNetworks = {
   near_mainnet,
   near_testnet
 }
+
+export { NearNetworks }

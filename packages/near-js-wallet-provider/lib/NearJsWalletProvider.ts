@@ -1,4 +1,4 @@
-import WalletProvider from '@liquality/wallet-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
 import { addressToString } from '@liquality/utils'
 import { NearNetwork } from '@liquality/near-networks'
 import { Address, Network, ChainProvider, near } from '@liquality/types'

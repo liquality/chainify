@@ -1,3 +1,3 @@
 import BitcoinSwapProvider from './BitcoinSwapProvider'
 
-export default BitcoinSwapProvider
+export { BitcoinSwapProvider }

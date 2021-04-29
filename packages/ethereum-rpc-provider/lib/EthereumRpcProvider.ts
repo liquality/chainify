@@ -1,4 +1,4 @@
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
+import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import {
   numberToHex,
   hexToNumber,

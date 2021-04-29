@@ -1,3 +1,3 @@
 import NearJsWalletProvider from './NearJsWalletProvider'
 
-export default NearJsWalletProvider
+export { NearJsWalletProvider }

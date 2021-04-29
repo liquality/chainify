@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
-import BitcoinSwapProvider from '../../lib'
-import BitcoinNetworks from '@liquality/bitcoin-networks'
+import { BitcoinSwapProvider } from '../../lib'
+import { BitcoinNetworks } from '@liquality/bitcoin-networks'
 import { BigNumber } from '@liquality/types'
 
 import chai from 'chai'

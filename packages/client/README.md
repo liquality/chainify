@@ -31,15 +31,15 @@ or
 ## Usage
 
 ```js
-import Client from '@liquality/client'
-import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
-import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
+import { Client } from '@liquality/client'
+import { BitcoinRpcProvider } from '@liquality/bitcoin-rpc-provider'
+import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider'
 
-import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
-import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
+import { BitcoinLedgerProvider } from '@liquality/bitcoin-ledger-provider'
+import { EthereumLedgerProvider } from '@liquality/ethereum-ledger-provider'
 
-import BitcoinNetworks from '@liquality/bitcoin-networks'
-import EthereumNetworks from '@liquality/ethereum-networks'
+import { BitcoinNetworks } from '@liquality/bitcoin-networks'
+import { EthereumNetworks } from '@liquality/ethereum-networks'
 
 const bitcoin = new Client()
 const ethereum = new Client()

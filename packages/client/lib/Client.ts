@@ -1,6 +1,6 @@
 import { Block as BlockSchema, Transaction as TransactionSchema } from '@liquality/schema'
 import { Block, Transaction, IClient } from '@liquality/types'
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import {
   DuplicateProviderError,
   InvalidProviderError,

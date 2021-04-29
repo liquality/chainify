@@ -116,4 +116,4 @@ const EthereumNetworks = {
   local
 }
 
-export default EthereumNetworks
+export { EthereumNetworks }

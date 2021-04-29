@@ -1,3 +1,3 @@
 import BitcoinEsploraBatchApiProvider from './BitcoinEsploraBatchApiProvider'
 
-export default BitcoinEsploraBatchApiProvider
+export { BitcoinEsploraBatchApiProvider }

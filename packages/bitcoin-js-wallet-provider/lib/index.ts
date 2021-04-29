@@ -1,3 +1,3 @@
 import BitcoinJsWalletProvider from './BitcoinJsWalletProvider'
 
-export default BitcoinJsWalletProvider
+export { BitcoinJsWalletProvider }

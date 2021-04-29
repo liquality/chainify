@@ -1,5 +1,5 @@
-import WalletProvider from '@liquality/wallet-provider'
-import EthereumNetworks, { EthereumNetwork } from '@liquality/ethereum-networks'
+import { WalletProvider } from '@liquality/wallet-provider'
+import { EthereumNetworks, EthereumNetwork } from '@liquality/ethereum-networks'
 import { WalletError } from '@liquality/errors'
 import {
   ensure0x,
@@ -10,7 +10,7 @@ import {
 } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
 import { Address, SendOptions, BigNumber, ethereum } from '@liquality/types'
-import Debug from '@liquality/debug'
+import { Debug } from '@liquality/debug'
 
 import { findKey } from 'lodash'
 

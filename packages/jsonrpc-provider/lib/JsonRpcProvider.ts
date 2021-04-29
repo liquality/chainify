@@ -1,5 +1,5 @@
-import NodeProvider, { AxiosRequestConfig, AxiosResponse } from '@liquality/node-provider'
-import Debug from '@liquality/debug'
+import { NodeProvider, AxiosRequestConfig, AxiosResponse } from '@liquality/node-provider'
+import { Debug } from '@liquality/debug'
 import { NodeError } from '@liquality/errors'
 
 import JSONBigInt from 'json-bigint'

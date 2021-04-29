@@ -1,9 +1,9 @@
-import WalletProvider from '@liquality/wallet-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
 import { WalletError } from '@liquality/errors'
 import { caseInsensitiveEqual } from '@liquality/utils'
 import { Network, Address } from '@liquality/types'
 import HwTransport from '@ledgerhq/hw-transport'
-import Debug from '@liquality/debug'
+import { Debug } from '@liquality/debug'
 
 const debug = Debug('ledger')
 

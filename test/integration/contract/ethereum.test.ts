@@ -5,7 +5,7 @@ import chaiAsPromised from 'chai-as-promised'
 import * as crypto from '../../../packages/crypto/lib'
 import { keccak256 } from 'ethereumjs-util'
 import { TEST_TIMEOUT, chains, deployERC20Token, mineBlock, getSwapParams, Chain } from '../common'
-import EthereumErc20SwapProvider from '../../../packages/ethereum-erc20-swap-provider/lib'
+import { EthereumErc20SwapProvider } from '../../../packages/ethereum-erc20-swap-provider/lib'
 import { SwapParams, BigNumber } from '../../../packages/types/lib'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'

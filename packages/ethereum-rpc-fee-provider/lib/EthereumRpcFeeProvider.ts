@@ -1,4 +1,4 @@
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import { FeeProvider } from '@liquality/types'
 
 import BigNumber from 'bignumber.js'

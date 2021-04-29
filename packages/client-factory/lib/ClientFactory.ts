@@ -1,5 +1,5 @@
 import { isArray, isFunction } from 'lodash'
-import Client from '@liquality/client'
+import { Client } from '@liquality/client'
 
 import * as presets from './presets'
 

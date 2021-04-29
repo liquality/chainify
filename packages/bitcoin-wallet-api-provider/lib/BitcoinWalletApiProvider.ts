@@ -1,5 +1,5 @@
-import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
-import WalletProvider from '@liquality/wallet-provider'
+import { BitcoinWalletProvider } from '@liquality/bitcoin-wallet-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { Address, bitcoin, SendOptions } from '@liquality/types'
 import { PsbtInputTarget } from '@liquality/types/dist/lib/bitcoin'

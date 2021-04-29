@@ -1,3 +1,3 @@
 import BitcoinRpcProvider from './BitcoinRpcProvider'
 
-export default BitcoinRpcProvider
+export { BitcoinRpcProvider }

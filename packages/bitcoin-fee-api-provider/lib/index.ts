@@ -1,3 +1,3 @@
 import BitcoinFeeApiProvider from './BitcoinFeeApiProvider'
 
-export default BitcoinFeeApiProvider
+export { BitcoinFeeApiProvider }

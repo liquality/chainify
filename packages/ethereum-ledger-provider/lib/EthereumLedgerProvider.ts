@@ -1,4 +1,4 @@
-import LedgerProvider from '@liquality/ledger-provider'
+import { LedgerProvider } from '@liquality/ledger-provider'
 import { Address, ethereum, SendOptions, Transaction, BigNumber } from '@liquality/types'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { addressToString } from '@liquality/utils'

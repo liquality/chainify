@@ -1,4 +1,4 @@
-import NodeProvider from '@liquality/node-provider'
+import { NodeProvider } from '@liquality/node-provider'
 import {
   numberToHex,
   normalizeTransactionObject,

@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 import { mockApi, mockApiFeesTooHigh } from './mock'
 
-import Client from '../../../client/lib'
-import EthereumGasNowFeeProvider from '../../lib'
+import { Client } from '../../../client/lib'
+import { EthereumGasNowFeeProvider } from '../../lib'
 
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'

@@ -1,9 +1,9 @@
 /* eslint-env mocha */
 import chai, { expect } from 'chai'
 
-import Client from '../../../client/lib'
-import NearRpcProvider from '../../lib'
-import NearNetwork from '../../../near-networks'
+import { Client } from '../../../client/lib'
+import { NearRpcProvider } from '../../lib'
+import { NearNetworks } from '../../../near-networks'
 import { BigNumber } from '../../../types/lib'
 
 chai.config.truncateThreshold = 0
@@ -14,7 +14,7 @@ describe('Near RPC provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    provider = new NearRpcProvider(NearNetwork.near_testnet)
+    provider = new NearRpcProvider(NearNetworks.near_testnet)
     client.addProvider(provider)
   })
 

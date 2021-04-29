@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 import { expect } from 'chai'
 import { hashPersonalMessage, fromRpcSig, ecrecover, publicToAddress } from 'ethereumjs-util'
-import EthereumNetworks from '../../../ethereum-networks/lib'
-import EthereumJsWalletProvider from '../../lib'
+import { EthereumNetworks } from '../../../ethereum-networks/lib'
+import { EthereumJsWalletProvider } from '../../lib'
 
 const MNEMONIC = 'number legend weasel whip trip silent victory taste hawk battle define file'
 

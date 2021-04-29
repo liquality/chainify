@@ -1,9 +1,9 @@
-import BitcoinEsploraBatchApiProvider from '@liquality/bitcoin-esplora-batch-api-provider'
-import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
-import BitcoinSwapProvider from '@liquality/bitcoin-swap-provider'
-import BitcoinEsploraSwapFindProvider from '@liquality/bitcoin-esplora-swap-find-provider'
-import BitcoinRpcFeeProvider from '@liquality/bitcoin-rpc-fee-provider'
-import BitcoinNetworks from '@liquality/bitcoin-networks'
+import { BitcoinEsploraBatchApiProvider } from '@liquality/bitcoin-esplora-batch-api-provider'
+import { BitcoinJsWalletProvider } from '@liquality/bitcoin-js-wallet-provider'
+import { BitcoinSwapProvider } from '@liquality/bitcoin-swap-provider'
+import { BitcoinEsploraSwapFindProvider } from '@liquality/bitcoin-esplora-swap-find-provider'
+import { BitcoinRpcFeeProvider } from '@liquality/bitcoin-rpc-fee-provider'
+import { BitcoinNetworks } from '@liquality/bitcoin-networks'
 
 export default [
   {

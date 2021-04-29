@@ -1,4 +1,4 @@
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import { Network, WalletProvider as IWalletProvider, Address } from '@liquality/types'
 import { WalletError } from '@liquality/errors'
 

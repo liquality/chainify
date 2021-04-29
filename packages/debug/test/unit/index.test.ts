@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-import Debug from '../../lib'
+import { Debug } from '../../lib'
 import _dbg from 'debug'
 
 // TODO: types?
