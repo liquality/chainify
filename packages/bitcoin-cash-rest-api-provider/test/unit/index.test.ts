@@ -27,8 +27,6 @@ describe('Bitcoin Cash Rest Api Provider', () => {
   describe('getTransactionByHash', () => {
     it('should return a transaction', async () => {
       const tx = await provider.getTransactionByHash('21d823eb78929c6edca4e12c3f2411f7e31220bcaad19d99740bd313f393a0bd')
-      console.error("tx test: ")
-      console.error(require("util").inspect(tx, false, null, true))
       expect(tx).to.deep.equal({
         hash: '21d823eb78929c6edca4e12c3f2411f7e31220bcaad19d99740bd313f393a0bd',
         value: 19983920,

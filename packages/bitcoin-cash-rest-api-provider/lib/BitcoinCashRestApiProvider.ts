@@ -105,18 +105,6 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
     const currentHeight = await this.getBlockHeight()
 
     let rawTx = await this.bchjs.RawTransactions.getRawTransaction([transactionHash], true);
-    /*if ((0 + 1) > -1) {
-      console.error(transactionHash)
-      console.error(require("util").inspect(rawTx, true, null, true))
-    console.error("looloo")
-    console.error(JSON.stringify(rawTx))
-    console.error("dff")
-    console.error(rawTx[0])
-
-
-
-    throw (transactionHash)
-  } */
     rawTx = rawTx[0];
     let status: explorer.TxStatus = { confirmed: rawTx["confirmations"] > 0 };
     if (status.confirmed) {

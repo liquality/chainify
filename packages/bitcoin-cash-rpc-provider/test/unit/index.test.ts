@@ -6,7 +6,7 @@ import BitcoinCashNetworks from '../../../bitcoin-cash-networks/lib'
 import BitcoinCashRpcProvider from '../../lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
-import bitcoinRpc from '../../../../test/mock/bitcoin/rpc'
+import bitcoinCashRpc from '../../../../test/mock/bitcoin-cash/rpc'
 
 chai.config.truncateThreshold = 0
 
@@ -17,14 +17,14 @@ describe('Bitcoin Cash RPC provider', () => {
   beforeEach(() => {
     client = new Client()
     provider = new BitcoinCashRpcProvider({
-      uri: 'http://localhost:18443',
+      uri: 'http://localhost:18543',
       username: 'bitcoin',
       password: 'local321',
       network: BitcoinCashNetworks.bitcoin_cash_testnet
     })
     client.addProvider(provider)
 
-    mockJsonRpc('http://localhost:18443', bitcoinRpc, 100)
+    mockJsonRpc('http://localhost:18543', bitcoinCashRpc, 100)
   })
 
   describe('getFeePerByte', () => {
@@ -67,7 +67,7 @@ describe('Bitcoin Cash RPC provider', () => {
               hex: '2103106e56019acc637afca6202e526ada2d2c8653157c19839d0ea1c32c5925deffac',
               reqSigs: 1,
               type: 'pubkey',
-              addresses: ['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc']
+              addresses: ['bchtest:qps9fqnlc4l4v4h4gq03wtz46nucrdjra5nm9cy5kk']
             }
           }
         ]
@@ -96,7 +96,7 @@ describe('Bitcoin Cash RPC provider', () => {
 
   describe('getBalance', () => {
     it('should return correct balance in sats', async () => {
-      const balance = await provider.getBalance(['mpJJQJzJhjceFabMVXAMB8i4VJcwwWQmcc'])
+      const balance = await provider.getBalance(['bchtest:qps9fqnlc4l4v4h4gq03wtz46nucrdjra5nm9cy5kk'])
       expect(balance.eq(20000000)).to.be.true
     })
   })
@@ -148,7 +148,7 @@ describe('Bitcoin Cash RPC provider', () => {
                 hex: 'a91448f1346b4453d0a208cef9d6b1722d87c6b3f11e87',
                 reqSigs: 1,
                 type: 'scripthash',
-                addresses: ['2MytubJ9LXs6JZ8p8Sct1TeNmp1uimmM8Et']
+                addresses: ['bchtest:ppy0zdrtg3fapgsgemuadvtj9krudvl3rcjkrsasgw']
               }
             },
             {
@@ -159,7 +159,7 @@ describe('Bitcoin Cash RPC provider', () => {
                 hex: 'a9143acc14bffd075dcaeff623d4c4ac11472a1fcff787',
                 reqSigs: 1,
                 type: 'scripthash',
-                addresses: ['2Mxc7fD9wtC1HBRDp2H9EaqMQBZGwuMy8WN']
+                addresses: ['bchtest:pqavc99ll5r4mjh07c3af39vz9rj58707ulk4v40xj']
               }
             }
           ],
