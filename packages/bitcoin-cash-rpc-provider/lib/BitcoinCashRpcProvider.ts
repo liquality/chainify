@@ -1,6 +1,6 @@
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { addressToString } from '@liquality/utils'
-import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
+import { normalizeTransactionObject, decodeRawTransaction } from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks'//'@liquality/bitcoin-cash-networks'
 import { bitcoinCash, Transaction, Block, ChainProvider, SendOptions, Address, BigNumber } from '@liquality/types'

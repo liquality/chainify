@@ -27,10 +27,10 @@ function classifyScript(script: bitcoreCash.Script) {
 }
 
 function bitcoreNetworkName(network: BitcoinCashNetwork) {
-  switch (network) {
-    case BitcoinCashNetworks.bitcoin_cash: return 'livenet';
-    case BitcoinCashNetworks.bitcoin_cash_testnet: return 'testnet';
-    case BitcoinCashNetworks.bitcoin_cash_regtest: return 'regtest';
+  switch (network.name) {
+    case "bitcoin_cash": return 'livenet';
+    case "bitcoin_cash_testnet": return 'testnet';
+    case "bitcoin_cash_regtest": return 'regtest';
   }
 }
 

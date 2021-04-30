@@ -1,4 +1,4 @@
-import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
+import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '../../bitcoin-cash-utils' // '@liquality/bitcoin-cash-utils'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks'//'@liquality/bitcoin-cash-networks'
 import { bitcoinCash, Transaction, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
