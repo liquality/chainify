@@ -1,7 +1,7 @@
 import nock from 'nock'
 
-function mockEsploraApi() {
-  nock('https://liquality.io:443', { encodedQueryParams: true })
+function mockBatchEsploraApi() {
+  nock('https://blockstream.info:443', { encodedQueryParams: true })
     .post('/electrs-testnet-batch/addresses/utxo', "{\"addresses\":[\"2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b\"]}")
     .reply(
       200,
@@ -32,8 +32,8 @@ function mockEsploraApi() {
       ]
     )
 
-  nock('https://liquality.io:443', { encodedQueryParams: true })
-    .post('/electrs-testnet-batch/addresses', "{\"addresses\":[\"2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b\"]}")
+  nock('https://blockstream.info', { encodedQueryParams: true }) //{ "addresses": ["2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b"] }
+    .post('/electrs-testnet-batch/addresses', () => true)
     .reply(
       200,
       [{ "address": "2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b", "chain_stats": { "funded_txo_count": 2, "funded_txo_sum": 20633270, "spent_txo_count": 0, "spent_txo_sum": 0, "tx_count": 2 }, "mempool_stats": { "funded_txo_count": 0, "funded_txo_sum": 0, "spent_txo_count": 0, "spent_txo_sum": 0, "tx_count": 0 } }],
@@ -45,7 +45,7 @@ function mockEsploraApi() {
         'Content-Type',
         'application/json',
         'Content-Length',
-        '2234',
+        '274',
         'Vary',
         'Accept-Encoding',
         'Access-Control-Allow-Origin',
@@ -64,4 +64,4 @@ function mockEsploraApi() {
     )
 }
 
-export default mockEsploraApi
+export default mockBatchEsploraApi

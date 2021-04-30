@@ -4,14 +4,14 @@ import chai, { expect } from 'chai'
 import Client from '../../../client/lib'
 import BitcoinEsploraBatchApiProvider from '../../lib'
 import BitcoinNetworks from '../../../bitcoin-networks/lib'
-//import mockEsploraApi from '../mock/mockEsploraApi'
+import mockBatchEsploraApi from '../mock/mockBatchEsploraApi'
 chai.config.truncateThreshold = 0
 
 describe('Bitcoin Esplora Api Provider', () => {
   let client: Client
   let provider: BitcoinEsploraBatchApiProvider
   before(() => {
-    //    mockEsploraApi()
+    mockBatchEsploraApi()
   })
 
   beforeEach(() => {
@@ -19,7 +19,8 @@ describe('Bitcoin Esplora Api Provider', () => {
     provider = new BitcoinEsploraBatchApiProvider({
       url: 'https://blockstream.info/testnet/api',
       network: BitcoinNetworks.bitcoin_testnet,
-      batchUrl: 'https://liquality.io/electrs-testnet-batch',
+      // or 'https://liquality.io/electrs-testnet-batch',
+      batchUrl: 'https://blockstream.info/electrs-testnet-batch',
     })
     client.addProvider(provider)
   })
@@ -27,7 +28,6 @@ describe('Bitcoin Esplora Api Provider', () => {
   describe('getUnspentTransactions', () => {
     it('should get unspent ttransactions', async () => {
       const tx = await provider.getUnspentTransactions(['2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b'])
-      console.error(require("util").inspect(tx, { showHidden: false, depth: null }))
       expect(tx).to.deep.equal(
         [
           {
@@ -45,21 +45,6 @@ describe('Bitcoin Esplora Api Provider', () => {
             "value": 10384287,
             "vout": 0
           },
-          {
-            "address": "2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b",
-            "amount": 0.10248983,
-            "blockHeight": 1973189,
-            "satoshis": 10248983,
-            "status": {
-              "block_hash": "0000000000000002c5b51ebf0c05c146e12db91cda027e13159f82565431a189",
-              "block_height": 1973189,
-              "block_time": 1619779578,
-              "confirmed": true,
-            },
-            "txid": "78af55e837c6435ab828b1563570631f8aae3ea7f68d6088048770fb25120033",
-            "value": 10248983,
-            "vout": 0
-          }
         ]
       )
     })
@@ -68,7 +53,6 @@ describe('Bitcoin Esplora Api Provider', () => {
   describe('getAddressTransactionCounts', () => {
     it('should get tx counts', async () => {
       const tx = await provider.getAddressTransactionCounts(['2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b'])
-      console.error(require("util").inspect(tx, { showHidden: false, depth: null }))
       expect(tx).to.deep.equal({ '2N4N393YJx9KuZV5D4HMkzHZ7QoFp6tJG1b': 2 })
     })
   })
