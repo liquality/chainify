@@ -3,10 +3,11 @@ import WalletProvider from '@liquality/wallet-provider'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
 import { bitcoinCash } from '@liquality/types'
 
-import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
+import { ECPair, ECPairInterface, script } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
+import { bitcoreCash, bitcoreNetworkName } from '../../bitcoin-cash-utils' // '@liquidity/bitcoin-cash-utils'
 
 type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 
@@ -75,39 +76,50 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
       })
     }
 
-    const psbt = new Psbt({ network })
+    let tx = new bitcoreCash.Transaction();
+    if (feePerByte) {
+      tx = tx.feePerByte(feePerByte);
+    }
+
+    let privateKeys: bitcoreCash.PrivateKey[] = [];
+    const node = await this.seedNode()
 
     for (let i = 0; i < inputs.length; i++) {
-      // const wallet = await this.getWalletAddress(inputs[i].address)
-      // const keyPair = await this.keyPair(wallet.derivationPath)
-      // const paymentVariant = this.getPaymentVariantFromPublicKey(keyPair.publicKey)
-
-      const psbtInput: any = {
-        hash: inputs[i].txid,
-        index: inputs[i].vout,
-        sequence: 0
-      }
+      const wallet = await this.getWalletAddress(inputs[i].address);
+      const wif = node.derivePath(wallet.derivationPath).toWIF();
+      privateKeys.push(new bitcoreCash.PrivateKey(wif, bitcoreNetworkName(network)))
 
       const inputTxRaw = await this.getMethod('getRawTransactionByHash')(inputs[i].txid)
-      psbtInput.nonWitnessUtxo = Buffer.from(inputTxRaw, 'hex')
+      const inputTx = new bitcoreCash.Transaction(inputTxRaw);
 
-      psbt.addInput(psbtInput)
+      // @ts-ignore
+      tx = tx.from([{
+        "txId": inputs[i].txid,
+        "outputIndex": inputs[i].vout,
+        "address": inputTx.outputs[i].script.toAddress(bitcoreNetworkName(network)),
+        "script": inputTx.outputs[i].script,
+        "satoshis": inputTx.outputs[i].satoshis
+      }])
     }
 
     for (const output of targets) {
-      psbt.addOutput(output)
+      tx.addOutput(new bitcoreCash.Transaction.Output({
+        script: bitcoreCash.Script.fromAddress(new bitcoreCash.Address(output.address)),
+        satoshis: output.value
+      }));
     }
 
-    for (let i = 0; i < inputs.length; i++) {
-      const wallet = await this.getWalletAddress(inputs[i].address)
-      const keyPair = await this.keyPair(wallet.derivationPath)
-      psbt.signInput(i, keyPair)
-      psbt.validateSignaturesOfInput(i)
+    // Remove the change output if it exits
+    const changeIndex = (tx as any)._changeIndex;
+    if (changeIndex) {
+      const changeOutput = tx.outputs[changeIndex];
+      const totalOutputAmount = (tx as any)._outputAmount;
+      (tx as any)._removeOutput(changeIndex);
+      (tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis;
+      (tx as any)._changeIndex = undefined;
     }
 
-    psbt.finalizeAllInputs()
-
-    return { hex: psbt.extractTransaction().toHex(), fee }
+    return { hex: tx.sign(privateKeys/*, null as any, "schnorr"*/).serialize(), fee }
   }
 
   async _buildSweepTransaction(externalChangeAddress: string, feePerByte: number) {
@@ -131,15 +143,6 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
     return this._buildTransaction(_outputs, feePerByte, inputs)
   }
 
-  async signPSBT(data: string, inputs: bitcoinCash.PsbtInputTarget[]) {
-    const psbt = Psbt.fromBase64(data, { network: this._network })
-    for (const input of inputs) {
-      const keyPair = await this.keyPair(input.derivationPath)
-      psbt.signInput(input.index, keyPair)
-    }
-    return psbt.toBase64()
-  }
-
   async signBatchP2SHTransaction(
     inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }],
     addresses: string,
@@ -156,17 +159,9 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
     const sigs = []
     for (let i = 0; i < inputs.length; i++) {
       const index = inputs[i].txInputIndex ? inputs[i].txInputIndex : inputs[i].index
-      let sigHash
-      // TODO QUESTION
-      /*sigHash = tx.hashForWitnessV0(
-        index,
-        inputs[i].outputScript,
-        inputs[i].vout.vSat,
-        BitcoinJsTransaction.SIGHASH_ALL
-      )*/
-      sigHash = tx.hashForSignature(index, inputs[i].outputScript, BitcoinJsTransaction.SIGHASH_ALL)
+      let sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, 0x01 | 0x40)
 
-      const sig = script.signature.encode(keyPairs[i].sign(sigHash), BitcoinJsTransaction.SIGHASH_ALL)
+      const sig = script.signature.encode(keyPairs[i].sign(sigHash), 0x01 | 0x40)
       sigs.push(sig)
     }
 
