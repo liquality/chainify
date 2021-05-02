@@ -2,7 +2,6 @@ import BitcoinCashWalletProvider from '../../bitcoin-cash-wallet-provider' //'@l
 import WalletProvider from '@liquality/wallet-provider'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
 import { Address, SendOptions } from '@liquality/types'
-import { PsbtInputTarget } from '@liquality/types/dist/lib/bitcoin'
 
 declare global {
   interface Window {
@@ -44,8 +43,30 @@ export default class BitcoinCashWalletApiProvider extends BitcoinCashWalletProvi
     return this.request('wallet_sendTransaction', sendOptions)
   }
 
-  async signPSBT(data: string, inputs: PsbtInputTarget[]) {
-    return this.request('wallet_signPSBT', data, inputs)
+  async sweepSwapOutput(
+    utxo: any,
+    secretHash: Buffer,
+    recipientPublicKey: Buffer,
+    refundPublicKey: Buffer,
+    expiration: number,
+    toAddress: Address,
+    fromAddress: Address,
+    outValue: number,
+    feePerByte: number,
+    secret?: Buffer
+  ) {
+    return this.request('wallet_sweepSwapOutput',
+      utxo,
+      secretHash,
+      recipientPublicKey,
+      refundPublicKey,
+      expiration,
+      toAddress,
+      fromAddress,
+      outValue,
+      feePerByte,
+      secret
+    )
   }
 
   async getConnectedNetwork() {

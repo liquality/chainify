@@ -6,11 +6,15 @@ import { InvalidAddressError } from '@liquality/errors'
 import BigNumber from 'bignumber.js'
 import * as bitcoin from 'bitcoinjs-lib'
 import * as classify from 'bitcoinjs-lib/src/classify'
-import * as bitcoreCash from 'bitcore-lib-cash'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
 
 // Disable version guard
+// @ts-ignore
+global._bitcoreCash = global._bitcore = undefined;
+
+import * as bitcoreCash from 'bitcore-lib-cash'
+
 // @ts-ignore
 global._bitcoreCash = global._bitcore = undefined;
 

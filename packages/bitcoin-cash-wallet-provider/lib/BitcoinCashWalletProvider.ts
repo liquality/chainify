@@ -1,6 +1,6 @@
 import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '../../bitcoin-cash-utils' // '@liquality/bitcoin-cash-utils'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks'//'@liquality/bitcoin-cash-networks'
-import { bitcoinCash, Transaction, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
+import { bitcoinCash, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
 import Provider from '@liquality/provider'
 import { InsufficientBalanceError } from '@liquality/errors'
@@ -52,7 +52,18 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
       externalChangeAddress: string,
       feePerByte?: number
     ): Promise<{ hex: string; fee: number }>
-    abstract signPSBT(data: string, inputs: bitcoinCash.PsbtInputTarget[]): Promise<string>
+    abstract sweepSwapOutput(
+      utxo: any,
+      secretHash: Buffer,
+      recipientPublicKey: Buffer,
+      refundPublicKey: Buffer,
+      expiration: number,
+      toAddress: Address,
+      fromAddress: Address,
+      outValue: number,
+      feePerByte: number,
+      secret?: Buffer
+    ): Promise<string>
     abstract signBatchP2SHTransaction(
       inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
       addresses: string,
@@ -108,30 +119,6 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
 
     async sendSweepTransaction(externalChangeAddress: Address | string, feePerByte: number) {
       const { hex, fee } = await this._buildSweepTransaction(addressToString(externalChangeAddress), feePerByte)
-      await this.getMethod('sendRawTransaction')(hex)
-      return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
-    }
-
-    async updateTransactionFee(tx: Transaction<bitcoinCash.Transaction> | string, newFeePerByte: number) {
-      const txHash = typeof tx === 'string' ? tx : tx.hash
-      const transaction: bitcoinCash.Transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
-      const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
-
-      const lookupAddresses = transaction.vout.map((vout) => vout.scriptPubKey.addresses[0])
-      const changeAddress = await this.findAddress(lookupAddresses, true)
-      const changeOutput = transaction.vout.find((vout) => vout.scriptPubKey.addresses[0] === changeAddress.address)
-
-      let outputs = transaction.vout
-      if (changeOutput) {
-        outputs = outputs.filter((vout) => vout.scriptPubKey.addresses[0] !== changeOutput.scriptPubKey.addresses[0])
-      }
-
-      // TODO more checks?
-      const transactions = outputs.map((output) => ({
-        address: output.scriptPubKey.addresses[0],
-        value: new BigNumber(output.value).times(1e8).toNumber()
-      }))
-      const { hex, fee } = await this._buildTransaction(transactions, newFeePerByte, fixedInputs)
       await this.getMethod('sendRawTransaction')(hex)
       return normalizeTransactionObject(decodeRawTransaction(hex, this._network), fee)
     }

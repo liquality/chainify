@@ -1,13 +1,14 @@
 import BitcoinCashWalletProvider from '../../bitcoin-cash-wallet-provider' //'@liquality/bitcoin-cash-wallet-provider'
 import WalletProvider from '@liquality/wallet-provider'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
-import { bitcoinCash } from '@liquality/types'
+import { bitcoinCash, Address } from '@liquality/types'
 
 import { ECPair, ECPairInterface, script } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
 import { bitcoreCash, bitcoreNetworkName } from '../../bitcoin-cash-utils' // '@liquidity/bitcoin-cash-utils'
+import { SwapScriptHashInput } from './SwapOutput'
 
 type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 
@@ -141,6 +142,70 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
 
     // @ts-ignore
     return this._buildTransaction(_outputs, feePerByte, inputs)
+  }
+
+  async sweepSwapOutput(
+    utxo: any,
+    secretHash: Buffer,
+    recipientPublicKey: Buffer,
+    refundPublicKey: Buffer,
+    expiration: number,
+    toAddress: Address,
+    fromAddress: Address,
+    outValue: number,
+    feePerByte: number,
+    secret?: Buffer
+  ) {
+    let tx = new bitcoreCash.Transaction();
+    if (feePerByte) {
+      tx = tx.feePerByte(feePerByte);
+    }
+    // @ts-ignore
+    tx.addInput(new SwapScriptHashInput(
+      {
+        "txId": utxo["txid"],
+        "outputIndex": utxo["outputIndex"],
+        "address": utxo["address"],
+        "script": utxo["script"],
+        "satoshis": utxo["satoshis"]
+      },
+      secretHash,
+      recipientPublicKey,
+      refundPublicKey,
+      expiration,
+      secret
+    ))
+
+    // This must run after adding at least one input
+    if (!secret) {
+      (tx as any).nLockTime = expiration;
+      for (var i = 0; i < tx.inputs.length; i++) {
+        if (tx.inputs[i].sequenceNumber === (bitcoreCash.Transaction.Input as any).DEFAULT_SEQNUMBER) {
+          (tx.inputs[i].sequenceNumber as any) = (bitcoreCash.Transaction.Input as any).DEFAULT_LOCKTIME_SEQNUMBER;
+        }
+      }
+    }
+
+    tx.addOutput(new bitcoreCash.Transaction.Output({
+      script: bitcoreCash.Script.fromAddress(new bitcoreCash.Address(toAddress)),
+      satoshis: outValue
+    }));
+
+    // Remove the change output if it exits
+    const changeIndex = (tx as any)._changeIndex;
+    if (changeIndex) {
+      const changeOutput = tx.outputs[changeIndex];
+      const totalOutputAmount = (tx as any)._outputAmount;
+      (tx as any)._removeOutput(changeIndex);
+      (tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis;
+      (tx as any)._changeIndex = undefined;
+    }
+
+    const node = await this.seedNode()
+    const wif = node.derivePath(fromAddress.derivationPath).toWIF();
+    const privateKey = new bitcoreCash.PrivateKey(wif, bitcoreNetworkName(this._network))
+
+    return tx.sign(privateKey).serialize()
   }
 
   async signBatchP2SHTransaction(
