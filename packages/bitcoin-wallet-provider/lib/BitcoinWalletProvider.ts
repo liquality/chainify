@@ -15,19 +15,14 @@ export enum AddressSearchType {
   EXTERNAL_OR_CHANGE
 }
 
-const ADDRESS_TYPE_TO_PREFIX = {
-  legacy: 44,
-  'p2sh-segwit': 49,
-  bech32: 84
-}
-
 type DerivationCache = { [index: string]: Address }
 
 type Constructor<T = unknown> = new (...args: any[]) => T
 
 interface BitcoinWalletProviderOptions {
   network: BitcoinNetwork
-  addressType: bitcoin.AddressType
+  baseDerivationPath: string
+  addressType?: bitcoin.AddressType
 }
 
 export default <T extends Constructor<Provider>>(superclass: T) => {
@@ -39,13 +34,11 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
 
     constructor(...args: any[]) {
       const options = args[0] as BitcoinWalletProviderOptions
-      const { network, addressType = bitcoin.AddressType.BECH32 } = options
+      const { network, baseDerivationPath, addressType = bitcoin.AddressType.BECH32 } = options
       const addressTypes = Object.values(bitcoin.AddressType)
       if (!addressTypes.includes(addressType)) {
         throw new Error(`addressType must be one of ${addressTypes.join(',')}`)
       }
-
-      const baseDerivationPath = `${ADDRESS_TYPE_TO_PREFIX[addressType]}'/${network.coinType}'/0'`
 
       super(options)
 

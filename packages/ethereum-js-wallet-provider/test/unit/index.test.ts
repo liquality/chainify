@@ -9,7 +9,11 @@ const MNEMONIC = 'number legend weasel whip trip silent victory taste hawk battl
 describe('Ethereum Js Wallet Provider', () => {
   describe('sign', () => {
     it('should return valid sig', async () => {
-      const provider = new EthereumJsWalletProvider(EthereumNetworks.ethereum_mainnet, MNEMONIC)
+      const provider = new EthereumJsWalletProvider({
+        network: EthereumNetworks.ethereum_mainnet,
+        mnemonic: MNEMONIC,
+        derivationPath: `m/44'/${EthereumNetworks.ethereum_mainnet.coinType}'/0'/0/0`
+      })
       const msg = 'bitcoin'
       const addresses = await provider.getAddresses()
       const sig = await provider.signMessage(msg)

@@ -13,6 +13,7 @@ type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 interface BitcoinJsWalletProviderOptions {
   network: BitcoinNetwork
   mnemonic: string
+  baseDerivationPath: string
   addressType?: bitcoin.AddressType
 }
 
@@ -24,8 +25,8 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
   _baseDerivationNode: BIP32Interface
 
   constructor(options: BitcoinJsWalletProviderOptions) {
-    const { network, mnemonic, addressType = bitcoin.AddressType.BECH32 } = options
-    super({ network, addressType })
+    const { network, mnemonic, baseDerivationPath, addressType = bitcoin.AddressType.BECH32 } = options
+    super({ network, baseDerivationPath, addressType })
 
     if (!mnemonic) throw new Error('Mnemonic should not be empty')
 

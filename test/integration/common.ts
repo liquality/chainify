@@ -65,7 +65,11 @@ function mockedBitcoinRpcProvider() {
 const bitcoinWithLedger = new Client()
 bitcoinWithLedger.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithLedger.addProvider(
-  new BitcoinLedgerProvider({ network: config.bitcoin.network, Transport: LedgerHwTransportNode })
+  new BitcoinLedgerProvider({
+    network: config.bitcoin.network,
+    baseDerivationPath: `m/84'/${config.bitcoin.network.coinType}'/0'`,
+    Transport: LedgerHwTransportNode
+  })
 )
 bitcoinWithLedger.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
@@ -84,7 +88,11 @@ bitcoinWithNode.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.ne
 const bitcoinWithJs = new Client()
 bitcoinWithJs.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithJs.addProvider(
-  new BitcoinJsWalletProvider({ network: config.bitcoin.network, mnemonic: generateMnemonic(256) })
+  new BitcoinJsWalletProvider({
+    network: config.bitcoin.network,
+    mnemonic: generateMnemonic(256),
+    baseDerivationPath: `m/84'/${config.bitcoin.network.coinType}'/0'`
+  })
 )
 bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
@@ -102,13 +110,23 @@ ethereumWithNode.addProvider(new EthereumSwapProvider())
 const ethereumWithLedger = new Client()
 ethereumWithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
 ethereumWithLedger.addProvider(
-  new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode })
+  new EthereumLedgerProvider({
+    network: config.ethereum.network,
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`,
+    Transport: LedgerHwTransportNode
+  })
 )
 ethereumWithLedger.addProvider(new EthereumSwapProvider())
 
 const ethereumWithJs = new Client()
 ethereumWithJs.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
-ethereumWithJs.addProvider(new EthereumJsWalletProvider(config.ethereum.network, generateMnemonic(256)))
+ethereumWithJs.addProvider(
+  new EthereumJsWalletProvider({
+    network: config.ethereum.network,
+    mnemonic: generateMnemonic(256),
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+  })
+)
 ethereumWithJs.addProvider(new EthereumSwapProvider())
 
 const erc20WithMetaMask = new Client()
@@ -125,14 +143,24 @@ erc20WithNode.addProvider(new EthereumErc20SwapProvider())
 const erc20WithLedger = new Client()
 erc20WithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
 erc20WithLedger.addProvider(
-  new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode })
+  new EthereumLedgerProvider({
+    network: config.ethereum.network,
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`,
+    Transport: LedgerHwTransportNode
+  })
 )
 erc20WithLedger.addProvider(new EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithLedger.addProvider(new EthereumErc20SwapProvider())
 
 const erc20WithJs = new Client()
 erc20WithJs.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
-erc20WithJs.addProvider(new EthereumJsWalletProvider(config.ethereum.network, generateMnemonic(256)))
+erc20WithJs.addProvider(
+  new EthereumJsWalletProvider({
+    network: config.ethereum.network,
+    mnemonic: generateMnemonic(256),
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+  })
+)
 erc20WithJs.addProvider(new EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithJs.addProvider(new EthereumErc20SwapProvider())
 

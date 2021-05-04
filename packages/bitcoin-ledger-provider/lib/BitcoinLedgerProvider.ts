@@ -14,6 +14,7 @@ type WalletProviderConstructor<T = LedgerProvider<HwAppBitcoin>> = new (...args:
 interface BitcoinLedgerProviderOptions {
   network: BitcoinNetwork
   Transport: any
+  baseDerivationPath: string
   addressType?: bitcoin.AddressType
 }
 
@@ -22,8 +23,8 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
   _baseDerivationNode: BIP32Interface
 
   constructor(options: BitcoinLedgerProviderOptions) {
-    const { network, addressType = bitcoin.AddressType.BECH32, Transport } = options
-    super({ network, addressType, App: HwAppBitcoin, Transport, ledgerScrambleKey: 'BTC' })
+    const { network, baseDerivationPath, addressType = bitcoin.AddressType.BECH32, Transport } = options
+    super({ network, baseDerivationPath, addressType, App: HwAppBitcoin, Transport, ledgerScrambleKey: 'BTC' })
     this._walletPublicKeyCache = {}
   }
 
@@ -61,7 +62,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       })
     }
 
-    const outputScriptHex = app.serializeTransactionOutputs({ outputs }).toString('hex')
+    const outputScriptHex = await app.serializeTransactionOutputs({ outputs }).toString('hex')
 
     const isSegwit = [bitcoin.AddressType.BECH32, bitcoin.AddressType.P2SH_SEGWIT].includes(this._addressType)
 
@@ -261,7 +262,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     return Promise.all(
       unspentOutputs.map(async (utxo) => {
         const hex = await this.getMethod('getTransactionHex')(utxo.txid)
-        const tx = app.splitTransaction(hex, true)
+        const tx = await app.splitTransaction(hex, true)
         return [tx, utxo.vout, undefined, 0]
       })
     )
