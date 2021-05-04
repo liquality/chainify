@@ -167,7 +167,13 @@ erc20WithJs.addProvider(new EthereumErc20SwapProvider())
 // Near
 const nearWithJs = new Client()
 nearWithJs.addProvider(new NearRpcProvider(config.near.network))
-nearWithJs.addProvider(new NearJsWalletProvider(config.near.network, config.near.senderMnemonic))
+nearWithJs.addProvider(
+  new NearJsWalletProvider({
+    network: config.near.network,
+    mnemonic: config.near.senderMnemonic,
+    derivationPath: `m/44'/${config.near.network.coinType}'/0'`
+  })
+)
 nearWithJs.addProvider(new NearSwapProvider())
 nearWithJs.addProvider(new NearSwapFindProvider(config.near.network.helperUrl))
 
@@ -247,7 +253,13 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
     case 'near': {
       const tempNearJsClient = new Client()
       tempNearJsClient.addProvider(new NearRpcProvider(config.near.network))
-      tempNearJsClient.addProvider(new NearJsWalletProvider(config.near.network, config.near.receiverMnemonic))
+      tempNearJsClient.addProvider(
+        new NearJsWalletProvider({
+          network: config.near.network,
+          mnemonic: config.near.receiverMnemonic,
+          derivationPath: `m/44'/${config.near.network.coinType}'/0'`
+        })
+      )
       const balance = await tempNearJsClient.chain.getBalance([config.near.receiverAddress])
       if (balance.gt(config.near.value)) {
         await tempNearJsClient.chain.sendTransaction({ to: address, value: balance.minus(config.near.value) })
