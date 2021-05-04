@@ -339,7 +339,7 @@ function testFee(chain: Chain) {
 describe('Swap Single Chain Flow', function () {
   this.timeout(TEST_TIMEOUT)
 
-  describe('Near - JS', () => {
+  describeExternal('Near - JS', () => {
     testSwap(chains.nearWithJs)
     testNearRefund(chains.nearWithJs)
   })
