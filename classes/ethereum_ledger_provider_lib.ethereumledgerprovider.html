@@ -97,7 +97,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_app" class="tsd-kind-icon">_<wbr>App</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_transport" class="tsd-kind-icon">_<wbr>Transport</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_appinstance" class="tsd-kind-icon">_app<wbr>Instance</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_basederivationpath" class="tsd-kind-icon">_base<wbr>Derivation<wbr>Path</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_derivationpath" class="tsd-kind-icon">_derivation<wbr>Path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_ledgerscramblekey" class="tsd-kind-icon">_ledger<wbr>Scramble<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_methods" class="tsd-kind-icon">_methods</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_network" class="tsd-kind-icon">_network</a></li>
@@ -136,28 +136,20 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Ethereum<wbr>Ledger<wbr>Provider<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>Transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EthereumNetwork</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html" class="tsd-signature-type" data-tsd-kind="Class">EthereumLedgerProvider</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Ethereum<wbr>Ledger<wbr>Provider<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EthereumLedgerProviderOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html" class="tsd-signature-type" data-tsd-kind="Class">EthereumLedgerProvider</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider&lt;HwAppEthereum&gt;.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L19">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L25">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>options: <span class="tsd-signature-symbol">{ </span>Transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EthereumNetwork</span><span class="tsd-signature-symbol"> }</span></h5>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5>Transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5>
-										</li>
-										<li class="tsd-parameter">
-											<h5>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">EthereumNetwork</span></h5>
-										</li>
-									</ul>
+									<h5>options: <span class="tsd-signature-type">EthereumLedgerProviderOptions</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html" class="tsd-signature-type" data-tsd-kind="Class">EthereumLedgerProvider</a></h4>
@@ -201,12 +193,12 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="_basederivationpath" class="tsd-anchor"></a>
-					<h3>_base<wbr>Derivation<wbr>Path</h3>
-					<div class="tsd-signature tsd-kind-icon">_base<wbr>Derivation<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="_derivationpath" class="tsd-anchor"></a>
+					<h3>_derivation<wbr>Path</h3>
+					<div class="tsd-signature tsd-kind-icon">_derivation<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L19">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L25">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -369,7 +361,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.getAddresses</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L35">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L41">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -460,7 +452,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.getUnusedAddress</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L49">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L53">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -478,7 +470,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.getUsedAddresses</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L63">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L67">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -520,7 +512,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.isWalletAvailable</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L54">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L58">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:58</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -537,7 +529,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L89">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L93">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:93</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -593,7 +585,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.signMessage</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L26">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L32">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:32</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -619,7 +611,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L67">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L71">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -645,7 +637,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/b795703/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L123">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/51d468e/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L127">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -694,7 +686,7 @@
 								<a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_appinstance" class="tsd-kind-icon">_app<wbr>Instance</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_basederivationpath" class="tsd-kind-icon">_base<wbr>Derivation<wbr>Path</a>
+								<a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_derivationpath" class="tsd-kind-icon">_derivation<wbr>Path</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_ledgerscramblekey" class="tsd-kind-icon">_ledger<wbr>Scramble<wbr>Key</a>
