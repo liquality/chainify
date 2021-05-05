@@ -17,7 +17,8 @@ services:
     image: zquestz/bitcoin-cash-node:23.0.0
     ports:
       - '18543:18543'
-    command: bitcoind -regtest=1
+    command:
+      bitcoind -regtest=1
       -txindex
       -rpcuser=bitcoin
       -rpcpassword=local321

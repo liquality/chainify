@@ -4,7 +4,12 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { bitcoinCash, SendOptions, BigNumber, Transaction, Address } from '@liquality/types'
 import { BitcoinCashNetworks, BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
-import { normalizeTransactionObject, decodeRawTransaction, constructSweepSwap, bitcoreCash } from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
+import {
+  normalizeTransactionObject,
+  decodeRawTransaction,
+  constructSweepSwap,
+  bitcoreCash
+} from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
 import { sha256 } from '@liquality/crypto'
 
 const BIP70_CHAIN_TO_NETWORK: { [index: string]: BitcoinCashNetwork } = {
@@ -133,19 +138,14 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
     const sigs = []
     for (let i = 0; i < inputs.length; i++) {
-      let sigHash = tx.hashForWitnessV0(
-        inputs[i].index,
-        inputs[i].outputScript,
-        inputs[i].vout.vSat,
-        0x41
-      ) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
+      const sigHash = tx.hashForWitnessV0(inputs[i].index, inputs[i].outputScript, inputs[i].vout.vSat, 0x41) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
 
       const signed = wallets[i].sign(sigHash)
 
       // BitcoinJS does not allow SIGHASH_FORKID
-      let signature = new bitcoreCash.crypto.Signature()
-      let r = signed.slice(0, 32)
-      let s = signed.slice(32)
+      const signature = new bitcoreCash.crypto.Signature()
+      const r = signed.slice(0, 32)
+      const s = signed.slice(32)
 
       // @ts-ignore
       r.toBuffer = () => r

@@ -12,21 +12,24 @@ import { SwapScriptHashInput, bitcoreCash } from './SwapOutput'
 
 function classifyScript(script: bitcoreCash.Script) {
   // Translate to Core's std::string GetTxnOutputType types
-  const classification = script.classify();
+  const classification = script.classify()
 
   // Instead of checking for Bitcoin.script.types equality
-  if (classification.includes("script hash")) return "scripthash";
-  if (classification.includes("multisig")) return "multisig";
-  if (classification.includes("public key hash")) return "pubkeyhash";
-  if (classification.includes("public key")) return "pubkey";
-  return "nonstandard";
+  if (classification.includes('script hash')) return 'scripthash'
+  if (classification.includes('multisig')) return 'multisig'
+  if (classification.includes('public key hash')) return 'pubkeyhash'
+  if (classification.includes('public key')) return 'pubkey'
+  return 'nonstandard'
 }
 
 function bitcoreNetworkName(network: BitcoinCashNetwork) {
   switch (network.name) {
-    case "bitcoin_cash": return 'livenet';
-    case "bitcoin_cash_testnet": return 'testnet';
-    case "bitcoin_cash_regtest": return 'regtest';
+    case 'bitcoin_cash':
+      return 'livenet'
+    case 'bitcoin_cash_testnet':
+      return 'testnet'
+    case 'bitcoin_cash_regtest':
+      return 'regtest'
   }
 }
 
@@ -54,10 +57,10 @@ function compressPubKey(pubKey: string) {
  * @return {Network}
  */
 function getAddressNetwork(address: string) {
-  const addr = address.toLowerCase();
-  if (addr.startsWith("bchreg:")) return BitcoinCashNetworks.bitcoin_cash_regtest;
-  if (addr.startsWith("bchtest:")) return BitcoinCashNetworks.bitcoin_cash_testnet;
-  return BitcoinCashNetworks.bitcoin_cash;
+  const addr = address.toLowerCase()
+  if (addr.startsWith('bchreg:')) return BitcoinCashNetworks.bitcoin_cash_regtest
+  if (addr.startsWith('bchtest:')) return BitcoinCashNetworks.bitcoin_cash_testnet
+  return BitcoinCashNetworks.bitcoin_cash
 }
 
 type CoinSelectTarget = {
@@ -99,7 +102,7 @@ function selectCoins(utxos: bT.UTXO[], targets: CoinSelectTarget[], feePerByte: 
 }
 
 function decodeRawTransaction(hex: string, network: BitcoinCashNetwork): bT.Transaction {
-  const tx = new bitcoreCash.Transaction(hex);
+  const tx = new bitcoreCash.Transaction(hex)
   const vin = tx.inputs.map((input) => {
     input.script.toASM()
     return <bT.Input>{
@@ -128,8 +131,8 @@ function decodeRawTransaction(hex: string, network: BitcoinCashNetwork): bT.Tran
 
     try {
       // fromOutputScript of bch-js could also be used
-      const address = bitcoreCash.Address.fromScript(output.script, bitcoreNetworkName(network)).toString();
-      vout.scriptPubKey.addresses.push(address);
+      const address = bitcoreCash.Address.fromScript(output.script, bitcoreNetworkName(network)).toString()
+      vout.scriptPubKey.addresses.push(address)
     } catch (e) {
       /** If output script is not parsable, we just skip it */
     }
@@ -190,13 +193,11 @@ function normalizeTransactionObject(
 function getPubKeyHash(address: string, network: BitcoinCashNetwork) {
   // Bitcore doesn't provide an equivalent
 
-  let oldAddress;
+  let oldAddress
   try {
-    oldAddress = new bitcoreCash.Address(address, bitcoreNetworkName(network)).toLegacyAddress();
+    oldAddress = new bitcoreCash.Address(address, bitcoreNetworkName(network)).toLegacyAddress()
   } catch (e) {
-    throw new InvalidAddressError(
-      `Invalid Bitcoin Cash address: ${address}.`
-    )
+    throw new InvalidAddressError(`Invalid Bitcoin Cash address: ${address}.`)
   }
 
   const outputScript = bitcoin.address.toOutputScript(oldAddress, network)
@@ -243,53 +244,57 @@ function constructSweepSwap(
   feePerByte: number,
   secret?: Buffer
 ) {
-  let tx = new bitcoreCash.Transaction();
+  let tx = new bitcoreCash.Transaction()
   if (feePerByte) {
-    tx = tx.feePerByte(feePerByte);
+    tx = tx.feePerByte(feePerByte)
   }
-  let out = new bitcoreCash.Transaction.Output({
-    script: utxo["script"],
-    satoshis: utxo["satoshis"]
-  });
+  const out = new bitcoreCash.Transaction.Output({
+    script: utxo['script'],
+    satoshis: utxo['satoshis']
+  })
 
   // @ts-ignore
-  tx.addInput(new SwapScriptHashInput(
-    {
-      output: out,
-      prevTxId: utxo["txid"],
-      outputIndex: utxo["outputIndex"],
-      script: bitcoreCash.Script.empty()
-    },
-    secretHash,
-    recipientPublicKey,
-    refundPublicKey,
-    expiration,
-    secret
-  ))
+  tx.addInput(
+    new SwapScriptHashInput(
+      {
+        output: out,
+        prevTxId: utxo['txid'],
+        outputIndex: utxo['outputIndex'],
+        script: bitcoreCash.Script.empty()
+      },
+      secretHash,
+      recipientPublicKey,
+      refundPublicKey,
+      expiration,
+      secret
+    )
+  )
 
   // This must run after adding at least one input
   if (!secret) {
-    (tx as any).nLockTime = expiration;
-    for (var i = 0; i < tx.inputs.length; i++) {
+    ;(tx as any).nLockTime = expiration
+    for (let i = 0; i < tx.inputs.length; i++) {
       if (tx.inputs[i].sequenceNumber === (bitcoreCash.Transaction.Input as any).DEFAULT_SEQNUMBER) {
-        (tx.inputs[i].sequenceNumber as any) = (bitcoreCash.Transaction.Input as any).DEFAULT_LOCKTIME_SEQNUMBER;
+        ;(tx.inputs[i].sequenceNumber as any) = (bitcoreCash.Transaction.Input as any).DEFAULT_LOCKTIME_SEQNUMBER
       }
     }
   }
 
-  tx.addOutput(new bitcoreCash.Transaction.Output({
-    script: bitcoreCash.Script.fromAddress(new bitcoreCash.Address(toAddress)),
-    satoshis: outValue
-  }));
+  tx.addOutput(
+    new bitcoreCash.Transaction.Output({
+      script: bitcoreCash.Script.fromAddress(new bitcoreCash.Address(toAddress)),
+      satoshis: outValue
+    })
+  )
 
   // Remove the change output if it exits
-  const changeIndex = (tx as any)._changeIndex;
+  const changeIndex = (tx as any)._changeIndex
   if (changeIndex) {
-    const changeOutput = tx.outputs[changeIndex];
-    const totalOutputAmount = (tx as any)._outputAmount;
-    (tx as any)._removeOutput(changeIndex);
-    (tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis;
-    (tx as any)._changeIndex = undefined;
+    const changeOutput = tx.outputs[changeIndex]
+    const totalOutputAmount = (tx as any)._outputAmount
+    ;(tx as any)._removeOutput(changeIndex)
+    ;(tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis
+    ;(tx as any)._changeIndex = undefined
   }
 
   return tx.sign(privateKey).uncheckedSerialize()

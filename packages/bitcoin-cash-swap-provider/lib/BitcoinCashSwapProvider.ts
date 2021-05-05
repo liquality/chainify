@@ -150,7 +150,6 @@ export default class BitcoinCashSwapProvider extends Provider implements Partial
     )
   }
 
-
   async _redeemSwapOutput(
     initiationTxHash: string,
     value: BigNumber,
@@ -185,15 +184,15 @@ export default class BitcoinCashSwapProvider extends Provider implements Partial
     }
     const { recipientPublicKey, refundPublicKey, secretHash } = this.extractSwapParams(swapOutput.toString('hex'))
     const walletAddress: Address = await this.getMethod('getWalletAddress')(address)
-    const inputTx = new bitcoreCash.Transaction(initiationTxRaw);
+    const inputTx = new bitcoreCash.Transaction(initiationTxRaw)
 
     const signedTx: string = await this.getMethod('sweepSwapOutput')(
       {
-        "txid": initiationTxHash,
-        "outputIndex": swapVout.n,
-        "address": inputTx.outputs[swapVout.n].script.toAddress(bitcoreNetworkName(network)),
-        "script": inputTx.outputs[swapVout.n].script.toHex(),
-        "satoshis": inputTx.outputs[swapVout.n].satoshis
+        txid: initiationTxHash,
+        outputIndex: swapVout.n,
+        address: inputTx.outputs[swapVout.n].script.toAddress(bitcoreNetworkName(network)),
+        script: inputTx.outputs[swapVout.n].script.toHex(),
+        satoshis: inputTx.outputs[swapVout.n].satoshis
       },
       secretHash,
       recipientPublicKey,
@@ -203,7 +202,7 @@ export default class BitcoinCashSwapProvider extends Provider implements Partial
       walletAddress,
       swapValue - txfee,
       feePerByte,
-      isClaim ? Buffer.from(secret, 'hex') : undefined,
+      isClaim ? Buffer.from(secret, 'hex') : undefined
     )
 
     await this.getMethod('sendRawTransaction')(signedTx)
@@ -246,9 +245,10 @@ export default class BitcoinCashSwapProvider extends Provider implements Partial
   doesTransactionMatchInitiation(swapParams: SwapParams, transaction: Transaction<bitcoinCash.Transaction>) {
     const swapOutput = this.getSwapOutput(swapParams)
     const swapPaymentVariant = this.getSwapPaymentVariant(swapOutput)
-    const vout = transaction._raw.vout.find((vout) =>
-      vout.scriptPubKey.hex == swapPaymentVariant.output.toString('hex') &&
-      new BigNumber(vout.value).times(1e8).eq(new BigNumber(swapParams.value))
+    const vout = transaction._raw.vout.find(
+      (vout) =>
+        vout.scriptPubKey.hex == swapPaymentVariant.output.toString('hex') &&
+        new BigNumber(vout.value).times(1e8).eq(new BigNumber(swapParams.value))
     )
     return Boolean(vout)
   }
@@ -265,7 +265,7 @@ export default class BitcoinCashSwapProvider extends Provider implements Partial
     blockNumber: number,
     predicate: (tx: Transaction<bitcoinCash.Transaction>) => boolean
   ) {
-    swapParams as any;
+    swapParams as any
     // TODO: Are mempool TXs possible?
     const block = await this.getMethod('getBlockByNumber')(blockNumber, true)
     const swapTransaction = block.transactions.find(predicate)

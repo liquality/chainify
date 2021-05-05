@@ -150,7 +150,7 @@ function testSignBatchP2SHTransaction(chain: Chain) {
     txb.addInput(initiationTx.hash, multiOne.multiVout.n, 0, paymentVariantOne.output)
     txb.addInput(initiationTx.hash, multiTwo.multiVout.n, 0, paymentVariantTwo.output)
 
-    let addr = new BitcoinCashUtils.bitcoreCash.Address(unusedAddressTwo.toString())
+    const addr = new BitcoinCashUtils.bitcoreCash.Address(unusedAddressTwo.toString())
     txb.addOutput(addr.toLegacyAddress(), value.toNumber() * 2 - txfee)
 
     const tx = txb.buildIncomplete()
@@ -224,7 +224,7 @@ function testSignBatchP2SHTransaction(chain: Chain) {
   })
 }
 
-describe('Transactions', function() {
+describe('Transactions', function () {
   this.timeout(TEST_TIMEOUT)
 
   describe('Bitcoin Cash - Node', () => {
@@ -234,7 +234,7 @@ describe('Transactions', function() {
   })
 
   describe('Bitcoin Cash - Js', () => {
-    before(async function() {
+    before(async function () {
       await importBitcoinAddresses(chains.bitcoinCashWithJs)
       await fundWallet(chains.bitcoinCashWithJs)
     })

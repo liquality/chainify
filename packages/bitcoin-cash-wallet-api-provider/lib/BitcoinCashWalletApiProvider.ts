@@ -55,7 +55,8 @@ export default class BitcoinCashWalletApiProvider extends BitcoinCashWalletProvi
     feePerByte: number,
     secret?: Buffer
   ) {
-    return this.request('wallet_sweepSwapOutput',
+    return this.request(
+      'wallet_sweepSwapOutput',
       utxo,
       secretHash,
       recipientPublicKey,

@@ -242,7 +242,12 @@ const chains: { [index: string]: Chain } = {
     client: bitcoinCashWithNode,
     network: config.bitcoincash.network
   },
-  bitcoinCashWithJs: { id: 'Bitcoin Cash Js', name: 'bitcoincash', client: bitcoinCashWithJs, network: config.bitcoincash.network },
+  bitcoinCashWithJs: {
+    id: 'Bitcoin Cash Js',
+    name: 'bitcoincash',
+    client: bitcoinCashWithJs,
+    network: config.bitcoincash.network
+  },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
@@ -418,7 +423,7 @@ async function mineUntilTimestamp(chain: Chain, timestamp: number) {
       console.log(
         '\x1b[2m',
         `Mining until chain timestamp: ${timestamp}. Now: ${block.timestamp}. Remaining: ${
-        timestamp - block.timestamp
+          timestamp - block.timestamp
         }s`,
         '\x1b[0m'
       )

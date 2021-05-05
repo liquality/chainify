@@ -42,7 +42,7 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
   }
 
   async getFeePerByte(numberOfBlocks = this._numberOfBlockConfirmation) {
-    numberOfBlocks as any;
+    numberOfBlocks as any
     // BCH fees are fairly stable
     return this._defaultFeePerByte
   }
@@ -53,23 +53,23 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
 
   async getBalance(_addresses: (string | Address)[]) {
     const addresses = _addresses.map(addressToString)
-    const response = await this.bchjs.Electrumx.balance(addresses)["balances"];
-    let sum = new BigNumber(0);
+    const response = await this.bchjs.Electrumx.balance(addresses)['balances']
+    const sum = new BigNumber(0)
 
-    response.reduce((acc: BigNumber, balance: any) => acc.plus(balance["confirmed"]).plus(balance["unconfirmed"]), sum);
+    response.reduce((acc: BigNumber, balance: any) => acc.plus(balance['confirmed']).plus(balance['unconfirmed']), sum)
 
-    return sum;
+    return sum
   }
 
   async _getUnspentTransactions(address: string): Promise<bitcoin.UTXO[]> {
-    let data = await this.bchjs.Electrumx.utxo(address);
+    const data = await this.bchjs.Electrumx.utxo(address)
 
-    return data["utxos"].map((utxo: any) => ({
+    return data['utxos'].map((utxo: any) => ({
       address,
-      txid: utxo["tx_hash"],
-      vout: utxo["tx_pos"],
-      value: utxo["value"],
-      blockHeight: utxo["height"]
+      txid: utxo['tx_hash'],
+      vout: utxo['tx_pos'],
+      value: utxo['value'],
+      blockHeight: utxo['height']
     }))
   }
 
@@ -81,8 +81,8 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
   }
 
   async _getAddressTransactionCount(address: string) {
-    let transactions = await this.bchjs.Electrumx.transactions(address);
-    return transactions["transactions"].length;
+    const transactions = await this.bchjs.Electrumx.transactions(address)
+    return transactions['transactions'].length
   }
 
   async getAddressTransactionCounts(_addresses: (Address | string)[]) {
@@ -98,31 +98,31 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
   }
 
   async getTransactionHex(transactionHash: string): Promise<string> {
-    return await this.bchjs.RawTransactions.getRawTransaction(transactionHash);
+    return await this.bchjs.RawTransactions.getRawTransaction(transactionHash)
   }
 
   async getTransaction(transactionHash: string) {
     const currentHeight = await this.getBlockHeight()
 
-    let rawTx = await this.bchjs.RawTransactions.getRawTransaction([transactionHash], true);
-    rawTx = rawTx[0];
-    let status: explorer.TxStatus = { confirmed: rawTx["confirmations"] > 0 };
+    let rawTx = await this.bchjs.RawTransactions.getRawTransaction([transactionHash], true)
+    rawTx = rawTx[0]
+    const status: explorer.TxStatus = { confirmed: rawTx['confirmations'] > 0 }
     if (status.confirmed) {
-      status.block_height = currentHeight - rawTx["confirmations"] + 1;
-      status.block_hash = await this.getBlockHash(status.block_height);
+      status.block_height = currentHeight - rawTx['confirmations'] + 1
+      status.block_hash = await this.getBlockHash(status.block_height)
     }
 
-    let tx: explorer.Transaction = {
-      txid: rawTx["txid"],
-      version: rawTx["version"],
-      locktime: rawTx["locktime"],
-      vin: rawTx["vin"],
+    const tx: explorer.Transaction = {
+      txid: rawTx['txid'],
+      version: rawTx['version'],
+      locktime: rawTx['locktime'],
+      vin: rawTx['vin'],
       fee: 0, // TODO
-      vout: rawTx["vout"],
-      size: rawTx["size"],
+      vout: rawTx['vout'],
+      size: rawTx['size'],
       status
     }
-    return this.formatTransaction(tx, currentHeight, rawTx["hex"])
+    return this.formatTransaction(tx, currentHeight, rawTx['hex'])
   }
 
   async formatTransaction(tx: explorer.Transaction, currentHeight: number, hex?: string) {
@@ -139,10 +139,10 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
   }
 
   async getBlockByHash(blockHash: string) {
-    let data;
+    let data
 
     try {
-      data = await this.bchjs.Blockchain.getBlock(blockHash);
+      data = await this.bchjs.Blockchain.getBlock(blockHash)
     } catch (e) {
       const { name, message, ...attrs } = e
       throw new BlockNotFoundError(`Block not found: ${blockHash}`, attrs)
@@ -171,7 +171,7 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
   }
 
   async getBlockHash(blockNumber: number): Promise<string> {
-    return await this.bchjs.Blockchain.getBlockHash([blockNumber])[0];
+    return await this.bchjs.Blockchain.getBlockHash([blockNumber])[0]
   }
 
   async getBlockByNumber(blockNumber: number) {
@@ -192,6 +192,6 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
   }
 
   async sendRawTransaction(rawTransaction: string): Promise<string> {
-    return await this.bchjs.RawTransactions.sendRawTransaction(rawTransaction);
+    return await this.bchjs.RawTransactions.sendRawTransaction(rawTransaction)
   }
 }

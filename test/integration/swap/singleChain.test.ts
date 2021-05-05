@@ -297,46 +297,46 @@ function testFee(chain: Chain) {
       await expectFee(chain, refundTx.hash, expectedFee, false, true)
     })
   })
-    ; (chain.client.wallet.canUpdateFee ? describe : describe.skip)('Update Fee', () => {
-      if (!chain.id.includes('ERC20')) {
-        // ERC20 initiation cannot be fee bumped
-        it('Initiate', async () => {
-          const secretHash = crypto.sha256(mockSecret)
-          const swapParams = await getSwapParams(chain, secretHash)
-          const initiationTx = await chain.client.swap.initiateSwap(swapParams, 25)
-          const expectedFee = 50
-          const newInitiationTx = await chain.client.chain.updateTransactionFee(initiationTx.hash, expectedFee)
-          await expectFee(chain, newInitiationTx.hash, expectedFee, true)
-        })
-      }
-
-      it('Claim', async () => {
+  ;(chain.client.wallet.canUpdateFee ? describe : describe.skip)('Update Fee', () => {
+    if (!chain.id.includes('ERC20')) {
+      // ERC20 initiation cannot be fee bumped
+      it('Initiate', async () => {
         const secretHash = crypto.sha256(mockSecret)
         const swapParams = await getSwapParams(chain, secretHash)
-        const initiationTxId = await initiateAndVerify(chain, swapParams)
-        await mineBlock(chain)
-        const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, mockSecret, 25)
+        const initiationTx = await chain.client.swap.initiateSwap(swapParams, 25)
         const expectedFee = 50
-        const newClaimTx = await chain.client.chain.updateTransactionFee(claimTx.hash, expectedFee)
-        await expectFee(chain, newClaimTx.hash, expectedFee, false, true)
+        const newInitiationTx = await chain.client.chain.updateTransactionFee(initiationTx.hash, expectedFee)
+        await expectFee(chain, newInitiationTx.hash, expectedFee, true)
       })
+    }
 
-      it('Refund', async () => {
-        const secretHash = crypto.sha256(mockSecret)
-        const swapParams = await getSwapParams(chain, secretHash)
-        swapParams.expiration = Math.floor(Date.now() / 1000) // now
-        const initiationTxId = await initiateAndVerify(chain, swapParams)
-        await mineBlock(chain)
-        await mineUntilTimestamp(chain, swapParams.expiration)
-        const refundTx = await chain.client.swap.refundSwap(swapParams, initiationTxId, 25)
-        const expectedFee = 50
-        const newRefundTx = await chain.client.chain.updateTransactionFee(refundTx.hash, expectedFee)
-        await expectFee(chain, newRefundTx.hash, expectedFee, false, true)
-      })
+    it('Claim', async () => {
+      const secretHash = crypto.sha256(mockSecret)
+      const swapParams = await getSwapParams(chain, secretHash)
+      const initiationTxId = await initiateAndVerify(chain, swapParams)
+      await mineBlock(chain)
+      const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, mockSecret, 25)
+      const expectedFee = 50
+      const newClaimTx = await chain.client.chain.updateTransactionFee(claimTx.hash, expectedFee)
+      await expectFee(chain, newClaimTx.hash, expectedFee, false, true)
     })
+
+    it('Refund', async () => {
+      const secretHash = crypto.sha256(mockSecret)
+      const swapParams = await getSwapParams(chain, secretHash)
+      swapParams.expiration = Math.floor(Date.now() / 1000) // now
+      const initiationTxId = await initiateAndVerify(chain, swapParams)
+      await mineBlock(chain)
+      await mineUntilTimestamp(chain, swapParams.expiration)
+      const refundTx = await chain.client.swap.refundSwap(swapParams, initiationTxId, 25)
+      const expectedFee = 50
+      const newRefundTx = await chain.client.chain.updateTransactionFee(refundTx.hash, expectedFee)
+      await expectFee(chain, newRefundTx.hash, expectedFee, false, true)
+    })
+  })
 }
 
-describe('Swap Single Chain Flow', function() {
+describe('Swap Single Chain Flow', function () {
   this.timeout(TEST_TIMEOUT)
 
   describeExternal('Near - JS', () => {
@@ -345,7 +345,7 @@ describe('Swap Single Chain Flow', function() {
   })
 
   describeExternal('Bitcoin - Ledger', () => {
-    before(async function() {
+    before(async function () {
       await importBitcoinAddresses(chains.bitcoinWithLedger)
       await fundWallet(chains.bitcoinWithLedger)
     })
@@ -361,7 +361,7 @@ describe('Swap Single Chain Flow', function() {
   })
 
   describe('Bitcoin - Js', () => {
-    before(async function() {
+    before(async function () {
       await importBitcoinAddresses(chains.bitcoinWithJs)
       await fundWallet(chains.bitcoinWithJs)
     })
@@ -376,12 +376,11 @@ describe('Swap Single Chain Flow', function() {
   })
 
   describe('Bitcoin Cash - Js', () => {
-    before(async function() {
+    before(async function () {
       await importBitcoinAddresses(chains.bitcoinCashWithJs)
       await fundWallet(chains.bitcoinCashWithJs)
     })
     testSwap(chains.bitcoinCashWithJs)
-
   })
 
   describe('Ethereum', () => {
@@ -389,7 +388,7 @@ describe('Swap Single Chain Flow', function() {
 
     describeExternal('Ethereum - MetaMask', () => {
       connectMetaMask()
-      before(async function() {
+      before(async function () {
         await fundWallet(chains.ethereumWithMetaMask)
       })
       testSwap(chains.ethereumWithMetaMask)
@@ -404,7 +403,7 @@ describe('Swap Single Chain Flow', function() {
     })
 
     describeExternal('Ethereum - Ledger', () => {
-      before(async function() {
+      before(async function () {
         await fundWallet(chains.ethereumWithLedger)
       })
       testSwap(chains.ethereumWithLedger)
@@ -413,7 +412,7 @@ describe('Swap Single Chain Flow', function() {
     })
 
     describe('Ethereum - Js', () => {
-      before(async function() {
+      before(async function () {
         await fundWallet(chains.ethereumWithJs)
       })
       testSwap(chains.ethereumWithJs)
@@ -423,7 +422,7 @@ describe('Swap Single Chain Flow', function() {
 
     describeExternal('ERC20 - MetaMask', () => {
       connectMetaMask()
-      before(async function() {
+      before(async function () {
         await fundWallet(chains.erc20WithMetaMask)
         await deployERC20Token(chains.erc20WithMetaMask)
       })
@@ -434,7 +433,7 @@ describe('Swap Single Chain Flow', function() {
     })
 
     describe('ERC20 - Node', async () => {
-      before(async function() {
+      before(async function () {
         await deployERC20Token(chains.erc20WithNode)
       })
 
@@ -444,7 +443,7 @@ describe('Swap Single Chain Flow', function() {
     })
 
     describeExternal('ERC20 - Ledger', () => {
-      before(async function() {
+      before(async function () {
         await fundWallet(chains.erc20WithLedger)
         await deployERC20Token(chains.erc20WithLedger)
       })
@@ -454,7 +453,7 @@ describe('Swap Single Chain Flow', function() {
     })
 
     describe('ERC20 - JS', () => {
-      before(async function() {
+      before(async function () {
         await fundWallet(chains.erc20WithJs)
         await deployERC20Token(chains.erc20WithJs)
       })

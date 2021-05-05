@@ -35,10 +35,10 @@ async function testSwap(chain1: Chain, chain2: Chain) {
   await claimAndVerify(chain2, chain2InitiationTxId, revealedSecret, chain2SwapParams)
 }
 
-describe('Swap Chain to Chain', function() {
+describe('Swap Chain to Chain', function () {
   this.timeout(TEST_TIMEOUT)
 
-  describeExternal('Ledger to Node', function() {
+  describeExternal('Ledger to Node', function () {
     before(async () => {
       await importBitcoinAddresses(chains.bitcoinWithLedger)
       await fundWallet(chains.bitcoinWithLedger)
@@ -53,7 +53,7 @@ describe('Swap Chain to Chain', function() {
     })
   })
 
-  describeExternal('Ledger to MetaMask', function() {
+  describeExternal('Ledger to MetaMask', function () {
     connectMetaMask()
 
     before(async () => {
@@ -71,7 +71,7 @@ describe('Swap Chain to Chain', function() {
     })
   })
 
-  describe('Node to Node', function() {
+  describe('Node to Node', function () {
     it('ETH (Node) - BCH (Node)', async () => {
       await testSwap(chains.ethereumWithNode, chains.bitcoinCashWithNode)
     })
@@ -89,7 +89,7 @@ describe('Swap Chain to Chain', function() {
     })
   })
 
-  describe('JS to JS', function() {
+  describe('JS to JS', function () {
     before(async () => {
       await importBitcoinAddresses(chains.bitcoinWithJs)
       await importBitcoinAddresses(chains.bitcoinCashWithJs)

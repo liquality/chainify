@@ -1,7 +1,7 @@
 import { Network as BitcoinJsLibNetwork } from 'bitcoinjs-lib'
 import { Network } from '@liquality/types'
 
-export interface BitcoinCashNetwork extends Network, BitcoinJsLibNetwork { }
+export interface BitcoinCashNetwork extends Network, BitcoinJsLibNetwork {}
 
 // Use the same derivation path as Electron Cash
 // https://www.reddit.com/r/btc/comments/a8jja9/psa_figuring_out_the_correct_hd_derivation_paths/ecbh3ri
@@ -14,7 +14,7 @@ const bitcoin_cash: BitcoinCashNetwork = {
     // Networks.mainnet.xpubkey
     public: 0x0488b21e,
     // Networks.mainnet.xprivkey
-    private: 0x0488ade4,
+    private: 0x0488ade4
   },
   pubKeyHash: 0x00,
   scriptHash: 0x05,
@@ -30,7 +30,7 @@ const bitcoin_cash_testnet: BitcoinCashNetwork = {
   bech32: '',
   bip32: {
     public: 0x043587cf,
-    private: 0x04358394,
+    private: 0x04358394
   },
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
@@ -45,7 +45,7 @@ const bitcoin_cash_regtest: BitcoinCashNetwork = {
   bech32: '',
   bip32: {
     public: 0x043587cf,
-    private: 0x04358394,
+    private: 0x04358394
   },
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
