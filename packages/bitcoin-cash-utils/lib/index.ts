@@ -1,4 +1,4 @@
-import BitcoinCashNetworks, { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
+import { BitcoinCashNetwork, BitcoinCashNetworks } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
 import { Address, Transaction, bitcoinCash as bT } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'

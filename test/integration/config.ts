@@ -1,6 +1,6 @@
 import { BigNumber } from '../../packages/types/lib'
 import { BitcoinNetworks } from '../../packages/bitcoin-networks/lib'
-import BitcoinCashNetworks from '../../packages/bitcoin-cash-networks/lib'
+import { BitcoinCashNetworks } from '../../packages/bitcoin-cash-networks/lib'
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
 

@@ -1,9 +1,9 @@
 import { ECPair } from 'bitcoinjs-lib'
 import { uniq, flatten } from 'lodash'
-import WalletProvider from '@liquality/wallet-provider'
-import JsonRpcProvider from '@liquality/jsonrpc-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
+import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { bitcoinCash, SendOptions, BigNumber, Transaction, Address } from '@liquality/types'
-import BitcoinCashNetworks, { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
+import { BitcoinCashNetworks, BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
 import { normalizeTransactionObject, decodeRawTransaction, constructSweepSwap, bitcoreCash } from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
 import { sha256 } from '@liquality/crypto'
 

@@ -1,4 +1,4 @@
-import NodeProvider from '@liquality/node-provider'
+import { NodeProvider } from '@liquality/node-provider'
 import { addressToString } from '@liquality/utils'
 import { decodeRawTransaction, normalizeTransactionObject } from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'

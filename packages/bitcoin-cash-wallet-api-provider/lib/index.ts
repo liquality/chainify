@@ -1,3 +1,3 @@
 import BitcoinCashWalletApiProvider from './BitcoinCashWalletApiProvider'
 
-export default BitcoinCashWalletApiProvider
+export { BitcoinCashWalletApiProvider }

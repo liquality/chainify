@@ -1,5 +1,5 @@
-import BitcoinCashWalletProvider from '../../bitcoin-cash-wallet-provider' //'@liquality/bitcoin-cash-wallet-provider'
-import WalletProvider from '@liquality/wallet-provider'
+import { BitcoinCashWalletProvider } from '../../bitcoin-cash-wallet-provider' //'@liquality/bitcoin-cash-wallet-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
 import { Address, SendOptions } from '@liquality/types'
 

@@ -60,4 +60,4 @@ const BitcoinCashNetworks = {
   bitcoin_cash_regtest
 }
 
-export default BitcoinCashNetworks
+export { BitcoinCashNetworks }

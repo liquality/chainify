@@ -2,7 +2,7 @@ import { selectCoins, normalizeTransactionObject, decodeRawTransaction, bitcoreC
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks'//'@liquality/bitcoin-cash-networks'
 import { bitcoinCash, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import { InsufficientBalanceError } from '@liquality/errors'
 
 import { BIP32Interface, payments } from 'bitcoinjs-lib'
