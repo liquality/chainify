@@ -14,6 +14,10 @@ import { BitcoinNodeWalletProvider } from '../../packages/bitcoin-node-wallet-pr
 import { BitcoinJsWalletProvider } from '../../packages/bitcoin-js-wallet-provider/lib'
 import { BitcoinRpcProvider } from '../../packages/bitcoin-rpc-provider/lib'
 import * as BitcoinUtils from '../../packages/bitcoin-utils/lib'
+import BitcoinCashSwapProvider from '../../packages/bitcoin-cash-swap-provider/lib'
+import BitcoinCashNodeWalletProvider from '../../packages/bitcoin-cash-node-wallet-provider/lib'
+import BitcoinCashJsWalletProvider from '../../packages/bitcoin-cash-js-wallet-provider/lib'
+import BitcoinCashRpcProvider from '../../packages/bitcoin-cash-rpc-provider/lib'
 import { EthereumRpcProvider } from '../../packages/ethereum-rpc-provider/lib'
 import { EthereumWalletApiProvider } from '../../packages/ethereum-wallet-api-provider/lib'
 import { EthereumSwapProvider } from '../../packages/ethereum-swap-provider/lib'
@@ -62,6 +66,18 @@ function mockedBitcoinRpcProvider() {
   return bitcoinRpcProvider
 }
 
+function mockedBitcoinCashRpcProvider() {
+  const bitcoinCashRpcProvider = new BitcoinCashRpcProvider({
+    network: config.bitcoincash.network,
+    uri: config.bitcoincash.rpc.host,
+    username: config.bitcoincash.rpc.username,
+    password: config.bitcoincash.rpc.password
+  })
+  // Mock Fee Per Byte to prevent from changing
+  bitcoinCashRpcProvider.getFeePerByte = async () => CONSTANTS.BITCOIN_FEE_PER_BYTE
+  return bitcoinCashRpcProvider
+}
+
 const bitcoinWithLedger = new Client()
 bitcoinWithLedger.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithLedger.addProvider(
@@ -95,6 +111,25 @@ bitcoinWithJs.addProvider(
   })
 )
 bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
+
+const bitcoinCashWithNode = new Client()
+bitcoinCashWithNode.addProvider(mockedBitcoinCashRpcProvider())
+bitcoinCashWithNode.addProvider(
+  new BitcoinCashNodeWalletProvider({
+    network: config.bitcoincash.network,
+    uri: config.bitcoincash.rpc.host,
+    username: config.bitcoincash.rpc.username,
+    password: config.bitcoincash.rpc.password
+  })
+)
+bitcoinCashWithNode.addProvider(new BitcoinCashSwapProvider({ network: config.bitcoincash.network }))
+
+const bitcoinCashWithJs = new Client()
+bitcoinCashWithJs.addProvider(mockedBitcoinCashRpcProvider())
+bitcoinCashWithJs.addProvider(
+  new BitcoinCashJsWalletProvider({ network: config.bitcoincash.network, mnemonic: generateMnemonic(256) })
+)
+bitcoinCashWithJs.addProvider(new BitcoinCashSwapProvider({ network: config.bitcoincash.network }))
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
@@ -201,6 +236,13 @@ const chains: { [index: string]: Chain } = {
     segwitFeeImplemented: true
   },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: config.bitcoin.network },
+  bitcoinCashWithNode: {
+    id: 'Bitcoin Cash Node',
+    name: 'bitcoincash',
+    client: bitcoinCashWithNode,
+    network: config.bitcoincash.network
+  },
+  bitcoinCashWithJs: { id: 'Bitcoin Cash Js', name: 'bitcoincash', client: bitcoinCashWithJs, network: config.bitcoincash.network },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
@@ -236,6 +278,14 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
   switch (chain.name) {
     case 'bitcoin': {
       tx = await chains.bitcoinWithNode.client.chain.sendTransaction({
+        to: address,
+        value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE
+      })
+      break
+    }
+
+    case 'bitcoincash': {
+      tx = await chains.bitcoinCashWithNode.client.chain.sendTransaction({
         to: address,
         value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE
       })
@@ -319,6 +369,10 @@ async function getRandomAddress(chain: Chain): Promise<Address> {
       return getRandomBitcoinAddress(chain)
     }
 
+    case 'bitcoincash': {
+      return getRandomBitcoinCashAddress(chain)
+    }
+
     default: {
       throw Error(`Unsupported chain: ${chain.name}`)
     }
@@ -335,6 +389,11 @@ function getRandomEthereumAddress() {
 async function getRandomBitcoinAddress(chain: Chain): Promise<Address> {
   const bitcoinRpcProvider = findProvider(chain.client, BitcoinRpcProvider) as BitcoinRpcProvider
   return bitcoinRpcProvider.jsonrpc('getnewaddress')
+}
+
+async function getRandomBitcoinCashAddress(chain: Chain): Promise<Address> {
+  const bitcoinCashRpcProvider = findProvider(chain.client, BitcoinCashRpcProvider) as BitcoinCashRpcProvider
+  return bitcoinCashRpcProvider.jsonrpc('getnewaddress')
 }
 
 async function mineBlock(chain: Chain, blocks = 1) {
@@ -359,7 +418,7 @@ async function mineUntilTimestamp(chain: Chain, timestamp: number) {
       console.log(
         '\x1b[2m',
         `Mining until chain timestamp: ${timestamp}. Now: ${block.timestamp}. Remaining: ${
-          timestamp - block.timestamp
+        timestamp - block.timestamp
         }s`,
         '\x1b[0m'
       )
@@ -457,7 +516,7 @@ async function expectBalance(
 ) {
   const balanceBefore = await chain.client.chain.getBalance([address])
   await func()
-  if (chain.name === 'bitcoin') await sleep(1000) // Node seems to need a little bit of time to process utxos
+  if (chain.name === 'bitcoin' || chain.name === 'bitcoincash') await sleep(1000) // Node seems to need a little bit of time to process utxos
   const balanceAfter = await chain.client.chain.getBalance([address])
   comparison(balanceBefore, balanceAfter)
 }
@@ -491,7 +550,7 @@ async function expectFee(
   swapInitiate = false,
   swapRedeem = false
 ) {
-  if (chain.name === 'bitcoin') {
+  if (chain.name === 'bitcoin' || chain.name === 'bitcoincash') {
     return swapRedeem // It's dumb because it does legacy calculation using 1 input 1 output
       ? expectBitcoinSwapRedeemFee(chain, txHash, expectedFeePerByte)
       : expectBitcoinFee(chain, txHash, expectedFeePerByte, swapInitiate)
@@ -600,6 +659,7 @@ export {
   getNewAddress,
   getRandomAddress,
   getRandomBitcoinAddress,
+  getRandomBitcoinCashAddress,
   importBitcoinAddresses,
   fundAddress,
   fundWallet,

@@ -189,15 +189,15 @@ export default class BitcoinCashSwapProvider extends Provider implements Partial
 
     const signedTx: string = await this.getMethod('sweepSwapOutput')(
       {
-        "txId": initiationTxHash,
+        "txid": initiationTxHash,
         "outputIndex": swapVout.n,
         "address": inputTx.outputs[swapVout.n].script.toAddress(bitcoreNetworkName(network)),
-        "script": inputTx.outputs[swapVout.n].script,
+        "script": inputTx.outputs[swapVout.n].script.toHex(),
         "satoshis": inputTx.outputs[swapVout.n].satoshis
       },
-      Buffer.from(secretHash, 'hex'),
-      Buffer.from(recipientPublicKey, 'hex'),
-      Buffer.from(refundPublicKey, 'hex'),
+      secretHash,
+      recipientPublicKey,
+      refundPublicKey,
       expiration,
       address,
       walletAddress,
@@ -210,14 +210,13 @@ export default class BitcoinCashSwapProvider extends Provider implements Partial
     return normalizeTransactionObject(decodeRawTransaction(signedTx, this._network), txfee)
   }
 
-
   extractSwapParams(outputScript: string) {
     const buffer = bScript.decompile(Buffer.from(outputScript, 'hex')) as Buffer[]
     if (buffer.length !== 20) throw new Error('Invalid swap output script')
-    const secretHash = buffer[5].reverse().toString('hex')
-    const recipientPublicKey = buffer[9].reverse().toString('hex')
-    const expiration = parseInt(buffer[11].reverse().toString('hex'), 16)
-    const refundPublicKey = buffer[16].reverse().toString('hex')
+    const secretHash = buffer[5]
+    const recipientPublicKey = buffer[9]
+    const expiration = parseInt(buffer[11].toString('hex'), 16)
+    const refundPublicKey = buffer[16]
     return { recipientPublicKey, refundPublicKey, secretHash, expiration }
   }
 

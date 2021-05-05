@@ -1,4 +1,4 @@
-import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '../../bitcoin-cash-utils' // '@liquality/bitcoin-cash-utils'
+import { selectCoins, normalizeTransactionObject, decodeRawTransaction, bitcoreCash, bitcoreNetworkName } from '../../bitcoin-cash-utils' // '@liquality/bitcoin-cash-utils'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks'//'@liquality/bitcoin-cash-networks'
 import { bitcoinCash, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
@@ -148,7 +148,11 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     }
 
     getAddressFromPublicKey(publicKey: Buffer) {
-      return this.getPaymentVariantFromPublicKey(publicKey).address
+      const oldAddress = this.getPaymentVariantFromPublicKey(publicKey).address
+      // Do not directly convert - regtest and testnet are different in CashAddr
+      return bitcoreCash.Script.buildPublicKeyHashOut(
+        new bitcoreCash.Address(oldAddress)
+      ).toAddress(bitcoreNetworkName(this._network)).toString()
     }
 
     getPaymentVariantFromPublicKey(publicKey: Buffer) {

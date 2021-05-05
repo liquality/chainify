@@ -8,15 +8,7 @@ import * as bitcoin from 'bitcoinjs-lib'
 import * as classify from 'bitcoinjs-lib/src/classify'
 import coinselect from 'coinselect'
 import coinselectAccumulative from 'coinselect/accumulative'
-
-// Disable version guard
-// @ts-ignore
-global._bitcoreCash = global._bitcore = undefined;
-
-import * as bitcoreCash from 'bitcore-lib-cash'
-
-// @ts-ignore
-global._bitcoreCash = global._bitcore = undefined;
+import { SwapScriptHashInput, bitcoreCash } from './SwapOutput'
 
 function classifyScript(script: bitcoreCash.Script) {
   // Translate to Core's std::string GetTxnOutputType types
@@ -238,6 +230,71 @@ function validateAddress(_address: Address | string, network: BitcoinCashNetwork
   }
 }
 
+function constructSweepSwap(
+  privateKey: bitcoreCash.PrivateKey,
+  utxo: any,
+  secretHash: Buffer,
+  recipientPublicKey: Buffer,
+  refundPublicKey: Buffer,
+  expiration: number,
+  toAddress: Address,
+  fromAddress: Address,
+  outValue: number,
+  feePerByte: number,
+  secret?: Buffer
+) {
+  let tx = new bitcoreCash.Transaction();
+  if (feePerByte) {
+    tx = tx.feePerByte(feePerByte);
+  }
+  let out = new bitcoreCash.Transaction.Output({
+    script: utxo["script"],
+    satoshis: utxo["satoshis"]
+  });
+
+  // @ts-ignore
+  tx.addInput(new SwapScriptHashInput(
+    {
+      output: out,
+      prevTxId: utxo["txid"],
+      outputIndex: utxo["outputIndex"],
+      script: bitcoreCash.Script.empty()
+    },
+    secretHash,
+    recipientPublicKey,
+    refundPublicKey,
+    expiration,
+    secret
+  ))
+
+  // This must run after adding at least one input
+  if (!secret) {
+    (tx as any).nLockTime = expiration;
+    for (var i = 0; i < tx.inputs.length; i++) {
+      if (tx.inputs[i].sequenceNumber === (bitcoreCash.Transaction.Input as any).DEFAULT_SEQNUMBER) {
+        (tx.inputs[i].sequenceNumber as any) = (bitcoreCash.Transaction.Input as any).DEFAULT_LOCKTIME_SEQNUMBER;
+      }
+    }
+  }
+
+  tx.addOutput(new bitcoreCash.Transaction.Output({
+    script: bitcoreCash.Script.fromAddress(new bitcoreCash.Address(toAddress)),
+    satoshis: outValue
+  }));
+
+  // Remove the change output if it exits
+  const changeIndex = (tx as any)._changeIndex;
+  if (changeIndex) {
+    const changeOutput = tx.outputs[changeIndex];
+    const totalOutputAmount = (tx as any)._outputAmount;
+    (tx as any)._removeOutput(changeIndex);
+    (tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis;
+    (tx as any)._changeIndex = undefined;
+  }
+
+  return tx.sign(privateKey).uncheckedSerialize()
+}
+
 export {
   calculateFee,
   compressPubKey,
@@ -248,5 +305,6 @@ export {
   bitcoreNetworkName,
   bitcoreCash,
   getPubKeyHash,
-  validateAddress
+  validateAddress,
+  constructSweepSwap
 }

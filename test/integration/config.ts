@@ -1,5 +1,6 @@
 import { BigNumber } from '../../packages/types/lib'
 import { BitcoinNetworks } from '../../packages/bitcoin-networks/lib'
+import BitcoinCashNetworks from '../../packages/bitcoin-cash-networks/lib'
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
 
@@ -11,6 +12,16 @@ export default {
       password: 'local321'
     },
     network: BitcoinNetworks.bitcoin_regtest,
+    value: new BigNumber(1000000),
+    mineBlocks: true
+  },
+  bitcoincash: {
+    rpc: {
+      host: 'http://localhost:18543',
+      username: 'bitcoin',
+      password: 'local321'
+    },
+    network: BitcoinCashNetworks.bitcoin_cash_regtest,
     value: new BigNumber(1000000),
     mineBlocks: true
   },

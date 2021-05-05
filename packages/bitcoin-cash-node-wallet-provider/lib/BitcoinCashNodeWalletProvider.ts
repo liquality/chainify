@@ -1,10 +1,10 @@
-import { ECPair, script } from 'bitcoinjs-lib'
+import { ECPair } from 'bitcoinjs-lib'
 import { uniq, flatten } from 'lodash'
 import WalletProvider from '@liquality/wallet-provider'
 import JsonRpcProvider from '@liquality/jsonrpc-provider'
 import { bitcoinCash, SendOptions, BigNumber, Transaction, Address } from '@liquality/types'
 import BitcoinCashNetworks, { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
-import { normalizeTransactionObject, decodeRawTransaction } from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
+import { normalizeTransactionObject, decodeRawTransaction, constructSweepSwap, bitcoreCash } from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
 import { sha256 } from '@liquality/crypto'
 
 const BIP70_CHAIN_TO_NETWORK: { [index: string]: BitcoinCashNetwork } = {
@@ -57,7 +57,12 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   async _sendTransaction(options: SendOptions) {
     const value = new BigNumber(options.value).dividedBy(1e8).toNumber()
-    const hash = await this._rpc.jsonrpc('sendtoaddress', options.to, value, '', '', false, true)
+
+    // Bitcoin Core API:
+    //const hash = await this._rpc.jsonrpc('sendtoaddress', options.to, value, '', '', false, true)
+    // BCHN API:
+    const hash = await this._rpc.jsonrpc('sendtoaddress', options.to, value, '', '', false)
+
     const transaction = await this._rpc.jsonrpc('gettransaction', hash, true)
     const fee = new BigNumber(transaction.fee).abs().times(1e8).toNumber()
     return normalizeTransactionObject(decodeRawTransaction(transaction.hex, this._network), fee)
@@ -83,6 +88,35 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     return psbt.toBase64()
   }*/
 
+  async sweepSwapOutput(
+    utxo: any,
+    secretHash: Buffer,
+    recipientPublicKey: Buffer,
+    refundPublicKey: Buffer,
+    expiration: number,
+    toAddress: Address,
+    fromAddress: Address,
+    outValue: number,
+    feePerByte: number,
+    secret?: Buffer
+  ) {
+    const privkey = await this.dumpPrivKey(fromAddress.address)
+
+    return constructSweepSwap(
+      new bitcoreCash.PrivateKey(privkey),
+      utxo,
+      secretHash,
+      recipientPublicKey,
+      refundPublicKey,
+      expiration,
+      toAddress,
+      fromAddress,
+      outValue,
+      feePerByte,
+      secret
+    )
+  }
+
   async signBatchP2SHTransaction(
     inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
     addresses: string,
@@ -106,8 +140,27 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
         0x41
       ) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
 
-      const sig = script.signature.encode(wallets[i].sign(sigHash), 0x41)
-      sigs.push(sig)
+      const signed = wallets[i].sign(sigHash)
+
+      // BitcoinJS does not allow SIGHASH_FORKID
+      let signature = new bitcoreCash.crypto.Signature()
+      let r = signed.slice(0, 32)
+      let s = signed.slice(32)
+
+      // @ts-ignore
+      r.toBuffer = () => r
+      // @ts-ignore
+      s.toBuffer = () => s
+
+      // @ts-ignore
+      signature.set({
+        r: r,
+        s: s,
+        isSchnorr: false,
+        nhashtype: 0x01 | 0x40
+      })
+      // @ts-ignore
+      sigs.push(signature.toTxFormat())
     }
 
     return sigs
@@ -199,5 +252,9 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
+  }
+
+  canUpdateFee() {
+    return false
   }
 }

@@ -3,12 +3,12 @@ import WalletProvider from '@liquality/wallet-provider'
 import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
 import { bitcoinCash, Address } from '@liquality/types'
 
-import { ECPair, ECPairInterface, script } from 'bitcoinjs-lib'
+import { ECPair, ECPairInterface } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
-import { bitcoreCash, bitcoreNetworkName } from '../../bitcoin-cash-utils' // '@liquidity/bitcoin-cash-utils'
-import { SwapScriptHashInput } from './SwapOutput'
+import { bitcoreCash, bitcoreNetworkName, constructSweepSwap } from '../../bitcoin-cash-utils' // '@liquidity/bitcoin-cash-utils'
+
 
 type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 
@@ -88,7 +88,7 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
     for (let i = 0; i < inputs.length; i++) {
       const wallet = await this.getWalletAddress(inputs[i].address);
       const wif = node.derivePath(wallet.derivationPath).toWIF();
-      privateKeys.push(new bitcoreCash.PrivateKey(wif, bitcoreNetworkName(network)))
+      privateKeys.push(new bitcoreCash.PrivateKey(wif))
 
       const inputTxRaw = await this.getMethod('getRawTransactionByHash')(inputs[i].txid)
       const inputTx = new bitcoreCash.Transaction(inputTxRaw);
@@ -97,10 +97,24 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
       tx = tx.from([{
         "txId": inputs[i].txid,
         "outputIndex": inputs[i].vout,
-        "address": inputTx.outputs[i].script.toAddress(bitcoreNetworkName(network)),
-        "script": inputTx.outputs[i].script,
-        "satoshis": inputTx.outputs[i].satoshis
+        "address": inputTx.outputs[inputs[i].vout].script.toAddress(bitcoreNetworkName(network)),
+        "script": inputTx.outputs[inputs[i].vout].script,
+        "satoshis": inputTx.outputs[inputs[i].vout].satoshis
       }])
+      // Alternative
+      /*let out = new bitcoreCash.Transaction.Output({
+        script: inputTx.outputs[inputs[i].vout].script,
+        satoshis: inputTx.outputs[inputs[i].vout].satoshis
+      });
+      tx.addInput(new bitcoreCash.Transaction.Input.PublicKeyHash(
+        {
+          output: out,
+          prevTxId: inputs[i].txid,
+          outputIndex: inputs[i].vout,
+          script: bitcoreCash.Script.empty()
+        }
+      ))*/
+
     }
 
     for (const output of targets) {
@@ -117,10 +131,16 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
       const totalOutputAmount = (tx as any)._outputAmount;
       (tx as any)._removeOutput(changeIndex);
       (tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis;
-      (tx as any)._changeIndex = undefined;
+      (tx as any)._changeIndex = 0;
     }
 
-    return { hex: tx.sign(privateKeys/*, null as any, "schnorr"*/).serialize(), fee }
+    const signed = tx.sign(privateKeys/*, null as any, "schnorr"*/)
+    if (!signed.isFullySigned()) {
+      throw new Error("Tx not fully signed")
+    }
+
+
+    return { hex: signed.serialize(), fee }
   }
 
   async _buildSweepTransaction(externalChangeAddress: string, feePerByte: number) {
@@ -156,56 +176,23 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
     feePerByte: number,
     secret?: Buffer
   ) {
-    let tx = new bitcoreCash.Transaction();
-    if (feePerByte) {
-      tx = tx.feePerByte(feePerByte);
-    }
-    // @ts-ignore
-    tx.addInput(new SwapScriptHashInput(
-      {
-        "txId": utxo["txid"],
-        "outputIndex": utxo["outputIndex"],
-        "address": utxo["address"],
-        "script": utxo["script"],
-        "satoshis": utxo["satoshis"]
-      },
+    const node = await this.seedNode()
+    const wif = node.derivePath(fromAddress.derivationPath).toWIF();
+    const privateKey = new bitcoreCash.PrivateKey(wif)
+
+    return constructSweepSwap(
+      privateKey,
+      utxo,
       secretHash,
       recipientPublicKey,
       refundPublicKey,
       expiration,
+      toAddress,
+      fromAddress,
+      outValue,
+      feePerByte,
       secret
-    ))
-
-    // This must run after adding at least one input
-    if (!secret) {
-      (tx as any).nLockTime = expiration;
-      for (var i = 0; i < tx.inputs.length; i++) {
-        if (tx.inputs[i].sequenceNumber === (bitcoreCash.Transaction.Input as any).DEFAULT_SEQNUMBER) {
-          (tx.inputs[i].sequenceNumber as any) = (bitcoreCash.Transaction.Input as any).DEFAULT_LOCKTIME_SEQNUMBER;
-        }
-      }
-    }
-
-    tx.addOutput(new bitcoreCash.Transaction.Output({
-      script: bitcoreCash.Script.fromAddress(new bitcoreCash.Address(toAddress)),
-      satoshis: outValue
-    }));
-
-    // Remove the change output if it exits
-    const changeIndex = (tx as any)._changeIndex;
-    if (changeIndex) {
-      const changeOutput = tx.outputs[changeIndex];
-      const totalOutputAmount = (tx as any)._outputAmount;
-      (tx as any)._removeOutput(changeIndex);
-      (tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis;
-      (tx as any)._changeIndex = undefined;
-    }
-
-    const node = await this.seedNode()
-    const wif = node.derivePath(fromAddress.derivationPath).toWIF();
-    const privateKey = new bitcoreCash.PrivateKey(wif, bitcoreNetworkName(this._network))
-
-    return tx.sign(privateKey).serialize()
+    )
   }
 
   async signBatchP2SHTransaction(
@@ -225,9 +212,27 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
     for (let i = 0; i < inputs.length; i++) {
       const index = inputs[i].txInputIndex ? inputs[i].txInputIndex : inputs[i].index
       let sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, 0x01 | 0x40)
+      const signed = keyPairs[i].sign(sigHash)
 
-      const sig = script.signature.encode(keyPairs[i].sign(sigHash), 0x01 | 0x40)
-      sigs.push(sig)
+      // BitcoinJS does not allow SIGHASH_FORKID
+      let signature = new bitcoreCash.crypto.Signature()
+      let r = signed.slice(0, 32)
+      let s = signed.slice(32)
+
+      // @ts-ignore
+      r.toBuffer = () => r
+      // @ts-ignore
+      s.toBuffer = () => s
+
+      // @ts-ignore
+      signature.set({
+        r: r,
+        s: s,
+        isSchnorr: false,
+        nhashtype: 0x01 | 0x40
+      })
+      // @ts-ignore
+      sigs.push(signature.toTxFormat())
     }
 
     return sigs
@@ -243,5 +248,9 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
 
   async isWalletAvailable() {
     return true
+  }
+
+  canUpdateFee() {
+    return false
   }
 }
