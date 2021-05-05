@@ -50,8 +50,10 @@ function SwapScriptHashInput(
     // @ts-ignore
     throw new Error(
       'Output does not hash correctly. Expected: ' +
+        // @ts-ignore
         this.output.script.toHex() +
         ' Actual: ' +
+        // @ts-ignore
         bcScript.buildScriptHashOut(this.redeemScript).toHex()
     )
   }

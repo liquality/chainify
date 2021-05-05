@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-cash-wallet-api-provider",
-  "version": "1.0.0-beta.4",
+  "version": "1.1.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,11 +20,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-networks": "^1.0.0-beta.4",
-    "@liquality/bitcoin-wallet-provider": "^1.0.0-beta.4",
-    "@liquality/types": "^1.0.0-beta.4",
-    "@liquality/utils": "^1.0.0-beta.4",
-    "@liquality/wallet-provider": "^1.0.0-beta.4"
+    "@liquality/bitcoin-networks": "^1.0.0",
+    "@liquality/bitcoin-wallet-provider": "^1.0.0",
+    "@liquality/types": "^1.0.0",
+    "@liquality/utils": "^1.0.0",
+    "@liquality/wallet-provider": "^1.0.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

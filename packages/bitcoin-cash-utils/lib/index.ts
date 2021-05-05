@@ -253,8 +253,8 @@ function constructSweepSwap(
     satoshis: utxo['satoshis']
   })
 
-  // @ts-ignore
   tx.addInput(
+    // @ts-ignore
     new SwapScriptHashInput(
       {
         output: out,

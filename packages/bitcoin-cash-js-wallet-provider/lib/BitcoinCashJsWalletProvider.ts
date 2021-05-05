@@ -92,8 +92,8 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
       const inputTxRaw = await this.getMethod('getRawTransactionByHash')(inputs[i].txid)
       const inputTx = new bitcoreCash.Transaction(inputTxRaw)
 
-      // @ts-ignore
       tx = tx.from([
+        // @ts-ignore
         {
           txId: inputs[i].txid,
           outputIndex: inputs[i].vout,
