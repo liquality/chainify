@@ -4,8 +4,8 @@ import {
   decodeRawTransaction,
   bitcoreCash,
   bitcoreNetworkName
-} from '../../bitcoin-cash-utils' // '@liquality/bitcoin-cash-utils'
-import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
+} from '@liquality/bitcoin-cash-utils'
+import { BitcoinCashNetwork } from '@liquality/bitcoin-cash-networks'
 import { bitcoinCash, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
 import { Provider } from '@liquality/provider'

@@ -2,9 +2,9 @@
 
 import { generateMnemonic } from 'bip39'
 
-import BitcoinCashNetworks from '../../../bitcoin-cash-networks/lib'
+import { BitcoinCashNetworks } from '../../../bitcoin-cash-networks/lib'
 import { Address } from '../../../types/lib'
-import BitcoinCashJsWalletProvider from '../../lib'
+import { BitcoinCashJsWalletProvider } from '../../lib'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 

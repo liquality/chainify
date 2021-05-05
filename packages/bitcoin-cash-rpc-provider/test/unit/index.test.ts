@@ -1,9 +1,9 @@
 /* eslint-env mocha */
 import chai, { expect } from 'chai'
 
-import Client from '../../../client/lib'
-import BitcoinCashNetworks from '../../../bitcoin-cash-networks/lib'
-import BitcoinCashRpcProvider from '../../lib'
+import { Client } from '../../../client/lib'
+import { BitcoinCashNetworks } from '../../../bitcoin-cash-networks/lib'
+import { BitcoinCashRpcProvider } from '../../lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
 import bitcoinCashRpc from '../../../../test/mock/bitcoin-cash/rpc'

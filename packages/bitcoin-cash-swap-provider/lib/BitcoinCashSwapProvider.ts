@@ -8,7 +8,7 @@ import {
   bitcoreCash,
   bitcoreNetworkName,
   validateAddress
-} from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
+} from '@liquality/bitcoin-cash-utils'
 import {
   addressToString,
   validateValue,
@@ -17,7 +17,7 @@ import {
   validateSecretAndHash,
   validateExpiration
 } from '@liquality/utils'
-import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
+import { BitcoinCashNetwork } from '@liquality/bitcoin-cash-networks'
 
 import { script as bScript, payments } from 'bitcoinjs-lib'
 

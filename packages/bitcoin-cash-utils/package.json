@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-networks": "^1.0.0",
+    "@liquality/bitcoin-cash-networks": "^1.0.0",
     "@liquality/crypto": "^1.0.0",
     "@liquality/errors": "^1.0.0",
     "@liquality/types": "^1.0.0",

@@ -1,9 +1,9 @@
 /* eslint-env mocha */
 
 import chai, { expect } from 'chai'
-import Client from '../../../client/lib'
-import BitcoinCashRestApiProvider from '../../lib'
-import BitcoinCashNetworks from '../../../bitcoin-cash-networks/lib'
+import { Client } from '../../../client/lib'
+import { BitcoinCashRestApiProvider } from '../../lib'
+import { BitcoinCashNetworks } from '../../../bitcoin-cash-networks/lib'
 import mockRestApi from '../mock/mockRestApi'
 chai.config.truncateThreshold = 0
 

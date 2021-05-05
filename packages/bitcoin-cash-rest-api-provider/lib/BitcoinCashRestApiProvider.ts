@@ -1,10 +1,10 @@
 import { NodeProvider } from '@liquality/node-provider'
 import { addressToString } from '@liquality/utils'
-import { decodeRawTransaction, normalizeTransactionObject } from '../../bitcoin-cash-utils' //'@liquality/bitcoin-cash-utils'
+import { decodeRawTransaction, normalizeTransactionObject } from '@liquality/bitcoin-cash-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { ChainProvider, Address, bitcoin, BigNumber } from '@liquality/types'
 import * as explorer from './types'
-import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
+import { BitcoinCashNetwork } from '@liquality/bitcoin-cash-networks'
 import BCHJS from '@psf/bch-js'
 
 import { flatten } from 'lodash'

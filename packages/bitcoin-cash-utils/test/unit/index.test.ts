@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-import BitcoinCashNetworks from '../../../bitcoin-cash-networks/lib'
+import { BitcoinCashNetworks } from '../../../bitcoin-cash-networks/lib'
 import * as BitcoinCashUtil from '../../lib'
 
 describe('Bitcoin Cash Util', () => {

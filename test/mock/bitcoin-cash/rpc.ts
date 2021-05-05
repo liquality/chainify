@@ -233,7 +233,7 @@ export default {
   ],
   sendtoaddress: [
     {
-      params: ['bchtest:pqlt35hmu8mxzj646he3amxqw3n8ed5scqj34qn9gw', 0.00001, '', '', false, true],
+      params: ['bchtest:pqlt35hmu8mxzj646he3amxqw3n8ed5scqj34qn9gw', 0.00001, '', '', false],
       result: '8d2ef62766cb1c15744228335483d37a7addc2a2f88d47413527e55e212ef8cd'
     }
   ],

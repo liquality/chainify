@@ -1,13 +1,13 @@
-import { BitcoinCashWalletProvider } from '../../bitcoin-cash-wallet-provider' //'@liquality/bitcoin-cash-wallet-provider'
+import { BitcoinCashWalletProvider } from '@liquality/bitcoin-cash-wallet-provider'
 import { WalletProvider } from '@liquality/wallet-provider'
-import { BitcoinCashNetwork } from '../../bitcoin-cash-networks' //'@liquality/bitcoin-cash-networks'
+import { BitcoinCashNetwork } from '@liquality/bitcoin-cash-networks'
 import { bitcoinCash, Address } from '@liquality/types'
 
 import { ECPair, ECPairInterface } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
-import { bitcoreCash, bitcoreNetworkName, constructSweepSwap } from '../../bitcoin-cash-utils' // '@liquidity/bitcoin-cash-utils'
+import { bitcoreCash, bitcoreNetworkName, constructSweepSwap } from '@liquality/bitcoin-cash-utils'
 
 type WalletProviderConstructor<T = WalletProvider> = new (...args: any[]) => T
 
