@@ -40,7 +40,7 @@ export default class BitcoinCashWalletApiProvider extends BitcoinCashWalletProvi
   }
 
   async sendTransaction(sendOptions: SendOptions) {
-    return this.request('wallet_sendTransaction', sendOptions)
+    return this.request('wallet_sendTransaction', { ...sendOptions, value: sendOptions.value.toNumber() })
   }
 
   async sweepSwapOutput(
