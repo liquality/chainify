@@ -569,7 +569,7 @@ async function expectBitcoinFee(chain: Chain, txHash: string, expectedFeePerByte
   const tx = await chain.client.chain.getTransactionByHash(txHash)
   const fee = await getBitcoinTransactionFee(chain, tx)
   let size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
-  if (payToScript && (chain.id.includes('Ledger') || chain.id.includes('Js'))) {
+  if (payToScript && (chain.id.includes('Ledger') || chain.id.includes('Js')) && !chain.id.includes('Cash')) {
     size -= 10 // Coin select fee calculation is off by 10 bytes as it does not consider pay to script
   }
   const maxFeePerByte = new BigNumber(new BigNumber(expectedFeePerByte).times(size + 4)).div(size).dp(0).toNumber() // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40

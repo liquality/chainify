@@ -291,10 +291,14 @@ function constructSweepSwap(
   const changeIndex = (tx as any)._changeIndex
   if (changeIndex) {
     const changeOutput = tx.outputs[changeIndex]
-    const totalOutputAmount = (tx as any)._outputAmount
-    ;(tx as any)._removeOutput(changeIndex)
-    ;(tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis
-    ;(tx as any)._changeIndex = undefined
+    // @ts-ignore
+    const totalOutputAmount = tx._outputAmount
+    // @ts-ignore
+    tx._removeOutput(changeIndex)
+    // @ts-ignore
+    tx._outputAmount = totalOutputAmount - changeOutput.satoshis
+    // @ts-ignore
+    tx._changeIndex = undefined
   }
 
   return tx.sign(privateKey).uncheckedSerialize()

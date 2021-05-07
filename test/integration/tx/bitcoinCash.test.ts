@@ -206,8 +206,8 @@ function testSignBatchP2SHTransaction(chain: Chain) {
     multiOne.paymentWithInput = bitcoinJs.payments.p2sh(multiOne.paymentParams)
     multiTwo.paymentWithInput = bitcoinJs.payments.p2sh(multiTwo.paymentParams)
 
-    tx.setInputScript(0, multiOne.paymentWithInput.input!)
-    tx.setInputScript(1, multiTwo.paymentWithInput.input!)
+    tx.setInputScript(0, multiOne.paymentWithInput.input)
+    tx.setInputScript(1, multiTwo.paymentWithInput.input)
 
     const claimTxHash = await chain.client.getMethod('sendRawTransaction')(tx.toHex())
 

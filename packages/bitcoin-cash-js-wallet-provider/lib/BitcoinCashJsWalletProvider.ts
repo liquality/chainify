@@ -93,14 +93,13 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
       const inputTx = new bitcoreCash.Transaction(inputTxRaw)
 
       tx = tx.from([
-        // @ts-ignore
-        {
+        new bitcoreCash.Transaction.UnspentOutput({
           txId: inputs[i].txid,
           outputIndex: inputs[i].vout,
           address: inputTx.outputs[inputs[i].vout].script.toAddress(bitcoreNetworkName(network)),
           script: inputTx.outputs[inputs[i].vout].script,
           satoshis: inputTx.outputs[inputs[i].vout].satoshis
-        }
+        })
       ])
       // Alternative
       /*let out = new bitcoreCash.Transaction.Output({
@@ -131,9 +130,12 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
     if (changeIndex) {
       const changeOutput = tx.outputs[changeIndex]
       const totalOutputAmount = (tx as any)._outputAmount
-      ;(tx as any)._removeOutput(changeIndex)
-      ;(tx as any)._outputAmount = totalOutputAmount - changeOutput.satoshis
-      ;(tx as any)._changeIndex = 0
+      // @ts-ignore
+      tx._removeOutput(changeIndex)
+      // @ts-ignore
+      tx._outputAmount = totalOutputAmount - changeOutput.satoshis
+      // @ts-ignore
+      tx._changeIndex = 0
     }
 
     const signed = tx.sign(privateKeys /*, null as any, "schnorr"*/)
@@ -199,8 +201,7 @@ export default class BitcoinCashJsWalletProvider extends BitcoinCashWalletProvid
   async signBatchP2SHTransaction(
     inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }],
     addresses: string,
-    tx: any,
-    lockTime?: number
+    tx: any
   ) {
     const keyPairs = []
     for (const address of addresses) {

@@ -373,6 +373,7 @@ describe('Swap Single Chain Flow', function () {
   describe('Bitcoin Cash - Node', () => {
     testSwap(chains.bitcoinCashWithNode)
     testBitcoinBalance(chains.bitcoinCashWithNode)
+    testFee(chains.bitcoinCashWithNode)
   })
 
   describe('Bitcoin Cash - Js', () => {
@@ -381,6 +382,8 @@ describe('Swap Single Chain Flow', function () {
       await fundWallet(chains.bitcoinCashWithJs)
     })
     testSwap(chains.bitcoinCashWithJs)
+    testBitcoinBalance(chains.bitcoinCashWithJs)
+    testFee(chains.bitcoinCashWithJs)
   })
 
   describe('Ethereum', () => {

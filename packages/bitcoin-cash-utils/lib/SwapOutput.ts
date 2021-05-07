@@ -7,7 +7,7 @@ import * as bitcoreCash from 'bitcore-lib-cash'
 // @ts-ignore
 global._bitcoreCash = global._bitcore = undefined
 
-const inherits = require('inherits')
+import inherits from 'inherits'
 
 const bcDeps = (bitcoreCash as any).deps
 const bcScript = bitcoreCash.Script
@@ -33,8 +33,6 @@ function SwapScriptHashInput(
 ) {
   // @ts-ignore
   bcTransaction.Input.apply(this, arguments)
-  // @ts-ignore
-  const self = this
   // @ts-ignore
   this.secretHash = secretHash
   // @ts-ignore
