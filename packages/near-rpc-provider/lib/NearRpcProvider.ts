@@ -65,7 +65,8 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
 
   async getGasPrice() {
     const result = await this._rpcQuery('gas_price', [null])
-    return get(result, 'gas_price')
+    const gasPrice = get(result, 'gas_price')
+    return parseInt(gasPrice)
   }
 
   async getBalance(_addresses: (Address | string)[]): Promise<BigNumber> {
