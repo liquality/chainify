@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import BitcoinRpcProvider from '@liquality/bitcoin-rpc-provider'
+import { BitcoinRpcProvider } from '@liquality/bitcoin-rpc-provider'
 
 const jsonrpc = new BitcoinRpcProvider('https://bitcoin.local', 'username', 'password')
 

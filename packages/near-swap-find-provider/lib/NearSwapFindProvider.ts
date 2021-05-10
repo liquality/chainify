@@ -1,5 +1,5 @@
 import { near, SwapParams, SwapProvider, Transaction } from '@liquality/types'
-import NodeProvider from '@liquality/node-provider'
+import { NodeProvider } from '@liquality/node-provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
 import { fromBase64, toBase64, fromNearTimestamp, parseReceipt } from '@liquality/near-utils'

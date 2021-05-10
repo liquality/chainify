@@ -1,4 +1,4 @@
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
 import {
   addressToString,

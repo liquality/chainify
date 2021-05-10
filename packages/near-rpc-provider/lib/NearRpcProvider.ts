@@ -1,4 +1,4 @@
-import NodeProvider from '@liquality/node-provider'
+import { NodeProvider } from '@liquality/node-provider'
 import { near, BigNumber, ChainProvider, FeeProvider, Address, Block, Transaction, FeeDetails } from '@liquality/types'
 import { NearNetwork } from '@liquality/near-networks'
 import { addressToString } from '@liquality/utils'

@@ -4,27 +4,27 @@ import chaiAsPromised from 'chai-as-promised'
 // TODO: Connector does not work for EIP1193
 import MetaMaskConnector from 'node-metamask'
 import LedgerHwTransportNode from '@ledgerhq/hw-transport-node-hid'
-import Client from '../../packages/client/lib'
+import { Client } from '../../packages/client/lib'
 import * as crypto from '../../packages/crypto/lib'
 import * as errors from '../../packages/errors/lib'
 import * as utils from '../../packages/utils/lib'
-import BitcoinLedgerProvider from '../../packages/bitcoin-ledger-provider/lib'
-import BitcoinSwapProvider from '../../packages/bitcoin-swap-provider/lib'
-import BitcoinNodeWalletProvider from '../../packages/bitcoin-node-wallet-provider/lib'
-import BitcoinJsWalletProvider from '../../packages/bitcoin-js-wallet-provider/lib'
-import BitcoinRpcProvider from '../../packages/bitcoin-rpc-provider/lib'
+import { BitcoinLedgerProvider } from '../../packages/bitcoin-ledger-provider/lib'
+import { BitcoinSwapProvider } from '../../packages/bitcoin-swap-provider/lib'
+import { BitcoinNodeWalletProvider } from '../../packages/bitcoin-node-wallet-provider/lib'
+import { BitcoinJsWalletProvider } from '../../packages/bitcoin-js-wallet-provider/lib'
+import { BitcoinRpcProvider } from '../../packages/bitcoin-rpc-provider/lib'
 import * as BitcoinUtils from '../../packages/bitcoin-utils/lib'
-import EthereumRpcProvider from '../../packages/ethereum-rpc-provider/lib'
-import EthereumWalletApiProvider from '../../packages/ethereum-wallet-api-provider/lib'
-import EthereumSwapProvider from '../../packages/ethereum-swap-provider/lib'
-import EthereumLedgerProvider from '../../packages/ethereum-ledger-provider/lib'
-import EthereumJsWalletProvider from '../../packages/ethereum-js-wallet-provider/lib'
-import EthereumErc20Provider from '../../packages/ethereum-erc20-provider/lib'
-import EthereumErc20SwapProvider from '../../packages/ethereum-erc20-swap-provider/lib'
-import NearRpcProvider from '../../packages/near-rpc-provider/lib'
-import NearJsWalletProvider from '../../packages/near-js-wallet-provider/lib'
-import NearSwapProvider from '../../packages/near-swap-provider/lib'
-import NearSwapFindProvider from '../../packages/near-swap-find-provider/lib'
+import { EthereumRpcProvider } from '../../packages/ethereum-rpc-provider/lib'
+import { EthereumWalletApiProvider } from '../../packages/ethereum-wallet-api-provider/lib'
+import { EthereumSwapProvider } from '../../packages/ethereum-swap-provider/lib'
+import { EthereumLedgerProvider } from '../../packages/ethereum-ledger-provider/lib'
+import { EthereumJsWalletProvider } from '../../packages/ethereum-js-wallet-provider/lib'
+import { EthereumErc20Provider } from '../../packages/ethereum-erc20-provider/lib'
+import { EthereumErc20SwapProvider } from '../../packages/ethereum-erc20-swap-provider/lib'
+import { NearRpcProvider } from '../../packages/near-rpc-provider/lib'
+import { NearJsWalletProvider } from '../../packages/near-js-wallet-provider/lib'
+import { NearSwapProvider } from '../../packages/near-swap-provider/lib'
+import { NearSwapFindProvider } from '../../packages/near-swap-find-provider/lib'
 import { BigNumber, Transaction, bitcoin, Network, SwapParams, SendOptions, Address } from '../../packages/types/lib'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
@@ -65,7 +65,11 @@ function mockedBitcoinRpcProvider() {
 const bitcoinWithLedger = new Client()
 bitcoinWithLedger.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithLedger.addProvider(
-  new BitcoinLedgerProvider({ network: config.bitcoin.network, Transport: LedgerHwTransportNode })
+  new BitcoinLedgerProvider({
+    network: config.bitcoin.network,
+    baseDerivationPath: `m/84'/${config.bitcoin.network.coinType}'/0'`,
+    Transport: LedgerHwTransportNode
+  })
 )
 bitcoinWithLedger.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
@@ -84,7 +88,11 @@ bitcoinWithNode.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.ne
 const bitcoinWithJs = new Client()
 bitcoinWithJs.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithJs.addProvider(
-  new BitcoinJsWalletProvider({ network: config.bitcoin.network, mnemonic: generateMnemonic(256) })
+  new BitcoinJsWalletProvider({
+    network: config.bitcoin.network,
+    mnemonic: generateMnemonic(256),
+    baseDerivationPath: `m/84'/${config.bitcoin.network.coinType}'/0'`
+  })
 )
 bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
@@ -102,13 +110,23 @@ ethereumWithNode.addProvider(new EthereumSwapProvider())
 const ethereumWithLedger = new Client()
 ethereumWithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
 ethereumWithLedger.addProvider(
-  new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode })
+  new EthereumLedgerProvider({
+    network: config.ethereum.network,
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`,
+    Transport: LedgerHwTransportNode
+  })
 )
 ethereumWithLedger.addProvider(new EthereumSwapProvider())
 
 const ethereumWithJs = new Client()
 ethereumWithJs.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
-ethereumWithJs.addProvider(new EthereumJsWalletProvider(config.ethereum.network, generateMnemonic(256)))
+ethereumWithJs.addProvider(
+  new EthereumJsWalletProvider({
+    network: config.ethereum.network,
+    mnemonic: generateMnemonic(256),
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+  })
+)
 ethereumWithJs.addProvider(new EthereumSwapProvider())
 
 const erc20WithMetaMask = new Client()
@@ -125,21 +143,37 @@ erc20WithNode.addProvider(new EthereumErc20SwapProvider())
 const erc20WithLedger = new Client()
 erc20WithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
 erc20WithLedger.addProvider(
-  new EthereumLedgerProvider({ network: config.ethereum.network, Transport: LedgerHwTransportNode })
+  new EthereumLedgerProvider({
+    network: config.ethereum.network,
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`,
+    Transport: LedgerHwTransportNode
+  })
 )
 erc20WithLedger.addProvider(new EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithLedger.addProvider(new EthereumErc20SwapProvider())
 
 const erc20WithJs = new Client()
 erc20WithJs.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
-erc20WithJs.addProvider(new EthereumJsWalletProvider(config.ethereum.network, generateMnemonic(256)))
+erc20WithJs.addProvider(
+  new EthereumJsWalletProvider({
+    network: config.ethereum.network,
+    mnemonic: generateMnemonic(256),
+    derivationPath: `m/44'/${config.ethereum.network.coinType}'/0'/0/0`
+  })
+)
 erc20WithJs.addProvider(new EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithJs.addProvider(new EthereumErc20SwapProvider())
 
 // Near
 const nearWithJs = new Client()
 nearWithJs.addProvider(new NearRpcProvider(config.near.network))
-nearWithJs.addProvider(new NearJsWalletProvider(config.near.network, config.near.senderMnemonic))
+nearWithJs.addProvider(
+  new NearJsWalletProvider({
+    network: config.near.network,
+    mnemonic: config.near.senderMnemonic,
+    derivationPath: `m/44'/${config.near.network.coinType}'/0'`
+  })
+)
 nearWithJs.addProvider(new NearSwapProvider())
 nearWithJs.addProvider(new NearSwapFindProvider(config.near.network.helperUrl))
 
@@ -219,7 +253,13 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
     case 'near': {
       const tempNearJsClient = new Client()
       tempNearJsClient.addProvider(new NearRpcProvider(config.near.network))
-      tempNearJsClient.addProvider(new NearJsWalletProvider(config.near.network, config.near.receiverMnemonic))
+      tempNearJsClient.addProvider(
+        new NearJsWalletProvider({
+          network: config.near.network,
+          mnemonic: config.near.receiverMnemonic,
+          derivationPath: `m/44'/${config.near.network.coinType}'/0'`
+        })
+      )
       const balance = await tempNearJsClient.chain.getBalance([config.near.receiverAddress])
       if (balance.gt(config.near.value)) {
         await tempNearJsClient.chain.sendTransaction({ to: address, value: balance.minus(config.near.value) })

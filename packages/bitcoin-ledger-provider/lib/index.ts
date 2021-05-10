@@ -1,3 +1,3 @@
 import BitcoinLedgerProvider from './BitcoinLedgerProvider'
 
-export default BitcoinLedgerProvider
+export { BitcoinLedgerProvider }

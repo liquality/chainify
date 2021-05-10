@@ -2,9 +2,9 @@
 
 import chai, { expect } from 'chai'
 
-import Client from '../../../client/lib'
-import EthereumRpcProvider from '../../../ethereum-rpc-provider/lib'
-import EthereumRpcFeeProvider from '../../lib'
+import { Client } from '../../../client/lib'
+import { EthereumRpcProvider } from '../../../ethereum-rpc-provider/lib'
+import { EthereumRpcFeeProvider } from '../../lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
 import ethereumRpc from '../../../../test/mock/ethereum/rpc'

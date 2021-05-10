@@ -1,4 +1,4 @@
-import NodeProvider from '@liquality/node-provider'
+import { NodeProvider } from '@liquality/node-provider'
 import { FeeProvider, FeeDetails, BigNumber } from '@liquality/types'
 
 const GWEI = 1e9

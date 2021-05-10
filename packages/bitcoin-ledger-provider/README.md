@@ -31,8 +31,8 @@ or
 ## Usage
 
 ```js
-import BitcoinLedgerProvider from '@liquality/bitcoin-ledger-provider'
-import BitcoinNetworks from '@liquality/bitcoin-network'
+import { BitcoinLedgerProvider } from '@liquality/bitcoin-ledger-provider'
+import { BitcoinNetworks } from '@liquality/bitcoin-network'
 
 const ledger = new BitcoinLedgerProvider({
   network: BitcoinNetworks.bitcoin_testnet

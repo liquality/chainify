@@ -1,3 +1,3 @@
 import ClientFactory from './ClientFactory'
 
-export default ClientFactory
+export { ClientFactory }

@@ -1,5 +1,5 @@
 import { SwapProvider, SwapParams, near, BigNumber, Transaction } from '@liquality/types'
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
 import { toNearTimestampFormat, parseReceipt, transactions, BN } from '@liquality/near-utils'
 

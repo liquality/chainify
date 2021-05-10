@@ -4,3 +4,4 @@ coverage
 examples
 doc
 .eslintrc.js
+typedoc.js

@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import Provider from '@liquality/provider'
+import { Provider } from '@liquality/provider'
 
 class MyCustomProvider extends Provider {
   // ...

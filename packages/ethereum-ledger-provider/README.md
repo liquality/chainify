@@ -31,8 +31,8 @@ or
 ## Usage
 
 ```js
-import EthereumLedgerProvider from '@liquality/ethereum-ledger-provider'
-import EthereumNetworks from '@liquality/ethereum-network'
+import { EthereumLedgerProvider } from '@liquality/ethereum-ledger-provider'
+import { EthereumNetworks } from '@liquality/ethereum-network'
 
 const ledger = new EthereumLedgerProvider({
   network: EthereumNetworks.rinkeby

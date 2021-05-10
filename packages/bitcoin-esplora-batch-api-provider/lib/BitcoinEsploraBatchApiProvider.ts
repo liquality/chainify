@@ -1,7 +1,7 @@
-import NodeProvider from '@liquality/node-provider'
+import { NodeProvider } from '@liquality/node-provider'
 import { BigNumber, Address } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
-import BitcoinEsploraApiProvider, { EsploraApiProviderOptions, esplora } from '@liquality/bitcoin-esplora-api-provider'
+import { BitcoinEsploraApiProvider, EsploraApiProviderOptions, esplora } from '@liquality/bitcoin-esplora-api-provider'
 import { flatten, uniq } from 'lodash'
 
 type BatchUTXOs = { address: string; utxo: esplora.UTXO[] }[]

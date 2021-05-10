@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import EthereumRpcProvider from '@liquality/ethereum-rpc-provider'
+import { EthereumRpcProvider } from '@liquality/ethereum-rpc-provider'
 
 const jsonrpc = new EthereumRpcProvider('https://ethereum.local')
 

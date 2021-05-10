@@ -3,8 +3,8 @@
 import BigNumber from 'bignumber.js'
 import chai, { expect } from 'chai'
 
-import Client from '../../../client/lib'
-import EthereumRpcProvider from '../../lib'
+import { Client } from '../../../client/lib'
+import { EthereumRpcProvider } from '../../lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
 import ethereumRpc from '../../../../test/mock/ethereum/rpc'

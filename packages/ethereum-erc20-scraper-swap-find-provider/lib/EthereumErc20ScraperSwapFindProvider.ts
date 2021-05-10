@@ -1,4 +1,4 @@
-import EthereumScraperSwapFindProvider, { scraper } from '@liquality/ethereum-scraper-swap-find-provider'
+import { EthereumScraperSwapFindProvider, scraper } from '@liquality/ethereum-scraper-swap-find-provider'
 import { ensure0x, remove0x, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
 import { SwapParams, Transaction, BigNumber } from '@liquality/types'

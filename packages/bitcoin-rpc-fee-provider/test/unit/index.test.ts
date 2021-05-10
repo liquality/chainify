@@ -2,10 +2,10 @@
 
 import chai, { expect } from 'chai'
 
-import Client from '../../../client/lib'
-import BitcoinRpcProvider from '../../../bitcoin-rpc-provider/lib'
-import BitcoinRpcFeeProvider from '../../lib'
-import BitcoinNetworks from '../../../bitcoin-networks/lib'
+import { Client } from '../../../client/lib'
+import { BitcoinRpcProvider } from '../../../bitcoin-rpc-provider/lib'
+import { BitcoinRpcFeeProvider } from '../../lib'
+import { BitcoinNetworks } from '../../../bitcoin-networks/lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
 import bitcoinRpc from '../../../../test/mock/bitcoin/rpc'

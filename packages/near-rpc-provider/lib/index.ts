@@ -1,3 +1,3 @@
 import NearRpcProvider from './NearRpcProvider'
 
-export default NearRpcProvider
+export { NearRpcProvider }

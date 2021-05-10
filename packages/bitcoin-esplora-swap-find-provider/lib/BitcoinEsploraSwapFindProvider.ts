@@ -1,4 +1,4 @@
-import NodeProvider from '@liquality/node-provider'
+import { NodeProvider } from '@liquality/node-provider'
 import { SwapParams, Transaction, bitcoin } from '@liquality/types'
 import { payments } from 'bitcoinjs-lib'
 

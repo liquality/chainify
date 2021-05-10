@@ -1,5 +1,5 @@
-import BitcoinWalletProvider from '@liquality/bitcoin-wallet-provider'
-import WalletProvider from '@liquality/wallet-provider'
+import { BitcoinWalletProvider } from '@liquality/bitcoin-wallet-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { Address, bitcoin, SendOptions } from '@liquality/types'
 import { PsbtInputTarget } from '@liquality/types/dist/lib/bitcoin'
@@ -42,7 +42,7 @@ export default class BitcoinWalletApiProvider extends BitcoinWalletProvider(
   }
 
   async sendTransaction(sendOptions: SendOptions) {
-    return this.request('wallet_sendTransaction', sendOptions)
+    return this.request('wallet_sendTransaction', { ...sendOptions, value: sendOptions.value.toNumber() })
   }
 
   async signPSBT(data: string, inputs: PsbtInputTarget[]) {

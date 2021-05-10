@@ -1,4 +1,4 @@
-import LedgerProvider from '@liquality/ledger-provider'
+import { LedgerProvider } from '@liquality/ledger-provider'
 import { Address, ethereum, SendOptions, Transaction, BigNumber } from '@liquality/types'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { addressToString } from '@liquality/utils'
@@ -15,12 +15,18 @@ import { toRpcSig } from 'ethereumjs-util'
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
 import EthereumJsTx from 'ethereumjs-tx'
 
-export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
-  _baseDerivationPath: string
+interface EthereumLedgerProviderOptions {
+  network: EthereumNetwork
+  derivationPath: string
+  Transport: any
+}
 
-  constructor(options: { network: EthereumNetwork; Transport: any }) {
+export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
+  _derivationPath: string
+
+  constructor(options: EthereumLedgerProviderOptions) {
     super({ ...options, App: HwAppEthereum, ledgerScrambleKey: 'w0w' }) // srs!
-    this._baseDerivationPath = `44'/${options.network.coinType}'/0'`
+    this._derivationPath = options.derivationPath
   }
 
   async signMessage(message: string, from: string) {
@@ -33,14 +39,12 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
   }
 
   async getAddresses() {
-    // TODO: Retrieve given num addresses?
     const app = await this.getApp()
-    const path = this._baseDerivationPath + '/0/0'
-    const address = await app.getAddress(path)
+    const address = await app.getAddress(this._derivationPath)
     return [
       new Address({
         address: address.address,
-        derivationPath: path,
+        derivationPath: this._derivationPath,
         publicKey: address.publicKey
       })
     ]

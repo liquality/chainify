@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import BitcoinEsploraBatchApiProvider from '@liquality/bitcoin-esplora-batch-api-provider'
+import { BitcoinEsploraBatchApiProvider } from '@liquality/bitcoin-esplora-batch-api-provider'
 
 const apiProvider = new BitcoinEsploraBatchApiProvider('https://blockstream.info/testnet/api')
 

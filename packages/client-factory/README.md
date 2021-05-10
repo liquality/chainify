@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import ClientFactory from '@liquality/client-factory'
+import { ClientFactory } from '@liquality/client-factory'
 
 const bitcoin = ClientFactory.create('mainnet', 'btc', { mnemonic: 'xxx' })
 const ethereum = ClientFactory.create('mainnet', 'eth', { mnemonic: 'xxx' })

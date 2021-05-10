@@ -34,10 +34,6 @@ chai.use(chaiAsPromised)
 const mockSecret = _.repeat('ff', 32)
 
 function testSwap(chain: Chain) {
-  if (chain.name !== 'near') {
-    testRefund(chain)
-  }
-
   it('Generated secrets are different', async () => {
     const secret1 = await chain.client.swap.generateSecret('secret1')
     const secret2 = await chain.client.swap.generateSecret('secret2')
@@ -107,6 +103,56 @@ function testSwap(chain: Chain) {
       (before, after) => expect(after.gt(before)).to.be.true
     )
   })
+
+  if (chain.name !== 'near') {
+    it('Refund fails after claim', async () => {
+      const secretHash = crypto.sha256(mockSecret)
+      const swapParams = await getSwapParams(chain, secretHash)
+      swapParams.expiration = Math.floor(Date.now() / 1000) // now
+      const initiationTxId = await initiateAndVerify(chain, swapParams)
+      await expectBalance(
+        chain,
+        swapParams.recipientAddress,
+        async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
+        (before, after) => expect(after.gt(before)).to.be.true
+      )
+
+      await expectBalance(
+        chain,
+        swapParams.refundAddress,
+        async () => {
+          try {
+            await refundAndVerify(chain, initiationTxId, swapParams)
+            // eslint-disable-next-line no-empty
+          } catch (e) {} // Refund failing is ok
+        },
+        (before, after) => expect(after.eq(before)).to.be.true
+      )
+      await mineUntilTimestamp(chain, swapParams.expiration)
+      await expectBalance(
+        chain,
+        swapParams.refundAddress,
+        async () => {
+          try {
+            await refundAndVerify(chain, initiationTxId, swapParams)
+            // eslint-disable-next-line no-empty
+          } catch (__e) {} // Refund failing is ok
+        },
+        (before, after) => expect(after.eq(before)).to.be.true
+      )
+    })
+
+    it('Refund available after expiration', async () => {
+      const secretHash = crypto.sha256(mockSecret)
+      const swapParams = await getSwapParams(chain, secretHash)
+      const latestBlock = await chain.client.chain.getBlockByNumber(await chain.client.chain.getBlockHeight())
+      swapParams.expiration = latestBlock.timestamp + 10
+      const initiationTxId = await initiateAndVerify(chain, swapParams)
+      await expect(refundAndVerify(chain, initiationTxId, swapParams)).to.be.rejected
+      await mineUntilTimestamp(chain, swapParams.expiration)
+      await refundAndVerify(chain, initiationTxId, swapParams)
+    })
+  }
 }
 
 function testEthereumBalance(chain: Chain) {
@@ -180,56 +226,6 @@ function testBitcoinBalance(chain: Chain) {
         expect(after.eq(expectedBalance)).to.be.true
       }
     )
-  })
-}
-
-function testRefund(chain: Chain) {
-  it('Refund fails after claim', async () => {
-    const secretHash = crypto.sha256(mockSecret)
-    const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Math.floor(Date.now() / 1000) // now
-    const initiationTxId = await initiateAndVerify(chain, swapParams)
-    await expectBalance(
-      chain,
-      swapParams.recipientAddress,
-      async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
-      (before, after) => expect(after.gt(before)).to.be.true
-    )
-
-    await expectBalance(
-      chain,
-      swapParams.refundAddress,
-      async () => {
-        try {
-          await refundAndVerify(chain, initiationTxId, swapParams)
-          // eslint-disable-next-line no-empty
-        } catch (e) {} // Refund failing is ok
-      },
-      (before, after) => expect(after.eq(before)).to.be.true
-    )
-    await mineUntilTimestamp(chain, swapParams.expiration)
-    await expectBalance(
-      chain,
-      swapParams.refundAddress,
-      async () => {
-        try {
-          await refundAndVerify(chain, initiationTxId, swapParams)
-          // eslint-disable-next-line no-empty
-        } catch (__e) {} // Refund failing is ok
-      },
-      (before, after) => expect(after.eq(before)).to.be.true
-    )
-  })
-
-  it('Refund available after expiration', async () => {
-    const secretHash = crypto.sha256(mockSecret)
-    const swapParams = await getSwapParams(chain, secretHash)
-    const latestBlock = await chain.client.chain.getBlockByNumber(await chain.client.chain.getBlockHeight())
-    swapParams.expiration = latestBlock.timestamp + 10
-    const initiationTxId = await initiateAndVerify(chain, swapParams)
-    await expect(refundAndVerify(chain, initiationTxId, swapParams)).to.be.rejected
-    await mineUntilTimestamp(chain, swapParams.expiration)
-    await refundAndVerify(chain, initiationTxId, swapParams)
   })
 }
 
@@ -343,7 +339,7 @@ function testFee(chain: Chain) {
 describe('Swap Single Chain Flow', function () {
   this.timeout(TEST_TIMEOUT)
 
-  describe('Near - JS', () => {
+  describeExternal('Near - JS', () => {
     testSwap(chains.nearWithJs)
     testNearRefund(chains.nearWithJs)
   })
@@ -393,7 +389,6 @@ describe('Swap Single Chain Flow', function () {
       testFee(chains.ethereumWithNode)
     })
 
-    // Local ledger tests do not work with geth https://github.com/ethereum/go-ethereum/issues/21120
     describeExternal('Ethereum - Ledger', () => {
       before(async function () {
         await fundWallet(chains.ethereumWithLedger)

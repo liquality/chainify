@@ -1,9 +1,15 @@
-import WalletProvider from '@liquality/wallet-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
 import { addressToString } from '@liquality/utils'
 import { NearNetwork } from '@liquality/near-networks'
 import { Address, Network, ChainProvider, near } from '@liquality/types'
 import { normalizeTransactionObject, keyStores, KeyPair, InMemorySigner, transactions, BN } from '@liquality/near-utils'
 import { parseSeedPhrase } from 'near-seed-phrase'
+
+interface NearJsWalletProviderOptions {
+  network: NearNetwork
+  mnemonic: string
+  derivationPath: string
+}
 
 export default class NearJsWalletProvider extends WalletProvider implements Partial<ChainProvider> {
   _network: NearNetwork
@@ -11,11 +17,12 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
   _derivationPath: string
   _keyStore: keyStores.InMemoryKeyStore
 
-  constructor(network: NearNetwork, mnemonic: string) {
+  constructor(options: NearJsWalletProviderOptions) {
+    const { network, mnemonic, derivationPath } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
-    this._derivationPath = `m/44'/${network.coinType}'/0'`
+    this._derivationPath = derivationPath
     this._keyStore = new keyStores.InMemoryKeyStore()
   }
 

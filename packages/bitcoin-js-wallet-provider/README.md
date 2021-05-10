@@ -31,8 +31,8 @@ or
 ## Usage
 
 ```js
-import BitcoinJsWalletProvider from '@liquality/bitcoin-js-wallet-provider'
-import BitcoinNetworks from '@liquality/bitcoin-network'
+import { BitcoinJsWalletProvider } from '@liquality/bitcoin-js-wallet-provider'
+import { BitcoinNetworks } from '@liquality/bitcoin-network'
 import { generateMnemonic } from 'bip39'
 
 const jsWallet = new BitcoinJsWalletProvider(

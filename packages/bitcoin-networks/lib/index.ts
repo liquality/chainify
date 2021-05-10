@@ -30,4 +30,4 @@ const BitcoinNetworks = {
   bitcoin_regtest
 }
 
-export default BitcoinNetworks
+export { BitcoinNetworks }

@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 
-import Client from '../../lib'
+import { Client } from '../../lib'
 
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'

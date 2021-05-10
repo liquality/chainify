@@ -43,4 +43,4 @@ const Debug = (namespace: string) => {
   return debug(namespace)
 }
 
-export default Debug
+export { Debug }

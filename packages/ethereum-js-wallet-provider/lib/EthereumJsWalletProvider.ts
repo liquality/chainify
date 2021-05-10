@@ -1,4 +1,4 @@
-import WalletProvider from '@liquality/wallet-provider'
+import { WalletProvider } from '@liquality/wallet-provider'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { Network, Address, SendOptions, ethereum, Transaction, BigNumber } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
@@ -18,16 +18,24 @@ import { Transaction as EthJsTransaction } from 'ethereumjs-tx'
 import Common from 'ethereumjs-common'
 import { chains as BaseChains } from 'ethereumjs-common/dist/chains'
 
+interface EthereumJsWalletProviderOptions {
+  network: EthereumNetwork
+  mnemonic: string
+  derivationPath: string
+  hardfork?: string
+}
+
 export default class EthereumJsWalletProvider extends WalletProvider {
   _derivationPath: string
   _mnemonic: string
   _network: EthereumNetwork
   _hardfork: string
 
-  constructor(network: EthereumNetwork, mnemonic: string, hardfork = 'istanbul') {
+  constructor(options: EthereumJsWalletProviderOptions) {
+    const { network, mnemonic, derivationPath, hardfork = 'istanbul' } = options
     super({ network })
 
-    this._derivationPath = `m/44'/${network.coinType}'/0'/`
+    this._derivationPath = derivationPath
     this._mnemonic = mnemonic
     this._network = network
     this._hardfork = hardfork
@@ -38,14 +46,13 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return hdkey.fromMasterSeed(seed)
   }
 
-  async hdKey(derivationPath: string) {
+  async hdKey() {
     const node = await this.node()
-    return node.derive(derivationPath)
+    return node.derive(this._derivationPath)
   }
 
   async signMessage(message: string) {
-    const derivationPath = this._derivationPath + '0/0'
-    const hdKey = await this.hdKey(derivationPath)
+    const hdKey = await this.hdKey()
     const msgHash = hashPersonalMessage(Buffer.from(message))
 
     const { v, r, s } = ecsign(msgHash, hdKey.privateKey)
@@ -54,14 +61,13 @@ export default class EthereumJsWalletProvider extends WalletProvider {
   }
 
   async getAddresses() {
-    const derivationPath = this._derivationPath + '0/0'
-    const hdKey = await this.hdKey(derivationPath)
+    const hdKey = await this.hdKey()
     const address = privateToAddress(hdKey.privateKey).toString('hex')
     const publicKey = privateToPublic(hdKey.privateKey).toString('hex')
     return [
       new Address({
         address,
-        derivationPath,
+        derivationPath: this._derivationPath,
         publicKey
       })
     ]
@@ -77,8 +83,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
   }
 
   async signTransaction(txData: ethereum.TransactionRequest): Promise<string> {
-    const derivationPath = this._derivationPath + '0/0'
-    const hdKey = await this.hdKey(derivationPath)
+    const hdKey = await this.hdKey()
 
     let common
     if (!(this._network.name === 'local')) {

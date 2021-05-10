@@ -13,8 +13,8 @@ function testWallet(chain: Chain) {
     it('should return the correct number of addresses starting at the correct index and return the right derivation path', async () => {
       const startingIndex = 0
       const numAddresses = 20
-      const expectedAddress0DerivationPath = `84'/1'/0'/0/0`
-      const expectedAddress19DerivationPath = `84'/1'/0'/0/19`
+      const expectedAddress0DerivationPath = `m/84'/1'/0'/0/0`
+      const expectedAddress19DerivationPath = `m/84'/1'/0'/0/19`
 
       const addresses = await chain.client.wallet.getAddresses(startingIndex, numAddresses)
 
@@ -34,8 +34,8 @@ function testWallet(chain: Chain) {
       const startingIndex = 0
       const numAddresses = 20
       const change = true
-      const expectedAddress0DerivationPath = `84'/1'/0'/1/0`
-      const expectedAddress19DerivationPath = `84'/1'/0'/1/19`
+      const expectedAddress0DerivationPath = `m/84'/1'/0'/1/0`
+      const expectedAddress19DerivationPath = `m/84'/1'/0'/1/19`
 
       const addresses = await chain.client.wallet.getAddresses(startingIndex, numAddresses, change)
 

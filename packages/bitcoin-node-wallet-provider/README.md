@@ -31,7 +31,7 @@ or
 ## Usage
 
 ```js
-import BitcoinNodeWalletProvider from '@liquality/bitcoin-node-wallet-provider'
+import { BitcoinNodeWalletProvider } from '@liquality/bitcoin-node-wallet-provider'
 
 const nodeWalletProvider = new BitcoinNodeWalletProvider('https://bitcoin.local', 'username', 'password')
 

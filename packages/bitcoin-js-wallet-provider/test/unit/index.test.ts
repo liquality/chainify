@@ -2,9 +2,9 @@
 
 import { generateMnemonic } from 'bip39'
 
-import BitcoinNetworks from '../../../bitcoin-networks/lib'
+import { BitcoinNetworks } from '../../../bitcoin-networks/lib'
 import { Address } from '../../../types/lib'
-import BitcoinJsWalletProvider from '../../lib'
+import { BitcoinJsWalletProvider } from '../../lib'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
@@ -18,6 +18,7 @@ describe('Bitcoin Wallet provider', () => {
   beforeEach(() => {
     provider = new BitcoinJsWalletProvider({
       network: BitcoinNetworks.bitcoin_regtest,
+      baseDerivationPath: `m/84'/${BitcoinNetworks.bitcoin_regtest.coinType}'/0`,
       mnemonic
     })
   })
@@ -44,6 +45,7 @@ describe('Bitcoin Wallet provider', () => {
     it('should import to new client', async () => {
       newProvider = new BitcoinJsWalletProvider({
         network: BitcoinNetworks.bitcoin_regtest,
+        baseDerivationPath: `m/84'/${BitcoinNetworks.bitcoin_regtest.coinType}'/0`,
         mnemonic
       })
       await newProvider.setDerivationCache(addressesFromDerivationCacheExpected)
@@ -58,6 +60,7 @@ describe('Bitcoin Wallet provider', () => {
     it("should fail if mnemonic doesn't match", async () => {
       newProvider = new BitcoinJsWalletProvider({
         network: BitcoinNetworks.bitcoin_regtest,
+        baseDerivationPath: `m/84'/${BitcoinNetworks.bitcoin_regtest.coinType}'/0`,
         mnemonic: generateMnemonic(256)
       })
       await expect(newProvider.setDerivationCache(addressesFromDerivationCacheExpected)).to.eventually.be.rejected
