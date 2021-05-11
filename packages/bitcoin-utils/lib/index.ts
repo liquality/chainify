@@ -1,8 +1,11 @@
 import { base58, padHexStart } from '@liquality/crypto'
-import { BitcoinNetworks, BitcoinNetwork } from '@liquality/bitcoin-networks'
+import { BitcoinNetworks, BitcoinNetwork, BitcoinCashNetwork, ProtocolType } from '@liquality/bitcoin-networks'
 import { Address, Transaction, bitcoin as bT } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
+
+import * as cashaddr from 'cashaddrjs'
+import bs58check from 'bs58check'
 
 import { findKey } from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -130,7 +133,7 @@ function decodeRawTransaction(hex: string, network: BitcoinNetwork): bT.Transact
 
     try {
       const address = bitcoin.address.fromOutputScript(output.script, network)
-      vout.scriptPubKey.addresses.push(address)
+      vout.scriptPubKey.addresses.push(addrFromBitcoinJS(address, network))
     } catch (e) {
       /** If output script is not parasable, we just skip it */
     }
@@ -166,7 +169,7 @@ function normalizeTransactionObject(
   }
 
   if (fee) {
-    const feePrice = Math.round(fee / tx.vsize)
+    const feePrice = Math.round(fee / (tx.vsize ? tx.vsize : tx.size))
     Object.assign(result, {
       fee,
       feePrice
@@ -217,6 +220,8 @@ function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
 }
 
 function getPubKeyHash(address: string, network: BitcoinNetwork) {
+  address = addrToBitcoinJS(address, network)
+
   const outputScript = bitcoin.address.toOutputScript(address, network)
   const type = classify.output(outputScript)
   if (![classify.types.P2PKH, classify.types.P2WPKH].includes(type)) {
@@ -253,6 +258,72 @@ function validateAddress(_address: Address | string, network: BitcoinNetwork) {
   }
 }
 
+// Convert from different address format to BitcoinJS's format
+// that is, Bitcoin's address format
+
+// Currently, we allow it if the conversion is already done
+
+function addrToBitcoinJS(address: string, network: BitcoinNetwork) {
+  if (network.protocolType == ProtocolType.Bitcoin) return address
+  if (network.protocolType == ProtocolType.BitcoinCash) {
+    // Older addresses have historically been allowed
+    try {
+      bs58check.decode(address)
+      return address
+    } catch (e) {
+      /**/
+    }
+
+    try {
+      if (!address.includes(':')) address = 'bitcoincash:' + address
+      const { prefix, type, hash } = cashaddr.decode(address)
+      const isTestnet = prefix != 'bitcoincash' ? 1 : 0
+      const isP2SH = type != 'P2PKH' ? 1 : 0
+      const prefixbyte = [0x00, 0x05, 0x6f, 0xc4][(2 * isTestnet) | isP2SH]
+      return bs58check.encode(Buffer.concat([Buffer.from([prefixbyte]), Buffer.from(hash)]))
+    } catch (e) {
+      throw new InvalidAddressError(`Invalid Address: ${address}`)
+    }
+  }
+}
+
+function addrFromBitcoinJS(address: string, network: BitcoinNetwork) {
+  if (network.protocolType == ProtocolType.Bitcoin) return address
+  if (network.protocolType == ProtocolType.BitcoinCash) {
+    // Case: Already converted
+    try {
+      let addr2 = address
+      if (!addr2.includes(':')) addr2 = 'bitcoincash:' + addr2
+      cashaddr.decode(addr2)
+      return addr2
+    } catch (e) {
+      /**/
+    }
+
+    try {
+      const decoded = bs58check.decode(address)
+      const prefixbyte = [0x00, 0x05, 0x6f, 0xc4].findIndex((a) => a == decoded[0])
+      if (prefixbyte == -1) throw new InvalidAddressError(`Invalid Address Version Byte: ${address}`)
+
+      const isTestnet = !!(prefixbyte & 2)
+      const type = prefixbyte & 1 ? 'P2SH' : 'P2PKH'
+      if (isTestnet) {
+        if (!network.name.includes('regtest') && !network.name.includes('testnet')) {
+          throw new InvalidAddressError(`Network Mismatch: ${address}`)
+        }
+      } else {
+        if (network.name.includes('regtest') || network.name.includes('testnet')) {
+          throw new InvalidAddressError(`Network Mismatch: ${address}`)
+        }
+      }
+      return cashaddr.encode((network as BitcoinCashNetwork).prefix, type, decoded.slice(1)) as string
+    } catch (e) {
+      if (e instanceof InvalidAddressError) throw e
+      throw new InvalidAddressError(`Invalid Address: ${address}`)
+    }
+  }
+}
+
 export {
   calculateFee,
   compressPubKey,
@@ -263,5 +334,7 @@ export {
   witnessStackToScriptWitness,
   AddressTypes,
   getPubKeyHash,
-  validateAddress
+  validateAddress,
+  addrToBitcoinJS,
+  addrFromBitcoinJS
 }

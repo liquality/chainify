@@ -13,6 +13,21 @@ services:
       -rpcbind=0.0.0.0
       -server
       -rpcworkqueue=400
+  bitcoin-cash:
+    image: zquestz/bitcoin-cash-node:23.0.0
+    ports:
+      - '18543:18543'
+    command:
+      bitcoind -regtest=1
+      -txindex
+      -rpcuser=bitcoin
+      -rpcpassword=local321
+      -rpcport=18543
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -server
+      -rpcworkqueue=400
+      #-port=18544
   ethereum:
     image: ethereum/client-go:v1.9.22
     ports:
@@ -35,3 +50,12 @@ services:
       - TARGET_PORT=18443
     depends_on:
       - bitcoin
+  bitcoin-cash-miner:
+    build:
+      context: .
+      dockerfile: miner.Dockerfile
+    environment:
+      - TARGET_HOST=bitcoin-cash
+      - TARGET_PORT=18543
+    depends_on:
+      - bitcoin-cash

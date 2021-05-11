@@ -1,4 +1,5 @@
 import * as rpc from './rpc'
+import * as explorer from './explorer'
 
 export interface OutputTarget {
   address: string
@@ -51,6 +52,7 @@ export interface UTXO {
   value: number
   address: string
   derivationPath?: string
+  blockHeight?: number
 }
 
 export enum AddressType {
@@ -72,4 +74,4 @@ export interface PsbtInputTarget {
   derivationPath: string
 }
 
-export { rpc }
+export { rpc, explorer }

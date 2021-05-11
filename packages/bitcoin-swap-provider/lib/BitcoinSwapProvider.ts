@@ -6,7 +6,8 @@ import {
   normalizeTransactionObject,
   witnessStackToScriptWitness,
   getPubKeyHash,
-  validateAddress
+  validateAddress,
+  addrToBitcoinJS
 } from '@liquality/bitcoin-utils'
 import {
   addressToString,
@@ -18,7 +19,7 @@ import {
 } from '@liquality/utils'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 
-import { Psbt, script as bScript, payments } from 'bitcoinjs-lib'
+import { Psbt, TransactionBuilder, script as bScript, payments } from 'bitcoinjs-lib'
 
 interface BitcoinSwapProviderOptions {
   network: BitcoinNetwork
@@ -31,10 +32,13 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
 
   constructor(options: BitcoinSwapProviderOptions) {
     super()
-    const { network, mode = bitcoin.SwapMode.P2WSH } = options
+    const { network, mode = network.segwitCapable ? bitcoin.SwapMode.P2WSH : bitcoin.SwapMode.P2SH } = options
     const swapModes = Object.values(bitcoin.SwapMode)
     if (!swapModes.includes(mode)) {
       throw new Error(`Mode must be one of ${swapModes.join(',')}`)
+    }
+    if (!network.segwitCapable && mode != bitcoin.SwapMode.P2SH) {
+      throw new Error('SegWit P2SH on SegWit-incompatible network')
     }
     this._network = network
     this._mode = mode
@@ -168,6 +172,56 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     )
   }
 
+  async _redeemSwapOutputLegacy(
+    utxo: any,
+    recipient: any,
+    output: Buffer,
+    isClaim: boolean,
+    secret: string,
+    address: string,
+    expiration: any
+  ) {
+    const txb = new TransactionBuilder(this._network as BitcoinNetwork)
+    const payment = payments.p2sh({
+      redeem: { output: output, network: this._network as BitcoinNetwork },
+      network: this._network as BitcoinNetwork
+    })
+    txb.addInput(utxo.hash, utxo.index, utxo.sequence, payment.output)
+    txb.addOutput(addrToBitcoinJS(recipient.address, this._network), recipient.value)
+
+    if (!isClaim) {
+      txb.setLockTime(expiration)
+    }
+
+    const tx = txb.buildIncomplete()
+    const sigs = await this.getMethod('signBatchP2SHTransaction')(
+      [
+        {
+          inputTxHex: '',
+          index: 0,
+          vout: { vSat: utxo.value },
+          outputScript: payment.redeem.output
+        }
+      ],
+      [address],
+      tx,
+      0,
+      true
+    )
+
+    const walletAddress: Address = await this.getMethod('getWalletAddress')(address)
+    const swapInput = this.getSwapInput(sigs[0], Buffer.from(walletAddress.publicKey, 'hex'), isClaim, secret)
+
+    const paymentParams = {
+      redeem: { output: output, input: swapInput, network: this._network },
+      network: this._network
+    }
+    const paymentWithInput = payments.p2sh(paymentParams)
+
+    tx.setInputScript(0, paymentWithInput.input)
+    return tx.toHex()
+  }
+
   async _redeemSwapOutput(
     initiationTxHash: string,
     value: BigNumber,
@@ -184,7 +238,7 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     const initiationTxRaw = await this.getMethod('getRawTransactionByHash')(initiationTxHash)
     const initiationTx = decodeRawTransaction(initiationTxRaw, this._network)
 
-    let swapVout
+    let swapVout: bitcoin.Output
     let paymentVariantName: string
     let paymentVariant: payments.Payment
     for (const vout of initiationTx.vout) {
@@ -213,6 +267,24 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
       throw new Error('Transaction amount does not cover fee.')
     }
 
+    const input: any = {
+      hash: initiationTxHash,
+      index: swapVout.n,
+      value: swapValue,
+      sequence: 0
+    }
+
+    const output = {
+      address: address,
+      value: swapValue - txfee
+    }
+
+    if (!this._network.usePSBT) {
+      const hex = await this._redeemSwapOutputLegacy(input, output, swapOutput, isClaim, secret, address, expiration)
+      await this.getMethod('sendRawTransaction')(hex)
+      return normalizeTransactionObject(decodeRawTransaction(hex, this._network), txfee)
+    }
+
     const psbt = new Psbt({ network })
 
     if (!isClaim) {
@@ -221,12 +293,6 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
 
     const isSegwit =
       paymentVariantName === bitcoin.SwapMode.P2WSH || paymentVariantName === bitcoin.SwapMode.P2SH_SEGWIT
-
-    const input: any = {
-      hash: initiationTxHash,
-      index: swapVout.n,
-      sequence: 0
-    }
 
     if (isSegwit) {
       input.witnessUtxo = {
@@ -237,11 +303,6 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     } else {
       input.nonWitnessUtxo = Buffer.from(initiationTxRaw, 'hex')
       input.redeemScript = paymentVariant.redeem.output
-    }
-
-    const output = {
-      address: address,
-      value: swapValue - txfee
     }
 
     psbt.addInput(input)
@@ -319,6 +380,9 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
   }
 
   async updateTransactionFee(tx: Transaction<bitcoin.Transaction> | string, newFeePerByte: number) {
+    if (!this._network.feeBumpCapable) {
+      throw new Error('This coin does not support fee bumping')
+    }
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction: Transaction<bitcoin.Transaction> = await this.getMethod('getTransactionByHash')(txHash)
     if (await this.UNSAFE_isSwapRedeemTransaction(transaction)) {

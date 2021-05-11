@@ -3,7 +3,6 @@ import { addressToString } from '@liquality/utils'
 import { decodeRawTransaction, normalizeTransactionObject } from '@liquality/bitcoin-utils'
 import { TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { ChainProvider, Address, bitcoin, BigNumber } from '@liquality/types'
-import * as esplora from './types'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 
 import { flatten } from 'lodash'
@@ -39,7 +38,7 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
 
   async getFeePerByte(numberOfBlocks = this._numberOfBlockConfirmation) {
     try {
-      const feeEstimates: esplora.FeeEstimates = await this.nodeGet('/fee-estimates')
+      const feeEstimates: bitcoin.explorer.FeeEstimates = await this.nodeGet('/fee-estimates')
       const blockOptions = Object.keys(feeEstimates).map((block) => parseInt(block))
       const closestBlockOption = blockOptions.reduce((prev, curr) => {
         return Math.abs(prev - numberOfBlocks) < Math.abs(curr - numberOfBlocks) ? prev : curr
@@ -64,7 +63,7 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
   }
 
   async _getUnspentTransactions(address: string): Promise<bitcoin.UTXO[]> {
-    const data: esplora.UTXO[] = await this.nodeGet(`/address/${address}/utxo`)
+    const data: bitcoin.explorer.UTXO[] = await this.nodeGet(`/address/${address}/utxo`)
     return data.map((utxo) => ({
       ...utxo,
       address,
@@ -81,7 +80,7 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
   }
 
   async _getAddressTransactionCount(address: string) {
-    const data: esplora.Address = await this.nodeGet(`/address/${address}`)
+    const data: bitcoin.explorer.Address = await this.nodeGet(`/address/${address}`)
     return data.chain_stats.tx_count + data.mempool_stats.tx_count
   }
 
@@ -102,7 +101,7 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
   }
 
   async getTransaction(transactionHash: string) {
-    let data: esplora.Transaction
+    let data: bitcoin.explorer.Transaction
 
     try {
       data = await this.nodeGet(`/tx/${transactionHash}`)
@@ -119,7 +118,7 @@ export default class BitcoinEsploraApiProvider extends NodeProvider implements P
     return this.formatTransaction(data, currentHeight)
   }
 
-  async formatTransaction(tx: esplora.Transaction, currentHeight: number) {
+  async formatTransaction(tx: bitcoin.explorer.Transaction, currentHeight: number) {
     const hex = await this.getTransactionHex(tx.txid)
     const confirmations = tx.status.confirmed ? currentHeight - tx.status.block_height + 1 : 0
     const decodedTx = decodeRawTransaction(hex, this._network)
