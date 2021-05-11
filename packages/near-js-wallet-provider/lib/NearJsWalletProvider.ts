@@ -16,6 +16,7 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
   _mnemonic: string
   _derivationPath: string
   _keyStore: keyStores.InMemoryKeyStore
+  _addressCache: { [key: string]: Address }
 
   constructor(options: NearJsWalletProviderOptions) {
     const { network, mnemonic, derivationPath } = options
@@ -24,21 +25,27 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
     this._mnemonic = mnemonic
     this._derivationPath = derivationPath
     this._keyStore = new keyStores.InMemoryKeyStore()
+    this._addressCache = {}
   }
 
   async getAddresses(): Promise<Address[]> {
+    if (this._addressCache[this._mnemonic]) {
+      return [this._addressCache[this._mnemonic]]
+    }
+
     const { publicKey, secretKey } = parseSeedPhrase(this._mnemonic, this._derivationPath)
     const keyPair = KeyPair.fromString(secretKey)
     const address = Buffer.from(keyPair.getPublicKey().data).toString('hex')
     await this._keyStore.setKey(this._network.networkId, address, keyPair)
 
-    return [
-      new Address({
-        address,
-        derivationPath: this._derivationPath,
-        publicKey
-      })
-    ]
+    const result = new Address({
+      address,
+      derivationPath: this._derivationPath,
+      publicKey
+    })
+
+    this._addressCache[this._mnemonic] = result
+    return [result]
   }
 
   async getUnusedAddress(): Promise<Address> {
