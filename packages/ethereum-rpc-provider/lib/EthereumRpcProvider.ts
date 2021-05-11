@@ -124,9 +124,12 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
       parentHash: remove0x(block.parentHash),
       timestamp: hexToNumber(block.timestamp),
       size: hexToNumber(block.size),
-      nonce: hexToNumber(block.nonce),
       number: hexToNumber(block.number),
       difficulty: hexToNumber(block.difficulty)
+    }
+
+    if (block.nonce) {
+      normalizedBlock.nonce = hexToNumber(block.nonce)
     }
 
     return normalizedBlock
