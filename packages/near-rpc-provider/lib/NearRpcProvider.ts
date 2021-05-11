@@ -12,8 +12,6 @@ interface RpcProvider extends providers.JsonRpcProvider {
 }
 
 export default class NearRpcProvider extends NodeProvider implements Partial<ChainProvider>, FeeProvider {
-  _usedAddressCache: { [key: string]: boolean }
-  _accountsCache: { [key: string]: boolean }
   _network: NearNetwork
   _jsonRpc: RpcProvider
 
@@ -25,8 +23,6 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     })
     this._jsonRpc = new providers.JsonRpcProvider(network.nodeUrl)
     this._network = network
-    this._usedAddressCache = {}
-    this._accountsCache = {}
   }
 
   async sendRawTransaction(hash: string): Promise<string> {
