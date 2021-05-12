@@ -152,7 +152,6 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
   }
 
   async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: number) {
-    this.validateSwapParams(swapParams)
     validateSecret(secret)
     validateSecretAndHash(secret, swapParams.secretHash)
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
@@ -172,7 +171,6 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
   }
 
   async refundSwap(swapParams: SwapParams, initiationTxHash: string, gasPrice: number) {
-    this.validateSwapParams(swapParams)
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
