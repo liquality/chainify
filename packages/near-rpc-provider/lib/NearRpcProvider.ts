@@ -150,7 +150,8 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
               {
                 transaction: t,
                 blockNumber: header.height,
-                blockHash: header.hash
+                blockHash: header.hash,
+                status: t.status
               },
               currentHeight
             )

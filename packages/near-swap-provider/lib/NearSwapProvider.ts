@@ -114,7 +114,8 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
     }
 
     const parsedInitiationTx = parseReceipt(initiationTransaction)
-    return this.doesTransactionMatchInitiation(swapParams, parsedInitiationTx)
+    const txMatchInitiation = this.doesTransactionMatchInitiation(swapParams, parsedInitiationTx)
+    return txMatchInitiation && !parsedInitiationTx._raw.status.Failure
   }
 
   async getSwapSecret(claimTxHash: string): Promise<string> {
@@ -126,7 +127,7 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
     return parsedTx.swap.secret
   }
 
-  generateUniqueString(prefix = 'liquality-htlc'): string {
-    return `${prefix}${Date.now() + Math.round(Math.random() * 1000)}`
+  generateUniqueString(prefix = 'liquality-wallet-htlc'): string {
+    return `${prefix}-${Date.now() + Math.round(Math.random() * 1000)}`
   }
 }
