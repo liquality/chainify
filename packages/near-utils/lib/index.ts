@@ -1,8 +1,17 @@
-import { near, Transaction } from '@liquality/types'
+import { near, SwapParams, Transaction } from '@liquality/types'
+import { validateValue, validateSecretHash, validateExpiration } from '@liquality/utils'
+
 import BN from 'bn.js'
 
+export { validateSecret, validateSecretAndHash } from '@liquality/utils'
 export { transactions, Account, InMemorySigner, providers, KeyPair, keyStores } from 'near-api-js'
 export { BN }
+
+export function validateSwapParams(swapParams: SwapParams) {
+  validateValue(swapParams.value)
+  validateSecretHash(swapParams.secretHash)
+  validateExpiration(swapParams.expiration)
+}
 
 function toBase64(str: string, encoding = 'hex' as BufferEncoding): string {
   try {

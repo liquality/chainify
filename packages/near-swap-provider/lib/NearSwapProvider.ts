@@ -1,7 +1,15 @@
 import { SwapProvider, SwapParams, near, BigNumber, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { PendingTxError, TxNotFoundError } from '@liquality/errors'
-import { toNearTimestampFormat, parseReceipt, transactions, BN } from '@liquality/near-utils'
+import {
+  toNearTimestampFormat,
+  parseReceipt,
+  transactions,
+  BN,
+  validateSwapParams,
+  validateSecret,
+  validateSecretAndHash
+} from '@liquality/near-utils'
 
 import Bytecode from './bytecode'
 
@@ -19,6 +27,8 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
   }
 
   async initiateSwap(swapParams: SwapParams): Promise<Transaction<near.InputTransaction>> {
+    validateSwapParams(swapParams)
+
     const bytecode = this.createSwapScript()
     const contractId = this.generateUniqueString(swapParams.secretHash.substr(0, 20))
 
@@ -48,8 +58,11 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
     initiationTxHash: string,
     secret: string
   ): Promise<Transaction<near.InputTransaction>> {
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    validateSecret(secret)
+    validateSecretAndHash(secret, swapParams.secretHash)
+    await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
@@ -72,8 +85,9 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
   }
 
   async refundSwap(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction<near.InputTransaction>> {
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
@@ -107,6 +121,8 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
   }
 
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
+    validateSwapParams(swapParams)
+
     const initiationTransaction = await this.getMethod('getTransactionReceipt')(initiationTxHash)
 
     if (!initiationTransaction) {
