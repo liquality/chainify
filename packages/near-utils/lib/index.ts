@@ -1,6 +1,6 @@
-import { near, SwapParams, Transaction } from '@liquality/types'
-import { validateValue, validateSecretHash, validateExpiration } from '@liquality/utils'
-
+import { near, SwapParams, Transaction, Address } from '@liquality/types'
+import { validateValue, validateSecretHash, validateExpiration, addressToString } from '@liquality/utils'
+import { InvalidAddressError } from '@liquality/errors'
 import BN from 'bn.js'
 
 export { validateSecret, validateSecretAndHash } from '@liquality/utils'
@@ -9,8 +9,26 @@ export { BN }
 
 export function validateSwapParams(swapParams: SwapParams) {
   validateValue(swapParams.value)
+  validateAddress(swapParams.recipientAddress)
+  validateAddress(swapParams.refundAddress)
   validateSecretHash(swapParams.secretHash)
   validateExpiration(swapParams.expiration)
+}
+
+export function validateAddress(_address: Address | string) {
+  const address = addressToString(_address)
+
+  if (typeof address !== 'string') {
+    throw new InvalidAddressError(`Invalid address: ${address}`)
+  }
+
+  if (address.length < 2) {
+    throw new InvalidAddressError(`Invalid address. Minimum length is 2`)
+  }
+
+  if (address.length > 64) {
+    throw new InvalidAddressError(`Invalid address. Maximum length is 64`)
+  }
 }
 
 function toBase64(str: string, encoding = 'hex' as BufferEncoding): string {

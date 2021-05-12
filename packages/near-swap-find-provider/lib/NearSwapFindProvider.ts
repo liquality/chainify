@@ -2,7 +2,14 @@ import { near, SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { NodeProvider } from '@liquality/node-provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
-import { fromBase64, toBase64, fromNearTimestamp, parseReceipt, validateSwapParams } from '@liquality/near-utils'
+import {
+  fromBase64,
+  toBase64,
+  fromNearTimestamp,
+  parseReceipt,
+  validateSwapParams,
+  validateSecretAndHash
+} from '@liquality/near-utils'
 
 const ONE_DAY_IN_NS = 24 * 60 * 60 * 1000 * 1000 * 1000
 
@@ -153,6 +160,7 @@ export default class NearSwapFindProvider extends NodeProvider implements Partia
     )
 
     if (tx && tx.secret) {
+      validateSecretAndHash(tx.secret, swapParams.secretHash)
       return tx
     }
   }
