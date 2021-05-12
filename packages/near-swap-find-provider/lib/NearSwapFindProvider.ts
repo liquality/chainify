@@ -2,7 +2,14 @@ import { near, SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { NodeProvider } from '@liquality/node-provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
-import { fromBase64, toBase64, fromNearTimestamp, parseReceipt } from '@liquality/near-utils'
+import {
+  fromBase64,
+  toBase64,
+  fromNearTimestamp,
+  parseReceipt,
+  validateSwapParams,
+  validateSecretAndHash
+} from '@liquality/near-utils'
 
 const ONE_DAY_IN_NS = 24 * 60 * 60 * 1000 * 1000 * 1000
 
@@ -125,6 +132,8 @@ export default class NearSwapFindProvider extends NodeProvider implements Partia
   }
 
   async findInitiateSwapTransaction(swapParams: SwapParams) {
+    validateSwapParams(swapParams)
+
     return this.findAddressTransaction(addressToString(swapParams.refundAddress), (tx: near.NearSwapTransaction) =>
       this.getMethod('doesTransactionMatchInitiation')(swapParams, tx)
     )
@@ -134,8 +143,9 @@ export default class NearSwapFindProvider extends NodeProvider implements Partia
     swapParams: SwapParams,
     initiationTxHash: string
   ): Promise<Transaction<near.NearSwapTransaction>> {
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    validateSwapParams(swapParams)
 
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
@@ -150,6 +160,7 @@ export default class NearSwapFindProvider extends NodeProvider implements Partia
     )
 
     if (tx && tx.secret) {
+      validateSecretAndHash(tx.secret, swapParams.secretHash)
       return tx
     }
   }
@@ -158,8 +169,9 @@ export default class NearSwapFindProvider extends NodeProvider implements Partia
     swapParams: SwapParams,
     initiationTxHash: string
   ): Promise<Transaction<near.NearSwapTransaction>> {
-    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
+    validateSwapParams(swapParams)
 
+    const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)
     if (!initiationTransactionReceipt) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
