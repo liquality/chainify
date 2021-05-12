@@ -20,7 +20,7 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
 
   async initiateSwap(swapParams: SwapParams): Promise<Transaction<near.InputTransaction>> {
     const bytecode = this.createSwapScript()
-    const contractId = this.generateUniqueString()
+    const contractId = this.generateUniqueString(swapParams.secretHash.substr(0, 20))
 
     return this.client.chain.sendTransaction({
       to: contractId,
@@ -127,7 +127,7 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
     return parsedTx.swap.secret
   }
 
-  generateUniqueString(prefix = 'liquality-wallet-htlc'): string {
-    return `${prefix}-${Date.now() + Math.round(Math.random() * 1000)}`
+  generateUniqueString(name: string): string {
+    return `htlc-${name}-${Date.now() + Math.round(Math.random() * 1000)}`
   }
 }
