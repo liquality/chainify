@@ -12,6 +12,7 @@ export interface Tx {
   actions: any[]
   signature: string
   hash: string
+  status: ExecutionStatus
   blockNumber?: number
 }
 
@@ -35,10 +36,22 @@ export interface NearBlockHeader {
   transactions: NormalizedTransaction[]
 }
 
+interface ExecutionError {
+  error_message: string
+  error_type: string
+}
+
+interface ExecutionStatus {
+  SuccessValue?: string
+  SuccessReceiptId?: string
+  Failure?: ExecutionError
+}
+
 export interface InputTransaction {
   transaction: Tx
   blockNumber: number
   blockHash: string
+  status: ExecutionStatus
 }
 
 export interface NormalizedTransaction {
