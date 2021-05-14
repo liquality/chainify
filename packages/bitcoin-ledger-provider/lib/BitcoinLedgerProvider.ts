@@ -201,8 +201,8 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
   }
 
   async signBatchP2SHTransaction(
-    inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
-    addresses: string,
+    inputs: { inputTxHex: string; index: number; vout: any; outputScript: Buffer }[],
+    addresses: string[],
     tx: any,
     lockTime?: number,
     segwit?: boolean

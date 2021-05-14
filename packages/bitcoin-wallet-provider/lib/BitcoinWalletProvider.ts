@@ -72,8 +72,8 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     ): Promise<{ hex: string; fee: number }>
     abstract signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]): Promise<string>
     abstract signBatchP2SHTransaction(
-      inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
-      addresses: string,
+      inputs: { inputTxHex: string; index: number; vout: any; outputScript: Buffer }[],
+      addresses: string[],
       tx: any,
       lockTime?: number,
       segwit?: boolean

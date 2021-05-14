@@ -217,8 +217,8 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
   }
 
   async signBatchP2SHTransaction(
-    inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }],
-    addresses: string,
+    inputs: { inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }[],
+    addresses: string[],
     tx: any,
     lockTime?: number,
     segwit?: boolean
