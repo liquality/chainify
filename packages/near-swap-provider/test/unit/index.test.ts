@@ -17,7 +17,7 @@ describe('Near Swap provider', () => {
   describe('Generate swap', async () => {
     describe('Swap contract address validation', async () => {
       async function testRecipientAddress(recipientAddress: string) {
-        return expect(() =>
+        return expect(
           provider.initiateSwap({
             value: new BigNumber(111),
             recipientAddress,
@@ -25,13 +25,11 @@ describe('Near Swap provider', () => {
             secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
             expiration: 1468194353
           })
-        )
-          .to.throw()
-          .property('name', 'InvalidAddressError')
+        ).to.be.rejectedWith('Invalid address')
       }
 
       async function testRefundAddress(refundAddress: string) {
-        return expect(() =>
+        return expect(
           provider.initiateSwap({
             value: new BigNumber(111),
             recipientAddress: '0a81e8be41b21f651a71aab1a85c6813b8bbccf8',
@@ -39,9 +37,7 @@ describe('Near Swap provider', () => {
             secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
             expiration: 1468194353
           })
-        )
-          .to.throw()
-          .property('name', 'InvalidAddressError')
+        ).to.be.rejectedWith('Invalid address')
       }
 
       it('should throw error with address wrong type', async () => {
@@ -64,7 +60,7 @@ describe('Near Swap provider', () => {
 
     describe('Swap contract secretHash validation', () => {
       async function testSecretHash(secretHash: string) {
-        return expect(() =>
+        return expect(
           provider.initiateSwap({
             value: new BigNumber(111),
             recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
@@ -72,9 +68,7 @@ describe('Near Swap provider', () => {
             secretHash,
             expiration: 1468194353
           })
-        )
-          .to.throw()
-          .property('name', 'InvalidSecretError')
+        ).to.be.rejectedWith('Invalid secret hash')
       }
 
       it('should throw when secretHash too small', () => {
@@ -96,7 +90,7 @@ describe('Near Swap provider', () => {
 
     describe('Swap contract expiration validation', () => {
       async function testExpirationInvalid(expiration: number) {
-        return expect(() =>
+        return expect(
           provider.initiateSwap({
             value: new BigNumber(111),
             recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
@@ -104,9 +98,7 @@ describe('Near Swap provider', () => {
             secretHash: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
             expiration
           })
-        )
-          .to.throw()
-          .property('name', 'InvalidExpirationError')
+        ).to.be.rejectedWith('Invalid expiration')
       }
 
       it('should throw error with 0 expiration', () => {
@@ -129,7 +121,7 @@ describe('Near Swap provider', () => {
 
     describe('Swap contract secretHash validation', () => {
       async function testSecretHash(secretHash: string) {
-        return expect(() =>
+        return expect(
           provider.initiateSwap({
             value: new BigNumber(111),
             recipientAddress: '5acbf79d0cf4139a6c3eca85b41ce2bd23ced04f',
@@ -137,9 +129,7 @@ describe('Near Swap provider', () => {
             secretHash,
             expiration: 1468194353
           })
-        )
-          .to.throw()
-          .property('name', 'InvalidSecretError')
+        ).to.be.rejectedWith('Invalid secret hash')
       }
 
       it('should throw when secretHash too small', () => {
