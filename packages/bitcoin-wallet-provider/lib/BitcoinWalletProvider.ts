@@ -4,8 +4,8 @@ import { bitcoin, Transaction, Address, BigNumber, SendOptions, ChainProvider, W
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
 import { Provider } from '@liquality/provider'
 import { InsufficientBalanceError } from '@liquality/errors'
-
 import { BIP32Interface, payments } from 'bitcoinjs-lib'
+import memoize from 'memoizee'
 
 const ADDRESS_GAP = 20
 
@@ -313,6 +313,49 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
       )
     }
 
+    async withCachedUtxos(func: () => any) {
+      const originalGetMethod = this.getMethod
+      const memoizedGetFeePerByte = memoize(this.getMethod('getFeePerByte'), { primitive: true })
+      const memoizedGetUnspentTransactions = memoize(this.getMethod('getUnspentTransactions'), { primitive: true })
+      const memoizedGetAddressTransactionCounts = memoize(this.getMethod('getAddressTransactionCounts'), {
+        primitive: true
+      })
+      this.getMethod = (method: string, requestor: any = this) => {
+        if (method === 'getFeePerByte') return memoizedGetFeePerByte
+        if (method === 'getUnspentTransactions') return memoizedGetUnspentTransactions
+        else if (method === 'getAddressTransactionCounts') return memoizedGetAddressTransactionCounts
+        else return originalGetMethod.bind(this)(method, requestor)
+      }
+
+      const result = await func.bind(this)()
+
+      this.getMethod = originalGetMethod
+
+      return result
+    }
+
+    async getTotalFee(opts: { value?: BigNumber; feePerByte: number; max?: boolean }) {
+      if (!opts.max) {
+        const { fee } = await this.getInputsForAmount([{ address: '', value: opts.value.toNumber() }], opts.feePerByte)
+        return fee
+      } else {
+        const { fee } = await this.getInputsForAmount([], opts.feePerByte, [], 100, true)
+        return fee
+      }
+    }
+
+    async getTotalFees(opts: { value?: BigNumber; feePerBytes: number[]; max?: boolean }) {
+      const fees = await this.withCachedUtxos(async () => {
+        const fees: { [index: number]: BigNumber } = {}
+        for (const feePerByte of opts.feePerBytes) {
+          const fee = await this.getTotalFee({ value: opts.value, feePerByte, max: opts.max })
+          fees[feePerByte] = new BigNumber(fee)
+        }
+        return fees
+      })
+      return fees
+    }
+
     async getInputsForAmount(
       _targets: bitcoin.OutputTarget[],
       feePerByte?: number,
@@ -387,12 +430,12 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
         }
 
         let targets
+        let sweepFee
         if (sweep) {
           const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
 
-          const amountToSend = new BigNumber(utxoBalance).minus(
-            feePerByte * ((_targets.length + 1) * 39 + utxos.length * 153)
-          ) // todo better calculation
+          sweepFee = feePerByte * ((_targets.length + 1) * 39 + utxos.length * 153)
+          const amountToSend = new BigNumber(utxoBalance).minus(sweepFee)
 
           targets = _targets.map((target) => ({ id: 'main', value: target.value }))
           targets.push({ id: 'main', value: amountToSend.minus(outputBalance).toNumber() })
@@ -400,14 +443,19 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
           targets = _targets.map((target) => ({ id: 'main', value: target.value }))
         }
 
-        const { inputs, outputs, change, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedUtxos)
+        const { inputs, outputs, change, fee: selectFee } = selectCoins(
+          utxos,
+          targets,
+          Math.ceil(feePerByte),
+          fixedUtxos
+        )
 
         if (inputs && outputs) {
           return {
             inputs,
             change,
             outputs,
-            fee
+            fee: sweep ? sweepFee : selectFee
           }
         }
 

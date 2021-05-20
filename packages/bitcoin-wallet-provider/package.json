@@ -27,7 +27,8 @@
     "@liquality/types": "^1.1.6",
     "@liquality/utils": "^1.1.6",
     "bignumber.js": "^9.0.0",
-    "bitcoinjs-lib": "^5.2.0"
+    "bitcoinjs-lib": "^5.2.0",
+    "memoizee": "^0.4.15"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
@@ -40,5 +41,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/memoizee": "^0.4.5"
+  }
 }
