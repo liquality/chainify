@@ -94,7 +94,7 @@ const bsc_testnet: EthereumNetwork = {
 }
 
 const polygon_mainnet: EthereumNetwork = {
-  name: 'matic_mainnet',
+  name: 'polygon_mainnet',
   coinType: '61',
   networkId: 137,
   chainId: 137,
@@ -102,7 +102,7 @@ const polygon_mainnet: EthereumNetwork = {
 }
 
 const polygon_testnet: EthereumNetwork = {
-  name: 'matic_testnet',
+  name: 'polygon_testnet',
   coinType: '61',
   networkId: 80001,
   chainId: 80001,
