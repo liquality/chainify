@@ -173,7 +173,7 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
       const data = await this._jsonRpc[method](args)
       return data
     } catch (error) {
-      throw new NodeError(`${error.type} ${error.message}` || error)
+      throw new NodeError(`${error.type} ${error.message}`, { data: { method, args } })
     }
   }
 
@@ -182,7 +182,7 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
       const data = await this._jsonRpc.sendJsonRpc(method, args)
       return data
     } catch (error) {
-      throw new NodeError(`${error.type} ${error.message}` || error)
+      throw new NodeError(`${error.type} ${error.message}`, { data: { method, args } })
     }
   }
 }
