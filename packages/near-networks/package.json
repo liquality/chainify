@@ -1,6 +1,6 @@
 {
   "name": "@liquality/near-networks",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/types": "^1.1.7"
+    "@liquality/types": "^1.1.8"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

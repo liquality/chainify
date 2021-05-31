@@ -1,6 +1,6 @@
 {
   "name": "@liquality/near-rpc-provider",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,13 +20,13 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.1.7",
-    "@liquality/ethereum-utils": "^1.1.7",
-    "@liquality/near-networks": "^1.1.7",
-    "@liquality/near-utils": "^1.1.7",
-    "@liquality/node-provider": "^1.1.7",
-    "@liquality/types": "^1.1.7",
-    "@liquality/utils": "^1.1.7",
+    "@liquality/errors": "^1.1.8",
+    "@liquality/ethereum-utils": "^1.1.8",
+    "@liquality/near-networks": "^1.1.8",
+    "@liquality/near-utils": "^1.1.8",
+    "@liquality/node-provider": "^1.1.8",
+    "@liquality/types": "^1.1.8",
+    "@liquality/utils": "^1.1.8",
     "bignumber.js": "^9.0.1",
     "lodash": "^4.17.20"
   },

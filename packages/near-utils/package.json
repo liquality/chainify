@@ -1,6 +1,6 @@
 {
   "name": "@liquality/near-utils",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,9 +20,9 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.1.7",
-    "@liquality/types": "^1.1.7",
-    "@liquality/utils": "^1.1.7",
+    "@liquality/errors": "^1.1.8",
+    "@liquality/types": "^1.1.8",
+    "@liquality/utils": "^1.1.8",
     "bn.js": "^5.2.0",
     "near-api-js": "^0.39.0"
   },
