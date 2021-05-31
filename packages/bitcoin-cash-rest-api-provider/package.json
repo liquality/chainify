@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/bitcoin-utils",
+  "name": "@liquality/bitcoin-cash-rest-api-provider",
   "version": "1.1.9",
   "description": "",
   "module": "dist/index.js",
@@ -21,17 +21,13 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/bitcoin-networks": "^1.1.9",
+    "@liquality/bitcoin-utils": "^1.1.9",
     "@liquality/crypto": "^1.1.9",
     "@liquality/errors": "^1.1.9",
+    "@liquality/node-provider": "^1.1.9",
     "@liquality/types": "^1.1.9",
     "@liquality/utils": "^1.1.9",
-    "bignumber.js": "^9.0.0",
-    "bip174": "^2.0.1",
-    "bitcoinjs-lib": "^5.2.0",
-    "bs58check": "^2.1.2",
-    "cashaddrjs": "^0.4.4",
-    "coinselect": "^3.1.11",
-    "lodash": "^4.17.20"
+    "bignumber.js": "^9.0.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
@@ -45,10 +41,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/bitcoinjs-lib": "^5.0.0",
-    "@types/bs58check": "^2.1.0",
-    "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.31"
+    "nock": "^13.0.11"
   },
   "sideEffects": false
 }

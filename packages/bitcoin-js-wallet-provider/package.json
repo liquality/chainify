@@ -21,6 +21,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/bitcoin-networks": "^1.1.9",
+    "@liquality/bitcoin-utils": "^1.1.9",
     "@liquality/bitcoin-wallet-provider": "^1.1.9",
     "@liquality/types": "^1.1.9",
     "@liquality/utils": "^1.1.9",
