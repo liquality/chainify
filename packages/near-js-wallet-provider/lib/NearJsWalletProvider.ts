@@ -35,7 +35,13 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
 
     const { publicKey, secretKey } = parseSeedPhrase(this._mnemonic, this._derivationPath)
     const keyPair = KeyPair.fromString(secretKey)
-    const address = Buffer.from(keyPair.getPublicKey().data).toString('hex')
+
+    let address = await this.getMethod('getImplicitAccount')(publicKey, 0)
+
+    if (!address) {
+      address = Buffer.from(keyPair.getPublicKey().data).toString('hex')
+    }
+
     await this._keyStore.setKey(this._network.networkId, address, keyPair)
 
     const result = new Address({
