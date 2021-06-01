@@ -91,6 +91,11 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
+  async getImplicitAccount(publicKey: string, index: number): Promise<string> {
+    const accounts = await this.nodeGet(`/publicKey/${publicKey.toString()}/accounts`)
+    return accounts[index]
+  }
+
   getAccount(accountId: string, signer?: any): Account {
     return new Account(
       {
