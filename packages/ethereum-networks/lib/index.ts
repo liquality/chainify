@@ -93,6 +93,22 @@ const bsc_testnet: EthereumNetwork = {
   isTestnet: true
 }
 
+const polygon_mainnet: EthereumNetwork = {
+  name: 'polygon_mainnet',
+  coinType: '61',
+  networkId: 137,
+  chainId: 137,
+  isTestnet: false
+}
+
+const polygon_testnet: EthereumNetwork = {
+  name: 'polygon_testnet',
+  coinType: '61',
+  networkId: 80001,
+  chainId: 80001,
+  isTestnet: true
+}
+
 const local: EthereumNetwork = {
   name: 'local',
   coinType: '60',
@@ -113,6 +129,8 @@ const EthereumNetworks = {
   rsk_regtest,
   bsc_mainnet,
   bsc_testnet,
+  polygon_mainnet,
+  polygon_testnet,
   local
 }
 
