@@ -430,11 +430,10 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
         }
 
         let targets
-        let sweepFee
         if (sweep) {
           const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
 
-          sweepFee = feePerByte * ((_targets.length + 1) * 39 + utxos.length * 153)
+          const sweepFee = feePerByte * ((_targets.length + 1) * 39 + utxos.length * 153)
           const amountToSend = new BigNumber(utxoBalance).minus(sweepFee)
 
           targets = _targets.map((target) => ({ id: 'main', value: target.value }))
@@ -443,19 +442,14 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
           targets = _targets.map((target) => ({ id: 'main', value: target.value }))
         }
 
-        const { inputs, outputs, change, fee: selectFee } = selectCoins(
-          utxos,
-          targets,
-          Math.ceil(feePerByte),
-          fixedUtxos
-        )
+        const { inputs, outputs, change, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedUtxos)
 
         if (inputs && outputs) {
           return {
             inputs,
             change,
             outputs,
-            fee: sweep ? sweepFee : selectFee
+            fee
           }
         }
 
