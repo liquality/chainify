@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-scraper-swap-find-provider",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,11 +20,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.1.8",
-    "@liquality/ethereum-utils": "^1.1.8",
-    "@liquality/node-provider": "^1.1.8",
-    "@liquality/types": "^1.1.8",
-    "@liquality/utils": "^1.1.8"
+    "@liquality/errors": "^1.1.9",
+    "@liquality/ethereum-utils": "^1.1.9",
+    "@liquality/node-provider": "^1.1.9",
+    "@liquality/types": "^1.1.9",
+    "@liquality/utils": "^1.1.9"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
