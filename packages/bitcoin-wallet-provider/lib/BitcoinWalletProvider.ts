@@ -1,4 +1,9 @@
-import { selectCoins, normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
+import {
+  selectCoins,
+  normalizeTransactionObject,
+  decodeRawTransaction,
+  addrFromBitcoinJS
+} from '@liquality/bitcoin-utils'
 import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { bitcoin, Transaction, Address, BigNumber, SendOptions, ChainProvider, WalletProvider } from '@liquality/types'
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
@@ -34,10 +39,17 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
 
     constructor(...args: any[]) {
       const options = args[0] as BitcoinWalletProviderOptions
-      const { network, baseDerivationPath, addressType = bitcoin.AddressType.BECH32 } = options
+      const {
+        network,
+        baseDerivationPath,
+        addressType = network.segwitCapable ? bitcoin.AddressType.BECH32 : bitcoin.AddressType.LEGACY
+      } = options
       const addressTypes = Object.values(bitcoin.AddressType)
       if (!addressTypes.includes(addressType)) {
         throw new Error(`addressType must be one of ${addressTypes.join(',')}`)
+      }
+      if (!network.segwitCapable && addressType != bitcoin.AddressType.LEGACY) {
+        throw new Error('SegWit P2SH on SegWit-incompatible network')
       }
 
       super(options)
@@ -60,8 +72,8 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     ): Promise<{ hex: string; fee: number }>
     abstract signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]): Promise<string>
     abstract signBatchP2SHTransaction(
-      inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
-      addresses: string,
+      inputs: { inputTxHex: string; index: number; vout: any; outputScript: Buffer }[],
+      addresses: string[],
       tx: any,
       lockTime?: number,
       segwit?: boolean
@@ -119,6 +131,9 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     }
 
     async updateTransactionFee(tx: Transaction<bitcoin.Transaction> | string, newFeePerByte: number) {
+      if (!this._network.feeBumpCapable) {
+        throw new Error('This coin does not support fee bumping')
+      }
       const txHash = typeof tx === 'string' ? tx : tx.hash
       const transaction: bitcoin.Transaction = (await this.getMethod('getTransactionByHash')(txHash))._raw
       const fixedInputs = [transaction.vin[0]] // TODO: should this pick more than 1 input? RBF doesn't mandate it
@@ -172,7 +187,9 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
 
     getPaymentVariantFromPublicKey(publicKey: Buffer) {
       if (this._addressType === bitcoin.AddressType.LEGACY) {
-        return payments.p2pkh({ pubkey: publicKey, network: this._network })
+        const addressObj = payments.p2pkh({ pubkey: publicKey, network: this._network })
+        addressObj.address = addrFromBitcoinJS(addressObj.address, this._network)
+        return addressObj
       } else if (this._addressType === bitcoin.AddressType.P2SH_SEGWIT) {
         return payments.p2sh({
           redeem: payments.p2wpkh({ pubkey: publicKey, network: this._network }),
