@@ -35,10 +35,18 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
   //   throw new Error('Method not implemented.')
   // }
 
-  async getBlockByNumber(blockNumber: number): Promise<Block<any>> {
+  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<any>> {
     const block = await this.connection.getBlock(blockNumber)
 
-    return this._normalizeBlock(block as any)
+    const normalizedBlock = this._normalizeBlock(block as any)
+
+    if (!includeTx) {
+      return normalizedBlock
+    }
+
+    normalizedBlock.transactions = await this._includeTransactions(blockNumber)
+
+    return normalizedBlock
   }
 
   getBlockHeight(): Promise<number> {
@@ -121,7 +129,8 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       number: block.parentSlot + 1,
       parentHash: block.previousBlockhash,
       size: block.blockHeight,
-      timestamp: block.blockTime
+      timestamp: block.blockTime,
+      transactions: []
     }
   }
 
@@ -136,12 +145,24 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const [hash] = signatures
     const [instruction] = instructions as any
 
-    const { lamports } = instruction.parsed.info
+    let lamports = 0
+
+    if (instruction.parsed) {
+      lamports = instruction.parsed.info.lamports
+    }
 
     return {
       hash,
       value: lamports,
       _raw: {}
     }
+  }
+
+  async _includeTransactions(blockNumber: number): Promise<Transaction<any>[]> {
+    const confirmedSignatures = await this.connection.getConfirmedBlockSignatures(blockNumber)
+
+    const blockTransactions = confirmedSignatures.signatures.map((signature) => this.getTransactionByHash(signature))
+
+    return await Promise.all(blockTransactions)
   }
 }

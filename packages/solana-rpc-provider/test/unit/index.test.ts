@@ -20,8 +20,8 @@ describe('Near RPC provider', () => {
 
   describe('getBlockNumber', () => {
     it('should return block by number', async () => {
-      const blockNumber = 62_708_626
-      await client.chain.getBlockByNumber(blockNumber)
+      const blockNumber = 62_724_331
+      await client.chain.getBlockByNumber(blockNumber, false)
     })
   })
 
