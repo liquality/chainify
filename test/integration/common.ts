@@ -108,6 +108,17 @@ bitcoinWithJs.addProvider(
 )
 bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
 
+const bitcoinCashWithLedger = new Client()
+bitcoinCashWithLedger.addProvider(mockedBitcoinCashRpcProvider())
+bitcoinCashWithLedger.addProvider(
+  new BitcoinLedgerProvider({
+    network: config.bitcoincash.network,
+    baseDerivationPath: `m/84'/${config.bitcoincash.network.coinType}'/0'`,
+    Transport: LedgerHwTransportNode
+  })
+)
+bitcoinCashWithLedger.addProvider(new BitcoinSwapProvider({ network: config.bitcoincash.network }))
+
 const bitcoinCashWithNode = new Client()
 bitcoinCashWithNode.addProvider(mockedBitcoinCashRpcProvider())
 bitcoinCashWithNode.addProvider(
@@ -236,6 +247,12 @@ const chains: { [index: string]: Chain } = {
     segwitFeeImplemented: true
   },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: config.bitcoin.network },
+  bitcoinCashWithLedger: {
+    id: 'Bitcoin Cash Ledger',
+    name: 'bitcoin',
+    client: bitcoinCashWithLedger,
+    network: config.bitcoincash.network
+  },
   bitcoinCashWithNode: {
     id: 'Bitcoin Cash Node',
     name: 'bitcoin',

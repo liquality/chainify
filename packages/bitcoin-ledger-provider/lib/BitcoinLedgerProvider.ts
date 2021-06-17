@@ -2,8 +2,14 @@ import { LedgerProvider } from '@liquality/ledger-provider'
 import { BitcoinWalletProvider } from '@liquality/bitcoin-wallet-provider'
 
 import { padHexStart } from '@liquality/crypto'
-import { compressPubKey, getAddressNetwork, decodeRawTransaction } from '@liquality/bitcoin-utils'
-import { BitcoinNetworks, BitcoinNetwork } from '@liquality/bitcoin-networks'
+import {
+  compressPubKey,
+  getAddressNetwork,
+  decodeRawTransaction,
+  addrToBitcoinJS,
+  txApplyBitcoinCashSighash
+} from '@liquality/bitcoin-utils'
+import { BitcoinNetworks, BitcoinCashNetworks, BitcoinNetwork, ProtocolType } from '@liquality/bitcoin-networks'
 import { bitcoin, BigNumber } from '@liquality/types'
 import HwAppBitcoin from '@ledgerhq/hw-app-btc'
 import { fromPublicKey, BIP32Interface } from 'bip32'
@@ -23,7 +29,12 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
   _baseDerivationNode: BIP32Interface
 
   constructor(options: BitcoinLedgerProviderOptions) {
-    const { network, baseDerivationPath, addressType = bitcoin.AddressType.BECH32, Transport } = options
+    const {
+      network,
+      baseDerivationPath,
+      addressType = network.segwitCapable ? bitcoin.AddressType.BECH32 : bitcoin.AddressType.LEGACY,
+      Transport
+    } = options
     super({ network, baseDerivationPath, addressType, App: HwAppBitcoin, Transport, ledgerScrambleKey: 'BTC' })
     this._walletPublicKeyCache = {}
   }
@@ -48,17 +59,26 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const ledgerInputs = await this.getLedgerInputs(inputs)
     const paths = inputs.map((utxo) => utxo.derivationPath)
 
+    const tryAddrToBitcoinJS = (address: string, network: BitcoinNetwork) => {
+      try {
+        address = addrToBitcoinJS(address, network)
+      } catch (e) {
+        /**/
+      }
+      return address
+    }
+
     const outputs = targets.map((output) => {
       const outputScript = Buffer.isBuffer(output.address)
         ? output.address
-        : address.toOutputScript(output.address, this._network) // Allow for OP_RETURN
+        : address.toOutputScript(tryAddrToBitcoinJS(output.address, this._network), this._network) // Allow for OP_RETURN
       return { amount: this.getAmountBuffer(output.value), script: outputScript }
     })
 
     if (change) {
       outputs.push({
         amount: this.getAmountBuffer(change.value),
-        script: address.toOutputScript(unusedAddress.address, this._network)
+        script: address.toOutputScript(addrToBitcoinJS(unusedAddress.address, this._network), this._network)
       })
     }
 
@@ -69,12 +89,18 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const txHex = await app.createPaymentTransactionNew({
       // @ts-ignore
       inputs: ledgerInputs,
+      sigHashType: this._network.protocolType == ProtocolType.BitcoinCash ? 0x41 : 0x01,
       associatedKeysets: paths,
       changePath: unusedAddress.derivationPath,
       outputScriptHex,
       segwit: isSegwit,
       useTrustedInputForSegwit: isSegwit,
-      additionals: this._addressType === bitcoin.AddressType.BECH32 ? ['bech32'] : []
+      additionals:
+        this._addressType === bitcoin.AddressType.BECH32
+          ? ['bech32']
+          : this._network.protocolType == ProtocolType.BitcoinCash
+          ? ['abc']
+          : []
     })
 
     return { hex: txHex, fee }
@@ -91,6 +117,8 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     if (inputsArePubkey && psbt.txInputs.length !== inputs.length) {
       throw new Error('signPSBT: Ledger must sign all inputs when they are all regular pub key hash payments.')
     }
+
+    const isBCH = this._network.protocolType == ProtocolType.BitcoinCash
 
     if (inputsArePubkey) {
       const ledgerInputs = await this.getLedgerInputs(
@@ -117,19 +145,20 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
         .toString('hex')
       const isSegwit = [bitcoin.AddressType.BECH32, bitcoin.AddressType.P2SH_SEGWIT].includes(this._addressType)
       const changeAddress = await this.findAddress(
-        psbt.txOutputs.map((output) => output.address),
+        psbt.txOutputs.map((output) => addrToBitcoinJS(output.address, this._network)), // todotest or not???
         true
       )
 
       const txHex = await app.createPaymentTransactionNew({
         // @ts-ignore
         inputs: ledgerInputs,
+        sigHashType: isBCH ? 0x41 : 0x01,
         associatedKeysets: paths,
         changePath: changeAddress && changeAddress.derivationPath,
         outputScriptHex,
         segwit: isSegwit,
         useTrustedInputForSegwit: isSegwit,
-        additionals: this._addressType === 'bech32' ? ['bech32'] : []
+        additionals: this._addressType === bitcoin.AddressType.BECH32 ? ['bech32'] : isBCH ? ['abc'] : []
       })
 
       const signedTransaction = BitcoinJsTransaction.fromHex(txHex)
@@ -148,6 +177,20 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
         }
 
         await psbt.signInputAsync(input.index, signer)
+      }
+
+      if (isBCH) {
+        const psbt2 = psbt.clone()
+
+        for (let i = 0; i < psbt2.data.inputs.length; i++) {
+          const pk = psbt2.data.inputs[i].partialSig
+          for (let a = 0; a < pk.length; a++) {
+            const sigHashIndex = pk[a].signature.length - 1
+            psbt2.data.inputs[i].partialSig[a].signature[sigHashIndex] = 2
+          }
+        }
+
+        return Psbt.fromHex(txApplyBitcoinCashSighash(psbt.toHex(), psbt2.toHex())).toBase64()
       }
 
       return psbt.toBase64()
@@ -176,6 +219,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const ledgerSigs = await app.signP2SHTransaction({
       // @ts-ignore
       inputs: ledgerInputs,
+      sigHashType: isBCH ? 0x41 : 0x01,
       associatedKeysets: walletAddresses.map((address) => address.derivationPath),
       outputScriptHex: ledgerOutputs.toString('hex'),
       lockTime: psbt.locktime,
@@ -195,6 +239,20 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
       }
 
       await psbt.signInputAsync(input.index, signer)
+    }
+
+    if (isBCH) {
+      const psbt2 = psbt.clone()
+
+      for (let i = 0; i < psbt2.data.inputs.length; i++) {
+        const pk = psbt2.data.inputs[i].partialSig
+        for (let a = 0; a < pk.length; a++) {
+          const sigHashIndex = pk[a].signature.length - 1
+          psbt2.data.inputs[i].partialSig[a].signature[sigHashIndex] = 2
+        }
+      }
+
+      return Psbt.fromHex(txApplyBitcoinCashSighash(psbt.toHex(), psbt2.toHex())).toBase64()
     }
 
     return psbt.toBase64()
@@ -233,6 +291,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const ledgerSigs = await app.signP2SHTransaction({
       // @ts-ignore
       inputs: ledgerInputs,
+      sigHashType: this._network.protocolType == ProtocolType.BitcoinCash ? 0x41 : 0x01,
       associatedKeysets: walletAddressDerivationPaths,
       outputScriptHex: ledgerOutputs,
       lockTime,
@@ -242,7 +301,9 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
 
     const finalLedgerSigs = []
     for (const ledgerSig of ledgerSigs) {
-      const finalSig = segwit ? ledgerSig : ledgerSig + '01'
+      const finalSig = segwit
+        ? ledgerSig
+        : ledgerSig + (this._network.protocolType == ProtocolType.BitcoinCash ? '41' : '01')
       finalLedgerSigs.push(Buffer.from(finalSig, 'hex'))
     }
 
@@ -300,13 +361,25 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
   async getConnectedNetwork() {
     const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath)
     const network = getAddressNetwork(walletPubKey.bitcoinAddress)
+
+    let inferredNetwork
     // Bitcoin Ledger app does not distinguish between regtest & testnet
     if (
       this._network.name === BitcoinNetworks.bitcoin_regtest.name &&
       network.name === BitcoinNetworks.bitcoin_testnet.name
     ) {
-      return BitcoinNetworks.bitcoin_regtest
+      inferredNetwork = BitcoinNetworks.bitcoin_regtest
+    } else inferredNetwork = network
+
+    if (this._network.protocolType == ProtocolType.BitcoinCash) {
+      switch (inferredNetwork.name) {
+        case 'bitcoin_mainnet':
+          return BitcoinCashNetworks.bitcoin_cash
+        case 'bitcoin_testnet':
+          return BitcoinCashNetworks.bitcoin_cash_testnet
+        case 'bitcoin_regtest':
+          return BitcoinCashNetworks.bitcoin_cash_regtest
+      }
     }
-    return network
   }
 }

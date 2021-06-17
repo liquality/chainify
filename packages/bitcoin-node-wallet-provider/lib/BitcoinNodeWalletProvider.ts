@@ -4,7 +4,7 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { bitcoin, SendOptions, BigNumber, Transaction, Address } from '@liquality/types'
 import { BitcoinNetworks, BitcoinNetwork, BitcoinCashNetworks, ProtocolType } from '@liquality/bitcoin-networks'
-import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
+import { normalizeTransactionObject, decodeRawTransaction, txApplyBitcoinCashSighash } from '@liquality/bitcoin-utils'
 import { sha256 } from '@liquality/crypto'
 
 const BIP70_CHAIN_TO_NETWORK: { [index: string]: BitcoinNetwork } = {
@@ -102,20 +102,81 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]) {
-    if (!this._network.usePSBT) {
-      throw new Error('This coin does not support PSBT signing')
-    }
     const psbt = Psbt.fromBase64(data, { network: this._network })
 
-    for (const input of inputs) {
-      const usedAddresses = await this.getUsedAddresses()
-      const address = usedAddresses.find((address) => address.derivationPath === input.derivationPath)
-      const wif = await this.dumpPrivKey(address.address)
-      const keyPair = ECPair.fromWIF(wif, this._network)
-      psbt.signInput(input.index, keyPair)
+    if (this._network.useBitcoinJSSign) {
+      for (const input of inputs) {
+        const usedAddresses = await this.getUsedAddresses()
+        const address = usedAddresses.find((address) => address.derivationPath === input.derivationPath)
+        const wif = await this.dumpPrivKey(address.address)
+        const keyPair = ECPair.fromWIF(wif, this._network)
+        psbt.signInput(input.index, keyPair)
+      }
+
+      return psbt.toBase64()
     }
 
-    return psbt.toBase64()
+    // This code is only for BCH
+    const inputInfo: { inputTxHex: string; index: number; vout: any; outputScript: Buffer }[] = []
+    const inputAddressInfo: string[] = []
+    for (let i = 0; i < inputs.length; i++) {
+      if (!psbt.data.inputs[inputs[i].index].witnessUtxo) {
+        const funder = BitcoinJsTransaction.fromBuffer(psbt.data.inputs[inputs[i].index].nonWitnessUtxo)
+        const outputIndex = (psbt as any).__CACHE.__TX.ins[inputs[i].index].index
+        psbt.data.inputs[inputs[i].index].witnessUtxo = funder.outs[outputIndex]
+      }
+
+      const output = psbt.data.inputs[inputs[i].index].witnessUtxo.script
+      const isP2SH = output.length == 23 && output[0] == 0xa9 && output[1] == 0x14 && output[22] == 0x87
+
+      inputInfo.push({
+        inputTxHex: '',
+        index: inputs[i].index,
+        vout: { vSat: psbt.data.inputs[inputs[i].index].witnessUtxo.value },
+        outputScript: isP2SH ? psbt.data.inputs[inputs[i].index].redeemScript : output
+      })
+      const usedAddresses = await this.getUsedAddresses()
+      const address = usedAddresses.find((address) => address.derivationPath === inputs[i].derivationPath)
+      inputAddressInfo.push(address.address)
+    }
+
+    const sigs = await this.signBatchP2SHTransaction(inputInfo, inputAddressInfo, (psbt as any).__CACHE.__TX, 0)
+
+    // Encode twice with different allowed sighashes
+    // to locate them in the final hex and replace
+    // them with the BTC-incompatible SigHash
+    // which BitcoinJS does not let us encode
+    const psbt2 = psbt.clone()
+
+    for (let i = 0; i < inputs.length; i++) {
+      const wif = await this.dumpPrivKey(inputAddressInfo[i])
+      const keyPair = ECPair.fromWIF(wif, this._network)
+      sigs[i][sigs[i].length - 1] = 3
+      const partialSig = [
+        {
+          pubkey: keyPair.publicKey,
+          // Pass by REFERENCE
+          signature: Buffer.from(sigs[i])
+        }
+      ]
+      psbt.data.updateInput(inputs[i].index, { partialSig })
+
+      sigs[i][sigs[i].length - 1] = 2
+      const partialSig2 = [
+        {
+          pubkey: keyPair.publicKey,
+          signature: sigs[i]
+        }
+      ]
+      psbt2.data.updateInput(inputs[i].index, { partialSig: partialSig2 })
+    }
+
+    const hex = psbt.toHex()
+    const hex2 = psbt2.toHex()
+
+    return Psbt.fromHex(
+      txApplyBitcoinCashSighash(hex, hex2, this._network.protocolType == ProtocolType.BitcoinCash ? '41' : '01')
+    ).toBase64()
   }
 
   async signBatchP2SHTransaction(

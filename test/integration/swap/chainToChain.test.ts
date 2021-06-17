@@ -51,6 +51,14 @@ describe('Swap Chain to Chain', function () {
     it('BTC (Node) - BTC (Ledger)', async () => {
       await testSwap(chains.bitcoinWithNode, chains.bitcoinWithLedger)
     })
+
+    it('BCH (Ledger) - BCH (Node)', async () => {
+      await testSwap(chains.bitcoinCashWithLedger, chains.bitcoinCashWithNode)
+    })
+
+    it('BCH (Node) - BCH (Ledger)', async () => {
+      await testSwap(chains.bitcoinCashWithNode, chains.bitcoinCashWithLedger)
+    })
   })
 
   describeExternal('Ledger to MetaMask', function () {

@@ -45,7 +45,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/bitcoinjs-lib": "^5.0.0",
     "@types/bs58check": "^2.1.0",
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.31"

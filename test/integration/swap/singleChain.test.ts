@@ -370,6 +370,16 @@ describe('Swap Single Chain Flow', function () {
     testFee(chains.bitcoinWithJs)
   })
 
+  describeExternal('Bitcoin Cash - Ledger', () => {
+    before(async function () {
+      await importBitcoinAddresses(chains.bitcoinCashWithLedger)
+      await fundWallet(chains.bitcoinCashWithLedger)
+    })
+    testSwap(chains.bitcoinCashWithLedger)
+    testBitcoinBalance(chains.bitcoinCashWithLedger)
+    testFee(chains.bitcoinCashWithLedger)
+  })
+
   describe('Bitcoin Cash - Node', () => {
     testSwap(chains.bitcoinCashWithNode)
     testBitcoinBalance(chains.bitcoinCashWithNode)

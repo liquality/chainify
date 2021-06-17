@@ -7,6 +7,7 @@ import {
   witnessStackToScriptWitness,
   getPubKeyHash,
   validateAddress,
+  psbtToHexTransactionBitcoinCash,
   addrToBitcoinJS
 } from '@liquality/bitcoin-utils'
 import {
@@ -17,9 +18,9 @@ import {
   validateSecretAndHash,
   validateExpiration
 } from '@liquality/utils'
-import { BitcoinNetwork } from '@liquality/bitcoin-networks'
+import { BitcoinNetwork, ProtocolType } from '@liquality/bitcoin-networks'
 
-import { Psbt, TransactionBuilder, script as bScript, payments } from 'bitcoinjs-lib'
+import { Psbt, script as bScript, payments } from 'bitcoinjs-lib'
 
 interface BitcoinSwapProviderOptions {
   network: BitcoinNetwork
@@ -172,56 +173,6 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     )
   }
 
-  async _redeemSwapOutputLegacy(
-    utxo: any,
-    recipient: any,
-    output: Buffer,
-    isClaim: boolean,
-    secret: string,
-    address: string,
-    expiration: any
-  ) {
-    const txb = new TransactionBuilder(this._network as BitcoinNetwork)
-    const payment = payments.p2sh({
-      redeem: { output: output, network: this._network as BitcoinNetwork },
-      network: this._network as BitcoinNetwork
-    })
-    txb.addInput(utxo.hash, utxo.index, utxo.sequence, payment.output)
-    txb.addOutput(addrToBitcoinJS(recipient.address, this._network), recipient.value)
-
-    if (!isClaim) {
-      txb.setLockTime(expiration)
-    }
-
-    const tx = txb.buildIncomplete()
-    const sigs = await this.getMethod('signBatchP2SHTransaction')(
-      [
-        {
-          inputTxHex: '',
-          index: 0,
-          vout: { vSat: utxo.value },
-          outputScript: payment.redeem.output
-        }
-      ],
-      [address],
-      tx,
-      0,
-      true
-    )
-
-    const walletAddress: Address = await this.getMethod('getWalletAddress')(address)
-    const swapInput = this.getSwapInput(sigs[0], Buffer.from(walletAddress.publicKey, 'hex'), isClaim, secret)
-
-    const paymentParams = {
-      redeem: { output: output, input: swapInput, network: this._network },
-      network: this._network
-    }
-    const paymentWithInput = payments.p2sh(paymentParams)
-
-    tx.setInputScript(0, paymentWithInput.input)
-    return tx.toHex()
-  }
-
   async _redeemSwapOutput(
     initiationTxHash: string,
     value: BigNumber,
@@ -275,14 +226,8 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
     }
 
     const output = {
-      address: address,
+      address: addrToBitcoinJS(address, network),
       value: swapValue - txfee
-    }
-
-    if (!this._network.usePSBT) {
-      const hex = await this._redeemSwapOutputLegacy(input, output, swapOutput, isClaim, secret, address, expiration)
-      await this.getMethod('sendRawTransaction')(hex)
-      return normalizeTransactionObject(decodeRawTransaction(hex, this._network), txfee)
     }
 
     const psbt = new Psbt({ network })
@@ -343,9 +288,13 @@ export default class BitcoinSwapProvider extends Provider implements Partial<Swa
       }
     }
 
-    psbt.finalizeInput(0, getFinalScripts)
-
-    const hex = psbt.extractTransaction().toHex()
+    let hex
+    if (network.protocolType == ProtocolType.BitcoinCash) {
+      hex = psbtToHexTransactionBitcoinCash(signedPSBT.toHex(), [getFinalScripts])
+    } else {
+      psbt.finalizeInput(0, getFinalScripts)
+      hex = psbt.extractTransaction().toHex()
+    }
     await this.getMethod('sendRawTransaction')(hex)
     return normalizeTransactionObject(decodeRawTransaction(hex, this._network), txfee)
   }

@@ -324,6 +324,63 @@ function addrFromBitcoinJS(address: string, network: BitcoinNetwork) {
   }
 }
 
+function txApplyBitcoinCashSighash(hex1: string, hex2: string, sighash = '41') {
+  // Encode twice with different allowed sighashes
+  // to locate them in the final hex and replace
+  // them with the BTC-incompatible SigHash
+  // which BitcoinJS-lib does not let us encode
+
+  // updateInput and finalizeAllInputs cannot encode non-BTC SigHash.
+  // After creating signature, change the sighash mark to a BTC one
+  // Scenario 1: finalize input, extract tx, call this func to serialize tx
+  // Scenario 2: serialize psbt as hex, call this func and decode and encode as base64
+
+  const hexArray = hex1.split('')
+  const diff = Array(hexArray.length)
+
+  for (let i = 0; i < diff.length; i++) {
+    diff[i] = hex1.charCodeAt(i) ^ hex2.charCodeAt(i)
+  }
+
+  for (let i = 0; i < diff.length; i++) {
+    if (diff[i]) {
+      hexArray[i - 1] = sighash[0]
+      hexArray[i] = sighash[1]
+    }
+  }
+
+  return hexArray.join('')
+}
+
+function psbtToHexTransactionBitcoinCash(psbt: string, finalScriptsFunc?: [any]) {
+  // Equivalent to finalizeAllInputs and extractTransaction
+  // Call finalScriptsFunc with funcs and nulls
+  const psbt1 = bitcoin.Psbt.fromHex(psbt)
+  const psbt2 = psbt1.clone()
+
+  for (let i = 0; i < psbt1.data.inputs.length; i++) {
+    const pk = psbt1.data.inputs[i].partialSig
+    for (let a = 0; a < pk.length; a++) {
+      const sigHashIndex = pk[a].signature.length - 1
+      psbt1.data.inputs[i].partialSig[a].signature[sigHashIndex] = 1
+      psbt2.data.inputs[i].partialSig[a].signature[sigHashIndex] = 2
+    }
+  }
+  for (let i = 0; i < psbt1.data.inputs.length; i++) {
+    if (finalScriptsFunc && finalScriptsFunc[i]) {
+      psbt1.finalizeInput(i, finalScriptsFunc[i])
+      psbt2.finalizeInput(i, finalScriptsFunc[i])
+    } else {
+      psbt1.finalizeInput(i)
+      psbt2.finalizeInput(i)
+    }
+  }
+  const hex1 = psbt1.extractTransaction().toHex()
+  const hex2 = psbt2.extractTransaction().toHex()
+
+  return txApplyBitcoinCashSighash(hex1, hex2)
+}
+
 export {
   calculateFee,
   compressPubKey,
@@ -336,5 +393,7 @@ export {
   getPubKeyHash,
   validateAddress,
   addrToBitcoinJS,
-  addrFromBitcoinJS
+  addrFromBitcoinJS,
+  txApplyBitcoinCashSighash,
+  psbtToHexTransactionBitcoinCash
 }

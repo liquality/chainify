@@ -11,10 +11,9 @@ export interface BitcoinNetwork extends Network, BitcoinJsLibNetwork {
   protocolType: ProtocolType
   segwitCapable: boolean
   feeBumpCapable: boolean
-  // When true, the newer BitcoinJS API is used
-  // This should be false if the signature is created
-  // differently than Bitcoin
-  usePSBT: boolean
+  // True for all cryptocurrencies except which use different Sighash such as
+  // BTG BCH BCHSV BCHABC
+  useBitcoinJSSign: boolean
 }
 
 const bitcoin: BitcoinNetwork = {
@@ -22,7 +21,7 @@ const bitcoin: BitcoinNetwork = {
   protocolType: ProtocolType.Bitcoin,
   feeBumpCapable: true,
   segwitCapable: true,
-  usePSBT: true,
+  useBitcoinJSSign: true,
   ...networks.bitcoin,
   coinType: '0',
   isTestnet: false
@@ -33,7 +32,7 @@ const bitcoin_testnet: BitcoinNetwork = {
   protocolType: ProtocolType.Bitcoin,
   feeBumpCapable: true,
   segwitCapable: true,
-  usePSBT: true,
+  useBitcoinJSSign: true,
   ...networks.testnet,
   coinType: '1',
   isTestnet: true
@@ -44,7 +43,7 @@ const bitcoin_regtest: BitcoinNetwork = {
   protocolType: ProtocolType.Bitcoin,
   feeBumpCapable: true,
   segwitCapable: true,
-  usePSBT: true,
+  useBitcoinJSSign: true,
   ...networks.regtest,
   coinType: '1',
   isTestnet: true
@@ -66,7 +65,7 @@ const bitcoin_cash: BitcoinCashNetwork = {
   prefix: 'bitcoincash',
   feeBumpCapable: false,
   segwitCapable: false,
-  usePSBT: false,
+  useBitcoinJSSign: false,
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: '',
   bip32: {
@@ -89,7 +88,7 @@ const bitcoin_cash_testnet: BitcoinCashNetwork = {
   prefix: 'bchtest',
   feeBumpCapable: false,
   segwitCapable: false,
-  usePSBT: false,
+  useBitcoinJSSign: false,
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: '',
   bip32: {
@@ -109,7 +108,7 @@ const bitcoin_cash_regtest: BitcoinCashNetwork = {
   prefix: 'bchreg',
   feeBumpCapable: false,
   segwitCapable: false,
-  usePSBT: false,
+  useBitcoinJSSign: false,
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: '',
   bip32: {
