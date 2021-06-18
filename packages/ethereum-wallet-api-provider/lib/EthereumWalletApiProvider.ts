@@ -1,13 +1,7 @@
 import { WalletProvider } from '@liquality/wallet-provider'
 import { EthereumNetworks, EthereumNetwork } from '@liquality/ethereum-networks'
 import { WalletError } from '@liquality/errors'
-import {
-  ensure0x,
-  buildTransaction,
-  normalizeTransactionObject,
-  remove0x,
-  hexToNumber
-} from '@liquality/ethereum-utils'
+import { ensure0x, buildTransaction, normalizeTransactionObject, remove0x } from '@liquality/ethereum-utils'
 import { addressToString } from '@liquality/utils'
 import { Address, SendOptions, BigNumber, ethereum } from '@liquality/types'
 import { Debug } from '@liquality/debug'
@@ -125,7 +119,7 @@ export default class EthereumWalletApiProvider extends WalletProvider {
   async getWalletNetworkId() {
     const networkId: ethereum.Hex = await this.request('net_version')
 
-    return hexToNumber(networkId)
+    return parseInt(networkId)
   }
 
   async getConnectedNetwork() {
