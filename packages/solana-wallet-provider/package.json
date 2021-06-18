@@ -20,8 +20,13 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@liquality/solana-network": "^1.2.0",
+    "@liquality/types": "^1.2.0",
     "@liquality/wallet-provider": "^1.2.0",
-    "@liquality/types": "^1.2.0"
+    "@solana/web3.js": "^1.18.0",
+    "bip39": "^3.0.4",
+    "ed25519-hd-key": "^1.2.0",
+    "tweetnacl": "^1.0.3"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

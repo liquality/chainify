@@ -8,7 +8,7 @@ import { SolanaNetworks } from '../../../solana-network'
 
 chai.config.truncateThreshold = 0
 
-describe('Near RPC provider', () => {
+describe('Solana RPC provider', () => {
   let client: Client
   let provider: any
 
