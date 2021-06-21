@@ -10,7 +10,8 @@ import {
   Transaction as SolTransaction,
   sendAndConfirmTransaction,
   TransactionInstruction,
-  ParsedConfirmedTransaction
+  ParsedConfirmedTransaction,
+  AccountInfo
 } from '@solana/web3.js'
 
 export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider> {
@@ -112,8 +113,21 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.sendRawTransaction(wireTransaciton)
   }
 
-  getConnection(): Connection {
-    return this.connection
+  async getProgramAccounts(programId: PublicKey): Promise<
+    {
+      pubkey: PublicKey
+      account: AccountInfo<Buffer>
+    }[]
+  > {
+    return await this.connection.getProgramAccounts(programId)
+  }
+
+  async getAccountInfo(pubkey: PublicKey): Promise<AccountInfo<Buffer>> {
+    return await this.connection.getAccountInfo(pubkey)
+  }
+
+  async getMinimumBalanceForRentExemption(dataLength: number): Promise<number> {
+    return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
 
   _sendBetweenAccounts(signer: Keypair, recepient: PublicKey, lamports: number): TransactionInstruction {
