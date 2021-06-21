@@ -48,21 +48,25 @@ export default {
     // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
 
     // sender
-    senderAddress: '9eed84cfc2ac0068dd8fc10b8b3b71c8d0f74cfd09211e036bdb8561c2647472',
-    senderMnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
+    senderAddress: '6XFgUGQWSQrtn2n3Tscds7PXQyvC55ZHqNo75KPutMR7',
+    senderMnemonic:
+      'mixed leader indoor danger you below wall rally coil key witness wedding elephant bunker edit fatal swallow penalty banana antique total fame sunny cash',
 
     // receiver
-    receiverAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',
-    receiverMnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze'
+    receiverAddress: '2ALwx6KUDPceTvM7ghcguwk9ANyNEgkgQSA7s93qMZBY',
+    receiverMnemonic:
+      'property expect output goat walnut across swallow double small doctor piece problem vault arctic city toe cotton start give control eye chunk stamp round'
   },
   solana: {
     network: SolanaNetworks.solana_testnet,
     walletIndex: 0,
-    value: new BigNumber(1000000),
+    value: new BigNumber(1000000000),
 
+    senderAddress: '6XFgUGQWSQrtn2n3Tscds7PXQyvC55ZHqNo75KPutMR7',
     senderMnemonic:
       'mixed leader indoor danger you below wall rally coil key witness wedding elephant bunker edit fatal swallow penalty banana antique total fame sunny cash',
 
+    receiverAddress: '2ALwx6KUDPceTvM7ghcguwk9ANyNEgkgQSA7s93qMZBY',
     receiverMnemonic:
       'property expect output goat walnut across swallow double small doctor piece problem vault arctic city toe cotton start give control eye chunk stamp round'
   }

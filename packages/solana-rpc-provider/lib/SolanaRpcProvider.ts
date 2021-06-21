@@ -64,8 +64,11 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address) => {
         try {
+          console.log('asd public key', address)
           const publicKey = new PublicKey(address)
+          console.log('PB', publicKey, publicKey.toString())
           const balance = await this.connection.getBalance(publicKey)
+          console.log('BALA', balance)
           return new BigNumber(balance)
         } catch (err) {
           if (err.message && err.message.includes('does not exist while viewing')) {
@@ -95,7 +98,11 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       options.instructions.forEach((instruction) => transaction.add(instruction))
     }
 
-    return await sendAndConfirmTransaction(this.connection, transaction, [options.signer])
+    const tx = await sendAndConfirmTransaction(this.connection, transaction, [options.signer])
+
+    console.log(tx)
+
+    return tx
   }
 
   // sendSweepTransaction(address: string | Address, fee?: number): Promise<Transaction<any>> {
