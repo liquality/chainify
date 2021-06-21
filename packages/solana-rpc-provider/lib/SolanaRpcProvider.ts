@@ -5,12 +5,10 @@ import { SolanaNetwork } from '@liquality/solana-network'
 import {
   Connection,
   PublicKey,
-  Keypair,
-  SystemProgram,
-  Transaction as SolTransaction,
+  ParsedConfirmedTransaction,
+  AccountInfo,
   sendAndConfirmTransaction,
-  TransactionInstruction,
-  ParsedConfirmedTransaction
+  Transaction as SolTransaction
 } from '@solana/web3.js'
 
 export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider> {
@@ -80,26 +78,6 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
-  // Promise<Transaction<any>>
-  async sendTransaction(options: solana.SolanaSendOptions): Promise<any> {
-    const instructions: TransactionInstruction[] = []
-
-    const signer = options.signer
-
-    if (!options.data) {
-      const to = new PublicKey(options.to)
-      const lamports = Number(options.value)
-
-      instructions.push(this._sendBetweenAccounts(signer, to, lamports))
-    }
-
-    const transaction = new SolTransaction()
-
-    instructions.forEach((instruction) => transaction.add(instruction))
-
-    return await sendAndConfirmTransaction(this.connection, transaction, [options.signer])
-  }
-
   // sendSweepTransaction(address: string | Address, fee?: number): Promise<Transaction<any>> {
   //   throw new Error('Method not implemented.')
   // }
@@ -115,12 +93,25 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.sendRawTransaction(wireTransaciton)
   }
 
-  _sendBetweenAccounts(signer: Keypair, recepient: PublicKey, lamports: number): TransactionInstruction {
-    return SystemProgram.transfer({
-      fromPubkey: signer.publicKey,
-      toPubkey: recepient,
-      lamports
-    })
+  async getProgramAccounts(programId: PublicKey): Promise<
+    {
+      pubkey: PublicKey
+      account: AccountInfo<Buffer>
+    }[]
+  > {
+    return await this.connection.getProgramAccounts(programId)
+  }
+
+  async getAccountInfo(pubkey: PublicKey): Promise<AccountInfo<Buffer>> {
+    return await this.connection.getAccountInfo(pubkey)
+  }
+
+  async getMinimumBalanceForRentExemption(dataLength: number): Promise<number> {
+    return await this.connection.getMinimumBalanceForRentExemption(dataLength)
+  }
+
+  async sendAndConfirmTransaction(transaction: SolTransaction, accounts: any[]) {
+    return await sendAndConfirmTransaction(this.connection, transaction, accounts)
   }
 
   _normalizeBlock(block: solana.SolanaBlock): Block {
