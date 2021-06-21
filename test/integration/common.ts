@@ -29,6 +29,8 @@ import { BigNumber, Transaction, bitcoin, Network, SwapParams, SendOptions, Addr
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
 import config from './config'
+import { SolanaRpcProvider } from 'solana-rpc-provider/lib'
+import { SolanaWalletProvider } from 'solana-wallet-provider/lib'
 
 const sleep = utils.sleep
 
@@ -211,6 +213,17 @@ nearWithJs.addProvider(
 )
 nearWithJs.addProvider(new NearSwapProvider())
 nearWithJs.addProvider(new NearSwapFindProvider(config.near.network.helperUrl))
+
+// Solana
+const solana = new Client()
+solana.addProvider(new SolanaRpcProvider(config.solana.network))
+solana.addProvider(
+  new SolanaWalletProvider({
+    network: config.solana.network,
+    mnemonic: config.solana.senderMnemonic,
+    derivationPath: `m/44'/501'/${config.solana.walletIndex}'/0'`
+  })
+)
 
 interface Chain {
   id: string

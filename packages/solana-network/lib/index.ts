@@ -3,6 +3,7 @@ import { Network } from '@liquality/types'
 export interface SolanaNetwork extends Network {
   nodeUrl: string
   helperUrl: string
+  walletIndex: number
 }
 
 const solana_mainnet: SolanaNetwork = {
@@ -10,7 +11,8 @@ const solana_mainnet: SolanaNetwork = {
   nodeUrl: 'https://api.mainnet-beta.solana.com',
   helperUrl: 'https://explorer.solana.com/',
   coinType: '397', // Need to check this cointype
-  isTestnet: false
+  isTestnet: false,
+  walletIndex: 0
 }
 
 const solana_testnet: SolanaNetwork = {
@@ -18,7 +20,8 @@ const solana_testnet: SolanaNetwork = {
   nodeUrl: 'https://api.devnet.solana.com',
   helperUrl: 'https://explorer-api.devnet.solana.com/',
   coinType: '397', // Need to check this cointype
-  isTestnet: true
+  isTestnet: true,
+  walletIndex: 0
 }
 
 const SolanaNetworks = {

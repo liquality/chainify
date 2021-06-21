@@ -18,6 +18,7 @@ export default class SolanaWalletProvider extends WalletProvider {
   _mnemonic: string
   _derivationPath: string
   _addressCache: { [key: string]: Address }
+  _signer: Keypair
 
   constructor(options: SolanaWalletProviderOptions) {
     const { network, mnemonic, derivationPath } = options
@@ -41,6 +42,8 @@ export default class SolanaWalletProvider extends WalletProvider {
     const derivedSeed = derivePath(this._derivationPath, seed).key
 
     const account = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
+
+    this._signer = account
 
     const result = new Address({
       address: account.publicKey.toString(),
@@ -78,5 +81,9 @@ export default class SolanaWalletProvider extends WalletProvider {
     const seed = await mnemonicToSeed(mnemonic)
 
     return Buffer.from(seed).toString('hex')
+  }
+
+  getSigner(): Keypair {
+    return this._signer
   }
 }

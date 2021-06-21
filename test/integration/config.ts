@@ -2,6 +2,7 @@ import { BigNumber } from '../../packages/types/lib'
 import { BitcoinNetworks, BitcoinCashNetworks } from '../../packages/bitcoin-networks/lib'
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
+import { SolanaNetworks } from '../../packages/solana-network/lib'
 
 export default {
   bitcoin: {
@@ -53,6 +54,17 @@ export default {
     // receiver
     receiverAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',
     receiverMnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze'
+  },
+  solana: {
+    network: SolanaNetworks.solana_testnet,
+    walletIndex: 0,
+    value: new BigNumber(1000000),
+
+    senderMnemonic:
+      'mixed leader indoor danger you below wall rally coil key witness wedding elephant bunker edit fatal swallow penalty banana antique total fame sunny cash',
+
+    receiverMnemonic:
+      'property expect output goat walnut across swallow double small doctor piece problem vault arctic city toe cotton start give control eye chunk stamp round'
   }
   // ethereum: { // RSK
   //   rpc: {

@@ -82,20 +82,17 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
 
   // Promise<Transaction<any>>
   async sendTransaction(options: solana.SolanaSendOptions): Promise<any> {
-    const instructions: TransactionInstruction[] = []
-
     const signer = options.signer
+    const transaction = new SolTransaction()
 
-    if (!options.data) {
+    if (!options.instructions) {
       const to = new PublicKey(options.to)
       const lamports = Number(options.value)
 
-      instructions.push(this._sendBetweenAccounts(signer, to, lamports))
+      transaction.add(this._sendBetweenAccounts(signer, to, lamports))
+    } else {
+      options.instructions.forEach((instruction) => transaction.add(instruction))
     }
-
-    const transaction = new SolTransaction()
-
-    instructions.forEach((instruction) => transaction.add(instruction))
 
     return await sendAndConfirmTransaction(this.connection, transaction, [options.signer])
   }
@@ -113,6 +110,10 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
   async sendRawTransaction(rawTransaction: string): Promise<string> {
     const wireTransaciton = Buffer.from(rawTransaction)
     return await this.connection.sendRawTransaction(wireTransaciton)
+  }
+
+  getConnection(): Connection {
+    return this.connection
   }
 
   _sendBetweenAccounts(signer: Keypair, recepient: PublicKey, lamports: number): TransactionInstruction {
