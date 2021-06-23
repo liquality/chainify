@@ -38,12 +38,7 @@ export default class SolanaWalletProvider extends WalletProvider {
       return [this._addressCache[this._mnemonic]]
     }
 
-    const seed = await this._mnemonicToSeed(this._mnemonic)
-    const derivedSeed = derivePath(this._derivationPath, seed).key
-
-    const account = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
-
-    this._signer = account
+    const account = await this.setSigner()
 
     const result = new Address({
       address: account.publicKey.toString(),
@@ -64,25 +59,33 @@ export default class SolanaWalletProvider extends WalletProvider {
     return this.getAddresses()
   }
 
-  // Promise<Transaction<any>>
-  async sendTransaction(options: solana.SolanaSendOptions): Promise<any> {
-    const signer = options.signer
+  async sendTransaction(options: solana.SolanaSendOptions): Promise<Transaction> {
     const transaction = new Transaction()
+
+    if (!this._signer) {
+      await this.setSigner()
+    }
 
     if (!options.instructions) {
       const to = new PublicKey(options.to)
       const lamports = Number(options.value)
 
-      transaction.add(this._sendBetweenAccounts(signer, to, lamports))
+      transaction.add(this._sendBetweenAccounts(this._signer, to, lamports))
     } else {
       options.instructions.forEach((instruction) => transaction.add(instruction))
     }
 
-    const tx = await this.getMethod('sendAndConfirmTransaction')(transaction, [options.signer])
+    let accounts = [this._signer]
 
-    console.log(tx)
+    if (options.accounts) {
+      accounts = [this._signer, ...options.accounts]
+    }
 
-    return tx
+    const tx = await this.getMethod('sendAndConfirmTransaction')(transaction, accounts)
+
+    console.log('txHash', tx)
+
+    return this.getMethod('getTransactionByHash')(tx)
   }
 
   // message: string, from: string
@@ -114,5 +117,16 @@ export default class SolanaWalletProvider extends WalletProvider {
       toPubkey: recepient,
       lamports
     })
+  }
+
+  async setSigner(): Promise<Keypair> {
+    const seed = await this._mnemonicToSeed(this._mnemonic)
+    const derivedSeed = derivePath(this._derivationPath, seed).key
+
+    const account = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
+
+    this._signer = account
+
+    return account
   }
 }

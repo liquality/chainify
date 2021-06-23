@@ -28,25 +28,35 @@ export const initSchema = new Map([
         ['buyer', 'string'],
         ['seller', 'string'],
         ['secret_hash', 'string'],
-        ['expiration', 'u64']
+        ['expiration', 'u64'],
+        ['value', 'u64']
       ]
     }
   ]
 ])
 
-export const createInitBuffer = (buyer: string, seller: string, secret_hash: string, expiration: number) => {
+export interface InitData {
+  buyer: string
+  seller: string
+  secret_hash: string
+  expiration: number
+  value: number
+}
+
+export const createInitBuffer = ({ buyer, seller, expiration, secret_hash, value }: InitData) => {
   const initTemplate = new Template({
     instruction: INTRSUCTION.INIT,
     buyer,
     seller,
     secret_hash,
-    expiration
+    expiration,
+    value
   })
 
   return serialize(initSchema, initTemplate)
 }
 
-const claimSchema = new Map([
+export const claimSchema = new Map([
   [
     Template,
     {
@@ -68,7 +78,7 @@ export const createClaimBuffer = (secret: string) => {
   return serialize(claimSchema, claim)
 }
 
-const refundSchema = new Map([
+export const refundSchema = new Map([
   [
     Template,
     {

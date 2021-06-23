@@ -1,6 +1,7 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Address, Block, Transaction, solana } from '@liquality/types'
 import { SolanaNetwork } from '@liquality/solana-network'
+import { TxNotFoundError } from '@liquality/errors'
 
 import {
   Connection,
@@ -8,8 +9,13 @@ import {
   ParsedConfirmedTransaction,
   AccountInfo,
   sendAndConfirmTransaction,
-  Transaction as SolTransaction
+  Transaction as SolTransaction,
+  Keypair,
+  BpfLoader,
+  BPF_LOADER_PROGRAM_ID
 } from '@solana/web3.js'
+
+import Bytecode from './bytecode'
 
 export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: SolanaNetwork
@@ -54,6 +60,10 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
   async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
     const tx = await this.connection.getParsedConfirmedTransaction(txHash)
 
+    if (!tx) {
+      throw new TxNotFoundError(`Transaction not found: ${txHash}`)
+    }
+
     return this._normalizeTransaction(tx)
   }
 
@@ -61,11 +71,10 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address) => {
         try {
-          console.log('asd public key', address)
           const publicKey = new PublicKey(address)
-          console.log('PB', publicKey, publicKey.toString())
+
           const balance = await this.connection.getBalance(publicKey)
-          console.log('BALA', balance)
+
           return new BigNumber(balance)
         } catch (err) {
           if (err.message && err.message.includes('does not exist while viewing')) {
@@ -102,7 +111,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       account: AccountInfo<Buffer>
     }[]
   > {
-    return await this.connection.getProgramAccounts(programId)
+    return await this.connection.getProgramAccounts(new PublicKey(programId))
   }
 
   async getAccountInfo(pubkey: PublicKey): Promise<AccountInfo<Buffer>> {
@@ -128,27 +137,34 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     }
   }
 
-  _normalizeTransaction(tx: ParsedConfirmedTransaction): Transaction {
+  _normalizeTransaction(tx: ParsedConfirmedTransaction): Transaction<solana.InputTransaction> {
     const {
       transaction: {
-        message: { instructions },
+        message: { accountKeys, instructions },
         signatures
       }
     } = tx
 
     const [hash] = signatures
-    const [instruction] = instructions as any
+    const [firstInstruction] = instructions as any
 
-    let lamports = 0
-
-    if (instruction.parsed) {
-      lamports = instruction.parsed.info.lamports
+    const data = {
+      lamports: 0,
+      programId: ''
     }
+
+    if (firstInstruction.parsed) {
+      data.lamports = firstInstruction.parsed.info.lamports
+    }
+
+    data.programId = accountKeys[accountKeys.length - 1].pubkey.toString()
 
     return {
       hash,
-      value: lamports,
-      _raw: {}
+      value: data.lamports,
+      _raw: {
+        programId: data.programId
+      }
     }
   }
 
@@ -158,5 +174,17 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const blockTransactions = confirmedSignatures.signatures.map((signature) => this.getTransactionByHash(signature))
 
     return await Promise.all(blockTransactions)
+  }
+
+  async _deploy(signer: any) {
+    const programAccount = new Keypair()
+
+    console.log('pa', programAccount.publicKey)
+
+    const resp = await BpfLoader.load(this.connection, signer, programAccount, Bytecode, BPF_LOADER_PROGRAM_ID)
+
+    console.log('resp', resp)
+
+    return programAccount.publicKey
   }
 }
