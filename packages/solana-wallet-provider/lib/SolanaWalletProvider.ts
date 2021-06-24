@@ -73,8 +73,6 @@ export default class SolanaWalletProvider extends WalletProvider {
       options.instructions.forEach((instruction) => transaction.add(instruction))
     }
 
-    options.instructions.forEach((ins) => console.log(ins))
-
     let accounts = [this._signer]
 
     if (options.accounts) {
