@@ -1,13 +1,23 @@
+import BigNumber from 'bignumber.js'
 import { SendOptions } from '../chain'
 
 export interface SolanaSendOptions extends SendOptions {
-  signer: any
+  instructions: any[]
+  accounts: any[]
 }
-
 export interface SolanaBlock {
   blockhash: string
   parentSlot: number
   previousBlockhash: string
   blockHeight: number
   blockTime: number
+}
+
+export interface InputTransaction {
+  programId: string
+  data?: object
+  expiration?: number
+  recipientAddress?: string
+  refundAddress?: string
+  value?: BigNumber
 }
