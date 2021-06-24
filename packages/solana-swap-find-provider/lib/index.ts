@@ -1,2 +1,2 @@
-// import SolanaSwapFindProvider from './SolanaSwapFindProvider'
-// export { SolanaSwapFindProvider }
+import SolanaSwapFindProvider from './SolanaSwapFindProvider'
+export { SolanaSwapFindProvider }

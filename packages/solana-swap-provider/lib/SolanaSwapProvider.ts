@@ -2,7 +2,7 @@ import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/typ
 import { Provider } from '@liquality/provider'
 import { Keypair, SystemProgram, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { deserialize } from 'borsh'
-import { sha256 } from '@liquality/crypto'
+import { base58, sha256 } from '@liquality/crypto'
 import { validateValue, validateSecretHash, validateExpiration } from '@liquality/utils'
 
 import { Template, initSchema, createInitBuffer, createClaimBuffer, createRefundBuffer, InitData } from './layouts'
@@ -20,15 +20,15 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const programId = transactionByHash._raw.programId.toString()
 
-    const data = await this._readAccountData(programId)
+    const initTxParams = await this.initTxParams(programId)
 
-    return data.secret_hash
+    return initTxParams.secret_hash
   }
 
   async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction<any>> {
-    // const programId = '5QG3YbJNXPyzR2Nv19hQN7xb28TwgLN41Wp6CFaRQa5W'
+    // const programId = 'DCvvi5xZFarRW3ZaBJY9BZD4LAJsNWmTaAxmhrdiGuic'
 
-    const signer = this.getMethod('getSigner')()
+    const signer = await this.getMethod('getSigner')()
 
     const programId = await this.getMethod('_deploy')(signer)
 
@@ -53,6 +53,8 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
       programId
     )
 
+    await new Promise((resolve) => setTimeout(resolve, 20000))
+
     const transactionInstruction = this._createTransactionInstruction(signer, appAccount, programId, initBuffer)
 
     return await this.getMethod('sendTransaction')({
@@ -69,19 +71,24 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   ): Promise<Transaction<any>> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
-    const transactionByHash = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    const transactionsByHash = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    const programId = transactionByHash._raw.programId.toString()
+    const programId = transactionsByHash[0]._raw.programId.toString()
 
-    const [[firstAccount], data] = await Promise.all([
+    const [[firstAccount], initTxParams] = await Promise.all([
       this.getMethod('getProgramAccounts')(programId),
-      this._readAccountData(programId)
+      this.initTxParams(programId)
     ])
 
     const appAccount = new PublicKey(firstAccount.pubkey)
-    const buyerAccount = new PublicKey(data.buyer)
+    const buyerAccount = new PublicKey(initTxParams.buyer)
 
-    const transactionInstruction = this._collectLamports(appAccount, buyerAccount, createClaimBuffer(secret), programId)
+    const transactionInstruction = await this._collectLamports(
+      appAccount,
+      buyerAccount,
+      createClaimBuffer(secret),
+      programId
+    )
 
     return await this.getMethod('sendTransaction')({
       instructions: [transactionInstruction]
@@ -91,19 +98,24 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction<any>> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
-    const transactionByHash = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    const transactionsByHash = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    const programId = transactionByHash._raw.programId.toString()
+    const programId = transactionsByHash[0]._raw.programId.toString()
 
     const [[firstAccount], { seller }] = await Promise.all([
       this.getMethod('getProgramAccounts')(programId),
-      this._readAccountData(programId)
+      this.initTxParams(programId)
     ])
 
     const appAccount = new PublicKey(firstAccount.pubkey)
     const sellerAccount = new PublicKey(seller)
 
-    const transactionInstruction = this._collectLamports(appAccount, sellerAccount, createRefundBuffer(), programId)
+    const transactionInstruction = await this._collectLamports(
+      appAccount,
+      sellerAccount,
+      createRefundBuffer(),
+      programId
+    )
 
     return await this.getMethod('sendTransaction')({
       instructions: [transactionInstruction]
@@ -113,16 +125,21 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
     this._validateSwapParams(swapParams)
 
-    const transactionByHash = await this.getMethod('getTransactionByHash')(initiationTxHash)
+    const transactionsByHash = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    const data = await this._readAccountData(transactionByHash._raw.programId.toString())
+    const initTxParams = this._deserialize(transactionsByHash)
 
-    return this._compareParams(swapParams, data)
+    return this._compareParams(swapParams, initTxParams)
   }
 
-  _collectLamports(appAccount: any, recipient: PublicKey, data: any, _programId: string): TransactionInstruction {
+  async _collectLamports(
+    appAccount: any,
+    recipient: PublicKey,
+    data: any,
+    _programId: string
+  ): Promise<TransactionInstruction> {
     const appAccountPubkey = appAccount.publicKey || appAccount
-    const signer = this.getMethod('getSigner')()
+    const signer = await this.getMethod('getSigner')()
     const programId = new PublicKey(_programId)
 
     return new TransactionInstruction({
@@ -136,10 +153,10 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
-  async _readAccountData(programId: string) {
+  async initTxParams(programId: string) {
     const accounts = await this.getMethod('getProgramAccounts')(programId)
 
-    const accountInfo = await this.getMethod('getAccountInfo')(accounts[0].pubkey)
+    const accountInfo = await this.getMethod('getAccountInfo')(accounts[0].pubkey.toString())
 
     return deserialize(initSchema, Template, accountInfo.data)
   }
@@ -176,13 +193,15 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     const newAccountPubkey = appAccount.publicKey
     const programId = new PublicKey(_programId)
 
-    return SystemProgram.createAccount({
+    const acc = SystemProgram.createAccount({
       fromPubkey: signer.publicKey,
       newAccountPubkey,
       lamports: lamports.toNumber(),
       space,
       programId
     })
+
+    return acc
   }
 
   _createTransactionInstruction = (
@@ -193,7 +212,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   ): TransactionInstruction => {
     const programId = new PublicKey(_programId)
 
-    return new TransactionInstruction({
+    const trans = new TransactionInstruction({
       keys: [
         { pubkey: signer.publicKey, isSigner: true, isWritable: true },
         { pubkey: appAccount.publicKey, isSigner: false, isWritable: true }
@@ -201,5 +220,15 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
       programId,
       data
     })
+
+    return trans
+  }
+
+  _deserialize(transactionsByHash: any[]) {
+    const decoded = base58.decode(transactionsByHash[0]._raw.data)
+
+    const deserilized = deserialize(initSchema, Template, decoded)
+
+    return deserilized
   }
 }

@@ -62,13 +62,13 @@ export default {
     walletIndex: 0,
     value: new BigNumber(1000000000),
 
-    senderAddress: '6XFgUGQWSQrtn2n3Tscds7PXQyvC55ZHqNo75KPutMR7',
+    senderAddress: 'BCGEJV2KP5JWjSL5bKuineq5NC5Y8FfYUUW7noF7ZPY',
     senderMnemonic:
-      'mixed leader indoor danger you below wall rally coil key witness wedding elephant bunker edit fatal swallow penalty banana antique total fame sunny cash',
+      'parade answer giggle alert scrap squirrel improve issue rabbit enlist output bullet uncle dismiss blood illness wear snap mass grit black spare purchase regular',
 
-    receiverAddress: '2ALwx6KUDPceTvM7ghcguwk9ANyNEgkgQSA7s93qMZBY',
+    receiverAddress: '7uonk2H1m9nDDTtaYzvd2rKrr26FzpLJARNvdsRDp4fH',
     receiverMnemonic:
-      'property expect output goat walnut across swallow double small doctor piece problem vault arctic city toe cotton start give control eye chunk stamp round'
+      'unlock tonight bind nation any exercise team salon void latin camp man bird essence hidden vibrant utility autumn wink sweet enact olive pottery point'
   }
   // ethereum: { // RSK
   //   rpc: {

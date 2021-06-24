@@ -60,20 +60,20 @@ export default class SolanaWalletProvider extends WalletProvider {
   }
 
   async sendTransaction(options: solana.SolanaSendOptions): Promise<Transaction> {
-    const transaction = new Transaction()
+    await this.setSigner()
 
-    if (!this._signer) {
-      await this.setSigner()
-    }
+    const transaction = new Transaction({ signatures: [this._signer as any] })
 
     if (!options.instructions) {
       const to = new PublicKey(options.to)
       const lamports = Number(options.value)
 
-      transaction.add(this._sendBetweenAccounts(this._signer, to, lamports))
+      transaction.add(await this._sendBetweenAccounts(to, lamports))
     } else {
       options.instructions.forEach((instruction) => transaction.add(instruction))
     }
+
+    options.instructions.forEach((ins) => console.log(ins))
 
     let accounts = [this._signer]
 
@@ -107,11 +107,17 @@ export default class SolanaWalletProvider extends WalletProvider {
     return Buffer.from(seed).toString('hex')
   }
 
-  getSigner(): Keypair {
+  async getSigner(): Promise<Keypair> {
+    if (!this._signer) {
+      await this.setSigner()
+    }
+
     return this._signer
   }
 
-  _sendBetweenAccounts(signer: Keypair, recepient: PublicKey, lamports: number): TransactionInstruction {
+  async _sendBetweenAccounts(recepient: PublicKey, lamports: number): Promise<TransactionInstruction> {
+    const signer = await this.getSigner()
+
     return SystemProgram.transfer({
       fromPubkey: signer.publicKey,
       toPubkey: recepient,
