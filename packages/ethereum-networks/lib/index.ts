@@ -109,6 +109,23 @@ const polygon_testnet: EthereumNetwork = {
   isTestnet: true
 }
 
+const arbitrum_mainnet: EthereumNetwork = {
+  name: 'arbitrum_mainnet',
+  coinType: '62',
+  // TODO change chainId when it is known
+  networkId: 421611,
+  chainId: 421611,
+  isTestnet: false
+}
+
+const arbitrum_testnet: EthereumNetwork = {
+  name: 'arbitrum_testnet',
+  coinType: '62',
+  networkId: 421611,
+  chainId: 421611,
+  isTestnet: true
+}
+
 const local: EthereumNetwork = {
   name: 'local',
   coinType: '60',
@@ -131,6 +148,8 @@ const EthereumNetworks = {
   bsc_testnet,
   polygon_mainnet,
   polygon_testnet,
+  arbitrum_testnet,
+  arbitrum_mainnet,
   local
 }
 
