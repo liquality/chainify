@@ -2,7 +2,8 @@ import * as rpc from './rpc'
 import * as explorer from './explorer'
 
 export interface OutputTarget {
-  address: string
+  address?: string
+  script?: Buffer
   value: number
 }
 

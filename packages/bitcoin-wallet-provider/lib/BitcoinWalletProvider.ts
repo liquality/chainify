@@ -1,4 +1,5 @@
 import {
+  CoinSelectTarget,
   selectCoins,
   normalizeTransactionObject,
   decodeRawTransaction,
@@ -84,10 +85,14 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     }
 
     sendOptionsToOutputs(transactions: SendOptions[]): bitcoin.OutputTarget[] {
-      return transactions.map((tx) => ({
-        address: addressToString(tx.to),
-        value: tx.value.toNumber()
-      }))
+      return transactions.map((tx) => {
+        const outputTarget: bitcoin.OutputTarget = {
+          value: tx.value.toNumber()
+        }
+        if (tx.to) outputTarget.address = addressToString(tx.to)
+        if (tx.data) outputTarget.script = Buffer.from(tx.data, 'hex')
+        return outputTarget
+      })
     }
 
     async setDerivationCache(derivationCache: DerivationCache) {
@@ -446,17 +451,17 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
           throw new Error(`Fee supplied (${feePerByte} sat/b) too low. Minimum relay fee is ${minRelayFee} sat/b`)
         }
 
-        let targets
+        let targets: CoinSelectTarget[]
         if (sweep) {
           const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
 
           const sweepFee = feePerByte * ((_targets.length + 1) * 39 + utxos.length * 153)
           const amountToSend = new BigNumber(utxoBalance).minus(sweepFee)
 
-          targets = _targets.map((target) => ({ id: 'main', value: target.value }))
+          targets = _targets.map((target) => ({ id: 'main', value: target.value, script: target.script }))
           targets.push({ id: 'main', value: amountToSend.minus(outputBalance).toNumber() })
         } else {
-          targets = _targets.map((target) => ({ id: 'main', value: target.value }))
+          targets = _targets.map((target) => ({ id: 'main', value: target.value, script: target.script }))
         }
 
         const { inputs, outputs, change, fee } = selectCoins(utxos, targets, Math.ceil(feePerByte), fixedUtxos)

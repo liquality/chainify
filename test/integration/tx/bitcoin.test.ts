@@ -48,36 +48,55 @@ function testBatchTransaction(chain: Chain) {
   })
 }
 
+function testCustomScript(chain: Chain) {
+  it('Send OP_RETURN script', async () => {
+    const tx: Transaction<bitcoin.Transaction> = await chain.client.chain.sendTransaction({
+      to: null,
+      value: new BigNumber(0),
+      data: '6a66726565646f6d565656565656565656565656565656'
+    })
+    expect(tx._raw.vout[0].scriptPubKey.hex).to.equal('6a66726565646f6d565656565656565656565656565656')
+    expect(tx._raw.vout[0].scriptPubKey.asm).to.include('OP_RETURN')
+  })
+}
+
 function testSweepTransaction(chain: Chain, nodeChain: Chain) {
-  it('should sweep wallet balance', async () => {
-    await fundWallet(chains.bitcoinWithJs)
+  describe('Sweep Transaction', () => {
+    after(async function () {
+      // After sweep, funds should be replenished
+      await fundWallet(chain)
+    })
 
-    const nonChangeAddresses = await chain.client.wallet.getAddresses(0, 20, false)
-    const changeAddresses = await chain.client.wallet.getAddresses(0, 20, true)
-    const addrList = nonChangeAddresses.concat(changeAddresses)
+    it('should sweep wallet balance', async () => {
+      await fundWallet(chains.bitcoinWithJs)
 
-    const bal = (await chain.client.chain.getBalance(addrList)).toNumber()
+      const nonChangeAddresses = await chain.client.wallet.getAddresses(0, 20, false)
+      const changeAddresses = await chain.client.wallet.getAddresses(0, 20, true)
+      const addrList = nonChangeAddresses.concat(changeAddresses)
 
-    let sendTxChain
-    if (bal === 0) {
-      sendTxChain = nodeChain
-    } else {
-      sendTxChain = chain
-    }
+      const bal = (await chain.client.chain.getBalance(addrList)).toNumber()
 
-    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[1], value: new BigNumber(200000000) })
-    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[2], value: new BigNumber(200000000) })
-    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[3], value: new BigNumber(200000000) })
-    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[4], value: new BigNumber(200000000) })
-    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[5], value: new BigNumber(200000000) })
-    await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[6], value: new BigNumber(200000000) })
+      let sendTxChain
+      if (bal === 0) {
+        sendTxChain = nodeChain
+      } else {
+        sendTxChain = chain
+      }
 
-    const addr1 = await getRandomBitcoinAddress(chain)
+      await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[1], value: new BigNumber(200000000) })
+      await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[2], value: new BigNumber(200000000) })
+      await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[3], value: new BigNumber(200000000) })
+      await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[4], value: new BigNumber(200000000) })
+      await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[5], value: new BigNumber(200000000) })
+      await sendTxChain.client.chain.sendTransaction({ to: changeAddresses[6], value: new BigNumber(200000000) })
 
-    await chain.client.chain.sendSweepTransaction(addr1)
+      const addr1 = await getRandomBitcoinAddress(chain)
 
-    const balanceAfter = await chain.client.chain.getBalance(changeAddresses)
-    expect(balanceAfter.toString()).to.equal('0')
+      await chain.client.chain.sendSweepTransaction(addr1)
+
+      const balanceAfter = await chain.client.chain.getBalance(changeAddresses)
+      expect(balanceAfter.toString()).to.equal('0')
+    })
   })
 }
 
@@ -415,6 +434,7 @@ describe('Transactions', function () {
     testSignPSBTSimple(chains.bitcoinWithLedger)
     testSignPSBTScript(chains.bitcoinWithLedger)
     testSignBatchP2SHTransaction(chains.bitcoinWithLedger, false)
+    testCustomScript(chains.bitcoinWithLedger)
   })
 
   describe('Bitcoin - Node', () => {
@@ -438,6 +458,7 @@ describe('Transactions', function () {
     testSignBatchP2SHTransaction(chains.bitcoinWithJs, false)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs, true)
     testSweepTransaction(chains.bitcoinWithJs, chains.bitcoinWithNode)
+    testCustomScript(chains.bitcoinWithJs)
   })
 
   describe('Bitcoin Cash - Node', () => {
@@ -455,5 +476,6 @@ describe('Transactions', function () {
     testBatchTransaction(chains.bitcoinCashWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinCashWithJs, true)
     testSweepTransaction(chains.bitcoinCashWithJs, chains.bitcoinCashWithNode)
+    // testCustomScript(chains.bitcoinCashWithJs) TODO: failing
   })
 })

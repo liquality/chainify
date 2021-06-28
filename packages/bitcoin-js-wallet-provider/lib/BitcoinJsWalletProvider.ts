@@ -94,7 +94,8 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
       txb.addInput(inputs[i].txid, inputs[i].vout, 0, p2pkhOutput)
     }
     for (let i = 0; i < targets.length; i++) {
-      txb.addOutput(addrToBitcoinJS(targets[i].address, this._network), targets[i].value)
+      const scriptPubKey = targets[i].script || addrToBitcoinJS(targets[i].address, this._network)
+      txb.addOutput(scriptPubKey, targets[i].value)
     }
     const tx = txb.buildIncomplete()
     const inputInfo: { inputTxHex: string; index: number; vout: any; outputScript: Buffer }[] = []
@@ -168,7 +169,17 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
     }
 
     for (const output of targets) {
-      psbt.addOutput(output)
+      if (output.script) {
+        psbt.addOutput({
+          value: output.value,
+          script: output.script
+        })
+      } else {
+        psbt.addOutput({
+          value: output.value,
+          address: output.address
+        })
+      }
     }
 
     for (let i = 0; i < inputs.length; i++) {

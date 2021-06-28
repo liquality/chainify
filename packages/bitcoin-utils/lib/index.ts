@@ -59,6 +59,7 @@ function getAddressNetwork(address: string) {
 
 type CoinSelectTarget = {
   value: number
+  script?: Buffer
   id?: string
 }
 
@@ -328,6 +329,7 @@ export {
   calculateFee,
   compressPubKey,
   getAddressNetwork,
+  CoinSelectTarget,
   selectCoins,
   decodeRawTransaction,
   normalizeTransactionObject,

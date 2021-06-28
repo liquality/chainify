@@ -49,9 +49,7 @@ export default class BitcoinLedgerProvider extends BitcoinWalletProvider(LedgerP
     const paths = inputs.map((utxo) => utxo.derivationPath)
 
     const outputs = targets.map((output) => {
-      const outputScript = Buffer.isBuffer(output.address)
-        ? output.address
-        : address.toOutputScript(output.address, this._network) // Allow for OP_RETURN
+      const outputScript = output.script || address.toOutputScript(output.address, this._network)
       return { amount: this.getAmountBuffer(output.value), script: outputScript }
     })
 
