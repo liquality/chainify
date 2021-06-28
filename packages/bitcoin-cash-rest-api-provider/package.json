@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-cash-rest-api-provider",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,13 +20,13 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-networks": "^1.3.1",
-    "@liquality/bitcoin-utils": "^1.3.1",
-    "@liquality/crypto": "^1.3.1",
-    "@liquality/errors": "^1.3.1",
-    "@liquality/node-provider": "^1.3.1",
-    "@liquality/types": "^1.3.1",
-    "@liquality/utils": "^1.3.1",
+    "@liquality/bitcoin-networks": "^1.3.2",
+    "@liquality/bitcoin-utils": "^1.3.2",
+    "@liquality/crypto": "^1.3.2",
+    "@liquality/errors": "^1.3.2",
+    "@liquality/node-provider": "^1.3.2",
+    "@liquality/types": "^1.3.2",
+    "@liquality/utils": "^1.3.2",
     "bignumber.js": "^9.0.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
