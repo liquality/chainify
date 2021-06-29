@@ -5,7 +5,16 @@ import { deserialize } from 'borsh'
 import { base58, sha256 } from '@liquality/crypto'
 import { validateValue, validateSecretHash, validateExpiration } from '@liquality/utils'
 
-import { Template, initSchema, createInitBuffer, createClaimBuffer, createRefundBuffer, InitData } from './layouts'
+import {
+  Template,
+  initSchema,
+  claimSchema,
+  createInitBuffer,
+  createClaimBuffer,
+  createRefundBuffer,
+  InitData,
+  refundSchema
+} from './layouts'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
   doesBlockScan: boolean | (() => boolean)
@@ -26,11 +35,11 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction<any>> {
-    // const programId = 'DCvvi5xZFarRW3ZaBJY9BZD4LAJsNWmTaAxmhrdiGuic'
-
     const signer = await this.getMethod('getSigner')()
 
     const programId = await this.getMethod('_deploy')(signer)
+
+    await this._waitForContractToBeExecutable(programId)
 
     const { expiration, refundAddress, recipientAddress, value, secretHash } = swapParams
 
@@ -53,8 +62,6 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
       programId
     )
 
-    await new Promise((resolve) => setTimeout(resolve, 20000))
-
     const transactionInstruction = this._createTransactionInstruction(signer, appAccount, programId, initBuffer)
 
     return await this.getMethod('sendTransaction')({
@@ -71,17 +78,18 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   ): Promise<Transaction<any>> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
-    const transactionsByHash = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    const programId = transactionsByHash[0]._raw.programId.toString()
+    const { programId, buyer } = initTransaction._raw
 
-    const [[firstAccount], initTxParams] = await Promise.all([
-      this.getMethod('getProgramAccounts')(programId),
-      this.initTxParams(programId)
-    ])
+    const [programAccount] = await this.getMethod('getProgramAccounts')(programId.toString())
 
-    const appAccount = new PublicKey(firstAccount.pubkey)
-    const buyerAccount = new PublicKey(initTxParams.buyer)
+    if (!programAccount) {
+      throw new Error('AccountDoesNotExist')
+    }
+
+    const appAccount = new PublicKey(programAccount.pubkey)
+    const buyerAccount = new PublicKey(buyer)
 
     const transactionInstruction = await this._collectLamports(
       appAccount,
@@ -98,23 +106,24 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction<any>> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
-    const transactionsByHash = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    const programId = transactionsByHash[0]._raw.programId.toString()
+    const { programId, seller } = initTransaction._raw
 
-    const [[firstAccount], { seller }] = await Promise.all([
-      this.getMethod('getProgramAccounts')(programId),
-      this.initTxParams(programId)
-    ])
+    const [programAccount] = await this.getMethod('getProgramAccounts')(programId.toString())
 
-    const appAccount = new PublicKey(firstAccount.pubkey)
+    if (!programAccount) {
+      throw new Error('AccountDoesNotExist')
+    }
+
+    const appAccount = new PublicKey(programAccount.pubkey)
     const sellerAccount = new PublicKey(seller)
 
     const transactionInstruction = await this._collectLamports(
       appAccount,
       sellerAccount,
       createRefundBuffer(),
-      programId
+      programId.toString()
     )
 
     return await this.getMethod('sendTransaction')({
@@ -125,11 +134,9 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
     this._validateSwapParams(swapParams)
 
-    const transactionsByHash = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    const initTxParams = this._deserialize(transactionsByHash)
-
-    return this._compareParams(swapParams, initTxParams)
+    return this._compareParams(swapParams, initTransaction._raw)
   }
 
   async _collectLamports(
@@ -153,12 +160,16 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
-  async initTxParams(programId: string) {
+  async initTxParams(programId: string): Promise<any> {
     const accounts = await this.getMethod('getProgramAccounts')(programId)
 
     const accountInfo = await this.getMethod('getAccountInfo')(accounts[0].pubkey.toString())
 
-    return deserialize(initSchema, Template, accountInfo.data)
+    return this._deserialize(accountInfo.data)
+  }
+
+  async fundSwap(): Promise<null> {
+    return null
   }
 
   _validateSwapParams(swapParams: SwapParams): void {
@@ -224,11 +235,48 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     return trans
   }
 
-  _deserialize(transactionsByHash: any[]) {
-    const decoded = base58.decode(transactionsByHash[0]._raw.data)
+  _deserialize(data: string) {
+    if (data) {
+      const decoded = base58.decode(data)
 
-    const deserilized = deserialize(initSchema, Template, decoded)
+      const instruction = decoded[0]
 
-    return deserilized
+      let schemaToUse
+
+      switch (instruction) {
+        case 0: {
+          schemaToUse = initSchema
+          break
+        }
+        case 1: {
+          schemaToUse = claimSchema
+          break
+        }
+        case 2: {
+          schemaToUse = refundSchema
+          break
+        }
+        default: {
+          break
+        }
+      }
+
+      const deserilized = deserialize(schemaToUse, Template, decoded)
+
+      return deserilized
+    }
+  }
+
+  _waitForContractToBeExecutable(programId: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      const interval = setInterval(async () => {
+        const accountInfo = await this.getMethod('_getAccountInfo')(programId)
+
+        if (accountInfo.executable) {
+          clearInterval(interval)
+          resolve(true)
+        }
+      }, 500)
+    })
   }
 }

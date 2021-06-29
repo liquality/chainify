@@ -1,52 +1,67 @@
 import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
+import { PendingTxError } from '@liquality/errors'
+import { sha256 } from '@liquality/crypto'
 
 import _filter from 'lodash/filter'
 
 export default class SolanaSwapFindProvider extends Provider implements Partial<SwapProvider> {
-  async findInitiateSwapTransaction(swapParams: SwapParams, blockNumber?: number): Promise<Transaction<any>> {
+  private instructions = {
+    init: 0,
+    claim: 1,
+    refund: 2
+  }
+
+  async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<any>> {
     const { refundAddress } = swapParams
 
-    const addressHistory = await this.getMethod('getAddressHistory')(refundAddress)
+    return await this._findTransactionByAddress({
+      address: refundAddress as string,
+      swapParams,
+      instruction: this.instructions.init,
+      validation: this._compareParams
+    })
+  }
 
-    const batch = this._batchSignatures(addressHistory)
+  async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction<any>> {
+    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    const parsedTransactions = batch.map((sp) => this.getMethod('getParsedAndConfirmedTransactions')(sp))
+    if (!initTransaction) {
+      throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
+    }
 
-    const data = await Promise.all(parsedTransactions)
+    const {
+      _raw: { buyer }
+    } = initTransaction
 
-    const deserialized = data.map((entity) => entity.forEach((e: any) => this.getMethod('_deserialize')(e)))
+    return await this._findTransactionByAddress({
+      swapParams,
+      address: buyer,
+      instruction: this.instructions.claim,
+      validation: this._validateSecret
+    })
+  }
 
-    console.log(deserialized)
+  async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction<any>> {
+    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
+    if (!initTransaction) {
+      throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
+    }
+
+    const {
+      _raw: { seller }
+    } = initTransaction
+
+    return await this._findTransactionByAddress({
+      swapParams,
+      address: seller,
+      instruction: this.instructions.refund
+    })
+  }
+
+  async findFundSwapTransaction(): Promise<null> {
     return null
-  }
-
-  async findClaimSwapTransaction(
-    swapParams: SwapParams,
-    initiationTxHash: string,
-    blockNumber?: number
-  ): Promise<Transaction<any>> {
-    // const transaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
-
-    // console.log(transaction)
-
-    return null
-  }
-
-  findRefundSwapTransaction(
-    swapParams: SwapParams,
-    initiationTxHash: string,
-    blockNumber?: number
-  ): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
-  }
-  findFundSwapTransaction(
-    swapParams: SwapParams,
-    initiationTxHash: string,
-    blockNumber?: number
-  ): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
   }
 
   _compareParams(
@@ -62,7 +77,11 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     )
   }
 
-  _batchSignatures(addressHistory: string[]) {
+  _validateSecret(swapParams: SwapParams, data: any): boolean {
+    return swapParams.secretHash === sha256(data.secret)
+  }
+
+  _batchSignatures(addressHistory: string[]): string[][] {
     const batches: string[][] = [[]]
 
     let currentBatch = 0
@@ -81,20 +100,48 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     return batches
   }
 
-  _decode(data: any) {
-    let filtered: any = []
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < data[i].length; j++) {
-        const { transaction } = data[i][j]
+  async _findTransactionByAddress({
+    address,
+    swapParams,
+    instruction,
+    validation
+  }: {
+    address: string
+    swapParams: SwapParams
+    instruction: number
+    validation?: Function
+  }): Promise<any> {
+    const addressHistory = await this.getMethod('getAddressHistory')(address)
 
-        if (transaction.message?.instructions) {
-          const entity = _filter(transaction.message.instructions, 'data')
+    const batch = this._batchSignatures(addressHistory)
 
-          if (entity.length) {
-            filtered.push(entity[0].data)
+    const parsedTransactions = batch.map((sp) => this.getMethod('getParsedAndConfirmedTransactions')(sp))
+
+    const matrix = await Promise.all(parsedTransactions)
+
+    let initTransaction
+
+    for (let i = 0; i < matrix.length; i++) {
+      for (let j = 0; j < matrix[i].length; j++) {
+        const data = matrix[i][j]
+
+        if (data._raw?.instruction === instruction) {
+          if (instruction === this.instructions.refund) {
+            initTransaction = data
+            break
+          } else if (validation(swapParams, data._raw)) {
+            initTransaction = data
+            initTransaction.secret = data.secret
+            break
           }
         }
       }
+
+      if (initTransaction) {
+        break
+      }
     }
+
+    return initTransaction
   }
 }

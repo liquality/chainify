@@ -496,24 +496,27 @@ async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: num
     const initiationTx = await chain.client.swap.initiateSwap(swapParams, fee)
     await mineBlock(chain)
 
-    // const currentBlock = await chain.client.chain.getBlockHeight()
+    const currentBlock = await chain.client.chain.getBlockHeight()
 
-    // const fundingTx = await chain.client.swap.fundSwap(swapParams, initiationTx.hash, fee)
-    // if (isERC20) {
-    //   await mineBlock(chain)
-    // }
+    const fundingTx = await chain.client.swap.fundSwap(swapParams, initiationTx.hash, fee)
 
-    // const foundInitiationTx = await chain.client.swap.findInitiateSwapTransaction(swapParams, currentBlock)
-    // expect(foundInitiationTx.hash).to.equal(initiationTx.hash)
+    if (isERC20) {
+      await mineBlock(chain)
+    }
 
-    // const foundFundingTx = await chain.client.swap.findFundSwapTransaction(
-    //   swapParams,
-    //   initiationTx.hash,
-    //   currentBlock + 1
-    // )
-    // if (isERC20) {
-    //   expect(foundFundingTx.hash).to.equal(fundingTx.hash)
-    // }
+    const foundInitiationTx = await chain.client.swap.findInitiateSwapTransaction(swapParams, currentBlock)
+
+    expect(foundInitiationTx.hash).to.equal(initiationTx.hash)
+
+    const foundFundingTx = await chain.client.swap.findFundSwapTransaction(
+      swapParams,
+      initiationTx.hash,
+      currentBlock + 1
+    )
+
+    if (isERC20) {
+      expect(foundFundingTx.hash).to.equal(fundingTx.hash)
+    }
 
     const isVerified = await chain.client.swap.verifyInitiateSwapTransaction(swapParams, initiationTx.hash)
     expect(isVerified).to.equal(true)
@@ -540,10 +543,9 @@ async function claimAndVerify(
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
   const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, secret, fee)
   await mineBlock(chain)
-  // const currentBlock = await chain.client.chain.getBlockHeight()
-  // const foundClaimTx = await chain.client.swap.findClaimSwapTransaction(swapParams, initiationTxId, currentBlock)
-  // expect(foundClaimTx.hash).to.equal(claimTx.hash)
-  console.log('claim tx', claimTx)
+  const currentBlock = await chain.client.chain.getBlockHeight()
+  const foundClaimTx = await chain.client.swap.findClaimSwapTransaction(swapParams, initiationTxId, currentBlock)
+  expect(foundClaimTx.hash).to.equal(claimTx.hash)
   return claimTx
 }
 

@@ -30,7 +30,8 @@ export default class SolanaWalletProvider extends WalletProvider {
   }
 
   async isWalletAvailable(): Promise<boolean> {
-    throw new Error('Method not implemented.')
+    const addresses = await this.getAddresses()
+    return addresses.length > 0
   }
 
   async getAddresses(): Promise<Address[]> {
@@ -65,7 +66,8 @@ export default class SolanaWalletProvider extends WalletProvider {
     const transaction = new Transaction({ signatures: [this._signer as any] })
 
     if (!options.instructions) {
-      const to = new PublicKey(options.to)
+      const toAddress = typeof options.to === 'object' ? options.to.address : options.to
+      const to = new PublicKey(toAddress)
       const lamports = Number(options.value)
 
       transaction.add(await this._sendBetweenAccounts(to, lamports))
@@ -81,9 +83,9 @@ export default class SolanaWalletProvider extends WalletProvider {
 
     const tx = await this.getMethod('sendAndConfirmTransaction')(transaction, accounts)
 
-    console.log('txHash', tx)
+    const [parsedTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([tx])
 
-    return this.getMethod('getTransactionByHash')(tx)
+    return parsedTransaction
   }
 
   // message: string, from: string
@@ -132,5 +134,9 @@ export default class SolanaWalletProvider extends WalletProvider {
     this._signer = account
 
     return account
+  }
+
+  canUpdateFee(): boolean {
+    return false
   }
 }

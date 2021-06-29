@@ -60,15 +60,16 @@ export default {
   solana: {
     network: SolanaNetworks.solana_testnet,
     walletIndex: 0,
-    value: new BigNumber(1000000000),
+    value: new BigNumber(100000000),
 
-    senderAddress: 'BCGEJV2KP5JWjSL5bKuineq5NC5Y8FfYUUW7noF7ZPY',
+    senderAddress: 'CGP6sKHyrZGPJRoUAy8XbyzmX7YD4tVBQG9SEe9ekZM6',
     senderMnemonic:
-      'parade answer giggle alert scrap squirrel improve issue rabbit enlist output bullet uncle dismiss blood illness wear snap mass grit black spare purchase regular',
+      'thumb proud solar any north rely grow ceiling pattern dress under illegal relief brief flock ensure tumble green million earth lesson absent horse snap',
 
-    receiverAddress: '7uonk2H1m9nDDTtaYzvd2rKrr26FzpLJARNvdsRDp4fH',
+    // receiver
+    receiverAddress: '5r3N8yt7DYgh888Rr7owRoD3Jn6QSNY9sYyisTkT86DU',
     receiverMnemonic:
-      'unlock tonight bind nation any exercise team salon void latin camp man bird essence hidden vibrant utility autumn wink sweet enact olive pottery point'
+      'glance item million plastic used siren giant process oppose access soldier what all live shy kitten urge earth easy bounce blade inmate scorpion icon'
   }
   // ethereum: { // RSK
   //   rpc: {

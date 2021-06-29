@@ -15,7 +15,8 @@ import {
   Transaction as SolTransaction,
   Keypair,
   BpfLoader,
-  BPF_LOADER_PROGRAM_ID
+  BPF_LOADER_PROGRAM_ID,
+  ConfirmedSignatureInfo
 } from '@solana/web3.js'
 
 export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider> {
@@ -41,18 +42,6 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
   // }
 
   async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<any>> {
-    // const swapParams: SwapParams = {
-    //   expiration: 1625181978,
-    //   recipientAddress: '6XFgUGQWSQrtn2n3Tscds7PXQyvC55ZHqNo75KPutMR7',
-    //   refundAddress: 'BViZSdcLbF26w7K6i8pgVGuiwjuDK5AWeVmRxwpk8gsT',
-    //   secretHash: '3881219d087dd9c634373fd33dfa33a2cb6bfc6c520b64b8bb60ef2ceb534ae7',
-    //   value: new BigNumber(1000000000)
-    // }
-
-    // // const initTxHash = '5XXMxMsnnU8i9oWAQT36NDDGneEoD8xtH5r7SBiaikmqfec8c2ErjdVmBtVLPFSH5UE7ozjmh6BL9YVJL5XGvSqe'
-
-    // await this.getMethod('findInitiateSwapTransaction')(swapParams)
-
     const block = await this.connection.getBlock(blockNumber)
 
     const normalizedBlock = this._normalizeBlock(block as any)
@@ -66,8 +55,8 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return normalizedBlock
   }
 
-  getBlockHeight(): Promise<number> {
-    throw new Error('Method not implemented.')
+  async getBlockHeight(): Promise<number> {
+    return await this.connection.getSlot()
   }
 
   async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
@@ -90,7 +79,9 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address) => {
         try {
-          const publicKey = new PublicKey(address)
+          const _addr = typeof address === 'object' ? address.address : address
+
+          const publicKey = new PublicKey(_addr)
 
           const balance = await this.connection.getBalance(publicKey)
 
@@ -125,13 +116,6 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     })
   }
 
-  // updateTransactionFee(tx: string | Transaction<any>, newFee: number): Promise<Transaction<any>> {
-  //   throw new Error('Method not implemented.')
-  // }
-  // sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction<any>> {
-  //   throw new Error('Method not implemented.')
-  // }
-
   async sendRawTransaction(rawTransaction: string): Promise<string> {
     const wireTransaciton = Buffer.from(rawTransaction)
     return await this.connection.sendRawTransaction(wireTransaciton)
@@ -154,12 +138,32 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
 
-  async sendAndConfirmTransaction(transaction: SolTransaction, accounts: any[]) {
+  async sendAndConfirmTransaction(transaction: SolTransaction, accounts: any[]): Promise<string> {
     return await sendAndConfirmTransaction(this.connection, transaction, accounts)
   }
 
-  async getAddressHistory(address: string) {
+  async getAddressHistory(address: string): Promise<ConfirmedSignatureInfo[]> {
     return await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(address))
+  }
+
+  async _includeTransactions(blockNumber: number): Promise<Transaction<any>[]> {
+    const confirmedSignatures = await this.connection.getConfirmedBlockSignatures(blockNumber)
+
+    const blockTransactions = confirmedSignatures.signatures.map((signature) => this.getTransactionByHash(signature))
+
+    return await Promise.all(blockTransactions)
+  }
+
+  async _deploy(signer: any): Promise<string> {
+    const programAccount = new Keypair()
+
+    await BpfLoader.load(this.connection, signer, programAccount, Bytecode, BPF_LOADER_PROGRAM_ID)
+
+    return programAccount.publicKey.toString()
+  }
+
+  async _getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
+    return this.connection.getAccountInfo(new PublicKey(address))
   }
 
   _normalizeBlock(block: solana.SolanaBlock): Block {
@@ -184,16 +188,23 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const [hash] = signatures
     const [firstInstruction] = instructions as any
 
-    const transactionData = {
+    const transactionData: any = {
       lamports: 0,
-      programId: '',
-      data: {}
+      programId: ''
     }
 
     const txData = filter(instructions as any, 'data')
 
+    let deserialized
+
     if (txData.length) {
-      transactionData.data = txData[0].data
+      deserialized = this.getMethod('_deserialize')(txData[0].data)
+
+      transactionData._raw = { ...transactionData._raw, ...deserialized }
+
+      if (deserialized.secret) {
+        transactionData.secret = deserialized.secret
+      }
     }
 
     if (firstInstruction.parsed) {
@@ -205,30 +216,11 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return {
       hash,
       value: transactionData.lamports,
+      secret: transactionData.secret,
       _raw: {
         programId: transactionData.programId,
-        data: transactionData.data
+        ...transactionData._raw
       }
     }
-  }
-
-  async _includeTransactions(blockNumber: number): Promise<Transaction<any>[]> {
-    const confirmedSignatures = await this.connection.getConfirmedBlockSignatures(blockNumber)
-
-    const blockTransactions = confirmedSignatures.signatures.map((signature) => this.getTransactionByHash(signature))
-
-    return await Promise.all(blockTransactions)
-  }
-
-  async _getConnection() {
-    return this.connection
-  }
-
-  async _deploy(signer: any): Promise<string> {
-    const programAccount = new Keypair()
-
-    await BpfLoader.load(this.connection, signer, programAccount, Bytecode, BPF_LOADER_PROGRAM_ID)
-
-    return programAccount.publicKey.toString()
   }
 }
