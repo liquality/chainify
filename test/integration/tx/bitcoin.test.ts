@@ -48,15 +48,34 @@ function testBatchTransaction(chain: Chain) {
   })
 }
 
-function testCustomScript(chain: Chain) {
+function testOpReturn(chain: Chain) {
   it('Send OP_RETURN script', async () => {
     const tx: Transaction<bitcoin.Transaction> = await chain.client.chain.sendTransaction({
       to: null,
       value: new BigNumber(0),
-      data: '6a66726565646f6d565656565656565656565656565656'
+      data: '66726565646f6d565656565656565656565656565656'
     })
-    expect(tx._raw.vout[0].scriptPubKey.hex).to.equal('6a66726565646f6d565656565656565656565656565656')
-    expect(tx._raw.vout[0].scriptPubKey.asm).to.include('OP_RETURN')
+    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a66726565646f6d565656565656565656565656565656')).to
+      .exist
+    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.asm.includes('OP_RETURN'))).to.exist
+  })
+
+  it('Send Value & OP_RETURN', async () => {
+    const to = await getRandomBitcoinAddress(chain)
+    const value = config[chain.name as keyof typeof config].value
+    const tx: Transaction<bitcoin.Transaction> = await chain.client.chain.sendTransaction({
+      to,
+      value,
+      data: '66726565646f6d565656565656565656565656565656'
+    })
+
+    // OP_RETURN exists
+    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a66726565646f6d565656565656565656565656565656')).to
+      .exist
+    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.asm.includes('OP_RETURN'))).to.exist
+
+    // P2PKH exists
+    expect(tx._raw.vout.find((vout) => vout.value === value.div(1e8).toNumber())).to.exist
   })
 }
 
@@ -434,7 +453,7 @@ describe('Transactions', function () {
     testSignPSBTSimple(chains.bitcoinWithLedger)
     testSignPSBTScript(chains.bitcoinWithLedger)
     testSignBatchP2SHTransaction(chains.bitcoinWithLedger, false)
-    testCustomScript(chains.bitcoinWithLedger)
+    testOpReturn(chains.bitcoinWithLedger)
   })
 
   describe('Bitcoin - Node', () => {
@@ -458,7 +477,7 @@ describe('Transactions', function () {
     testSignBatchP2SHTransaction(chains.bitcoinWithJs, false)
     testSignBatchP2SHTransaction(chains.bitcoinWithJs, true)
     testSweepTransaction(chains.bitcoinWithJs, chains.bitcoinWithNode)
-    testCustomScript(chains.bitcoinWithJs)
+    testOpReturn(chains.bitcoinWithJs)
   })
 
   describe('Bitcoin Cash - Node', () => {
@@ -476,6 +495,6 @@ describe('Transactions', function () {
     testBatchTransaction(chains.bitcoinCashWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinCashWithJs, true)
     testSweepTransaction(chains.bitcoinCashWithJs, chains.bitcoinCashWithNode)
-    // testCustomScript(chains.bitcoinCashWithJs) TODO: failing
+    // testOpReturn(chains.bitcoinCashWithJs) TODO: failing
   })
 })

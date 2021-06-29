@@ -85,14 +85,26 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     }
 
     sendOptionsToOutputs(transactions: SendOptions[]): bitcoin.OutputTarget[] {
-      return transactions.map((tx) => {
-        const outputTarget: bitcoin.OutputTarget = {
-          value: tx.value.toNumber()
+      const targets: bitcoin.OutputTarget[] = []
+
+      transactions.forEach((tx) => {
+        if (tx.to && tx.value && tx.value.gt(0)) {
+          targets.push({
+            address: addressToString(tx.to),
+            value: tx.value.toNumber()
+          })
         }
-        if (tx.to) outputTarget.address = addressToString(tx.to)
-        if (tx.data) outputTarget.script = Buffer.from(tx.data, 'hex')
-        return outputTarget
+
+        if (tx.data) {
+          const script = '6a' + tx.data // OP_RETURN
+          targets.push({
+            value: 0,
+            script: Buffer.from(script, 'hex')
+          })
+        }
       })
+
+      return targets
     }
 
     async setDerivationCache(derivationCache: DerivationCache) {
