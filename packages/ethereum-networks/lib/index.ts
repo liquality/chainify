@@ -112,9 +112,8 @@ const polygon_testnet: EthereumNetwork = {
 const arbitrum_mainnet: EthereumNetwork = {
   name: 'arbitrum_mainnet',
   coinType: '62',
-  // TODO change chainId when it is known
-  networkId: 421611,
-  chainId: 421611,
+  networkId: 42161,
+  chainId: 42161,
   isTestnet: false
 }
 
