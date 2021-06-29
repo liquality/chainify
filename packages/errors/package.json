@@ -1,6 +1,6 @@
 {
   "name": "@liquality/errors",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
