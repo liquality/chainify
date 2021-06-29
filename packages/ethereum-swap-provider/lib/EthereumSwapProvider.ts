@@ -26,7 +26,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     const bytecode = [
       // Constructor
       '60',
-      'c8', // PUSH1 {contractSize}
+      'c9', // PUSH1 {contractSize}
       '80', // DUP1
       '60',
       '0b', // PUSH1 0b
@@ -57,8 +57,8 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
       '80', // DUP1
       '60',
       '02', // PUSH1 02
-      '60',
-      '48', // PUSH1 48
+      '61',
+      'ffff', //PUSH ffff gas units for sha256 execution
       'f1', // CALL
 
       // Validate input size
@@ -78,7 +78,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
       '16', // AND (input valid size AND sha256 success) AND secret valid
       // Redeem if secret is valid
       '60',
-      '4f', // PUSH1 {redeemDestination}
+      '50', // PUSH1 {redeemDestination}
       '57', // JUMPI
 
       // Validate input size
@@ -92,7 +92,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
       '16', // AND (input size 0 AND time lock expired)
       // Refund if timelock passed
       '60',
-      '8c', // PUSH1 {refundDestination}
+      '8d', // PUSH1 {refundDestination}
       '57',
 
       'fe', // INVALID
@@ -125,7 +125,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
       .join('')
       .toLowerCase()
 
-    if (Buffer.byteLength(bytecode) !== 422) {
+    if (Buffer.byteLength(bytecode) !== 424) {
       throw new Error('Invalid swap script. Bytecode length incorrect.')
     }
 
