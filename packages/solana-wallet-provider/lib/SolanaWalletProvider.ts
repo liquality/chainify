@@ -1,6 +1,7 @@
 import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, Network, solana } from '@liquality/types'
 import { SolanaNetwork } from '@liquality/solana-network'
+import { base58 } from '@liquality/crypto'
 
 import { validateMnemonic, mnemonicToSeed } from 'bip39'
 import { derivePath } from 'ed25519-hd-key'
@@ -93,9 +94,15 @@ export default class SolanaWalletProvider extends WalletProvider {
     return parsedTransaction
   }
 
-  // message: string, from: string
-  signMessage(): Promise<string> {
-    throw new Error('Method not implemented.')
+  async signMessage(message: string, from: string): Promise<string> {
+    const buffer = Buffer.from(message)
+
+    const signature = nacl.sign.detached(buffer, base58.decode(this._signer.secretKey.toString()))
+
+    return JSON.stringify({
+      signature: base58.encode(signature),
+      publicKey: new PublicKey(from)
+    })
   }
 
   async getConnectedNetwork(): Promise<Network> {
