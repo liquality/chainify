@@ -2,6 +2,7 @@ import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/typ
 import { Provider } from '@liquality/provider'
 import { PendingTxError } from '@liquality/errors'
 import { sha256 } from '@liquality/crypto'
+import { addressToString } from '@liquality/utils'
 
 import _filter from 'lodash/filter'
 
@@ -16,7 +17,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     const { refundAddress } = swapParams
 
     return await this._findTransactionByAddress({
-      address: refundAddress as string,
+      address: addressToString(refundAddress),
       swapParams,
       instruction: this.instructions.init,
       validation: this._compareParams

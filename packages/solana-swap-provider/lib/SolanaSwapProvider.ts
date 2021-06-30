@@ -3,7 +3,7 @@ import { Provider } from '@liquality/provider'
 import { Keypair, SystemProgram, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { deserialize } from 'borsh'
 import { base58, sha256 } from '@liquality/crypto'
-import { validateValue, validateSecretHash, validateExpiration } from '@liquality/utils'
+import { validateValue, validateSecretHash, validateExpiration, addressToString } from '@liquality/utils'
 
 import {
   Template,
@@ -15,6 +15,7 @@ import {
   InitData,
   refundSchema
 } from './layouts'
+import bytecode from './bytecode'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
   doesBlockScan: boolean | (() => boolean)
@@ -37,9 +38,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction<any>> {
     const signer = await this.getMethod('getSigner')()
 
-    const programId = await this.getMethod('_deploy')(signer)
-
-    await this._waitForContractToBeExecutable(programId)
+    const programId = await this.getMethod('sendTransaction')({ bytecode })
 
     const { expiration, refundAddress, recipientAddress, value, secretHash } = swapParams
 
@@ -176,8 +175,8 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     validateValue(swapParams.value)
     validateSecretHash(swapParams.secretHash)
     validateExpiration(swapParams.expiration)
-    this._validateAddress(swapParams.recipientAddress as string)
-    this._validateAddress(swapParams.refundAddress as string)
+    this._validateAddress(addressToString(swapParams.recipientAddress))
+    this._validateAddress(addressToString(swapParams.refundAddress))
   }
 
   _validateAddress(address: string): boolean {
@@ -265,18 +264,5 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
       return deserilized
     }
-  }
-
-  _waitForContractToBeExecutable(programId: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      const interval = setInterval(async () => {
-        const accountInfo = await this.getMethod('_getAccountInfo')(programId)
-
-        if (accountInfo.executable) {
-          clearInterval(interval)
-          resolve(true)
-        }
-      }, 500)
-    })
   }
 }

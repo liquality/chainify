@@ -4,6 +4,7 @@ import { SendOptions } from '../chain'
 export interface SolanaSendOptions extends SendOptions {
   instructions: any[]
   accounts: any[]
+  bytecode: number[]
 }
 export interface SolanaBlock {
   blockhash: string

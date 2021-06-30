@@ -63,11 +63,16 @@ export default class SolanaWalletProvider extends WalletProvider {
   async sendTransaction(options: solana.SolanaSendOptions): Promise<Transaction> {
     await this.setSigner()
 
-    const transaction = new Transaction({ signatures: [this._signer as any] })
+    const transaction = new Transaction()
 
-    if (!options.instructions) {
-      const toAddress = typeof options.to === 'object' ? options.to.address : options.to
-      const to = new PublicKey(toAddress)
+    if (!options.instructions && !options.to) {
+      const programId = await this.getMethod('_deploy')(this._signer, options.bytecode)
+
+      await this._waitForContractToBeExecutable(programId)
+
+      return programId
+    } else if (!options.instructions) {
+      const to = new PublicKey(options.to)
       const lamports = Number(options.value)
 
       transaction.add(await this._sendBetweenAccounts(to, lamports))
@@ -138,5 +143,18 @@ export default class SolanaWalletProvider extends WalletProvider {
 
   canUpdateFee(): boolean {
     return false
+  }
+
+  _waitForContractToBeExecutable(programId: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      const interval = setInterval(async () => {
+        const accountInfo = await this.getMethod('_getAccountInfo')(programId)
+
+        if (accountInfo.executable) {
+          clearInterval(interval)
+          resolve(true)
+        }
+      }, 500)
+    })
   }
 }

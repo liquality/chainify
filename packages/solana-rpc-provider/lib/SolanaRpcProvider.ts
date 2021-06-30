@@ -4,7 +4,6 @@ import { SolanaNetwork } from '@liquality/solana-network'
 import { TxNotFoundError } from '@liquality/errors'
 
 import filter from 'lodash/filter'
-import Bytecode from './bytecode'
 
 import {
   Connection,
@@ -79,9 +78,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address) => {
         try {
-          const _addr = typeof address === 'object' ? address.address : address
-
-          const publicKey = new PublicKey(_addr)
+          const publicKey = new PublicKey(address)
 
           const balance = await this.connection.getBalance(publicKey)
 
@@ -154,10 +151,10 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await Promise.all(blockTransactions)
   }
 
-  async _deploy(signer: any): Promise<string> {
+  async _deploy(signer: any, bytecode: any): Promise<string> {
     const programAccount = new Keypair()
 
-    await BpfLoader.load(this.connection, signer, programAccount, Bytecode, BPF_LOADER_PROGRAM_ID)
+    await BpfLoader.load(this.connection, signer, programAccount, bytecode, BPF_LOADER_PROGRAM_ID)
 
     return programAccount.publicKey.toString()
   }
