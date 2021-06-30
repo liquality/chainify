@@ -1,8 +1,8 @@
-import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/types'
+import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { PendingTxError } from '@liquality/errors'
-import { sha256 } from '@liquality/crypto'
 import { addressToString } from '@liquality/utils'
+import { compareParams, _validateSecret } from '@liquality/solana-utils'
 
 import _filter from 'lodash/filter'
 
@@ -20,7 +20,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
       address: addressToString(refundAddress),
       swapParams,
       instruction: this.instructions.init,
-      validation: this._compareParams
+      validation: compareParams
     })
   }
 
@@ -39,7 +39,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
       swapParams,
       address: buyer,
       instruction: this.instructions.claim,
-      validation: this._validateSecret
+      validation: _validateSecret
     })
   }
 
@@ -63,23 +63,6 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
 
   async findFundSwapTransaction(): Promise<null> {
     return null
-  }
-
-  _compareParams(
-    swapParams: SwapParams,
-    initTxParams: { buyer: string; seller: string; secret_hash: string; value: BigNumber; expiration: BigNumber }
-  ): boolean {
-    return (
-      swapParams.recipientAddress === initTxParams.buyer &&
-      swapParams.refundAddress === initTxParams.seller &&
-      swapParams.secretHash === initTxParams.secret_hash &&
-      swapParams.value.eq(initTxParams.value) &&
-      new BigNumber(swapParams.expiration).eq(initTxParams.expiration)
-    )
-  }
-
-  _validateSecret(swapParams: SwapParams, data: { secret: string }): boolean {
-    return swapParams.secretHash === sha256(data.secret)
   }
 
   _batchSignatures(addressHistory: object[]): string[][] {

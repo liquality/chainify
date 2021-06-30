@@ -40,7 +40,7 @@ export default class SolanaWalletProvider extends WalletProvider {
       return [this._addressCache[this._mnemonic]]
     }
 
-    const account = await this.setSigner()
+    const account = await this.getSigner()
 
     const result = new Address({
       address: account.publicKey.toString(),
@@ -62,7 +62,7 @@ export default class SolanaWalletProvider extends WalletProvider {
   }
 
   async sendTransaction(options: solana.SolanaSendOptions): Promise<Transaction> {
-    await this.setSigner()
+    await this.getSigner()
 
     const transaction = new Transaction()
 
@@ -95,14 +95,13 @@ export default class SolanaWalletProvider extends WalletProvider {
   }
 
   async signMessage(message: string, from: string): Promise<string> {
+    await this.getSigner()
+
     const buffer = Buffer.from(message)
 
-    const signature = nacl.sign.detached(buffer, base58.decode(this._signer.secretKey.toString()))
+    const signature = nacl.sign.detached(buffer, base58.decode(base58.encode(this._signer.secretKey)))
 
-    return JSON.stringify({
-      signature: base58.encode(signature),
-      publicKey: new PublicKey(from)
-    })
+    return Buffer.from(signature).toString('hex')
   }
 
   async getConnectedNetwork(): Promise<Network> {

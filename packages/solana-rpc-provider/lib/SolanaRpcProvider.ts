@@ -2,6 +2,7 @@ import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Address, Block, Transaction, solana } from '@liquality/types'
 import { SolanaNetwork } from '@liquality/solana-network'
 import { TxNotFoundError } from '@liquality/errors'
+import { _deserialize } from '@liquality/solana-utils'
 
 import filter from 'lodash/filter'
 
@@ -37,15 +38,14 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
-  // This method is not supported by Solana SDK
-  // getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
-  //   throw new Error('Method not implemented.')
-  // }
+  getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
+    throw new Error('Method not implemented.')
+  }
 
   async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block> {
     const block = await this.connection.getBlock(blockNumber)
 
-    const normalizedBlock = this._normalizeBlock(block)
+    const normalizedBlock = this._normalizeBlock(block as any)
 
     if (!includeTx) {
       return normalizedBlock
@@ -197,7 +197,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     let deserialized
 
     if (txData.length) {
-      deserialized = this.getMethod('_deserialize')(txData[0].data)
+      deserialized = _deserialize(txData[0].data)
 
       transactionData._raw = { ...transactionData._raw, ...deserialized }
 

@@ -1,20 +1,17 @@
 import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { Keypair, SystemProgram, PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { deserialize } from 'borsh'
-import { base58, sha256 } from '@liquality/crypto'
-import { validateValue, validateSecretHash, validateExpiration, addressToString } from '@liquality/utils'
-
+import { sha256 } from '@liquality/crypto'
+import { validateValue, validateSecretHash, validateExpiration } from '@liquality/utils'
 import {
-  Template,
-  initSchema,
-  claimSchema,
-  createInitBuffer,
+  validateAddress,
+  compareParams,
+  _deserialize,
   createClaimBuffer,
-  createRefundBuffer,
-  InitData,
-  refundSchema
-} from './layouts'
+  createInitBuffer,
+  createRefundBuffer
+} from '@liquality/solana-utils'
+
 import bytecode from './bytecode'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
@@ -38,7 +35,11 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction> {
     const signer = await this.getMethod('getSigner')()
 
+    console.log('start deploy')
+
     const programId = await this.getMethod('sendTransaction')({ bytecode })
+
+    console.log('deployyed', programId)
 
     const { expiration, refundAddress, recipientAddress, value, secretHash } = swapParams
 
@@ -130,7 +131,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
-    return this._compareParams(swapParams, initTransaction._raw)
+    return compareParams(swapParams, initTransaction._raw)
   }
 
   async _collectLamports(
@@ -158,7 +159,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const accountInfo = await this.getMethod('getAccountInfo')(accounts[0].pubkey.toString())
 
-    return this._deserialize(accountInfo.data)
+    return _deserialize(accountInfo.data)
   }
 
   async fundSwap(): Promise<null> {
@@ -169,22 +170,8 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     validateValue(swapParams.value)
     validateSecretHash(swapParams.secretHash)
     validateExpiration(swapParams.expiration)
-    this._validateAddress(addressToString(swapParams.recipientAddress))
-    this._validateAddress(addressToString(swapParams.refundAddress))
-  }
-
-  _validateAddress(address: string): boolean {
-    return typeof address === 'string' && address.length === 44
-  }
-
-  _compareParams(swapParams: SwapParams, transactionParams: InitData): boolean {
-    return (
-      swapParams.recipientAddress === transactionParams.buyer &&
-      swapParams.refundAddress === transactionParams.seller &&
-      swapParams.secretHash === transactionParams.secret_hash &&
-      new BigNumber(swapParams.expiration).eq(transactionParams.expiration) &&
-      swapParams.value.eq(transactionParams.value)
-    )
+    validateAddress(swapParams.recipientAddress)
+    validateAddress(swapParams.refundAddress)
   }
 
   _createStorageAccountInstruction(
@@ -216,7 +203,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   ): TransactionInstruction => {
     const programId = new PublicKey(_programId)
 
-    const trans = new TransactionInstruction({
+    const transaction = new TransactionInstruction({
       keys: [
         { pubkey: signer.publicKey, isSigner: true, isWritable: true },
         { pubkey: appAccount.publicKey, isSigner: false, isWritable: true }
@@ -225,38 +212,6 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
       data: Buffer.from(data)
     })
 
-    return trans
-  }
-
-  _deserialize(data: string) {
-    if (data) {
-      const decoded = base58.decode(data)
-
-      const instruction = decoded[0]
-
-      let schemaToUse
-
-      switch (instruction) {
-        case 0: {
-          schemaToUse = initSchema
-          break
-        }
-        case 1: {
-          schemaToUse = claimSchema
-          break
-        }
-        case 2: {
-          schemaToUse = refundSchema
-          break
-        }
-        default: {
-          break
-        }
-      }
-
-      const deserilized = deserialize(schemaToUse, Template, decoded)
-
-      return deserilized
-    }
+    return transaction
   }
 }
