@@ -15,7 +15,8 @@ import {
   Keypair,
   BpfLoader,
   BPF_LOADER_PROGRAM_ID,
-  ConfirmedSignatureInfo
+  ConfirmedSignatureInfo,
+  Signer
 } from '@solana/web3.js'
 
 export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider> {
@@ -36,14 +37,15 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
+  // This method is not supported by Solana SDK
   // getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
   //   throw new Error('Method not implemented.')
   // }
 
-  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<any>> {
+  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block> {
     const block = await this.connection.getBlock(blockNumber)
 
-    const normalizedBlock = this._normalizeBlock(block as any)
+    const normalizedBlock = this._normalizeBlock(block)
 
     if (!includeTx) {
       return normalizedBlock
@@ -58,7 +60,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.getSlot()
   }
 
-  async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
+  async getTransactionByHash(txHash: string): Promise<Transaction> {
     const tx = await this.connection.getParsedConfirmedTransaction(txHash)
 
     if (!tx) {
@@ -97,7 +99,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
-  async sendSweepTransaction(address: string | Address, fee?: number): Promise<Transaction<any>> {
+  async sendSweepTransaction(address: string | Address, fee?: number): Promise<Transaction> {
     const sender = await this.getMethod('getUnusedAddress')()
 
     const [balance, blockHash] = await Promise.all([
@@ -135,7 +137,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
 
-  async sendAndConfirmTransaction(transaction: SolTransaction, accounts: any[]): Promise<string> {
+  async sendAndConfirmTransaction(transaction: SolTransaction, accounts: Array<Signer>): Promise<string> {
     return await sendAndConfirmTransaction(this.connection, transaction, accounts)
   }
 
@@ -143,7 +145,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(address))
   }
 
-  async _includeTransactions(blockNumber: number): Promise<Transaction<any>[]> {
+  async _includeTransactions(blockNumber: number): Promise<Transaction[]> {
     const confirmedSignatures = await this.connection.getConfirmedBlockSignatures(blockNumber)
 
     const blockTransactions = confirmedSignatures.signatures.map((signature) => this.getTransactionByHash(signature))
@@ -151,7 +153,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await Promise.all(blockTransactions)
   }
 
-  async _deploy(signer: any, bytecode: any): Promise<string> {
+  async _deploy(signer: Keypair, bytecode: number[]): Promise<string> {
     const programAccount = new Keypair()
 
     await BpfLoader.load(this.connection, signer, programAccount, bytecode, BPF_LOADER_PROGRAM_ID)
@@ -185,7 +187,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const [hash] = signatures
     const [firstInstruction] = instructions as any
 
-    const transactionData: any = {
+    const transactionData: { lamports: number; programId: string; _raw?: object; secret?: string } = {
       lamports: 0,
       programId: ''
     }

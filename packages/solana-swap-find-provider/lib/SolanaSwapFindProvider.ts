@@ -13,7 +13,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     refund: 2
   }
 
-  async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<any>> {
+  async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction> {
     const { refundAddress } = swapParams
 
     return await this._findTransactionByAddress({
@@ -24,7 +24,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     })
   }
 
-  async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction<any>> {
+  async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
     const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
     if (!initTransaction) {
@@ -43,7 +43,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     })
   }
 
-  async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction<any>> {
+  async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
     const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
 
     if (!initTransaction) {
@@ -78,18 +78,18 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     )
   }
 
-  _validateSecret(swapParams: SwapParams, data: any): boolean {
+  _validateSecret(swapParams: SwapParams, data: { secret: string }): boolean {
     return swapParams.secretHash === sha256(data.secret)
   }
 
-  _batchSignatures(addressHistory: string[]): string[][] {
+  _batchSignatures(addressHistory: object[]): string[][] {
     const batches: string[][] = [[]]
 
     let currentBatch = 0
 
     const MAX_NUMBER_OF_REQUESTS = 100
 
-    addressHistory.forEach((pastTx: any, idx: number) => {
+    addressHistory.forEach((pastTx: { signature: string }, idx: number) => {
       if (idx && idx % MAX_NUMBER_OF_REQUESTS === 0) {
         currentBatch++
         batches.push([])
@@ -111,7 +111,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     swapParams: SwapParams
     instruction: number
     validation?: Function
-  }): Promise<any> {
+  }): Promise<Transaction> {
     const addressHistory = await this.getMethod('getAddressHistory')(address)
 
     const batch = this._batchSignatures(addressHistory)

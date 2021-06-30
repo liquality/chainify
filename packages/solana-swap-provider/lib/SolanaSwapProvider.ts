@@ -35,7 +35,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     return initTxParams.secret_hash
   }
 
-  async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction<any>> {
+  async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction> {
     const signer = await this.getMethod('getSigner')()
 
     const programId = await this.getMethod('sendTransaction')({ bytecode })
@@ -69,12 +69,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
-  async claimSwap(
-    swapParams: SwapParams,
-    initiationTxHash: string,
-    secret: string,
-    fee: number
-  ): Promise<Transaction<any>> {
+  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number): Promise<Transaction> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
@@ -102,7 +97,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
-  async refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction<any>> {
+  async refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
@@ -139,12 +134,11 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async _collectLamports(
-    appAccount: any,
+    appAccountPubkey: PublicKey,
     recipient: PublicKey,
-    data: any,
+    data: Uint8Array,
     _programId: string
   ): Promise<TransactionInstruction> {
-    const appAccountPubkey = appAccount.publicKey || appAccount
     const signer = await this.getMethod('getSigner')()
     const programId = new PublicKey(_programId)
 
@@ -155,7 +149,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
         { pubkey: recipient, isSigner: false, isWritable: true }
       ],
       programId,
-      data
+      data: Buffer.from(data)
     })
   }
 
@@ -218,7 +212,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     signer: Keypair,
     appAccount: Keypair,
     _programId: string,
-    data: any
+    data: Uint8Array
   ): TransactionInstruction => {
     const programId = new PublicKey(_programId)
 
@@ -228,7 +222,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
         { pubkey: appAccount.publicKey, isSigner: false, isWritable: true }
       ],
       programId,
-      data
+      data: Buffer.from(data)
     })
 
     return trans
