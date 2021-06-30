@@ -10,7 +10,7 @@ import { bitcoin, Transaction, Address, BigNumber, SendOptions, ChainProvider, W
 import { asyncSetImmediate, addressToString } from '@liquality/utils'
 import { Provider } from '@liquality/provider'
 import { InsufficientBalanceError } from '@liquality/errors'
-import { BIP32Interface, payments } from 'bitcoinjs-lib'
+import { BIP32Interface, payments, script } from 'bitcoinjs-lib'
 import memoize from 'memoizee'
 
 const ADDRESS_GAP = 20
@@ -96,10 +96,10 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
         }
 
         if (tx.data) {
-          const script = '6a' + tx.data // OP_RETURN
+          const scriptBuffer = script.compile([script.OPS.OP_RETURN, Buffer.from(tx.data, 'hex')])
           targets.push({
             value: 0,
-            script: Buffer.from(script, 'hex')
+            script: scriptBuffer
           })
         }
       })

@@ -53,10 +53,10 @@ function testOpReturn(chain: Chain) {
     const tx: Transaction<bitcoin.Transaction> = await chain.client.chain.sendTransaction({
       to: null,
       value: new BigNumber(0),
-      data: '66726565646f6d565656565656565656565656565656'
+      data: Buffer.from('freedom', 'utf-8').toString('hex')
     })
-    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a66726565646f6d565656565656565656565656565656')).to
-      .exist
+
+    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a0766726565646f6d')).to.exist
     expect(tx._raw.vout.find((vout) => vout.scriptPubKey.asm.includes('OP_RETURN'))).to.exist
   })
 
@@ -66,12 +66,11 @@ function testOpReturn(chain: Chain) {
     const tx: Transaction<bitcoin.Transaction> = await chain.client.chain.sendTransaction({
       to,
       value,
-      data: '66726565646f6d565656565656565656565656565656'
+      data: Buffer.from('freedom', 'utf-8').toString('hex')
     })
 
     // OP_RETURN exists
-    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a66726565646f6d565656565656565656565656565656')).to
-      .exist
+    expect(tx._raw.vout.find((vout) => vout.scriptPubKey.hex === '6a0766726565646f6d')).to.exist
     expect(tx._raw.vout.find((vout) => vout.scriptPubKey.asm.includes('OP_RETURN'))).to.exist
 
     // P2PKH exists
@@ -495,6 +494,6 @@ describe('Transactions', function () {
     testBatchTransaction(chains.bitcoinCashWithJs)
     testSignBatchP2SHTransaction(chains.bitcoinCashWithJs, true)
     testSweepTransaction(chains.bitcoinCashWithJs, chains.bitcoinCashWithNode)
-    // testOpReturn(chains.bitcoinCashWithJs) TODO: failing
+    testOpReturn(chains.bitcoinCashWithJs)
   })
 })
