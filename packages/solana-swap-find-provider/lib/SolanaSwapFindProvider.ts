@@ -4,8 +4,6 @@ import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
 import { compareParams, _validateSecret } from '@liquality/solana-utils'
 
-import _filter from 'lodash/filter'
-
 export default class SolanaSwapFindProvider extends Provider implements Partial<SwapProvider> {
   private instructions = {
     init: 0,

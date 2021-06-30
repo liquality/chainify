@@ -32,14 +32,10 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     return initTxParams.secret_hash
   }
 
-  async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction> {
+  async initiateSwap(swapParams: SwapParams): Promise<Transaction> {
     const signer = await this.getMethod('getSigner')()
 
-    console.log('start deploy')
-
     const programId = await this.getMethod('sendTransaction')({ bytecode })
-
-    console.log('deployyed', programId)
 
     const { expiration, refundAddress, recipientAddress, value, secretHash } = swapParams
 
@@ -70,7 +66,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
-  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number): Promise<Transaction> {
+  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string): Promise<Transaction> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
@@ -98,7 +94,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
-  async refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction> {
+  async refundSwap(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])

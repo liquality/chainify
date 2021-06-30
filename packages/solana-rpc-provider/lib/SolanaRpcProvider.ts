@@ -38,7 +38,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
-  getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
+  getBlockByHash(): Promise<Block<any>> {
     throw new Error('Method not implemented.')
   }
 
@@ -99,7 +99,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
-  async sendSweepTransaction(address: string | Address, fee?: number): Promise<Transaction> {
+  async sendSweepTransaction(address: string | Address): Promise<Transaction> {
     const sender = await this.getMethod('getUnusedAddress')()
 
     const [balance, blockHash] = await Promise.all([

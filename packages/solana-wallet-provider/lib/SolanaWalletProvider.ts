@@ -94,7 +94,7 @@ export default class SolanaWalletProvider extends WalletProvider {
     return parsedTransaction
   }
 
-  async signMessage(message: string, from: string): Promise<string> {
+  async signMessage(message: string): Promise<string> {
     await this.getSigner()
 
     const buffer = Buffer.from(message)
