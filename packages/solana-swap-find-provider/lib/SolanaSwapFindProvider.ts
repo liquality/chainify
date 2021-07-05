@@ -3,6 +3,7 @@ import { Provider } from '@liquality/provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
 import { compareParams, _validateSecret } from '@liquality/solana-utils'
+import { InitData } from '../../solana-utils/dist/lib/layouts'
 
 export default class SolanaSwapFindProvider extends Provider implements Partial<SwapProvider> {
   private instructions = {
@@ -91,7 +92,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     address: string
     swapParams: SwapParams
     instruction: number
-    validation?: any
+    validation?: (swapParams: SwapParams, transactionData: InitData | { secret: string }) => boolean
   }): Promise<Transaction> {
     const addressHistory = await this.getMethod('getAddressHistory')(address)
 

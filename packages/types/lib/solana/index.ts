@@ -22,3 +22,11 @@ export interface InputTransaction {
   refundAddress?: string
   value?: BigNumber
 }
+
+export interface InitData {
+  buyer: string;
+  seller: string;
+  secret_hash: string;
+  expiration: number;
+  value: number;
+}

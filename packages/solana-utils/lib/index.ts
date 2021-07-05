@@ -107,7 +107,7 @@ export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transactio
   const [hash] = signatures
   const [firstInstruction] = instructions as any
 
-  const transactionData: { lamports: number; programId: string; _raw?: object; secret?: string } = {
+  const transactionData: { lamports: number; programId: string; _raw?: any; secret?: string } = {
     lamports: 0,
     programId: ''
   }
