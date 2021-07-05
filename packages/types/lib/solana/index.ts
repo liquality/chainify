@@ -10,13 +10,13 @@ export interface SolanaBlock {
   blockhash: string
   parentSlot: number
   previousBlockhash: string
-  blockHeight: number
+  blockHeight?: number
   blockTime: number
 }
 
 export interface InputTransaction {
   programId: string
-  data?: object
+  data?: any
   expiration?: number
   recipientAddress?: string
   refundAddress?: string

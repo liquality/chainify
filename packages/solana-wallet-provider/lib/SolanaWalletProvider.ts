@@ -89,7 +89,7 @@ export default class SolanaWalletProvider extends WalletProvider {
 
     const tx = await this.getMethod('sendAndConfirmTransaction')(transaction, accounts)
 
-    const [parsedTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([tx])
+    const [parsedTransaction] = await this.getMethod('getTransactionReceipt')([tx])
 
     return parsedTransaction
   }

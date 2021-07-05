@@ -23,7 +23,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
   }
 
   async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
-    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
     if (!initTransaction) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
@@ -42,7 +42,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
   }
 
   async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
-    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
     if (!initTransaction) {
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
@@ -97,15 +97,15 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
 
     const batch = this._batchSignatures(addressHistory)
 
-    const parsedTransactions = batch.map((sp) => this.getMethod('getParsedAndConfirmedTransactions')(sp))
+    const parsedTransactions = batch.map((sp) => this.getMethod('getTransactionReceipt')(sp))
 
-    const matrix = await Promise.all(parsedTransactions)
+    const parsedTransactionsData = await Promise.all(parsedTransactions)
 
     let initTransaction
 
-    for (let i = 0; i < matrix.length; i++) {
-      for (let j = 0; j < matrix[i].length; j++) {
-        const data = matrix[i][j]
+    for (let i = 0; i < parsedTransactionsData.length; i++) {
+      for (let j = 0; j < parsedTransactionsData[i].length; j++) {
+        const data = parsedTransactionsData[i][j]
 
         if (data._raw?.instruction === instruction) {
           if (instruction === this.instructions.refund) {

@@ -34,7 +34,7 @@ chai.use(chaiAsPromised)
 const mockSecret = _.repeat('ff', 32)
 
 function testSwap(chain: Chain) {
-  xit('Generated secrets are different', async () => {
+  it('Generated secrets are different', async () => {
     const secret1 = await chain.client.swap.generateSecret('secret1')
     const secret2 = await chain.client.swap.generateSecret('secret2')
     expect(secret1).to.not.equal(secret2)

@@ -1,10 +1,14 @@
-import { Address, BigNumber, SwapParams } from '@liquality/types'
-import { addressToString } from '@liquality/utils'
+import { Address, BigNumber, Block, solana, SwapParams, Transaction } from '@liquality/types'
+import { addressToString, validateSecret } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
-import { base58, sha256 } from '@liquality/crypto'
-import { serialize, deserialize } from 'borsh'
+import { base58 } from '@liquality/crypto'
+import { ParsedConfirmedTransaction } from '@solana/web3.js'
+import { serialize, deserialize as deserializer } from 'borsh'
+import filter from 'lodash/filter'
 
-import { initSchema, claimSchema, refundSchema, InitData, Template } from './layouts'
+import { initSchema, claimSchema, refundSchema, InitData, Template as _Template } from './layouts'
+
+export const Template = _Template
 
 export function validateAddress(_address: Address | string) {
   const address = addressToString(_address)
@@ -14,7 +18,7 @@ export function validateAddress(_address: Address | string) {
   }
 
   if (address.length !== 44) {
-    throw new InvalidAddressError(`Invalid address. Minimum length is 2`)
+    throw new InvalidAddressError(`Invalid address. Length should be 44`)
   }
 }
 
@@ -28,7 +32,7 @@ export function compareParams(swapParams: SwapParams, transactionParams: InitDat
   )
 }
 
-export function _deserialize(data: string) {
+export function deserialize(data: string) {
   if (data) {
     const decoded = base58.decode(data)
 
@@ -54,9 +58,7 @@ export function _deserialize(data: string) {
       }
     }
 
-    const deserilized = deserialize(schemaToUse, Template, decoded)
-
-    return deserilized
+    return deserializer(schemaToUse, Template, decoded)
   }
 }
 
@@ -88,6 +90,66 @@ export const createInitBuffer = ({ buyer, seller, expiration, secret_hash, value
   return serialize(initSchema, initTemplate)
 }
 
-export function _validateSecret(swapParams: SwapParams, data: { secret: string }): boolean {
-  return swapParams.secretHash === sha256(data.secret)
+export function _validateSecret(swapParams: SwapParams, data: { secret: string }): any {
+  validateSecret(data.secret)
+
+  return true
+}
+
+export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transaction<solana.InputTransaction> {
+  const {
+    transaction: {
+      message: { accountKeys, instructions },
+      signatures
+    }
+  } = tx
+
+  const [hash] = signatures
+  const [firstInstruction] = instructions as any
+
+  const transactionData: { lamports: number; programId: string; _raw?: object; secret?: string } = {
+    lamports: 0,
+    programId: ''
+  }
+
+  const txData = filter(instructions as any, 'data')
+
+  let deserialized
+
+  if (txData.length) {
+    deserialized = deserialize(txData[0].data)
+
+    transactionData._raw = { ...transactionData._raw, ...deserialized }
+
+    if (deserialized.secret) {
+      transactionData.secret = deserialized.secret
+    }
+  }
+
+  if (firstInstruction.parsed) {
+    transactionData.lamports = firstInstruction.parsed.info.lamports
+  }
+
+  transactionData.programId = accountKeys[accountKeys.length - 1].pubkey.toString()
+
+  return {
+    hash,
+    value: transactionData.lamports,
+    secret: transactionData.secret,
+    _raw: {
+      programId: transactionData.programId,
+      ...transactionData._raw
+    }
+  }
+}
+
+export function normalizeBlock(block: solana.SolanaBlock): Block {
+  return {
+    hash: block.blockhash,
+    number: block.parentSlot + 1,
+    parentHash: block.previousBlockhash,
+    size: block.blockHeight,
+    timestamp: block.blockTime,
+    transactions: []
+  }
 }

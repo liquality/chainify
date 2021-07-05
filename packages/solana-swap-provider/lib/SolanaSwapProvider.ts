@@ -6,7 +6,7 @@ import { validateValue, validateSecretHash, validateExpiration } from '@liqualit
 import {
   validateAddress,
   compareParams,
-  _deserialize,
+  deserialize,
   createClaimBuffer,
   createInitBuffer,
   createRefundBuffer
@@ -29,7 +29,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const initTxParams = await this.initTxParams(programId)
 
-    return initTxParams.secret_hash
+    return initTxParams.secret
   }
 
   async initiateSwap(swapParams: SwapParams): Promise<Transaction> {
@@ -69,7 +69,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string): Promise<Transaction> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
-    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
     const { programId, buyer } = initTransaction._raw
 
@@ -97,7 +97,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async refundSwap(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
-    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
     const { programId, seller } = initTransaction._raw
 
@@ -125,7 +125,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
     this._validateSwapParams(swapParams)
 
-    const [initTransaction] = await this.getMethod('getParsedAndConfirmedTransactions')([initiationTxHash])
+    const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
     return compareParams(swapParams, initTransaction._raw)
   }
@@ -155,7 +155,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const accountInfo = await this.getMethod('getAccountInfo')(accounts[0].pubkey.toString())
 
-    return _deserialize(accountInfo.data)
+    return deserialize(accountInfo.data)
   }
 
   async fundSwap(): Promise<null> {

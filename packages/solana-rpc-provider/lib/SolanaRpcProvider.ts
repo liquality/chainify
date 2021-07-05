@@ -2,14 +2,11 @@ import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Address, Block, Transaction, solana } from '@liquality/types'
 import { SolanaNetwork } from '@liquality/solana-network'
 import { TxNotFoundError } from '@liquality/errors'
-import { _deserialize } from '@liquality/solana-utils'
-
-import filter from 'lodash/filter'
+import { normalizeBlock, normalizeTransaction } from '@liquality/solana-utils'
 
 import {
   Connection,
   PublicKey,
-  ParsedConfirmedTransaction,
   AccountInfo,
   sendAndConfirmTransaction,
   Transaction as SolTransaction,
@@ -38,14 +35,14 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
-  getBlockByHash(): Promise<Block<any>> {
+  getBlockByHash(): Promise<Block> {
     throw new Error('Method not implemented.')
   }
 
   async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block> {
     const block = await this.connection.getBlock(blockNumber)
 
-    const normalizedBlock = this._normalizeBlock(block as any)
+    const normalizedBlock = normalizeBlock(block)
 
     if (!includeTx) {
       return normalizedBlock
@@ -67,13 +64,17 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
     }
 
-    return this._normalizeTransaction(tx)
+    return normalizeTransaction(tx)
   }
 
-  async getParsedAndConfirmedTransactions(txHashes: string[]): Promise<Transaction<solana.InputTransaction>[]> {
+  async getTransactionReceipt(txHashes: string[]): Promise<Transaction<solana.InputTransaction>[]> {
     const transactions = await this.connection.getParsedConfirmedTransactions(txHashes)
 
-    return transactions.map((transaction) => this._normalizeTransaction(transaction))
+    if (!transactions) {
+      return []
+    }
+
+    return transactions.map((transaction) => normalizeTransaction(transaction))
   }
 
   async getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
@@ -86,7 +87,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
 
           return new BigNumber(balance)
         } catch (err) {
-          if (err.message && err.message.includes('does not exist while viewing')) {
+          if (err?.message?.includes('does not exist while viewing')) {
             return new BigNumber(0)
           }
           throw err
@@ -163,63 +164,5 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
 
   async _getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
     return this.connection.getAccountInfo(new PublicKey(address))
-  }
-
-  _normalizeBlock(block: solana.SolanaBlock): Block {
-    return {
-      hash: block.blockhash,
-      number: block.parentSlot + 1,
-      parentHash: block.previousBlockhash,
-      size: block.blockHeight,
-      timestamp: block.blockTime,
-      transactions: []
-    }
-  }
-
-  _normalizeTransaction(tx: ParsedConfirmedTransaction): Transaction<solana.InputTransaction> {
-    const {
-      transaction: {
-        message: { accountKeys, instructions },
-        signatures
-      }
-    } = tx
-
-    const [hash] = signatures
-    const [firstInstruction] = instructions as any
-
-    const transactionData: { lamports: number; programId: string; _raw?: object; secret?: string } = {
-      lamports: 0,
-      programId: ''
-    }
-
-    const txData = filter(instructions as any, 'data')
-
-    let deserialized
-
-    if (txData.length) {
-      deserialized = _deserialize(txData[0].data)
-
-      transactionData._raw = { ...transactionData._raw, ...deserialized }
-
-      if (deserialized.secret) {
-        transactionData.secret = deserialized.secret
-      }
-    }
-
-    if (firstInstruction.parsed) {
-      transactionData.lamports = firstInstruction.parsed.info.lamports
-    }
-
-    transactionData.programId = accountKeys[accountKeys.length - 1].pubkey.toString()
-
-    return {
-      hash,
-      value: transactionData.lamports,
-      secret: transactionData.secret,
-      _raw: {
-        programId: transactionData.programId,
-        ...transactionData._raw
-      }
-    }
   }
 }
