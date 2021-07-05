@@ -63,7 +63,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     return null
   }
 
-  _batchSignatures(addressHistory: [{signature: string}]): string[][] {
+  _batchSignatures(addressHistory: [{ signature: string }]): string[][] {
     const batches: string[][] = [[]]
 
     let currentBatch = 0
