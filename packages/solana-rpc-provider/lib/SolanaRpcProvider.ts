@@ -122,8 +122,8 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
   }
 
   async getProgramAccounts(
-        programId: PublicKey
-          ): Promise<
+    programId: PublicKey
+  ): Promise<
     {
       pubkey: PublicKey
       account: AccountInfo<Buffer>
