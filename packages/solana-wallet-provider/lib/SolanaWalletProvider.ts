@@ -1,6 +1,6 @@
 import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, Network, solana } from '@liquality/types'
-import { addressToString } from '@liquality/utils';
+import { addressToString } from '@liquality/utils'
 import { SolanaNetwork } from '@liquality/solana-network'
 import { base58 } from '@liquality/crypto'
 
@@ -74,7 +74,6 @@ export default class SolanaWalletProvider extends WalletProvider {
 
       return programId
     } else if (!options.instructions) {
-      
       const to = new PublicKey(addressToString(options.to))
       const lamports = Number(options.value)
 
