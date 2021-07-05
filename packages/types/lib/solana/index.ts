@@ -24,9 +24,9 @@ export interface InputTransaction {
 }
 
 export interface InitData {
-  buyer: string;
-  seller: string;
-  secret_hash: string;
-  expiration: number;
-  value: number;
+  buyer: string
+  seller: string
+  secret_hash: string
+  expiration: number
+  value: number
 }
