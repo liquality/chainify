@@ -16,6 +16,7 @@ import {
   ConfirmedSignatureInfo,
   Signer
 } from '@solana/web3.js'
+import { addressToString } from '@liquality/utils'
 
 export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: SolanaNetwork
@@ -81,7 +82,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address) => {
         try {
-          const publicKey = new PublicKey(address)
+          const publicKey = new PublicKey(addressToString(address))
 
           const balance = await this.connection.getBalance(publicKey)
 
