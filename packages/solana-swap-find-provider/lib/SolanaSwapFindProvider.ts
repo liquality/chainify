@@ -91,7 +91,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     address: string
     swapParams: SwapParams
     instruction: number
-    validation?: Function
+    validation?: any
   }): Promise<Transaction> {
     const addressHistory = await this.getMethod('getAddressHistory')(address)
 

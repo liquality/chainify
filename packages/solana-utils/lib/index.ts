@@ -90,7 +90,7 @@ export const createInitBuffer = ({ buyer, seller, expiration, secret_hash, value
   return serialize(initSchema, initTemplate)
 }
 
-export function _validateSecret(swapParams: SwapParams, data: { secret: string }): any {
+export function _validateSecret(swapParams: SwapParams, data: { secret: string }): boolean {
   validateSecret(data.secret)
 
   return true
