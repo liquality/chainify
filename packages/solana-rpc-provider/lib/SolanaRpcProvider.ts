@@ -121,7 +121,9 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.sendRawTransaction(wireTransaciton)
   }
 
-  async getProgramAccounts(programId: PublicKey): Promise<
+  async getProgramAccounts(
+        programId: PublicKey
+          ): Promise<
     {
       pubkey: PublicKey
       account: AccountInfo<Buffer>
