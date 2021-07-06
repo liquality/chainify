@@ -164,10 +164,10 @@ export default class SolanaWalletProvider extends WalletProvider {
   }
 
   async sendSweepTransaction(address: string | Address): Promise<Transaction> {
-    const sender = await this.getAddresses()
+    const [sender] = await this.getAddresses()
 
     const [balance, blockHash] = await Promise.all([
-      this.getMethod('getBalance')([sender[0].address]),
+      this.getMethod('getBalance')([sender]),
       this.getMethod('getRecentBlockhash')()
     ])
 
