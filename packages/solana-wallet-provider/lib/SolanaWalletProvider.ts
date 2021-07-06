@@ -4,10 +4,10 @@ import { addressToString } from '@liquality/utils'
 import { SolanaNetwork } from '@liquality/solana-network'
 import { base58 } from '@liquality/crypto'
 
-import { validateMnemonic, mnemonicToSeed } from 'bip39'
-import { derivePath } from 'ed25519-hd-key'
-import { Keypair, Transaction, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import nacl from 'tweetnacl'
+import { derivePath } from 'ed25519-hd-key'
+import { validateMnemonic, mnemonicToSeed } from 'bip39'
+import { Keypair, Transaction, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 
 interface SolanaWalletProviderOptions {
   network: SolanaNetwork
@@ -41,7 +41,7 @@ export default class SolanaWalletProvider extends WalletProvider {
       return [this._addressCache[this._mnemonic]]
     }
 
-    const account = await this.getSigner()
+    const account = await this._getSigner()
 
     const result = new Address({
       address: account.publicKey.toString(),
@@ -63,15 +63,13 @@ export default class SolanaWalletProvider extends WalletProvider {
   }
 
   async sendTransaction(options: solana.SolanaSendOptions): Promise<Transaction> {
-    await this.getSigner()
+    await this._getSigner()
 
     const transaction = new Transaction()
 
     if (!options.instructions && !options.to) {
       const programId = await this.getMethod('_deploy')(this._signer, options.bytecode)
-
-      await this._waitForContractToBeExecutable(programId)
-
+      await this.getMethod('_waitForContractToBeExecutable')(programId)
       return programId
     } else if (!options.instructions) {
       const to = new PublicKey(addressToString(options.to))
@@ -88,20 +86,15 @@ export default class SolanaWalletProvider extends WalletProvider {
       accounts = [this._signer, ...options.accounts]
     }
 
-    const tx = await this.getMethod('sendAndConfirmTransaction')(transaction, accounts)
-
-    const [parsedTransaction] = await this.getMethod('getTransactionReceipt')([tx])
-
+    const txHash = await this.getMethod('_sendAndConfirmTransaction')(transaction, accounts)
+    const [parsedTransaction] = await this.getMethod('getTransactionReceipt')([txHash])
     return parsedTransaction
   }
 
   async signMessage(message: string): Promise<string> {
-    await this.getSigner()
-
+    await this._getSigner()
     const buffer = Buffer.from(message)
-
     const signature = nacl.sign.detached(buffer, base58.decode(base58.encode(this._signer.secretKey)))
-
     return Buffer.from(signature).toString('hex')
   }
 
@@ -109,58 +102,8 @@ export default class SolanaWalletProvider extends WalletProvider {
     return this._network
   }
 
-  async _mnemonicToSeed(mnemonic: string) {
-    if (!validateMnemonic(mnemonic)) {
-      throw new Error('Invalid seed words')
-    }
-
-    const seed = await mnemonicToSeed(mnemonic)
-
-    return Buffer.from(seed).toString('hex')
-  }
-
-  async getSigner(): Promise<Keypair> {
-    if (!this._signer) {
-      await this.setSigner()
-    }
-
-    return this._signer
-  }
-
-  async _sendBetweenAccounts(recipient: PublicKey, lamports: number): Promise<TransactionInstruction> {
-    const signer = await this.getSigner()
-
-    return SystemProgram.transfer({
-      fromPubkey: signer.publicKey,
-      toPubkey: recipient,
-      lamports
-    })
-  }
-
-  async setSigner(): Promise<void> {
-    const seed = await this._mnemonicToSeed(this._mnemonic)
-    const derivedSeed = derivePath(this._derivationPath, seed).key
-
-    const account = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
-
-    this._signer = account
-  }
-
   canUpdateFee(): boolean {
     return false
-  }
-
-  _waitForContractToBeExecutable(programId: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      const interval = setInterval(async () => {
-        const accountInfo = await this.getMethod('_getAccountInfo')(programId)
-
-        if (accountInfo.executable) {
-          clearInterval(interval)
-          resolve(true)
-        }
-      }, 5000)
-    })
   }
 
   async sendSweepTransaction(address: string | Address): Promise<Transaction> {
@@ -168,7 +111,7 @@ export default class SolanaWalletProvider extends WalletProvider {
 
     const [balance, blockHash] = await Promise.all([
       this.getMethod('getBalance')(addresses),
-      this.getMethod('getRecentBlockhash')()
+      this.getMethod('_getRecentBlockhash')()
     ])
 
     const _fee = blockHash.feeCalculator.lamportsPerSignature
@@ -177,5 +120,38 @@ export default class SolanaWalletProvider extends WalletProvider {
       to: addressToString(address),
       value: balance.minus(_fee)
     })
+  }
+
+  async _mnemonicToSeed(mnemonic: string) {
+    if (!validateMnemonic(mnemonic)) {
+      throw new Error('Invalid seed words')
+    }
+
+    const seed = await mnemonicToSeed(mnemonic)
+    return Buffer.from(seed).toString('hex')
+  }
+
+  async _getSigner(): Promise<Keypair> {
+    if (!this._signer) {
+      await this._setSigner()
+    }
+
+    return this._signer
+  }
+
+  async _sendBetweenAccounts(recipient: PublicKey, lamports: number): Promise<TransactionInstruction> {
+    const signer = await this._getSigner()
+    return SystemProgram.transfer({
+      fromPubkey: signer.publicKey,
+      toPubkey: recipient,
+      lamports
+    })
+  }
+
+  async _setSigner(): Promise<void> {
+    const seed = await this._mnemonicToSeed(this._mnemonic)
+    const derivedSeed = derivePath(this._derivationPath, seed).key
+    const account = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
+    this._signer = account
   }
 }

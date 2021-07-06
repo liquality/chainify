@@ -100,7 +100,7 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     instruction: number
     validation?: (swapParams: SwapParams, transactionData: InitData | { secret: string }) => boolean
   }): Promise<Transaction> {
-    const addressHistory = await this.getMethod('getAddressHistory')(address)
+    const addressHistory = await this.getMethod('_getAddressHistory')(address)
 
     const batch = this._batchSignatures(addressHistory)
 

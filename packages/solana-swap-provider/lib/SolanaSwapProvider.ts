@@ -23,18 +23,15 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
   async getSwapSecret(claimTxHash: string): Promise<string> {
     const transactionByHash = await this.getMethod('getTransactionByHash')(claimTxHash)
-
     const programId = transactionByHash._raw.programId.toString()
-
-    const initTxParams = await this.initTxParams(programId)
-
-    return initTxParams.secret
+    const tx = await this._initTxParams(programId)
+    return tx.secret
   }
 
   async initiateSwap(swapParams: SwapParams): Promise<Transaction> {
     validateSwapParams(swapParams)
 
-    const signer = await this.getMethod('getSigner')()
+    const signer = await this.getMethod('_getSigner')()
 
     const programId = await this.getMethod('sendTransaction')({ bytecode })
 
@@ -49,7 +46,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
 
     const appAccount = new Keypair()
-    const lamports = await this.getMethod('getMinimumBalanceForRentExemption')(initBuffer.length)
+    const lamports = await this.getMethod('_getMinimumBalanceForRentExemption')(initBuffer.length)
 
     const systemAccountInstruction = this._createStorageAccountInstruction(
       signer,
@@ -74,7 +71,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
     const { programId, buyer } = initTransaction._raw
-    const [programAccount] = await this.getMethod('getProgramAccounts')(programId.toString())
+    const [programAccount] = await this.getMethod('_getProgramAccounts')(programId.toString())
 
     if (!programAccount) {
       throw new Error('AccountDoesNotExist')
@@ -102,7 +99,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
     const { programId, seller } = initTransaction._raw
-    const [programAccount] = await this.getMethod('getProgramAccounts')(programId.toString())
+    const [programAccount] = await this.getMethod('_getProgramAccounts')(programId.toString())
 
     if (!programAccount) {
       throw new Error('AccountDoesNotExist')
@@ -123,9 +120,12 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
+  async fundSwap(): Promise<null> {
+    return null
+  }
+
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
-
     return doesTransactionMatchInitiation(swapParams, initTransaction._raw)
   }
 
@@ -135,7 +135,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     data: Uint8Array,
     _programId: string
   ): Promise<TransactionInstruction> {
-    const signer = await this.getMethod('getSigner')()
+    const signer = await this.getMethod('_getSigner')()
     const programId = new PublicKey(_programId)
 
     return new TransactionInstruction({
@@ -149,16 +149,10 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
   }
 
-  async initTxParams(programId: string): Promise<any> {
-    const accounts = await this.getMethod('getProgramAccounts')(programId)
-
-    const accountInfo = await this.getMethod('getAccountInfo')(accounts[0].pubkey.toString())
-
+  async _initTxParams(programId: string): Promise<any> {
+    const accounts = await this.getMethod('_getProgramAccounts')(programId)
+    const accountInfo = await this.getMethod('_getAccountInfo')(accounts[0].pubkey.toString())
     return deserialize(accountInfo.data)
-  }
-
-  async fundSwap(): Promise<null> {
-    return null
   }
 
   _createStorageAccountInstruction(

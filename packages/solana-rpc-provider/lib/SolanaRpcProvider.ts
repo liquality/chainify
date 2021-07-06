@@ -36,7 +36,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
-  getBlockByHash(): Promise<Block> {
+  async getBlockByHash(): Promise<Block> {
     throw new Error('Method not implemented.')
   }
 
@@ -50,7 +50,6 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     }
 
     normalizedBlock.transactions = await this._includeTransactions(blockNumber)
-
     return normalizedBlock
   }
 
@@ -101,16 +100,16 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
-  async getRecentBlockhash() {
-    return this.connection.getRecentBlockhash()
-  }
-
   async sendRawTransaction(rawTransaction: string): Promise<string> {
     const wireTransaciton = Buffer.from(rawTransaction)
     return await this.connection.sendRawTransaction(wireTransaciton)
   }
 
-  async getProgramAccounts(
+  async _getRecentBlockhash() {
+    return this.connection.getRecentBlockhash()
+  }
+
+  async _getProgramAccounts(
     programId: PublicKey
   ): Promise<
     {
@@ -121,19 +120,15 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.getProgramAccounts(new PublicKey(programId))
   }
 
-  async getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
-    return await this.connection.getAccountInfo(new PublicKey(address))
-  }
-
-  async getMinimumBalanceForRentExemption(dataLength: number): Promise<number> {
+  async _getMinimumBalanceForRentExemption(dataLength: number): Promise<number> {
     return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
 
-  async sendAndConfirmTransaction(transaction: SolTransaction, accounts: Array<Signer>): Promise<string> {
+  async _sendAndConfirmTransaction(transaction: SolTransaction, accounts: Array<Signer>): Promise<string> {
     return await sendAndConfirmTransaction(this.connection, transaction, accounts)
   }
 
-  async getAddressHistory(address: string): Promise<ConfirmedSignatureInfo[]> {
+  async _getAddressHistory(address: string): Promise<ConfirmedSignatureInfo[]> {
     return await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(addressToString(address)))
   }
 
@@ -155,5 +150,18 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
 
   async _getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
     return this.connection.getAccountInfo(new PublicKey(address))
+  }
+
+  async _waitForContractToBeExecutable(programId: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      const interval = setInterval(async () => {
+        const accountInfo = await this._getAccountInfo(programId)
+
+        if (accountInfo.executable) {
+          clearInterval(interval)
+          resolve(true)
+        }
+      }, 5000)
+    })
   }
 }
