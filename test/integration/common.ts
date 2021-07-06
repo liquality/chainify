@@ -224,7 +224,7 @@ solana.addProvider(
   new SolanaWalletProvider({
     network: config.solana.network,
     mnemonic: config.solana.senderMnemonic,
-    derivationPath: `m/44'/${config.solana.network.coinType}/${config.solana.walletIndex}'/0'`
+    derivationPath: `m/44'/${config.solana.network.coinType}'/${config.solana.walletIndex}'/0'`
   })
 )
 solana.addProvider(new SolanaSwapProvider())
