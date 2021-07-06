@@ -23,7 +23,6 @@
     "bip39": "^3.0.2",
     "bitcoinjs-lib": "^5.2.0",
     "buffer": "^6.0.3",
-    "calgen": "0.0.5",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "copy": "^0.3.2",
@@ -92,30 +91,13 @@
     "eslint": "--ext .jsx,.ts,.tsx"
   },
   "nyc": {
-    "include": [
-      "packages/**/lib/**"
-    ],
-    "exclude": [
-      "**/bin/**",
-      "**/coverage/**",
-      "**/dist/**",
-      "**/html/assets/**",
-      "**/test/**"
-    ],
-    "reporter": [
-      "text",
-      "lcov"
-    ],
+    "include": ["packages/**/lib/**"],
+    "exclude": ["**/bin/**", "**/coverage/**", "**/dist/**", "**/html/assets/**", "**/test/**"],
+    "reporter": ["text", "lcov"],
     "all": true,
-    "require": [
-      "./babel.test.js"
-    ],
+    "require": ["./babel.test.js"],
     "sourceMap": false,
     "instrument": false
   },
-  "pre-commit": [
-    "lint",
-    "build",
-    "test:unit"
-  ]
+  "pre-commit": ["lint", "build", "test:unit"]
 }
