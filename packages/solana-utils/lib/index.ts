@@ -1,5 +1,11 @@
 import { Address, BigNumber, Block, solana, SwapParams, Transaction } from '@liquality/types'
-import { addressToString, validateSecret } from '@liquality/utils'
+import {
+  addressToString,
+  validateSecret as _validateSecret,
+  validateValue,
+  validateExpiration,
+  validateSecretHash
+} from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 import { base58 } from '@liquality/crypto'
 import { ParsedConfirmedTransaction } from '@solana/web3.js'
@@ -22,7 +28,7 @@ export function validateAddress(_address: Address | string) {
   }
 }
 
-export function compareParams(swapParams: SwapParams, transactionParams: InitData) {
+export function doesTransactionMatchInitiation(swapParams: SwapParams, transactionParams: InitData) {
   return (
     swapParams.recipientAddress === transactionParams.buyer &&
     swapParams.refundAddress === transactionParams.seller &&
@@ -90,8 +96,8 @@ export const createInitBuffer = ({ buyer, seller, expiration, secret_hash, value
   return serialize(initSchema, initTemplate)
 }
 
-export function _validateSecret(swapParams: SwapParams, data: { secret: string }): boolean {
-  validateSecret(data.secret)
+export function validateSecret(swapParams: SwapParams, data: { secret: string }): boolean {
+  _validateSecret(data.secret)
 
   return true
 }
@@ -107,7 +113,18 @@ export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transactio
   const [hash] = signatures
   const [firstInstruction] = instructions as any
 
-  const transactionData: { lamports: number; programId: string; _raw?: any; secret?: string } = {
+  const transactionData: {
+    lamports: number
+    programId: string
+    _raw?: {
+      buyer: string
+      seller: string
+      secret_hash: string
+      value: BigNumber
+      expiration: number
+    }
+    secret?: string
+  } = {
     lamports: 0,
     programId: ''
   }
@@ -152,4 +169,12 @@ export function normalizeBlock(block: solana.SolanaBlock): Block {
     timestamp: block.blockTime,
     transactions: []
   }
+}
+
+export function validateSwapParams(swapParams: SwapParams): void {
+  validateValue(swapParams.value)
+  validateSecretHash(swapParams.secretHash)
+  validateExpiration(swapParams.expiration)
+  validateAddress(swapParams.recipientAddress)
+  validateAddress(swapParams.refundAddress)
 }

@@ -2,7 +2,7 @@ import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
-import { compareParams, _validateSecret } from '@liquality/solana-utils'
+import { doesTransactionMatchInitiation, validateSwapParams, validateSecret } from '@liquality/solana-utils'
 import { InitData } from '../../solana-utils/dist/lib/layouts'
 
 export default class SolanaSwapFindProvider extends Provider implements Partial<SwapProvider> {
@@ -13,17 +13,21 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
   }
 
   async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction> {
+    validateSwapParams(swapParams)
+
     const { refundAddress } = swapParams
 
     return await this._findTransactionByAddress({
       address: addressToString(refundAddress),
       swapParams,
       instruction: this.instructions.init,
-      validation: compareParams
+      validation: doesTransactionMatchInitiation
     })
   }
 
   async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
+    validateSwapParams(swapParams)
+
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
     if (!initTransaction) {
@@ -31,18 +35,20 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     }
 
     const {
-      _raw: { buyer }
+      _raw: { programId }
     } = initTransaction
 
     return await this._findTransactionByAddress({
       swapParams,
-      address: buyer,
+      address: programId,
       instruction: this.instructions.claim,
-      validation: _validateSecret
+      validation: validateSecret
     })
   }
 
   async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
+    validateSwapParams(swapParams)
+
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
     if (!initTransaction) {
@@ -50,12 +56,12 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     }
 
     const {
-      _raw: { seller }
+      _raw: { programId }
     } = initTransaction
 
     return await this._findTransactionByAddress({
       swapParams,
-      address: seller,
+      address: programId,
       instruction: this.instructions.refund
     })
   }

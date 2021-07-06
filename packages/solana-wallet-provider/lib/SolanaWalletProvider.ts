@@ -127,25 +127,23 @@ export default class SolanaWalletProvider extends WalletProvider {
     return this._signer
   }
 
-  async _sendBetweenAccounts(recepient: PublicKey, lamports: number): Promise<TransactionInstruction> {
+  async _sendBetweenAccounts(recipient: PublicKey, lamports: number): Promise<TransactionInstruction> {
     const signer = await this.getSigner()
 
     return SystemProgram.transfer({
       fromPubkey: signer.publicKey,
-      toPubkey: recepient,
+      toPubkey: recipient,
       lamports
     })
   }
 
-  async setSigner(): Promise<Keypair> {
+  async setSigner(): Promise<void> {
     const seed = await this._mnemonicToSeed(this._mnemonic)
     const derivedSeed = derivePath(this._derivationPath, seed).key
 
     const account = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
 
     this._signer = account
-
-    return account
   }
 
   canUpdateFee(): boolean {
@@ -161,7 +159,23 @@ export default class SolanaWalletProvider extends WalletProvider {
           clearInterval(interval)
           resolve(true)
         }
-      }, 500)
+      }, 5000)
+    })
+  }
+
+  async sendSweepTransaction(address: string | Address): Promise<Transaction> {
+    const sender = await this.getMethod('getUnusedAddress')()
+
+    const [balance, blockHash] = await Promise.all([
+      this.getMethod('getBalance')([sender.address]),
+      this.getMethod('getRecentBlockhash')()
+    ])
+
+    const _fee = blockHash.feeCalculator.lamportsPerSignature
+
+    return await this.sendTransaction({
+      to: address,
+      value: balance.minus(_fee)
     })
   }
 }

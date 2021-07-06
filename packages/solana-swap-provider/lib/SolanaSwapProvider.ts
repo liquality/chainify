@@ -2,14 +2,13 @@ import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/typ
 import { Provider } from '@liquality/provider'
 import { Keypair, SystemProgram, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { sha256 } from '@liquality/crypto'
-import { validateValue, validateSecretHash, validateExpiration } from '@liquality/utils'
 import {
-  validateAddress,
-  compareParams,
+  doesTransactionMatchInitiation,
   deserialize,
   createClaimBuffer,
   createInitBuffer,
-  createRefundBuffer
+  createRefundBuffer,
+  validateSwapParams
 } from '@liquality/solana-utils'
 
 import bytecode from './bytecode'
@@ -33,6 +32,8 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async initiateSwap(swapParams: SwapParams): Promise<Transaction> {
+    validateSwapParams(swapParams)
+
     const signer = await this.getMethod('getSigner')()
 
     const programId = await this.getMethod('sendTransaction')({ bytecode })
@@ -67,12 +68,12 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string): Promise<Transaction> {
+    validateSwapParams(swapParams)
+
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
-
     const { programId, buyer } = initTransaction._raw
-
     const [programAccount] = await this.getMethod('getProgramAccounts')(programId.toString())
 
     if (!programAccount) {
@@ -95,12 +96,12 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async refundSwap(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
+    validateSwapParams(swapParams)
+
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
-
     const { programId, seller } = initTransaction._raw
-
     const [programAccount] = await this.getMethod('getProgramAccounts')(programId.toString())
 
     if (!programAccount) {
@@ -123,11 +124,9 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
-    this._validateSwapParams(swapParams)
-
     const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
 
-    return compareParams(swapParams, initTransaction._raw)
+    return doesTransactionMatchInitiation(swapParams, initTransaction._raw)
   }
 
   async _collectLamports(
@@ -160,14 +159,6 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
   async fundSwap(): Promise<null> {
     return null
-  }
-
-  _validateSwapParams(swapParams: SwapParams): void {
-    validateValue(swapParams.value)
-    validateSecretHash(swapParams.secretHash)
-    validateExpiration(swapParams.expiration)
-    validateAddress(swapParams.recipientAddress)
-    validateAddress(swapParams.refundAddress)
   }
 
   _createStorageAccountInstruction(

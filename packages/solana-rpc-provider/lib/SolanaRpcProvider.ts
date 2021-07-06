@@ -101,20 +101,8 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
-  async sendSweepTransaction(address: string | Address): Promise<Transaction> {
-    const sender = await this.getMethod('getUnusedAddress')()
-
-    const [balance, blockHash] = await Promise.all([
-      this.getBalance([sender.address]),
-      this.connection.getRecentBlockhash()
-    ])
-
-    const _fee = blockHash.feeCalculator.lamportsPerSignature
-
-    return await this.getMethod('sendTransaction')({
-      to: address,
-      value: balance.minus(_fee)
-    })
+  async getRecentBlockhash() {
+    return this.connection.getRecentBlockhash()
   }
 
   async sendRawTransaction(rawTransaction: string): Promise<string> {
@@ -122,9 +110,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.sendRawTransaction(wireTransaciton)
   }
 
-  async getProgramAccounts(
-    programId: PublicKey
-  ): Promise<
+  async getProgramAccounts(programId: PublicKey): Promise<
     {
       pubkey: PublicKey
       account: AccountInfo<Buffer>
@@ -146,7 +132,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
   }
 
   async getAddressHistory(address: string): Promise<ConfirmedSignatureInfo[]> {
-    return await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(address))
+    return await this.connection.getConfirmedSignaturesForAddress2(new PublicKey(addressToString(address)))
   }
 
   async _includeTransactions(blockNumber: number): Promise<Transaction[]> {
