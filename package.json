@@ -91,13 +91,30 @@
     "eslint": "--ext .jsx,.ts,.tsx"
   },
   "nyc": {
-    "include": ["packages/**/lib/**"],
-    "exclude": ["**/bin/**", "**/coverage/**", "**/dist/**", "**/html/assets/**", "**/test/**"],
-    "reporter": ["text", "lcov"],
+    "include": [
+      "packages/**/lib/**"
+    ],
+    "exclude": [
+      "**/bin/**",
+      "**/coverage/**",
+      "**/dist/**",
+      "**/html/assets/**",
+      "**/test/**"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
+    ],
     "all": true,
-    "require": ["./babel.test.js"],
+    "require": [
+      "./babel.test.js"
+    ],
     "sourceMap": false,
     "instrument": false
   },
-  "pre-commit": ["lint", "build", "test:unit"]
+  "pre-commit": [
+    "lint",
+    "build",
+    "test:unit"
+  ]
 }
