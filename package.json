@@ -68,7 +68,7 @@
     "env:integration": "docker-compose -f test/integration/environment/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
     "env:integration:bootup": "sleep 10",
     "test:integration:chain": "cross-env NODE_ENV=test TS_NODE_FILES=true TS_NODE_PROJECT=\"tsconfig.json\" mocha -r ts-node/register test/integration/chain/*.test.ts $npm_package_options_mocha",
-    "test:integration:swap": "cross-env NODE_ENV=test TS_NODE_FILES=true TS_NODE_PROJECT=\"tsconfig.json\" mocha -r ts-node/register test/integration/swap/singleChain.test.ts $npm_package_options_mocha",
+    "test:integration:swap": "cross-env NODE_ENV=test TS_NODE_FILES=true TS_NODE_PROJECT=\"tsconfig.json\" mocha -r ts-node/register test/integration/swap/*.test.ts $npm_package_options_mocha",
     "test:integration:wallet": "cross-env NODE_ENV=test TS_NODE_FILES=true TS_NODE_PROJECT=\"tsconfig.json\" mocha -r ts-node/register test/integration/wallet/*.test.ts $npm_package_options_mocha",
     "test:integration:tx": "cross-env NODE_ENV=test TS_NODE_FILES=true TS_NODE_PROJECT=\"tsconfig.json\" mocha -r ts-node/register test/integration/tx/*.test.ts $npm_package_options_mocha",
     "test:integration:contract": "cross-env NODE_ENV=test TS_NODE_FILES=true TS_NODE_PROJECT=\"tsconfig.json\" mocha -r ts-node/register test/integration/contract/*.test.ts $npm_package_options_mocha",
