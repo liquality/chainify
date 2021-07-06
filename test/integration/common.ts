@@ -546,7 +546,7 @@ async function claimAndVerify(
   const currentBlock = await chain.client.chain.getBlockHeight()
   const foundClaimTx = await chain.client.swap.findClaimSwapTransaction(swapParams, initiationTxId, currentBlock)
   expect(foundClaimTx.hash).to.equal(claimTx.hash)
-  return claimTx
+  return foundClaimTx
 }
 
 async function refundAndVerify(
