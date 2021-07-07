@@ -10,6 +10,7 @@ import {
   createRefundBuffer,
   validateSwapParams
 } from '@liquality/solana-utils'
+import { WalletError } from '@liquality/errors'
 
 import bytecode from './bytecode'
 
@@ -46,12 +47,16 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     })
 
     const appAccount = new Keypair()
-    const lamports = await this.getMethod('_getMinimumBalanceForRentExemption')(initBuffer.length)
+    const lamportsForRent = await this.getMethod('_getMinimumBalanceForRentExemption')(initBuffer.length)
+
+    if(value.lt(lamportsForRent)) {
+      throw new WalletError(`Invalid amount. Cannot be less than ${lamportsForRent} LAMPORTS`)
+    }
 
     const systemAccountInstruction = this._createStorageAccountInstruction(
       signer,
       appAccount,
-      value.plus(lamports),
+      value,
       initBuffer.length,
       programId
     )
@@ -165,15 +170,13 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     const newAccountPubkey = appAccount.publicKey
     const programId = new PublicKey(_programId)
 
-    const acc = SystemProgram.createAccount({
+    return SystemProgram.createAccount({
       fromPubkey: signer.publicKey,
       newAccountPubkey,
       lamports: lamports.toNumber(),
       space,
       programId
     })
-
-    return acc
   }
 
   _createTransactionInstruction = (
