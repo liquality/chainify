@@ -1,5 +1,5 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block, Transaction, solana } from '@liquality/types'
+import { BigNumber, ChainProvider, Address, Block, Transaction, solana, FeeDetails } from '@liquality/types'
 import { SolanaNetwork } from '@liquality/solana-network'
 import { TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/solana-utils'
@@ -105,7 +105,7 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return await this.connection.sendRawTransaction(wireTransaciton)
   }
 
-  async _getRecentBlockhash() {
+  async getRecentBlockhash() {
     return this.connection.getRecentBlockhash()
   }
 
@@ -163,5 +163,20 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
         }
       }, 5000)
     })
+  }
+
+  async getFees(): Promise<FeeDetails> {
+    const fee = await this.getGasPrice()
+    return {
+      slow: {
+        fee
+      },
+      average: {
+        fee
+      },
+      fast: {
+        fee
+      }
+    }
   }
 }

@@ -111,7 +111,7 @@ export default class SolanaWalletProvider extends WalletProvider {
 
     const [balance, blockHash] = await Promise.all([
       this.getMethod('getBalance')(addresses),
-      this.getMethod('_getRecentBlockhash')()
+      this.getMethod('getRecentBlockhash')()
     ])
 
     const _fee = blockHash.feeCalculator.lamportsPerSignature
