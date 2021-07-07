@@ -69,13 +69,13 @@ export default class SolanaWalletProvider extends WalletProvider {
 
     if (!options.instructions && !options.to) {
       const programId = await this.getMethod('_deploy')(this._signer, options.bytecode)
-     
+
       await this.getMethod('_waitForContractToBeExecutable')(programId)
-     
+
       const [final] = await this.getMethod('_getAddressHistory')(programId)
 
       return await this.getMethod('getTransactionReceipt')([final.signature])
-   } else if (!options.instructions) {
+    } else if (!options.instructions) {
       const to = new PublicKey(addressToString(options.to))
       const lamports = Number(options.value)
 
