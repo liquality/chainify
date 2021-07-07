@@ -49,7 +49,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     const appAccount = new Keypair()
     const lamportsForRent = await this.getMethod('_getMinimumBalanceForRentExemption')(initBuffer.length)
 
-    if(value.lt(lamportsForRent)) {
+    if (value.lt(lamportsForRent)) {
       throw new WalletError(`Invalid amount. Cannot be less than ${lamportsForRent} LAMPORTS`)
     }
 
