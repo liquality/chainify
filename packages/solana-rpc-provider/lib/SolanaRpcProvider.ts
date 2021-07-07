@@ -166,16 +166,17 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
   }
 
   async getFees(): Promise<FeeDetails> {
-    const fee = await this.getGasPrice()
+    const {feeCalculator} = await this.getRecentBlockhash()
+    
     return {
       slow: {
-        fee
+        fee: feeCalculator.lamportsPerSignature
       },
       average: {
-        fee
+        fee: feeCalculator.lamportsPerSignature
       },
       fast: {
-        fee
+        fee: feeCalculator.lamportsPerSignature
       }
     }
   }
