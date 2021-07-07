@@ -35,7 +35,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     const signer = await this.getMethod('_getSigner')()
 
     const [
-      { 
+      {
         _raw: { programId }
       }
     ] = await this.getMethod('sendTransaction')({ bytecode })

@@ -158,7 +158,7 @@ export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transactio
   return {
     hash,
     value: transactionData.lamports,
-    ...(transactionData.secret && {secret: transactionData.secret}),
+    ...(transactionData.secret && { secret: transactionData.secret }),
     _raw: {
       programId: transactionData.programId,
       ...transactionData._raw

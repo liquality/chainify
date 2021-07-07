@@ -504,7 +504,11 @@ async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: num
       await mineBlock(chain)
     }
 
+    console.log('initiation', initiationTx);
+
     const foundInitiationTx = await chain.client.swap.findInitiateSwapTransaction(swapParams, currentBlock)
+
+    console.log('founded', foundInitiationTx);
 
     expect(foundInitiationTx.hash).to.equal(initiationTx.hash)
 
