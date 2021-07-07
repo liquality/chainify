@@ -145,10 +145,16 @@ export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transactio
 
   if (firstInstruction.parsed) {
     transactionData.lamports = firstInstruction.parsed.info.lamports
+  
+    if (firstInstruction.parsed.type === 'finalize') {
+      transactionData.programId = firstInstruction.parsed.info.account
+    }
   }
 
-  transactionData.programId = accountKeys[accountKeys.length - 1].pubkey.toString()
-
+  if (!transactionData.programId) {
+    transactionData.programId = accountKeys[accountKeys.length - 1].pubkey.toString()
+  }
+  
   return {
     hash,
     value: transactionData.lamports,
