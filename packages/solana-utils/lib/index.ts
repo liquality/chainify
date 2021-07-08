@@ -103,7 +103,7 @@ export function validateSecret(swapParams: SwapParams, data: { secret: string })
 }
 
 export function normalizeTransaction(
-  tx: ParsedConfirmedTransaction, 
+  tx: ParsedConfirmedTransaction,
   signatureStatus?: any
 ): Transaction<solana.InputTransaction> {
   const {
