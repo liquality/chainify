@@ -14,9 +14,7 @@ import {
   BpfLoader,
   BPF_LOADER_PROGRAM_ID,
   ConfirmedSignatureInfo,
-  Signer,
-  RpcResponseAndContext,
-  SignatureStatus
+  Signer
 } from '@solana/web3.js'
 
 import { addressToString } from '@liquality/utils'
@@ -81,10 +79,6 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     }
 
     return transactions.map((transaction) => normalizeTransaction(transaction))
-  }
-
-  async getConfirmations(txHash: string): Promise<RpcResponseAndContext<SignatureStatus>> {
-    return await this.connection.getSignatureStatus(txHash, {searchTransactionHistory: true})
   }
 
   async getBalance(addresses: (string | Address)[]): Promise<BigNumber> {

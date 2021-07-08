@@ -102,7 +102,10 @@ export function validateSecret(swapParams: SwapParams, data: { secret: string })
   return true
 }
 
-export function normalizeTransaction(tx: ParsedConfirmedTransaction, signatureStatus?: any): Transaction<solana.InputTransaction> {
+export function normalizeTransaction(
+    tx: ParsedConfirmedTransaction, 
+    signatureStatus?: any
+): Transaction<solana.InputTransaction> {
   const {
     transaction: {
       message: { accountKeys, instructions },
