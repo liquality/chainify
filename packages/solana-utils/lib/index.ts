@@ -103,8 +103,8 @@ export function validateSecret(swapParams: SwapParams, data: { secret: string })
 }
 
 export function normalizeTransaction(
-    tx: ParsedConfirmedTransaction, 
-    signatureStatus?: any
+  tx: ParsedConfirmedTransaction, 
+  signatureStatus?: any
 ): Transaction<solana.InputTransaction> {
   const {
     transaction: {
@@ -118,7 +118,7 @@ export function normalizeTransaction(
 
   const transactionData: {
     lamports: number
-    programId: string,
+    programId: string
     confirmations?: number
     _raw?: {
       buyer: string
@@ -160,7 +160,7 @@ export function normalizeTransaction(
   }
 
   if (signatureStatus?.value?.confirmationStatus === 'finalized') {
-    transactionData.confirmations = 31   
+    transactionData.confirmations = 31
   }
 
   return {
