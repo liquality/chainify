@@ -355,7 +355,7 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
       if (balance.gt(config.solana.value)) {
         await solana.chain.sendTransaction({
           to: address,
-          value: new BigNumber(10000000)
+          value: config.solana.value
         })
       }
 
