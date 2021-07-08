@@ -102,7 +102,7 @@ export function validateSecret(swapParams: SwapParams, data: { secret: string })
   return true
 }
 
-export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transaction<solana.InputTransaction> {
+export function normalizeTransaction(tx: ParsedConfirmedTransaction, signatureStatus?: any): Transaction<solana.InputTransaction> {
   const {
     transaction: {
       message: { accountKeys, instructions },
@@ -121,7 +121,8 @@ export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transactio
       seller: string
       secret_hash: string
       value: BigNumber
-      expiration: number
+      expiration: number,
+      confirmations: number,
     }
     secret?: string
   } = {
@@ -153,6 +154,10 @@ export function normalizeTransaction(tx: ParsedConfirmedTransaction): Transactio
 
   if (!transactionData.programId) {
     transactionData.programId = accountKeys[accountKeys.length - 1].pubkey.toString()
+  }
+
+  if (signatureStatus?.value?.confirmationStatus === 'finalized') {
+    transactionData._raw.confirmations = 31   
   }
 
   return {
