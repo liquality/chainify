@@ -17,7 +17,7 @@ const solana_mainnet: SolanaNetwork = {
 
 const solana_testnet: SolanaNetwork = {
   name: 'devnet',
-  nodeUrl: 'https://api.devnet.solana.com',
+  nodeUrl: 'http://liquality.devnet.rpcpool.com/',
   helperUrl: 'https://explorer-api.devnet.solana.com/',
   coinType: '501',
   isTestnet: true,
