@@ -118,14 +118,14 @@ export function normalizeTransaction(
 
   const transactionData: {
     lamports: number
-    programId: string
+    programId: string,
+    confirmations?: number
     _raw?: {
       buyer: string
       seller: string
       secret_hash: string
       value: BigNumber
-      expiration: number,
-      confirmations: number,
+      expiration: number
     }
     secret?: string
   } = {
@@ -160,13 +160,14 @@ export function normalizeTransaction(
   }
 
   if (signatureStatus?.value?.confirmationStatus === 'finalized') {
-    transactionData._raw.confirmations = 31   
+    transactionData.confirmations = 31   
   }
 
   return {
     hash,
     value: transactionData.lamports,
     ...(transactionData.secret && { secret: transactionData.secret }),
+    ...(transactionData.confirmations && { confirmations: transactionData.confirmations }),
     _raw: {
       programId: transactionData.programId,
       ...transactionData._raw
