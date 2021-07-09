@@ -2,8 +2,7 @@ import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { StargateClient } from '@cosmjs/stargate'
-import { TxRaw } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
-
+import { TxRaw } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
 
 export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: CosmosNetwork
