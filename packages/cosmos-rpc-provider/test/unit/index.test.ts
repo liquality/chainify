@@ -15,7 +15,7 @@ describe('Cosmos RPC provider', () => {
   beforeEach(async () => {
     // client = new Client()
     rpcProvider = new CosmosRpcProvider(CosmosNetworks.cosmoshub_mainnet)
-    await rpcProvider.initClient()
+    await rpcProvider._initClient()
     // client.addProvider(rpcProvider)
   })
 

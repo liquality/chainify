@@ -1,7 +1,9 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block, Transaction /* , SendOptions */, cosmos } from '@liquality/types'
+import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { StargateClient } from '@cosmjs/stargate'
+import { TxRaw } from "@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx";
+
 
 export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: CosmosNetwork
@@ -10,14 +12,14 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   constructor(network: CosmosNetwork) {
     super({
       baseURL: network.rpcUrl,
-      responseType: 'json',
+      responseType: 'text',
       transformResponse: undefined
     })
     this._network = network
   }
 
-  async initClient() {
-    if (this._client === undefined) {
+  async _initClient() {
+    if (!this._client) {
       this._client = await StargateClient.connect(this._network.rpcUrl)
     }
   }
@@ -26,55 +28,87 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 7250))
   }
 
-  getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
-    console.log(blockHash, includeTx) // TODO remove
-    this._client.getTx(blockHash)
+  async getBlockByHash(blockHash: string): Promise<Block<any>> {
+    // TODO: check if request is successful
+    const response: cosmos.RpcResponse = await this.nodeGet(`/block_by_hash?hash=${blockHash}`)
 
-    return
+    return this.normalizeBlock(response.result)
   }
 
-  getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<any>> {
-    console.log(blockNumber, includeTx) // TODO remove
-    throw new Error('Method not implemented.')
+  async getBlockByNumber(blockNumber: number): Promise<Block<any>> {
+    // TODO: check if request is successful
+    const response: cosmos.RpcResponse = await this.nodeGet(`/block?height=${blockNumber}`)
+
+    return this.normalizeBlock(response.result)
   }
 
   async getBlockHeight(): Promise<number> {
+    await this._initClient()
     return this._client.getHeight()
   }
 
   async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
-    const response = await this.nodeGet(`/tx?hash=${txHash}`)
-    const responseObj: cosmos.RpcResponse = JSON.parse(JSON.stringify(response))
-    const tx: cosmos.Tx = responseObj.result
+    // TODO: check if request is successful
+    const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
 
-    return this.normalizeBlock(tx)
+    return this.normalizeTx(response.result)
   }
 
-  getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
-    console.log(addresses)
+  async getBalance(addresses: string[]): Promise<BigNumber> {
+    await this._initClient()
+    let totalBalance = new BigNumber(0)
 
-    throw new Error('Method not implemented.')
+    for (const address of addresses) {
+      const userBalance = await this._client.getBalance(address, 'atom') // atom is hardcoded
+      totalBalance = BigNumber.sum(totalBalance, new BigNumber(userBalance.amount))
+    }
+
+    return totalBalance
   }
 
-  sendRawTransaction(rawTransaction: string): Promise<string> {
-    console.log(rawTransaction)
+  async sendRawTransaction(rawTransaction: string): Promise<string> {
+    await this._initClient()
 
-    throw new Error('Method not implemented.')
+    const rtx = TxRaw.fromJSON(rawTransaction)
+    const txRawBytes = TxRaw.encode(rtx).finish()
+    const txResponse = await this._client.broadcastTx(txRawBytes)
+
+    return txResponse.toString()
   }
 
-  normalizeBlock(tx: cosmos.Tx) {
-    const normalizedBlock: Transaction<cosmos.Tx> = {
-      hash: tx.hash,
-      value: 0, // TODO: set to proper value if possible
-      blockHash: '', // TODO: set it when block is implemented
-      blockNumber: parseInt(tx.height),
-      // confirmations: 0, // cosmos has instant validity
-      // feePrice: 0, // TODO:
-      // fee: 0, // TODO:
-      // secret?: '' // TODO: ...
-      _raw: tx
+  // TODO: move to utils
+  normalizeBlock(blockResponse: cosmos.BlockResponse) {
+    const normalizedBlock: Block<cosmos.Tx> = {
+      number: blockResponse.block.header.height,
+      hash: blockResponse.block_id.hash,
+      timestamp: new Date(blockResponse.block.header.time).getTime() / 1000,
+      size: 0, // size is unknown
+      parentHash: blockResponse.block.header.last_block_id.hash
+      // difficulty?: number;
+      // nonce?: number;
+      // transactions?: cosmos.Tx[] // TODO: parse utf8 encoded strings
     }
 
     return normalizedBlock
+  }
+
+  // TODO: move to utils
+  async normalizeTx(tx: cosmos.Tx) {
+    const blockHeight = parseInt(tx.height)
+    const block = await this.getBlockByNumber(blockHeight)
+
+    const normalizedTx: Transaction<cosmos.Tx> = {
+      hash: tx.hash,
+      value: 0, // TODO: set to proper value if possible
+      blockHash: block.hash,
+      blockNumber: blockHeight,
+      confirmations: 0, // cosmos has instant validity
+      feePrice: 0, // TODO: ...
+      fee: 0, // TODO: ...
+      secret: '', // TODO: ...
+      _raw: tx
+    }
+
+    return normalizedTx
   }
 }
