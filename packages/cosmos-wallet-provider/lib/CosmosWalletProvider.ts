@@ -1,33 +1,91 @@
 import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, ChainProvider, Transaction, SendOptions } from '@liquality/types'
+import { CosmosNetwork } from '@liquality/cosmos-networks'
+import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import { SigningStargateClient } from '@cosmjs/stargate'
+
+interface CosmosWalletProviderOptions {
+  network: CosmosNetwork
+  mnemonic: string
+  derivationPath: string
+}
 
 export default class CosmosWalletProvider extends WalletProvider implements Partial<ChainProvider> {
-  isWalletAvailable(): Promise<boolean> {
-    throw new Error('Method not implemented.')
+  _network: CosmosNetwork
+  _mnemonic: string
+  _derivationPath: string
+  _wallet: DirectSecp256k1HdWallet
+  _signingClient: SigningStargateClient
+  _addressCache: { [key: string]: Address }
+
+  constructor(options: CosmosWalletProviderOptions) {
+    const { network, mnemonic, derivationPath } = options
+    super({ network })
+    this._network = network
+    this._mnemonic = mnemonic
+    this._derivationPath = derivationPath
+    this._addressCache = {}
   }
 
-  getAddresses(startingIndex?: number, numAddresses?: number, change?: boolean): Promise<Address[]> {
-    console.log(startingIndex, numAddresses, change)
-    throw new Error('Method not implemented.')
+  async getAddresses(): Promise<Address[]> {
+    if (this._addressCache[this._mnemonic]) {
+      return [this._addressCache[this._mnemonic]]
+    }
+
+    if (!this._wallet || !this._signingClient) {
+      this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(this._mnemonic)
+      this._signingClient = await SigningStargateClient.connectWithSigner(this._network.rpcUrl, this._wallet)
+    }
+
+    const [account] = await this._wallet.getAccounts()
+    const result = new Address({
+      address: account.address,
+      derivationPath: this._derivationPath,
+      publicKey: account.pubkey.toString()
+    })
+
+    this._addressCache[this._mnemonic] = result
+    return [result]
   }
 
-  getUsedAddresses(numAddressPerCall?: number): Promise<Address[]> {
-    console.log(numAddressPerCall)
-    throw new Error('Method not implemented.')
+  async isWalletAvailable(): Promise<boolean> {
+    return !this._addressCache[this._mnemonic]
   }
 
-  getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<Address> {
-    console.log(change, numAddressPerCall)
-    throw new Error('Method not implemented.')
+  async getUsedAddresses(): Promise<Address[]> {
+    return this.getAddresses()
   }
 
-  signMessage(message: string, from: string): Promise<string> {
-    console.log(message, from)
-    throw new Error('Method not implemented.')
+  async getUnusedAddress(): Promise<Address> {
+    const addresses = await this.getAddresses()
+    return addresses[0]
   }
 
-  getConnectedNetwork(): Promise<any> {
-    throw new Error('Method not implemented.')
+  // TODO: return only signature
+  async signMessage(message: string, from: string, memo?: string): Promise<string> {
+    // TODO: object to string -> pass as argument -> convert back to object
+
+    console.log(message, from, memo)
+    // const fee = {
+    //   amount: [
+    //     {
+    //       denom: 'token',
+    //       amount: '1'
+    //     }
+    //   ],
+    //   gas: '180000' // 180k
+    // }
+
+    // const txRaw = await this._signingClient.sign((await this.getAddresses())[0], [msgAny], fee, memo)
+    return
+  }
+
+  async getConnectedNetwork(): Promise<any> {
+    if (this._addressCache[this._mnemonic]) {
+      return this._network.network
+    }
+
+    return ''
   }
 
   sendTransaction(options: SendOptions): Promise<Transaction> {
