@@ -368,22 +368,29 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
       return result
     }
 
-    async getTotalFee(opts: { value?: BigNumber; feePerByte: number; max?: boolean }) {
-      if (!opts.max) {
-        const { fee } = await this.getInputsForAmount([{ address: '', value: opts.value.toNumber() }], opts.feePerByte)
+    async getTotalFee(opts: SendOptions, max: boolean) {
+      const targets = this.sendOptionsToOutputs([opts])
+      if (!max) {
+        const { fee } = await this.getInputsForAmount(targets, opts.fee)
         return fee
       } else {
-        const { fee } = await this.getInputsForAmount([], opts.feePerByte, [], 100, true)
+        const { fee } = await this.getInputsForAmount(
+          targets.filter((t) => !t.value),
+          opts.fee,
+          [],
+          100,
+          true
+        )
         return fee
       }
     }
 
-    async getTotalFees(opts: { value?: BigNumber; feePerBytes: number[]; max?: boolean }) {
+    async getTotalFees(transactions: SendOptions[], max: boolean) {
       const fees = await this.withCachedUtxos(async () => {
         const fees: { [index: number]: BigNumber } = {}
-        for (const feePerByte of opts.feePerBytes) {
-          const fee = await this.getTotalFee({ value: opts.value, feePerByte, max: opts.max })
-          fees[feePerByte] = new BigNumber(fee)
+        for (const tx of transactions) {
+          const fee = await this.getTotalFee(tx, max)
+          fees[tx.fee] = new BigNumber(fee)
         }
         return fees
       })
@@ -467,7 +474,16 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
         if (sweep) {
           const outputBalance = _targets.reduce((a, b) => a + (b['value'] || 0), 0)
 
-          const sweepFee = feePerByte * ((_targets.length + 1) * 39 + utxos.length * 153)
+          const sweepOutputSize = 39
+          const paymentOutputSize = _targets.filter((t) => t.value && t.address).length * 39
+          const scriptOutputSize = _targets
+            .filter((t) => !t.value && t.script)
+            .reduce((size, t) => size + 39 + t.script.byteLength, 0)
+
+          const outputSize = sweepOutputSize + paymentOutputSize + scriptOutputSize
+          const inputSize = utxos.length * 153
+
+          const sweepFee = feePerByte * (inputSize + outputSize)
           const amountToSend = new BigNumber(utxoBalance).minus(sweepFee)
 
           targets = _targets.map((target) => ({ id: 'main', value: target.value, script: target.script }))
