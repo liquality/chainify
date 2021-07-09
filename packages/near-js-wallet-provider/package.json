@@ -1,6 +1,6 @@
 {
   "name": "@liquality/near-js-wallet-provider",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,11 +20,11 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/near-networks": "^1.4.3",
-    "@liquality/near-utils": "^1.4.3",
-    "@liquality/types": "^1.4.3",
-    "@liquality/utils": "^1.4.3",
-    "@liquality/wallet-provider": "^1.4.3",
+    "@liquality/near-networks": "^1.4.4",
+    "@liquality/near-utils": "^1.4.4",
+    "@liquality/types": "^1.4.4",
+    "@liquality/utils": "^1.4.4",
+    "@liquality/wallet-provider": "^1.4.4",
     "near-seed-phrase": "^0.1.1"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
