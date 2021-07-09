@@ -23,7 +23,8 @@
     "@cosmjs/stargate": "^0.25.5",
     "@liquality/cosmos-networks": "^1.4.3",
     "@liquality/node-provider": "^1.4.3",
-    "@liquality/types": "^1.4.3"
+    "@liquality/types": "^1.4.3",
+    "@liquality/utils": "^1.4.4"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

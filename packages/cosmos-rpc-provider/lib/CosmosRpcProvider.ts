@@ -1,5 +1,6 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality/types'
+import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { StargateClient } from '@cosmjs/stargate'
 import { TxRaw } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
@@ -53,16 +54,26 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     return this.normalizeTx(response.result)
   }
 
-  async getBalance(addresses: string[]): Promise<BigNumber> {
-    await this._initClient()
-    let totalBalance = new BigNumber(0)
+  async getBalance(_addresses: string[]): Promise<BigNumber> {
+    const addresses = _addresses.map(addressToString)
 
-    for (const address of addresses) {
-      const userBalance = await this._client.getBalance(address, 'atom') // atom is hardcoded
-      totalBalance = BigNumber.sum(totalBalance, new BigNumber(userBalance.amount))
-    }
+    const promiseBalances = await Promise.all(
+      addresses.map(async (address: string) => {
+        try {
+          const userBalance = await this._client.getBalance(address, 'atom') // atom is hardcoded
+          return new BigNumber(userBalance.amount)
+        } catch (err) {
+          if (err.message) {
+            return new BigNumber(0)
+          }
+          throw err
+        }
+      })
+    )
 
-    return totalBalance
+    return promiseBalances
+      .map((balance) => new BigNumber(balance))
+      .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
   async sendRawTransaction(rawTransaction: string): Promise<string> {
