@@ -1,0 +1,42 @@
+{
+  "name": "@liquality/solana-utils",
+  "version": "1.3.0",
+  "description": "",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@liquality/crypto": "^1.3.0",
+    "@liquality/errors": "^1.3.0",
+    "@liquality/types": "^1.3.0",
+    "@liquality/utils": "^1.3.0",
+    "@solana/web3.js": "^1.20.0",
+    "borsh": "^0.4.0",
+    "lodash": "^4.17.21"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}
