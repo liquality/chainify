@@ -141,14 +141,14 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return programAccount.publicKey.toString()
   }
 
-  async getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
+  async _getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
     return this.connection.getAccountInfo(new PublicKey(address))
   }
 
   async _waitForContractToBeExecutable(programId: string): Promise<boolean> {
     return new Promise((resolve) => {
       const interval = setInterval(async () => {
-        const accountInfo = await this.getAccountInfo(programId)
+        const accountInfo = await this._getAccountInfo(programId)
 
         if (accountInfo.executable) {
           clearInterval(interval)

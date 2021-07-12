@@ -72,10 +72,10 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string): Promise<Transaction> {
     validateSwapParams(swapParams)
 
-    const [_, { programId }, [initTransaction]] = await Promise.all([
-      this.verifyInitiateSwapTransaction(swapParams, initiationTxHash),
+    const [{ programId }, [initTransaction]] = await Promise.all([
       this.getMethod('getConnectedNetwork')(),
-      this.getMethod('getTransactionReceipt')([initiationTxHash])
+      this.getMethod('getTransactionReceipt')([initiationTxHash]),
+      this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
     ])
 
     const { buyer, programAccount } = initTransaction._raw
@@ -100,10 +100,10 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   async refundSwap(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
     validateSwapParams(swapParams)
 
-    const [_, { programId }, [initTransaction]] = await Promise.all([
-      this.verifyInitiateSwapTransaction(swapParams, initiationTxHash),
+    const [{ programId }, [initTransaction]] = await Promise.all([
       this.getMethod('getConnectedNetwork')(),
-      this.getMethod('getTransactionReceipt')([initiationTxHash])
+      this.getMethod('getTransactionReceipt')([initiationTxHash]),
+      this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
     ])
 
     const { seller, programAccount } = initTransaction._raw
@@ -194,7 +194,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async _checkIfProgramAccountExists(programAccount: string): Promise<boolean> {
-    const isExisting = await this.getMethod('getAccountInfo')(programAccount)
+    const isExisting = await this.getMethod('_getAccountInfo')(programAccount)
 
     if (!isExisting) {
       throw new InvalidAddressError('AccountDoesNotExist')
