@@ -1,8 +1,11 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, ChainProvider, Transaction, SendOptions, Network } from '@liquality/types'
+import { Address, ChainProvider, Transaction, SendOptions, Network, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
+import { addressToString } from '@liquality/utils'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
-import { SigningStargateClient } from '@cosmjs/stargate'
+import { SigningStargateClient, MsgSendEncodeObject, BroadcastTxResponse } from '@cosmjs/stargate'
+import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
+import { TxRaw } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
 
 interface CosmosWalletProviderOptions {
   network: CosmosNetwork
@@ -86,8 +89,30 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     return this._network
   }
 
-  sendTransaction(options: SendOptions): Promise<Transaction> {
-    console.log(options)
-    throw new Error('Method not implemented.')
+  async sendTransaction(options: SendOptions): Promise<Transaction<cosmos.Tx>> {
+    const [address] = await this.getAddresses()
+
+    const msg = MsgSend.fromJSON({
+      fromAddress: addressToString(address),
+      toAddress: addressToString(options.to),
+      amount: [{ denom: this._network.token, amount: options.value.toString() }]
+    })
+
+    const msgObject: MsgSendEncodeObject = {
+      typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+      value: msg
+    }
+
+    const txRaw = await this._signingClient.sign(
+      addressToString(address),
+      [msgObject],
+      this._signingClient.fees.send,
+      ''
+    )
+
+    const txRawBytes = TxRaw.encode(TxRaw.fromJSON(txRaw)).finish()
+    const txResponse: BroadcastTxResponse = await this._signingClient.broadcastTx(txRawBytes)
+
+    return this.getMethod('getTransactionByHash')(txResponse.transactionHash)
   }
 }

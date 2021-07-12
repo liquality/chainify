@@ -2,8 +2,8 @@ import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
+import { normalizeBlock, normalizeTx } from '@liquality/cosmos-utils'
 import { StargateClient } from '@cosmjs/stargate'
-import { TxRaw } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
 
 export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: CosmosNetwork
@@ -28,18 +28,16 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 7250))
   }
 
-  async getBlockByHash(blockHash: string): Promise<Block<any>> {
-    // TODO: check if request is successful
+  async getBlockByHash(blockHash: string): Promise<Block<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/block_by_hash?hash=${blockHash}`)
 
-    return this.normalizeBlock(response.result)
+    return normalizeBlock(response.result)
   }
 
-  async getBlockByNumber(blockNumber: number): Promise<Block<any>> {
-    // TODO: check if request is successful
+  async getBlockByNumber(blockNumber: number): Promise<Block<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/block?height=${blockNumber}`)
 
-    return this.normalizeBlock(response.result)
+    return normalizeBlock(response.result)
   }
 
   async getBlockHeight(): Promise<number> {
@@ -47,11 +45,12 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     return this._client.getHeight()
   }
 
-  async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
-    // TODO: check if request is successful
+  async getTransactionByHash(txHash: string): Promise<Transaction<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
+    const blockHeight = parseInt(response.result.height)
+    const block = await this.getBlockByNumber(blockHeight)
 
-    return this.normalizeTx(response.result)
+    return normalizeTx(response.result, block.hash)
   }
 
   async getBalance(_addresses: string[]): Promise<BigNumber> {
@@ -60,7 +59,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address: string) => {
         try {
-          const userBalance = await this._client.getBalance(address, 'atom') // atom is hardcoded
+          const userBalance = await this._client.getBalance(address, this._network.token) // atom is hardcoded
           return new BigNumber(userBalance.amount)
         } catch (err) {
           if (err.message) {
@@ -79,46 +78,9 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   async sendRawTransaction(rawTransaction: string): Promise<string> {
     await this._initClient()
 
-    const rtx = TxRaw.fromJSON(rawTransaction)
-    const txRawBytes = TxRaw.encode(rtx).finish()
-    const txResponse = await this._client.broadcastTx(txRawBytes)
+    const buf = Buffer.from(rawTransaction)
+    const txResponse = await this._client.broadcastTx(buf)
 
     return txResponse.toString()
-  }
-
-  // TODO: move to utils
-  normalizeBlock(blockResponse: cosmos.BlockResponse) {
-    const normalizedBlock: Block<cosmos.Tx> = {
-      number: blockResponse.block.header.height,
-      hash: blockResponse.block_id.hash,
-      timestamp: new Date(blockResponse.block.header.time).getTime() / 1000,
-      size: 0, // size is unknown
-      parentHash: blockResponse.block.header.last_block_id.hash
-      // difficulty?: number;
-      // nonce?: number;
-      // transactions?: cosmos.Tx[] // TODO: parse utf8 encoded strings
-    }
-
-    return normalizedBlock
-  }
-
-  // TODO: move to utils
-  async normalizeTx(tx: cosmos.Tx) {
-    const blockHeight = parseInt(tx.height)
-    const block = await this.getBlockByNumber(blockHeight)
-
-    const normalizedTx: Transaction<cosmos.Tx> = {
-      hash: tx.hash,
-      value: 0, // TODO: set to proper value if possible
-      blockHash: block.hash,
-      blockNumber: blockHeight,
-      confirmations: 0, // cosmos has instant validity
-      feePrice: 0, // TODO: ...
-      fee: 0, // TODO: ...
-      secret: '', // TODO: ...
-      _raw: tx
-    }
-
-    return normalizedTx
   }
 }
