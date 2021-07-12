@@ -121,17 +121,18 @@ export function normalizeTransaction(
     programId: string
     confirmations?: number
     _raw?: {
-      buyer: string
-      seller: string
-      secret_hash: string
-      value: BigNumber
-      expiration: number
-      programAccount: string
+      buyer?: string
+      seller?: string
+      secret_hash?: string
+      value?: BigNumber
+      expiration?: number
+      programAccount?: string
     }
     secret?: string
   } = {
     lamports: 0,
-    programId: ''
+    programId: '',
+    _raw: {}
   }
 
   const txData = filter(instructions as any, 'data')
