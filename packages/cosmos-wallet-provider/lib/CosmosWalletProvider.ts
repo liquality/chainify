@@ -1,5 +1,5 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, ChainProvider, Transaction, SendOptions } from '@liquality/types'
+import { Address, ChainProvider, Transaction, SendOptions, Network } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
 import { SigningStargateClient } from '@cosmjs/stargate'
@@ -49,7 +49,8 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
   }
 
   async isWalletAvailable(): Promise<boolean> {
-    return !this._addressCache[this._mnemonic]
+    const addresses = await this.getAddresses()
+    return addresses.length > 0
   }
 
   async getUsedAddresses(): Promise<Address[]> {
@@ -62,9 +63,10 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
   }
 
   // TODO: return only signature
-  async signMessage(message: string, from: string, memo?: string): Promise<string> {
+  async signMessage(message: string, from: string): Promise<string> {
     // TODO: object to string -> pass as argument -> convert back to object
 
+    const memo = ''
     console.log(message, from, memo)
     // const fee = {
     //   amount: [
@@ -80,12 +82,8 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     return
   }
 
-  async getConnectedNetwork(): Promise<any> {
-    if (this._addressCache[this._mnemonic]) {
-      return this._network.network
-    }
-
-    return ''
+  async getConnectedNetwork(): Promise<Network> {
+    return this._network
   }
 
   sendTransaction(options: SendOptions): Promise<Transaction> {
