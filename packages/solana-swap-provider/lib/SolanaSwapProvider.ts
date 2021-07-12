@@ -12,8 +12,6 @@ import {
 } from '@liquality/solana-utils'
 import { WalletError } from '@liquality/errors'
 
-import bytecode from './bytecode'
-
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
   doesBlockScan: boolean | (() => boolean)
   signer: Keypair
@@ -34,11 +32,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const signer = await this.getMethod('_getSigner')()
 
-    const [
-      {
-        _raw: { programId }
-      }
-    ] = await this.getMethod('sendTransaction')({ bytecode })
+    const { programId } = await this.getMethod('getConnectedNetwork')()
 
     const { expiration, refundAddress, recipientAddress, value, secretHash } = swapParams
 
