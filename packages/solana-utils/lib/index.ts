@@ -126,6 +126,7 @@ export function normalizeTransaction(
       secret_hash: string
       value: BigNumber
       expiration: number
+      programAccount: string
     }
     secret?: string
   } = {
@@ -150,8 +151,20 @@ export function normalizeTransaction(
   if (firstInstruction.parsed) {
     transactionData.lamports = firstInstruction.parsed.info.lamports
 
-    if (firstInstruction.parsed.type === 'finalize') {
-      transactionData.programId = firstInstruction.parsed.info.account
+    const { type } = firstInstruction.parsed
+
+    switch (type) {
+      case 'finalize': {
+        transactionData.programId = firstInstruction.parsed.info.account
+        break
+      }
+      case 'createAccount': {
+        transactionData._raw.programAccount = firstInstruction.parsed.info.newAccount
+        break
+      }
+      default: {
+        break
+      }
     }
   }
 
