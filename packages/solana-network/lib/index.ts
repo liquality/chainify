@@ -4,6 +4,7 @@ export interface SolanaNetwork extends Network {
   nodeUrl: string
   helperUrl: string
   walletIndex: number
+  programId: string
 }
 
 const solana_mainnet: SolanaNetwork = {
@@ -12,7 +13,8 @@ const solana_mainnet: SolanaNetwork = {
   helperUrl: 'https://explorer.solana.com/',
   coinType: '501',
   isTestnet: false,
-  walletIndex: 0
+  walletIndex: 0,
+  programId: '!!! TODO: REPLACE AFTER DEPLOY ON THE MAINNET !!!'
 }
 
 const solana_testnet: SolanaNetwork = {
@@ -21,7 +23,8 @@ const solana_testnet: SolanaNetwork = {
   helperUrl: 'https://explorer-api.devnet.solana.com/',
   coinType: '501',
   isTestnet: true,
-  walletIndex: 0
+  walletIndex: 0,
+  programId: '4B9k2YntFxQC93MezXZB3AKLsLrEaqDdXEaPmgTTF5WX'
 }
 
 const SolanaNetworks = {
