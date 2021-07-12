@@ -113,17 +113,6 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return this.connection.getRecentBlockhash()
   }
 
-  async _getProgramAccounts(
-    programId: PublicKey
-  ): Promise<
-    {
-      pubkey: PublicKey
-      account: AccountInfo<Buffer>
-    }[]
-  > {
-    return await this.connection.getProgramAccounts(new PublicKey(programId))
-  }
-
   async _getMinimumBalanceForRentExemption(dataLength: number): Promise<number> {
     return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
@@ -152,14 +141,14 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return programAccount.publicKey.toString()
   }
 
-  async _getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
+  async getAccountInfo(address: string): Promise<AccountInfo<Buffer>> {
     return this.connection.getAccountInfo(new PublicKey(address))
   }
 
   async _waitForContractToBeExecutable(programId: string): Promise<boolean> {
     return new Promise((resolve) => {
       const interval = setInterval(async () => {
-        const accountInfo = await this._getAccountInfo(programId)
+        const accountInfo = await this.getAccountInfo(programId)
 
         if (accountInfo.executable) {
           clearInterval(interval)
