@@ -113,17 +113,6 @@ export default class SolanaRpcProvider extends NodeProvider implements Partial<C
     return this.connection.getRecentBlockhash()
   }
 
-  async _getProgramAccounts(
-    programId: PublicKey
-  ): Promise<
-    {
-      pubkey: PublicKey
-      account: AccountInfo<Buffer>
-    }[]
-  > {
-    return await this.connection.getProgramAccounts(new PublicKey(programId))
-  }
-
   async _getMinimumBalanceForRentExemption(dataLength: number): Promise<number> {
     return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
