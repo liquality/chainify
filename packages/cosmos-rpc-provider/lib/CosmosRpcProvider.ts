@@ -4,10 +4,11 @@ import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { normalizeBlock, normalizeTx, getTxHash } from '@liquality/cosmos-utils'
 import { StargateClient } from '@cosmjs/stargate'
+import { fromBase64 } from '@cosmjs/encoding'
 
 export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: CosmosNetwork
-  _client: StargateClient
+  private _client: StargateClient
 
   constructor(network: CosmosNetwork) {
     super({
@@ -54,12 +55,13 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   }
 
   async getBalance(_addresses: string[]): Promise<BigNumber> {
+    await this._initClient()
     const addresses = _addresses.map(addressToString)
 
     const promiseBalances = await Promise.all(
       addresses.map(async (address: string) => {
         try {
-          const userBalance = await this._client.getBalance(address, this._network.token) // atom is hardcoded
+          const userBalance = await this._client.getBalance(address, this._network.token)
           return new BigNumber(userBalance.amount)
         } catch (err) {
           if (err.message) {
@@ -78,7 +80,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   async sendRawTransaction(rawTransaction: string): Promise<string> {
     await this._initClient()
 
-    const buf = Buffer.from(rawTransaction)
+    const buf = fromBase64(rawTransaction)
     const txResponse = await this._client.broadcastTx(buf)
 
     return txResponse.toString()
@@ -86,9 +88,9 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
 
   async _normalizeBlock(block: cosmos.BlockResponse): Promise<Block<cosmos.Tx>> {
     const promiseTxs = await Promise.all(
-      block.block.data.txs.map(async (address: string) => {
+      block.block.data.txs.map(async (tx: string) => {
         try {
-          const txHash = getTxHash(address)
+          const txHash = await getTxHash(tx)
           const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
           return response.result
         } catch (err) {

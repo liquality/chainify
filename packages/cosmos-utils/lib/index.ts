@@ -33,10 +33,10 @@ async function normalizeTx(tx: cosmos.Tx, blockHash: string) {
   return normalizedTx
 }
 
-async function getTxHash(txBase64: string) {
+function getTxHash(txBase64: string): string {
   const buff = fromBase64(txBase64)
   const digest = new Sha256(buff).digest()
-  return toHex(digest)
+  return '0x' + toHex(digest)
 }
 
 export { normalizeBlock, normalizeTx, getTxHash }
