@@ -15,10 +15,10 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
   async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction> {
     validateSwapParams(swapParams)
 
-    const { refundAddress } = swapParams
+    const { programId } = await this.getMethod('getConnectedNetwork')()
 
     return await this._findTransactionByAddress({
-      address: addressToString(refundAddress),
+      address: addressToString(programId),
       swapParams,
       instruction: this.instructions.init,
       validation: doesTransactionMatchInitiation
@@ -35,12 +35,12 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     }
 
     const {
-      _raw: { programId }
+      _raw: { programAccount }
     } = initTransaction
 
     return await this._findTransactionByAddress({
       swapParams,
-      address: programId,
+      address: programAccount,
       instruction: this.instructions.claim,
       validation: validateSecret
     })
@@ -56,12 +56,12 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     }
 
     const {
-      _raw: { programId }
+      _raw: { programAccount }
     } = initTransaction
 
     return await this._findTransactionByAddress({
       swapParams,
-      address: programId,
+      address: programAccount,
       instruction: this.instructions.refund
     })
   }
