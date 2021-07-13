@@ -1,15 +1,15 @@
 import { Block, Transaction, cosmos } from '@liquality/types'
+import { Sha256 } from '@cosmjs/crypto'
+import { toHex, fromBase64 } from '@cosmjs/encoding'
 
-function normalizeBlock(blockResponse: cosmos.BlockResponse) {
+function normalizeBlock(blockResponse: cosmos.BlockResponse, txs: cosmos.Tx[]) {
   const normalizedBlock: Block<cosmos.Tx> = {
     number: blockResponse.block.header.height,
     hash: blockResponse.block_id.hash,
     timestamp: new Date(blockResponse.block.header.time).getTime() / 1000,
-    size: 0, // size is unknown
-    parentHash: blockResponse.block.header.last_block_id.hash
-    // difficulty?: number;
-    // nonce?: number;
-    // transactions?: cosmos.Tx[] // TODO: parse utf8 encoded strings
+    size: 0,
+    parentHash: blockResponse.block.header.last_block_id.hash,
+    transactions: txs
   }
 
   return normalizedBlock
@@ -20,17 +20,23 @@ async function normalizeTx(tx: cosmos.Tx, blockHash: string) {
 
   const normalizedTx: Transaction<cosmos.Tx> = {
     hash: tx.hash,
-    value: 0, // TODO: set to proper value if possible
+    value: 0,
     blockHash: blockHash,
     blockNumber: blockHeight,
     confirmations: 0, // cosmos has instant validity
-    feePrice: 0, // TODO: ...
-    fee: 0, // TODO: ...
-    secret: '', // TODO: ...
+    feePrice: 0,
+    fee: 0,
+    secret: '',
     _raw: tx
   }
 
   return normalizedTx
 }
 
-export { normalizeBlock, normalizeTx }
+async function getTxHash(txBase64: string) {
+  const buff = fromBase64(txBase64)
+  const digest = new Sha256(buff).digest()
+  return toHex(digest)
+}
+
+export { normalizeBlock, normalizeTx, getTxHash }

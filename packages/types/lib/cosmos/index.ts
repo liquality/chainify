@@ -57,7 +57,7 @@ export interface BlockHeader {
 }
 
 export interface BlockData {
-  txs: Tx[]
+  txs: string[]
 }
 
 export interface Block {

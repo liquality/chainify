@@ -2,7 +2,7 @@ import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
-import { normalizeBlock, normalizeTx } from '@liquality/cosmos-utils'
+import { normalizeBlock, normalizeTx, getTxHash } from '@liquality/cosmos-utils'
 import { StargateClient } from '@cosmjs/stargate'
 
 export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
@@ -31,13 +31,13 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   async getBlockByHash(blockHash: string): Promise<Block<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/block_by_hash?hash=${blockHash}`)
 
-    return normalizeBlock(response.result)
+    return this._normalizeBlock(response.result)
   }
 
   async getBlockByNumber(blockNumber: number): Promise<Block<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/block?height=${blockNumber}`)
 
-    return normalizeBlock(response.result)
+    return this._normalizeBlock(response.result)
   }
 
   async getBlockHeight(): Promise<number> {
@@ -82,5 +82,27 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const txResponse = await this._client.broadcastTx(buf)
 
     return txResponse.toString()
+  }
+
+  async _normalizeBlock(block: cosmos.BlockResponse): Promise<Block<cosmos.Tx>> {
+    const promiseTxs = await Promise.all(
+      block.block.data.txs.map(async (address: string) => {
+        try {
+          const txHash = getTxHash(address)
+          const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
+          return response.result
+        } catch (err) {
+          if (err.message) {
+            return null
+          }
+          throw err
+        }
+      })
+    )
+
+    return normalizeBlock(
+      block,
+      promiseTxs.map((tx) => tx)
+    )
   }
 }
