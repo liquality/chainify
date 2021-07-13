@@ -1,5 +1,5 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, ChainProvider, Transaction, SendOptions, Network, cosmos } from '@liquality/types'
+import { BigNumber, Address, ChainProvider, Transaction, SendOptions, Network, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
 import { DirectSecp256k1HdWallet, makeCosmoshubPath } from '@cosmjs/proto-signing'
@@ -82,6 +82,13 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
 
   async getConnectedNetwork(): Promise<Network> {
     return this._network
+  }
+
+  async sendSweepTransaction(address: Address | string): Promise<Transaction<cosmos.Tx>> {
+    const [senderAddress] = await this.getAddresses()
+    const coin = await this._signingClient.getBalance(addressToString(senderAddress), this._network.token)
+
+    return this.sendTransaction({ to: address, value: new BigNumber(coin.amount) })
   }
 
   async sendTransaction(options: SendOptions): Promise<Transaction<cosmos.Tx>> {
