@@ -9,7 +9,7 @@ export interface CosmosNetwork extends Network {
   faucetUrl?: string
 }
 
-const cosmoshub_mainnet: CosmosNetwork = {
+const cosmoshub_mainnet_atom: CosmosNetwork = {
   name: 'mainnet',
   network: 'cosmoshub-4',
   rpcUrl: 'https://rpc.cosmos.network:443',
@@ -20,7 +20,7 @@ const cosmoshub_mainnet: CosmosNetwork = {
   isTestnet: false
 }
 
-const cosmoshub_testnet: CosmosNetwork = {
+const cosmoshub_testnet_photon: CosmosNetwork = {
   name: 'testnet',
   network: 'cosmoshub-testnet',
   rpcUrl: 'https://rpc.testnet.cosmos.network:443',
@@ -33,8 +33,8 @@ const cosmoshub_testnet: CosmosNetwork = {
 }
 
 const CosmosNetworks = {
-  cosmoshub_mainnet,
-  cosmoshub_testnet
+  cosmoshub_mainnet_atom,
+  cosmoshub_testnet_photon
 }
 
 export { CosmosNetworks }

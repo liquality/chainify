@@ -2,10 +2,12 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, ChainProvider, Transaction, SendOptions, Network, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import { DirectSecp256k1HdWallet, makeCosmoshubPath } from '@cosmjs/proto-signing'
 import { SigningStargateClient, MsgSendEncodeObject, BroadcastTxResponse } from '@cosmjs/stargate'
-import { MsgSend } from '@cosmjs/stargate/build/codec/cosmos/bank/v1beta1/tx'
-import { TxRaw } from '@cosmjs/stargate/build/codec/cosmos/tx/v1beta1/tx'
+import { Secp256k1, Slip10, Slip10Curve } from '@cosmjs/crypto'
+import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
+import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
+import { mnemonicToSeed } from 'bip39'
 
 interface CosmosWalletProviderOptions {
   network: CosmosNetwork
@@ -15,11 +17,11 @@ interface CosmosWalletProviderOptions {
 
 export default class CosmosWalletProvider extends WalletProvider implements Partial<ChainProvider> {
   _network: CosmosNetwork
-  _mnemonic: string
-  _derivationPath: string
-  _wallet: DirectSecp256k1HdWallet
-  _signingClient: SigningStargateClient
-  _addressCache: { [key: string]: Address }
+  private _mnemonic: string
+  private _derivationPath: string
+  private _signingClient: SigningStargateClient
+  private _addressCache: { [key: string]: Address }
+  private _privateKey: any
 
   constructor(options: CosmosWalletProviderOptions) {
     const { network, mnemonic, derivationPath } = options
@@ -28,6 +30,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     this._mnemonic = mnemonic
     this._derivationPath = derivationPath
     this._addressCache = {}
+    this._privateKey = null
   }
 
   async getAddresses(): Promise<Address[]> {
@@ -35,12 +38,12 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
       return [this._addressCache[this._mnemonic]]
     }
 
-    if (!this._wallet || !this._signingClient) {
-      this._wallet = await DirectSecp256k1HdWallet.fromMnemonic(this._mnemonic)
-      this._signingClient = await SigningStargateClient.connectWithSigner(this._network.rpcUrl, this._wallet)
-    }
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this._mnemonic)
+    this._signingClient = await SigningStargateClient.connectWithSigner(this._network.rpcUrl, wallet)
+    const seed = await mnemonicToSeed(this._mnemonic)
+    this._privateKey = Slip10.derivePath(Slip10Curve.Secp256k1, seed, makeCosmoshubPath(0)).privkey
 
-    const [account] = await this._wallet.getAccounts()
+    const [account] = await wallet.getAccounts()
     const result = new Address({
       address: account.address,
       derivationPath: this._derivationPath,
@@ -65,24 +68,16 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     return addresses[0]
   }
 
-  // TODO: return only signature
-  async signMessage(message: string, from: string): Promise<string> {
-    // TODO: object to string -> pass as argument -> convert back to object
+  async signMessage(message: string): Promise<string> {
+    await this.getAddresses()
 
-    const memo = ''
-    console.log(message, from, memo)
-    // const fee = {
-    //   amount: [
-    //     {
-    //       denom: 'token',
-    //       amount: '1'
-    //     }
-    //   ],
-    //   gas: '180000' // 180k
-    // }
-
-    // const txRaw = await this._signingClient.sign((await this.getAddresses())[0], [msgAny], fee, memo)
-    return
+    const buffer = Buffer.from(message)
+    const signature = await Secp256k1.createSignature(buffer, this._privateKey)
+    return (
+      Buffer.from(signature.r(32)).toString('hex') +
+      Buffer.from(signature.s(32)).toString('hex') +
+      signature.recovery.toString()
+    )
   }
 
   async getConnectedNetwork(): Promise<Network> {

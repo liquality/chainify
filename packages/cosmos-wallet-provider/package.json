@@ -20,13 +20,15 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@cosmjs/crypto": "^0.25.5",
     "@cosmjs/proto-signing": "^0.25.5",
     "@cosmjs/stargate": "^0.25.5",
     "@liquality/cosmos-networks": "^1.4.3",
     "@liquality/cosmos-utils": "^1.4.3",
-    "@liquality/utils": "^1.4.3",
     "@liquality/types": "^1.4.3",
-    "@liquality/wallet-provider": "^1.4.3"
+    "@liquality/utils": "^1.4.3",
+    "@liquality/wallet-provider": "^1.4.3",
+    "cosmjs-types": "^0.1.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
