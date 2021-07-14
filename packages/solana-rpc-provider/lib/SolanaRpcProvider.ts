@@ -1,13 +1,13 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { 
-  BigNumber, 
-  ChainProvider, 
-  Address, 
-  Block, 
-  Transaction, 
-  solana, 
-  FeeDetails, 
-  FeeProvider 
+import {
+  BigNumber,
+  ChainProvider,
+  Address,
+  Block,
+  Transaction,
+  solana,
+  FeeDetails,
+  FeeProvider
 } from '@liquality/types'
 import { SolanaNetwork } from '@liquality/solana-networks'
 import { TxNotFoundError } from '@liquality/errors'
