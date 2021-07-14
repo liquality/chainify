@@ -45,6 +45,7 @@ export default class SolanaWalletProvider extends WalletProvider {
 
     const result = new Address({
       address: account.publicKey.toString(),
+      publicKey: account.publicKey.toString(),
       derivationPath: this._derivationPath
     })
 
