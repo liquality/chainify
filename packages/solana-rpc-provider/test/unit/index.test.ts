@@ -29,7 +29,7 @@ describe('Solana RPC provider', () => {
         derivationPath: `m/44'/501'/0'/0'`
       })
     )
-    client.addProvider(new SolanaSwapFindProvider())
+    client.addProvider(new SolanaSwapFindProvider(SolanaNetworks.solana_testnet))
   })
 
   describe('getBlockNumber', () => {

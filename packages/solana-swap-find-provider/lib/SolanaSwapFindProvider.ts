@@ -2,6 +2,7 @@ import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
+import { SolanaNetwork } from '@liquality/solana-networks';
 import { doesTransactionMatchInitiation, validateSwapParams, validateSecret } from '@liquality/solana-utils'
 import { InitData } from '../../solana-utils/dist/lib/layouts'
 
@@ -10,6 +11,13 @@ export default class SolanaSwapFindProvider extends Provider implements Partial<
     init: 0,
     claim: 1,
     refund: 2
+  }
+
+  _network: SolanaNetwork
+
+  constructor(network: SolanaNetwork) {
+    super()
+    this._network = network
   }
 
   async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction> {

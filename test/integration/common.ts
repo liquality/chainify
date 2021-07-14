@@ -228,7 +228,7 @@ solana.addProvider(
   })
 )
 solana.addProvider(new SolanaSwapProvider(config.solana.network))
-solana.addProvider(new SolanaSwapFindProvider())
+solana.addProvider(new SolanaSwapFindProvider(config.solana.network))
 
 interface Chain {
   id: string
@@ -348,7 +348,7 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
         })
       )
       solana.addProvider(new SolanaSwapProvider(config.solana.network))
-      solana.addProvider(new SolanaSwapFindProvider())
+      solana.addProvider(new SolanaSwapFindProvider(config.solana.network))
 
       const balance = await solana.chain.getBalance([config.near.senderAddress])
 
