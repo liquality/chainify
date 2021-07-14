@@ -1,5 +1,5 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block, Transaction, solana, FeeDetails } from '@liquality/types'
+import { BigNumber, ChainProvider, Address, Block, Transaction, solana, FeeDetails, FeeProvider } from '@liquality/types'
 import { SolanaNetwork } from '@liquality/solana-networks'
 import { TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/solana-utils'
@@ -19,7 +19,7 @@ import {
 
 import { addressToString } from '@liquality/utils'
 
-export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider> {
+export default class SolanaRpcProvider extends NodeProvider implements Partial<ChainProvider>, FeeProvider {
   _network: SolanaNetwork
   connection: Connection
 
