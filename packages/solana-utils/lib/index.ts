@@ -1,10 +1,10 @@
 import { Address, BigNumber, Block, solana, SwapParams, Transaction } from '@liquality/types'
 import {
   addressToString,
-  validateSecret as _validateSecret,
   validateValue,
   validateExpiration,
-  validateSecretHash
+  validateSecretHash,
+  validateSecretAndHash
 } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 import { base58 } from '@liquality/crypto'
@@ -97,7 +97,7 @@ export const createInitBuffer = ({ buyer, seller, expiration, secret_hash, value
 }
 
 export function validateSecret(swapParams: SwapParams, data: { secret: string }): boolean {
-  _validateSecret(data.secret)
+  validateSecretAndHash(data.secret, swapParams.secretHash)
 
   return true
 }
