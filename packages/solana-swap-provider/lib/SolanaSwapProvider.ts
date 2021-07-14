@@ -1,7 +1,6 @@
 import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { Keypair, SystemProgram, PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { sha256 } from '@liquality/crypto'
 import {
   doesTransactionMatchInitiation,
   createClaimBuffer,
@@ -21,7 +20,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
  
   generateSecret(message: string): Promise<string> {
-    return sha256(message)
+    return this.getMethod('signMessage')(message)
   }
 
   async getSwapSecret(claimTxHash: string): Promise<string> {
