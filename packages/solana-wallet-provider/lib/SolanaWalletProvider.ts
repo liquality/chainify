@@ -1,7 +1,7 @@
 import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, Network, solana } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
-import { SolanaNetwork } from '@liquality/solana-network'
+import { SolanaNetwork } from '@liquality/solana-networks'
 import { base58 } from '@liquality/crypto'
 
 import nacl from 'tweetnacl'

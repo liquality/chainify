@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/solana-network",
+  "name": "@liquality/solana-networks",
   "version": "1.2.0",
   "description": "Network specific settings for Solana",
   "module": "dist/index.js",
