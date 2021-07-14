@@ -8,7 +8,7 @@ import {
   createRefundBuffer,
   validateSwapParams
 } from '@liquality/solana-utils'
-import { SolanaNetwork } from '@liquality/solana-networks';
+import { SolanaNetwork } from '@liquality/solana-networks'
 import { WalletError, TxNotFoundError, InvalidAddressError } from '@liquality/errors'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
@@ -18,7 +18,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     super()
     this._network = network
   }
- 
+
   generateSecret(message: string): Promise<string> {
     return this.getMethod('signMessage')(message)
   }
@@ -38,7 +38,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const signer = await this.getMethod('_getSigner')()
 
-    const { programId } = this._network;
+    const { programId } = this._network
 
     const { expiration, refundAddress, recipientAddress, value, secretHash } = swapParams
 

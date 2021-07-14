@@ -2,7 +2,7 @@ import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
-import { SolanaNetwork } from '@liquality/solana-networks';
+import { SolanaNetwork } from '@liquality/solana-networks'
 import { doesTransactionMatchInitiation, validateSwapParams, validateSecret } from '@liquality/solana-utils'
 import { InitData } from '../../solana-utils/dist/lib/layouts'
 
