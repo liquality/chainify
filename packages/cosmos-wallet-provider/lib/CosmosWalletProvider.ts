@@ -105,16 +105,21 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
       value: msg
     }
 
-    const txRaw = await this._signingClient.sign(
-      addressToString(address),
-      [msgObject],
-      this._signingClient.fees.send,
-      ''
-    )
+    const fee = {
+      amount: [
+        {
+          denom: this._network.token,
+          amount: this._signingClient.fees.send.amount[0].amount
+        }
+      ],
+      gas: this._signingClient.fees.send.gas
+    }
+
+    const txRaw = await this._signingClient.sign(addressToString(address), [msgObject], fee, '')
 
     const txRawBytes = TxRaw.encode(TxRaw.fromJSON(txRaw)).finish()
     const txResponse: BroadcastTxResponse = await this._signingClient.broadcastTx(txRawBytes)
 
-    return this.getMethod('getTransactionByHash')(txResponse.transactionHash)
+    return this.getMethod('getTransactionByHash')('0x' + txResponse.transactionHash)
   }
 }
