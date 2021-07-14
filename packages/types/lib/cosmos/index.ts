@@ -42,7 +42,7 @@ export interface BlockId {
 export interface BlockHeader {
   version?: any
   chain_id: string
-  height: number
+  height: string
   time: string
   last_block_id?: BlockId
   last_commit_hash?: string

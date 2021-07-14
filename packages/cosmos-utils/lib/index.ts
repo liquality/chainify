@@ -4,7 +4,7 @@ import { toHex, fromBase64 } from '@cosmjs/encoding'
 
 function normalizeBlock(blockResponse: cosmos.BlockResponse, txs: cosmos.Tx[]) {
   const normalizedBlock: Block<cosmos.Tx> = {
-    number: blockResponse.block.header.height,
+    number: parseInt(blockResponse.block.header.height),
     hash: blockResponse.block_id.hash,
     timestamp: new Date(blockResponse.block.header.time).getTime() / 1000,
     size: 0,
