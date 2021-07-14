@@ -12,9 +12,6 @@ import {
 import { WalletError, TxNotFoundError, InvalidAddressError } from '@liquality/errors'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
-  doesBlockScan: boolean | (() => boolean)
-  signer: Keypair
-
   generateSecret(message: string): Promise<string> {
     return sha256(message)
   }
