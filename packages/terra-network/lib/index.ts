@@ -5,6 +5,7 @@ export interface TerraNetwork extends Network {
   nodeUrl: string
   helperUrl: string
   chainID: string
+  coin: string
 }
 
 const terra_mainnet: TerraNetwork = {
@@ -14,7 +15,8 @@ const terra_mainnet: TerraNetwork = {
   helperUrl: 'https://finder.terra.money',
   coinType: '397',
   isTestnet: false,
-  chainID: 'columbus-4'
+  chainID: 'columbus-4',
+  coin: 'luna'
 }
 
 const terra_testnet: TerraNetwork = {
@@ -24,7 +26,8 @@ const terra_testnet: TerraNetwork = {
   helperUrl: 'https://finder.terra.money/tequila-0004',
   coinType: '397',
   isTestnet: true,
-  chainID: 'tequila-0004'
+  chainID: 'tequila-0004',
+  coin: 'uluna'
 }
 
 const TerraNetworks = {

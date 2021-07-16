@@ -7,7 +7,7 @@ import { normalizeBlock } from '@liquality/terra-utils'
 import { LCDClient } from '@terra-money/terra.js'
 
 export default class TerraRpcProvider extends NodeProvider implements Partial<ChainProvider> {
-  // private _network: TerraNetwork
+  private _network: TerraNetwork
   private _lcdClient: LCDClient
 
   constructor(network: TerraNetwork) {
@@ -20,7 +20,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       URL: network.nodeUrl,
       chainID: network.chainID
     })
-    // this._network = network
+    this._network = network
   }
 
   async generateBlock(numberOfBlocks: number): Promise<void> {
@@ -58,7 +58,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       addresses.map(async (address) => {
         try {
           const balance = await this._lcdClient.bank.balance(address)
-          const val = Number(balance.get('uluna').amount)
+          const val = Number(balance.get(this._network.coin).amount)
 
           return new BigNumber(val)
         } catch (err) {
