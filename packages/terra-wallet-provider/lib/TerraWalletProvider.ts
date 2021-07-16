@@ -25,8 +25,9 @@ export default class TerraWalletProvider extends WalletProvider {
     this._addressCache = {}
   }
 
-  isWalletAvailable(): Promise<boolean> {
-    throw new Error('Method not implemented.')
+  async isWalletAvailable(): Promise<boolean> {
+    const addresses = await this.getAddresses()
+    return addresses.length > 0
   }
 
   async getAddresses(): Promise<Address[]> {
