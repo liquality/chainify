@@ -43,9 +43,10 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     return Number(height)
   }
 
-  getTransactionByHash(txHash: string): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
+  async getTransactionByHash(txHash: string): Promise<any> {
+    return await this._lcdClient.tx.txInfo(txHash)
   }
+
   getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
     throw new Error('Method not implemented.')
   }
