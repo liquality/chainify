@@ -1,7 +1,7 @@
 {
-  "name": "@liquality/terra-rpc-provider",
+  "name": "@liquality/terra-utils",
   "version": "1.4.4",
-  "description": "RPC Provider implementation for Terra",
+  "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
   "types": "dist/lib/index.d.ts",
@@ -19,13 +19,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.12.1",
-    "@liquality/node-provider": "^1.4.4",
-    "@liquality/terra-networks": "^1.4.4",
-    "@liquality/terra-utils": "^1.4.4",
-    "@liquality/types": "^1.4.4",
-    "@liquality/utils": "^1.4.4",
-    "@terra-money/terra.js": "^1.8.8"
+    "@liquality/types": "^1.4.4"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
