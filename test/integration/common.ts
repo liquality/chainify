@@ -25,6 +25,8 @@ import { NearRpcProvider } from '../../packages/near-rpc-provider/lib'
 import { NearJsWalletProvider } from '../../packages/near-js-wallet-provider/lib'
 import { NearSwapProvider } from '../../packages/near-swap-provider/lib'
 import { NearSwapFindProvider } from '../../packages/near-swap-find-provider/lib'
+import { TerraRpcProvider } from '../../packages/terra-rpc-provider/lib'
+import { TerraWalletProvider } from '../../packages/terra-wallet-provider/lib'
 import { BigNumber, Transaction, bitcoin, Network, SwapParams, SendOptions, Address } from '../../packages/types/lib'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
@@ -212,6 +214,16 @@ nearWithJs.addProvider(
 nearWithJs.addProvider(new NearSwapProvider())
 nearWithJs.addProvider(new NearSwapFindProvider(config.near.network.helperUrl))
 
+// Terra
+const terra = new Client()
+terra.addProvider(new TerraRpcProvider(config.terra.network)).addProvider(
+  new TerraWalletProvider({
+    network: config.terra.network,
+    mnemonic: config.terra.senderMnemonic,
+    derivationPath: ''
+  })
+)
+
 interface Chain {
   id: string
   name: string
@@ -256,7 +268,8 @@ const chains: { [index: string]: Chain } = {
   erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
   erc20WithLedger: { id: 'ERC20 Ledger', name: 'ethereum', client: erc20WithLedger },
   erc20WithJs: { id: 'ERC20 Js', name: 'ethereum', client: erc20WithJs },
-  nearWithJs: { id: 'Near Js', name: 'near', client: nearWithJs }
+  nearWithJs: { id: 'Near Js', name: 'near', client: nearWithJs },
+  terra: { id: 'Terra', name: 'terra', client: terra }
 }
 
 async function getSwapParams(chain: Chain, secretHash: string): Promise<SwapParams> {
@@ -313,6 +326,22 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
       const balance = await tempNearJsClient.chain.getBalance([config.near.receiverAddress])
       if (balance.gt(config.near.value)) {
         await tempNearJsClient.chain.sendTransaction({ to: address, value: balance.minus(config.near.value) })
+      }
+      break
+    }
+
+    case 'terra': {
+      const terra = new Client()
+      terra.addProvider(new TerraRpcProvider(config.terra.network)).addProvider(
+        new TerraWalletProvider({
+          network: config.terra.network,
+          mnemonic: config.terra.senderMnemonic,
+          derivationPath: ''
+        })
+      )
+      const balance = await terra.chain.getBalance([config.terra.receiverAddress])
+      if (balance.gt(config.terra.value)) {
+        await terra.chain.sendTransaction({ to: address, value: balance.minus(config.terra.value) })
       }
       break
     }
