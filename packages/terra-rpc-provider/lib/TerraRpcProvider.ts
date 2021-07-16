@@ -24,12 +24,15 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
-  getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
+  async getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
     throw new Error('Method not implemented.')
   }
-  getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<any>> {
-    throw new Error('Method not implemented.')
+
+  // Add type of Block
+  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<any> {
+    return await this._lcdClient.tendermint.blockInfo(blockNumber)
   }
+
   getBlockHeight(): Promise<number> {
     throw new Error('Method not implemented.')
   }
