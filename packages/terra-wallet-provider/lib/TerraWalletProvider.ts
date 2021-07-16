@@ -89,6 +89,10 @@ export default class TerraWalletProvider extends WalletProvider {
     console.log('resp', resp)
   }
 
+  canUpdateFee(): boolean {
+    return false
+  }
+
   private setSigner(): MnemonicKey {
     if (!this._signer) {
       this._signer = new MnemonicKey({
