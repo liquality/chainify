@@ -20,9 +20,10 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     this._network = network
   }
 
-  generateBlock(numberOfBlocks: number): Promise<void> {
-    throw new Error('Method not implemented.')
+  async generateBlock(numberOfBlocks: number): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
+
   getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
     throw new Error('Method not implemented.')
   }
