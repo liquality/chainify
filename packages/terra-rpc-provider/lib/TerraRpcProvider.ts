@@ -33,9 +33,16 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     return await this._lcdClient.tendermint.blockInfo(blockNumber)
   }
 
-  getBlockHeight(): Promise<number> {
-    throw new Error('Method not implemented.')
+  async getBlockHeight(): Promise<number> {
+    const {
+      block: {
+        header: { height }
+      }
+    } = await this._lcdClient.tendermint.blockInfo()
+
+    return Number(height)
   }
+
   getTransactionByHash(txHash: string): Promise<Transaction<any>> {
     throw new Error('Method not implemented.')
   }
