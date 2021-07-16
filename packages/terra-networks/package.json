@@ -1,5 +1,5 @@
 {
-  "name": "@liquality/terra-network",
+  "name": "@liquality/terra-networks",
   "version": "1.4.4",
   "description": "Network specific settings for Terra",
   "module": "dist/index.js",
