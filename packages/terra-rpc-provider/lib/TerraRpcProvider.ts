@@ -1,6 +1,6 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Address, Block, Transaction, terra } from '@liquality/types'
-import { TerraNetwork } from '@liquality/terra-network'
+import { TerraNetwork } from '@liquality/terra-networks'
 import { addressToString } from '@liquality/utils'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
 
