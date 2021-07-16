@@ -4,7 +4,7 @@ import { TerraNetwork } from '@liquality/terra-networks'
 import { addressToString } from '@liquality/utils'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
 
-import { LCDClient } from '@terra-money/terra.js'
+import { BlockTxBroadcastResult, LCDClient, MnemonicKey, StdTx, Wallet } from '@terra-money/terra.js'
 
 export default class TerraRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   private _network: TerraNetwork
@@ -95,5 +95,13 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
 
   sendRawTransaction(rawTransaction: string): Promise<string> {
     throw new Error('Method not implemented.')
+  }
+
+  _createWallet(mnemonicKey: MnemonicKey): Wallet {
+    return this._lcdClient.wallet(mnemonicKey)
+  }
+
+  async _broadcastTx(tx: StdTx): Promise<BlockTxBroadcastResult> {
+    return await this._lcdClient.tx.broadcast(tx)
   }
 }

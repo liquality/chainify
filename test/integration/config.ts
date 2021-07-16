@@ -2,6 +2,7 @@ import { BigNumber } from '../../packages/types/lib'
 import { BitcoinNetworks, BitcoinCashNetworks } from '../../packages/bitcoin-networks/lib'
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
+import { TerraNetworks } from '../../packages/terra-networks/lib'
 
 export default {
   bitcoin: {
@@ -53,6 +54,23 @@ export default {
     // receiver
     receiverAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',
     receiverMnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze'
+  },
+  terra: {
+    network: TerraNetworks.terra_testnet,
+    value: new BigNumber(10000),
+
+    // Both of the accounts are used for the tests.
+    // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
+
+    // sender
+    senderAddress: 'terra1kndc26sx87rjet5ur3vvnppln449pdvf665g7p',
+    senderMnemonic:
+      'donkey ripple napkin pulp near program profit polar mutual receive gorilla choice whale shoot vendor seat draw cost sell winter arctic crane detect daughter',
+
+    // receiver
+    receiverAddress: 'terra1krq0p9qh9nujpf77cvma36acyeqy7gdedfamgw',
+    receiverMnemonic:
+      'base eternal trash tent twist fog palm summer crop oppose memory absent usual ahead subject spirit end fragile gauge defy month mercy grit frost'
   }
   // ethereum: { // RSK
   //   rpc: {
