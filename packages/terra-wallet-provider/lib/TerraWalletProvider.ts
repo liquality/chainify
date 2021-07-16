@@ -51,9 +51,12 @@ export default class TerraWalletProvider extends WalletProvider {
   getUsedAddresses(numAddressPerCall?: number): Promise<Address[]> {
     throw new Error('Method not implemented.')
   }
-  getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<Address> {
-    throw new Error('Method not implemented.')
+
+  async getUnusedAddress(): Promise<Address> {
+    const addresses = await this.getAddresses()
+    return addresses[0]
   }
+
   signMessage(message: string, from: string): Promise<string> {
     throw new Error('Method not implemented.')
   }
