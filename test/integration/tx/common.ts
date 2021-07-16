@@ -18,7 +18,7 @@ function testTransaction(chain: Chain) {
     expect(balBefore.plus(value).toString()).to.equal(balAfter.toString())
   })
 
-  xit('Send transaction with fee', async () => {
+  it('Send transaction with fee', async () => {
     const addr = await getRandomAddress(chain)
     const value = config[chain.name as keyof typeof config].value
 

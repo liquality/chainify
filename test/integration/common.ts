@@ -390,6 +390,12 @@ async function getRandomAddress(chain: Chain): Promise<Address> {
       }
     }
 
+    case 'terra': {
+      return {
+        address: config.terra.receiverAddress
+      }
+    }
+
     case 'ethereum': {
       return getRandomEthereumAddress()
     }

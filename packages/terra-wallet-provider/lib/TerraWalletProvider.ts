@@ -77,16 +77,18 @@ export default class TerraWalletProvider extends WalletProvider {
     const wallet = this.getMethod('_createWallet')(this._signer)
 
     const send = new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
-      uluna: value.toNumber()
+      [this._network.coin]: value.toNumber()
     })
 
     const tx = await wallet.createAndSignTx({
       msgs: [send]
     })
 
-    const resp = await this.getMethod('_broadcastTx')(tx)
+    const transaction = await this.getMethod('_broadcastTx')(tx)
 
-    console.log('resp', resp)
+    const parsed = await this.getMethod('getTransactionByHash')(transaction.txhash)
+
+    return parsed
   }
 
   canUpdateFee(): boolean {

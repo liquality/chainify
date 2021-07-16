@@ -14,10 +14,10 @@ describe('Transactions', function () {
   this.timeout(TEST_TIMEOUT)
 
   before(async () => {
-    await fundAddress(chains.nearWithJs, config.near.senderAddress)
+    await fundAddress(chains.terra, config.terra.senderAddress)
   })
 
   describe('Terra', () => {
-    testTransaction(chains.nearWithJs)
+    testTransaction(chains.terra)
   })
 })
