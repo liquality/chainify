@@ -4,7 +4,7 @@ import chai, { expect } from 'chai'
 import { Client } from '../../../client/lib'
 import { TerraRpcProvider } from '../../lib'
 import { TerraNetworks } from '../../../terra-network'
-import { describeExternal } from '../../../../test/integration/common'
+// import { describeExternal } from '../../../../test/integration/common'
 
 chai.config.truncateThreshold = 0
 
@@ -28,13 +28,13 @@ describe('Solana RPC provider', () => {
     })
   })
 
-  describeExternal('getBalance', () => {
+  describe('getBalance', () => {
     it('should return user balance', async () => {
       await client.chain.getBalance(['terra1kndc26sx87rjet5ur3vvnppln449pdvf665g7p'])
     })
   })
 
-  describeExternal('getBalance', () => {
+  describe('getBalance', () => {
     it('should return 0 if balance do not exist', async () => {
       const balance = await client.chain.getBalance(['terra1f9xpzndman0t3u5h0qr6nk9qh4al9lwq7jgpf0'])
 
@@ -42,11 +42,13 @@ describe('Solana RPC provider', () => {
     })
   })
 
-  describeExternal('getTransactionByHash', () => {
+  describe('getTransactionByHash', () => {
     it('should get tx by hash', async () => {
       const txHash = '3Xu7GVdUrcx1wNXJJCGe7TuVB8RqSqkQA2ioReDZpGPyo6648otdZfaDRetpYjuK4MSizFF8469V7RDYwYDzdbDQ'
 
       const tx = await client.chain.getTransactionByHash(txHash)
+
+      console.log(tx)
 
       expect(tx.value).to.equal(10)
     })

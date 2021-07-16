@@ -58,7 +58,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       addresses.map(async (address) => {
         try {
           const balance = await this._lcdClient.bank.balance(address)
-          const val = Number(balance.get(this._network.coin).amount)
+          const val = Number(balance.get(this._network.coin)?.amount) || 0
 
           return new BigNumber(val)
         } catch (err) {
