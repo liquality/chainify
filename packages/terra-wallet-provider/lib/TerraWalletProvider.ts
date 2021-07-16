@@ -57,8 +57,12 @@ export default class TerraWalletProvider extends WalletProvider {
     return addresses[0]
   }
 
-  signMessage(message: string, from: string): Promise<string> {
-    throw new Error('Method not implemented.')
+  async signMessage(message: string): Promise<string> {
+    this.getSigner()
+
+    const signed = await this._signer.sign(Buffer.from(message))
+
+    return signed.toString('hex')
   }
 
   async getConnectedNetwork(): Promise<TerraNetwork> {
