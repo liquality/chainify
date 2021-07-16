@@ -71,3 +71,9 @@ export interface BlockResponse {
   block_id: BlockId
   block: Block
 }
+
+export interface Currency {
+  coinDenom: string
+  coinMinimalDenom: string
+  coinDecimals: number
+}

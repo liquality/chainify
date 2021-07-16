@@ -61,7 +61,10 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address: string) => {
         try {
-          const userBalance = await this._client.getBalance(address, this._network.token)
+          const userBalance = await this._client.getBalance(
+            address,
+            this._network.defaultCurrencies[0].coinMinimalDenom
+          )
           return new BigNumber(userBalance.amount)
         } catch (err) {
           if (err.message) {
