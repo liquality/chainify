@@ -48,8 +48,8 @@ export default class TerraWalletProvider extends WalletProvider {
     return [result]
   }
 
-  getUsedAddresses(numAddressPerCall?: number): Promise<Address[]> {
-    throw new Error('Method not implemented.')
+  async getUsedAddresses(): Promise<Address[]> {
+    return await this.getAddresses()
   }
 
   async getUnusedAddress(): Promise<Address> {
