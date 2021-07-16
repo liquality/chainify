@@ -1,10 +1,13 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block, Transaction, SendOptions } from '@liquality/types'
+import { BigNumber, ChainProvider, Address, Block } from '@liquality/types'
 import { TerraNetwork } from '@liquality/terra-network'
+import { addressToString } from '@liquality/utils'
+import { normalizeBlock } from '@liquality/terra-utils'
+
 import { LCDClient } from '@terra-money/terra.js'
 
 export default class TerraRpcProvider extends NodeProvider implements Partial<ChainProvider> {
-  private _network: TerraNetwork
+  // private _network: TerraNetwork
   private _lcdClient: LCDClient
 
   constructor(network: TerraNetwork) {
@@ -17,7 +20,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       URL: network.nodeUrl,
       chainID: network.chainID
     })
-    this._network = network
+    // this._network = network
   }
 
   async generateBlock(numberOfBlocks: number): Promise<void> {
@@ -28,9 +31,10 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     throw new Error('Method not implemented.')
   }
 
-  // Add type of Block
-  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<any> {
-    return await this._lcdClient.tendermint.blockInfo(blockNumber)
+  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block> {
+    const block = await this._lcdClient.tendermint.blockInfo(blockNumber)
+
+    return normalizeBlock(block)
   }
 
   async getBlockHeight(): Promise<number> {
@@ -47,21 +51,30 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     return await this._lcdClient.tx.txInfo(txHash)
   }
 
-  getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
-    throw new Error('Method not implemented.')
+  async getBalance(_addresses: (string | Address)[]): Promise<BigNumber> {
+    const addresses = _addresses.map(addressToString)
+
+    const promiseBalances = await Promise.all(
+      addresses.map(async (address) => {
+        try {
+          const balance = await this._lcdClient.bank.balance(address)
+          const val = Number(balance.get('uluna').amount)
+
+          return new BigNumber(val)
+        } catch (err) {
+          if (err.message && err.message.includes('does not exist while viewing')) {
+            return new BigNumber(0)
+          }
+          throw err
+        }
+      })
+    )
+
+    return promiseBalances
+      .map((balance) => new BigNumber(balance))
+      .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
-  sendTransaction(options: SendOptions): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
-  }
-  sendSweepTransaction(address: string | Address, fee?: number): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
-  }
-  updateTransactionFee(tx: string | Transaction<any>, newFee: number): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
-  }
-  sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
-  }
+
   sendRawTransaction(rawTransaction: string): Promise<string> {
     throw new Error('Method not implemented.')
   }
