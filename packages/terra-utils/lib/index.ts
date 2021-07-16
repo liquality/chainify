@@ -1,4 +1,6 @@
-export const normalizeBlock = (data: any) => ({
+import { Block, Transaction } from '@liquality/types'
+
+export const normalizeBlock = (data: any): Block => ({
   hash: data.block_id.hash,
   timestamp: convertDateToTimestamp(data.block.header.time),
   size: Number(data.block.header.height),
@@ -6,10 +8,22 @@ export const normalizeBlock = (data: any) => ({
   parentHash: data.block.last_commit.block_id.hash
 })
 
-const convertDateToTimestamp = (fullDate: string) => {
-  const dateAndHours = fullDate.split('.')[0]
+export const normalizeTransaction = (data: any): Transaction => {
+  const value = data.tx.msg[0]?.init_coins?.get('uluna')?.amount || 0
 
-  const [date, time] = dateAndHours.split('T')
+  // const initData = data.tx.msg[0].init_msg
+
+  return {
+    value: Number(value),
+    hash: data.txhash,
+    _raw: {}
+  }
+}
+
+const convertDateToTimestamp = (fullDate: string): number => {
+  const dateAndTime = fullDate.split('.')[0]
+
+  const [date, time] = dateAndTime.split('T')
 
   const [year, month, day] = date.split('-').map((e) => Number(e))
   const [hour, minute, second] = time.split(':').map((e) => Number(e))

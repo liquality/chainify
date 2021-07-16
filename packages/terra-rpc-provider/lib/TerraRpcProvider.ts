@@ -2,7 +2,7 @@ import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Address, Block } from '@liquality/types'
 import { TerraNetwork } from '@liquality/terra-network'
 import { addressToString } from '@liquality/utils'
-import { normalizeBlock } from '@liquality/terra-utils'
+import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
 
 import { LCDClient } from '@terra-money/terra.js'
 
@@ -48,7 +48,9 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
   }
 
   async getTransactionByHash(txHash: string): Promise<any> {
-    return await this._lcdClient.tx.txInfo(txHash)
+    const transaction = await this._lcdClient.tx.txInfo(txHash)
+
+    return normalizeTransaction(transaction)
   }
 
   async getBalance(_addresses: (string | Address)[]): Promise<BigNumber> {

@@ -22,8 +22,6 @@ describe('Solana RPC provider', () => {
     it('should return block by number', async () => {
       const currentBlock = await client.getMethod('getBlockHeight')()
 
-      console.log('current block', currentBlock)
-
       await client.chain.getBlockByNumber(currentBlock, false)
     })
   })
@@ -44,13 +42,11 @@ describe('Solana RPC provider', () => {
 
   describe('getTransactionByHash', () => {
     it('should get tx by hash', async () => {
-      const txHash = '3Xu7GVdUrcx1wNXJJCGe7TuVB8RqSqkQA2ioReDZpGPyo6648otdZfaDRetpYjuK4MSizFF8469V7RDYwYDzdbDQ'
+      const txHash = '88FB048FC79EE4854F42217B02ACA47376D13A49F5259F2A5A6D545252470B65'
 
       const tx = await client.chain.getTransactionByHash(txHash)
 
-      console.log(tx)
-
-      expect(tx.value).to.equal(10)
+      expect(tx.value).to.equal(123)
     })
   })
 })
