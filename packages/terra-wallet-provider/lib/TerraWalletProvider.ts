@@ -1,7 +1,8 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address } from '@liquality/types'
+import { Address, SendOptions } from '@liquality/types'
+import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { MnemonicKey } from '@terra-money/terra.js'
+import { MnemonicKey, MsgSend } from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
@@ -59,7 +60,7 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   async signMessage(message: string): Promise<string> {
-    this.getSigner()
+    this.setSigner()
 
     const signed = await this._signer.sign(Buffer.from(message))
 
@@ -70,7 +71,25 @@ export default class TerraWalletProvider extends WalletProvider {
     return this._network
   }
 
-  private getSigner(): MnemonicKey {
+  async sendTransaction(sendOptions: SendOptions) {
+    const { to, value } = sendOptions
+    this.setSigner()
+    const wallet = this.getMethod('_createWallet')(this._signer)
+
+    const send = new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
+      uluna: value.toNumber()
+    })
+
+    const tx = await wallet.createAndSignTx({
+      msgs: [send]
+    })
+
+    const resp = await this.getMethod('_broadcastTx')(tx)
+
+    console.log('resp', resp)
+  }
+
+  private setSigner(): MnemonicKey {
     if (!this._signer) {
       this._signer = new MnemonicKey({
         mnemonic: this._mnemonic
