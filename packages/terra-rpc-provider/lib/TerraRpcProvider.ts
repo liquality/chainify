@@ -1,5 +1,5 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block } from '@liquality/types'
+import { BigNumber, ChainProvider, Address, Block, Transaction, terra } from '@liquality/types'
 import { TerraNetwork } from '@liquality/terra-network'
 import { addressToString } from '@liquality/utils'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
@@ -31,10 +31,26 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     throw new Error('Method not implemented.')
   }
 
-  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block> {
+  async getBlockByNumber(
+    blockNumber: number,
+    includeTx?: boolean
+  ): Promise<Block<Transaction<terra.InputTransaction>>> {
     const block = await this._lcdClient.tendermint.blockInfo(blockNumber)
 
-    return normalizeBlock(block)
+    const parsedBlock = normalizeBlock(block)
+
+    if (!includeTx) {
+      return parsedBlock
+    }
+
+    const txs = await this._lcdClient.tx.txInfosByHeight(Number(block.block.header.height))
+
+    const transactions = txs.map((tx) => normalizeTransaction(tx))
+
+    return {
+      ...parsedBlock,
+      transactions
+    }
   }
 
   async getBlockHeight(): Promise<number> {
