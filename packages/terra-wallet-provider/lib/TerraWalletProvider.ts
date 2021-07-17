@@ -1,8 +1,9 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, SendOptions } from '@liquality/types'
+import { Address, BigNumber, SwapParams } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { MnemonicKey, MsgSend } from '@terra-money/terra.js'
+import { MnemonicKey, MsgInstantiateContract, MsgSend } from '@terra-money/terra.js'
+import { TerraSendOptions } from '../../types/dist/lib/terra'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
@@ -24,6 +25,7 @@ export default class TerraWalletProvider extends WalletProvider {
     this._mnemonic = mnemonic
     this._derivationPath = derivationPath
     this._addressCache = {}
+    this.setSigner()
   }
 
   async isWalletAvailable(): Promise<boolean> {
@@ -60,8 +62,6 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   async signMessage(message: string): Promise<string> {
-    this.setSigner()
-
     const signed = await this._signer.sign(Buffer.from(message))
 
     return signed.toString('hex')
@@ -71,20 +71,27 @@ export default class TerraWalletProvider extends WalletProvider {
     return this._network
   }
 
-  async sendTransaction(sendOptions: SendOptions) {
-    const { to, value } = sendOptions
-    this.setSigner()
+  async sendTransaction(sendOptions: TerraSendOptions) {
+    const { to, value, messages } = sendOptions
     const wallet = this.getMethod('_createWallet')(this._signer)
 
-    const send = new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
-      [this._network.coin]: value.toNumber()
-    })
+    const msgs = []
+
+    console.log(messages)
+
+    if (!to && !value) {
+      msgs.push(...messages)
+    } else {
+      msgs.push(this._sendMessage(to, value))
+    }
 
     const tx = await wallet.createAndSignTx({
-      msgs: [send]
+      msgs
     })
 
     const transaction = await this.getMethod('_broadcastTx')(tx)
+
+    console.log('txhash', transaction.txhash)
 
     const parsed = await this.getMethod('getTransactionByHash')(transaction.txhash)
 
@@ -93,6 +100,30 @@ export default class TerraWalletProvider extends WalletProvider {
 
   canUpdateFee(): boolean {
     return false
+  }
+
+  _instantiateContractMessage(swapParams: SwapParams, codeId: number = 6384): MsgInstantiateContract {
+    const wallet = this.getMethod('_createWallet')(this._signer)
+
+    return new MsgInstantiateContract(
+      wallet.key.accAddress,
+      codeId,
+      {
+        buyer: swapParams.recipientAddress,
+        seller: swapParams.refundAddress,
+        expiration: swapParams.expiration,
+        value: Number(swapParams.value),
+        secret_hash: swapParams.secretHash
+      },
+      { uluna: Number(swapParams.value) },
+      false
+    )
+  }
+
+  _sendMessage(to: Address | string, value: BigNumber): MsgSend {
+    return new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
+      [this._network.coin]: value.toNumber()
+    })
   }
 
   private setSigner(): MnemonicKey {
