@@ -9,8 +9,14 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     return sha256(message)
   }
 
-  getSwapSecret(claimTxHash: string): Promise<string> {
-    throw new Error('Method not implemented.')
+  async getSwapSecret(claimTxHash: string): Promise<string> {
+    const transaction = await this.getMethod('getTransactionByHash')(claimTxHash)
+
+    if (!transaction) {
+      throw new TxNotFoundError(`Transaction with hash: ${claimTxHash} was not found`)
+    }
+
+    return transaction?.secret
   }
 
   async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction<any>> {
