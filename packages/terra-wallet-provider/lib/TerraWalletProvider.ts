@@ -25,7 +25,7 @@ export default class TerraWalletProvider extends WalletProvider {
     this._mnemonic = mnemonic
     this._derivationPath = derivationPath
     this._addressCache = {}
-    this.setSigner()
+    this._setSigner()
   }
 
   async isWalletAvailable(): Promise<boolean> {
@@ -77,7 +77,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const msgs = []
 
-    if (!to && !value) {
+    if (messages) {
       msgs.push(...messages)
     } else {
       msgs.push(this._sendMessage(to, value))
@@ -94,6 +94,18 @@ export default class TerraWalletProvider extends WalletProvider {
     const parsed = await this.getMethod('getTransactionByHash')(transaction.txhash)
 
     return parsed
+  }
+
+  async sendSweepTransaction(address: string | Address): Promise<any> {
+    const addresses = await this.getAddresses()
+
+    const balance = await this.getMethod('getBalance')(addresses)
+
+    const message = this._sendMessage(address, balance)
+
+    const fee = await this.getMethod('_estimateFee')(this._signer.accAddress, [message])
+
+    return await this.sendTransaction({ to: address, value: balance.minus(fee * 2) })
   }
 
   canUpdateFee(): boolean {
@@ -130,7 +142,7 @@ export default class TerraWalletProvider extends WalletProvider {
     })
   }
 
-  private setSigner(): MnemonicKey {
+  private _setSigner(): MnemonicKey {
     if (!this._signer) {
       this._signer = new MnemonicKey({
         mnemonic: this._mnemonic

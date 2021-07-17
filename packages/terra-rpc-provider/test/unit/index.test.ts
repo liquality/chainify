@@ -3,7 +3,7 @@ import chai, { expect } from 'chai'
 
 import { Client } from '../../../client/lib'
 import { TerraRpcProvider } from '../../lib'
-import { TerraNetworks } from '../../../terra-network'
+import { TerraNetworks } from '../../../terra-networks'
 // import { describeExternal } from '../../../../test/integration/common'
 
 chai.config.truncateThreshold = 0

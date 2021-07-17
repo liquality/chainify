@@ -10,13 +10,14 @@ export const normalizeBlock = (data: any): Block => ({
 })
 
 export const normalizeTransaction = (data: any): Transaction => {
-  const value = data.tx.msg[0]?.init_coins?.get('uluna')?.amount || 0
+  const value = data.tx?.msg?.[0]?.init_coins?.get('uluna')?.amount || 0
 
-  const txParams = data.tx.msg[0]?.init_msg || data.tx.msg[0]?.execute_msg?.claim
+  const txParams = data.tx?.msg?.[0]?.init_msg || data.tx.msg?.[0]?.execute_msg?.claim || {}
 
   const [contractAddress] =
-    data.logs[0]?.eventsByType?.instantiate_contract?.contract_address ||
-    data.logs[0]?.eventsByType?.execute_contract?.contract_address
+    data?.logs?.[0]?.eventsByType?.instantiate_contract?.contract_address ||
+    data?.logs?.[0]?.eventsByType?.execute_contract?.contract_address ||
+    ''
 
   return {
     value: Number(value),
