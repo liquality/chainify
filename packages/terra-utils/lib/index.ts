@@ -1,4 +1,5 @@
-import { Block, Transaction } from '@liquality/types'
+import { Block, SwapParams, Transaction } from '@liquality/types'
+import { StandardError } from '@liquality/errors'
 
 export const normalizeBlock = (data: any): Block => ({
   hash: data.block_id.hash,
@@ -11,13 +12,36 @@ export const normalizeBlock = (data: any): Block => ({
 export const normalizeTransaction = (data: any): Transaction => {
   const value = data.tx.msg[0]?.init_coins?.get('uluna')?.amount || 0
 
-  // const initData = data.tx.msg[0].init_msg
+  const txParams = data.tx.msg[0]?.init_msg || data.tx.msg[0]?.execute_msg?.claim
+
+  const [contractAddress] =
+    data.logs[0]?.eventsByType?.instantiate_contract?.contract_address ||
+    data.logs[0]?.eventsByType?.execute_contract?.contract_address
 
   return {
     value: Number(value),
     hash: data.txhash,
-    _raw: {}
+    ...(txParams?.secret && { secret: txParams.secret }),
+    _raw: {
+      ...txParams,
+      contractAddress
+    }
   }
+}
+
+export function doesTransactionMatchInitiation(swapParams: SwapParams, transactionParams: any) {
+  const areMatching =
+    swapParams.recipientAddress === transactionParams.buyer &&
+    swapParams.refundAddress === transactionParams.seller &&
+    swapParams.secretHash === transactionParams.secret_hash &&
+    swapParams.expiration === transactionParams.expiration &&
+    swapParams.value.eq(transactionParams.value)
+
+  if (!areMatching) {
+    throw new StandardError('Transactions are not matching')
+  }
+
+  return areMatching
 }
 
 const convertDateToTimestamp = (fullDate: string): number => {

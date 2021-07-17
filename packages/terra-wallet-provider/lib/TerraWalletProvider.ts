@@ -2,7 +2,7 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, BigNumber, SwapParams } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { MnemonicKey, MsgInstantiateContract, MsgSend } from '@terra-money/terra.js'
+import { MnemonicKey, MsgExecuteContract, MsgInstantiateContract, MsgSend } from '@terra-money/terra.js'
 import { TerraSendOptions } from '../../types/dist/lib/terra'
 
 interface TerraWalletProviderOptions {
@@ -77,8 +77,6 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const msgs = []
 
-    console.log(messages)
-
     if (!to && !value) {
       msgs.push(...messages)
     } else {
@@ -118,6 +116,12 @@ export default class TerraWalletProvider extends WalletProvider {
       { uluna: Number(swapParams.value) },
       false
     )
+  }
+
+  _executeContractMessage(contractAddress: string, method: any): MsgExecuteContract {
+    const wallet = this.getMethod('_createWallet')(this._signer)
+
+    return new MsgExecuteContract(wallet.key.accAddress, contractAddress, method)
   }
 
   _sendMessage(to: Address | string, value: BigNumber): MsgSend {
