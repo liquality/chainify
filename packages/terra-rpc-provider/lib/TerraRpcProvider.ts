@@ -1,5 +1,5 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block, Transaction, terra } from '@liquality/types'
+import { BigNumber, ChainProvider, Address, Block, Transaction } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
@@ -28,14 +28,11 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
-  async getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any>> {
+  async getBlockByHash(): Promise<Block<any>> {
     throw new Error('Method not implemented.')
   }
 
-  async getBlockByNumber(
-    blockNumber: number,
-    includeTx?: boolean
-  ): Promise<Block<Transaction<terra.InputTransaction>>> {
+  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<Transaction<any>>> {
     const block = await this._lcdClient.tendermint.blockInfo(blockNumber)
 
     const parsedBlock = normalizeBlock(block)
@@ -112,7 +109,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
 
-  sendRawTransaction(rawTransaction: string): Promise<string> {
+  sendRawTransaction(): Promise<string> {
     throw new Error('Method not implemented.')
   }
 
@@ -124,7 +121,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     return await this._lcdClient.tx.broadcast(tx)
   }
 
-  async _estimateFee(payer: string, msgs: Msg[]): Promise<Number> {
+  async _estimateFee(payer: string, msgs: Msg[]): Promise<number> {
     const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
 
     return Number(fee.amount.get(this._network.coin).amount)

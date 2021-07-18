@@ -4,7 +4,7 @@ import { Provider } from '@liquality/provider'
 import { validateSecretAndHash } from '@liquality/utils'
 
 export default class TerraSwapFindProvider extends Provider implements Partial<SwapProvider> {
-  async findInitiateSwapTransaction(swapParams: SwapParams, blockNumber?: number): Promise<Transaction> {
+  async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction> {
     const { refundAddress } = swapParams
 
     const transactions = await this.getMethod('_getTransactionsForAddress')(refundAddress)
@@ -20,11 +20,7 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     return null
   }
 
-  async findClaimSwapTransaction(
-    swapParams: SwapParams,
-    initiationTxHash: string,
-    blockNumber?: number
-  ): Promise<Transaction> {
+  async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
     const { contractAddress } = initTx._raw
@@ -43,11 +39,7 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     return null
   }
 
-  async findRefundSwapTransaction(
-    swapParams: SwapParams,
-    initiationTxHash: string,
-    blockNumber?: number
-  ): Promise<Transaction> {
+  async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
     const { contractAddress } = initTx._raw
