@@ -6,6 +6,7 @@ export interface TerraNetwork extends Network {
   helperUrl: string
   chainID: string
   coin: string
+  codeId: number
 }
 
 const terra_mainnet: TerraNetwork = {
@@ -16,7 +17,8 @@ const terra_mainnet: TerraNetwork = {
   coinType: '397',
   isTestnet: false,
   chainID: 'columbus-4',
-  coin: 'luna'
+  coin: 'luna',
+  codeId: 6384 // TODO: Replace after deploying contract on mainnet
 }
 
 const terra_testnet: TerraNetwork = {
@@ -27,7 +29,8 @@ const terra_testnet: TerraNetwork = {
   coinType: '397',
   isTestnet: true,
   chainID: 'tequila-0004',
-  coin: 'uluna'
+  coin: 'uluna',
+  codeId: 6384
 }
 
 const TerraNetworks = {

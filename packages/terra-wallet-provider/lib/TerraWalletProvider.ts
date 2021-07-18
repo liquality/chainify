@@ -112,12 +112,12 @@ export default class TerraWalletProvider extends WalletProvider {
     return false
   }
 
-  _instantiateContractMessage(swapParams: SwapParams, codeId = 6384): MsgInstantiateContract {
+  _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
     const wallet = this.getMethod('_createWallet')(this._signer)
 
     return new MsgInstantiateContract(
       wallet.key.accAddress,
-      codeId,
+      this._network.codeId,
       {
         buyer: swapParams.recipientAddress,
         seller: swapParams.refundAddress,
