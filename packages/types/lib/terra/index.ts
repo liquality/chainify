@@ -6,7 +6,7 @@ export interface TerraSendOptions extends SendOptions {
 
 export interface InputTransaction {
   buyer?: string
-  sender?: string
+  seller?: string
   expiration?: number
   value?: number
   secret_hash?: string
@@ -16,6 +16,6 @@ export interface InputTransaction {
     claim?: {
       secret: string
     }
-    refund: {}
+    refund: () => void
   }
 }
