@@ -1,4 +1,6 @@
 import { Block, SwapParams, Transaction, terra } from '@liquality/types'
+import { addressToString, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils'
+import { InvalidAddressError } from '@liquality/errors'
 
 export const normalizeBlock = (data: any): Block => ({
   hash: data.block_id.hash,
@@ -47,7 +49,7 @@ export const normalizeTransaction = (data: any, asset: string): Transaction<terr
   }
 }
 
-export function doesTransactionMatchInitiation(swapParams: SwapParams, transactionParams: any) {
+export const doesTransactionMatchInitiation = (swapParams: SwapParams, transactionParams: any): boolean => {
   return (
     swapParams.recipientAddress === transactionParams.buyer &&
     swapParams.refundAddress === transactionParams.seller &&
@@ -55,6 +57,14 @@ export function doesTransactionMatchInitiation(swapParams: SwapParams, transacti
     swapParams.expiration === transactionParams.expiration &&
     swapParams.value.eq(transactionParams.value)
   )
+}
+
+export const validateSwapParams = (swapParams: SwapParams) => {
+  validateValue(swapParams.value)
+  validateSecretHash(swapParams.secretHash)
+  validateExpiration(swapParams.expiration)
+  validateAddress(addressToString(swapParams.recipientAddress))
+  validateAddress(addressToString(swapParams.refundAddress))
 }
 
 const convertDateToTimestamp = (fullDate: string): number => {
@@ -68,4 +78,10 @@ const convertDateToTimestamp = (fullDate: string): number => {
   const dateFormat = new Date(Date.UTC(year, month - 1, day, hour, minute, second))
 
   return Math.floor(dateFormat.getTime() / 1000)
+}
+
+const validateAddress = (address: string): void => {
+  if (typeof address !== 'string' || address.length !== 44) {
+    throw new InvalidAddressError(`Invalid address: ${address}`)
+  }
 }

@@ -2,7 +2,7 @@ import { SwapParams, SwapProvider, terra, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { sha256 } from '@liquality/crypto'
 import { TxNotFoundError, StandardError } from '@liquality/errors'
-import { doesTransactionMatchInitiation } from '@liquality/terra-utils'
+import { validateSwapParams, doesTransactionMatchInitiation } from '@liquality/terra-utils'
 
 export default class TerraSwapProvider extends Provider implements Partial<SwapProvider> {
   async generateSecret(message: string): Promise<string> {
@@ -20,6 +20,8 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   }
 
   async initiateSwap(swapParams: SwapParams): Promise<Transaction<terra.InputTransaction>> {
+    validateSwapParams(swapParams)
+
     const initContractMsg = this.getMethod('_instantiateContractMessage')(swapParams)
 
     return await this.getMethod('sendTransaction')({
@@ -32,6 +34,8 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     initiationTxHash: string,
     secret: string
   ): Promise<Transaction<terra.InputTransaction>> {
+    validateSwapParams(swapParams)
+
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
@@ -48,6 +52,8 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   }
 
   async refundSwap(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction<terra.InputTransaction>> {
+    validateSwapParams(swapParams)
+
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
