@@ -1,2 +1,2 @@
-import TerraRpcProvider from "./TerraRpcProvider";
-export { TerraRpcProvider };
+import TerraRpcProvider from './TerraRpcProvider'
+export { TerraRpcProvider }

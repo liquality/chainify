@@ -1,2 +1,2 @@
-import TerraWalletProvider from "./TerraWalletProvider";
-export { TerraWalletProvider };
+import TerraWalletProvider from './TerraWalletProvider'
+export { TerraWalletProvider }

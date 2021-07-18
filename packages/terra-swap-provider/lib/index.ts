@@ -1,2 +1,2 @@
-import TerraSwapProvider from "./TerraSwapProvider";
-export { TerraSwapProvider };
+import TerraSwapProvider from './TerraSwapProvider'
+export { TerraSwapProvider }

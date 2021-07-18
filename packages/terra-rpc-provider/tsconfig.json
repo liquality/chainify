@@ -6,7 +6,5 @@
     "rootDir": "./",
     "esModuleInterop": true
   },
-  "include": [
-    "lib"
-  ]
+  "include": ["lib"]
 }
