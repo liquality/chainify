@@ -43,7 +43,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
 
     const txs = await this._lcdClient.tx.txInfosByHeight(Number(block.block.header.height))
 
-    const transactions = txs.map((tx) => normalizeTransaction(tx))
+    const transactions = txs.map((tx) => normalizeTransaction(tx, this._network.asset))
 
     return {
       ...parsedBlock,
@@ -82,7 +82,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
     }
 
-    return normalizeTransaction(transaction)
+    return normalizeTransaction(transaction, this._network.asset)
   }
 
   async getBalance(_addresses: (string | Address)[]): Promise<BigNumber> {
@@ -92,7 +92,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       addresses.map(async (address) => {
         try {
           const balance = await this._lcdClient.bank.balance(address)
-          const val = Number(balance.get(this._network.coin)?.amount) || 0
+          const val = Number(balance.get(this._network.asset)?.amount) || 0
 
           return new BigNumber(val)
         } catch (err) {
@@ -124,7 +124,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
   async _estimateFee(payer: string, msgs: Msg[]): Promise<number> {
     const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
 
-    return Number(fee.amount.get(this._network.coin).amount)
+    return Number(fee.amount.get(this._network.asset).amount)
   }
 
   async _getTransactionsForAddress(address: Address | string): Promise<any> {

@@ -1,16 +1,24 @@
 import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
-import { normalizeTransaction, doesTransactionMatchInitiation } from '@liquality/terra-utils'
 import { Provider } from '@liquality/provider'
 import { validateSecretAndHash } from '@liquality/utils'
+import { TerraNetwork } from '@liquality/terra-networks'
+import { normalizeTransaction, doesTransactionMatchInitiation } from '@liquality/terra-utils'
 
 export default class TerraSwapFindProvider extends Provider implements Partial<SwapProvider> {
+  private _network: TerraNetwork
+
+  constructor(network: TerraNetwork) {
+    super()
+    this._network = network
+  }
+
   async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction> {
     const { refundAddress } = swapParams
 
     const transactions = await this.getMethod('_getTransactionsForAddress')(refundAddress)
 
     for (let i = 0; i < transactions.length; i++) {
-      const parsedTx = normalizeTransaction(transactions[i])
+      const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
 
       if (doesTransactionMatchInitiation(swapParams, parsedTx._raw)) {
         return parsedTx
@@ -28,7 +36,7 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     const transactions = await this.getMethod('_getTransactionsForAddress')(contractAddress)
 
     for (let i = 0; i < transactions.length; i++) {
-      const parsedTx = normalizeTransaction(transactions[i])
+      const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
 
       if (parsedTx.secret) {
         validateSecretAndHash(parsedTx.secret, swapParams.secretHash)
@@ -47,7 +55,7 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     const transactions = await this.getMethod('_getTransactionsForAddress')(contractAddress)
 
     for (let i = 0; i < transactions.length; i++) {
-      const parsedTx = normalizeTransaction(transactions[i])
+      const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
 
       if (parsedTx._raw.method.refund) {
         return parsedTx

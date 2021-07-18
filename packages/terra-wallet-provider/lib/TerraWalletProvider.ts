@@ -114,10 +114,11 @@ export default class TerraWalletProvider extends WalletProvider {
 
   _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
     const wallet = this.getMethod('_createWallet')(this._signer)
+    const { asset, codeId } = this._network
 
     return new MsgInstantiateContract(
       wallet.key.accAddress,
-      this._network.codeId,
+      codeId,
       {
         buyer: swapParams.recipientAddress,
         seller: swapParams.refundAddress,
@@ -125,7 +126,7 @@ export default class TerraWalletProvider extends WalletProvider {
         value: Number(swapParams.value),
         secret_hash: swapParams.secretHash
       },
-      { uluna: Number(swapParams.value) },
+      { [asset]: Number(swapParams.value) },
       false
     )
   }
@@ -138,7 +139,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
   _sendMessage(to: Address | string, value: BigNumber): MsgSend {
     return new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
-      [this._network.coin]: value.toNumber()
+      [this._network.asset]: value.toNumber()
     })
   }
 
