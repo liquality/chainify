@@ -18,7 +18,7 @@ const terra_mainnet: TerraNetwork = {
   isTestnet: false,
   chainID: 'columbus-4',
   asset: 'luna',
-  codeId: 6384 // TODO: Replace after deploying contract on mainnet
+  codeId: 6431 // TODO: Replace after deploying contract on mainnet
 }
 
 const terra_testnet: TerraNetwork = {
@@ -30,7 +30,7 @@ const terra_testnet: TerraNetwork = {
   isTestnet: true,
   chainID: 'tequila-0004',
   asset: 'uluna',
-  codeId: 6384
+  codeId: 6431
 }
 
 const TerraNetworks = {

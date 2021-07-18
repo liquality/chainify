@@ -123,7 +123,7 @@ function testSwap(chain: Chain) {
         async () => {
           try {
             await refundAndVerify(chain, initiationTxId, swapParams)
-            // eslint-disable-next-line no-empty
+            /* eslint-disable-next-line no-empty */
           } catch (e) {} // Refund failing is ok
         },
         (before, after) => expect(after.eq(before)).to.be.true
@@ -135,7 +135,7 @@ function testSwap(chain: Chain) {
         async () => {
           try {
             await refundAndVerify(chain, initiationTxId, swapParams)
-            // eslint-disable-next-line no-empty
+            /* eslint-disable-next-line no-empty */
           } catch (__e) {} // Refund failing is ok
         },
         (before, after) => expect(after.eq(before)).to.be.true
@@ -277,7 +277,7 @@ function testTerraRefund(chain: Chain) {
   it('Refund fails after claim', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Math.floor(Date.now() / 1000) + 60
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 20
 
     const initiationTxId = await initiateAndVerify(chain, swapParams)
 
@@ -296,8 +296,7 @@ function testTerraRefund(chain: Chain) {
         try {
           await refundAndVerify(chain, initiationTxId, swapParams)
         } catch (e) {
-          console.log(e)
-          expect(e.type).equal('AccountDoesNotExist')
+          expect(e.response.data.error).include('Balance is 0')
           fee = new BigNumber(0)
         } // Refund failing is ok
       },
