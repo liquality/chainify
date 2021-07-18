@@ -58,20 +58,6 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       }
     } = await this._lcdClient.tendermint.blockInfo()
 
-    const swapParams = {
-      value: new BigNumber(1000000),
-      recipientAddress: 'terra1krq0p9qh9nujpf77cvma36acyeqy7gdedfamgw',
-      refundAddress: 'terra1kndc26sx87rjet5ur3vvnppln449pdvf665g7p',
-      secretHash: '3881219d087dd9c634373fd33dfa33a2cb6bfc6c520b64b8bb60ef2ceb534ae7',
-      expiration: 1626696458
-    }
-
-    const initTxHash = 'F4BAEE50AEC3850F0D1221F66A7A975385597050A1A60D888762B50BDD16BA31'
-
-    await this.getMethod('findRefundSwapTransaction')(swapParams, initTxHash)
-
-    // console.log('resp', resp)
-
     return Number(height)
   }
 
