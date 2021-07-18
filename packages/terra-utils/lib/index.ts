@@ -1,5 +1,4 @@
 import { Block, SwapParams, Transaction } from '@liquality/types'
-import { StandardError } from '@liquality/errors'
 
 export const normalizeBlock = (data: any): Block => ({
   hash: data.block_id.hash,
@@ -12,11 +11,25 @@ export const normalizeBlock = (data: any): Block => ({
 export const normalizeTransaction = (data: any): Transaction => {
   const value = data.tx?.msg?.[0]?.init_coins?.get('uluna')?.amount || 0
 
-  const txParams = data.tx?.msg?.[0]?.init_msg || data.tx.msg?.[0]?.execute_msg?.claim || {}
+  let txParams = data.tx?.msg?.[0]?.init_msg || data.tx?.msg?.[0]?.execute_msg?.claim || {}
 
-  const [contractAddress] =
-    data?.logs?.[0]?.eventsByType?.instantiate_contract?.contract_address ||
-    data?.logs?.[0]?.eventsByType?.execute_contract?.contract_address ||
+  if (!Object.keys(txParams).length) {
+    const initMsg = data.tx?.value?.msg?.[0]?.value?.init_msg
+    const executeMsg = data.tx?.value?.msg?.[0]?.value?.execute_msg
+
+    if (initMsg) {
+      txParams = JSON.parse(Buffer.from(initMsg, 'base64').toString())
+    }
+
+    if (executeMsg) {
+      txParams = JSON.parse(Buffer.from(executeMsg, 'base64').toString()).claim
+    }
+  }
+
+  const contractAddress =
+    data?.logs?.[0]?.eventsByType?.instantiate_contract?.contract_address[0] ||
+    data?.logs?.[0]?.eventsByType?.execute_contract?.contract_address[0] ||
+    data?.logs?.[0]?.events[0]?.attributes?.filter((e: any) => e.key === 'contract_address')?.[0]?.value ||
     ''
 
   return {
@@ -31,18 +44,13 @@ export const normalizeTransaction = (data: any): Transaction => {
 }
 
 export function doesTransactionMatchInitiation(swapParams: SwapParams, transactionParams: any) {
-  const areMatching =
+  return (
     swapParams.recipientAddress === transactionParams.buyer &&
     swapParams.refundAddress === transactionParams.seller &&
     swapParams.secretHash === transactionParams.secret_hash &&
     swapParams.expiration === transactionParams.expiration &&
     swapParams.value.eq(transactionParams.value)
-
-  if (!areMatching) {
-    throw new StandardError('Transactions are not matching')
-  }
-
-  return areMatching
+  )
 }
 
 const convertDateToTimestamp = (fullDate: string): number => {
