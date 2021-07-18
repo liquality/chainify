@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@liquality/errors": "^1.4.4",
     "@liquality/node-provider": "^1.4.4",
     "@liquality/terra-networks": "^1.4.4",
     "@liquality/terra-utils": "^1.4.4",

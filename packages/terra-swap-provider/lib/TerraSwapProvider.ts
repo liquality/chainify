@@ -1,7 +1,7 @@
 import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { sha256 } from '@liquality/crypto'
-import { TxNotFoundError } from '@liquality/errors'
+import { TxNotFoundError, StandardError } from '@liquality/errors'
 import { doesTransactionMatchInitiation } from '@liquality/terra-utils'
 
 export default class TerraSwapProvider extends Provider implements Partial<SwapProvider> {
@@ -66,6 +66,10 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     return transaction
   }
 
+  async fundSwap(): Promise<null> {
+    return null
+  }
+
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
@@ -73,6 +77,10 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
       throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
     }
 
-    return doesTransactionMatchInitiation(swapParams, initTx._raw)
+    if (!doesTransactionMatchInitiation(swapParams, initTx._raw)) {
+      throw new StandardError('Transactions are not matching')
+    }
+
+    return true
   }
 }

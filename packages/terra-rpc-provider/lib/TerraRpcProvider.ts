@@ -1,9 +1,10 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Address, Block, Transaction, terra } from '@liquality/types'
-import { TerraNetwork } from '@liquality/terra-networks'
 import { addressToString } from '@liquality/utils'
+import { TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
 
+import { TerraNetwork } from '@liquality/terra-networks'
 import { BlockTxBroadcastResult, LCDClient, MnemonicKey, StdTx, Wallet, Msg } from '@terra-money/terra.js'
 
 export default class TerraRpcProvider extends NodeProvider implements Partial<ChainProvider> {
@@ -60,11 +61,29 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       }
     } = await this._lcdClient.tendermint.blockInfo()
 
+    const swapParams = {
+      value: new BigNumber(1000000),
+      recipientAddress: 'terra1krq0p9qh9nujpf77cvma36acyeqy7gdedfamgw',
+      refundAddress: 'terra1kndc26sx87rjet5ur3vvnppln449pdvf665g7p',
+      secretHash: '3881219d087dd9c634373fd33dfa33a2cb6bfc6c520b64b8bb60ef2ceb534ae7',
+      expiration: 1626696458
+    }
+
+    const initTxHash = 'F4BAEE50AEC3850F0D1221F66A7A975385597050A1A60D888762B50BDD16BA31'
+
+    await this.getMethod('findRefundSwapTransaction')(swapParams, initTxHash)
+
+    // console.log('resp', resp)
+
     return Number(height)
   }
 
   async getTransactionByHash(txHash: string): Promise<any> {
     const transaction = await this._lcdClient.tx.txInfo(txHash)
+
+    if (!transaction) {
+      throw new TxNotFoundError(`Transaction not found: ${txHash}`)
+    }
 
     return normalizeTransaction(transaction)
   }
@@ -109,5 +128,17 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
 
     return Number(fee.amount.get(this._network.coin).amount)
+  }
+
+  async _getTransactionsForAddress(address: Address | string): Promise<any> {
+    const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=500&action=contract`
+
+    const response = await this.nodeGet(url)
+
+    if (!response?.txs) {
+      throw new TxNotFoundError(`Transactions not found: ${address}`)
+    }
+
+    return response.txs
   }
 }
