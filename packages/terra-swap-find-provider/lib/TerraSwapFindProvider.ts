@@ -1,4 +1,4 @@
-import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
+import { SwapParams, SwapProvider, terra, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { validateSecretAndHash } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
@@ -12,7 +12,7 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     this._network = network
   }
 
-  async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction> {
+  async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<terra.InputTransaction>> {
     const { refundAddress } = swapParams
 
     const transactions = await this.getMethod('_getTransactionsForAddress')(refundAddress)
@@ -28,7 +28,10 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     return null
   }
 
-  async findClaimSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
+  async findClaimSwapTransaction(
+    swapParams: SwapParams,
+    initiationTxHash: string
+  ): Promise<Transaction<terra.InputTransaction>> {
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
     const { contractAddress } = initTx._raw
@@ -47,7 +50,10 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     return null
   }
 
-  async findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction> {
+  async findRefundSwapTransaction(
+    swapParams: SwapParams,
+    initiationTxHash: string
+  ): Promise<Transaction<terra.InputTransaction>> {
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
     const { contractAddress } = initTx._raw

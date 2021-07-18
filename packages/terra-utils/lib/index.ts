@@ -1,4 +1,4 @@
-import { Block, SwapParams, Transaction } from '@liquality/types'
+import { Block, SwapParams, Transaction, terra } from '@liquality/types'
 
 export const normalizeBlock = (data: any): Block => ({
   hash: data.block_id.hash,
@@ -8,7 +8,7 @@ export const normalizeBlock = (data: any): Block => ({
   parentHash: data.block.last_commit.block_id.hash
 })
 
-export const normalizeTransaction = (data: any, asset: string): Transaction => {
+export const normalizeTransaction = (data: any, asset: string): Transaction<terra.InputTransaction> => {
   const value = data.tx?.msg?.[0]?.init_coins?.get(asset)?.amount || 0
 
   let txParams = data.tx?.msg?.[0]?.init_msg || data.tx?.msg?.[0]?.execute_msg?.claim || {}

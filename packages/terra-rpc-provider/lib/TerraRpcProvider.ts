@@ -1,9 +1,8 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block, Transaction } from '@liquality/types'
+import { BigNumber, ChainProvider, Address, Block, Transaction, terra } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
-
 import { TerraNetwork } from '@liquality/terra-networks'
 import { BlockTxBroadcastResult, LCDClient, MnemonicKey, StdTx, Wallet, Msg } from '@terra-money/terra.js'
 
@@ -28,11 +27,14 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
-  async getBlockByHash(): Promise<Block<any>> {
+  async getBlockByHash(): Promise<Block> {
     throw new Error('Method not implemented.')
   }
 
-  async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block<Transaction<any>>> {
+  async getBlockByNumber(
+    blockNumber: number,
+    includeTx?: boolean
+  ): Promise<Block<Transaction<terra.InputTransaction>>> {
     const block = await this._lcdClient.tendermint.blockInfo(blockNumber)
 
     const parsedBlock = normalizeBlock(block)
@@ -61,7 +63,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     return Number(height)
   }
 
-  async getTransactionByHash(txHash: string): Promise<any> {
+  async getTransactionByHash(txHash: string): Promise<Transaction<terra.InputTransaction>> {
     const transaction = await this._lcdClient.tx.txInfo(txHash)
 
     if (!transaction) {
@@ -113,7 +115,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
     return Number(fee.amount.get(this._network.asset).amount)
   }
 
-  async _getTransactionsForAddress(address: Address | string): Promise<any> {
+  async _getTransactionsForAddress(address: Address | string): Promise<any[]> {
     const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=500&action=contract`
 
     const response = await this.nodeGet(url)

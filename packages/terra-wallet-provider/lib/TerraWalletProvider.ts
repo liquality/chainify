@@ -1,9 +1,8 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, BigNumber, SwapParams } from '@liquality/types'
+import { Address, BigNumber, SwapParams, Transaction, terra } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
 import { MnemonicKey, MsgExecuteContract, MsgInstantiateContract, MsgSend } from '@terra-money/terra.js'
-import { TerraSendOptions } from '../../types/dist/lib/terra'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
@@ -71,7 +70,7 @@ export default class TerraWalletProvider extends WalletProvider {
     return this._network
   }
 
-  async sendTransaction(sendOptions: TerraSendOptions) {
+  async sendTransaction(sendOptions: terra.TerraSendOptions): Promise<Transaction<terra.InputTransaction>> {
     const { to, value, messages } = sendOptions
     const wallet = this.getMethod('_createWallet')(this._signer)
 
@@ -89,14 +88,14 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const transaction = await this.getMethod('_broadcastTx')(tx)
 
-    console.log('txhash', transaction.txhash)
+    console.log(transaction.txhash)
 
     const parsed = await this.getMethod('getTransactionByHash')(transaction.txhash)
 
     return parsed
   }
 
-  async sendSweepTransaction(address: string | Address): Promise<any> {
+  async sendSweepTransaction(address: string | Address): Promise<Transaction<terra.InputTransaction>> {
     const addresses = await this.getAddresses()
 
     const balance = await this.getMethod('getBalance')(addresses)
