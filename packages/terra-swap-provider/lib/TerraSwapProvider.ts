@@ -66,6 +66,10 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     return transaction
   }
 
+  async fundSwap(): Promise<null> {
+    return null
+  }
+
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 

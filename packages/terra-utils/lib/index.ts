@@ -22,7 +22,11 @@ export const normalizeTransaction = (data: any): Transaction => {
     }
 
     if (executeMsg) {
-      txParams = JSON.parse(Buffer.from(executeMsg, 'base64').toString()).claim
+      txParams.method = JSON.parse(Buffer.from(executeMsg, 'base64').toString())
+
+      if (txParams.method.claim) {
+        txParams.secret = txParams.method.claim.secret
+      }
     }
   }
 

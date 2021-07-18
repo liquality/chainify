@@ -1,26 +1,13 @@
-import { SwapParams, SwapProvider, Transaction, Address } from '@liquality/types'
-import { addressToString } from '@liquality/utils'
-import { NodeProvider } from '@liquality/node-provider'
-import { TerraNetwork } from '@liquality/terra-networks'
+import { SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { normalizeTransaction, doesTransactionMatchInitiation } from '@liquality/terra-utils'
+import { Provider } from '@liquality/provider'
+import { validateSecretAndHash } from '@liquality/utils'
 
-export default class TerraSwapFindProvider extends NodeProvider implements Partial<SwapProvider> {
-  private _network: TerraNetwork
-
-  constructor(network: TerraNetwork) {
-    super({
-      baseURL: network.helperUrl,
-      responseType: 'text',
-      transformResponse: undefined
-    })
-
-    this._network = network
-  }
-
-  async findInitiateSwapTransaction(swapParams: SwapParams, blockNumber?: number): Promise<Transaction<any>> {
+export default class TerraSwapFindProvider extends Provider implements Partial<SwapProvider> {
+  async findInitiateSwapTransaction(swapParams: SwapParams, blockNumber?: number): Promise<Transaction> {
     const { refundAddress } = swapParams
 
-    const transactions = await this._getTransactionsForAddress(refundAddress)
+    const transactions = await this.getMethod('_getTransactionsForAddress')(refundAddress)
 
     for (let i = 0; i < transactions.length; i++) {
       const parsedTx = normalizeTransaction(transactions[i])
@@ -33,26 +20,52 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
     return null
   }
 
-  findClaimSwapTransaction(
+  async findClaimSwapTransaction(
     swapParams: SwapParams,
     initiationTxHash: string,
     blockNumber?: number
-  ): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
+  ): Promise<Transaction> {
+    const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
+
+    const { contractAddress } = initTx._raw
+
+    const transactions = await this.getMethod('_getTransactionsForAddress')(contractAddress)
+
+    for (let i = 0; i < transactions.length; i++) {
+      const parsedTx = normalizeTransaction(transactions[i])
+
+      if (parsedTx.secret) {
+        validateSecretAndHash(parsedTx.secret, swapParams.secretHash)
+        return parsedTx
+      }
+    }
+
+    return null
   }
-  findRefundSwapTransaction(
+
+  async findRefundSwapTransaction(
     swapParams: SwapParams,
     initiationTxHash: string,
     blockNumber?: number
-  ): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
+  ): Promise<Transaction> {
+    const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
+
+    const { contractAddress } = initTx._raw
+
+    const transactions = await this.getMethod('_getTransactionsForAddress')(contractAddress)
+
+    for (let i = 0; i < transactions.length; i++) {
+      const parsedTx = normalizeTransaction(transactions[i])
+
+      if (parsedTx._raw.method.refund) {
+        return parsedTx
+      }
+    }
+
+    return null
   }
 
-  async _getTransactionsForAddress(address: Address | string): Promise<any> {
-    const response = await this.nodeGet(
-      `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=10&action=contract`
-    )
-
-    return response.txs
+  async findFundSwapTransaction(): Promise<null> {
+    return null
   }
 }

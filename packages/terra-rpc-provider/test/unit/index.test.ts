@@ -16,7 +16,7 @@ describe('Solana RPC provider', () => {
   beforeEach(() => {
     client = new Client()
     provider = new TerraRpcProvider(TerraNetworks.terra_testnet)
-    client.addProvider(provider).addProvider(new TerraSwapFindProvider(TerraNetworks.terra_testnet))
+    client.addProvider(provider).addProvider(new TerraSwapFindProvider())
   })
 
   describe('getBlockNumber', () => {
