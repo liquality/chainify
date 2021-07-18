@@ -28,6 +28,7 @@ import { NearSwapFindProvider } from '../../packages/near-swap-find-provider/lib
 import { TerraRpcProvider } from '../../packages/terra-rpc-provider/lib'
 import { TerraWalletProvider } from '../../packages/terra-wallet-provider/lib'
 import { TerraSwapProvider } from '../../packages/terra-swap-provider/lib'
+import { TerraSwapFindProvider } from '../../packages/terra-swap-find-provider/lib'
 import { BigNumber, Transaction, bitcoin, Network, SwapParams, SendOptions, Address } from '../../packages/types/lib'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
@@ -227,6 +228,7 @@ terra
     })
   )
   .addProvider(new TerraSwapProvider())
+  .addProvider(new TerraSwapFindProvider(config.terra.network))
 
 interface Chain {
   id: string
