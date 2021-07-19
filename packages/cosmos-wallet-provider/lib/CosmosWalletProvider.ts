@@ -4,7 +4,7 @@ import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
 import { DirectSecp256k1HdWallet, makeCosmoshubPath } from '@cosmjs/proto-signing'
 import { SigningStargateClient, MsgSendEncodeObject, BroadcastTxResponse } from '@cosmjs/stargate'
-import { Secp256k1, Slip10, Slip10Curve /* , stringToPath */ } from '@cosmjs/crypto'
+import { Secp256k1, Slip10, Slip10Curve } from '@cosmjs/crypto'
 import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 import { mnemonicToSeed } from 'bip39'
@@ -91,7 +91,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     const [senderAddress] = await this.getAddresses()
     const coin = await this._signingClient.getBalance(
       addressToString(senderAddress),
-      this._network.defaultCurrencies[0].coinMinimalDenom
+      this._network.defaultCurrency.coinMinimalDenom
     )
 
     return this.sendTransaction({ to: address, value: new BigNumber(coin.amount) })
@@ -103,7 +103,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     const msg = MsgSend.fromJSON({
       fromAddress: addressToString(address),
       toAddress: addressToString(options.to),
-      amount: [{ denom: this._network.defaultCurrencies[0].coinMinimalDenom, amount: options.value.toString() }]
+      amount: [{ denom: this._network.defaultCurrency.coinMinimalDenom, amount: options.value.toString() }]
     })
 
     const msgObject: MsgSendEncodeObject = {
@@ -114,7 +114,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     const fee = {
       amount: [
         {
-          denom: this._network.defaultCurrencies[0].coinMinimalDenom,
+          denom: this._network.defaultCurrency.coinMinimalDenom,
           amount: this._signingClient.fees.send.amount[0].amount
         }
       ],

@@ -32,13 +32,13 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   async getBlockByHash(blockHash: string): Promise<Block<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/block_by_hash?hash=${blockHash}`)
 
-    return this._normalizeBlock(response.result)
+    return this.parseBlock(response.result)
   }
 
   async getBlockByNumber(blockNumber: number): Promise<Block<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/block?height=${blockNumber}`)
 
-    return this._normalizeBlock(response.result)
+    return this.parseBlock(response.result)
   }
 
   async getBlockHeight(): Promise<number> {
@@ -61,10 +61,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const promiseBalances = await Promise.all(
       addresses.map(async (address: string) => {
         try {
-          const userBalance = await this._client.getBalance(
-            address,
-            this._network.defaultCurrencies[0].coinMinimalDenom
-          )
+          const userBalance = await this._client.getBalance(address, this._network.defaultCurrency.coinMinimalDenom)
           return new BigNumber(userBalance.amount)
         } catch (err) {
           if (err.message) {
@@ -89,7 +86,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     return txResponse.toString()
   }
 
-  async _normalizeBlock(block: cosmos.BlockResponse): Promise<Block<cosmos.Tx>> {
+  async parseBlock(block: cosmos.BlockResponse): Promise<Block<cosmos.Tx>> {
     const promiseTxs = await Promise.all(
       block.block.data.txs.map(async (tx: string) => {
         try {
