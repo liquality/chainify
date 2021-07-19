@@ -1,7 +1,6 @@
 import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { Keypair, SystemProgram, PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { sha256 } from '@liquality/crypto'
 import {
   doesTransactionMatchInitiation,
   createClaimBuffer,
@@ -10,13 +9,14 @@ import {
   validateSwapParams
 } from '@liquality/solana-utils'
 import { WalletError, TxNotFoundError, InvalidAddressError } from '@liquality/errors'
+import { SolanaNetwork } from '@liquality/solana-network'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
-  doesBlockScan: boolean | (() => boolean)
-  signer: Keypair
+  private _network: SolanaNetwork
 
-  generateSecret(message: string): Promise<string> {
-    return sha256(message)
+  constructor(network: SolanaNetwork) {
+    super()
+    this._network = network
   }
 
   async getSwapSecret(claimTxHash: string): Promise<string> {
@@ -34,7 +34,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
 
     const signer = await this.getMethod('_getSigner')()
 
-    const { programId } = await this.getMethod('getConnectedNetwork')()
+    const { programId } = this._network
 
     const { expiration, refundAddress, recipientAddress, value, secretHash } = swapParams
 
