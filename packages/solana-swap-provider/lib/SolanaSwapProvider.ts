@@ -19,10 +19,6 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
     this._network = network
   }
 
-  generateSecret(message: string): Promise<string> {
-    return this.getMethod('signMessage')(message)
-  }
-
   async getSwapSecret(claimTxHash: string): Promise<string> {
     const transactionByHash = await this.getMethod('getTransactionByHash')(claimTxHash)
 
