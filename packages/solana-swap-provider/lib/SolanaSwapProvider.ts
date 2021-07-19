@@ -9,7 +9,7 @@ import {
   validateSwapParams
 } from '@liquality/solana-utils'
 import { WalletError, TxNotFoundError, InvalidAddressError } from '@liquality/errors'
-import { SolanaNetwork } from '@liquality/solana-network'
+import { SolanaNetwork } from '@liquality/solana-networks'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
   private _network: SolanaNetwork

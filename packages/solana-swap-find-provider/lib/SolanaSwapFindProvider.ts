@@ -3,7 +3,7 @@ import { Provider } from '@liquality/provider'
 import { PendingTxError } from '@liquality/errors'
 import { addressToString } from '@liquality/utils'
 import { doesTransactionMatchInitiation, validateSwapParams, validateSecret } from '@liquality/solana-utils'
-import { SolanaNetwork } from '@liquality/solana-network'
+import { SolanaNetwork } from '@liquality/solana-networks'
 
 export default class SolanaSwapFindProvider extends Provider implements Partial<SwapProvider> {
   private _network: SolanaNetwork
