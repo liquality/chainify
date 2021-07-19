@@ -2,7 +2,7 @@ import { BigNumber } from '../../packages/types/lib'
 import { BitcoinNetworks, BitcoinCashNetworks } from '../../packages/bitcoin-networks/lib'
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
-import { SolanaNetworks } from '../../packages/solana-network/lib'
+import { SolanaNetworks } from '../../packages/solana-networks/lib'
 
 export default {
   bitcoin: {

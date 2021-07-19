@@ -227,8 +227,8 @@ solana.addProvider(
     derivationPath: `m/44'/${config.solana.network.coinType}'/${config.solana.walletIndex}'/0'`
   })
 )
-solana.addProvider(new SolanaSwapProvider())
-solana.addProvider(new SolanaSwapFindProvider())
+solana.addProvider(new SolanaSwapProvider(config.solana.network))
+solana.addProvider(new SolanaSwapFindProvider(config.solana.network))
 
 interface Chain {
   id: string
@@ -347,8 +347,6 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
           derivationPath: `m/44'/501'/${config.solana.walletIndex}'/0'`
         })
       )
-      solana.addProvider(new SolanaSwapProvider())
-      solana.addProvider(new SolanaSwapFindProvider())
 
       const balance = await solana.chain.getBalance([config.near.senderAddress])
 
