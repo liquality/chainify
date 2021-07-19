@@ -4,7 +4,7 @@ import chai from 'chai'
 import { Client } from '../../../client/lib'
 import { SolanaWalletProvider } from '../../lib'
 import { SolanaRpcProvider } from '../../../solana-rpc-provider'
-import { SolanaNetworks } from '../../../solana-network'
+import { SolanaNetworks } from '../../../solana-networks'
 
 chai.config.truncateThreshold = 0
 
