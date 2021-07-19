@@ -7,6 +7,7 @@ export interface CosmosNetwork extends Network {
   grpcUrl?: string
   defaultCurrency: cosmos.Currency // staking and fee currency
   addressPrefix: string
+  minimalGasPrice: number
   derivationPath?: string
   faucetUrl?: string
 }
@@ -24,6 +25,7 @@ const cosmoshub_mainnet_atom: CosmosNetwork = {
   },
   coinType: '118',
   addressPrefix: 'cosmos',
+  minimalGasPrice: 0.025, // default value
   isTestnet: false
 }
 
@@ -41,6 +43,7 @@ const cosmoshub_testnet_photon: CosmosNetwork = {
   },
   coinType: '118',
   addressPrefix: 'cosmos',
+  minimalGasPrice: 0.025, // default value
   isTestnet: true
 }
 
@@ -56,6 +59,7 @@ const akash_testnet_akt: CosmosNetwork = {
   },
   coinType: '118',
   addressPrefix: 'akash',
+  minimalGasPrice: 0.025, // default value
   isTestnet: true
 }
 
@@ -71,6 +75,7 @@ const cryptoorg_testnet_tcro: CosmosNetwork = {
   },
   coinType: '394',
   addressPrefix: 'tcro', // testnet only prefix
+  minimalGasPrice: 0.025, // default value
   isTestnet: true
 }
 
@@ -86,6 +91,7 @@ const starname_testnet_voi: CosmosNetwork = {
   },
   coinType: '234',
   addressPrefix: 'star',
+  minimalGasPrice: 1,
   isTestnet: true
 }
 

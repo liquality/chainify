@@ -111,14 +111,16 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
       value: msg
     }
 
+    const gas = this._signingClient.fees.send.gas // default gas for send is 80k
+    const amount = new BigNumber(gas).multipliedBy(new BigNumber(this._network.minimalGasPrice))
     const fee = {
       amount: [
         {
           denom: this._network.defaultCurrency.coinMinimalDenom,
-          amount: this._signingClient.fees.send.amount[0].amount
+          amount: amount.toString()
         }
       ],
-      gas: this._signingClient.fees.send.gas
+      gas: gas
     }
 
     const txRaw = await this._signingClient.sign(addressToString(address), [msgObject], fee, '')
