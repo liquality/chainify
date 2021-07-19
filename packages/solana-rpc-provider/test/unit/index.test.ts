@@ -4,7 +4,7 @@ import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js'
 
 import { Client } from '../../../client/lib'
 import { SolanaRpcProvider } from '../../lib'
-import { SolanaNetworks } from '../../../solana-network'
+import { SolanaNetworks } from '../../../solana-networks'
 import { describeExternal } from '../../../../test/integration/common'
 import { SolanaSwapFindProvider } from '../../../solana-swap-find-provider/lib'
 import { SolanaSwapProvider } from '../../../solana-swap-provider/lib'
@@ -20,7 +20,7 @@ describe('Solana RPC provider', () => {
     client = new Client()
     provider = new SolanaRpcProvider(SolanaNetworks.solana_testnet)
     client.addProvider(provider)
-    client.addProvider(new SolanaSwapProvider())
+    client.addProvider(new SolanaSwapProvider(SolanaNetworks.solana_testnet))
     client.addProvider(
       new SolanaWalletProvider({
         network: SolanaNetworks.solana_testnet,
@@ -29,7 +29,7 @@ describe('Solana RPC provider', () => {
         derivationPath: `m/44'/501'/0'/0'`
       })
     )
-    client.addProvider(new SolanaSwapFindProvider())
+    client.addProvider(new SolanaSwapFindProvider(SolanaNetworks.solana_testnet))
   })
 
   describe('getBlockNumber', () => {
