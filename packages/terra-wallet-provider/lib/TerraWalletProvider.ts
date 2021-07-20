@@ -88,8 +88,6 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const transaction = await this.getMethod('_broadcastTx')(tx)
 
-    console.log(transaction.txhash)
-
     const parsed = await this.getMethod('getTransactionByHash')(transaction.txhash)
 
     return parsed
