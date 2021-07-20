@@ -53,7 +53,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const currentHeight = await this.getBlockHeight()
     const confirmations = currentHeight - block.number
 
-    return normalizeTx(response.result, block.hash, confirmations)
+    return normalizeTx(response.result, block.hash, confirmations, this._network.defaultCurrency.coinDecimals)
   }
 
   async getBalance(_addresses: string[]): Promise<BigNumber> {

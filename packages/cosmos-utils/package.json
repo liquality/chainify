@@ -22,7 +22,9 @@
     "@babel/runtime": "^7.12.1",
     "@liquality/types": "^1.4.3",
     "@cosmjs/proto-signing": "^0.25.5",
-    "@cosmjs/encoding": "^0.25.5"
+    "@cosmjs/encoding": "^0.25.5",
+    "@cosmjs/stargate": "^0.25.5",
+    "cosmjs-types": "^0.1.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
