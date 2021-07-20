@@ -4,7 +4,6 @@ import chaiAsPromised from 'chai-as-promised'
 import { Client } from '../../../client/lib'
 import { CosmosRpcProvider } from '../../lib'
 import { CosmosNetworks } from '../../../cosmos-networks'
-// import { BigNumber } from '../../../types/lib'
 
 chai.config.truncateThreshold = 0
 chai.use(chaiAsPromised)
@@ -15,10 +14,6 @@ const txHash_TestNet = '12222DB9AE10ED1ABF1311743EA437B051E520911AF73369A44877EC
 const blockHeight_TestNet = 979038
 const address_1_TestNet = 'cosmos1eejyfynksgjap5kwhkkf57l80rnwkfsswvel8a'
 const address_2_TestNet = 'cosmos1cvm7vja680lpcn5w2g2hmu8pt70z6gxlf5c6gh'
-
-const txRaw =
-  'CpABCo0BChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEm0KLWNvc21vczFlZWp5Znlua3NnamFwNWt3aGtrZjU3bDgwcm53a2Zzc3d2ZWw4YRItY29zbW9zMWN2bTd2amE2ODBscGNuNXcyZzJobXU4cHQ3MHo2Z3hsZjVjNmdoGg0KB3VwaG90b24SAjEwEmYKUApGCh8vY29zbW9zLmNyeXB0by5zZWNwMjU2azEuUHViS2V5EiMKIQJwHKKsIvOgYwc3A6+JBpfJ4HsZFuypqjv4NodzIfs5KRIECgIIARgcEhIKDAoHdXBob3RvbhIBMRCg/goaQCeUFderU/T39DvTJWI/uFha3inWYVXV4VmY+0eABeZKWtplpe9SD7ffi5Y9jyOhFC3Dydt6UFU6zG595QOw6z0='
-// const errString = 'Error: {"code":-32603,"message":"Internal error","data":"tx already exists in cache"}'
 
 describe('Cosmos RPC provider', () => {
   let client: Client
@@ -76,18 +71,6 @@ describe('Cosmos RPC provider', () => {
       const balance = await client.chain.getBalance([address_1_TestNet, address_2_TestNet])
 
       expect(balance.isGreaterThan(0)).to.be.true
-    })
-  })
-
-  xdescribe('sendRawTransaction', () => {
-    it('should fail sending a raw transaction due to same old nonce', async () => {
-      // try {
-      //   await client.getMethod('sendRawTransaction')(txRaw)
-      // } catch (err) {
-      //   expect(err.toString()).equal(errString)
-      // }
-      // await expect(client.getMethod('sendRawTransaction')(txRaw)).to.be.rejected
-      await expect(client.chain.sendRawTransaction(txRaw)).to.be.rejected
     })
   })
 })

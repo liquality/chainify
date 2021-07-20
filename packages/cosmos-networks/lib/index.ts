@@ -4,7 +4,6 @@ export interface CosmosNetwork extends Network {
   network: string
   rpcUrl: string
   apiUrl?: string
-  grpcUrl?: string
   defaultCurrency: cosmos.Currency // staking and fee currency
   addressPrefix: string
   minimalGasPrice: number
@@ -17,7 +16,6 @@ const cosmoshub_mainnet_atom: CosmosNetwork = {
   network: 'cosmoshub-4',
   rpcUrl: 'https://rpc.cosmos.network:443',
   apiUrl: 'https://api.cosmos.network:443',
-  grpcUrl: 'https://grpc.cosmos.network:443',
   defaultCurrency: {
     coinDenom: 'ATOM',
     coinMinimalDenom: 'uatom',
@@ -34,7 +32,6 @@ const cosmoshub_testnet_photon: CosmosNetwork = {
   network: 'cosmoshub-testnet',
   rpcUrl: 'https://rpc.testnet.cosmos.network:443',
   apiUrl: 'https://api.testnet.cosmos.network:443',
-  grpcUrl: 'https://grpc.testnet.cosmos.network:443',
   faucetUrl: 'https://faucet.testnet.cosmos.network:443',
   defaultCurrency: {
     coinDenom: 'PHOTON',

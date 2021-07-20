@@ -15,7 +15,7 @@ function normalizeBlock(blockResponse: cosmos.BlockResponse, txs: cosmos.Tx[]) {
   return normalizedBlock
 }
 
-async function normalizeTx(tx: cosmos.Tx, blockHash: string) {
+async function normalizeTx(tx: cosmos.Tx, blockHash: string, confirmations: number) {
   const blockHeight = parseInt(tx.height)
 
   const normalizedTx: Transaction<cosmos.Tx> = {
@@ -23,7 +23,7 @@ async function normalizeTx(tx: cosmos.Tx, blockHash: string) {
     value: 0,
     blockHash: blockHash,
     blockNumber: blockHeight,
-    confirmations: 0, // cosmos has instant validity
+    confirmations: confirmations,
     feePrice: 0,
     fee: 0,
     secret: '',

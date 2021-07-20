@@ -94,6 +94,10 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
       this._network.defaultCurrency.coinMinimalDenom
     )
 
+    if (coin === undefined) {
+      throw new Error('Empty Balance!')
+    }
+
     return this.sendTransaction({ to: address, value: new BigNumber(coin.amount) })
   }
 

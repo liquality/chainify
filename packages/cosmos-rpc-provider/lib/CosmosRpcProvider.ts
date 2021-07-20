@@ -50,8 +50,10 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
     const blockHeight = parseInt(response.result.height)
     const block = await this.getBlockByNumber(blockHeight)
+    const currentHeight = await this.getBlockHeight()
+    const confirmations = currentHeight - block.number
 
-    return normalizeTx(response.result, block.hash)
+    return normalizeTx(response.result, block.hash, confirmations)
   }
 
   async getBalance(_addresses: string[]): Promise<BigNumber> {
