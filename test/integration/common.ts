@@ -338,16 +338,14 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
 
     case 'terra': {
       const terra = new Client()
-      terra
-        .addProvider(new TerraRpcProvider(config.terra.network))
-        .addProvider(
-          new TerraWalletProvider({
-            network: config.terra.network,
-            mnemonic: config.terra.senderMnemonic,
-            derivationPath: ''
-          })
-        )
-        .addProvider(new TerraSwapProvider())
+      terra.addProvider(new TerraRpcProvider(config.terra.network)).addProvider(
+        new TerraWalletProvider({
+          network: config.terra.network,
+          mnemonic: config.terra.senderMnemonic,
+          derivationPath: ''
+        })
+      )
+
       const balance = await terra.chain.getBalance([config.terra.receiverAddress])
       if (balance.gt(config.terra.value)) {
         await terra.chain.sendTransaction({ to: address, value: balance.minus(config.terra.value) })
