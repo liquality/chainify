@@ -1,15 +1,8 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, BigNumber, SwapParams, Transaction, terra } from '@liquality/types'
+import { Address, BigNumber, Transaction, terra } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import {
-  LCDClient,
-  MnemonicKey,
-  MsgExecuteContract,
-  MsgInstantiateContract,
-  MsgSend,
-  Wallet
-} from '@terra-money/terra.js'
+import { BlockTxBroadcastResult, LCDClient, MnemonicKey, Msg, MsgSend, StdTx, Wallet } from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
@@ -24,6 +17,8 @@ export default class TerraWalletProvider extends WalletProvider {
   private _mnemonic: string
   private _signer: MnemonicKey
   private _lcdClient: LCDClient
+  private _wallet: Wallet
+  _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
     const { network, mnemonic, derivationPath } = options
@@ -32,12 +27,14 @@ export default class TerraWalletProvider extends WalletProvider {
     this._mnemonic = mnemonic
     this._derivationPath = derivationPath
     this._addressCache = {}
-    this._setSigner()
 
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
       chainID: network.chainID
     })
+
+    this._setSigner()
+    this._createWallet(this._signer)
   }
 
   async isWalletAvailable(): Promise<boolean> {
@@ -85,7 +82,6 @@ export default class TerraWalletProvider extends WalletProvider {
 
   async sendTransaction(sendOptions: terra.TerraSendOptions): Promise<Transaction<terra.InputTransaction>> {
     const { to, value, messages } = sendOptions
-    const wallet = this._createWallet(this._signer)
 
     const msgs = []
 
@@ -95,15 +91,13 @@ export default class TerraWalletProvider extends WalletProvider {
       msgs.push(this._sendMessage(to, value))
     }
 
-    const tx = await wallet.createAndSignTx({
+    const tx = await this._wallet.createAndSignTx({
       msgs
     })
 
-    const transaction = await this.getMethod('_broadcastTx')(tx)
+    const transaction = await this._broadcastTx(tx)
 
-    const parsed = await this.getMethod('getTransactionByHash')(transaction.txhash)
-
-    return parsed
+    return await this.getMethod('getTransactionByHash')(transaction.txhash)
   }
 
   async sendSweepTransaction(address: string | Address): Promise<Transaction<terra.InputTransaction>> {
@@ -113,7 +107,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const message = this._sendMessage(address, balance)
 
-    const fee = await this.getMethod('_estimateFee')(this._signer.accAddress, [message])
+    const fee = await this._estimateFee(this._signer.accAddress, [message])
 
     return await this.sendTransaction({ to: address, value: balance.minus(fee * 2) })
   }
@@ -122,48 +116,35 @@ export default class TerraWalletProvider extends WalletProvider {
     return false
   }
 
-  _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
-    const wallet = this._createWallet(this._signer)
-    const { asset, codeId } = this._network
-
-    return new MsgInstantiateContract(
-      wallet.key.accAddress,
-      codeId,
-      {
-        buyer: swapParams.recipientAddress,
-        seller: swapParams.refundAddress,
-        expiration: swapParams.expiration,
-        value: Number(swapParams.value),
-        secret_hash: swapParams.secretHash
-      },
-      { [asset]: Number(swapParams.value) },
-      false
-    )
-  }
-
-  _executeContractMessage(contractAddress: string, method: any): MsgExecuteContract {
-    const wallet = this._createWallet(this._signer)
-
-    return new MsgExecuteContract(wallet.key.accAddress, contractAddress, method)
-  }
-
   _sendMessage(to: Address | string, value: BigNumber): MsgSend {
     return new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
       [this._network.asset]: value.toNumber()
     })
   }
 
-  private _setSigner(): MnemonicKey {
-    if (!this._signer) {
-      this._signer = new MnemonicKey({
-        mnemonic: this._mnemonic
-      })
-    }
-
-    return this._signer
+  _getAccAddressKey(): string {
+    return this._accAddressKey
   }
 
-  private _createWallet(mnemonicKey: MnemonicKey): Wallet {
-    return this._lcdClient.wallet(mnemonicKey)
+  private _setSigner(): MnemonicKey {
+    return new MnemonicKey({
+      mnemonic: this._mnemonic
+    })
+  }
+
+  private _createWallet(mnemonicKey: MnemonicKey): void {
+    this._wallet = this._lcdClient.wallet(mnemonicKey)
+
+    this._accAddressKey = this._wallet.key.accAddress
+  }
+
+  private async _broadcastTx(tx: StdTx): Promise<BlockTxBroadcastResult> {
+    return await this._lcdClient.tx.broadcast(tx)
+  }
+
+  private async _estimateFee(payer: string, msgs: Msg[]): Promise<number> {
+    const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
+
+    return Number(fee.amount.get(this._network.asset).amount)
   }
 }

@@ -4,8 +4,17 @@ import { sha256 } from '@liquality/crypto'
 import { TxNotFoundError, StandardError } from '@liquality/errors'
 import { validateSwapParams, doesTransactionMatchInitiation } from '@liquality/terra-utils'
 import { validateSecretAndHash } from '@liquality/utils'
+import { TerraNetwork } from '@liquality/terra-networks'
+import { MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js'
 
 export default class TerraSwapProvider extends Provider implements Partial<SwapProvider> {
+  private _network: TerraNetwork
+
+  constructor(network: TerraNetwork) {
+    super()
+    this._network = network
+  }
+
   async generateSecret(message: string): Promise<string> {
     return sha256(message)
   }
@@ -23,7 +32,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   async initiateSwap(swapParams: SwapParams): Promise<Transaction<terra.InputTransaction>> {
     validateSwapParams(swapParams)
 
-    const initContractMsg = this.getMethod('_instantiateContractMessage')(swapParams)
+    const initContractMsg = this._instantiateContractMessage(swapParams)
 
     return await this.getMethod('sendTransaction')({
       messages: [initContractMsg]
@@ -41,7 +50,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
 
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
-    const executeContractMsg = this.getMethod('_executeContractMessage')(initTx._raw.contractAddress, {
+    const executeContractMsg = this._executeContractMessage(initTx._raw.contractAddress, {
       claim: { secret }
     })
 
@@ -86,5 +95,31 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     }
 
     return true
+  }
+
+  _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
+    const address = this.getMethod('_getAccAddressKey')
+
+    const { asset, codeId } = this._network
+
+    return new MsgInstantiateContract(
+      address,
+      codeId,
+      {
+        buyer: swapParams.recipientAddress,
+        seller: swapParams.refundAddress,
+        expiration: swapParams.expiration,
+        value: Number(swapParams.value),
+        secret_hash: swapParams.secretHash
+      },
+      { [asset]: Number(swapParams.value) },
+      false
+    )
+  }
+
+  _executeContractMessage(contractAddress: string, method: any): MsgExecuteContract {
+    const address = this.getMethod('_getAccAddressKey')
+
+    return new MsgExecuteContract(address, contractAddress, method)
   }
 }

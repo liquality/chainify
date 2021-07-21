@@ -3,7 +3,6 @@ import chai, { expect } from 'chai'
 
 import { Client } from '../../../client/lib'
 import { TerraRpcProvider } from '../../lib'
-import { TerraSwapFindProvider } from '../../../terra-swap-find-provider/lib'
 import { TerraNetworks } from '../../../terra-networks'
 // import { describeExternal } from '../../../../test/integration/common'
 
@@ -16,7 +15,7 @@ describe('Solana RPC provider', () => {
   beforeEach(() => {
     client = new Client()
     provider = new TerraRpcProvider(TerraNetworks.terra_testnet)
-    client.addProvider(provider).addProvider(new TerraSwapFindProvider(TerraNetworks.terra_testnet))
+    client.addProvider(provider)
   })
 
   describe('getBlockNumber', () => {

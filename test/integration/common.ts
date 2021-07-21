@@ -227,7 +227,7 @@ terra
       derivationPath: ''
     })
   )
-  .addProvider(new TerraSwapProvider())
+  .addProvider(new TerraSwapProvider(config.terra.network))
   .addProvider(new TerraSwapFindProvider(config.terra.network))
 
 interface Chain {

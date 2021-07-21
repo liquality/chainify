@@ -4,7 +4,7 @@ import { addressToString } from '@liquality/utils'
 import { TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { BlockTxBroadcastResult, LCDClient, StdTx, Msg } from '@terra-money/terra.js'
+import { LCDClient } from '@terra-money/terra.js'
 
 export default class TerraRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   private _network: TerraNetwork
@@ -24,7 +24,7 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
   }
 
   async generateBlock(numberOfBlocks: number): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
+    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 30000))
   }
 
   async getBlockByHash(): Promise<Block> {
@@ -99,16 +99,6 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
 
   sendRawTransaction(): Promise<string> {
     throw new Error('Method not implemented.')
-  }
-
-  async _broadcastTx(tx: StdTx): Promise<BlockTxBroadcastResult> {
-    return await this._lcdClient.tx.broadcast(tx)
-  }
-
-  async _estimateFee(payer: string, msgs: Msg[]): Promise<number> {
-    const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
-
-    return Number(fee.amount.get(this._network.asset).amount)
   }
 
   async _getTransactionsForAddress(address: Address | string): Promise<any[]> {
