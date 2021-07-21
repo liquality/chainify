@@ -98,7 +98,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   }
 
   _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
-    const address = this.getMethod('_getAccAddressKey')
+    const address = this.getMethod('_getAccAddressKey')()
 
     const { asset, codeId } = this._network
 
@@ -118,7 +118,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   }
 
   _executeContractMessage(contractAddress: string, method: any): MsgExecuteContract {
-    const address = this.getMethod('_getAccAddressKey')
+    const address = this.getMethod('_getAccAddressKey')()
 
     return new MsgExecuteContract(address, contractAddress, method)
   }
