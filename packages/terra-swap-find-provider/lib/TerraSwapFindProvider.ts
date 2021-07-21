@@ -69,7 +69,7 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
     for (let i = 0; i < transactions.length; i++) {
       const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
 
-      if (parsedTx._raw.method.refund) {
+      if (parsedTx._raw.method?.refund) {
         return parsedTx
       }
     }

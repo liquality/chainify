@@ -16,7 +16,7 @@ export interface InputTransaction {
     claim?: {
       secret: string
     }
-    refund: () => void
+    refund?: () => void
   }
   confirmations?: number
 }
