@@ -1,3 +1,19 @@
+import { SendOptions } from '../chain'
+import { Address } from '../address'
+
+export enum MsgType {
+  SendMsg = 'SendMsg',
+  DelegateMsg = 'DelegateMsg',
+  UndelegateMsg = 'UndelegateMsg',
+  WithdrawMsg = 'WithdrawMsg',
+  TransferMsg = 'TransferMsg'
+}
+
+export interface CosmosSendOptions extends SendOptions {
+  type: MsgType
+  from?: Address | string
+}
+
 export interface RpcResponse {
   jsonrpc?: string
   id?: number
