@@ -5,7 +5,7 @@ import { Client } from '../../../client/lib'
 import { CosmosRpcProvider } from '../../../cosmos-rpc-provider/lib'
 import { CosmosWalletProvider } from '../../lib'
 import { CosmosNetworks } from '../../../cosmos-networks'
-import { BigNumber } from '../../../types/lib'
+import { BigNumber, cosmos } from '../../../types/lib'
 
 chai.config.truncateThreshold = 0
 chai.use(chaiAsPromised)
@@ -69,7 +69,13 @@ describe('Cosmos Wallet provider', () => {
 
   describe('sendTransaction', () => {
     it('should send transaction', async () => {
-      const tx = await client.chain.sendTransaction({ to: address_2_TestNet, value: new BigNumber(1) })
+      const options = {
+        type: cosmos.MsgType.SendMsg,
+        to: address_2_TestNet,
+        value: new BigNumber(1)
+      } as cosmos.CosmosSendOptions
+
+      const tx = await client.chain.sendTransaction(options)
       expect(tx._raw !== null).to.be.true
     })
   })

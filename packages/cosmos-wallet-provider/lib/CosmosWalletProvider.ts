@@ -32,7 +32,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     this._derivationPath = derivationPath
     this._addressCache = {}
     this._privateKey = null
-    this._msgFactory = null
+    this._msgFactory = new MsgFactory(this._network)
   }
 
   async getAddresses(): Promise<Address[]> {
@@ -45,7 +45,6 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     })
 
     this._signingClient = await SigningStargateClient.connectWithSigner(this._network.rpcUrl, wallet)
-    this._msgFactory = new MsgFactory(this._network, this._signingClient.fees)
     const seed = await mnemonicToSeed(this._mnemonic)
     this._privateKey = Slip10.derivePath(Slip10Curve.Secp256k1, seed, makeCosmoshubPath(0)).privkey
 

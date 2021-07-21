@@ -1,9 +1,8 @@
 import { BigNumber, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
-import { FeeTable, StdFee, coin, CosmosFeeTable } from '@cosmjs/stargate'
+import { StdFee, coin } from '@cosmjs/stargate'
 import { EncodeObject } from '@cosmjs/proto-signing'
-import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
 
 export interface TransactionData {
   msg: EncodeObject
@@ -11,15 +10,21 @@ export interface TransactionData {
 }
 
 export class MsgFactory {
-  private _feeTable: FeeTable
   private _network: CosmosNetwork
+  private _gasFeeTable: { [key: string]: string }
   private _builders: { [key: string]: (options: cosmos.CosmosSendOptions) => TransactionData }
 
-  constructor(network: CosmosNetwork, feeTable: CosmosFeeTable) {
-    this._feeTable = feeTable
+  constructor(network: CosmosNetwork) {
     this._network = network
+    this._gasFeeTable = {
+      send: '80000',
+      delegate: '160000',
+      transfer: '160000',
+      undelegate: '160000',
+      withdraw: '160000'
+    }
     this._builders = {
-      SendMsg: this.buildSendMsg
+      SendMsg: this.buildSendMsg.bind(this)
     }
   }
 
@@ -30,18 +35,16 @@ export class MsgFactory {
   private buildSendMsg(options: cosmos.CosmosSendOptions): TransactionData {
     const { from, to, value } = options
 
-    const baseMsg = MsgSend.fromJSON({
-      fromAddress: addressToString(from),
-      toAddress: addressToString(to),
-      amount: value
-    })
-
     const msg: EncodeObject = {
       typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-      value: baseMsg
+      value: {
+        fromAddress: addressToString(from),
+        toAddress: addressToString(to),
+        amount: [coin(value.toNumber(), this._network.defaultCurrency.coinMinimalDenom)]
+      }
     }
 
-    return { msg, fee: this.buildFeeObject(this._feeTable.send.gas) }
+    return { msg, fee: this.buildFeeObject(this._gasFeeTable['send']) }
   }
 
   private buildFeeObject(gas: string): StdFee {
