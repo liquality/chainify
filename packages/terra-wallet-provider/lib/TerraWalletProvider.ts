@@ -126,8 +126,8 @@ export default class TerraWalletProvider extends WalletProvider {
     return this._accAddressKey
   }
 
-  private _setSigner(): MnemonicKey {
-    return new MnemonicKey({
+  private _setSigner(): void {
+    this._signer = new MnemonicKey({
       mnemonic: this._mnemonic
     })
   }
