@@ -2,6 +2,7 @@ import { Block, SwapParams, Transaction, terra } from '@liquality/types'
 import { addressToString, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 import get from 'lodash/get'
+import { DateTime } from 'luxon'
 
 export const normalizeBlock = (data: any): Block => ({
   hash: data.block_id.hash,
@@ -69,16 +70,7 @@ export const validateSwapParams = (swapParams: SwapParams) => {
 }
 
 const convertDateToTimestamp = (fullDate: string): number => {
-  const dateAndTime = fullDate.split('.')[0]
-
-  const [date, time] = dateAndTime.split('T')
-
-  const [year, month, day] = date.split('-').map((e) => Number(e))
-  const [hour, minute, second] = time.split(':').map((e) => Number(e))
-
-  const dateFormat = new Date(Date.UTC(year, month - 1, day, hour, minute, second))
-
-  return Math.floor(dateFormat.getTime() / 1000)
+  return DateTime.fromISO(fullDate).toSeconds()
 }
 
 const validateAddress = (address: string): void => {

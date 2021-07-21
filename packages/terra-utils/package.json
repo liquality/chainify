@@ -22,7 +22,9 @@
     "@liquality/errors": "^1.4.4",
     "@liquality/types": "^1.4.4",
     "@liquality/utils": "^1.4.4",
-    "lodash": "^4.17.21"
+    "@types/luxon": "^1.27.1",
+    "lodash": "^4.17.21",
+    "luxon": "^2.0.1"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
