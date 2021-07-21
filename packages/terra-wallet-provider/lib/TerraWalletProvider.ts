@@ -2,7 +2,14 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, BigNumber, SwapParams, Transaction, terra } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { MnemonicKey, MsgExecuteContract, MsgInstantiateContract, MsgSend } from '@terra-money/terra.js'
+import {
+  LCDClient,
+  MnemonicKey,
+  MsgExecuteContract,
+  MsgInstantiateContract,
+  MsgSend,
+  Wallet
+} from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
@@ -16,6 +23,7 @@ export default class TerraWalletProvider extends WalletProvider {
   _addressCache: { [key: string]: Address }
   private _mnemonic: string
   private _signer: MnemonicKey
+  private _lcdClient: LCDClient
 
   constructor(options: TerraWalletProviderOptions) {
     const { network, mnemonic, derivationPath } = options
@@ -25,6 +33,11 @@ export default class TerraWalletProvider extends WalletProvider {
     this._derivationPath = derivationPath
     this._addressCache = {}
     this._setSigner()
+
+    this._lcdClient = new LCDClient({
+      URL: network.nodeUrl,
+      chainID: network.chainID
+    })
   }
 
   async isWalletAvailable(): Promise<boolean> {
@@ -72,7 +85,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
   async sendTransaction(sendOptions: terra.TerraSendOptions): Promise<Transaction<terra.InputTransaction>> {
     const { to, value, messages } = sendOptions
-    const wallet = this.getMethod('_createWallet')(this._signer)
+    const wallet = this._createWallet(this._signer)
 
     const msgs = []
 
@@ -110,7 +123,7 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
-    const wallet = this.getMethod('_createWallet')(this._signer)
+    const wallet = this._createWallet(this._signer)
     const { asset, codeId } = this._network
 
     return new MsgInstantiateContract(
@@ -129,7 +142,7 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   _executeContractMessage(contractAddress: string, method: any): MsgExecuteContract {
-    const wallet = this.getMethod('_createWallet')(this._signer)
+    const wallet = this._createWallet(this._signer)
 
     return new MsgExecuteContract(wallet.key.accAddress, contractAddress, method)
   }
@@ -148,5 +161,9 @@ export default class TerraWalletProvider extends WalletProvider {
     }
 
     return this._signer
+  }
+
+  private _createWallet(mnemonicKey: MnemonicKey): Wallet {
+    return this._lcdClient.wallet(mnemonicKey)
   }
 }
