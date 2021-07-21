@@ -12,13 +12,17 @@ export const normalizeBlock = (data: any): Block => ({
 })
 
 export const normalizeTransaction = (data: any, asset: string): Transaction<terra.InputTransaction> => {
-  const value = data.tx?.msg?.[0]?.init_coins?.get(asset)?.amount || 0
+  const msg = data.tx?.msg?.[0]
 
-  let txParams = data.tx?.msg?.[0]?.init_msg || data.tx?.msg?.[0]?.execute_msg?.claim || {}
+  const value = msg?.init_coins?.get(asset)?.amount || 0
+
+  let txParams = msg?.init_msg || msg?.execute_msg?.claim || {}
 
   if (!Object.keys(txParams).length) {
-    const initMsg = data.tx?.value?.msg?.[0]?.value?.init_msg
-    const executeMsg = data.tx?.value?.msg?.[0]?.value?.execute_msg
+    const contractMsg = data.tx?.value?.msg?.[0]?.value
+
+    const initMsg = contractMsg?.init_msg
+    const executeMsg = contractMsg?.execute_msg
 
     if (initMsg) {
       txParams = JSON.parse(Buffer.from(initMsg, 'base64').toString())
@@ -33,9 +37,11 @@ export const normalizeTransaction = (data: any, asset: string): Transaction<terr
     }
   }
 
+  const eventsByType = data?.logs?.[0]?.eventsByType
+
   const contractAddress =
-    data?.logs?.[0]?.eventsByType?.instantiate_contract?.contract_address[0] ||
-    data?.logs?.[0]?.eventsByType?.execute_contract?.contract_address[0] ||
+    eventsByType?.instantiate_contract?.contract_address[0] ||
+    eventsByType?.execute_contract?.contract_address[0] ||
     data?.logs?.[0]?.events[0]?.attributes?.filter((e: any) => e.key === 'contract_address')?.[0]?.value ||
     ''
 
