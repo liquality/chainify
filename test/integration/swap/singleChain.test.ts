@@ -43,7 +43,6 @@ function testSwap(chain: Chain) {
   it('Initiate and claim - happy route', async () => {
     if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
     const secret = await chain.client.swap.generateSecret('secret')
-    console.log('sec', secret)
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain, secretHash)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
