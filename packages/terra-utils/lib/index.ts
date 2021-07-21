@@ -1,7 +1,6 @@
 import { Block, SwapParams, Transaction, terra } from '@liquality/types'
 import { addressToString, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
-import get from 'lodash/get'
 import { DateTime } from 'luxon'
 
 export const normalizeBlock = (data: any): Block => ({
@@ -13,7 +12,7 @@ export const normalizeBlock = (data: any): Block => ({
 })
 
 export const normalizeTransaction = (data: any, asset: string): Transaction<terra.InputTransaction> => {
-  const value = get(data, `tx.msg[0].init_coins._coins.${asset}.amount`) || 0
+  const value = data.tx?.msg?.[0]?.init_coins?.get(asset)?.amount || 0
 
   let txParams = data.tx?.msg?.[0]?.init_msg || data.tx?.msg?.[0]?.execute_msg?.claim || {}
 
