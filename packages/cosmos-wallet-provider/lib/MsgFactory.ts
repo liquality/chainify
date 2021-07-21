@@ -24,7 +24,8 @@ export class MsgFactory {
       withdraw: '160000'
     }
     this._builders = {
-      SendMsg: this.buildSendMsg.bind(this)
+      SendMsg: this.buildSendMsg.bind(this),
+      DelegateMsg: this.buildDelegateMsg.bind(this)
     }
   }
 
@@ -45,6 +46,26 @@ export class MsgFactory {
     }
 
     return { msg, fee: this.buildFeeObject(this._gasFeeTable['send']) }
+  }
+
+  private buildDelegateMsg(options: cosmos.CosmosSendOptions): TransactionData {
+    const { from, to, value } = options
+
+    const msg: EncodeObject = {
+      typeUrl: '/cosmos.staking.v1beta1.MsgDelegate',
+      value: {
+        delegatorAddress: addressToString(from),
+        validatorAddress: addressToString(to),
+        amount: coin(
+          value.toNumber(),
+          this._network.stakingCurrency
+            ? this._network.stakingCurrency.coinMinimalDenom
+            : this._network.defaultCurrency.coinMinimalDenom
+        )
+      }
+    }
+
+    return { msg, fee: this.buildFeeObject(this._gasFeeTable['delegate']) }
   }
 
   private buildFeeObject(gas: string): StdFee {

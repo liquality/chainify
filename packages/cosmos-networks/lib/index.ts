@@ -5,6 +5,7 @@ export interface CosmosNetwork extends Network {
   rpcUrl: string
   apiUrl?: string
   defaultCurrency: cosmos.Currency // staking and fee currency
+  stakingCurrency?: cosmos.Currency // staking currency on testnets
   addressPrefix: string
   minimalGasPrice: number
   derivationPath?: string
@@ -36,6 +37,11 @@ const cosmoshub_testnet_photon: CosmosNetwork = {
   defaultCurrency: {
     coinDenom: 'PHOTON',
     coinMinimalDenom: 'uphoton',
+    coinDecimals: 6
+  },
+  stakingCurrency: {
+    coinDenom: 'STAKE',
+    coinMinimalDenom: 'stake',
     coinDecimals: 6
   },
   coinType: '118',

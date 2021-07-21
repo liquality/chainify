@@ -93,3 +93,12 @@ export interface Currency {
   coinMinimalDenom: string
   coinDecimals: number
 }
+
+export interface NormalizeTxOptions {
+  value: number
+  blockHash: string
+  blockNumber: number
+  confirmations: number
+  feePrice: number
+  fee: number
+}

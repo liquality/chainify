@@ -3,8 +3,9 @@ import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality
 import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { normalizeBlock, normalizeTx, getTxHash } from '@liquality/cosmos-utils'
-import { StargateClient } from '@cosmjs/stargate'
+import { logs, parseCoins, Coin, StargateClient } from '@cosmjs/stargate'
 import { fromBase64 } from '@cosmjs/encoding'
+import { Tx } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 
 export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: CosmosNetwork
@@ -48,12 +49,57 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
 
   async getTransactionByHash(txHash: string): Promise<Transaction<cosmos.Tx>> {
     const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
-    const blockHeight = parseInt(response.result.height)
+    const tx = response.result
+    const blockHeight = parseInt(tx.height)
     const block = await this.getBlockByNumber(blockHeight)
     const currentHeight = await this.getBlockHeight()
     const confirmations = currentHeight - block.number
 
-    return normalizeTx(response.result, block.hash, confirmations, this._network.defaultCurrency.coinDecimals)
+    // fetching transferred amount from logs
+    const _log = logs.parseRawLog(tx.tx_result.log)
+    const action = logs.findAttribute(_log, 'message', 'action')
+
+    let transferredValue: number
+    switch (action.value) {
+      case 'send': {
+        const data = logs.findAttribute(_log, 'transfer', 'amount')
+        const decimals = Math.pow(10, this._network.defaultCurrency.coinDecimals)
+        transferredValue = this.coinToNumber(parseCoins(data.value)[0], decimals)
+        break
+      }
+      case 'delegate': {
+        const stakingCurrency = this._network.stakingCurrency
+          ? this._network.stakingCurrency
+          : this._network.defaultCurrency
+        const data = logs.findAttribute(_log, 'delegate', 'amount')
+        const decimals = Math.pow(10, stakingCurrency.coinDecimals)
+        // cosmos logs bug work around
+        transferredValue = this.coinToNumber(parseCoins(data.value + stakingCurrency.coinMinimalDenom)[0], decimals)
+        break
+      }
+
+      default:
+    }
+
+    // calculate feePrice and fee in NON minimal denomination
+    const gasWanted = parseInt(tx.tx_result.gas_wanted)
+    const txDecoded = Tx.decode(fromBase64(tx.tx))
+    const fee = this.coinToNumber(
+      txDecoded.authInfo.fee.amount[0],
+      Math.pow(10, this._network.defaultCurrency.coinDecimals)
+    )
+    const feePrice = fee / gasWanted
+
+    const options = {
+      value: transferredValue,
+      blockHash: block.hash,
+      blockNumber: blockHeight,
+      confirmations,
+      feePrice,
+      fee
+    } as cosmos.NormalizeTxOptions
+
+    return normalizeTx(tx, options)
   }
 
   async getBalance(_addresses: string[]): Promise<BigNumber> {
@@ -108,5 +154,9 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
       block,
       promiseTxs.map((tx) => tx)
     )
+  }
+
+  private coinToNumber(coin: Coin, decimals: number): number {
+    return new BigNumber(coin.amount).dividedBy(new BigNumber(decimals)).toNumber()
   }
 }
