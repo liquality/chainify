@@ -18,4 +18,5 @@ export interface InputTransaction {
     }
     refund: () => void
   }
+  confirmations?: number
 }

@@ -484,9 +484,9 @@ async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: num
   const isERC20 = chain.id.includes('ERC20')
 
   const func = async () => {
+    console.log('before init')
     const initiationTx = await chain.client.swap.initiateSwap(swapParams, fee)
-    await mineBlock(chain)
-
+    console.log('after init')
     const currentBlock = await chain.client.chain.getBlockHeight()
 
     const fundingTx = await chain.client.swap.fundSwap(swapParams, initiationTx.hash, fee)
@@ -529,10 +529,14 @@ async function claimAndVerify(
   fee?: number
 ): Promise<Transaction<any>> {
   if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Claiming ${chain.id}: Watch prompt on wallet`, '\x1b[0m')
+  console.log('before claim')
   const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, secret, fee)
+  console.log('after claim')
   await mineBlock(chain)
   const currentBlock = await chain.client.chain.getBlockHeight()
+  console.log('before find')
   const foundClaimTx = await chain.client.swap.findClaimSwapTransaction(swapParams, initiationTxId, currentBlock)
+  console.log('after find')
   expect(foundClaimTx.hash).to.equal(claimTx.hash)
   return foundClaimTx
 }

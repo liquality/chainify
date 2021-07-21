@@ -135,6 +135,8 @@ export default class TerraWalletProvider extends WalletProvider {
   private _createWallet(mnemonicKey: MnemonicKey): void {
     this._wallet = this._lcdClient.wallet(mnemonicKey)
 
+    console.log(this._wallet.key.accAddress)
+
     this._accAddressKey = this._wallet.key.accAddress
   }
 

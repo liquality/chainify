@@ -55,7 +55,8 @@ export const normalizeTransaction = (
     ...(txParams?.secret && { secret: txParams.secret }),
     _raw: {
       ...txParams,
-      contractAddress
+      contractAddress,
+      confirmations: currentBlock - data.height
     }
   }
 }
