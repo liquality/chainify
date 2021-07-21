@@ -66,7 +66,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
 
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
-    const executeContractMsg = this.getMethod('_executeContractMessage')(initTx._raw.contractAddress, {
+    const executeContractMsg = this._executeContractMessage(initTx._raw.contractAddress, {
       refund: {}
     })
 
