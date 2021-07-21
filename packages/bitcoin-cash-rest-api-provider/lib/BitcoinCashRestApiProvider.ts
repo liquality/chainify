@@ -163,7 +163,7 @@ export default class BitcoinCashRestApiProvider extends NodeProvider implements 
   async getBlockHash(blockNumber: number): Promise<string> {
     const header = (await this.nodeGet('electrumx/block/headers/' + blockNumber + '?count=1'))['headers'][0]
     const hash = Buffer.from(sha256(Buffer.from(sha256(Buffer.from(header, 'hex')), 'hex')), 'hex')
-    return hash.reverse().toString()
+    return hash.reverse().toString('hex')
   }
 
   async getBlockByNumber(blockNumber: number) {
