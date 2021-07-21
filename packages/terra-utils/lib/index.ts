@@ -11,7 +11,11 @@ export const normalizeBlock = (data: any): Block => ({
   parentHash: data.block.last_commit.block_id.hash
 })
 
-export const normalizeTransaction = (data: any, asset: string): Transaction<terra.InputTransaction> => {
+export const normalizeTransaction = (
+  data: any,
+  asset: string,
+  currentBlock?: number
+): Transaction<terra.InputTransaction> => {
   const msg = data.tx?.msg?.[0]
 
   const value = msg?.init_coins?.get(asset)?.amount || 0

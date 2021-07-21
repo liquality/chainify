@@ -70,7 +70,9 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
     }
 
-    return normalizeTransaction(transaction, this._network.asset)
+    const currentBlock = await this.getBlockHeight()
+
+    return normalizeTransaction(transaction, this._network.asset, currentBlock)
   }
 
   async getBalance(_addresses: (string | Address)[]): Promise<BigNumber> {
