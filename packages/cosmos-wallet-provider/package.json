@@ -1,0 +1,45 @@
+{
+  "name": "@liquality/cosmos-wallet-provider",
+  "version": "1.4.3",
+  "description": "Wallet Provider implementation for Cosmos",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@cosmjs/crypto": "^0.25.5",
+    "@cosmjs/proto-signing": "^0.25.5",
+    "@cosmjs/stargate": "^0.25.5",
+    "@liquality/cosmos-networks": "^1.4.3",
+    "@liquality/cosmos-utils": "^1.4.3",
+    "@liquality/types": "^1.4.3",
+    "@liquality/utils": "^1.4.3",
+    "@liquality/wallet-provider": "^1.4.3",
+    "cosmjs-types": "^0.1.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}
