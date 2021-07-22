@@ -1,6 +1,8 @@
-import { Block, Transaction, cosmos } from '@liquality/types'
+import { BigNumber, Block, Transaction, cosmos } from '@liquality/types'
+import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { Sha256 } from '@cosmjs/crypto'
 import { toHex, fromBase64 } from '@cosmjs/encoding'
+import { logs, parseCoins, Coin } from '@cosmjs/stargate'
 
 function normalizeBlock(blockResponse: cosmos.BlockResponse, txs: cosmos.Tx[]) {
   const normalizedBlock: Block<cosmos.Tx> = {
@@ -32,4 +34,36 @@ function getTxHash(txBase64: string): string {
   return '0x' + toHex(digest)
 }
 
-export { normalizeBlock, normalizeTx, getTxHash }
+function getValueFromLogs(log: string, network: CosmosNetwork): number {
+  // fetching transferred amount from logs
+  const _log = logs.parseRawLog(log)
+  const action = logs.findAttribute(_log, 'message', 'action')
+
+  let transferredValue: number
+  switch (action.value) {
+    case 'send': {
+      const data = logs.findAttribute(_log, 'transfer', 'amount')
+      const decimals = Math.pow(10, network.defaultCurrency.coinDecimals)
+      transferredValue = coinToNumber(parseCoins(data.value)[0], decimals)
+      break
+    }
+    case 'delegate': {
+      const stakingCurrency = network.stakingCurrency ? network.stakingCurrency : network.defaultCurrency
+      const data = logs.findAttribute(_log, 'delegate', 'amount')
+      const decimals = Math.pow(10, stakingCurrency.coinDecimals)
+      // cosmos logs bug work around
+      transferredValue = coinToNumber(parseCoins(data.value + stakingCurrency.coinMinimalDenom)[0], decimals)
+      break
+    }
+
+    default:
+  }
+
+  return transferredValue
+}
+
+function coinToNumber(coin: Coin, decimals: number): number {
+  return new BigNumber(coin.amount).dividedBy(new BigNumber(decimals)).toNumber()
+}
+
+export { normalizeBlock, normalizeTx, getTxHash, getValueFromLogs, coinToNumber }
