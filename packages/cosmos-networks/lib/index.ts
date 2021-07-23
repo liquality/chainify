@@ -3,7 +3,7 @@ import { Network, cosmos } from '@liquality/types'
 export interface CosmosNetwork extends Network {
   network: string
   rpcUrl: string
-  apiUrl?: string
+  apiUrl: string
   defaultCurrency: cosmos.Currency // staking and fee currency
   stakingCurrency?: cosmos.Currency // staking currency on testnets
   addressPrefix: string

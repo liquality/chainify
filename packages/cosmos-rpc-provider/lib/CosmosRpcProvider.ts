@@ -10,6 +10,7 @@ import { Tx } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: CosmosNetwork
   private _client: StargateClient
+  private _queriesProvider: NodeProvider
 
   constructor(network: CosmosNetwork) {
     super({
@@ -18,6 +19,11 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
       transformResponse: undefined
     })
     this._network = network
+    this._queriesProvider = new NodeProvider({
+      baseURL: network.apiUrl,
+      responseType: 'text',
+      transformResponse: undefined
+    })
   }
 
   async _initClient() {
@@ -105,6 +111,22 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const txResponse = await this._client.broadcastTx(buf)
 
     return txResponse.toString()
+  }
+
+  async getDelegatedAmount(delegatorAddr: string, validatorAddr: string): Promise<BigNumber> {
+    let response: cosmos.DelegationResponse
+    try {
+      response = await this._queriesProvider.nodeGet(
+        `/cosmos/staking/v1beta1/validators/${validatorAddr}/delegations/${delegatorAddr}`
+      )
+    } catch (err) {
+      if (err.message) {
+        return new BigNumber(0)
+      }
+      throw err
+    }
+
+    return new BigNumber(response.delegation_response.balance.amount)
   }
 
   async parseBlock(block: cosmos.BlockResponse): Promise<Block<cosmos.Tx>> {

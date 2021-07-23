@@ -14,6 +14,8 @@ const txHash_TestNet = '12222DB9AE10ED1ABF1311743EA437B051E520911AF73369A44877EC
 const blockHeight_TestNet = 979038
 const address_1_TestNet = 'cosmos1eejyfynksgjap5kwhkkf57l80rnwkfsswvel8a'
 const address_2_TestNet = 'cosmos1cvm7vja680lpcn5w2g2hmu8pt70z6gxlf5c6gh'
+const address_3_TestNet = 'cosmos1rcpsmmwvy7p56s3vkhq0yufa74x0z0jray5mk2'
+const validator_address_1_TestNet = 'cosmosvaloper14w4fsqpd3daf0afeqqmg9fhkz2v0rvqjzq4wdw'
 
 describe('Cosmos RPC provider', () => {
   let client: Client
@@ -71,6 +73,12 @@ describe('Cosmos RPC provider', () => {
       const balance = await client.chain.getBalance([address_1_TestNet, address_2_TestNet])
 
       expect(balance.isGreaterThan(0)).to.be.true
+    })
+  })
+
+  describe('getDelegatedAmount', () => {
+    it('should return correct delegated amount of tokens to validator', async () => {
+      await client.getMethod('getDelegatedAmount')(address_3_TestNet, validator_address_1_TestNet)
     })
   })
 })
