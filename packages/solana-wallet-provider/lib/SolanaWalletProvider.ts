@@ -100,7 +100,7 @@ export default class SolanaWalletProvider extends WalletProvider {
     await this._getSigner()
     const buffer = Buffer.from(message)
     const signature = nacl.sign.detached(buffer, base58.decode(base58.encode(this._signer.secretKey)))
-    return base58.encode(signature);
+    return base58.encode(signature)
   }
 
   async getConnectedNetwork(): Promise<Network> {
