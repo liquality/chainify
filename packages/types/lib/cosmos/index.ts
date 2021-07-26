@@ -48,6 +48,7 @@ export interface Tx {
   index?: number
   tx_result: TxResult
   tx: string
+  completionTime?: number
 }
 
 export interface BlockId {

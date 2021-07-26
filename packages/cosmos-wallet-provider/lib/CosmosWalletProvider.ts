@@ -106,9 +106,9 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
   async sendTransaction(options: cosmos.CosmosSendOptions): Promise<Transaction<cosmos.Tx>> {
     const [address] = await this.getAddresses()
 
-    const { msg, fee } = this._msgFactory.buildMsg({ ...options, from: address })
+    const { msgs, fee } = this._msgFactory.buildMsg({ ...options, from: address })
 
-    const txRaw = await this._signingClient.sign(addressToString(address), [msg], fee, '')
+    const txRaw = await this._signingClient.sign(addressToString(address), msgs, fee, '')
 
     const txRawBytes = TxRaw.encode(TxRaw.fromJSON(txRaw)).finish()
     const txResponse: BroadcastTxResponse = await this._signingClient.broadcastTx(txRawBytes)

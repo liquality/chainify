@@ -34,12 +34,14 @@ function getTxHash(txBase64: string): string {
   return '0x' + toHex(digest)
 }
 
-function getValueFromLogs(log: string, network: CosmosNetwork): number {
+function getValueFromLogs(log: string, network: CosmosNetwork): { transferredValue: number; completionTime?: number } {
   // fetching transferred amount from logs
   const _log = logs.parseRawLog(log)
+
   const action = logs.findAttribute(_log, 'message', 'action')
 
   let transferredValue: number
+  let completionTime: number
   switch (action.value) {
     case 'send': {
       const data = logs.findAttribute(_log, 'transfer', 'amount')
@@ -55,11 +57,33 @@ function getValueFromLogs(log: string, network: CosmosNetwork): number {
       transferredValue = coinToNumber(parseCoins(data.value + stakingCurrency.coinMinimalDenom)[0], decimals)
       break
     }
+    case 'begin_unbonding': {
+      const data = logs.findAttribute(_log, 'transfer', 'amount')
+      const decimals = Math.pow(10, network.defaultCurrency.coinDecimals)
+      transferredValue = coinToNumber(parseCoins(data.value)[0], decimals)
+
+      const time = logs.findAttribute(_log, 'unbond', 'completion_time').value
+      completionTime = Math.floor(new Date(time).getTime() / 1000)
+
+      break
+    }
+    case 'withdraw_delegator_reward': {
+      const data = logs.findAttribute(_log, 'withdraw_rewards', 'amount')
+
+      if (data.value == '') {
+        transferredValue = 0
+        break
+      }
+
+      const decimals = Math.pow(10, network.defaultCurrency.coinDecimals)
+      transferredValue = coinToNumber(parseCoins(data.value)[0], decimals)
+      break
+    }
 
     default:
   }
 
-  return transferredValue
+  return { transferredValue, completionTime }
 }
 
 function coinToNumber(coin: Coin, decimals: number): number {

@@ -14,7 +14,9 @@ const mnemonic_1_TestNet = 'vacuum photo autumn dream friend table ski motion ca
 const address_1_TestNet = 'cosmos1rcpsmmwvy7p56s3vkhq0yufa74x0z0jray5mk2'
 
 // const mnemonic_2_TestNet = 'omit sudden employ fee ozone unfair syrup concert indoor april board age'
-const address_2_TestNet = 'cosmos1cvm7vja680lpcn5w2g2hmu8pt70z6gxlf5c6gh'
+const address_2_TestNet = 'cosmos1ekqwvtcl2vsxlhm3pua7t2ccyywewmkafcmkaw'
+
+const validator_1_TestNet = 'cosmosvaloper14w4fsqpd3daf0afeqqmg9fhkz2v0rvqjzq4wdw'
 
 const msg = 'liquality'
 const msgSignature =
@@ -61,7 +63,7 @@ describe('Cosmos Wallet provider', () => {
   })
 
   describe('signMessage', () => {
-    it('should have a correct network', async () => {
+    it('should sign message', async () => {
       const signature = await client.wallet.signMessage(msg, address_1_TestNet)
       expect(signature).to.be.equal(msgSignature)
     })
@@ -73,6 +75,46 @@ describe('Cosmos Wallet provider', () => {
         type: cosmos.MsgType.SendMsg,
         to: address_2_TestNet,
         value: new BigNumber(1)
+      } as cosmos.CosmosSendOptions
+
+      const tx = await client.chain.sendTransaction(options)
+      expect(tx._raw !== null).to.be.true
+    })
+  })
+
+  describe('delegateTransaction', () => {
+    it('should delegate tokens to validators', async () => {
+      const options = {
+        type: cosmos.MsgType.DelegateMsg,
+        to: validator_1_TestNet,
+        value: new BigNumber(1)
+      } as cosmos.CosmosSendOptions
+
+      const tx = await client.chain.sendTransaction(options)
+      expect(tx._raw !== null).to.be.true
+    })
+  })
+
+  // leave this test only for manual testing
+  xdescribe('undelegateTransaction', () => {
+    it('should delegate tokens to validators', async () => {
+      const options = {
+        type: cosmos.MsgType.UndelegateMsg,
+        to: validator_1_TestNet,
+        value: new BigNumber(1)
+      } as cosmos.CosmosSendOptions
+
+      const tx = await client.chain.sendTransaction(options)
+      expect(tx._raw !== null).to.be.true
+    })
+  })
+
+  // leave this test only for manual testing
+  xdescribe('withdrawTransaction', () => {
+    it('should withdraw tokens', async () => {
+      const options = {
+        type: cosmos.MsgType.WithdrawMsg,
+        to: validator_1_TestNet
       } as cosmos.CosmosSendOptions
 
       const tx = await client.chain.sendTransaction(options)

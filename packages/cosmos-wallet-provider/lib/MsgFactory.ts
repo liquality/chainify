@@ -5,7 +5,7 @@ import { StdFee, coin } from '@cosmjs/stargate'
 import { EncodeObject } from '@cosmjs/proto-signing'
 
 export interface TransactionData {
-  msg: EncodeObject
+  msgs: EncodeObject[]
   fee: StdFee
 }
 
@@ -20,12 +20,16 @@ export class MsgFactory {
       send: '80000',
       delegate: '160000',
       transfer: '160000',
-      undelegate: '160000',
-      withdraw: '160000'
+      undelegate: '180000',
+      withdraw: '120000',
+      undelegateAndWithdraw: '300000'
     }
     this._builders = {
       SendMsg: this.buildSendMsg.bind(this),
-      DelegateMsg: this.buildDelegateMsg.bind(this)
+      DelegateMsg: this.buildDelegateMsg.bind(this),
+      UndelegateMsg: this.buildUndelegateMsg.bind(this),
+      WithdrawMsg: this.buildWithdrawMsg.bind(this),
+      UndelegateAndWithdrawMsg: this.buildUndelegateAndWithdraw.bind(this)
     }
   }
 
@@ -45,7 +49,7 @@ export class MsgFactory {
       }
     }
 
-    return { msg, fee: this.buildFeeObject(this._gasFeeTable['send']) }
+    return { msgs: [msg], fee: this.buildFeeObject(this._gasFeeTable['send']) }
   }
 
   private buildDelegateMsg(options: cosmos.CosmosSendOptions): TransactionData {
@@ -65,7 +69,48 @@ export class MsgFactory {
       }
     }
 
-    return { msg, fee: this.buildFeeObject(this._gasFeeTable['delegate']) }
+    return { msgs: [msg], fee: this.buildFeeObject(this._gasFeeTable['delegate']) }
+  }
+
+  private buildUndelegateMsg(options: cosmos.CosmosSendOptions): TransactionData {
+    const { from, to, value } = options
+
+    const msg: EncodeObject = {
+      typeUrl: '/cosmos.staking.v1beta1.MsgUndelegate',
+      value: {
+        delegatorAddress: addressToString(from),
+        validatorAddress: addressToString(to),
+        amount: coin(
+          value.toNumber(),
+          this._network.stakingCurrency
+            ? this._network.stakingCurrency.coinMinimalDenom
+            : this._network.defaultCurrency.coinMinimalDenom
+        )
+      }
+    }
+
+    return { msgs: [msg], fee: this.buildFeeObject(this._gasFeeTable['undelegate']) }
+  }
+
+  private buildWithdrawMsg(options: cosmos.CosmosSendOptions): TransactionData {
+    const { from, to } = options
+
+    const msg: EncodeObject = {
+      typeUrl: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward',
+      value: {
+        delegatorAddress: addressToString(from),
+        validatorAddress: addressToString(to)
+      }
+    }
+
+    return { msgs: [msg], fee: this.buildFeeObject(this._gasFeeTable['withdraw']) }
+  }
+
+  private buildUndelegateAndWithdraw(options: cosmos.CosmosSendOptions): TransactionData {
+    const { msgs: umsgs } = this.buildUndelegateMsg(options)
+    const { msgs: wmsgs } = this.buildWithdrawMsg(options)
+
+    return { msgs: [...umsgs, ...wmsgs], fee: this.buildFeeObject(this._gasFeeTable['withdraw']) }
   }
 
   private buildFeeObject(gas: string): StdFee {
