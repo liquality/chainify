@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-fee-api-provider",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,8 +20,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/node-provider": "^1.4.4",
-    "@liquality/types": "^1.4.4"
+    "@liquality/node-provider": "^1.4.5",
+    "@liquality/types": "^1.4.5"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

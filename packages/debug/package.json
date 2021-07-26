@@ -1,6 +1,6 @@
 {
   "name": "@liquality/debug",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
