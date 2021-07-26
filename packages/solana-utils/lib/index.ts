@@ -14,6 +14,7 @@ import filter from 'lodash/filter'
 
 import { initSchema, claimSchema, refundSchema, InitData, Template as _Template } from './layouts'
 
+const FINALIZED_CONFIRMATIONS = 31 // Confirmations of a solana transaction with finalized status
 export const Template = _Template
 
 export function validateAddress(_address: Address | string) {
@@ -174,7 +175,7 @@ export function normalizeTransaction(
   }
 
   if (signatureStatus?.value?.confirmationStatus === 'finalized') {
-    transactionData.confirmations = 31
+    transactionData.confirmations = FINALIZED_CONFIRMATIONS
   }
 
   return {
