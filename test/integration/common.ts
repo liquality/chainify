@@ -25,6 +25,11 @@ import { NearRpcProvider } from '../../packages/near-rpc-provider/lib'
 import { NearJsWalletProvider } from '../../packages/near-js-wallet-provider/lib'
 import { NearSwapProvider } from '../../packages/near-swap-provider/lib'
 import { NearSwapFindProvider } from '../../packages/near-swap-find-provider/lib'
+import { SolanaRpcProvider } from '../../packages/solana-rpc-provider/lib'
+import { SolanaWalletProvider } from '../../packages/solana-wallet-provider/lib'
+import { SolanaSwapProvider } from '../../packages/solana-swap-provider/lib'
+import { SolanaSwapFindProvider } from '../../packages/solana-swap-find-provider/lib'
+
 import { BigNumber, Transaction, bitcoin, Network, SwapParams, SendOptions, Address } from '../../packages/types/lib'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
@@ -212,6 +217,19 @@ nearWithJs.addProvider(
 nearWithJs.addProvider(new NearSwapProvider())
 nearWithJs.addProvider(new NearSwapFindProvider(config.near.network.helperUrl))
 
+// Solana
+const solana = new Client()
+solana.addProvider(new SolanaRpcProvider(config.solana.network))
+solana.addProvider(
+  new SolanaWalletProvider({
+    network: config.solana.network,
+    mnemonic: config.solana.senderMnemonic,
+    derivationPath: `m/44'/${config.solana.network.coinType}'/${config.solana.walletIndex}'/0'`
+  })
+)
+solana.addProvider(new SolanaSwapProvider(config.solana.network))
+solana.addProvider(new SolanaSwapFindProvider(config.solana.network))
+
 interface Chain {
   id: string
   name: string
@@ -256,7 +274,8 @@ const chains: { [index: string]: Chain } = {
   erc20WithNode: { id: 'ERC20 Node', name: 'ethereum', client: erc20WithNode },
   erc20WithLedger: { id: 'ERC20 Ledger', name: 'ethereum', client: erc20WithLedger },
   erc20WithJs: { id: 'ERC20 Js', name: 'ethereum', client: erc20WithJs },
-  nearWithJs: { id: 'Near Js', name: 'near', client: nearWithJs }
+  nearWithJs: { id: 'Near Js', name: 'near', client: nearWithJs },
+  solana: { id: 'Solana', name: 'solana', client: solana }
 }
 
 async function getSwapParams(chain: Chain, secretHash: string): Promise<SwapParams> {
@@ -316,6 +335,30 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
       }
       break
     }
+
+    case 'solana': {
+      const solana = new Client()
+
+      solana.addProvider(new SolanaRpcProvider(config.solana.network))
+      solana.addProvider(
+        new SolanaWalletProvider({
+          network: config.solana.network,
+          mnemonic: config.solana.senderMnemonic,
+          derivationPath: `m/44'/501'/${config.solana.walletIndex}'/0'`
+        })
+      )
+
+      const balance = await solana.chain.getBalance([config.near.senderAddress])
+
+      if (balance.gt(config.solana.value)) {
+        await solana.chain.sendTransaction({
+          to: address,
+          value: config.solana.value
+        })
+      }
+
+      break
+    }
   }
 
   await mineBlock(chain)
@@ -332,6 +375,17 @@ async function fundWallet(chain: Chain) {
 
 async function getNewAddress(chain: Chain, refund = false): Promise<Address> {
   switch (chain.name) {
+    case 'solana': {
+      if (refund) {
+        return {
+          address: config.solana.senderAddress
+        }
+      }
+      return {
+        address: config.solana.receiverAddress
+      }
+    }
+
     case 'near': {
       if (refund) {
         return {
@@ -358,6 +412,12 @@ async function getRandomAddress(chain: Chain): Promise<Address> {
     case 'near': {
       return {
         address: config.near.receiverAddress
+      }
+    }
+
+    case 'solana': {
+      return {
+        address: config.solana.receiverAddress
       }
     }
 
@@ -437,11 +497,13 @@ async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: num
     const currentBlock = await chain.client.chain.getBlockHeight()
 
     const fundingTx = await chain.client.swap.fundSwap(swapParams, initiationTx.hash, fee)
+
     if (isERC20) {
       await mineBlock(chain)
     }
 
     const foundInitiationTx = await chain.client.swap.findInitiateSwapTransaction(swapParams, currentBlock)
+
     expect(foundInitiationTx.hash).to.equal(initiationTx.hash)
 
     const foundFundingTx = await chain.client.swap.findFundSwapTransaction(
@@ -449,6 +511,7 @@ async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: num
       initiationTx.hash,
       currentBlock + 1
     )
+
     if (isERC20) {
       expect(foundFundingTx.hash).to.equal(fundingTx.hash)
     }

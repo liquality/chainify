@@ -5,6 +5,7 @@ import { Client } from '../../../client/lib'
 import { NearJsWalletProvider } from '../../lib'
 import { NearRpcProvider } from '../../../near-rpc-provider'
 import { NearNetworks } from '../../../near-networks'
+import { describeExternal } from '../../../../test/integration/common'
 
 chai.config.truncateThreshold = 0
 
@@ -12,7 +13,7 @@ const network = NearNetworks.near_testnet
 const derivationPath = `m/44'/397'/0'`
 const rpcProvider = new NearRpcProvider(network)
 
-describe('Near JS Wallet Provider provider', () => {
+describeExternal('Near JS Wallet Provider provider', () => {
   describe('getAddresses', () => {
     it('should return top level account', async () => {
       const client = new Client()
