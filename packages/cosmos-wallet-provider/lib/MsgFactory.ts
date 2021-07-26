@@ -21,15 +21,13 @@ export class MsgFactory {
       delegate: '160000',
       transfer: '160000',
       undelegate: '180000',
-      withdraw: '120000',
-      undelegateAndWithdraw: '300000'
+      withdraw: '120000'
     }
     this._builders = {
       SendMsg: this.buildSendMsg.bind(this),
       DelegateMsg: this.buildDelegateMsg.bind(this),
       UndelegateMsg: this.buildUndelegateMsg.bind(this),
-      WithdrawMsg: this.buildWithdrawMsg.bind(this),
-      UndelegateAndWithdrawMsg: this.buildUndelegateAndWithdraw.bind(this)
+      WithdrawMsg: this.buildWithdrawMsg.bind(this)
     }
   }
 
@@ -104,13 +102,6 @@ export class MsgFactory {
     }
 
     return { msgs: [msg], fee: this.buildFeeObject(this._gasFeeTable['withdraw']) }
-  }
-
-  private buildUndelegateAndWithdraw(options: cosmos.CosmosSendOptions): TransactionData {
-    const { msgs: umsgs } = this.buildUndelegateMsg(options)
-    const { msgs: wmsgs } = this.buildWithdrawMsg(options)
-
-    return { msgs: [...umsgs, ...wmsgs], fee: this.buildFeeObject(this._gasFeeTable['withdraw']) }
   }
 
   private buildFeeObject(gas: string): StdFee {
