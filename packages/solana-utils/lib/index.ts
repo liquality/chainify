@@ -14,6 +14,11 @@ import filter from 'lodash/filter'
 
 import { initSchema, claimSchema, refundSchema, InitData, Template as _Template } from './layouts'
 
+const CONSTANTS = {
+  ADDRESS_LENGTH: 44,
+  NUMBER_OF_CONFIRMATIONS: 31
+}
+
 export const Template = _Template
 
 export function validateAddress(_address: Address | string) {
@@ -23,7 +28,7 @@ export function validateAddress(_address: Address | string) {
     throw new InvalidAddressError(`Invalid address: ${address}`)
   }
 
-  if (address.length !== 44) {
+  if (address.length !== CONSTANTS.ADDRESS_LENGTH) {
     throw new InvalidAddressError(`Invalid address. Length should be 44`)
   }
 }
@@ -174,7 +179,7 @@ export function normalizeTransaction(
   }
 
   if (signatureStatus?.value?.confirmationStatus === 'finalized') {
-    transactionData.confirmations = 31
+    transactionData.confirmations = CONSTANTS.NUMBER_OF_CONFIRMATIONS
   }
 
   return {
