@@ -81,4 +81,10 @@ describe('Cosmos RPC provider', () => {
       await client.getMethod('getDelegatedAmount')(address_3_TestNet, validator_address_1_TestNet)
     })
   })
+
+  describe('getReward', () => {
+    it('should return correct reward from delegation of tokens to validator', async () => {
+      await client.getMethod('getReward')(address_3_TestNet, validator_address_1_TestNet)
+    })
+  })
 })

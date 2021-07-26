@@ -3,7 +3,7 @@ import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality
 import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { normalizeBlock, normalizeTx, getTxHash, coinToNumber, getValueFromLogs } from '@liquality/cosmos-utils'
-import { StargateClient } from '@cosmjs/stargate'
+import { StargateClient, Coin } from '@cosmjs/stargate'
 import { fromBase64 } from '@cosmjs/encoding'
 import { Tx } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 
@@ -67,7 +67,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     const fee = coinToNumber(txDecoded.authInfo.fee.amount[0], Math.pow(10, this._network.defaultCurrency.coinDecimals))
     const feePrice = fee / gasWanted
 
-    const transferredValue = getValueFromLogs(tx.tx_result.log, this._network)
+    const { transferredValue, completionTime } = getValueFromLogs(tx.tx_result.log, this._network)
 
     const options = {
       value: transferredValue,
@@ -78,7 +78,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
       fee
     } as cosmos.NormalizeTxOptions
 
-    return normalizeTx(tx, options)
+    return normalizeTx({ ...tx, completionTime }, options)
   }
 
   async getBalance(_addresses: string[]): Promise<BigNumber> {
@@ -113,7 +113,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     return txResponse.toString()
   }
 
-  async getDelegatedAmount(delegatorAddr: string, validatorAddr: string): Promise<BigNumber> {
+  async getDelegatedAmount(delegatorAddr: string, validatorAddr: string): Promise<Coin | null> {
     let response: cosmos.DelegationResponse
     try {
       response = await this._queriesProvider.nodeGet(
@@ -121,12 +121,28 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
       )
     } catch (err) {
       if (err.message) {
-        return new BigNumber(0)
+        null
       }
       throw err
     }
 
-    return new BigNumber(response.delegation_response.balance.amount)
+    return response.delegation_response.balance
+  }
+
+  async getReward(delegatorAddr: string, validatorAddr: string): Promise<Coin[] | null> {
+    let response: { rewards: Coin[] }
+    try {
+      response = await this._queriesProvider.nodeGet(
+        `/cosmos/distribution/v1beta1/delegators/${delegatorAddr}/rewards/${validatorAddr}`
+      )
+    } catch (err) {
+      if (err.message) {
+        return null
+      }
+      throw err
+    }
+
+    return response.rewards
   }
 
   async parseBlock(block: cosmos.BlockResponse): Promise<Block<cosmos.Tx>> {
