@@ -43,6 +43,8 @@ function getValueFromLogs(log: string, network: CosmosNetwork): { transferredVal
   let transferredValue: number
   let completionTime: number
   switch (action.value) {
+    // IBC transfer
+    case 'transfer':
     case 'send': {
       const data = logs.findAttribute(_log, 'transfer', 'amount')
       const decimals = Math.pow(10, network.defaultCurrency.coinDecimals)

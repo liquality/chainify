@@ -3,6 +3,7 @@ import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
 import { StdFee, coin } from '@cosmjs/stargate'
 import { EncodeObject } from '@cosmjs/proto-signing'
+import Long from 'long'
 
 export interface TransactionData {
   msgs: EncodeObject[]
@@ -19,7 +20,7 @@ export class MsgFactory {
     this._gasFeeTable = {
       send: '80000',
       delegate: '160000',
-      transfer: '160000',
+      transfer: '100000',
       undelegate: '180000',
       withdraw: '120000'
     }
@@ -27,7 +28,8 @@ export class MsgFactory {
       SendMsg: this.buildSendMsg.bind(this),
       DelegateMsg: this.buildDelegateMsg.bind(this),
       UndelegateMsg: this.buildUndelegateMsg.bind(this),
-      WithdrawMsg: this.buildWithdrawMsg.bind(this)
+      WithdrawMsg: this.buildWithdrawMsg.bind(this),
+      TransferMsg: this.buildTransferMsg.bind(this)
     }
   }
 
@@ -102,6 +104,27 @@ export class MsgFactory {
     }
 
     return { msgs: [msg], fee: this.buildFeeObject(this._gasFeeTable['withdraw']) }
+  }
+
+  // IBC Transfer Msg
+  private buildTransferMsg(options: cosmos.CosmosSendOptions): TransactionData {
+    const { from, to, value } = options
+
+    const msg: EncodeObject = {
+      typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
+      value: {
+        sourcePort: 'transfer',
+        sourceChannel: 'channel-2',
+        token: coin(value.toNumber(), this._network.defaultCurrency.coinMinimalDenom),
+        sender: addressToString(from),
+        receiver: addressToString(to),
+        timeoutHeight: undefined,
+        // covert to nanoseconds and add one second on top of the Unix timestamp
+        timeoutTimestamp: Long.fromNumber(Date.now() * 1000000 + 1000000000)
+      }
+    }
+
+    return { msgs: [msg], fee: this.buildFeeObject(this._gasFeeTable['transfer']) }
   }
 
   private buildFeeObject(gas: string): StdFee {

@@ -121,4 +121,17 @@ describe('Cosmos Wallet provider', () => {
       expect(tx._raw !== null).to.be.true
     })
   })
+
+  describe('transferTransaction', () => {
+    it('should transfer tokens', async () => {
+      const options = {
+        type: cosmos.MsgType.TransferMsg,
+        to: address_2_TestNet,
+        value: new BigNumber(100)
+      } as cosmos.CosmosSendOptions
+
+      const tx = await client.chain.sendTransaction(options)
+      expect(tx._raw !== null).to.be.true
+    })
+  })
 })
