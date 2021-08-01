@@ -55,7 +55,7 @@ const goerli: EthereumNetwork = {
 
 const rsk_mainnet: EthereumNetwork = {
   name: 'rsk_mainnet',
-  coinType: '137',
+  coinType: '60',
   networkId: 30,
   chainId: 30,
   isTestnet: false
