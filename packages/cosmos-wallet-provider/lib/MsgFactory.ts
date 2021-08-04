@@ -34,7 +34,7 @@ export class MsgFactory {
   }
 
   buildMsg(options: cosmos.CosmosSendOptions): TransactionData {
-    return this._builders[options.type](options)
+    return this._builders[options.type ? options.type : cosmos.MsgType.SendMsg](options)
   }
 
   private buildSendMsg(options: cosmos.CosmosSendOptions): TransactionData {

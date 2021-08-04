@@ -69,6 +69,18 @@ describe('Cosmos Wallet provider', () => {
     })
   })
 
+  describe('sendTransaction_missing_type', () => {
+    it('should send transaction', async () => {
+      const options = {
+        to: address_2_TestNet,
+        value: new BigNumber(1)
+      } as cosmos.CosmosSendOptions
+
+      const tx = await client.chain.sendTransaction(options)
+      expect(tx._raw !== null).to.be.true
+    })
+  })
+
   describe('sendTransaction', () => {
     it('should send transaction', async () => {
       const options = {
