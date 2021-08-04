@@ -52,11 +52,12 @@ export const normalizeTransaction = (
   return {
     value: Number(value),
     hash: data.txhash,
+    confirmations: Math.min(currentBlock - data.height, 10),
     ...(txParams?.secret && { secret: txParams.secret }),
     _raw: {
       ...txParams,
       contractAddress,
-      confirmations: currentBlock - data.height
+      
     }
   }
 }
