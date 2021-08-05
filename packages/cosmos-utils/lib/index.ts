@@ -92,4 +92,8 @@ function coinToNumber(coin: Coin, decimals: number): number {
   return new BigNumber(coin.amount).dividedBy(new BigNumber(decimals)).toNumber()
 }
 
-export { normalizeBlock, normalizeTx, getTxHash, getValueFromLogs, coinToNumber }
+function validateAddress(address: string): string {
+  return address.startsWith('0x') ? address : '0x' + address
+}
+
+export { normalizeBlock, normalizeTx, getTxHash, getValueFromLogs, coinToNumber, validateAddress }

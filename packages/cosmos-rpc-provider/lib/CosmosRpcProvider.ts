@@ -2,7 +2,14 @@ import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
-import { normalizeBlock, normalizeTx, getTxHash, coinToNumber, getValueFromLogs } from '@liquality/cosmos-utils'
+import {
+  normalizeBlock,
+  normalizeTx,
+  getTxHash,
+  coinToNumber,
+  getValueFromLogs,
+  validateAddress
+} from '@liquality/cosmos-utils'
 import { StargateClient, Coin } from '@cosmjs/stargate'
 import { fromBase64 } from '@cosmjs/encoding'
 import { Tx } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
@@ -37,7 +44,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   }
 
   async getBlockByHash(blockHash: string): Promise<Block<cosmos.Tx>> {
-    const response: cosmos.RpcResponse = await this.nodeGet(`/block_by_hash?hash=${blockHash}`)
+    const response: cosmos.RpcResponse = await this.nodeGet(`/block_by_hash?hash=${validateAddress(blockHash)}`)
 
     return this.parseBlock(response.result)
   }
@@ -54,7 +61,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
   }
 
   async getTransactionByHash(txHash: string): Promise<Transaction<cosmos.Tx>> {
-    const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
+    const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${validateAddress(txHash)}`)
     const tx = response.result
     const blockHeight = parseInt(tx.height)
     const block = await this.getBlockByNumber(blockHeight)
@@ -150,7 +157,7 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
       block.block.data.txs.map(async (tx: string) => {
         try {
           const txHash = await getTxHash(tx)
-          const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${txHash}`)
+          const response: cosmos.RpcResponse = await this.nodeGet(`/tx?hash=${validateAddress(txHash)}`)
           return response.result
         } catch (err) {
           if (err.message) {

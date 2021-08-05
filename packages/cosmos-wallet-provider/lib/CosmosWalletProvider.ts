@@ -110,9 +110,9 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
 
     const txRaw = await this._signingClient.sign(addressToString(address), msgs, fee, '')
 
-    const txRawBytes = TxRaw.encode(TxRaw.fromJSON(txRaw)).finish()
+    const txRawBytes = TxRaw.encode(txRaw).finish()
     const txResponse: BroadcastTxResponse = await this._signingClient.broadcastTx(txRawBytes)
 
-    return this.getMethod('getTransactionByHash')('0x' + txResponse.transactionHash)
+    return this.getMethod('getTransactionByHash')(txResponse.transactionHash)
   }
 }
