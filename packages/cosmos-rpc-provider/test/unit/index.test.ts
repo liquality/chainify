@@ -76,6 +76,14 @@ describe('Cosmos RPC provider', () => {
     })
   })
 
+  describe('getFees', () => {
+    it('should return correct fees', async () => {
+      const fees = await client.chain.getFees()
+
+      expect(CosmosNetworks.cosmoshub_testnet_photon.minimalGasPrice).to.be.equal(fees.slow.fee)
+    })
+  })
+
   describe('getDelegatedAmount', () => {
     it('should return correct delegated amount of tokens to validator', async () => {
       await client.getMethod('getDelegatedAmount')(address_3_TestNet, validator_address_1_TestNet)

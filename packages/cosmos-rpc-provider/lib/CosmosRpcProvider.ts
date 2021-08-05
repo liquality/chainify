@@ -1,5 +1,5 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Block, Transaction, cosmos } from '@liquality/types'
+import { BigNumber, ChainProvider, Block, Transaction, FeeProvider, FeeDetails, cosmos } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import {
@@ -14,7 +14,7 @@ import { StargateClient, Coin } from '@cosmjs/stargate'
 import { fromBase64 } from '@cosmjs/encoding'
 import { Tx } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 
-export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider> {
+export default class CosmosRpcProvider extends NodeProvider implements Partial<ChainProvider>, FeeProvider {
   _network: CosmosNetwork
   private _client: StargateClient
   private _queriesProvider: NodeProvider
@@ -150,6 +150,21 @@ export default class CosmosRpcProvider extends NodeProvider implements Partial<C
     }
 
     return response.rewards
+  }
+
+  async getFees(): Promise<FeeDetails> {
+    const fee = this._network.minimalGasPrice
+    return {
+      slow: {
+        fee
+      },
+      average: {
+        fee
+      },
+      fast: {
+        fee
+      }
+    }
   }
 
   async parseBlock(block: cosmos.BlockResponse): Promise<Block<cosmos.Tx>> {
