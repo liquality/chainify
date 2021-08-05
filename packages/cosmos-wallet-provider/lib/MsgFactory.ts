@@ -108,19 +108,19 @@ export class MsgFactory {
 
   // IBC Transfer Msg
   private buildTransferMsg(options: cosmos.CosmosSendOptions): TransactionData {
-    const { from, to, value } = options
+    const { from, to, value, sourcePort, sourceChannel } = options
 
     const msg: EncodeObject = {
       typeUrl: '/ibc.applications.transfer.v1.MsgTransfer',
       value: {
-        sourcePort: 'transfer',
-        sourceChannel: 'channel-2',
+        sourcePort,
+        sourceChannel,
         token: coin(value.toNumber(), this._network.defaultCurrency.coinMinimalDenom),
         sender: addressToString(from),
         receiver: addressToString(to),
         timeoutHeight: undefined,
         // covert to nanoseconds and add one second on top of the Unix timestamp
-        timeoutTimestamp: Long.fromNumber(Date.now() * 1000000 + 1000000000)
+        timeoutTimestamp: Long.fromNumber(Date.now() * Math.pow(10, 6) + Math.pow(10, 9))
       }
     }
 

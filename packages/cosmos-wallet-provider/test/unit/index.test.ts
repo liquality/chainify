@@ -137,6 +137,8 @@ describe('Cosmos Wallet provider', () => {
   describe('transferTransaction', () => {
     it('should transfer tokens', async () => {
       const options = {
+        sourcePort: 'transfer',
+        sourceChannel: 'channel-2',
         type: cosmos.MsgType.TransferMsg,
         to: address_2_TestNet,
         value: new BigNumber(100)

@@ -12,6 +12,8 @@ export enum MsgType {
 export interface CosmosSendOptions extends SendOptions {
   type: MsgType
   from?: Address | string
+  sourcePort?: string
+  sourceChannel?: string
 }
 
 export interface RpcResponse {
