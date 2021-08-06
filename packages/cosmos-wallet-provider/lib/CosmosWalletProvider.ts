@@ -4,6 +4,7 @@ import { BigNumber, Address, ChainProvider, Transaction, Network, cosmos } from 
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
+import { StdSignDoc, Secp256k1HdWallet, AminoSignResponse } from '@cosmjs/amino'
 import { SigningStargateClient, BroadcastTxResponse } from '@cosmjs/stargate'
 import { Secp256k1, Slip10, Slip10Curve, stringToPath } from '@cosmjs/crypto'
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
@@ -20,6 +21,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
   private _mnemonic: string
   private _derivationPath: string
   private _signingClient: SigningStargateClient
+  private _aminoSigner: Secp256k1HdWallet
   private _addressCache: { [key: string]: Address }
   private _privateKey: any
   private _msgFactory: MsgFactory
@@ -41,6 +43,10 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     }
 
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this._mnemonic, {
+      prefix: this._network.addressPrefix
+    })
+
+    this._aminoSigner = await Secp256k1HdWallet.fromMnemonic(this._mnemonic, {
       prefix: this._network.addressPrefix
     })
 
@@ -83,6 +89,10 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
       Buffer.from(signature.s(32)).toString('hex') +
       signature.recovery.toString()
     )
+  }
+
+  async signAmino(signerAddr: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
+    return this._aminoSigner.signAmino(signerAddr, signDoc)
   }
 
   async getConnectedNetwork(): Promise<Network> {
