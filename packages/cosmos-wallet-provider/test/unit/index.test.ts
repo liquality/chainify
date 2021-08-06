@@ -36,7 +36,7 @@ describe('Cosmos Wallet provider', () => {
     walletProvider = new CosmosWalletProvider({
       network: CosmosNetworks.cosmoshub_testnet_photon,
       mnemonic: mnemonic_1_TestNet,
-      derivationPath: ''
+      derivationPath: `m/44'/118'/0'/0/0`
     })
     client.addProvider(walletProvider)
   })

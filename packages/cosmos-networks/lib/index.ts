@@ -8,8 +8,6 @@ export interface CosmosNetwork extends Network {
   stakingCurrency?: cosmos.Currency // staking currency on testnets
   addressPrefix: string
   minimalGasPrice: number
-  derivationPath?: string
-  faucetUrl?: string
 }
 
 const cosmoshub_mainnet_atom: CosmosNetwork = {
@@ -33,7 +31,6 @@ const cosmoshub_testnet_photon: CosmosNetwork = {
   network: 'cosmoshub-testnet',
   rpcUrl: 'https://rpc.testnet.cosmos.network:443',
   apiUrl: 'https://api.testnet.cosmos.network:443',
-  faucetUrl: 'https://faucet.testnet.cosmos.network:443',
   defaultCurrency: {
     coinDenom: 'PHOTON',
     coinMinimalDenom: 'uphoton',

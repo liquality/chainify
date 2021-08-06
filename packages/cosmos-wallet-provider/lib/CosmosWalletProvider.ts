@@ -3,9 +3,9 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { BigNumber, Address, ChainProvider, Transaction, Network, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
-import { DirectSecp256k1HdWallet, makeCosmoshubPath } from '@cosmjs/proto-signing'
+import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
 import { SigningStargateClient, BroadcastTxResponse } from '@cosmjs/stargate'
-import { Secp256k1, Slip10, Slip10Curve } from '@cosmjs/crypto'
+import { Secp256k1, Slip10, Slip10Curve, stringToPath } from '@cosmjs/crypto'
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 import { mnemonicToSeed } from 'bip39'
 
@@ -46,7 +46,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
 
     this._signingClient = await SigningStargateClient.connectWithSigner(this._network.rpcUrl, wallet)
     const seed = await mnemonicToSeed(this._mnemonic)
-    this._privateKey = Slip10.derivePath(Slip10Curve.Secp256k1, seed, makeCosmoshubPath(0)).privkey
+    this._privateKey = Slip10.derivePath(Slip10Curve.Secp256k1, seed, stringToPath(this._derivationPath)).privkey
 
     const [account] = await wallet.getAccounts()
     const result = new Address({
@@ -114,5 +114,9 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     const txResponse: BroadcastTxResponse = await this._signingClient.broadcastTx(txRawBytes)
 
     return this.getMethod('getTransactionByHash')(txResponse.transactionHash)
+  }
+
+  canUpdateFee(): boolean {
+    return false
   }
 }
