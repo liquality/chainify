@@ -52,7 +52,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     const seed = await mnemonicToSeed(this._mnemonic)
     this._privateKey = Slip10.derivePath(Slip10Curve.Secp256k1, seed, stringToPath(this._derivationPath)).privkey
     const [account] = await wallet.getAccounts()
-    
+
     const result = new Address({
       address: account.address,
       derivationPath: this._derivationPath,
@@ -79,7 +79,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
 
   async signMessage(message: string): Promise<string> {
     await this.getAddresses()
-    
+
     const buffer = Buffer.from(message)
     const signature = await Secp256k1.createSignature(buffer, this._privateKey)
     return (
@@ -117,24 +117,22 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     const { msgs, fee } = this._msgFactory.buildMsg({ ...options, from: address })
 
     const txResponse = await this._broadcastTx(address, msgs, fee)
-  
+
     return this.getMethod('getTransactionByHash')(txResponse.transactionHash)
   }
 
-  async sendInjectionTx(
-    tx: StdTx,
-  ): Promise<Buffer> {
+  async sendInjectionTx(tx: StdTx): Promise<Buffer> {
     const [address] = await this.getAddresses()
 
-    const msgs = tx.msg.map(msg => {
+    const msgs = tx.msg.map((msg) => {
       const { type, value } = msg
-      
+
       const msgType = type.split('/')[1]
-      
+
       const { delegator_address, validator_address, amount } = value
-      
-      return this._msgFactory.buildMsg({ 
-        type: msgType, 
+
+      return this._msgFactory.buildMsg({
+        type: msgType,
         to: validator_address,
         from: delegator_address,
         value: new BigNumber(amount.amount || 0)
@@ -142,7 +140,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     })
 
     const txResponse = await this._broadcastTx(address, msgs, tx.fee)
-  
+
     return Buffer.from(txResponse.transactionHash, 'hex')
   }
 
@@ -153,7 +151,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
   private async _broadcastTx(address: Address, msgs: EncodeObject[], fee: StdFee): Promise<BroadcastTxResponse> {
     const txRaw = await this._signingClient.sign(addressToString(address), msgs, fee, '')
     const txRawBytes = TxRaw.encode(txRaw).finish()
-  
+
     return await this._signingClient.broadcastTx(txRawBytes)
   }
 }

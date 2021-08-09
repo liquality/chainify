@@ -57,7 +57,7 @@ export interface WalletProvider {
    */
   canUpdateFee?: boolean | (() => boolean)
 
-  signAmino?(signerAddr: string, signDoc: any): Promise<any>;
+  signAmino?(signerAddr: string, signDoc: any): Promise<any>
 
-  sendInjectionTx?(tx: any): Promise<any>;
+  sendInjectionTx?(tx: any): Promise<any>
 }

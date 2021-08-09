@@ -61,7 +61,8 @@ export default {
     senderAddress: 'cosmos1rcpsmmwvy7p56s3vkhq0yufa74x0z0jray5mk2',
     senderMnemonic: 'vacuum photo autumn dream friend table ski motion cable reason link rare',
     receiverAddress: 'cosmos1ekqwvtcl2vsxlhm3pua7t2ccyywewmkafcmkaw',
-    receiverMnemonic: 'omit sudden employ fee ozone unfair syrup concert indoor april board age'
+    receiverMnemonic: 'omit sudden employ fee ozone unfair syrup concert indoor april board age',
+    validatorAddress: 'cosmosvaloper14w4fsqpd3daf0afeqqmg9fhkz2v0rvqjzq4wdw'
   }
   // ethereum: { // RSK
   //   rpc: {

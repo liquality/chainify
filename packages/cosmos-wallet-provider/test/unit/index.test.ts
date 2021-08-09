@@ -84,7 +84,7 @@ describe('Cosmos Wallet provider', () => {
   describe('sendTransaction', () => {
     it('should send transaction', async () => {
       const options = {
-        type: cosmos.MsgType.SendMsg,
+        type: cosmos.MsgType.MsgSend,
         to: address_2_TestNet,
         value: new BigNumber(1)
       } as cosmos.CosmosSendOptions
@@ -97,7 +97,7 @@ describe('Cosmos Wallet provider', () => {
   describe('delegateTransaction', () => {
     it('should delegate tokens to validators', async () => {
       const options = {
-        type: cosmos.MsgType.DelegateMsg,
+        type: cosmos.MsgType.MsgDelegate,
         to: validator_1_TestNet,
         value: new BigNumber(1)
       } as cosmos.CosmosSendOptions
@@ -111,7 +111,7 @@ describe('Cosmos Wallet provider', () => {
   xdescribe('undelegateTransaction', () => {
     it('should delegate tokens to validators', async () => {
       const options = {
-        type: cosmos.MsgType.UndelegateMsg,
+        type: cosmos.MsgType.MsgUndelegate,
         to: validator_1_TestNet,
         value: new BigNumber(1)
       } as cosmos.CosmosSendOptions
@@ -125,7 +125,7 @@ describe('Cosmos Wallet provider', () => {
   xdescribe('withdrawTransaction', () => {
     it('should withdraw tokens', async () => {
       const options = {
-        type: cosmos.MsgType.WithdrawMsg,
+        type: cosmos.MsgType.MsgWithdraw,
         to: validator_1_TestNet
       } as cosmos.CosmosSendOptions
 
@@ -139,7 +139,7 @@ describe('Cosmos Wallet provider', () => {
       const options = {
         sourcePort: 'transfer',
         sourceChannel: 'channel-2',
-        type: cosmos.MsgType.TransferMsg,
+        type: cosmos.MsgType.MsgTransfer,
         to: address_2_TestNet,
         value: new BigNumber(100)
       } as cosmos.CosmosSendOptions
