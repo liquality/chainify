@@ -56,4 +56,8 @@ export interface WalletProvider {
    * @return {Promise<Boolean>} True if wallet accepts fee updating
    */
   canUpdateFee?: boolean | (() => boolean)
+
+  signAmino?(signerAddr: string, signDoc: any): Promise<any>;
+
+  sendInjectionTx?(tx: any): Promise<any>;
 }

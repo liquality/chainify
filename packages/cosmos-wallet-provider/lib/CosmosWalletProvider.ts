@@ -3,12 +3,13 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { BigNumber, Address, ChainProvider, Transaction, Network, cosmos } from '@liquality/types'
 import { CosmosNetwork } from '@liquality/cosmos-networks'
 import { addressToString } from '@liquality/utils'
-import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing'
-import { StdSignDoc, Secp256k1HdWallet, AminoSignResponse } from '@cosmjs/amino'
+import { DirectSecp256k1HdWallet, EncodeObject } from '@cosmjs/proto-signing'
+import { StdSignDoc, Secp256k1HdWallet, AminoSignResponse, StdFee } from '@cosmjs/amino'
 import { SigningStargateClient, BroadcastTxResponse } from '@cosmjs/stargate'
 import { Secp256k1, Slip10, Slip10Curve, stringToPath } from '@cosmjs/crypto'
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
 import { mnemonicToSeed } from 'bip39'
+import { StdTx } from '@cosmjs/launchpad'
 
 interface CosmosWalletProviderOptions {
   network: CosmosNetwork
@@ -41,20 +42,17 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
     if (this._addressCache[this._mnemonic]) {
       return [this._addressCache[this._mnemonic]]
     }
-
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this._mnemonic, {
       prefix: this._network.addressPrefix
     })
-
     this._aminoSigner = await Secp256k1HdWallet.fromMnemonic(this._mnemonic, {
       prefix: this._network.addressPrefix
     })
-
     this._signingClient = await SigningStargateClient.connectWithSigner(this._network.rpcUrl, wallet)
     const seed = await mnemonicToSeed(this._mnemonic)
     this._privateKey = Slip10.derivePath(Slip10Curve.Secp256k1, seed, stringToPath(this._derivationPath)).privkey
-
     const [account] = await wallet.getAccounts()
+    
     const result = new Address({
       address: account.address,
       derivationPath: this._derivationPath,
@@ -81,7 +79,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
 
   async signMessage(message: string): Promise<string> {
     await this.getAddresses()
-
+    
     const buffer = Buffer.from(message)
     const signature = await Secp256k1.createSignature(buffer, this._privateKey)
     return (
@@ -92,7 +90,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
   }
 
   async signAmino(signerAddr: string, signDoc: StdSignDoc): Promise<AminoSignResponse> {
-    return this._aminoSigner.signAmino(signerAddr, signDoc)
+    return await this._aminoSigner.signAmino(signerAddr, signDoc)
   }
 
   async getConnectedNetwork(): Promise<Network> {
@@ -110,7 +108,7 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
       throw new Error('Empty Balance!')
     }
 
-    return this.sendTransaction({ type: cosmos.MsgType.SendMsg, to: address, value: new BigNumber(coin.amount) })
+    return this.sendTransaction({ type: cosmos.MsgType.MsgSend, to: address, value: new BigNumber(coin.amount) })
   }
 
   async sendTransaction(options: cosmos.CosmosSendOptions): Promise<Transaction<cosmos.Tx>> {
@@ -118,15 +116,44 @@ export default class CosmosWalletProvider extends WalletProvider implements Part
 
     const { msgs, fee } = this._msgFactory.buildMsg({ ...options, from: address })
 
-    const txRaw = await this._signingClient.sign(addressToString(address), msgs, fee, '')
-
-    const txRawBytes = TxRaw.encode(txRaw).finish()
-    const txResponse: BroadcastTxResponse = await this._signingClient.broadcastTx(txRawBytes)
-
+    const txResponse = await this._broadcastTx(address, msgs, fee)
+  
     return this.getMethod('getTransactionByHash')(txResponse.transactionHash)
+  }
+
+  async sendInjectionTx(
+    tx: StdTx,
+  ): Promise<Buffer> {
+    const [address] = await this.getAddresses()
+
+    const msgs = tx.msg.map(msg => {
+      const { type, value } = msg
+      
+      const msgType = type.split('/')[1]
+      
+      const { delegator_address, validator_address, amount } = value
+      
+      return this._msgFactory.buildMsg({ 
+        type: msgType, 
+        to: validator_address,
+        from: delegator_address,
+        value: new BigNumber(amount.amount || 0)
+      }).msgs[0]
+    })
+
+    const txResponse = await this._broadcastTx(address, msgs, tx.fee)
+  
+    return Buffer.from(txResponse.transactionHash, 'hex')
   }
 
   canUpdateFee(): boolean {
     return false
+  }
+
+  private async _broadcastTx(address: Address, msgs: EncodeObject[], fee: StdFee): Promise<BroadcastTxResponse> {
+    const txRaw = await this._signingClient.sign(addressToString(address), msgs, fee, '')
+    const txRawBytes = TxRaw.encode(txRaw).finish()
+  
+    return await this._signingClient.broadcastTx(txRawBytes)
   }
 }

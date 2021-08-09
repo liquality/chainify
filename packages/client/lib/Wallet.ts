@@ -77,6 +77,14 @@ export default class Wallet implements WalletProvider {
     return this.client.getMethod('isWalletAvailable')()
   }
 
+  async signAmino(signerAddr: string, signDoc: any): Promise<any> {
+    return this.client.getMethod('signAmino')(signerAddr, signDoc)
+  }
+
+  async sendInjectionTx(tx: any): Promise<any> {
+    return this.client.getMethod('sendInjectionTx')(tx)
+  }
+
   /**
    * Flag indicating if the wallet allows apps to update transaction fees
    * @return {Promise<Boolean>} True if wallet accepts fee updating

@@ -2,15 +2,15 @@ import { SendOptions } from '../chain'
 import { Address } from '../address'
 
 export enum MsgType {
-  SendMsg = 'SendMsg',
-  DelegateMsg = 'DelegateMsg',
-  UndelegateMsg = 'UndelegateMsg',
-  WithdrawMsg = 'WithdrawMsg',
-  TransferMsg = 'TransferMsg'
+  MsgSend = 'MsgSend',
+  MsgDelegate = 'MsgDelegate',
+  MsgUndelegate = 'MsgUndelegate',
+  MsgWithdraw = 'MsgWithdraw',
+  MsgTransfer = 'MsgTransfer'
 }
 
 export interface CosmosSendOptions extends SendOptions {
-  type: MsgType
+  type?: string
   from?: Address | string
   sourcePort?: string
   sourceChannel?: string

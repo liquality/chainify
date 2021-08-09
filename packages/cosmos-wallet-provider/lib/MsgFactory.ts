@@ -25,16 +25,16 @@ export class MsgFactory {
       withdraw: '120000'
     }
     this._builders = {
-      SendMsg: this.buildSendMsg.bind(this),
-      DelegateMsg: this.buildDelegateMsg.bind(this),
-      UndelegateMsg: this.buildUndelegateMsg.bind(this),
-      WithdrawMsg: this.buildWithdrawMsg.bind(this),
-      TransferMsg: this.buildTransferMsg.bind(this)
+      MsgSend: this.buildSendMsg.bind(this),
+      MsgDelegate: this.buildDelegateMsg.bind(this),
+      MsgUndelegate: this.buildUndelegateMsg.bind(this),
+      MsgWithdraw: this.buildWithdrawMsg.bind(this),
+      MsgTransfer: this.buildTransferMsg.bind(this)
     }
   }
 
   buildMsg(options: cosmos.CosmosSendOptions): TransactionData {
-    return this._builders[options.type ? options.type : cosmos.MsgType.SendMsg](options)
+    return this._builders[options.type ? options.type : cosmos.MsgType.MsgSend](options)
   }
 
   private buildSendMsg(options: cosmos.CosmosSendOptions): TransactionData {
