@@ -96,7 +96,7 @@ export default class SolanaWalletProvider extends WalletProvider {
       accounts = [this._signer, ...options.accounts]
     }
 
-    const hash = await this.getMethod('_sendAndConfirmTransaction')(transaction, accounts)
+    const hash = await this.getMethod('_sendTransaction')(transaction, accounts)
     return {
       hash,
       value: options.value?.toNumber() || 0,

@@ -125,7 +125,7 @@ export default class SolanaRpcProvider extends NodeProvider implements FeeProvid
     return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
 
-  async _sendAndConfirmTransaction(transaction: SolTransaction, accounts: Array<Signer>): Promise<string> {
+  async _sendTransaction(transaction: SolTransaction, accounts: Array<Signer>): Promise<string> {
     return await this.connection.sendTransaction(transaction, accounts)
   }
 
