@@ -7,7 +7,13 @@ import { base58 } from '@liquality/crypto'
 import nacl from 'tweetnacl'
 import { derivePath } from 'ed25519-hd-key'
 import { validateMnemonic, mnemonicToSeed } from 'bip39'
-import { Keypair, Transaction as SolTransaction, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
+import {
+  Keypair,
+  Transaction as SolTransaction,
+  PublicKey,
+  SystemProgram,
+  TransactionInstruction
+} from '@solana/web3.js'
 
 interface SolanaWalletProviderOptions {
   network: SolanaNetwork
@@ -86,13 +92,11 @@ export default class SolanaWalletProvider extends WalletProvider {
     }
 
     let accounts = [this._signer]
-
     if (options.accounts) {
       accounts = [this._signer, ...options.accounts]
     }
 
     const hash = await this.getMethod('_sendAndConfirmTransaction')(transaction, accounts)
-    
     return {
       hash,
       value: options.value?.toNumber() || 0,
