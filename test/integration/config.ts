@@ -49,13 +49,11 @@ export default {
 
     // sender
     senderAddress: '51d852b19f1ec451d694ce56c39cc18c8d892ab37cee7d82adc23bd8a48ade28',
-    senderMnemonic:
-      'buddy blood uncle anxiety honey eternal turn smart bunker voice absent exotic',
+    senderMnemonic: 'buddy blood uncle anxiety honey eternal turn smart bunker voice absent exotic',
 
     // receiver
     receiverAddress: 'bcdd908836ca6555875d40c1aa61b9f3ddd6c32ea19f6ad53df3b6bfecfa0706',
-    receiverMnemonic:
-      'wheat success humble lawsuit suspect exotic reopen kid moral capable blade genuine'
+    receiverMnemonic: 'wheat success humble lawsuit suspect exotic reopen kid moral capable blade genuine'
   },
   solana: {
     network: SolanaNetworks.solana_testnet,
