@@ -48,14 +48,14 @@ export default {
     // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
 
     // sender
-    senderAddress: '6XFgUGQWSQrtn2n3Tscds7PXQyvC55ZHqNo75KPutMR7',
+    senderAddress: '51d852b19f1ec451d694ce56c39cc18c8d892ab37cee7d82adc23bd8a48ade28',
     senderMnemonic:
-      'mixed leader indoor danger you below wall rally coil key witness wedding elephant bunker edit fatal swallow penalty banana antique total fame sunny cash',
+      'buddy blood uncle anxiety honey eternal turn smart bunker voice absent exotic',
 
     // receiver
-    receiverAddress: '2ALwx6KUDPceTvM7ghcguwk9ANyNEgkgQSA7s93qMZBY',
+    receiverAddress: 'bcdd908836ca6555875d40c1aa61b9f3ddd6c32ea19f6ad53df3b6bfecfa0706',
     receiverMnemonic:
-      'property expect output goat walnut across swallow double small doctor piece problem vault arctic city toe cotton start give control eye chunk stamp round'
+      'wheat success humble lawsuit suspect exotic reopen kid moral capable blade genuine'
   },
   solana: {
     network: SolanaNetworks.solana_testnet,
