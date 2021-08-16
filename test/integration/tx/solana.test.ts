@@ -14,6 +14,7 @@ describe('Transactions', function () {
   this.timeout(TEST_TIMEOUT)
 
   before(async () => {
+    console.log(config.solana)
     await fundAddress(chains.solana, config.solana.receiverAddress)
   })
 
