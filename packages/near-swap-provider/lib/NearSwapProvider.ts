@@ -32,6 +32,14 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
     const bytecode = this.createSwapScript()
     const contractId = this.generateUniqueString(swapParams.secretHash.substr(0, 20))
 
+    const data = Buffer.from(
+      JSON.stringify({
+        secretHash: Buffer.from(swapParams.secretHash, 'hex').toString('base64'),
+        expiration: `${toNearTimestampFormat(swapParams.expiration)}`,
+        buyer: swapParams.recipientAddress
+      })
+    )
+
     return this.client.chain.sendTransaction({
       to: contractId,
       value: null,
@@ -39,16 +47,7 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
         transactions.createAccount(),
         transactions.transfer(new BN(swapParams.value.toFixed())),
         transactions.deployContract(new Uint8Array(bytecode)),
-        transactions.functionCall(
-          ABI.init.method,
-          {
-            secretHash: Buffer.from(swapParams.secretHash, 'hex').toString('base64'),
-            expiration: `${toNearTimestampFormat(swapParams.expiration)}`,
-            buyer: swapParams.recipientAddress
-          },
-          new BN(ABI.init.gas),
-          new BN(0)
-        )
+        transactions.functionCall(ABI.init.method, data, new BN(ABI.init.gas), new BN(0))
       ]
     } as near.NearSendOptions)
   }
@@ -67,20 +66,13 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
 
+    const data = Buffer.from(JSON.stringify({ secret: Buffer.from(secret, 'hex').toString('base64') }))
+
     const parsedInitiationTx = parseReceipt(initiationTransactionReceipt)
     return this.client.chain.sendTransaction({
       to: parsedInitiationTx.receiver,
       value: null,
-      actions: [
-        transactions.functionCall(
-          ABI.claim.method,
-          {
-            secret: Buffer.from(secret, 'hex').toString('base64')
-          },
-          new BN(ABI.claim.gas),
-          new BN(0)
-        )
-      ]
+      actions: [transactions.functionCall(ABI.claim.method, data, new BN(ABI.claim.gas), new BN(0))]
     } as near.NearSendOptions)
   }
 
@@ -92,10 +84,12 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
       throw new PendingTxError(`Transaction receipt is not available: ${initiationTxHash}`)
     }
     const parsedInitiationTx = parseReceipt(initiationTransactionReceipt)
+    const data = Buffer.from(JSON.stringify({}))
+
     return this.client.chain.sendTransaction({
       to: parsedInitiationTx.receiver,
       value: null,
-      actions: [transactions.functionCall(ABI.refund.method, {}, new BN(ABI.refund.gas), new BN(0))]
+      actions: [transactions.functionCall(ABI.refund.method, data, new BN(ABI.refund.gas), new BN(0))]
     } as near.NearSendOptions)
   }
 

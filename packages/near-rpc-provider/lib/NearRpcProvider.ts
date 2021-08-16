@@ -46,7 +46,7 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
   async getTransactionByHash(txHash: string) {
     const currentHeight = await this.getBlockHeight()
     const args = txHash.split('_')
-    const tx = await this._rpcQuery('tx', args)
+    const tx = (await this._rpcQuery('tx', args)) as any
     const blockHash = tx.transaction_outcome.block_hash
     const blockNumber = await this.getBlockHeight(blockHash)
     return normalizeTransactionObject({ ...tx, blockNumber, blockHash }, currentHeight)
@@ -54,7 +54,7 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
 
   async getTransactionReceipt(txHash: string): Promise<near.InputTransaction> {
     const args = txHash.split('_')
-    const tx = await this._rpcQuery('EXPERIMENTAL_tx_status', args)
+    const tx = (await this._rpcQuery('EXPERIMENTAL_tx_status', args)) as any
     const blockNumber = await this.getBlockHeight(tx.transaction_outcome.block_hash)
     return { ...tx, blockNumber }
   }
