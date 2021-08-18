@@ -17,7 +17,6 @@ import {
   Connection,
   PublicKey,
   AccountInfo,
-  sendAndConfirmTransaction,
   Transaction as SolTransaction,
   Keypair,
   BpfLoader,
@@ -83,8 +82,8 @@ export default class SolanaRpcProvider extends NodeProvider implements FeeProvid
   async getTransactionReceipt(txHashes: string[]): Promise<Transaction<solana.InputTransaction>[]> {
     const transactions = await this.connection.getParsedConfirmedTransactions(txHashes)
 
-    if (!transactions) {
-      return []
+    if (transactions.includes(null)) {
+      throw new TxNotFoundError(`Transaction not found: ${txHashes[0]}`)
     }
 
     return transactions.map((transaction) => normalizeTransaction(transaction))
@@ -126,8 +125,8 @@ export default class SolanaRpcProvider extends NodeProvider implements FeeProvid
     return await this.connection.getMinimumBalanceForRentExemption(dataLength)
   }
 
-  async _sendAndConfirmTransaction(transaction: SolTransaction, accounts: Array<Signer>): Promise<string> {
-    return await sendAndConfirmTransaction(this.connection, transaction, accounts)
+  async _sendTransaction(transaction: SolTransaction, accounts: Array<Signer>): Promise<string> {
+    return await this.connection.sendTransaction(transaction, accounts)
   }
 
   async _getAddressHistory(address: string): Promise<ConfirmedSignatureInfo[]> {

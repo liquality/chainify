@@ -1,5 +1,5 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, Network, solana } from '@liquality/types'
+import { Address, Network, Transaction, solana } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { SolanaNetwork } from '@liquality/solana-networks'
 import { base58 } from '@liquality/crypto'
@@ -7,7 +7,13 @@ import { base58 } from '@liquality/crypto'
 import nacl from 'tweetnacl'
 import { derivePath } from 'ed25519-hd-key'
 import { validateMnemonic, mnemonicToSeed } from 'bip39'
-import { Keypair, Transaction, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
+import {
+  Keypair,
+  Transaction as SolTransaction,
+  PublicKey,
+  SystemProgram,
+  TransactionInstruction
+} from '@solana/web3.js'
 
 interface SolanaWalletProviderOptions {
   network: SolanaNetwork
@@ -66,7 +72,7 @@ export default class SolanaWalletProvider extends WalletProvider {
   async sendTransaction(options: solana.SolanaSendOptions): Promise<Transaction> {
     await this._getSigner()
 
-    const transaction = new Transaction()
+    const transaction = new SolTransaction()
 
     if (!options.instructions && !options.to) {
       const programId = await this.getMethod('_deploy')(this._signer, options.bytecode)
@@ -86,14 +92,16 @@ export default class SolanaWalletProvider extends WalletProvider {
     }
 
     let accounts = [this._signer]
-
     if (options.accounts) {
       accounts = [this._signer, ...options.accounts]
     }
 
-    const txHash = await this.getMethod('_sendAndConfirmTransaction')(transaction, accounts)
-    const [parsedTransaction] = await this.getMethod('getTransactionReceipt')([txHash])
-    return parsedTransaction
+    const hash = await this.getMethod('_sendTransaction')(transaction, accounts)
+    return {
+      hash,
+      value: options.value?.toNumber() || 0,
+      _raw: {}
+    }
   }
 
   async signMessage(message: string): Promise<string> {
