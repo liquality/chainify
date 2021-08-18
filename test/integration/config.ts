@@ -48,12 +48,11 @@ export default {
     // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
 
     // sender
-    senderAddress: '51d852b19f1ec451d694ce56c39cc18c8d892ab37cee7d82adc23bd8a48ade28',
-    senderMnemonic: 'buddy blood uncle anxiety honey eternal turn smart bunker voice absent exotic',
-
+    senderAddress: '9eed84cfc2ac0068dd8fc10b8b3b71c8d0f74cfd09211e036bdb8561c2647472',
+    senderMnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
     // receiver
-    receiverAddress: 'bcdd908836ca6555875d40c1aa61b9f3ddd6c32ea19f6ad53df3b6bfecfa0706',
-    receiverMnemonic: 'wheat success humble lawsuit suspect exotic reopen kid moral capable blade genuine'
+    receiverAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',
+    receiverMnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze'
   },
   solana: {
     network: SolanaNetworks.solana_testnet,
