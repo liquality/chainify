@@ -1,6 +1,6 @@
 {
   "name": "@liquality/types",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
