@@ -71,8 +71,19 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>More information on <a href="https://nomicon.io/DataStructures/Account.html">the Account spec</a></p>
+						<p>This class provides common account related RPC calls including signing transactions with a <a href="near_utils_lib.keypair.html">KeyPair</a>.</p>
 					</div>
+					<dl class="tsd-comment-tags">
+						<dt>example</dt>
+						<dd><p><a href="https://docs.near.org/docs/develop/front-end/naj-quick-reference#account" class="external">https://docs.near.org/docs/develop/front-end/naj-quick-reference#account</a></p>
+						</dd>
+						<dt>hint</dt>
+						<dd><p>Use {@link WalletConnection} in the browser to redirect to <a href="https://docs.near.org/docs/tools/near-wallet" class="external">NEAR Wallet</a> for Account/key management using the {@link BrowserLocalStorageKeyStore}.</p>
+						</dd>
+						<dt>see</dt>
+						<dd><p><a href="https://nomicon.io/DataStructures/Account.html" class="external">Account Spec</a></p>
+						</dd>
+					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -96,18 +107,12 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="near_utils_lib.account.html#accesskeybypublickeycache" class="tsd-kind-icon">access<wbr>Key<wbr>ByPublic<wbr>Key<wbr>Cache</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="near_utils_lib.account.html#accountid" class="tsd-kind-icon">account<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="near_utils_lib.account.html#connection" class="tsd-kind-icon">connection</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="near_utils_lib.account.html#printlogs" class="tsd-kind-icon">print<wbr>Logs</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="near_utils_lib.account.html#printlogsandfailures" class="tsd-kind-icon">print<wbr>Logs<wbr>And<wbr>Failures</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="near_utils_lib.account.html#validateargs" class="tsd-kind-icon">validate<wbr>Args</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-private-protected tsd-is-external">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected tsd-is-external"><a href="near_utils_lib.account.html#ready" class="tsd-kind-icon">ready</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="near_utils_lib.account.html#functioncallv1" class="tsd-kind-icon">function<wbr>Call<wbr>V1</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="near_utils_lib.account.html#functioncallv2" class="tsd-kind-icon">function<wbr>Call<wbr>V2</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="near_utils_lib.account.html#signandsendtransactionv1" class="tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V1</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="near_utils_lib.account.html#signandsendtransactionv2" class="tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V2</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
@@ -149,7 +154,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:27</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:76</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -169,30 +174,12 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-external">
-					<a name="accesskeybypublickeycache" class="tsd-anchor"></a>
-					<h3>access<wbr>Key<wbr>ByPublic<wbr>Key<wbr>Cache</h3>
-					<div class="tsd-signature tsd-kind-icon">access<wbr>Key<wbr>ByPublic<wbr>Key<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:44</li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="near_utils_lib.transactions.accesskey.html" class="tsd-signature-type" data-tsd-kind="Class">AccessKey</a></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-external">
 					<a name="accountid" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> account<wbr>Id</h3>
 					<div class="tsd-signature tsd-kind-icon">account<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:26</li>
+							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:74</li>
 						</ul>
 					</aside>
 				</section>
@@ -202,59 +189,49 @@
 					<div class="tsd-signature tsd-kind-icon">connection<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Connection</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:25</li>
+							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:73</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="printlogs" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> print<wbr>Logs</h3>
-					<div class="tsd-signature tsd-kind-icon">print<wbr>Logs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="functioncallv1" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> function<wbr>Call<wbr>V1</h3>
+					<div class="tsd-signature tsd-kind-icon">function<wbr>Call<wbr>V1<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:36</li>
+							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:168</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="printlogsandfailures" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> print<wbr>Logs<wbr>And<wbr>Failures</h3>
-					<div class="tsd-signature tsd-kind-icon">print<wbr>Logs<wbr>And<wbr>Failures<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="functioncallv2" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> function<wbr>Call<wbr>V2</h3>
+					<div class="tsd-signature tsd-kind-icon">function<wbr>Call<wbr>V2<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:35</li>
+							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:169</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="validateargs" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> validate<wbr>Args</h3>
-					<div class="tsd-signature tsd-kind-icon">validate<wbr>Args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<a name="signandsendtransactionv1" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V1</h3>
+					<div class="tsd-signature tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V1<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:109</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+					<a name="signandsendtransactionv2" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V2</h3>
+					<div class="tsd-signature tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V2<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:110</li>
 						</ul>
 					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected tsd-is-external">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected tsd-is-external">
-					<a name="ready" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> ready</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> ready<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:27</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
@@ -263,15 +240,25 @@
 					<a name="addkey" class="tsd-anchor"></a>
 					<h3>add<wbr>Key</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Key<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span>, contractId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, methodNames<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, amount<span class="tsd-signature-symbol">?: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Key<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span>, contractId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, methodNames<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, amount<span class="tsd-signature-symbol">?: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:98</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:178</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://docs.near.org/docs/concepts/account#access-keys" class="external">https://docs.near.org/docs/concepts/account#access-keys</a></p>
+									</dd>
+									<dt>todo</dt>
+									<dd><p>expand this API to support more options.</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -299,8 +286,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>TODO: expand this API to support more options.</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -308,13 +294,13 @@
 					<a name="createaccount" class="tsd-anchor"></a>
 					<h3>create<wbr>Account</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Account<span class="tsd-signature-symbol">(</span>newAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span>, amount<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Account<span class="tsd-signature-symbol">(</span>newAccountId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span>, amount<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:69</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:146</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -335,7 +321,7 @@
 									<h5>amount: <a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -349,9 +335,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:57</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:136</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create a new account and deploy a contract to it</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -363,7 +354,7 @@
 								<li>
 									<h5>publicKey: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The public key to add while signing and sending the transaction</p>
+										<p>The public key to add to the created contract account</p>
 									</div>
 								</li>
 								<li>
@@ -374,6 +365,9 @@
 								</li>
 								<li>
 									<h5>amount: <a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>of NEAR to transfer to the created contract account. Transfer enough to pay for storage <a href="https://docs.near.org/docs/concepts/storage-staking">https://docs.near.org/docs/concepts/storage-staking</a></p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="near_utils_lib.account.html" class="tsd-signature-type" data-tsd-kind="Class">Account</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -384,13 +378,13 @@
 					<a name="deleteaccount" class="tsd-anchor"></a>
 					<h3>delete<wbr>Account</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">delete<wbr>Account<span class="tsd-signature-symbol">(</span>beneficiaryId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>Account<span class="tsd-signature-symbol">(</span>beneficiaryId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:74</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:150</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -402,8 +396,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>void</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -411,13 +404,13 @@
 					<a name="deletekey" class="tsd-anchor"></a>
 					<h3>delete<wbr>Key</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">delete<wbr>Key<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>Key<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:103</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:183</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -429,7 +422,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -437,13 +430,13 @@
 					<a name="deploycontract" class="tsd-anchor"></a>
 					<h3>deploy<wbr>Contract</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">deploy<wbr>Contract<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">deploy<wbr>Contract<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:79</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:154</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -455,7 +448,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -469,7 +462,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:29</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:78</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -480,25 +473,42 @@
 					<a name="findaccesskey" class="tsd-anchor"></a>
 					<h3>find<wbr>Access<wbr>Key</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">find<wbr>Access<wbr>Key<span class="tsd-signature-symbol">(</span>receiverId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, actions<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.transactions.action.html" class="tsd-signature-type" data-tsd-kind="Class">Action</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>accessKey<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.transactions.accesskey.html" class="tsd-signature-type" data-tsd-kind="Class">AccessKey</a><span class="tsd-signature-symbol">; </span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PublicKey</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Access<wbr>Key<span class="tsd-signature-symbol">(</span>receiverId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, actions<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.transactions.action.html" class="tsd-signature-type" data-tsd-kind="Class">Action</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>accessKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AccessKeyView</span><span class="tsd-signature-symbol">; </span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PublicKey</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:47</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:124</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Finds the {@link AccessKeyView} associated with the accounts {@link PublicKey} stored in the {@link KeyStore}.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>todo</dt>
+									<dd><p>Find matching access key based on transaction (i.e. receiverId and actions)</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>receiverId: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>currently unused (see todo)</p>
+									</div>
 								</li>
 								<li>
 									<h5>actions: <a href="near_utils_lib.transactions.action.html" class="tsd-signature-type" data-tsd-kind="Class">Action</a><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>currently unused (see todo)</p>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>accessKey<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.transactions.accesskey.html" class="tsd-signature-type" data-tsd-kind="Class">AccessKey</a><span class="tsd-signature-symbol">; </span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PublicKey</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>accessKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AccessKeyView</span><span class="tsd-signature-symbol">; </span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PublicKey</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p><code>{ publicKey PublicKey; accessKey: AccessKeyView }</code></p>
 						</li>
 					</ul>
 				</section>
@@ -506,15 +516,36 @@
 					<a name="functioncall" class="tsd-anchor"></a>
 					<h3>function<wbr>Call</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">function<wbr>Call<span class="tsd-signature-symbol">(</span>contractId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, methodName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, gas<span class="tsd-signature-symbol">?: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a>, amount<span class="tsd-signature-symbol">?: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">function<wbr>Call<span class="tsd-signature-symbol">(</span>props<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">FunctionCallOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">function<wbr>Call<span class="tsd-signature-symbol">(</span>contractId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, methodName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, gas<span class="tsd-signature-symbol">?: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a>, amount<span class="tsd-signature-symbol">?: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:89</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:155</li>
 								</ul>
 							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>props: <span class="tsd-signature-type">FunctionCallOptions</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:167</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd></dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -544,9 +575,12 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> amount: <a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>amount of NEAR (in yoctoNEAR) to send together with the call</p>
+									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -554,17 +588,26 @@
 					<a name="getaccesskeys" class="tsd-anchor"></a>
 					<h3>get<wbr>Access<wbr>Keys</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Access<wbr>Keys<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Access<wbr>Keys<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AccessKeyInfoView</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:140</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:225</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>array of {access_key: AccessKey, public_key: PublicKey} items.</p>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get all access keys for the account</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://docs.near.org/docs/develop/front-end/rpc#view-access-key-list" class="external">https://docs.near.org/docs/develop/front-end/rpc#view-access-key-list</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AccessKeyInfoView</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -578,7 +621,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:150</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:236</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -594,21 +637,26 @@
 					<a name="getaccountdetails" class="tsd-anchor"></a>
 					<h3>get<wbr>Account<wbr>Details</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Account<wbr>Details<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Account<wbr>Details<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>authorizedApps<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AccountAuthorizedApp</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:145</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:230</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns account details in terms of authorized apps and transactions</p>
+									<p>Returns a list of authorized apps</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>todo</dt>
+									<dd><p>update the response value to return all the different keys, not just app keys.</p>
+									</dd>
+								</dl>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>authorizedApps<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AccountAuthorizedApp</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -616,13 +664,13 @@
 					<a name="sendmoney" class="tsd-anchor"></a>
 					<h3>send<wbr>Money</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">send<wbr>Money<span class="tsd-signature-symbol">(</span>receiverId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, amount<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">send<wbr>Money<span class="tsd-signature-symbol">(</span>receiverId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, amount<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:63</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:141</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -640,7 +688,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -648,15 +696,50 @@
 					<a name="signandsendtransaction" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> sign<wbr>And<wbr>Send<wbr>Transaction</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<span class="tsd-signature-symbol">(</span>receiverId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, actions<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.transactions.action.html" class="tsd-signature-type" data-tsd-kind="Class">Action</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SignAndSendTransactionOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<span class="tsd-signature-symbol">(</span>receiverId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, actions<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.transactions.action.html" class="tsd-signature-type" data-tsd-kind="Class">Action</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:43</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:99</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sign a transaction to preform a list of actions and broadcast it using the RPC API.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p>{@link JsonRpcProvider.sendTransaction}</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>__namedParameters: <span class="tsd-signature-type">SignAndSendTransactionOptions</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:108</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd><p>Sign a transaction to preform a list of actions and broadcast it using the RPC API.</p>
+									</dd>
+									<dt>see</dt>
+									<dd><p>{@link JsonRpcProvider.sendTransaction}</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -668,11 +751,11 @@
 								<li>
 									<h5>actions: <a href="near_utils_lib.transactions.action.html" class="tsd-signature-type" data-tsd-kind="Class">Action</a><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The transaction <a href="https://nomicon.io/RuntimeSpec/Actions.html">Action as described in the spec</a>.</p>
+										<p>list of actions to perform as part of the transaction</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -686,16 +769,32 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:37</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:94</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Create a signed transaction which can be broadcast to the network</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p>{@link JsonRpcProvider.sendTransaction}</p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>receiverId: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>NEAR account receiving the transaction</p>
+									</div>
 								</li>
 								<li>
 									<h5>actions: <a href="near_utils_lib.transactions.action.html" class="tsd-signature-type" data-tsd-kind="Class">Action</a><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>list of actions to perform as part of the transaction</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">, </span><a href="near_utils_lib.transactions.signedtransaction.html" class="tsd-signature-type" data-tsd-kind="Class">SignedTransaction</a><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -706,15 +805,22 @@
 					<a name="stake" class="tsd-anchor"></a>
 					<h3>stake</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">stake<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span>, amount<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">stake<span class="tsd-signature-symbol">(</span>publicKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PublicKey</span>, amount<span class="tsd-signature-symbol">: </span><a href="near_utils_lib.bn-1.html" class="tsd-signature-type" data-tsd-kind="Class">BN</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:109</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:190</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://docs.near.org/docs/validator/staking-overview" class="external">https://docs.near.org/docs/validator/staking-overview</a></p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -730,7 +836,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/near_utils_lib.providers.finalexecutionoutcome.html" class="tsd-signature-type" data-tsd-kind="Interface">FinalExecutionOutcome</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">FinalExecutionOutcome</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -738,21 +844,26 @@
 					<a name="state" class="tsd-anchor"></a>
 					<h3>state</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AccountState</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AccountView</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:34</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:83</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns the state of a NEAR account</p>
+									<p>Returns basic NEAR account information via the <code>view_account</code> RPC query method</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://docs.near.org/docs/develop/front-end/rpc#view-account" class="external">https://docs.near.org/docs/develop/front-end/rpc#view-account</a></p>
+									</dd>
+								</dl>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AccountState</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AccountView</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -760,15 +871,25 @@
 					<a name="viewfunction" class="tsd-anchor"></a>
 					<h3>view<wbr>Function</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">view<wbr>Function<span class="tsd-signature-symbol">(</span>contractId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, methodName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, __namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>parse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">view<wbr>Function<span class="tsd-signature-symbol">(</span>contractId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, methodName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, args<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, __namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>parse<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:117</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:202</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Invoke a contract view function using the RPC API.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://docs.near.org/docs/develop/front-end/rpc#call-a-contract-function" class="external">https://docs.near.org/docs/develop/front-end/rpc#call-a-contract-function</a></p>
+									</dd>
+								</dl>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -784,7 +905,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>args: <span class="tsd-signature-type">any</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> args: <span class="tsd-signature-type">any</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Any arguments to the view contract method, wrapped in JSON</p>
 									</div>
@@ -824,21 +945,25 @@
 					<a name="viewstate" class="tsd-anchor"></a>
 					<h3>view<wbr>State</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">view<wbr>State<span class="tsd-signature-symbol">(</span>prefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span>, blockQuery<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>blockId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BlockId</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>finality<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Finality</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">; </span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">view<wbr>State<span class="tsd-signature-symbol">(</span>prefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span>, blockQuery<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>blockId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BlockId</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>finality<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Finality</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol">; </span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Buffer</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:129</li>
+									<li>Defined in packages/near-utils/node_modules/near-api-js/lib/account.d.ts:213</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>See <a href="https://docs.near.org/docs/develop/front-end/rpc#view-contract-state">https://docs.near.org/docs/develop/front-end/rpc#view-contract-state</a></p>
+									<p>Returns the state (key value pairs) of this account&#39;s contract based on the key prefix.
+									Pass an empty string for prefix if you would like to return the entire state.</p>
 								</div>
-								<p>Returns the state (key value pairs) of this account&#39;s contract based on the key prefix.
-								Pass an empty string for prefix if you would like to return the entire state.</p>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://docs.near.org/docs/develop/front-end/rpc#view-contract-state" class="external">https://docs.near.org/docs/develop/front-end/rpc#view-contract-state</a></p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -849,7 +974,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>blockQuery: <span class="tsd-signature-symbol">{ </span>blockId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BlockId</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>finality<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Finality</span><span class="tsd-signature-symbol"> }</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> blockQuery: <span class="tsd-signature-symbol">{ </span>blockId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BlockId</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>finality<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Finality</span><span class="tsd-signature-symbol"> }</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>specifies which block to query state at. By default returns last &quot;optimistic&quot; block (i.e. not necessarily finalized).</p>
 									</div>
@@ -874,12 +999,6 @@
 								<a href="../modules/near_utils_lib.bn.html">BN</a>
 							</li>
 							<li class=" tsd-kind-namespace tsd-parent-kind-module tsd-is-external">
-								<a href="../modules/near_utils_lib.keystores.html">key<wbr>Stores</a>
-							</li>
-							<li class=" tsd-kind-namespace tsd-parent-kind-module tsd-is-external">
-								<a href="../modules/near_utils_lib.providers.html">providers</a>
-							</li>
-							<li class=" tsd-kind-namespace tsd-parent-kind-module tsd-is-external">
 								<a href="../modules/near_utils_lib.transactions.html">transactions</a>
 							</li>
 						</ul>
@@ -897,25 +1016,22 @@
 								<a href="near_utils_lib.account.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-external">
-								<a href="near_utils_lib.account.html#accesskeybypublickeycache" class="tsd-kind-icon">access<wbr>Key<wbr>ByPublic<wbr>Key<wbr>Cache</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-external">
 								<a href="near_utils_lib.account.html#accountid" class="tsd-kind-icon">account<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-external">
 								<a href="near_utils_lib.account.html#connection" class="tsd-kind-icon">connection</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="near_utils_lib.account.html#printlogs" class="tsd-kind-icon">print<wbr>Logs</a>
+								<a href="near_utils_lib.account.html#functioncallv1" class="tsd-kind-icon">function<wbr>Call<wbr>V1</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="near_utils_lib.account.html#printlogsandfailures" class="tsd-kind-icon">print<wbr>Logs<wbr>And<wbr>Failures</a>
+								<a href="near_utils_lib.account.html#functioncallv2" class="tsd-kind-icon">function<wbr>Call<wbr>V2</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="near_utils_lib.account.html#validateargs" class="tsd-kind-icon">validate<wbr>Args</a>
+								<a href="near_utils_lib.account.html#signandsendtransactionv1" class="tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V1</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected tsd-is-external">
-								<a href="near_utils_lib.account.html#ready" class="tsd-kind-icon">ready</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
+								<a href="near_utils_lib.account.html#signandsendtransactionv2" class="tsd-kind-icon">sign<wbr>And<wbr>Send<wbr>Transaction<wbr>V2</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="near_utils_lib.account.html#addkey" class="tsd-kind-icon">add<wbr>Key</a>
