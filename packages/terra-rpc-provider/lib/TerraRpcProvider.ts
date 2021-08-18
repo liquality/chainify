@@ -1,12 +1,12 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-import { BigNumber, ChainProvider, Address, Block, Transaction, terra } from '@liquality/types'
+import { BigNumber, ChainProvider, Address, Block, Transaction, terra, FeeProvider } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
 import { TerraNetwork } from '@liquality/terra-networks'
 import { LCDClient } from '@terra-money/terra.js'
 
-export default class TerraRpcProvider extends NodeProvider implements Partial<ChainProvider> {
+export default class TerraRpcProvider extends NodeProvider implements FeeProvider, Partial<ChainProvider> {
   private _network: TerraNetwork
   private _lcdClient: LCDClient
 
@@ -114,4 +114,19 @@ export default class TerraRpcProvider extends NodeProvider implements Partial<Ch
 
     return response.txs
   }
+
+  async getFees() {
+    return {
+      slow: {
+        fee: 0
+      },
+      average: {
+        fee: 0
+      },
+      fast: {
+        fee: 0
+      }
+    }
+  }
+  
 }
