@@ -182,7 +182,7 @@ export default class NearRpcProvider extends NodeProvider implements Partial<Cha
     }
   }
 
-  async _rpcQuery(method: string, args: any[]) {
+  async _rpcQuery(method: string, args: any[]): Promise<any> {
     try {
       const data = await this._jsonRpc.sendJsonRpc(method, args)
       return data

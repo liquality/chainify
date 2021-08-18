@@ -348,7 +348,7 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
         })
       )
 
-      const balance = await solana.chain.getBalance([config.near.senderAddress])
+      const balance = await solana.chain.getBalance([config.solana.senderAddress])
 
       if (balance.gt(config.solana.value)) {
         await solana.chain.sendTransaction({
