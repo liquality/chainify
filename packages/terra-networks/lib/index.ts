@@ -16,7 +16,7 @@ const terra_mainnet: TerraNetwork = {
   helperUrl: 'https://fcd.terra.dev/v1',
   coinType: '397',
   isTestnet: false,
-  chainID: 'columbus-4',
+  chainID: 'columbus-5',
   asset: 'luna',
   codeId: 6431 // TODO: Replace after deploying contract on mainnet
 }
