@@ -30,7 +30,7 @@ const terra_testnet: TerraNetwork = {
   isTestnet: true,
   chainID: 'bombay-9',
   asset: 'uluna',
-  codeId: 6431
+  codeId: 3989
 }
 
 const TerraNetworks = {
