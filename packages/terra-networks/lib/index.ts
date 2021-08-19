@@ -24,11 +24,11 @@ const terra_mainnet: TerraNetwork = {
 const terra_testnet: TerraNetwork = {
   name: 'testnet',
   networkId: 'testnet',
-  nodeUrl: 'https://tequila-lcd.terra.dev',
-  helperUrl: 'https://tequila-fcd.terra.dev/v1',
+  nodeUrl: 'https://bombay-lcd.terra.dev',
+  helperUrl: 'https://bombay-fcd.terra.dev',
   coinType: '397',
   isTestnet: true,
-  chainID: 'tequila-0004',
+  chainID: 'bombay-9',
   asset: 'uluna',
   codeId: 6431
 }
