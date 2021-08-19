@@ -63,14 +63,14 @@ export default {
     // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
 
     // sender
-    senderAddress: 'terra1kndc26sx87rjet5ur3vvnppln449pdvf665g7p',
-    senderMnemonic:
-      'donkey ripple napkin pulp near program profit polar mutual receive gorilla choice whale shoot vendor seat draw cost sell winter arctic crane detect daughter',
+    receiverAddress: 'terra1ux73wdfgmu7r5us2sf0u9vdmrfxuhdk8760zzj',
+    receiverMnemonic:
+      'party leopard scare aisle latin spend moment curtain kite industry donate topple candy crucial fault oven flee that audit disagree cross sustain degree wisdom',
 
     // receiver
-    receiverAddress: 'terra1krq0p9qh9nujpf77cvma36acyeqy7gdedfamgw',
-    receiverMnemonic:
-      'base eternal trash tent twist fog palm summer crop oppose memory absent usual ahead subject spirit end fragile gauge defy month mercy grit frost'
+    senderAddress: 'terra197xgx306vcw8d8kqxdv9xercxdt7lnjstrm7k6',
+    senderMnemonic:
+      'slush dutch dice canvas narrow weird flock toast gesture smile sound melody favorite save hybrid physical hard drink pear race kingdom kiwi tenant town'
   }
   // ethereum: { // RSK
   //   rpc: {

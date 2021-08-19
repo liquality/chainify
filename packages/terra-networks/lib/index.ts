@@ -25,12 +25,12 @@ const terra_testnet: TerraNetwork = {
   name: 'testnet',
   networkId: 'testnet',
   nodeUrl: 'https://bombay-lcd.terra.dev',
-  helperUrl: 'https://bombay-fcd.terra.dev',
+  helperUrl: 'https://bombay-fcd.terra.dev/v1',
   coinType: '397',
   isTestnet: true,
   chainID: 'bombay-9',
   asset: 'uluna',
-  codeId: 3989
+  codeId: 4031
 }
 
 const TerraNetworks = {

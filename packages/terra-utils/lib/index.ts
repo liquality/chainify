@@ -16,24 +16,28 @@ export const normalizeTransaction = (
   asset: string,
   currentBlock?: number
 ): Transaction<terra.InputTransaction> => {
-  const msg = data.tx?.msg?.[0]
+  const msg = data.tx.msg?.[0] || data.tx.value?.msg?.[0]?.value
 
-  const value = msg?.init_coins?.get(asset)?.amount || 0
+  let value = 0
 
-  let txParams = msg?.init_msg || msg?.execute_msg?.claim || {}
+  if (Array.isArray(msg?.init_coins)) {
+    value = msg.init_coins.find((e: any) => e.denom === asset)?.amount
+  } else if (typeof msg?.init_coins === 'object') {
+    value = msg.init_coins.get(asset)?.amount
+  }
 
-  if (!Object.keys(txParams).length) {
-    const contractMsg = data.tx?.value?.msg?.[0]?.value
+  let txParams = msg?.init_msg || msg?.execute_msg || {}
 
-    const initMsg = contractMsg?.init_msg
-    const executeMsg = contractMsg?.execute_msg
+  if (Object.keys(txParams).length) {
+    const initMsg = msg?.init_msg
+    const executeMsg = msg?.execute_msg
 
     if (initMsg) {
-      txParams = JSON.parse(Buffer.from(initMsg, 'base64').toString())
+      txParams = initMsg
     }
 
     if (executeMsg) {
-      txParams.method = JSON.parse(Buffer.from(executeMsg, 'base64').toString())
+      txParams.method = executeMsg
 
       if (txParams.method.claim) {
         txParams.secret = txParams.method.claim.secret
@@ -41,12 +45,12 @@ export const normalizeTransaction = (
     }
   }
 
-  const eventsByType = data?.logs?.[0]?.eventsByType
+  const logs = data.logs?.[0]
 
   const contractAddress =
-    eventsByType?.instantiate_contract?.contract_address[0] ||
-    eventsByType?.execute_contract?.contract_address[0] ||
-    data?.logs?.[0]?.events[0]?.attributes?.filter((e: any) => e.key === 'contract_address')?.[0]?.value ||
+    logs?.eventsByType?.execute_contract?.contract_address[0] ||
+    logs?.events?.find((e: any) => e.type === 'wasm')?.attributes.find((e: any) => e.key === 'contract_address')
+      .value ||
     ''
 
   return {
@@ -56,8 +60,7 @@ export const normalizeTransaction = (
     ...(txParams?.secret && { secret: txParams.secret }),
     _raw: {
       ...txParams,
-      contractAddress,
-      
+      contractAddress
     }
   }
 }

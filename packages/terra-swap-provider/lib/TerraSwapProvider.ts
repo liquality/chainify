@@ -104,16 +104,16 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
 
     return new MsgInstantiateContract(
       address,
+      null,
       codeId,
       {
         buyer: swapParams.recipientAddress,
         seller: swapParams.refundAddress,
         expiration: swapParams.expiration,
-        value: Number(swapParams.value),
+        value: swapParams.value.toNumber(),
         secret_hash: swapParams.secretHash
       },
-      { [asset]: Number(swapParams.value) },
-      false
+      { [asset]: swapParams.value.toNumber() }
     )
   }
 
