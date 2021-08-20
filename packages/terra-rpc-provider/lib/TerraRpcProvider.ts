@@ -128,5 +128,4 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
       }
     }
   }
-  
 }
