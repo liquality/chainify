@@ -18,13 +18,14 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     })
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
-      chainID: network.chainID
+      chainID: network.chainID,
+      gasPrices: network.gasPrices
     })
     this._network = network
   }
 
   async generateBlock(numberOfBlocks: number): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 30000))
+    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
   async getBlockByHash(): Promise<Block> {
@@ -104,7 +105,7 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
   }
 
   async _getTransactionsForAddress(address: Address | string): Promise<any[]> {
-    const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=500&action=contract`
+    const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=500`
 
     const response = await this.nodeGet(url)
 
