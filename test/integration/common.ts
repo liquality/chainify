@@ -29,6 +29,11 @@ import { TerraRpcProvider } from '../../packages/terra-rpc-provider/lib'
 import { TerraWalletProvider } from '../../packages/terra-wallet-provider/lib'
 import { TerraSwapProvider } from '../../packages/terra-swap-provider/lib'
 import { TerraSwapFindProvider } from '../../packages/terra-swap-find-provider/lib'
+import { SolanaRpcProvider } from '../../packages/solana-rpc-provider/lib'
+import { SolanaWalletProvider } from '../../packages/solana-wallet-provider/lib'
+import { SolanaSwapProvider } from '../../packages/solana-swap-provider/lib'
+import { SolanaSwapFindProvider } from '../../packages/solana-swap-find-provider/lib'
+
 import { BigNumber, Transaction, bitcoin, Network, SwapParams, SendOptions, Address } from '../../packages/types/lib'
 import { findLast } from 'lodash'
 import { generateMnemonic } from 'bip39'
@@ -229,6 +234,18 @@ terra
   )
   .addProvider(new TerraSwapProvider(config.terra.network))
   .addProvider(new TerraSwapFindProvider(config.terra.network))
+// Solana
+const solana = new Client()
+solana.addProvider(new SolanaRpcProvider(config.solana.network))
+solana.addProvider(
+  new SolanaWalletProvider({
+    network: config.solana.network,
+    mnemonic: config.solana.senderMnemonic,
+    derivationPath: `m/44'/${config.solana.network.coinType}'/${config.solana.walletIndex}'/0'`
+  })
+)
+solana.addProvider(new SolanaSwapProvider(config.solana.network))
+solana.addProvider(new SolanaSwapFindProvider(config.solana.network))
 
 interface Chain {
   id: string
@@ -275,7 +292,8 @@ const chains: { [index: string]: Chain } = {
   erc20WithLedger: { id: 'ERC20 Ledger', name: 'ethereum', client: erc20WithLedger },
   erc20WithJs: { id: 'ERC20 Js', name: 'ethereum', client: erc20WithJs },
   nearWithJs: { id: 'Near Js', name: 'near', client: nearWithJs },
-  terra: { id: 'Terra', name: 'terra', client: terra }
+  terra: { id: 'Terra', name: 'terra', client: terra },
+  solana: { id: 'Solana', name: 'solana', client: solana }
 }
 
 async function getSwapParams(chain: Chain, secretHash: string): Promise<SwapParams> {
@@ -350,6 +368,30 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
       if (balance.gt(config.terra.value)) {
         await terra.chain.sendTransaction({ to: address, value: balance.minus(config.terra.value) })
       }
+
+      break
+    }
+    case 'solana': {
+      const solana = new Client()
+
+      solana.addProvider(new SolanaRpcProvider(config.solana.network))
+      solana.addProvider(
+        new SolanaWalletProvider({
+          network: config.solana.network,
+          mnemonic: config.solana.senderMnemonic,
+          derivationPath: `m/44'/501'/${config.solana.walletIndex}'/0'`
+        })
+      )
+
+      const balance = await solana.chain.getBalance([config.solana.senderAddress])
+
+      if (balance.gt(config.solana.value)) {
+        await solana.chain.sendTransaction({
+          to: address,
+          value: config.solana.value
+        })
+      }
+
       break
     }
   }
@@ -368,6 +410,17 @@ async function fundWallet(chain: Chain) {
 
 async function getNewAddress(chain: Chain, refund = false): Promise<Address> {
   switch (chain.name) {
+    case 'solana': {
+      if (refund) {
+        return {
+          address: config.solana.senderAddress
+        }
+      }
+      return {
+        address: config.solana.receiverAddress
+      }
+    }
+
     case 'near': {
       if (refund) {
         return {
@@ -411,6 +464,11 @@ async function getRandomAddress(chain: Chain): Promise<Address> {
     case 'terra': {
       return {
         address: config.terra.receiverAddress
+      }
+    }
+    case 'solana': {
+      return {
+        address: config.solana.receiverAddress
       }
     }
 
@@ -488,16 +546,19 @@ async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: num
     await mineBlock(chain)
     const currentBlock = await chain.client.chain.getBlockHeight()
     const fundingTx = await chain.client.swap.fundSwap(swapParams, initiationTx.hash, fee)
+
     if (isERC20) {
       await mineBlock(chain)
     }
     const foundInitiationTx = await chain.client.swap.findInitiateSwapTransaction(swapParams, currentBlock)
+
     expect(foundInitiationTx.hash).to.equal(initiationTx.hash)
     const foundFundingTx = await chain.client.swap.findFundSwapTransaction(
       swapParams,
       initiationTx.hash,
       currentBlock + 1
     )
+
     if (isERC20) {
       expect(foundFundingTx.hash).to.equal(fundingTx.hash)
     }

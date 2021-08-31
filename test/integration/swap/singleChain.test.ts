@@ -104,7 +104,7 @@ function testSwap(chain: Chain) {
     )
   })
 
-  if (chain.name !== 'near' && chain.name !== 'terra') {
+  if (chain.name !== 'near' && chain.name !== 'solana' && chain.name !== 'terra') {
     it('Refund fails after claim', async () => {
       const secretHash = crypto.sha256(mockSecret)
       const swapParams = await getSwapParams(chain, secretHash)
@@ -226,6 +226,50 @@ function testBitcoinBalance(chain: Chain) {
         expect(after.eq(expectedBalance)).to.be.true
       }
     )
+  })
+}
+
+function testSolanaRefund(chain: Chain) {
+  it('Refund fails after claim', async () => {
+    if (chain.name === 'solana') {
+      const secretHash = crypto.sha256(mockSecret)
+      const swapParams = await getSwapParams(chain, secretHash)
+      swapParams.expiration = Math.floor(Date.now() / 1000) + 60
+
+      const initiationTxId = await initiateAndVerify(chain, swapParams)
+
+      await expectBalance(
+        chain,
+        swapParams.recipientAddress,
+        async () => claimAndVerify(chain, initiationTxId, mockSecret, swapParams),
+        (before, after) => expect(after.gt(before)).to.be.true
+      )
+
+      let fee: BigNumber
+      await expectBalance(
+        chain,
+        swapParams.refundAddress,
+        async () => {
+          try {
+            await refundAndVerify(chain, initiationTxId, swapParams)
+          } catch (e) {
+            expect(e.message).equal('AccountDoesNotExist')
+            fee = new BigNumber(0)
+          } // Refund failing is ok
+        },
+        (before, after) => expect(fee ? after.plus(fee).eq(before) : after.eq(before)).to.be.true
+      )
+    }
+  })
+
+  it('Refund available after expiration', async () => {
+    const secretHash = crypto.sha256(mockSecret)
+    const swapParams = await getSwapParams(chain, secretHash)
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 60
+    const initiationTxId = await initiateAndVerify(chain, swapParams)
+    await expect(refundAndVerify(chain, initiationTxId, swapParams)).to.be.rejected
+    await mineBlock(chain, 3)
+    await refundAndVerify(chain, initiationTxId, swapParams)
   })
 }
 
@@ -384,6 +428,11 @@ describe('Swap Single Chain Flow', function () {
   describe('Terra', () => {
     testSwap(chains.terra)
     testTerraRefund(chains.terra)
+  })
+
+  describeExternal('Solana', () => {
+    testSwap(chains.solana)
+    testSolanaRefund(chains.solana)
   })
 
   describeExternal('Near - JS', () => {

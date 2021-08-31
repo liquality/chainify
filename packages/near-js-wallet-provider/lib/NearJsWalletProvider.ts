@@ -87,7 +87,10 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
       options.actions = [transactions.transfer(new BN(options.value.toFixed()))]
     }
 
-    const tx = await from.signAndSendTransaction(addressToString(options.to), options.actions)
+    const tx = await from.signAndSendTransaction({
+      receiverId: addressToString(options.to),
+      actions: options.actions
+    })
     return normalizeTransactionObject({ ...tx, blockHash: tx.transaction_outcome.block_hash })
   }
 

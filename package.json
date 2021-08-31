@@ -86,7 +86,8 @@
     "new:version": "lerna version --no-push --no-git-tag-version && lerna clean --yes && lerna bootstrap",
     "publish:all": "lerna publish from-package",
     "prepublishOnly": "npm run lint && npm run build && npm run test",
-    "link:all": "lerna exec npm link"
+    "link:all": "lerna exec npm link",
+    "unlink:all": "lerna exec npm unlink"
   },
   "options": {
     "coverage": "--reporter=text-lcov",
