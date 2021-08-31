@@ -7,7 +7,7 @@ export interface TerraNetwork extends Network {
   chainID: string
   asset: string
   codeId: number
-  gasPrices: string
+  gasPrices: number
 }
 
 const terra_mainnet: TerraNetwork = {
@@ -20,7 +20,7 @@ const terra_mainnet: TerraNetwork = {
   chainID: 'columbus-5',
   asset: 'luna',
   codeId: 6431, // TODO: Replace after deploying contract on mainnet
-  gasPrices: '0.01133uluna'
+  gasPrices: 0.01133 // // TODO: Replace after deploying contract on mainnet
 }
 
 const terra_testnet: TerraNetwork = {
@@ -33,7 +33,7 @@ const terra_testnet: TerraNetwork = {
   chainID: 'bombay-10',
   asset: 'uluna',
   codeId: 7685,
-  gasPrices: '0.15uluna'
+  gasPrices: 0.15
 }
 
 const TerraNetworks = {
