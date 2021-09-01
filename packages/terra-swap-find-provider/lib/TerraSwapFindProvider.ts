@@ -23,7 +23,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
 
     const { refundAddress } = swapParams
 
-    const transactions = await this.getMethod('_getTransactionsForAddress')(refundAddress)
+    const transactions = await this._getTransactionsForAddress(refundAddress)
 
     for (let i = 0; i < transactions.length; i++) {
       const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
@@ -46,7 +46,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
 
     const { contractAddress } = initTx._raw
 
-    const transactions = await this.getMethod('_getTransactionsForAddress')(contractAddress)
+    const transactions = await this._getTransactionsForAddress(contractAddress)
 
     for (let i = 0; i < transactions.length; i++) {
       const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
@@ -70,7 +70,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
 
     const { contractAddress } = initTx._raw
 
-    const transactions = await this.getMethod('_getTransactionsForAddress')(contractAddress)
+    const transactions = await this._getTransactionsForAddress(contractAddress)
 
     for (let i = 0; i < transactions.length; i++) {
       const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
