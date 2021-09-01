@@ -22,6 +22,7 @@
     "@liquality/errors": "^1.4.4",
     "@liquality/types": "^1.4.4",
     "@liquality/utils": "^1.4.4",
+    "@terra-money/terra.js": "^2.0.4",
     "@types/luxon": "^1.27.1",
     "luxon": "^2.0.1"
   },

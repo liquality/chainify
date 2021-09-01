@@ -1,14 +1,20 @@
-import { SwapParams, SwapProvider, terra, Transaction } from '@liquality/types'
-import { Provider } from '@liquality/provider'
-import { validateSecretAndHash } from '@liquality/utils'
+import { Address, SwapParams, SwapProvider, terra, Transaction } from '@liquality/types'
+import { addressToString, validateSecretAndHash } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
 import { normalizeTransaction, doesTransactionMatchInitiation, validateSwapParams } from '@liquality/terra-utils'
+import { TxNotFoundError } from '@liquality/errors'
+import { NodeProvider } from '@liquality/node-provider'
 
-export default class TerraSwapFindProvider extends Provider implements Partial<SwapProvider> {
+export default class TerraSwapFindProvider extends NodeProvider implements Partial<SwapProvider> {
   private _network: TerraNetwork
 
   constructor(network: TerraNetwork) {
-    super()
+    super({
+      baseURL: network.helperUrl,
+      responseType: 'text',
+      transformResponse: undefined
+    })
+
     this._network = network
   }
 
@@ -79,5 +85,17 @@ export default class TerraSwapFindProvider extends Provider implements Partial<S
 
   async findFundSwapTransaction(): Promise<null> {
     return null
+  }
+
+  async _getTransactionsForAddress(address: Address | string): Promise<any[]> {
+    const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=500`
+
+    const response = await this.nodeGet(url)
+
+    if (!response?.txs) {
+      throw new TxNotFoundError(`Transactions not found: ${address}`)
+    }
+
+    return response.txs
   }
 }

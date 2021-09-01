@@ -1,6 +1,5 @@
 import { SwapParams, SwapProvider, terra, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
-import { sha256 } from '@liquality/crypto'
 import { TxNotFoundError, StandardError } from '@liquality/errors'
 import { validateSwapParams, doesTransactionMatchInitiation } from '@liquality/terra-utils'
 import { validateSecretAndHash } from '@liquality/utils'
@@ -13,10 +12,6 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   constructor(network: TerraNetwork) {
     super()
     this._network = network
-  }
-
-  async generateSecret(message: string): Promise<string> {
-    return sha256(message)
   }
 
   async getSwapSecret(claimTxHash: string): Promise<string> {

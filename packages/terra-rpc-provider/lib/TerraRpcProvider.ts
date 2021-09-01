@@ -105,18 +105,6 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     throw new Error('Method not implemented.')
   }
 
-  async _getTransactionsForAddress(address: Address | string): Promise<any[]> {
-    const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=500`
-
-    const response = await this.nodeGet(url)
-
-    if (!response?.txs) {
-      throw new TxNotFoundError(`Transactions not found: ${address}`)
-    }
-
-    return response.txs
-  }
-
   async getFees() {
     const prices = await this.nodeGet(this._network.gasPricesUrl)
 
