@@ -30,8 +30,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
-      chainID: network.chainID,
-      gasPrices: network.gasPrices + network.asset
+      chainID: network.chainID
     })
 
     this._setSigner()

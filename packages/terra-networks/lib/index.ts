@@ -4,10 +4,10 @@ export interface TerraNetwork extends Network {
   networkId: string
   nodeUrl: string
   helperUrl: string
+  gasPricesUrl: string
   chainID: string
   asset: string
   codeId: number
-  gasPrices: number
 }
 
 const terra_mainnet: TerraNetwork = {
@@ -15,12 +15,12 @@ const terra_mainnet: TerraNetwork = {
   networkId: 'mainnet',
   nodeUrl: 'https://lcd.terra.dev',
   helperUrl: 'https://fcd.terra.dev/v1',
+  gasPricesUrl: 'https://bombay-fcd.terra.dev/v1/txs/gas_prices',
   coinType: '397',
   isTestnet: false,
   chainID: 'columbus-5',
   asset: 'luna',
-  codeId: 6431, // TODO: Replace after deploying contract on mainnet
-  gasPrices: 0.01133 // // TODO: Replace after deploying contract on mainnet
+  codeId: 6431 // TODO: Replace after deploying contract on mainnet
 }
 
 const terra_testnet: TerraNetwork = {
@@ -28,12 +28,12 @@ const terra_testnet: TerraNetwork = {
   networkId: 'testnet',
   nodeUrl: 'https://bombay-lcd.terra.dev',
   helperUrl: 'https://bombay-fcd.terra.dev/v1',
+  gasPricesUrl: 'https://bombay-fcd.terra.dev/v1/txs/gas_prices',
   coinType: '397',
   isTestnet: true,
   chainID: 'bombay-10',
   asset: 'uluna',
-  codeId: 7685,
-  gasPrices: 0.15
+  codeId: 7685
 }
 
 const TerraNetworks = {

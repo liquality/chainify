@@ -24,7 +24,7 @@
     "@liquality/types": "^1.4.4",
     "@liquality/utils": "^1.4.4",
     "@liquality/wallet-provider": "^1.4.4",
-    "@terra-money/terra.js": "^2.0.1"
+    "@terra-money/terra.js": "^2.0.4"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

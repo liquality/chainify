@@ -16,11 +16,12 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
       responseType: 'text',
       transformResponse: undefined
     })
+
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
-      chainID: network.chainID,
-      gasPrices: network.gasPrices + network.asset
+      chainID: network.chainID
     })
+
     this._network = network
   }
 
@@ -117,15 +118,17 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
   }
 
   async getFees() {
+    const prices = await this.nodeGet(this._network.gasPricesUrl)
+
     return {
       slow: {
-        fee: this._network.gasPrices
+        fee: Number(prices[this._network.asset])
       },
       average: {
-        fee: this._network.gasPrices
+        fee: Number(prices[this._network.asset])
       },
       fast: {
-        fee: this._network.gasPrices
+        fee: Number(prices[this._network.asset])
       }
     }
   }
