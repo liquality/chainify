@@ -125,12 +125,20 @@ const arbitrum_testnet: EthereumNetwork = {
   isTestnet: true
 }
 
-const fuse_network: EthereumNetwork = {
-  name: 'fuse_network',
+const fuse_mainnent: EthereumNetwork = {
+  name: 'fuse_mainnet',
   coinType: '60',
   networkId: 122,
   chainId: 122,
   isTestnet: false
+}
+
+const fuse_testnet: EthereumNetwork = {
+  name: 'fuse_testnet',
+  coinType: '60',
+  networkId: 122,
+  chainId: 122,
+  isTestnet: true
 }
 
 const local: EthereumNetwork = {
