@@ -2,7 +2,16 @@ import { WalletProvider } from '@liquality/wallet-provider'
 import { Address, BigNumber, Transaction, terra } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { BlockTxBroadcastResult, LCDClient, MnemonicKey, Msg, MsgSend, StdTx, Wallet } from '@terra-money/terra.js'
+import {
+  BlockTxBroadcastResult,
+  Coins,
+  LCDClient,
+  MnemonicKey,
+  Msg,
+  MsgSend,
+  StdTx,
+  Wallet
+} from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
@@ -92,7 +101,12 @@ export default class TerraWalletProvider extends WalletProvider {
     }
 
     const tx = await this._wallet.createAndSignTx({
-      msgs
+      msgs,
+      gasPrices: sendOptions.fee
+        ? new Coins({
+            [this._network.asset]: sendOptions.fee
+          })
+        : undefined
     })
 
     const transaction = await this._broadcastTx(tx)
