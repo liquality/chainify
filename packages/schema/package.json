@@ -1,6 +1,6 @@
 {
   "name": "@liquality/schema",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
