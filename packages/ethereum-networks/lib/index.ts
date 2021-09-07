@@ -165,7 +165,8 @@ const EthereumNetworks = {
   polygon_testnet,
   arbitrum_testnet,
   arbitrum_mainnet,
-  fuse_network,
+  fuse_testnet,
+  fuse_mainnent,
   local
 }
 
