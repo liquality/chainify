@@ -51,6 +51,12 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return node.derive(this._derivationPath)
   }
 
+  async getPrivateKey() {
+    const hdKey = await this.hdKey()
+
+    return hdKey.privateKey.toString('hex')
+  }
+
   async signMessage(message: string) {
     const hdKey = await this.hdKey()
     const msgHash = hashPersonalMessage(Buffer.from(message))

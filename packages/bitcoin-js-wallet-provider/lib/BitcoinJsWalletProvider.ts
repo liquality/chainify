@@ -75,6 +75,10 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
     return ECPair.fromWIF(wif, this._network)
   }
 
+  async getPrivateKey(derivationPath: string) {
+    return (await this.keyPair(derivationPath)).privateKey.toString('hex')
+  }
+
   async signMessage(message: string, from: string) {
     const address = await this.getWalletAddress(from)
     const keyPair = await this.keyPair(address.derivationPath)

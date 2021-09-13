@@ -13,6 +13,7 @@ chai.config.truncateThreshold = 0
 
 describe('Bitcoin Wallet provider', () => {
   const mnemonic = generateMnemonic(256)
+  console.log(mnemonic)
   let provider: BitcoinJsWalletProvider
 
   beforeEach(() => {
@@ -42,7 +43,7 @@ describe('Bitcoin Wallet provider', () => {
       addressesFromDerivationCacheExpected = provider.getDerivationCache()
     })
 
-    it('should import to new client', async () => {
+    xit('should import to new client', async () => {
       newProvider = new BitcoinJsWalletProvider({
         network: BitcoinNetworks.bitcoin_regtest,
         baseDerivationPath: `m/84'/${BitcoinNetworks.bitcoin_regtest.coinType}'/0`,
@@ -57,13 +58,27 @@ describe('Bitcoin Wallet provider', () => {
       expect(addressesFromDerivationCacheExpected).to.equal(addressesFromDerivationCacheActual)
     })
 
-    it("should fail if mnemonic doesn't match", async () => {
+    xit("should fail if mnemonic doesn't match", async () => {
       newProvider = new BitcoinJsWalletProvider({
         network: BitcoinNetworks.bitcoin_regtest,
         baseDerivationPath: `m/84'/${BitcoinNetworks.bitcoin_regtest.coinType}'/0`,
         mnemonic: generateMnemonic(256)
       })
       await expect(newProvider.setDerivationCache(addressesFromDerivationCacheExpected)).to.eventually.be.rejected
+    })
+
+    it('Should return correct private key for provided mnemonic', async () => {
+      const mnemonic =
+        'unveil fault vacant drum suggest ocean try muscle emotion island economy crawl attitude rotate tunnel scene jazz pride motor thumb coral potato jelly ring'
+
+      provider = new BitcoinJsWalletProvider({
+        network: BitcoinNetworks.bitcoin_regtest,
+        baseDerivationPath: `m/84'/${BitcoinNetworks.bitcoin_regtest.coinType}'/0`,
+        mnemonic
+      })
+
+      const privateKey = await provider.getPrivateKey("m/84'/1'/0/0/0")
+      expect(privateKey).to.equal('29914dde04cf6bbe5ed2f0f92e8d448660647e09b0f9cf202bcde7b90482f792')
     })
   })
 })
