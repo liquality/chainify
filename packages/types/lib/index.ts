@@ -13,6 +13,7 @@ import * as bitcoin from './bitcoin'
 import * as ethereum from './ethereum'
 import * as near from './near'
 import * as solana from './solana'
+import * as flow from './flow'
 
 interface IClient {
   /**
@@ -47,5 +48,6 @@ export {
   bitcoin,
   ethereum,
   near,
-  solana
+  solana,
+  flow
 }
