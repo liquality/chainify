@@ -36,7 +36,7 @@ export const normalizeTransaction = (
       txParams = initMsg
     }
 
-    if (executeMsg) {
+    if (executeMsg && typeof txParams !== 'string') {
       txParams.method = executeMsg
 
       if (txParams.method.claim) {
