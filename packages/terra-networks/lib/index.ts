@@ -32,7 +32,7 @@ const terra_testnet: TerraNetwork = {
   coinType: '397',
   isTestnet: true,
   chainID: 'bombay-10',
-  asset: 'luna',
+  asset: 'uluna',
   codeId: 7685
 }
 
