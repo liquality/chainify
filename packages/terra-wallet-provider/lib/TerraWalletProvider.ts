@@ -95,9 +95,9 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const msgs = []
     const data = sendOptions.data as any
-    let txData: any;
+    let txData: any
 
-    if(data) {
+    if (data) {
       txData = {
         ...data,
         msgs: data.msgs.map((msg: any) => Msg.fromData(JSON.parse(msg))),
@@ -109,14 +109,18 @@ export default class TerraWalletProvider extends WalletProvider {
       msgs.push(this._sendMessage(to, value))
     }
 
-    const tx = await this._wallet.createAndSignTx(txData ? txData : {
-      msgs,
-      gasPrices: fee
-        ? new Coins({
-            [this._network.asset]: fee
-          })
-        : undefined
-    })
+    const tx = await this._wallet.createAndSignTx(
+      txData
+        ? txData
+        : {
+            msgs,
+            gasPrices: fee
+              ? new Coins({
+                  [this._network.asset]: fee
+                })
+              : undefined
+          }
+    )
 
     const transaction = await this._broadcastTx(tx)
 
