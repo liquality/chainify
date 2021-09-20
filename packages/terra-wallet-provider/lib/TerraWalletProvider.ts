@@ -91,25 +91,29 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   async sendTransaction(sendOptions: terra.TerraSendOptions): Promise<Transaction<terra.InputTransaction>> {
-    const { to, value, messages } = sendOptions
-
-    const data = sendOptions.data as any
+    const { to, value, messages, fee } = sendOptions
 
     const msgs = []
+    const data = sendOptions.data as any
+    let txData: any;
 
-    if (data) {
-      return this._handleInjection(data)
+    if(data) {
+      txData = {
+        ...data,
+        msgs: data.msgs.map((msg: any) => Msg.fromData(JSON.parse(msg))),
+        fee: data.fee ? StdFee.fromData(JSON.parse(data.fee)) : undefined
+      }
     } else if (messages) {
       msgs.push(...messages)
     } else {
       msgs.push(this._sendMessage(to, value))
     }
 
-    const tx = await this._wallet.createAndSignTx({
+    const tx = await this._wallet.createAndSignTx(txData ? txData : {
       msgs,
-      gasPrices: sendOptions.fee
+      gasPrices: fee
         ? new Coins({
-            [this._network.asset]: sendOptions.fee
+            [this._network.asset]: fee
           })
         : undefined
     })
@@ -169,25 +173,5 @@ export default class TerraWalletProvider extends WalletProvider {
     const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
 
     return Number(fee.amount.get(this._network.asset).amount)
-  }
-
-  private async _handleInjection(params: any) {
-    const { msgs, fee } = params
-
-    const tx = await this._wallet.createAndSignTx({
-      ...params,
-      msgs: msgs.map((msg: any) => Msg.fromData(JSON.parse(msg))),
-      fee: fee ? StdFee.fromData(JSON.parse(fee)) : undefined
-    })
-
-    const transaction = await this._broadcastTx(tx)
-
-    console.log(transaction.txhash)
-
-    return {
-      hash: transaction.txhash,
-      value: 0,
-      _raw: {}
-    }
   }
 }
