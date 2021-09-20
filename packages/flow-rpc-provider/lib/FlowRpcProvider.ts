@@ -1,8 +1,9 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 // import { BigNumber, ChainProvider, Address, Block, Transaction, SendOptions, flow } from '@liquality/types'
-import { ChainProvider, Block, Transaction, flow } from '@liquality/types'
-import { FlowNetwork } from '@liquality/flow-networks'
+import { BigNumber, ChainProvider, Block, Transaction, flow } from '@liquality/types'
+import { addressToString } from '@liquality/utils'
 
+import { FlowNetwork } from '@liquality/flow-networks'
 import { normalizeBlock, normalizeTx } from '@liquality/flow-utils'
 
 import * as fcl from '@onflow/fcl'
@@ -30,26 +31,16 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 3000))
   }
 
-  async getBlockByHash(blockHash: string): Promise<Block<any>> {
-    console.log('getBlockByHash')
-
+  async getBlockByHash(blockHash: string): Promise<Block<flow.Tx>> {
     const block = await fcl.send([fcl.getBlock(), fcl.atBlockId(blockHash)]).then(fcl.decode)
-    console.log('block: ', block)
-
     const parsedBlock = await this.parseBlock(block)
-    console.log('parsedBlock: ', parsedBlock)
 
-    return await this.parseBlock(block)
+    return parsedBlock
   }
 
-  async getBlockByNumber(blockNumber: number): Promise<Block<any>> {
-    console.log('getBlockByNumber')
-
+  async getBlockByNumber(blockNumber: number): Promise<Block<flow.Tx>> {
     const block = await fcl.send([fcl.getBlock(), fcl.atBlockHeight(blockNumber)]).then(fcl.decode)
-    console.log('block: ', block)
-
     const parsedBlock = await this.parseBlock(block)
-    console.log('parsedBlock: ', parsedBlock)
 
     return parsedBlock
   }
@@ -66,17 +57,34 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
     return normalizeTx(tx, txHash)
   }
 
-  // getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
-  //   throw new Error('Method not implemented.')
-  // }
+  async getBalance(_addresses: string[]): Promise<BigNumber> {
+    const addresses = _addresses.map(addressToString)
 
-  // sendTransaction(options: SendOptions): Promise<Transaction<any>> {
-  //   throw new Error('Method not implemented.')
-  // }
+    const promiseBalances = await Promise.all(
+      addresses.map(async (address: string) => {
+        try {
+          const account = await fcl.account(address)
+          return new BigNumber(account.balance)
+        } catch (err) {
+          if (err.message) {
+            return new BigNumber(0)
+          }
+          throw err
+        }
+      })
+    )
 
-  // sendRawTransaction(rawTransaction: string): Promise<string> {
-  //   throw new Error('Method not implemented.')
-  // }
+    return promiseBalances
+      .map((balance) => new BigNumber(balance))
+      .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
+  }
+
+  async sendRawTransaction(rawTransaction: string): Promise<string> {
+    const txResponse = await fcl.send([fcl.script(rawTransaction)]).then(fcl.decode)
+
+    // TODO: return value
+    return txResponse.toString()
+  }
 
   async parseBlock(block: flow.BlockResponse): Promise<Block<flow.Tx>> {
     const txs: flow.Tx[] = []

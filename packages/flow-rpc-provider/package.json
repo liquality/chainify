@@ -24,6 +24,7 @@
     "@liquality/flow-utils": "^1.6.1",
     "@liquality/node-provider": "^1.6.1",
     "@liquality/types": "^1.6.1",
+    "@liquality/utils": "^1.6.1",
     "@onflow/fcl": "^0.0.76"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",

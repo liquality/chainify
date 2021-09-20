@@ -42,12 +42,19 @@ describe('Flow RPC provider', () => {
   //   })
   // })
 
-  describe('getTransactionByHash', () => {
-    it('should return transaction by hash', async () => {
-      const tx = await client.chain.getTransactionByHash(
-        '81ba9ddcea40f3f7330ecd9aed464f83bd03b8f6233f52f1be2dac4aef0a175c'
-      )
-      console.log('Tx: ', tx)
+  // describe('getTransactionByHash', () => {
+  //   it('should return transaction by hash', async () => {
+  //     const tx = await client.chain.getTransactionByHash(
+  //       '81ba9ddcea40f3f7330ecd9aed464f83bd03b8f6233f52f1be2dac4aef0a175c'
+  //     )
+  //     console.log('Tx: ', tx)
+  //   })
+  // })
+
+  describe('getBalance', () => {
+    it('should return accounts balances', async () => {
+      const tx = await client.chain.getBalance(['faa9821df84e8530', 'f086a545ce3c552d'])
+      console.log('Balance: ', tx)
     })
   })
 })
