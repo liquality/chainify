@@ -1,7 +1,9 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 // import { BigNumber, ChainProvider, Address, Block, Transaction, SendOptions, flow } from '@liquality/types'
-import { ChainProvider, Block, Transaction } from '@liquality/types'
+import { ChainProvider, Block, Transaction, flow } from '@liquality/types'
 import { FlowNetwork } from '@liquality/flow-networks'
+
+import { normalizeBlock, normalizeTx } from '@liquality/flow-utils'
 
 import * as fcl from '@onflow/fcl'
 
@@ -31,13 +33,25 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
   async getBlockByHash(blockHash: string): Promise<Block<any>> {
     console.log('getBlockByHash')
 
-    return await fcl.send([fcl.getBlock(), fcl.atBlockId(blockHash)]).then(fcl.decode)
+    const block = await fcl.send([fcl.getBlock(), fcl.atBlockId(blockHash)]).then(fcl.decode)
+    console.log('block: ', block)
+
+    const parsedBlock = await this.parseBlock(block)
+    console.log('parsedBlock: ', parsedBlock)
+
+    return await this.parseBlock(block)
   }
 
   async getBlockByNumber(blockNumber: number): Promise<Block<any>> {
+    console.log('getBlockByNumber')
+
     const block = await fcl.send([fcl.getBlock(), fcl.atBlockHeight(blockNumber)]).then(fcl.decode)
-    console.log(block)
-    return block
+    console.log('block: ', block)
+
+    const parsedBlock = await this.parseBlock(block)
+    console.log('parsedBlock: ', parsedBlock)
+
+    return parsedBlock
   }
 
   async getBlockHeight(): Promise<number> {
@@ -46,29 +60,26 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
     return block.height
   }
 
-  async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
-    return await fcl.send([fcl.getTransaction(txHash)]).then(fcl.decode)
+  async getTransactionByHash(txHash: string): Promise<Transaction<flow.Tx>> {
+    const tx = await fcl.send([fcl.getTransaction(txHash)]).then(fcl.decode)
+
+    return normalizeTx(tx, txHash)
   }
 
   // getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
   //   throw new Error('Method not implemented.')
   // }
+
   // sendTransaction(options: SendOptions): Promise<Transaction<any>> {
   //   throw new Error('Method not implemented.')
   // }
-  // sendSweepTransaction(address: string | Address, fee?: number): Promise<Transaction<any>> {
-  //   throw new Error('Method not implemented.')
-  // }
-  // updateTransactionFee(tx: string | Transaction<any>, newFee: number): Promise<Transaction<any>> {
-  //   throw new Error('Method not implemented.')
-  // }
-  // sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction<any>> {
-  //   throw new Error('Method not implemented.')
-  // }
+
   // sendRawTransaction(rawTransaction: string): Promise<string> {
   //   throw new Error('Method not implemented.')
   // }
 
-  // HELPER METHOD
-  // parseBlock() {}
+  async parseBlock(block: flow.BlockResponse): Promise<Block<flow.Tx>> {
+    const txs: flow.Tx[] = []
+    return normalizeBlock(block, txs)
+  }
 }

@@ -21,7 +21,7 @@ describe('Flow RPC provider', () => {
   // describe('getBlockByHash', () => {
   //   it('should return block by hash', async () => {
   //     const block = await client.chain.getBlockByHash(
-  //       '40c614f1feaa2a373139039fcfb9e8cf9a7051a9db83f47ccf8d44e973a9a034'
+  //       '32e4e4eaed92156b839e7045770cd367023c95a896fcf0313d00bd1caec25187'
   //     )
 
   //     console.log('Block: ', block)
@@ -30,15 +30,24 @@ describe('Flow RPC provider', () => {
 
   // describe('getBlockByNumber', () => {
   //   it('should return block by number', async () => {
-  //     const block = await client.chain.getBlockByNumber(45242825)
+  //     const block = await client.chain.getBlockByNumber(45310104)
   //     console.log('Block: ', block)
   //   })
   // })
 
-  describe('getBlockHeight', () => {
-    it('should return latest block height', async () => {
-      const height = await client.chain.getBlockHeight()
-      console.log('Height: ', height)
+  // describe('getBlockHeight', () => {
+  //   it('should return latest block height', async () => {
+  //     const height = await client.chain.getBlockHeight()
+  //     console.log('Height: ', height)
+  //   })
+  // })
+
+  describe('getTransactionByHash', () => {
+    it('should return transaction by hash', async () => {
+      const tx = await client.chain.getTransactionByHash(
+        '81ba9ddcea40f3f7330ecd9aed464f83bd03b8f6233f52f1be2dac4aef0a175c'
+      )
+      console.log('Tx: ', tx)
     })
   })
 })

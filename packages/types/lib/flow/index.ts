@@ -1,4 +1,4 @@
-export interface Block {
+export interface BlockResponse {
   id: string
   parentId: string
   height: number
@@ -8,5 +8,25 @@ export interface Block {
   signatures: string[]
 }
 export interface Tx {
-  hash: string
+  script: string
+  args: any[]
+  referenceBlockId: string
+  gasLimit: number
+  proposalKey: ProposalKey
+  payer: string
+  authorizers: string[]
+  payloadSignatures: Signature[]
+  envelopeSignatures: Signature[]
+}
+
+export interface Signature {
+  address: string
+  keyId: number
+  signature: string
+}
+
+export interface ProposalKey {
+  address: string
+  keyId: number
+  sequenceNumber: number
 }
