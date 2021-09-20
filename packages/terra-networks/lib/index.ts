@@ -15,7 +15,7 @@ const terra_mainnet: TerraNetwork = {
   networkId: 'mainnet',
   nodeUrl: 'https://lcd.terra.dev',
   helperUrl: 'https://fcd.terra.dev/v1',
-  gasPricesUrl: 'https://bombay-fcd.terra.dev/v1/txs/gas_prices',
+  gasPricesUrl: 'https://fcd.terra.dev/v1/txs/gas_prices',
   coinType: '397',
   isTestnet: false,
   chainID: 'columbus-5',
