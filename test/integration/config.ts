@@ -57,20 +57,20 @@ export default {
   },
   terra: {
     network: TerraNetworks.terra_testnet,
-    value: new BigNumber(1000000),
+    value: new BigNumber(1000),
 
     // Both of the accounts are used for the tests.
     // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
 
     // receiver
-    receiverAddress: 'terra197xgx306vcw8d8kqxdv9xercxdt7lnjstrm7k6',
+    receiverAddress: 'terra10c9wv2symnwq72yh8v9xg7ddkcugxq08nhskx9',
     receiverMnemonic:
-      'party leopard scare aisle latin spend moment curtain kite industry donate topple candy crucial fault oven flee that audit disagree cross sustain degree wisdom',
+      'avoid void grid scare guard biology gaze system wine undo tomorrow evoke noble salon income juice stumble myth debate praise kind reflect ketchup fossil',
 
     // sender
-    senderAddress: 'terra1ux73wdfgmu7r5us2sf0u9vdmrfxuhdk8760zzj',
+    senderAddress: 'terra156c6y66lqp7xe9x3hvl3uf0szl7ek44ferg4sg',
     senderMnemonic:
-      'slush dutch dice canvas narrow weird flock toast gesture smile sound melody favorite save hybrid physical hard drink pear race kingdom kiwi tenant town'
+      'fury motion step civil horn snake engine wage honey already interest fall property nephew jeans true moment weasel village then upset avocado wheat write'
   },
   solana: {
     network: SolanaNetworks.solana_testnet,
