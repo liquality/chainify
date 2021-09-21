@@ -1,0 +1,43 @@
+{
+  "name": "@liquality/terra-swap-find-provider",
+  "version": "1.4.4",
+  "description": "Swap Find Provider implementation for Terra",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@liquality/errors": "^1.4.4",
+    "@liquality/node-provider": "^1.4.4",
+    "@liquality/provider": "^1.4.4",
+    "@liquality/terra-networks": "^1.4.4",
+    "@liquality/terra-utils": "^1.4.4",
+    "@liquality/types": "^1.4.4",
+    "@liquality/utils": "^1.4.4"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}

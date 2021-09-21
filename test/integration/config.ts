@@ -2,6 +2,7 @@ import { BigNumber } from '../../packages/types/lib'
 import { BitcoinNetworks, BitcoinCashNetworks } from '../../packages/bitcoin-networks/lib'
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
+import { TerraNetworks } from '../../packages/terra-networks/lib'
 import { SolanaNetworks } from '../../packages/solana-networks/lib'
 
 export default {
@@ -53,6 +54,23 @@ export default {
     // receiver
     receiverAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',
     receiverMnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze'
+  },
+  terra: {
+    network: TerraNetworks.terra_testnet,
+    value: new BigNumber(100000),
+
+    // Both of the accounts are used for the tests.
+    // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
+
+    // receiver
+    receiverAddress: 'terra10c9wv2symnwq72yh8v9xg7ddkcugxq08nhskx9',
+    receiverMnemonic:
+      'avoid void grid scare guard biology gaze system wine undo tomorrow evoke noble salon income juice stumble myth debate praise kind reflect ketchup fossil',
+
+    // sender
+    senderAddress: 'terra156c6y66lqp7xe9x3hvl3uf0szl7ek44ferg4sg',
+    senderMnemonic:
+      'fury motion step civil horn snake engine wage honey already interest fall property nephew jeans true moment weasel village then upset avocado wheat write'
   },
   solana: {
     network: SolanaNetworks.solana_testnet,

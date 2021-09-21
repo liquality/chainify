@@ -12,6 +12,7 @@ import { Network } from './network'
 import * as bitcoin from './bitcoin'
 import * as ethereum from './ethereum'
 import * as near from './near'
+import * as terra from './terra'
 import * as solana from './solana'
 
 interface IClient {
@@ -47,5 +48,6 @@ export {
   bitcoin,
   ethereum,
   near,
+  terra,
   solana
 }
