@@ -425,7 +425,7 @@ function testFee(chain: Chain) {
 describe('Swap Single Chain Flow', function () {
   this.timeout(TEST_TIMEOUT)
 
-  describe('Terra', () => {
+  describeExternal('Terra', () => {
     testSwap(chains.terra)
     testTerraRefund(chains.terra)
   })
