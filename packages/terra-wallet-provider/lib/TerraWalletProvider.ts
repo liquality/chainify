@@ -93,15 +93,14 @@ export default class TerraWalletProvider extends WalletProvider {
   async sendTransaction(sendOptions: SendOptions): Promise<Transaction<terra.InputTransaction>> {
     const { to, value, fee } = sendOptions
 
-    const msgs = []
     const data: CreateTxOptions = sendOptions.data as any
     let txData: any
 
-    if (data.msgs && data.gasAdjustment) {
+    if (data?.msgs && data?.gasAdjustment) {
       txData = {
         ...data
       }
-    } else if (data.msgs) {
+    } else if (data?.msgs) {
       txData = {
         msgs: data.msgs,
         ...(fee && {gasPrices: new Coins({
@@ -110,15 +109,11 @@ export default class TerraWalletProvider extends WalletProvider {
       }
      else {
       txData = {
-        msgs: msgs.push(this._sendMessage(to, value))
+        msgs: [this._sendMessage(to, value)]
       }
     }
 
-    console.log(txData)
-
     const tx = await this._wallet.createAndSignTx(txData)
-
-    console.log(tx)
 
     const transaction = await this._broadcastTx(tx)
 
