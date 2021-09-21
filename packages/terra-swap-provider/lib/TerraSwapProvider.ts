@@ -30,7 +30,9 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     const initContractMsg = this._instantiateContractMessage(swapParams)
 
     return await this.getMethod('sendTransaction')({
-      messages: [initContractMsg]
+      data: {
+        msgs: [initContractMsg]
+      }
     })
   }
 
@@ -50,7 +52,9 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     })
 
     const transaction = await this.getMethod('sendTransaction')({
-      messages: [executeContractMsg]
+      data: {
+        msgs: [executeContractMsg]
+      }
     })
 
     return transaction
@@ -66,7 +70,9 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     })
 
     const transaction = await this.getMethod('sendTransaction')({
-      messages: [executeContractMsg]
+      data: {
+        msgs: [executeContractMsg]
+      }
     })
 
     return transaction

@@ -20,7 +20,7 @@ const terra_mainnet: TerraNetwork = {
   isTestnet: false,
   chainID: 'columbus-5',
   asset: 'luna',
-  codeId: 6431 // TODO: Replace after deploying contract on mainnet
+  codeId: 9301 // TODO: Replace after deploying contract on mainnet
 }
 
 const terra_testnet: TerraNetwork = {
@@ -31,9 +31,9 @@ const terra_testnet: TerraNetwork = {
   gasPricesUrl: 'https://bombay-fcd.terra.dev/v1/txs/gas_prices',
   coinType: '397',
   isTestnet: true,
-  chainID: 'bombay-10',
+  chainID: 'bombay-11',
   asset: 'uluna',
-  codeId: 7685
+  codeId: 9301
 }
 
 const TerraNetworks = {

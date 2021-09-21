@@ -1,9 +1,3 @@
-import { SendOptions } from '../chain'
-
-export interface TerraSendOptions extends SendOptions {
-  messages?: any[]
-}
-
 export interface InputTransaction {
   buyer?: string
   seller?: string

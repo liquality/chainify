@@ -1,5 +1,5 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, BigNumber, Transaction, terra } from '@liquality/types'
+import { Address, BigNumber, Transaction, terra, SendOptions } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
 import {
@@ -10,8 +10,8 @@ import {
   Msg,
   MsgSend,
   StdTx,
-  StdFee,
-  Wallet
+  Wallet,
+  CreateTxOptions
 } from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
@@ -90,37 +90,35 @@ export default class TerraWalletProvider extends WalletProvider {
     return this._network
   }
 
-  async sendTransaction(sendOptions: terra.TerraSendOptions): Promise<Transaction<terra.InputTransaction>> {
-    const { to, value, messages, fee } = sendOptions
+  async sendTransaction(sendOptions: SendOptions): Promise<Transaction<terra.InputTransaction>> {
+    const { to, value, fee } = sendOptions
 
     const msgs = []
-    const data = sendOptions.data as any
+    const data: CreateTxOptions = sendOptions.data as any
     let txData: any
 
-    if (data) {
+    if (data.msgs && data.gasAdjustment) {
       txData = {
-        ...data,
-        msgs: data.msgs.map((msg: any) => Msg.fromData(JSON.parse(msg))),
-        fee: data.fee ? StdFee.fromData(JSON.parse(data.fee)) : undefined
+        ...data
       }
-    } else if (messages) {
-      msgs.push(...messages)
-    } else {
-      msgs.push(this._sendMessage(to, value))
+    } else if (data.msgs) {
+      txData = {
+        msgs: data.msgs,
+        ...(fee && {gasPrices: new Coins({
+          [this._network.asset]: fee
+        })})}
+      }
+     else {
+      txData = {
+        msgs: msgs.push(this._sendMessage(to, value))
+      }
     }
 
-    const tx = await this._wallet.createAndSignTx(
-      txData
-        ? txData
-        : {
-            msgs,
-            gasPrices: fee
-              ? new Coins({
-                  [this._network.asset]: fee
-                })
-              : undefined
-          }
-    )
+    console.log(txData)
+
+    const tx = await this._wallet.createAndSignTx(txData)
+
+    console.log(tx)
 
     const transaction = await this._broadcastTx(tx)
 
