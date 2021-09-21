@@ -103,11 +103,13 @@ export default class TerraWalletProvider extends WalletProvider {
     } else if (data?.msgs) {
       txData = {
         msgs: data.msgs,
-        ...(fee && {gasPrices: new Coins({
-          [this._network.asset]: fee
-        })})}
+        ...(fee && {
+          gasPrices: new Coins({
+            [this._network.asset]: fee
+          })
+        })
       }
-     else {
+    } else {
       txData = {
         msgs: [this._sendMessage(to, value)]
       }
