@@ -57,7 +57,7 @@ export default {
   },
   terra: {
     network: TerraNetworks.terra_testnet,
-    value: new BigNumber(1000),
+    value: new BigNumber(100000),
 
     // Both of the accounts are used for the tests.
     // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
