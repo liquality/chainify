@@ -63,12 +63,12 @@ export default {
     // Before each test all funds from the receiver are moved to the sender, which provides enough funds for the whole test suite.
 
     // receiver
-    receiverAddress: 'terra1ux73wdfgmu7r5us2sf0u9vdmrfxuhdk8760zzj',
+    receiverAddress: 'terra197xgx306vcw8d8kqxdv9xercxdt7lnjstrm7k6',
     receiverMnemonic:
       'party leopard scare aisle latin spend moment curtain kite industry donate topple candy crucial fault oven flee that audit disagree cross sustain degree wisdom',
 
     // sender
-    senderAddress: 'terra197xgx306vcw8d8kqxdv9xercxdt7lnjstrm7k6',
+    senderAddress: 'terra1ux73wdfgmu7r5us2sf0u9vdmrfxuhdk8760zzj',
     senderMnemonic:
       'slush dutch dice canvas narrow weird flock toast gesture smile sound melody favorite save hybrid physical hard drink pear race kingdom kiwi tenant town'
   },
