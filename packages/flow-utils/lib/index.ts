@@ -9,18 +9,17 @@
 
 import { Transaction, Block, flow } from '@liquality/types'
 
-async function normalizeTx(tx: flow.Tx, txHash: string) {
-  // TODO: fix tx
+async function normalizeTx(rawTx: flow.Tx) {
   const normalizedTx: Transaction<flow.Tx> = {
-    hash: txHash,
-    value: 0,
-    blockHash: tx.referenceBlockId,
-    blockNumber: 0,
-    confirmations: 0,
-    feePrice: 0,
-    fee: 0,
-    secret: '',
-    _raw: tx
+    hash: rawTx.txId,
+    value: 0, // TODO: fetch value from events
+    blockHash: rawTx.referenceBlockId,
+    blockNumber: rawTx.blockNumber,
+    confirmations: rawTx.blockConfirmations,
+    // feePrice: 0,
+    fee: 0, // TODO: is it possible to fetch fee?
+    // secret: '',
+    _raw: rawTx
   }
 
   return normalizedTx

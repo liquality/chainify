@@ -51,17 +51,31 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
     return block.height
   }
 
-  async getTransactionByHash(txHash: string): Promise<Transaction<flow.Tx>> {
-    const tx = await fcl.send([fcl.getTransaction(txHash)]).then(fcl.decode)
+  async getTransactionByHash(
+    txHash: string,
+    blockData?: Block<flow.Tx>,
+    currentBlockHeight?: number
+  ): Promise<Transaction<flow.Tx>> {
+    const txRaw = await fcl.send([fcl.getTransaction(txHash)]).then(fcl.decode)
+    const txAdditionaData = await fcl.tx(txHash).snapshot()
 
-    return normalizeTx(tx, txHash)
+    const _currentBlockHeight = currentBlockHeight || (await this.getBlockHeight())
+    const _blockData = blockData || (await this.getBlockByHash(txRaw.referenceBlockId))
+
+    return normalizeTx({
+      ...txRaw,
+      ...txAdditionaData,
+      txId: txHash,
+      blockNumber: _blockData.number,
+      blockConfirmations: _currentBlockHeight - _blockData.number
+    })
   }
 
-  async getBalance(_addresses: string[]): Promise<BigNumber> {
-    const addresses = _addresses.map(addressToString)
+  async getBalance(addresses: string[]): Promise<BigNumber> {
+    const _addresses = addresses.map(addressToString)
 
     const promiseBalances = await Promise.all(
-      addresses.map(async (address: string) => {
+      _addresses.map(async (address: string) => {
         try {
           const account = await fcl.account(address)
           return new BigNumber(account.balance)
@@ -82,11 +96,12 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
   async sendRawTransaction(rawTransaction: string): Promise<string> {
     const txResponse = await fcl.send([fcl.script(rawTransaction)]).then(fcl.decode)
 
-    // TODO: return value
+    // TODO: return correct value
     return txResponse.toString()
   }
 
   async parseBlock(block: flow.BlockResponse): Promise<Block<flow.Tx>> {
+    // TODO: fetch txs
     const txs: flow.Tx[] = []
     return normalizeBlock(block, txs)
   }
