@@ -1,6 +1,6 @@
 {
   "name": "@liquality/jsonrpc-provider",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,9 +20,9 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/debug": "^1.6.3",
-    "@liquality/errors": "^1.6.3",
-    "@liquality/node-provider": "^1.6.3",
+    "@liquality/debug": "^1.6.4",
+    "@liquality/errors": "^1.6.4",
+    "@liquality/node-provider": "^1.6.4",
     "@types/lodash": "^4.14.168",
     "json-bigint": "^1.0.0",
     "lodash": "^4.17.20"
