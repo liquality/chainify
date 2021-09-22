@@ -194,7 +194,7 @@ terra
     new TerraWalletProvider({
       network: config.terra.network,
       mnemonic: config.terra.senderMnemonic,
-      derivationPath: ''
+      baseDerivationPath: `'m/44'/307'/0'`
     })
   )
   .addProvider(new TerraSwapProvider(config.terra.network))
@@ -310,7 +310,7 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
         new TerraWalletProvider({
           network: config.terra.network,
           mnemonic: config.terra.senderMnemonic,
-          derivationPath: ''
+          baseDerivationPath: `'m/44'/307'/0'`
         })
       )
 

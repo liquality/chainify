@@ -17,12 +17,12 @@ import {
 interface TerraWalletProviderOptions {
   network: TerraNetwork
   mnemonic: string
-  derivationPath: string
+  baseDerivationPath: string
 }
 
 export default class TerraWalletProvider extends WalletProvider {
   _network: TerraNetwork
-  _derivationPath: string
+  _baseDerivationPath: string
   _addressCache: { [key: string]: Address }
   private _mnemonic: string
   private _signer: MnemonicKey
@@ -31,11 +31,11 @@ export default class TerraWalletProvider extends WalletProvider {
   _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
-    const { network, mnemonic, derivationPath } = options
+    const { network, mnemonic, baseDerivationPath } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
-    this._derivationPath = derivationPath
+    this._baseDerivationPath = baseDerivationPath
     this._addressCache = {}
 
     this._lcdClient = new LCDClient({
@@ -63,7 +63,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const result = new Address({
       address: wallet.accAddress,
-      derivationPath: this._derivationPath,
+      derivationPath: this._baseDerivationPath,
       publicKey: wallet.accPubKey
     })
 
