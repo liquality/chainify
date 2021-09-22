@@ -3,7 +3,7 @@ import { uniq, flatten, isString } from 'lodash'
 import { WalletProvider } from '@liquality/wallet-provider'
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { bitcoin, SendOptions, BigNumber, Transaction, Address } from '@liquality/types'
-import { BitcoinNetworks, BitcoinNetwork, BitcoinCashNetworks, ProtocolType } from '@liquality/bitcoin-networks'
+import { BitcoinNetworks, BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { normalizeTransactionObject, decodeRawTransaction } from '@liquality/bitcoin-utils'
 import { sha256 } from '@liquality/crypto'
 
@@ -11,12 +11,6 @@ const BIP70_CHAIN_TO_NETWORK: { [index: string]: BitcoinNetwork } = {
   main: BitcoinNetworks.bitcoin,
   test: BitcoinNetworks.bitcoin_testnet,
   regtest: BitcoinNetworks.bitcoin_regtest
-}
-
-const BIP70_CHAIN_TO_NETWORK_BCH: { [index: string]: BitcoinNetwork } = {
-  main: BitcoinCashNetworks.bitcoin_cash,
-  test: BitcoinCashNetworks.bitcoin_cash_testnet,
-  regtest: BitcoinCashNetworks.bitcoin_cash_regtest
 }
 
 interface ProviderOptions {
@@ -71,12 +65,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   async _sendTransaction(options: SendOptions) {
     const value = new BigNumber(options.value).dividedBy(1e8).toNumber()
-    const shouldNotReuse = []
-    if (this._network.protocolType != ProtocolType.BitcoinCash) {
-      // BCHN deviates from Core's syntax
-      shouldNotReuse.push(true)
-    }
-    const hash = await this._rpc.jsonrpc('sendtoaddress', options.to, value, '', '', false, ...shouldNotReuse)
+    const hash = await this._rpc.jsonrpc('sendtoaddress', options.to, value, '', '', false, true)
     const transaction = await this._rpc.jsonrpc('gettransaction', hash, true)
     const fee = new BigNumber(transaction.fee).abs().times(1e8).toNumber()
     return normalizeTransactionObject(decodeRawTransaction(transaction.hex, this._network), fee)
@@ -89,9 +78,6 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async updateTransactionFee(tx: Transaction<bitcoin.Transaction>, newFeePerByte: number) {
-    if (!this._network.feeBumpCapable) {
-      throw new Error('This coin does not support fee bumping')
-    }
     const txHash = isString(tx) ? tx : tx.hash
     return this.withTxFee(async () => {
       const result = await this._rpc.jsonrpc('bumpfee', txHash)
@@ -102,9 +88,6 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]) {
-    if (!this._network.usePSBT) {
-      throw new Error('This coin does not support PSBT signing')
-    }
     const psbt = Psbt.fromBase64(data, { network: this._network })
 
     for (const input of inputs) {
@@ -119,8 +102,8 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async signBatchP2SHTransaction(
-    inputs: { inputTxHex: string; index: number; vout: any; outputScript: Buffer }[],
-    addresses: string[],
+    inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer }],
+    addresses: string,
     tx: any,
     locktime: number,
     segwit = false
@@ -134,22 +117,19 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
     const sigs = []
     for (let i = 0; i < inputs.length; i++) {
-      let sigHashId = BitcoinJsTransaction.SIGHASH_ALL
-      if (this._network.protocolType == ProtocolType.BitcoinCash) sigHashId |= 0x40
-
       let sigHash
-      if (segwit || this._network.protocolType == ProtocolType.BitcoinCash) {
-        sigHash = tx.hashForWitnessV0(inputs[i].index, inputs[i].outputScript, inputs[i].vout.vSat, sigHashId)
+      if (segwit) {
+        sigHash = tx.hashForWitnessV0(
+          inputs[i].index,
+          inputs[i].outputScript,
+          inputs[i].vout.vSat,
+          BitcoinJsTransaction.SIGHASH_ALL
+        ) // AMOUNT NEEDS TO BE PREVOUT AMOUNT
       } else {
         sigHash = tx.hashForSignature(inputs[i].index, inputs[i].outputScript, BitcoinJsTransaction.SIGHASH_ALL)
       }
 
       const sig = script.signature.encode(wallets[i].sign(sigHash), BitcoinJsTransaction.SIGHASH_ALL)
-
-      if (this._network.protocolType == ProtocolType.BitcoinCash) {
-        // Having bypassed BitcoinJS sanity checks
-        sig[sig.length - 1] |= 0x40
-      }
       sigs.push(sig)
     }
 
@@ -161,7 +141,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   }
 
   async getNewAddress(addressType: bitcoin.AddressType, label = '') {
-    const params = addressType && this._network.segwitCapable ? [label, addressType] : [label]
+    const params = addressType ? [label, addressType] : [label]
     const newAddress = await this._rpc.jsonrpc('getnewaddress', ...params)
 
     if (!newAddress) return null
@@ -227,7 +207,6 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
   async getConnectedNetwork() {
     const blockchainInfo = await this._rpc.jsonrpc('getblockchaininfo')
     const chain = blockchainInfo.chain
-    if (this._network.protocolType == ProtocolType.BitcoinCash) return BIP70_CHAIN_TO_NETWORK_BCH[chain]
     return BIP70_CHAIN_TO_NETWORK[chain]
   }
 
@@ -244,9 +223,5 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     const signedMessage = await this.signMessage(message, address)
     const secret = sha256(signedMessage)
     return secret
-  }
-
-  canUpdateFee() {
-    return this._network.feeBumpCapable
   }
 }

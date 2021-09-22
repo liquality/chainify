@@ -78,7 +78,8 @@ function testOpReturn(chain: Chain) {
   })
 }
 
-function testSweepTransaction(chain: Chain, nodeChain: Chain) {
+
+function testSweepTransaction(chain: Chain) {
   describe('Sweep Transaction', () => {
     after(async function () {
       // After sweep, funds should be replenished
@@ -93,10 +94,9 @@ function testSweepTransaction(chain: Chain, nodeChain: Chain) {
       const addrList = nonChangeAddresses.concat(changeAddresses)
 
       const bal = (await chain.client.chain.getBalance(addrList)).toNumber()
-
       let sendTxChain
       if (bal === 0) {
-        sendTxChain = nodeChain
+        sendTxChain = chains.bitcoinWithNode
       } else {
         sendTxChain = chain
       }
@@ -281,7 +281,7 @@ function testSignPSBTScript(chain: Chain) {
   })
 }
 
-function testSignBatchP2SHTransaction(chain: Chain, legacy: boolean) {
+function testSignBatchP2SHTransaction(chain: Chain) {
   it("Should redeem two P2SH's", async () => {
     const network = chain.network
     const value = config[chain.name as keyof typeof config].value
@@ -317,13 +317,11 @@ function testSignBatchP2SHTransaction(chain: Chain, legacy: boolean) {
       OPS.OP_CHECKMULTISIG
     ])
 
-    const paymentVariant = legacy ? bitcoinJs.payments.p2sh : bitcoinJs.payments.p2wsh
-
-    const paymentVariantOne = paymentVariant({
+    const paymentVariantOne = bitcoinJs.payments.p2wsh({
       redeem: { output: multisigOutputOne, network: network as BitcoinNetwork },
       network: network as BitcoinNetwork
     })
-    const paymentVariantTwo = paymentVariant({
+    const paymentVariantTwo = bitcoinJs.payments.p2wsh({
       redeem: { output: multisigOutputTwo, network: network as BitcoinNetwork },
       network: network as BitcoinNetwork
     })
@@ -356,8 +354,7 @@ function testSignBatchP2SHTransaction(chain: Chain, legacy: boolean) {
 
     txb.addInput(initiationTx.hash, multiOne.multiVout.n, 0, paymentVariantOne.output)
     txb.addInput(initiationTx.hash, multiTwo.multiVout.n, 0, paymentVariantTwo.output)
-    const addr = unusedAddressTwo.toString()
-    txb.addOutput(BitcoinUtils.addrToBitcoinJS(addr, network as BitcoinNetwork), value.toNumber() * 2 - txfee)
+    txb.addOutput(unusedAddressTwo, value.toNumber() * 2 - txfee)
 
     const tx = txb.buildIncomplete()
 
@@ -379,7 +376,7 @@ function testSignBatchP2SHTransaction(chain: Chain, legacy: boolean) {
       [addresses[0].address, addresses[0].address],
       tx,
       0,
-      !legacy
+      true
     )
 
     const signaturesTwo = await chain.client.getMethod('signBatchP2SHTransaction')(
@@ -400,7 +397,7 @@ function testSignBatchP2SHTransaction(chain: Chain, legacy: boolean) {
       [addresses[1].address, addresses[1].address],
       tx,
       0,
-      !legacy
+      true
     )
 
     const multiOneInput = bitcoinJs.script.compile([OPS.OP_0, signaturesOne[0], signaturesTwo[0]])
@@ -410,19 +407,11 @@ function testSignBatchP2SHTransaction(chain: Chain, legacy: boolean) {
     multiOne.paymentParams = { redeem: { output: multisigOutputOne, input: multiOneInput, network }, network }
     multiTwo.paymentParams = { redeem: { output: multisigOutputTwo, input: multiTwoInput, network }, network }
 
-    if (legacy) {
-      multiOne.paymentWithInput = bitcoinJs.payments.p2sh(multiOne.paymentParams)
-      multiTwo.paymentWithInput = bitcoinJs.payments.p2sh(multiTwo.paymentParams)
+    multiOne.paymentWithInput = bitcoinJs.payments.p2wsh(multiOne.paymentParams)
+    multiTwo.paymentWithInput = bitcoinJs.payments.p2wsh(multiTwo.paymentParams)
 
-      tx.setInputScript(0, multiOne.paymentWithInput.input)
-      tx.setInputScript(1, multiTwo.paymentWithInput.input)
-    } else {
-      multiOne.paymentWithInput = bitcoinJs.payments.p2wsh(multiOne.paymentParams)
-      multiTwo.paymentWithInput = bitcoinJs.payments.p2wsh(multiTwo.paymentParams)
-
-      tx.setWitness(0, multiOne.paymentWithInput.witness)
-      tx.setWitness(1, multiTwo.paymentWithInput.witness)
-    }
+    tx.setWitness(0, multiOne.paymentWithInput.witness)
+    tx.setWitness(1, multiTwo.paymentWithInput.witness)
 
     const claimTxHash = await chain.client.getMethod('sendRawTransaction')(tx.toHex())
 
@@ -451,7 +440,7 @@ describe('Transactions', function () {
     testBatchTransaction(chains.bitcoinWithLedger)
     testSignPSBTSimple(chains.bitcoinWithLedger)
     testSignPSBTScript(chains.bitcoinWithLedger)
-    testSignBatchP2SHTransaction(chains.bitcoinWithLedger, false)
+    testSignBatchP2SHTransaction(chains.bitcoinWithLedger)
     testOpReturn(chains.bitcoinWithLedger)
   })
 
@@ -460,8 +449,7 @@ describe('Transactions', function () {
     testBatchTransaction(chains.bitcoinWithNode)
     testSignPSBTSimple(chains.bitcoinWithNode)
     testSignPSBTScript(chains.bitcoinWithNode)
-    testSignBatchP2SHTransaction(chains.bitcoinWithNode, false)
-    testSignBatchP2SHTransaction(chains.bitcoinWithNode, true)
+    testSignBatchP2SHTransaction(chains.bitcoinWithNode)
   })
 
   describe('Bitcoin - Js', () => {
@@ -473,27 +461,8 @@ describe('Transactions', function () {
     testBatchTransaction(chains.bitcoinWithJs)
     testSignPSBTSimple(chains.bitcoinWithJs)
     testSignPSBTScript(chains.bitcoinWithJs)
-    testSignBatchP2SHTransaction(chains.bitcoinWithJs, false)
-    testSignBatchP2SHTransaction(chains.bitcoinWithJs, true)
-    testSweepTransaction(chains.bitcoinWithJs, chains.bitcoinWithNode)
+    testSignBatchP2SHTransaction(chains.bitcoinWithJs)
+    testSweepTransaction(chains.bitcoinWithJs)
     testOpReturn(chains.bitcoinWithJs)
-  })
-
-  describe('Bitcoin Cash - Node', () => {
-    testTransaction(chains.bitcoinCashWithNode)
-    testBatchTransaction(chains.bitcoinCashWithNode)
-    testSignBatchP2SHTransaction(chains.bitcoinCashWithNode, true)
-  })
-
-  describe('Bitcoin Cash - Js', () => {
-    before(async function () {
-      await importBitcoinAddresses(chains.bitcoinCashWithJs)
-      await fundWallet(chains.bitcoinCashWithJs)
-    })
-    testTransaction(chains.bitcoinCashWithJs)
-    testBatchTransaction(chains.bitcoinCashWithJs)
-    testSignBatchP2SHTransaction(chains.bitcoinCashWithJs, true)
-    testSweepTransaction(chains.bitcoinCashWithJs, chains.bitcoinCashWithNode)
-    testOpReturn(chains.bitcoinCashWithJs)
   })
 })

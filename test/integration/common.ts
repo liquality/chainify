@@ -71,18 +71,6 @@ function mockedBitcoinRpcProvider() {
   return bitcoinRpcProvider
 }
 
-function mockedBitcoinCashRpcProvider() {
-  const bitcoinCashRpcProvider = new BitcoinRpcProvider({
-    network: config.bitcoincash.network,
-    uri: config.bitcoincash.rpc.host,
-    username: config.bitcoincash.rpc.username,
-    password: config.bitcoincash.rpc.password
-  })
-  // Mock Fee Per Byte to prevent from changing
-  bitcoinCashRpcProvider.getFeePerByte = async () => CONSTANTS.BITCOIN_FEE_PER_BYTE
-  return bitcoinCashRpcProvider
-}
-
 const bitcoinWithLedger = new Client()
 bitcoinWithLedger.addProvider(mockedBitcoinRpcProvider())
 bitcoinWithLedger.addProvider(
@@ -116,29 +104,6 @@ bitcoinWithJs.addProvider(
   })
 )
 bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.network }))
-
-const bitcoinCashWithNode = new Client()
-bitcoinCashWithNode.addProvider(mockedBitcoinCashRpcProvider())
-bitcoinCashWithNode.addProvider(
-  new BitcoinNodeWalletProvider({
-    network: config.bitcoincash.network,
-    uri: config.bitcoincash.rpc.host,
-    username: config.bitcoincash.rpc.username,
-    password: config.bitcoincash.rpc.password
-  })
-)
-bitcoinCashWithNode.addProvider(new BitcoinSwapProvider({ network: config.bitcoincash.network }))
-
-const bitcoinCashWithJs = new Client()
-bitcoinCashWithJs.addProvider(mockedBitcoinCashRpcProvider())
-bitcoinCashWithJs.addProvider(
-  new BitcoinJsWalletProvider({
-    network: config.bitcoincash.network,
-    mnemonic: generateMnemonic(256),
-    baseDerivationPath: `m/30'/${config.bitcoincash.network.coinType}'/0'`
-  })
-)
-bitcoinCashWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoincash.network }))
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
@@ -271,18 +236,6 @@ const chains: { [index: string]: Chain } = {
     segwitFeeImplemented: true
   },
   bitcoinWithJs: { id: 'Bitcoin Js', name: 'bitcoin', client: bitcoinWithJs, network: config.bitcoin.network },
-  bitcoinCashWithNode: {
-    id: 'Bitcoin Cash Node',
-    name: 'bitcoin',
-    client: bitcoinCashWithNode,
-    network: config.bitcoincash.network
-  },
-  bitcoinCashWithJs: {
-    id: 'Bitcoin Cash Js',
-    name: 'bitcoin',
-    client: bitcoinCashWithJs,
-    network: config.bitcoincash.network
-  },
   ethereumWithMetaMask: { id: 'Ethereum MetaMask', name: 'ethereum', client: ethereumWithMetaMask },
   ethereumWithNode: { id: 'Ethereum Node', name: 'ethereum', client: ethereumWithNode },
   ethereumWithLedger: { id: 'Ethereum Ledger', name: 'ethereum', client: ethereumWithLedger },
@@ -319,10 +272,7 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
   let tx
   switch (chain.name) {
     case 'bitcoin': {
-      tx = await (address.includes(':')
-        ? chains.bitcoinCashWithNode
-        : chains.bitcoinWithNode
-      ).client.chain.sendTransaction({
+      tx = await chains.bitcoinWithNode.client.chain.sendTransaction({
         to: address,
         value: value || CONSTANTS.BITCOIN_ADDRESS_DEFAULT_BALANCE
       })
@@ -664,7 +614,7 @@ async function expectBitcoinFee(chain: Chain, txHash: string, expectedFeePerByte
   const tx = await chain.client.chain.getTransactionByHash(txHash)
   const fee = await getBitcoinTransactionFee(chain, tx)
   let size = chain.segwitFeeImplemented ? tx._raw.vsize : tx._raw.size
-  if (payToScript && (chain.id.includes('Ledger') || chain.id.includes('Js')) && !chain.id.includes('Cash')) {
+  if (payToScript && (chain.id.includes('Ledger') || chain.id.includes('Js'))) {
     size -= 10 // Coin select fee calculation is off by 10 bytes as it does not consider pay to script
   }
   const maxFeePerByte = new BigNumber(new BigNumber(expectedFeePerByte).times(size + 4)).div(size).dp(0).toNumber() // https://github.com/bitcoin/bitcoin/blob/362f9c60a54e673bb3daa8996f86d4bc7547eb13/test/functional/test_framework/util.py#L40

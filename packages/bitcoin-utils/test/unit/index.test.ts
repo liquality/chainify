@@ -2,7 +2,7 @@
 
 import { expect } from 'chai'
 
-import { BitcoinNetwork, BitcoinNetworks, BitcoinCashNetworks } from '../../../bitcoin-networks/lib'
+import { BitcoinNetworks } from '../../../bitcoin-networks/lib'
 import * as BitcoinUtil from '../../lib'
 
 describe('Bitcoin Util', () => {
@@ -188,48 +188,6 @@ describe('Bitcoin Util', () => {
         hex:
           '02000000000101d91c9f26c7ecf0afb541df576801a6694420a3652c4f5f3c7033a361945ea6be00000000000000000001a45e150300000000160014c42dba1576d9ba619d92b47e26f97f8790a65b8405483045022100afbf55d5991ca4e8a9e423e39d55011f12e99fd8def7cc4a0347d777d1910ed802201aba22c141f34df7dc954dfbf0d1224c6ad05f6df70345c0903c948283532e9201210304bb3f24bd44298d578257e42c61f716f884b4743780eef03c4b1e0a30a35fe420767050193726eb46aa4efb0dc6979a53c515b061d9c4d043871b30fcb99d80220101616382012088a82014f786ddd0b839deec2c27357eb4e5a82ac2030e2b9782f5f05e0945ce5e32918876a914c42dba1576d9ba619d92b47e26f97f8790a65b846704332c3a5fb17576a914128371468880b80dd995b31e5cdef8a5acbd7f936888ac00000000'
       })
-    })
-  })
-
-  describe('cashaddr', () => {
-    it('should convert cashaddr to legacy', () => {
-      const mainnet = BitcoinCashNetworks.bitcoin_cash as BitcoinNetwork
-      const testnet = BitcoinCashNetworks.bitcoin_cash_testnet as BitcoinNetwork
-      const regtest = BitcoinCashNetworks.bitcoin_cash_regtest as BitcoinNetwork
-
-      expect(BitcoinUtil.addrToBitcoinJS('bchtest:ppy0zdrtg3fapgsgemuadvtj9krudvl3rcjkrsasgw', testnet)).to.equal(
-        '2MytubJ9LXs6JZ8p8Sct1TeNmp1uimmM8Et'
-      )
-
-      expect(BitcoinUtil.addrToBitcoinJS('qrukvmhdtye7rlg3nspum20ds3ttg8p4ucv4y3cjw0', mainnet)).to.equal(
-        '1PjhxxVuEC3D1yPVTRPsVPdVq6x6NqrQxZ'
-      )
-
-      expect(BitcoinUtil.addrToBitcoinJS('bchtest:qrxjjxg7d5z4jjm7nx782euecjlsqr4nqywt0qursc', testnet)).to.equal(
-        'mzDk3vhn4cGiziYLL5gdjH3ekMw56LKbEt'
-      )
-
-      expect(BitcoinUtil.addrToBitcoinJS('bchreg:qrxjjxg7d5z4jjm7nx782euecjlsqr4nqy5heplsn7', regtest)).to.equal(
-        'mzDk3vhn4cGiziYLL5gdjH3ekMw56LKbEt'
-      )
-    })
-
-    it('should convert legacy to cashaddr', () => {
-      const mainnet = BitcoinCashNetworks.bitcoin_cash as BitcoinNetwork
-      const testnet = BitcoinCashNetworks.bitcoin_cash_testnet as BitcoinNetwork
-      const regtest = BitcoinCashNetworks.bitcoin_cash_regtest as BitcoinNetwork
-
-      expect(BitcoinUtil.addrFromBitcoinJS('1PjhxxVuEC3D1yPVTRPsVPdVq6x6NqrQxZ', mainnet)).to.equal(
-        'bitcoincash:qrukvmhdtye7rlg3nspum20ds3ttg8p4ucv4y3cjw0'
-      )
-
-      expect(BitcoinUtil.addrFromBitcoinJS('2MytubJ9LXs6JZ8p8Sct1TeNmp1uimmM8Et', testnet)).to.equal(
-        'bchtest:ppy0zdrtg3fapgsgemuadvtj9krudvl3rcjkrsasgw'
-      )
-
-      expect(BitcoinUtil.addrFromBitcoinJS('mzDk3vhn4cGiziYLL5gdjH3ekMw56LKbEt', regtest)).to.equal(
-        'bchreg:qrxjjxg7d5z4jjm7nx782euecjlsqr4nqy5heplsn7'
-      )
     })
   })
 })

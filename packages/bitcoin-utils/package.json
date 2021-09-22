@@ -28,8 +28,6 @@
     "bignumber.js": "^9.0.0",
     "bip174": "^2.0.1",
     "bitcoinjs-lib": "^5.2.0",
-    "bs58check": "^2.1.2",
-    "cashaddrjs": "^0.4.4",
     "coinselect": "^3.1.11",
     "lodash": "^4.17.20"
   },
@@ -46,7 +44,6 @@
   },
   "devDependencies": {
     "@types/bitcoinjs-lib": "^5.0.0",
-    "@types/bs58check": "^2.1.0",
     "@types/lodash": "^4.14.168",
     "@types/node": "^14.14.31"
   },

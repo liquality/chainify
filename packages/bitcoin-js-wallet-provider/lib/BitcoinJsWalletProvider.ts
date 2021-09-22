@@ -1,18 +1,9 @@
 import { BitcoinWalletProvider } from '@liquality/bitcoin-wallet-provider'
 import { WalletProvider } from '@liquality/wallet-provider'
-import { BitcoinNetwork, ProtocolType } from '@liquality/bitcoin-networks'
-import { addrToBitcoinJS, addrFromBitcoinJS } from '@liquality/bitcoin-utils'
+import { BitcoinNetwork } from '@liquality/bitcoin-networks'
 import { bitcoin } from '@liquality/types'
 
-import {
-  Psbt,
-  ECPair,
-  ECPairInterface,
-  Transaction as BitcoinJsTransaction,
-  TransactionBuilder,
-  script,
-  address
-} from 'bitcoinjs-lib'
+import { Psbt, ECPair, ECPairInterface, Transaction as BitcoinJsTransaction, script } from 'bitcoinjs-lib'
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message'
 import { mnemonicToSeed } from 'bip39'
 import { BIP32Interface, fromSeed } from 'bip32'
@@ -34,17 +25,8 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
   _baseDerivationNode: BIP32Interface
 
   constructor(options: BitcoinJsWalletProviderOptions) {
-    const {
-      network,
-      mnemonic,
-      baseDerivationPath,
-      addressType = network.segwitCapable ? bitcoin.AddressType.BECH32 : bitcoin.AddressType.LEGACY
-    } = options
-    super({
-      network,
-      baseDerivationPath,
-      addressType
-    })
+    const { network, mnemonic, baseDerivationPath, addressType = bitcoin.AddressType.BECH32 } = options
+    super({ network, baseDerivationPath, addressType })
 
     if (!mnemonic) throw new Error('Mnemonic should not be empty')
 
@@ -82,45 +64,6 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
     return signature.toString('hex')
   }
 
-  async _buildTransactionLegacy(targets: bitcoin.OutputTarget[], inputs: bitcoin.UTXO[]) {
-    // Currently this function is intended for Bitcoin Cash only
-    // The only reason Bitcoin Cash needs this is the need to use a different Sighash value
-    const txb = new TransactionBuilder(this._network as BitcoinNetwork)
-    for (let i = 0; i < inputs.length; i++) {
-      const p2pkhOutput = address.toOutputScript(
-        addrToBitcoinJS(inputs[i].address, this._network),
-        this._network as any
-      )
-      txb.addInput(inputs[i].txid, inputs[i].vout, 0, p2pkhOutput)
-    }
-    for (let i = 0; i < targets.length; i++) {
-      const scriptPubKey = targets[i].script || addrToBitcoinJS(targets[i].address, this._network)
-      txb.addOutput(scriptPubKey, targets[i].value)
-    }
-    const tx = txb.buildIncomplete()
-    const inputInfo: { inputTxHex: string; index: number; vout: any; outputScript: Buffer }[] = []
-    const inputAddressInfo: string[] = []
-    for (let i = 0; i < inputs.length; i++) {
-      const vout: any = {}
-      vout.vSat = inputs[i].value
-      inputInfo.push({
-        inputTxHex: '',
-        index: i,
-        vout: vout,
-        outputScript: address.toOutputScript(addrToBitcoinJS(inputs[i].address, this._network), this._network as any)
-      })
-      inputAddressInfo.push(inputs[i].address)
-    }
-    const sigs = await this.signBatchP2SHTransaction(inputInfo, inputAddressInfo, tx, 0)
-    for (let i = 0; i < inputs.length; i++) {
-      const wallet = await this.getWalletAddress(inputs[i].address)
-      const keyPair = await this.keyPair(wallet.derivationPath)
-      tx.setInputScript(i, script.compile([sigs[i], keyPair.publicKey]))
-    }
-
-    return tx.toHex()
-  }
-
   async _buildTransaction(targets: bitcoin.OutputTarget[], feePerByte?: number, fixedInputs?: bitcoin.Input[]) {
     const network = this._network
 
@@ -133,8 +76,6 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
         value: change.value
       })
     }
-
-    if (!network.usePSBT) return { hex: await this._buildTransactionLegacy(targets, inputs), fee }
 
     const psbt = new Psbt({ network })
 
@@ -216,9 +157,6 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
   }
 
   async signPSBT(data: string, inputs: bitcoin.PsbtInputTarget[]) {
-    if (!this._network.usePSBT) {
-      throw new Error('This coin does not support PSBT signing')
-    }
     const psbt = Psbt.fromBase64(data, { network: this._network })
     for (const input of inputs) {
       const keyPair = await this.keyPair(input.derivationPath)
@@ -228,15 +166,15 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
   }
 
   async signBatchP2SHTransaction(
-    inputs: { inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }[],
-    addresses: string[],
+    inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }],
+    addresses: string,
     tx: any,
     lockTime?: number,
     segwit?: boolean
   ) {
     const keyPairs = []
     for (const address of addresses) {
-      const wallet = await this.getWalletAddress(addrFromBitcoinJS(address, this._network as BitcoinNetwork))
+      const wallet = await this.getWalletAddress(address)
       const keyPair = await this.keyPair(wallet.derivationPath)
       keyPairs.push(keyPair)
     }
@@ -244,24 +182,19 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
     const sigs = []
     for (let i = 0; i < inputs.length; i++) {
       const index = inputs[i].txInputIndex ? inputs[i].txInputIndex : inputs[i].index
-
-      let sigHashId = BitcoinJsTransaction.SIGHASH_ALL
-      if (this._network.protocolType == ProtocolType.BitcoinCash) sigHashId |= 0x40
-
       let sigHash
-      if (segwit || this._network.protocolType == ProtocolType.BitcoinCash) {
-        sigHash = tx.hashForWitnessV0(index, inputs[i].outputScript, inputs[i].vout.vSat, sigHashId)
+      if (segwit) {
+        sigHash = tx.hashForWitnessV0(
+          index,
+          inputs[i].outputScript,
+          inputs[i].vout.vSat,
+          BitcoinJsTransaction.SIGHASH_ALL
+        )
       } else {
         sigHash = tx.hashForSignature(index, inputs[i].outputScript, BitcoinJsTransaction.SIGHASH_ALL)
       }
 
       const sig = script.signature.encode(keyPairs[i].sign(sigHash), BitcoinJsTransaction.SIGHASH_ALL)
-
-      if (this._network.protocolType == ProtocolType.BitcoinCash) {
-        // Having bypassed BitcoinJS sanity checks
-        sig[sig.length - 1] |= 0x40
-      }
-
       sigs.push(sig)
     }
 
@@ -280,9 +213,5 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
 
   async isWalletAvailable() {
     return true
-  }
-
-  canUpdateFee() {
-    return this._network.feeBumpCapable
   }
 }
