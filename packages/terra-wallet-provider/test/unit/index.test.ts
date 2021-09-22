@@ -9,7 +9,7 @@ import { TerraNetworks } from '../../../terra-networks'
 chai.config.truncateThreshold = 0
 
 const network = TerraNetworks.terra_testnet
-const derivationPath = ``
+const baseDerivationPath = `'m/44'/307'/0'`
 const rpcProvider = new TerraRpcProvider(network)
 
 describe('Terra Wallet Provider provider', () => {
@@ -20,7 +20,7 @@ describe('Terra Wallet Provider provider', () => {
         network,
         mnemonic:
           'donkey ripple napkin pulp near program profit polar mutual receive gorilla choice whale shoot vendor seat draw cost sell winter arctic crane detect daughter',
-        derivationPath
+        baseDerivationPath
       })
       client.addProvider(provider)
       client.addProvider(rpcProvider)
@@ -34,7 +34,7 @@ describe('Terra Wallet Provider provider', () => {
         network,
         mnemonic:
           'base eternal trash tent twist fog palm summer crop oppose memory absent usual ahead subject spirit end fragile gauge defy month mercy grit frost',
-        derivationPath
+        baseDerivationPath
       })
       client.addProvider(provider)
       client.addProvider(rpcProvider)
