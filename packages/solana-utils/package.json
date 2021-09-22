@@ -1,6 +1,6 @@
 {
   "name": "@liquality/solana-utils",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -19,10 +19,10 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@liquality/crypto": "^1.6.2",
-    "@liquality/errors": "^1.6.2",
-    "@liquality/types": "^1.6.2",
-    "@liquality/utils": "^1.6.2",
+    "@liquality/crypto": "^1.6.3",
+    "@liquality/errors": "^1.6.3",
+    "@liquality/types": "^1.6.3",
+    "@liquality/utils": "^1.6.3",
     "@solana/web3.js": "^1.20.0",
     "borsh": "^0.4.0",
     "lodash": "^4.17.21"
