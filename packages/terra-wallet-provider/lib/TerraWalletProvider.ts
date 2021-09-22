@@ -63,7 +63,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const result = new Address({
       address: wallet.accAddress,
-      derivationPath: this._baseDerivationPath,
+      derivationPath: this._baseDerivationPath + `/0/0`,
       publicKey: wallet.accPubKey
     })
 

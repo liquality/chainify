@@ -78,7 +78,6 @@ function testOpReturn(chain: Chain) {
   })
 }
 
-
 function testSweepTransaction(chain: Chain) {
   describe('Sweep Transaction', () => {
     after(async function () {
