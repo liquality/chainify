@@ -53,21 +53,21 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
 
   async getTransactionByHash(
     txHash: string,
-    blockData?: Block<flow.Tx>,
+    blockNumber?: number,
     currentBlockHeight?: number
   ): Promise<Transaction<flow.Tx>> {
     const txRaw = await fcl.send([fcl.getTransaction(txHash)]).then(fcl.decode)
     const txAdditionaData = await fcl.tx(txHash).snapshot()
 
     const _currentBlockHeight = currentBlockHeight || (await this.getBlockHeight())
-    const _blockData = blockData || (await this.getBlockByHash(txRaw.referenceBlockId))
+    const _blockNumber = blockNumber || (await this.getBlockByHash(txRaw.referenceBlockId)).number
 
     return normalizeTx({
       ...txRaw,
       ...txAdditionaData,
       txId: txHash,
-      blockNumber: _blockData.number,
-      blockConfirmations: _currentBlockHeight - _blockData.number
+      blockNumber: _blockNumber,
+      blockConfirmations: _currentBlockHeight - blockNumber
     })
   }
 
@@ -101,8 +101,26 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
   }
 
   async parseBlock(block: flow.BlockResponse): Promise<Block<flow.Tx>> {
-    // TODO: fetch txs
-    const txs: flow.Tx[] = []
-    return normalizeBlock(block, txs)
+    const promiseTxs = await Promise.all(
+      block.collectionGuarantees.map(async (collectionGuarantee: any) => {
+        try {
+          const collection = await fcl.send([fcl.getCollection(collectionGuarantee.collectionId)]).then(fcl.decode)
+          return await Promise.all(
+            collection.transactionIds.map(async (transactionId: any) => {
+              const txRaw: flow.Tx = await fcl.send([fcl.getTransaction(transactionId)]).then(fcl.decode)
+              return txRaw
+            })
+          )
+        } catch (err) {
+          if (err.message) {
+            return null
+          }
+          throw err
+        }
+      })
+    )
+    console.log()
+
+    return normalizeBlock(block, Array.prototype.concat.apply([], promiseTxs))
   }
 }

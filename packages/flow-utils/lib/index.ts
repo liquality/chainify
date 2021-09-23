@@ -25,14 +25,14 @@ async function normalizeTx(rawTx: flow.Tx) {
   return normalizedTx
 }
 
-function normalizeBlock(blockResponse: flow.BlockResponse, txs: flow.Tx[]) {
+function normalizeBlock(blockResponse: flow.BlockResponse, rawTxs: flow.Tx[]) {
   const normalizedBlock: Block<flow.Tx> = {
     number: blockResponse.height,
     hash: blockResponse.id,
     timestamp: Math.floor(new Date(blockResponse.timestamp).getTime() / 1000),
     size: 0,
     parentHash: blockResponse.parentId,
-    transactions: txs
+    transactions: rawTxs
   }
 
   return normalizedBlock
