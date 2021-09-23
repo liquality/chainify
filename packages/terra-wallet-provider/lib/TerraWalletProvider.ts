@@ -11,7 +11,8 @@ import {
   MsgSend,
   StdTx,
   Wallet,
-  CreateTxOptions
+  CreateTxOptions,
+  StdFee
 } from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
@@ -98,7 +99,8 @@ export default class TerraWalletProvider extends WalletProvider {
 
     if (data?.msgs && data?.gasAdjustment) {
       txData = {
-        ...data
+        msgs: data.msgs.map((msg: any) => Msg.fromData(JSON.parse(msg))),
+        fee: data.fee ? StdFee.fromData(JSON.parse(data.fee as any)) : undefined
       }
     } else if (data?.msgs) {
       txData = {
