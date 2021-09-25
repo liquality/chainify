@@ -98,7 +98,9 @@ export default class TerraWalletProvider extends WalletProvider {
     let txData: any
 
     if (typeof data?.fee === 'string') {
-      txData.fee = StdFee.fromData(JSON.parse(data.fee as any))
+      txData = {
+        fee: StdFee.fromData(JSON.parse(data.fee as any))
+      }
     } else if (data?.msgs) {
       txData = {
         ...(fee && {
@@ -114,7 +116,10 @@ export default class TerraWalletProvider extends WalletProvider {
     }
 
     if (!txData.msgs) {
-      txData.msgs = data.msgs.map((msg) => (typeof msg === 'string' ? JSON.parse(msg) : msg))
+      txData = {
+        ...txData,
+        msgs: data.msgs.map((msg) => (typeof msg === 'string' ? Msg.fromData(JSON.parse(msg)) : msg))
+      }
     }
 
     const tx = await this._wallet.createAndSignTx(txData)
