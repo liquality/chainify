@@ -1,12 +1,3 @@
-// import { near, SwapParams, Transaction, Address } from '@liquality/types'
-// import { validateValue, validateSecretHash, validateExpiration, addressToString } from '@liquality/utils'
-// import { InvalidAddressError } from '@liquality/errors'
-// import BN from 'bn.js'
-
-// export { validateSecret, validateSecretAndHash } from '@liquality/utils'
-// export { transactions, Account, InMemorySigner, providers, KeyPair, keyStores } from 'near-api-js'
-// export { BN }
-
 import { Transaction, Block, flow } from '@liquality/types'
 
 async function normalizeTx(rawTx: flow.Tx) {
@@ -17,7 +8,7 @@ async function normalizeTx(rawTx: flow.Tx) {
     blockNumber: rawTx.blockNumber,
     confirmations: rawTx.blockConfirmations,
     // feePrice: 0,
-    fee: 0, // TODO: is it possible to fetch fee?
+    fee: 0, // TODO: fetch fee
     // secret: '',
     _raw: rawTx
   }

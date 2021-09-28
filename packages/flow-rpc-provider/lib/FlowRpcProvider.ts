@@ -67,7 +67,7 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
       ...txAdditionaData,
       txId: txHash,
       blockNumber: _blockNumber,
-      blockConfirmations: _currentBlockHeight - blockNumber
+      blockConfirmations: _currentBlockHeight - _blockNumber
     })
   }
 

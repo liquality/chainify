@@ -11,7 +11,7 @@ export interface FlowNetwork extends Network {
 const flow_mainnet: FlowNetwork = {
   name: 'flow_mainnet',
   network: 'flow_mainnet',
-  rpcUrl: 'https://access.onflow.org',
+  rpcUrl: 'https://access-mainnet-beta.onflow.org',
   discoveryWallet: 'https://fcl-discovery.onflow.org/mainnet/authn',
   helperUrl: 'https://flowscan.org',
   coinType: '539',
