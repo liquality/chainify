@@ -10,6 +10,7 @@ import * as fcl from '@onflow/fcl'
 
 export default class FlowRpcProvider extends NodeProvider implements Partial<ChainProvider> {
   _network: FlowNetwork
+  _addressAPI: NodeProvider
 
   constructor(network: FlowNetwork) {
     super({
@@ -18,6 +19,12 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
       transformResponse: undefined
     })
     this._network = network
+
+    this._addressAPI = new NodeProvider({
+      baseURL: network.accountAPI,
+      responseType: 'text',
+      transformResponse: undefined
+    })
 
     fcl
       .config()
@@ -100,6 +107,37 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
     return txResponse.toString()
   }
 
+  async accountAddress(publicKey: string): Promise<string> {
+    let addr = await this.getAccountAddressFromPublicKey(publicKey)
+    if (addr == '') {
+      addr = await this.createAccountAddressFromPublicKey(publicKey)
+    }
+    return addr
+  }
+
+  async createAccountAddressFromPublicKey(publicKey: string): Promise<string> {
+    try {
+      // By default Liquality wallet uses ECDSA_secp256k1 and SHA3_256
+      const response = await this._addressAPI.nodePost('/accounts', {
+        publicKey,
+        signatureAlgorithm: 'ECDSA_secp256k1',
+        hashAlgorithm: 'SHA3_256'
+      })
+      return response.address
+    } catch (e) {
+      return ''
+    }
+  }
+
+  async getAccountAddressFromPublicKey(publicKey: string): Promise<string> {
+    try {
+      const response = await this._addressAPI.nodeGet(`/accounts?publicKey=${publicKey}`)
+      return response.address
+    } catch (e) {
+      return ''
+    }
+  }
+
   async parseBlock(block: flow.BlockResponse): Promise<Block<flow.Tx>> {
     const promiseTxs = await Promise.all(
       block.collectionGuarantees.map(async (collectionGuarantee: any) => {
@@ -119,7 +157,6 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
         }
       })
     )
-    console.log()
 
     return normalizeBlock(block, Array.prototype.concat.apply([], promiseTxs))
   }

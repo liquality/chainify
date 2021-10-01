@@ -3,17 +3,18 @@ export interface FlowNetwork extends Network {
   network: string
   rpcUrl: string
   discoveryWallet: string
+  accountAPI: string
   helperUrl?: string
   derivationPath?: string
 }
 
-// TODO: test mainnet
 const flow_mainnet: FlowNetwork = {
   name: 'flow_mainnet',
   network: 'flow_mainnet',
   rpcUrl: 'https://access-mainnet-beta.onflow.org',
   discoveryWallet: 'https://fcl-discovery.onflow.org/mainnet/authn',
   helperUrl: 'https://flowscan.org',
+  accountAPI: 'http://localhost:8081/', // TODO: get the correct one
   coinType: '539',
   isTestnet: false
 }
@@ -24,6 +25,7 @@ const flow_testnet: FlowNetwork = {
   rpcUrl: 'https://access-testnet.onflow.org',
   discoveryWallet: 'https://fcl-discovery.onflow.org/testnet/authn',
   helperUrl: 'https://testnet.flowscan.org',
+  accountAPI: 'http://localhost:8081/', // TODO: get the correct one
   coinType: '539',
   isTestnet: true
 }

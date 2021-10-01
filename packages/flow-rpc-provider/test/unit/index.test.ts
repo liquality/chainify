@@ -1,5 +1,4 @@
 /* eslint-env mocha */
-// import chai from 'chai'
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { Client } from '../../../client/lib'

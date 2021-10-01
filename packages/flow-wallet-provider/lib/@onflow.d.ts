@@ -1,1 +1,8 @@
 declare module '@onflow/fcl'
+declare module '@onflow/sdk'
+declare module '@onflow/rlp'
+declare module '@onflow/types'
+declare module '@onflow/util-encode-key'
+declare module '@onflow/six-create-account'
+declare module 'elliptic'
+declare module 'hdkey'
