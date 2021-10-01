@@ -41,6 +41,8 @@ describe('Terra Wallet Provider provider', () => {
       expect(true)
 
       const address = await client.wallet.getAddresses()
+
+      expect(address[0].derivationPath).to.equal(`'m/44'/307'/0'/0/0`)
       expect(address[0].address).to.be.equal('terra1krq0p9qh9nujpf77cvma36acyeqy7gdedfamgw')
     })
   })
