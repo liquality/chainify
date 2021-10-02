@@ -67,6 +67,15 @@ export default {
     receiverAddress: '5r3N8yt7DYgh888Rr7owRoD3Jn6QSNY9sYyisTkT86DU',
     receiverMnemonic:
       'glance item million plastic used siren giant process oppose access soldier what all live shy kitten urge earth easy bounce blade inmate scorpion icon'
+  },
+  flow: {
+    value: new BigNumber(5),
+
+    // sender
+    senderAddress: '0xdadbaee81662a80a',
+
+    // receiver
+    receiverAddress: '0x368b4c701d609c17'
   }
   // ethereum: { // RSK
   //   rpc: {

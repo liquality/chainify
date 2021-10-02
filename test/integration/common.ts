@@ -29,6 +29,10 @@ import { SolanaRpcProvider } from '../../packages/solana-rpc-provider/lib'
 import { SolanaWalletProvider } from '../../packages/solana-wallet-provider/lib'
 import { SolanaSwapProvider } from '../../packages/solana-swap-provider/lib'
 import { SolanaSwapFindProvider } from '../../packages/solana-swap-find-provider/lib'
+// import { FlowRpcProvider } from '../../packages/flow-rpc-provider/lib'
+// import { FlowWalletProvider } from '../../packages/flow-wallet-provider/lib'
+import { FlowSwapProvider } from '../../packages/flow-swap-provider/lib'
+// import { FlowSwapFindProvider } from '../../packages/flow-swap-find-provider/lib'
 
 import { BigNumber, Transaction, bitcoin, Network, SwapParams, SendOptions, Address } from '../../packages/types/lib'
 import { findLast } from 'lodash'
@@ -230,6 +234,13 @@ solana.addProvider(
 solana.addProvider(new SolanaSwapProvider(config.solana.network))
 solana.addProvider(new SolanaSwapFindProvider(config.solana.network))
 
+// Flow
+const flow = new Client()
+// flow.addProvider(new FlowRpcProvider())
+// flow.addProvider(new FlowWalletProvider())
+flow.addProvider(new FlowSwapProvider())
+// flow.addProvider(new FlowSwapFindProvider())
+
 interface Chain {
   id: string
   name: string
@@ -275,7 +286,8 @@ const chains: { [index: string]: Chain } = {
   erc20WithLedger: { id: 'ERC20 Ledger', name: 'ethereum', client: erc20WithLedger },
   erc20WithJs: { id: 'ERC20 Js', name: 'ethereum', client: erc20WithJs },
   nearWithJs: { id: 'Near Js', name: 'near', client: nearWithJs },
-  solana: { id: 'Solana', name: 'solana', client: solana }
+  solana: { id: 'Solana', name: 'solana', client: solana },
+  flow: { id: 'Flow', name: 'flow', client: flow }
 }
 
 async function getSwapParams(chain: Chain, secretHash: string): Promise<SwapParams> {
@@ -375,6 +387,17 @@ async function fundWallet(chain: Chain) {
 
 async function getNewAddress(chain: Chain, refund = false): Promise<Address> {
   switch (chain.name) {
+    case 'flow': {
+      if (refund) {
+        return {
+          address: config.flow.senderAddress
+        }
+      }
+      return {
+        address: config.flow.receiverAddress
+      }
+    }
+
     case 'solana': {
       if (refund) {
         return {
@@ -418,6 +441,12 @@ async function getRandomAddress(chain: Chain): Promise<Address> {
     case 'solana': {
       return {
         address: config.solana.receiverAddress
+      }
+    }
+
+    case 'flow': {
+      return {
+        address: config.flow.receiverAddress
       }
     }
 
