@@ -31,9 +31,9 @@ const terra_testnet: TerraNetwork = {
   gasPricesUrl: 'https://bombay-fcd.terra.dev/v1/txs/gas_prices',
   coinType: '370',
   isTestnet: true,
-  chainID: 'bombay-11',
+  chainID: 'bombay-12',
   asset: 'uluna',
-  codeId: 9344
+  codeId: 10696
 }
 
 const TerraNetworks = {
