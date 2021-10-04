@@ -1,3 +1,5 @@
+import { SendOptions } from '../chain'
+
 export interface BlockResponse {
   id: string
   parentId: string
@@ -43,4 +45,10 @@ export interface ProposalKey {
   address: string
   keyId: number
   sequenceNumber: number
+}
+
+export interface FlowSendOptions extends SendOptions {
+  transaction?: string
+  args?: any[]
+  keyId?: string
 }

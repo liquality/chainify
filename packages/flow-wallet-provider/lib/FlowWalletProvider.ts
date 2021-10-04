@@ -1,5 +1,5 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, ChainProvider, Network, Transaction, SendOptions, flow, BigNumber } from '@liquality/types'
+import { Address, ChainProvider, Network, Transaction, flow, BigNumber } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { FlowNetwork } from '@liquality/flow-networks'
 import { formatTokenUnits } from '@liquality/flow-utils'
@@ -16,11 +16,6 @@ interface FlowJsWalletProviderOptions {
   network: FlowNetwork
   mnemonic: string
   derivationPath: string
-}
-
-interface FlowSendOptions extends SendOptions {
-  args: any[]
-  keyId?: string
 }
 
 export default class FlowWalletProvider extends WalletProvider implements Partial<ChainProvider> {
@@ -126,10 +121,12 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
     })
   }
 
-  async sendTransaction(options: FlowSendOptions): Promise<Transaction<flow.Tx>> {
+  async sendTransaction(options: flow.FlowSendOptions): Promise<Transaction<flow.Tx>> {
     const [address] = await this.getAddresses()
 
     const authz = this.authz(addressToString(address), options.keyId || '0')
+
+    // TODO: default: when transaction and args are empty
 
     const response = await fcl
       .send([
