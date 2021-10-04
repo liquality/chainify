@@ -43,7 +43,9 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
       .config()
       .put('accessNode.api', this._network.rpcUrl)
       .put('env', this._network.isTestnet ? 'testnet' : 'mainnet')
-    // .put('0xFUNGIBLETOKENADDRESS') // TODO:
+      .put('0xFUNGIBLETOKENADDRESS', this._network.fungibleTokenAddress)
+      .put('0xFLOWTOKENADDRESS', this._network.flowTokenAddress)
+      .put('0xFUSDTOKENADDRESS', this._network.fusdTokenAddress)
   }
 
   async getAddresses(): Promise<Address[]> {
