@@ -88,7 +88,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
   }
 
   async _getTransactionsForAddress(address: Address | string): Promise<any[]> {
-    const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=500`
+    const url = `${this._network.helperUrl}/txs?account=${addressToString(address)}&limit=100`
 
     const response = await this.nodeGet(url)
 
