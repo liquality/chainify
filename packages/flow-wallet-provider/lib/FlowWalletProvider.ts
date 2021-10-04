@@ -1,24 +1,26 @@
 import { WalletProvider } from '@liquality/wallet-provider'
-import { Address, ChainProvider, Network } from '@liquality/types'
+import { Address, ChainProvider, Network, Transaction, SendOptions, flow, BigNumber } from '@liquality/types'
+import { addressToString } from '@liquality/utils'
 import { FlowNetwork } from '@liquality/flow-networks'
-import { mnemonicToSeed } from 'bip39'
+import { formatTokenUnits } from '@liquality/flow-utils'
 
 import * as fcl from '@onflow/fcl'
-// import * as types from '@onflow/types'
-
-// import * as sdk from '@onflow/sdk'
-// import { template as createAccount } from '@onflow/six-create-account'
-import { encodeKey, ECDSA_secp256k1, SHA3_256 } from '@onflow/util-encode-key'
+import * as types from '@onflow/types'
 
 import { ec as EC } from 'elliptic'
 import { SHA3 } from 'sha3'
 import hdkey from 'hdkey'
-// import { privateToPublic } from 'ethereumjs-util'
+import { mnemonicToSeed } from 'bip39'
 
 interface FlowJsWalletProviderOptions {
   network: FlowNetwork
   mnemonic: string
   derivationPath: string
+}
+
+interface FlowSendOptions extends SendOptions {
+  args: any[]
+  keyId?: string
 }
 
 export default class FlowWalletProvider extends WalletProvider implements Partial<ChainProvider> {
@@ -33,18 +35,15 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
-    this._derivationPath = derivationPath || "m/44'/" + this._network.coinType + "/769'/0'/0"
+    this._derivationPath = derivationPath || `m/44'/${this._network.coinType}'/771'/0'/0`
     this._addressCache = {}
     this._privateKey = null
-
-    // TODO remove: suppressing linter errors
-    console.log(this._authz)
-    console.log(this._privateKey)
 
     fcl
       .config()
       .put('accessNode.api', this._network.rpcUrl)
       .put('env', this._network.isTestnet ? 'testnet' : 'mainnet')
+    // .put('0xFUNGIBLETOKENADDRESS') // TODO:
   }
 
   async getAddresses(): Promise<Address[]> {
@@ -52,16 +51,13 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
       return [this._addressCache[this._mnemonic]]
     }
 
-    const keys = await this._geenrateKeys()
+    const keys = await this._generateKeys()
     this._privateKey = keys.private
-    const publicKeyEncoded = encodeKey(keys.public, ECDSA_secp256k1, SHA3_256, 1000)
-
-    const address = this.getMethod('accountAddress')(publicKeyEncoded)
 
     const result = new Address({
-      address: address,
+      address: await this.getMethod('accountAddress')(keys.public),
       derivationPath: this._derivationPath,
-      publicKey: publicKeyEncoded
+      publicKey: keys.public
     })
 
     this._addressCache[this._mnemonic] = result
@@ -82,85 +78,76 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
     return addresses[0]
   }
 
-  async signMessage(message: string): Promise<string> {
-    console.log(message)
+  // message should be in hex format
+  async signMessage(msgHex: string): Promise<string> {
+    await this.getAddresses() // initialize wallet
 
-    // await this.getAddresses()
-    // const buffer = Buffer.from(message)
-    // const signature = await Secp256k1.createSignature(buffer, this._privateKey)
-    // return (
-    //   Buffer.from(signature.r(32)).toString('hex') +
-    //   Buffer.from(signature.s(32)).toString('hex') +
-    //   signature.recovery.toString()
-    // )
-
-    return ''
+    const ec = new EC('p256')
+    const key = ec.keyFromPrivate(Buffer.from(this._privateKey, 'hex'))
+    const sig = key.sign(this._hashMessage(msgHex))
+    const n = 32
+    const r = sig.r.toArrayLike(Buffer, 'be', n)
+    const s = sig.s.toArrayLike(Buffer, 'be', n)
+    return Buffer.concat([r, s]).toString('hex')
   }
 
   async getConnectedNetwork(): Promise<Network> {
     return this._network
   }
 
-  async sendRawTransaction(rawTransaction: string): Promise<string> {
-    console.log(rawTransaction)
-    return ''
+  async sendSweepTransaction(addressTo: Address | string): Promise<Transaction<flow.Tx>> {
+    const [addressFrom] = await this.getAddresses()
+
+    const balance = await this.getAccountBalance(addressToString(addressFrom))
+    const balanceFormatted = formatTokenUnits(balance, 8)
+
+    return this.sendTransaction({
+      to: addressFrom,
+      value: new BigNumber(0),
+      data: `\
+      import FungibleToken from 0xFUNGIBLETOKENADDRESS
+      transaction(amount: UFix64, to: Address) {
+      let vault: @FungibleToken.Vault
+      prepare(signer: AuthAccount) {
+      self.vault <- signer
+      .borrow<&{FungibleToken.Provider}>(from: /storage/flowTokenVault)!
+      .withdraw(amount: amount)
+      }
+      execute {
+      getAccount(to)
+      .getCapability(/public/flowTokenReceiver)!
+      .borrow<&{FungibleToken.Receiver}>()!
+      .deposit(from: <-self.vault)
+      }
+      }`,
+      args: [fcl.arg(balanceFormatted, types.UFix64), fcl.arg(addressToString(addressTo), types.String)]
+    })
   }
 
-  // async getAddresses() {
+  async sendTransaction(options: FlowSendOptions): Promise<Transaction<flow.Tx>> {
+    const [address] = await this.getAddresses()
 
-  //   const authorization = await authz(
-  //     '0x35f382ee21cef78d',
-  //     '0',
-  //     '3e47bf5f5f7851ef36cba1aed43cad42b7ed8633111dd951607ef113fd88b4c2'
-  //   )
+    const authz = this.authz(addressToString(address), options.keyId || '0')
 
-  //   try {
-  //     const txId = await fcl
-  //       .send([
-  //         fcl.transaction(`\
-  //         transaction(a: UFix64, b: Address) {
-  //           prepare(acct: AuthAccount) {}
-  //         }`),
-  //         // fcl.transaction(`\
-  //         // import FungibleToken from 0x9a0766d93b6608b7
-  //         // import FlowToken from 0x7e60df042a9c0868
-  //         // transaction(amount: UFix64, to: Address) {
-  //         //     // The Vault resource that holds the tokens that are being transferred
-  //         //     let sentVault: @FungibleToken.Vault
-  //         //     prepare(signer: AuthAccount) {
-  //         //         // Get a reference to the signer's stored vault
-  //         //         let vaultRef = signer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
-  //         //             ?? panic("Could not borrow reference to the owner's Vault!")
-  //         //         // Withdraw tokens from the signer's stored vault
-  //         //         self.sentVault <- vaultRef.withdraw(amount: amount)
-  //         //     }
-  //         //     execute {
-  //         //         // Get the recipient's public account object
-  //         //         let recipient = getAccount(to)
-  //         //         // Get a reference to the recipient's Receiver
-  //         //         let receiverRef = recipient.getCapability(/public/flowTokenReceiver)!.borrow<&{FungibleToken.Receiver}>()
-  //         //             ?? panic("Could not borrow receiver reference to the recipient's Vault")
-  //         //         // Deposit the withdrawn tokens in the recipient's receiver
-  //         //         receiverRef.deposit(from: <-self.sentVault)
-  //         //     }
-  //         // }`),
-  //         fcl.args([fcl.arg('1.0', types.UFix64), fcl.arg('0xeb57e6ef97aba0aa', types.Address)]),
-  //         fcl.proposer(authorization),
-  //         fcl.payer(authorization),
-  //         fcl.authorizations([authorization]),
-  //         fcl.limit(100)
-  //       ])
-  //       .then(fcl.decode)
+    const response = await fcl
+      .send([
+        fcl.transaction`
+        ${options.data}
+        `,
+        fcl.args(options.args),
+        fcl.proposer(authz),
+        fcl.authorizations(authz),
+        fcl.payer(authz),
+        fcl.limit(9999)
+      ])
+      .then(fcl.decode)
 
-  //     console.log('restxIdult:', txId)
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  //   return
-  // }
+    return this.getMethod('getTransactionByHash')(response)
+  }
 
   // ===== FLOW SPECIFIC FEATURES =====
-  private _authz(flowAccountAddress: string, flowAccountKeyId: string, flowAccountPrivateKey: string) {
+  // use 0 key id as default
+  authz(flowAccountAddress: string, flowAccountKeyId: string) {
     return (account: any) => {
       return {
         ...account,
@@ -170,10 +157,15 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
         signingFunction: (signable: { message: string }) => ({
           addr: fcl.withPrefix(flowAccountAddress),
           keyId: Number(flowAccountKeyId),
-          signature: this._sign(flowAccountPrivateKey, signable.message)
+          signature: this.signMessage(signable.message)
         })
       }
     }
+  }
+
+  async getAccountBalance(address: string) {
+    const account = await fcl.send([fcl.getAccount(address)]).then(fcl.decode)
+    return account.balance
   }
 
   // ===== HELPER METHODS =====
@@ -183,17 +175,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
     return sha.digest()
   }
 
-  private _sign(privateKey: string, msgHex: string) {
-    const ec = new EC('p256')
-    const key = ec.keyFromPrivate(Buffer.from(privateKey, 'hex'))
-    const sig = key.sign(this._hashMessage(msgHex))
-    const n = 32
-    const r = sig.r.toArrayLike(Buffer, 'be', n)
-    const s = sig.s.toArrayLike(Buffer, 'be', n)
-    return Buffer.concat([r, s]).toString('hex')
-  }
-
-  private async _geenrateKeys() {
+  private async _generateKeys() {
     const seed = await mnemonicToSeed(this._mnemonic)
     const node = await hdkey.fromMasterSeed(seed)
     // public key is compressed
@@ -203,7 +185,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
     const ec = new EC('secp256k1')
     const keyPair = ec.keyFromPrivate(hdKey._privateKey.toString('hex'))
     const privKey = keyPair.getPrivate('hex')
-    const pubKey = keyPair.getPublic().encode('hex')
+    const pubKey = keyPair.getPublic('hex').replace(/^04/, '')
 
     return { private: privKey, public: pubKey }
   }

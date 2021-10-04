@@ -21,16 +21,13 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/flow-networks": "^1.6.1",
+    "@liquality/flow-utils": "^1.6.1",
     "@liquality/types": "^1.6.1",
+    "@liquality/utils": "^1.6.1",
     "@liquality/wallet-provider": "^1.6.1",
     "@onflow/fcl": "^0.0.76",
-    "@onflow/rlp": "^0.0.3",
-    "@onflow/six-add-new-key": "^0.0.8",
-    "@onflow/six-create-account": "^0.0.7",
     "@onflow/types": "^0.0.5",
-    "@onflow/util-encode-key": "^0.0.2",
     "elliptic": "^6.5.4",
-    "ethereumjs-util": "^7.1.2",
     "hdkey": "^2.0.1",
     "sha3": "^2.1.4"
   },

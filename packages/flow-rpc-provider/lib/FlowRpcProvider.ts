@@ -107,15 +107,15 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
     return txResponse.toString()
   }
 
-  async accountAddress(publicKey: string): Promise<string> {
+  async accountAddress(publicKey: string): Promise<string | undefined> {
     let addr = await this.getAccountAddressFromPublicKey(publicKey)
-    if (addr == '') {
+    if (!addr) {
       addr = await this.createAccountAddressFromPublicKey(publicKey)
     }
     return addr
   }
 
-  async createAccountAddressFromPublicKey(publicKey: string): Promise<string> {
+  async createAccountAddressFromPublicKey(publicKey: string): Promise<string | undefined> {
     try {
       // By default Liquality wallet uses ECDSA_secp256k1 and SHA3_256
       const response = await this._addressAPI.nodePost('/accounts', {
@@ -124,17 +124,17 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
         hashAlgorithm: 'SHA3_256'
       })
       return response.address
-    } catch (e) {
-      return ''
+    } catch {
+      return
     }
   }
 
-  async getAccountAddressFromPublicKey(publicKey: string): Promise<string> {
+  async getAccountAddressFromPublicKey(publicKey: string): Promise<string | undefined> {
     try {
       const response = await this._addressAPI.nodeGet(`/accounts?publicKey=${publicKey}`)
       return response.address
-    } catch (e) {
-      return ''
+    } catch {
+      return
     }
   }
 

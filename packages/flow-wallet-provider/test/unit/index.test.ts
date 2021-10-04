@@ -22,11 +22,4 @@ describe('Flow Wallet provider', () => {
     })
     client.addProvider(walletProvider)
   })
-
-  describe('getAddress', () => {
-    it('get address', async () => {
-      const data = await walletProvider.getAddresses()
-      console.log('DATA: ', data)
-    })
-  })
 })
