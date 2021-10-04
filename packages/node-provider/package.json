@@ -1,6 +1,6 @@
 {
   "name": "@liquality/node-provider",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,8 +20,8 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.6.6",
-    "@liquality/provider": "^1.6.6",
+    "@liquality/errors": "^1.6.7",
+    "@liquality/provider": "^1.6.7",
     "@types/axios": "^0.14.0",
     "@types/lodash": "^4.14.168",
     "axios": "^0.21.0",
