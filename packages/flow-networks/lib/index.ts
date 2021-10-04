@@ -17,7 +17,7 @@ const flow_mainnet: FlowNetwork = {
   rpcUrl: 'https://access-mainnet-beta.onflow.org',
   discoveryWallet: 'https://fcl-discovery.onflow.org/mainnet/authn',
   helperUrl: 'https://flowscan.org',
-  accountAPI: 'http://localhost:8081/', // TODO: get the correct one
+  accountAPI: 'https://hardware-wallet-api-mainnet.onflow.org/',
   coinType: '539',
   isTestnet: false,
   fungibleTokenAddress: '0xf233dcee88fe0abe',
@@ -31,7 +31,7 @@ const flow_testnet: FlowNetwork = {
   rpcUrl: 'https://access-testnet.onflow.org',
   discoveryWallet: 'https://fcl-discovery.onflow.org/testnet/authn',
   helperUrl: 'https://testnet.flowscan.org',
-  accountAPI: 'http://localhost:8081/', // TODO: get the correct one
+  accountAPI: 'https://hardware-wallet-api-testnet.staging.onflow.org/',
   coinType: '539',
   isTestnet: true,
   fungibleTokenAddress: '0x9a0766d93b6608b7',

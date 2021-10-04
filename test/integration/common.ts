@@ -29,8 +29,8 @@ import { SolanaRpcProvider } from '../../packages/solana-rpc-provider/lib'
 import { SolanaWalletProvider } from '../../packages/solana-wallet-provider/lib'
 import { SolanaSwapProvider } from '../../packages/solana-swap-provider/lib'
 import { SolanaSwapFindProvider } from '../../packages/solana-swap-find-provider/lib'
-// import { FlowRpcProvider } from '../../packages/flow-rpc-provider/lib'
-// import { FlowWalletProvider } from '../../packages/flow-wallet-provider/lib'
+import { FlowRpcProvider } from '../../packages/flow-rpc-provider/lib'
+import { FlowWalletProvider } from '../../packages/flow-wallet-provider/lib'
 import { FlowSwapProvider } from '../../packages/flow-swap-provider/lib'
 // import { FlowSwapFindProvider } from '../../packages/flow-swap-find-provider/lib'
 
@@ -236,8 +236,14 @@ solana.addProvider(new SolanaSwapFindProvider(config.solana.network))
 
 // Flow
 const flow = new Client()
-// flow.addProvider(new FlowRpcProvider())
-// flow.addProvider(new FlowWalletProvider())
+flow.addProvider(new FlowRpcProvider(config.flow.network))
+flow.addProvider(
+  new FlowWalletProvider({
+    network: config.flow.network,
+    mnemonic: config.flow.senderMnemonic,
+    derivationPath: `m/44'/${config.flow.network.coinType}'/771'/0'/0`
+  })
+)
 flow.addProvider(new FlowSwapProvider())
 // flow.addProvider(new FlowSwapFindProvider())
 
@@ -366,6 +372,30 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
         await solana.chain.sendTransaction({
           to: address,
           value: config.solana.value
+        })
+      }
+
+      break
+    }
+
+    case 'flow': {
+      const flow = new Client()
+
+      flow.addProvider(new FlowRpcProvider(config.flow.network))
+      flow.addProvider(
+        new FlowWalletProvider({
+          network: config.flow.network,
+          mnemonic: config.flow.senderMnemonic,
+          derivationPath: `m/44'/${config.flow.network.coinType}'/771'/0'/0`
+        })
+      )
+
+      const balance = await flow.chain.getBalance([config.flow.senderAddress])
+
+      if (balance.gt(config.flow.value)) {
+        await flow.chain.sendTransaction({
+          to: address,
+          value: config.flow.value
         })
       }
 

@@ -1,5 +1,4 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
-// import { BigNumber, ChainProvider, Address, Block, Transaction, SendOptions, flow } from '@liquality/types'
 import { BigNumber, ChainProvider, Block, Transaction, flow } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 

@@ -1,5 +1,5 @@
-import { Transaction, Block, flow } from '@liquality/types'
-import { BigNumber } from '@ethersproject/bignumber'
+import { Transaction, Block, flow, BigNumber } from '@liquality/types'
+import { BigNumber as BN } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
 async function normalizeTx(rawTx: flow.Tx) {
@@ -31,9 +31,8 @@ function normalizeBlock(blockResponse: flow.BlockResponse, rawTxs: flow.Tx[]) {
   return normalizedBlock
 }
 
-function formatTokenUnits(tokenValue: number, decimals: number): string {
-  const value = BigNumber.from(tokenValue)
-  return formatUnits(value, decimals)
+function formatTokenUnits(value: BigNumber, decimals: number): string {
+  return formatUnits(BN.from(value.toString(10)), decimals)
 }
 
 export { normalizeTx, normalizeBlock, formatTokenUnits }

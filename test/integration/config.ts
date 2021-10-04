@@ -3,6 +3,7 @@ import { BitcoinNetworks, BitcoinCashNetworks } from '../../packages/bitcoin-net
 import { EthereumNetworks } from '../../packages/ethereum-networks/lib'
 import { NearNetworks } from '../../packages/near-networks/lib'
 import { SolanaNetworks } from '../../packages/solana-networks/lib'
+import { FlowNetworks } from '../../packages/flow-networks/lib'
 
 export default {
   bitcoin: {
@@ -69,10 +70,16 @@ export default {
       'glance item million plastic used siren giant process oppose access soldier what all live shy kitten urge earth easy bounce blade inmate scorpion icon'
   },
   flow: {
-    value: new BigNumber(5),
+    network: FlowNetworks.flow_testnet,
+    value: new BigNumber(100),
 
     // sender
-    senderAddress: '0xdadbaee81662a80a',
+    senderMnemonic:
+      'thumb proud solar any north rely grow ceiling pattern dress under illegal relief brief flock ensure tumble green million earth lesson absent horse snap',
+    senderAddress: '0xe2d2ff92c2d93b5e',
+    senderPublicKey:
+      'b0988d9005f141a0c21039a5f36754c9ec11477a62013a6187867c9022ab93bcec8e283437f9416c330704771ae97e2e1c041c0c0b6ac0ddd6c1dc9e11faa30f',
+    senderKeyId: '0',
 
     // receiver
     receiverAddress: '0x368b4c701d609c17'
