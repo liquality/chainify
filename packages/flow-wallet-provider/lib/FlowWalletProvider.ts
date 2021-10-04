@@ -121,6 +121,10 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
     return this.getMethod('getTransactionByHash')(response)
   }
 
+  canUpdateFee(): boolean {
+    return false
+  }
+
   // ===== FLOW SPECIFIC FEATURES =====
   // use 0 key id as default
   authz(flowAccountAddress: string, flowAccountKeyId: string) {
