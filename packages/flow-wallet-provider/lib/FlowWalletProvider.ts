@@ -78,11 +78,11 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
     return addresses[0]
   }
 
-  // message should be in hex format
+  // message should be in utf8 format
   async signMessage(msgHex: string): Promise<string> {
     await this.getAddresses() // initialize wallet
 
-    return this.sign(msgHex)
+    return this.sign(this._hashMessage(msgHex, 'utf8'))
   }
 
   async getConnectedNetwork(): Promise<Network> {
@@ -145,15 +145,16 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
         signingFunction: (signable: { message: string }) => ({
           addr: fcl.withPrefix(flowAccountAddress),
           keyId: Number(flowAccountKeyId),
-          signature: this.sign(signable.message)
+          // message should be in hex format
+          signature: this.sign(this._hashMessage(signable.message))
         })
       }
     }
   }
 
-  sign(msgHex: string): string {
+  sign(msgHash: Buffer): string {
     const key = this._ec.keyFromPrivate(Buffer.from(this._privateKey, 'hex'))
-    const sig = key.sign(this._hashMessage(msgHex))
+    const sig = key.sign(msgHash)
 
     const n = 32
     const r = sig.r.toArrayLike(Buffer, 'be', n)
@@ -181,9 +182,9 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
   }
 
   // ===== HELPER METHODS =====
-  private _hashMessage(message: string) {
+  private _hashMessage(message: string, encoding: BufferEncoding = 'hex') {
     const sha = new SHA3(256)
-    sha.update(Buffer.from(message, 'hex'))
+    sha.update(Buffer.from(message, encoding))
     return sha.digest()
   }
 

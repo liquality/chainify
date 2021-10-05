@@ -1,6 +1,5 @@
 /* eslint-env mocha */
-import chai from 'chai'
-// import chai, { expect } from 'chai'
+import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { Client } from '../../../client/lib'
 import { FlowWalletProvider } from '../../lib'
@@ -28,5 +27,14 @@ describe('Flow Wallet provider', () => {
       derivationPath: `m/44'/${FlowNetworks.flow_testnet.coinType}'/771'/0'/0`
     })
     client.addProvider(walletProvider)
+  })
+
+  describe('signMessage', () => {
+    it('should sign message', async () => {
+      const signature0 = await client.getMethod('signMessage')('secret')
+      const signature1 = await client.getMethod('signMessage')('secret1')
+
+      expect(signature0).not.to.equal(signature1)
+    })
   })
 })
