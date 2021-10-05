@@ -14,7 +14,6 @@ describe('Transactions', function () {
   this.timeout(TEST_TIMEOUT)
 
   before(async () => {
-    console.log(config.flow)
     await fundAddress(chains.flow, config.flow.receiverAddress)
   })
 

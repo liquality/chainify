@@ -62,8 +62,10 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
     blockNumber?: number,
     currentBlockHeight?: number
   ): Promise<Transaction<flow.Tx>> {
+    // do not change the order of this operations!
+    // fcl.tx is a blocking operation until block is sealed
+    const txAdditionaData = await fcl.tx(txHash).onceSealed()
     const txRaw = await fcl.send([fcl.getTransaction(txHash)]).then(fcl.decode)
-    const txAdditionaData = await fcl.tx(txHash).snapshot()
 
     const _currentBlockHeight = currentBlockHeight || (await this.getBlockHeight())
     const _blockNumber = blockNumber || (await this.getBlockByHash(txRaw.referenceBlockId)).number

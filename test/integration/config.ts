@@ -82,7 +82,8 @@ export default {
     senderKeyId: '0',
 
     // receiver
-    receiverMnemonic: 'glance item million plastic used siren giant process oppose access soldier what all live shy kitten urge earth easy bounce blade inmate scorpion icon',
+    receiverMnemonic:
+      'glance item million plastic used siren giant process oppose access soldier what all live shy kitten urge earth easy bounce blade inmate scorpion icon',
     receiverAddress: '0x368b4c701d609c17'
   }
   // ethereum: { // RSK
