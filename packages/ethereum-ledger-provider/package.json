@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@ethereumjs/tx": "^3.3.2",
     "@ledgerhq/hw-app-eth": "^5.37.0",
     "@liquality/ethereum-networks": "^1.6.5",
     "@liquality/ethereum-utils": "^1.6.5",

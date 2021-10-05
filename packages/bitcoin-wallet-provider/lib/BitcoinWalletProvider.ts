@@ -122,7 +122,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     }
 
     async sendTransaction(options: SendOptions) {
-      return this._sendTransaction(this.sendOptionsToOutputs([options]), options.fee)
+      return this._sendTransaction(this.sendOptionsToOutputs([options]), options.fee as number)
     }
 
     async sendBatchTransaction(transactions: SendOptions[]) {
@@ -358,12 +358,12 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
     async getTotalFee(opts: SendOptions, max: boolean) {
       const targets = this.sendOptionsToOutputs([opts])
       if (!max) {
-        const { fee } = await this.getInputsForAmount(targets, opts.fee)
+        const { fee } = await this.getInputsForAmount(targets, opts.fee as number)
         return fee
       } else {
         const { fee } = await this.getInputsForAmount(
           targets.filter((t) => !t.value),
-          opts.fee,
+          opts.fee as number,
           [],
           100,
           true
@@ -377,7 +377,7 @@ export default <T extends Constructor<Provider>>(superclass: T) => {
         const fees: { [index: number]: BigNumber } = {}
         for (const tx of transactions) {
           const fee = await this.getTotalFee(tx, max)
-          fees[tx.fee] = new BigNumber(fee)
+          fees[tx.fee as number] = new BigNumber(fee)
         }
         return fees
       })

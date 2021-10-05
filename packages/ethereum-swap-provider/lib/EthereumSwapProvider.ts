@@ -1,6 +1,6 @@
 import { Provider } from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
-import { SwapProvider, SwapParams, BigNumber, Transaction, Block, ethereum } from '@liquality/types'
+import { SwapProvider, SwapParams, BigNumber, Transaction, Block, ethereum, EIP1559Fee } from '@liquality/types'
 import {
   addressToString,
   caseInsensitiveEqual,
@@ -140,7 +140,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     validateExpiration(swapParams.expiration)
   }
 
-  async initiateSwap(swapParams: SwapParams, gasPrice: number) {
+  async initiateSwap(swapParams: SwapParams, gasPrice: EIP1559Fee | number) {
     this.validateSwapParams(swapParams)
 
     const bytecode = this.createSwapScript(swapParams)
@@ -151,7 +151,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     return null
   }
 
-  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: number) {
+  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: EIP1559Fee | number) {
     validateSecret(secret)
     validateSecretAndHash(secret, swapParams.secretHash)
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
@@ -170,7 +170,7 @@ export default class EthereumSwapProvider extends Provider implements Partial<Sw
     })
   }
 
-  async refundSwap(swapParams: SwapParams, initiationTxHash: string, gasPrice: number) {
+  async refundSwap(swapParams: SwapParams, initiationTxHash: string, gasPrice: EIP1559Fee | number) {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const initiationTransactionReceipt = await this.getMethod('getTransactionReceipt')(initiationTxHash)

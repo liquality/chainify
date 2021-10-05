@@ -103,7 +103,7 @@ export default class TerraWalletProvider extends WalletProvider {
       txData = {
         ...(fee && {
           gasPrices: new Coins({
-            [this._network.asset]: fee
+            [this._network.asset]: fee as number
           })
         })
       }

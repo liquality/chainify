@@ -7,7 +7,16 @@ import {
   remove0x,
   buildTransaction
 } from '@liquality/ethereum-utils'
-import { Address, Block, ethereum, SendOptions, Transaction, ChainProvider, BigNumber } from '@liquality/types'
+import {
+  Address,
+  Block,
+  ethereum,
+  SendOptions,
+  Transaction,
+  ChainProvider,
+  BigNumber,
+  EIP1559Fee
+} from '@liquality/types'
 import { sleep, addressToString } from '@liquality/utils'
 import { InvalidDestinationAddressError, TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
 import { padHexStart } from '@liquality/crypto'
@@ -61,7 +70,15 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
       value: options.value,
       data: options.data
     }
-    if (options.fee) txOptions.gasPrice = new BigNumber(options.fee)
+
+    if (options.fee) {
+      if (typeof options.fee === 'number') {
+        txOptions.gasPrice = new BigNumber(options.fee)
+      } else {
+        txOptions.maxPriorityFeePerGas = new BigNumber(options.fee.maxPriorityFeePerGas)
+        txOptions.maxFeePerGas = new BigNumber(options.fee.maxFeePerGas)
+      }
+    }
 
     const txData = buildTransaction(txOptions)
     const gas = await this.estimateGas(txData)
@@ -78,7 +95,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return normalizeTransactionObject(txWithHash)
   }
 
-  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
+  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: EIP1559Fee | number) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = await this.getTransactionByHash(txHash)
 
@@ -86,9 +103,15 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
-      gasPrice: new BigNumber(newGasPrice),
       data: transaction._raw.input,
       nonce: hexToNumber(transaction._raw.nonce)
+    }
+
+    if (typeof newGasPrice === 'number') {
+      txOptions.gasPrice = new BigNumber(newGasPrice)
+    } else {
+      txOptions.maxPriorityFeePerGas = new BigNumber(newGasPrice.maxPriorityFeePerGas)
+      txOptions.maxFeePerGas = new BigNumber(newGasPrice.maxFeePerGas)
     }
 
     const txData = buildTransaction(txOptions)
@@ -199,7 +222,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return hexToNumber(count)
   }
 
-  async getGasPrice() {
+  async getGasPrice(): Promise<BigNumber> {
     const gasPrice = await this.rpc<ethereum.Hex>('eth_gasPrice')
     return new BigNumber(gasPrice).div(1e9) // Gwei
   }

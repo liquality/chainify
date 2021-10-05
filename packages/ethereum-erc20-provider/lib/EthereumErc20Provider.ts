@@ -2,7 +2,7 @@ import { Provider } from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
 import { addressToString } from '@liquality/utils'
 import { ensure0x, hexToNumber, remove0x, numberToHex } from '@liquality/ethereum-utils'
-import { ChainProvider, SendOptions, BigNumber, Address } from '@liquality/types'
+import { ChainProvider, SendOptions, BigNumber, Address, EIP1559Fee } from '@liquality/types'
 import { InsufficientBalanceError } from '@liquality/errors'
 
 const SOL_TRANSFER_FUNCTION = '0xa9059cbb' // transfer(address,uint256)
@@ -45,7 +45,7 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
     return this.getMethod('sendTransaction')(options)
   }
 
-  async sendSweepTransaction(address: Address | string, gasPrice: number) {
+  async sendSweepTransaction(address: Address | string, gasPrice: EIP1559Fee | number) {
     const addresses: Address[] = await this.getMethod('getAddresses')()
 
     const balance = await this.getBalance(addresses.map((address) => address.address))

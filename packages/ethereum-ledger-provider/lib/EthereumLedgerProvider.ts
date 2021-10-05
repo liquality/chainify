@@ -1,5 +1,5 @@
 import { LedgerProvider } from '@liquality/ledger-provider'
-import { Address, ethereum, SendOptions, Transaction, BigNumber } from '@liquality/types'
+import { Address, ethereum, SendOptions, Transaction, BigNumber, EIP1559Fee } from '@liquality/types'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { addressToString } from '@liquality/utils'
 import {
@@ -13,7 +13,7 @@ import {
 import { toRpcSig } from 'ethereumjs-util'
 
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
-import EthereumJsTx from 'ethereumjs-tx'
+import { Transaction as NewEthJsTransaction } from '@ethereumjs/tx'
 
 interface EthereumLedgerProviderOptions {
   network: EthereumNetwork
@@ -71,9 +71,9 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
   async signTransaction(txData: ethereum.TransactionRequest, path: string) {
     const chainId = numberToHex((this._network as EthereumNetwork).chainId)
     const app = await this.getApp()
-    const tx = new EthereumJsTx({
+    const tx = NewEthJsTransaction.fromTxData({
       ...txData,
-      chainId: hexToNumber(chainId), // HEY Could be incorrect
+      // chainId: hexToNumber(chainId), // HEY Could be incorrect
       v: chainId
     })
     const serializedTx = tx.serialize().toString('hex')
@@ -85,7 +85,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
       s: ensure0x(txSig.s)
     }
 
-    const signedTx = new EthereumJsTx(signedTxData)
+    const signedTx = NewEthJsTransaction.fromTxData(signedTxData)
     const signedSerializedTx = signedTx.serialize().toString('hex')
     return signedSerializedTx
   }
@@ -95,18 +95,26 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     const address = addresses[0]
     const from = address.address
 
-    const [nonce, gasPrice] = await Promise.all([
-      this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
-      options.fee ? Promise.resolve(new BigNumber(options.fee)) : this.getMethod('getGasPrice')()
-    ])
-
+    const nonce = await this.getMethod('getTransactionCount')(remove0x(from), 'pending')
     const txOptions: ethereum.UnsignedTransaction = {
       from,
       to: options.to ? addressToString(options.to) : (options.to as string),
       value: options.value,
       data: options.data,
-      gasPrice,
       nonce
+    }
+
+    if (options.fee) {
+      if (typeof options.fee === 'number') {
+        txOptions.gasPrice = new BigNumber(options.fee)
+      } else {
+        txOptions.maxPriorityFeePerGas = new BigNumber(options.fee.maxPriorityFeePerGas)
+        txOptions.maxFeePerGas = new BigNumber(options.fee.maxFeePerGas)
+      }
+    } else {
+      const fee = (await this.getMethod('getFees')()).average as EIP1559Fee
+      txOptions.maxPriorityFeePerGas = new BigNumber(fee.maxPriorityFeePerGas)
+      txOptions.maxFeePerGas = new BigNumber(fee.maxFeePerGas)
     }
 
     const txData = buildTransaction(txOptions)
@@ -124,7 +132,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return normalizeTransactionObject(txWithHash)
   }
 
-  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
+  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: EIP1559Fee | number) {
     const transaction: Transaction<ethereum.Transaction> =
       typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
@@ -132,9 +140,15 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
-      gasPrice: new BigNumber(newGasPrice),
       data: transaction._raw.input,
       nonce: hexToNumber(transaction._raw.nonce)
+    }
+
+    if (typeof newGasPrice === 'number') {
+      txOptions.gasPrice = new BigNumber(newGasPrice)
+    } else {
+      txOptions.maxPriorityFeePerGas = new BigNumber(newGasPrice.maxPriorityFeePerGas)
+      txOptions.maxFeePerGas = new BigNumber(newGasPrice.maxFeePerGas)
     }
 
     const txData = await buildTransaction(txOptions)
