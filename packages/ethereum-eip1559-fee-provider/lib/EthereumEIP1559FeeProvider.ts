@@ -1,3 +1,4 @@
+import { Provider } from '@liquality/provider'
 import { estimateFees } from '@mycrypto/gas-estimation'
 import { FeeProvider, FeeDetails, BigNumber } from '@liquality/types'
 
@@ -9,13 +10,15 @@ type FeeOptions = {
 
 const GWEI = 1e9
 
-export default class EthereumEIP1559FeeProvider implements FeeProvider {
+export default class EthereumEIP1559FeeProvider extends Provider implements FeeProvider {
   _uri: string
   _slowMultiplier: number
   _averageMultiplier: number
   _fastMultiplier: number
 
   constructor(uri: string, opts: FeeOptions = {}) {
+    super()
+
     this._uri = uri
 
     const { slowMultiplier = 1, averageMultiplier = 1.25, fastMultiplier = 1.4 } = opts

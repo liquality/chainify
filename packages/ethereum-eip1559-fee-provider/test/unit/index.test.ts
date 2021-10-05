@@ -2,7 +2,10 @@
 import { mockApi, mockApiFeesTooHigh } from './mock'
 
 import { Client } from '../../../client/lib'
-import { EthereumGasNowFeeProvider } from '../../lib'
+import { EthereumEIP1559FeeProvider } from '../../lib'
+
+import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
+import ethereumRpc from '../../../../test/mock/ethereum/rpc'
 
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
@@ -10,12 +13,14 @@ import chaiAsPromised from 'chai-as-promised'
 const { expect } = chai.use(chaiAsPromised)
 chai.config.truncateThreshold = 0
 
-describe('Ethereum Gas Station Fee provider', () => {
+describe('Ethereum EIP1559 Fee provider', () => {
   let client: Client
 
   beforeEach(() => {
     client = new Client()
-    client.addProvider(new EthereumGasNowFeeProvider())
+    client.addProvider(new EthereumEIP1559FeeProvider('http://localhost:8545'))
+
+    mockJsonRpc('http://localhost:8545', ethereumRpc, 100)
   })
 
   describe('getFees', () => {
