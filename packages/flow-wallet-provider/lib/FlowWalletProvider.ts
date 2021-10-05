@@ -43,7 +43,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
       .put('0xFUNGIBLETOKENADDRESS', this._network.fungibleTokenAddress)
       .put('0xFLOWTOKENADDRESS', this._network.flowTokenAddress)
       .put('0xFUSDTOKENADDRESS', this._network.fusdTokenAddress)
-      .put('')
+      .put('0xHTLCADDRESS', this._network.htlcAddress)
   }
 
   async getAddresses(): Promise<Address[]> {
@@ -126,7 +126,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
       .send([tx, fcl.args(args), fcl.proposer(authz), fcl.authorizations([authz]), fcl.payer(authz), fcl.limit(9999)])
       .then(fcl.decode)
 
-    return this.getMethod('getTransactionByHash')(response)
+    return await this.getMethod('getTransactionByHash')(response)
   }
 
   canUpdateFee(): boolean {

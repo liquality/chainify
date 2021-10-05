@@ -35,15 +35,16 @@ chai.use(chaiAsPromised)
 const mockSecret = _.repeat('ff', 32)
 
 function testSwap(chain: Chain) {
-  it('Generated secrets are different', async () => {
+  xit('Generated secrets are different', async () => {
     const secret1 = await chain.client.swap.generateSecret('secret1')
     const secret2 = await chain.client.swap.generateSecret('secret2')
     expect(secret1).to.not.equal(secret2)
   })
 
-  xit('Initiate and claim - happy route', async () => {
+  it('Initiate and claim - happy route', async () => {
     if (process.env.RUN_EXTERNAL) console.log('\x1b[33m', `Generating secret: Watch for prompt`, '\x1b[0m')
     const secret = await chain.client.swap.generateSecret('secret')
+    console.log('secret', secret)
     const secretHash = crypto.sha256(secret)
     const swapParams = await getSwapParams(chain, secretHash)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
@@ -92,13 +93,13 @@ function testSwap(chain: Chain) {
   xit('Initiate and Refund', async () => {
     const secretHash = crypto.sha256(mockSecret)
     const swapParams = await getSwapParams(chain, secretHash)
-    swapParams.expiration = Math.floor(Date.now() / 1000)
+    swapParams.expiration = Math.floor(Date.now() / 1000 + 5000)
     const initiationTxId = await initiateAndVerify(chain, swapParams)
     await expectBalance(
       chain,
       swapParams.refundAddress,
       async () => {
-        await mineUntilTimestamp(chain, swapParams.expiration)
+        await mineUntilTimestamp(chain, swapParams.expiration + 5000)
         await refundAndVerify(chain, initiationTxId, swapParams)
       },
       (before, after) => expect(after.gt(before)).to.be.true

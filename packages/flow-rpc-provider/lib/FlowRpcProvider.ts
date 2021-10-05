@@ -34,7 +34,7 @@ export default class FlowRpcProvider extends NodeProvider implements Partial<Cha
 
   // average block time is around 2.7 seconds
   async generateBlock(numberOfBlocks: number): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 3000))
+    await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 15000))
   }
 
   async getBlockByHash(blockHash: string): Promise<Block<flow.Tx>> {

@@ -9,6 +9,7 @@ export interface FlowNetwork extends Network {
   fungibleTokenAddress: string
   flowTokenAddress: string
   fusdTokenAddress: string
+  htlcAddress: string
 }
 
 const flow_mainnet: FlowNetwork = {
@@ -22,7 +23,8 @@ const flow_mainnet: FlowNetwork = {
   isTestnet: false,
   fungibleTokenAddress: '0xf233dcee88fe0abe',
   flowTokenAddress: '0x1654653399040a61',
-  fusdTokenAddress: '0x3c5959b568896393'
+  fusdTokenAddress: '0x3c5959b568896393',
+  htlcAddress: '0xdadbaee81662a80a'
 }
 
 const flow_testnet: FlowNetwork = {
@@ -36,7 +38,8 @@ const flow_testnet: FlowNetwork = {
   isTestnet: true,
   fungibleTokenAddress: '0x9a0766d93b6608b7',
   flowTokenAddress: '0x7e60df042a9c0868',
-  fusdTokenAddress: '0xe223d8a629e49c68'
+  fusdTokenAddress: '0xe223d8a629e49c68',
+  htlcAddress: '0xdadbaee81662a80a'
 }
 
 const FlowNetworks = {

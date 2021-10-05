@@ -21,8 +21,10 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@liquality/flow-networks": "^1.6.1",
+    "@liquality/flow-utils": "^1.6.1",
     "@liquality/provider": "^1.6.1",
     "@liquality/types": "^1.6.1",
+    "@liquality/utils": "^1.6.1",
     "@onflow/fcl": "^0.0.77",
     "@onflow/types": "^0.0.5"
   },

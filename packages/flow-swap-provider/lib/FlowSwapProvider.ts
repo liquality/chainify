@@ -2,6 +2,9 @@ import { SwapProvider, SwapParams, Transaction } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 
 import * as fcl from '@onflow/fcl'
+import types from '@onflow/types'
+import { addressToString, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils'
+import { formatTimestamp, formatTokenUnits, parseTimestamp, parseTokenUnits } from '@liquality/flow-utils'
 
 export default class FlowSwapProvider extends Provider implements Partial<SwapProvider> {
   constructor() {
@@ -12,32 +15,88 @@ export default class FlowSwapProvider extends Provider implements Partial<SwapPr
     throw new Error('Method not implemented.')
   }
 
-  initiateSwap(swapParams: SwapParams): Promise<Transaction<any>> {
-    return null
-  }
+  async initiateSwap(swapParams: SwapParams): Promise<Transaction<any>> {
+    console.log('SECRET HASH', swapParams.secretHash)
+    this._validateSwapParams(swapParams)
 
-  verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
-    throw new Error('Method not implemented.')
-  }
+    try {
+      await this.getMethod('sendTransaction')({
+        transaction: this._createManager()
+      })
+    } catch {
+    } finally {
+      await new Promise((resolve) => setTimeout(resolve, 5000))
 
-  claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
-  }
-
-  refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
-  }
-
-  // TODO: Move in utils
-  _validateAddress(address: string) {
-    if (typeof address !== 'string' || !address.startsWith('0x') || address.length !== 18) {
-      throw new Error(`Invalid Address`)
+      const args = this._convertSwapParamsToArgs(swapParams)
+      console.log(args)
+      return await this.getMethod('sendTransaction')({
+        transaction: this._createHTLC(),
+        args
+      })
     }
   }
 
+  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, fee: number): Promise<Transaction<any>> {
+    console.log('secret', secret)
+    await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
+
+    const [refundAddress, recipientAddress, _, expiration, secretHash] = this._convertSwapParamsToArgs(swapParams);
+
+    const args = [refundAddress, recipientAddress, expiration, secretHash, fcl.arg(secret, types.String)]
+
+    return await this.getMethod('sendTransaction')({
+      transaction: this._claimHTLC(),
+      args
+    })
+  }
+
+  async refundSwap(swapParams: SwapParams, initiationTxHash: string, fee: number): Promise<Transaction<any>> {
+    await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
+
+    const [refundAddress, recipientAddress, _, expiration, secretHash] = this._convertSwapParamsToArgs(swapParams);
+
+    const args = [refundAddress, recipientAddress, expiration, secretHash]
+
+    return await this.getMethod('sendTransaction')({
+      transaction: this._refundHTLC(),
+      args
+    })
+  }
+
+  async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
+    this._validateSwapParams(swapParams)
+
+    const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
+
+    if(!initTx) {
+      throw new Error('no tx found')
+    }
+
+    const { _raw: { args } } = initTx
+
+    
+    if(!this.doesTransactionMatchInitiation(swapParams, args)) {
+      throw new Error('Txs do not match params')
+    }
+
+    return true
+  }
+
+  doesTransactionMatchInitiation(swapParams: SwapParams, txParams: any) {
+    const [refundAddress, recipientAddress, value, expiration, secretHash] = txParams
+
+    return (
+      swapParams.refundAddress === refundAddress.value &&
+      swapParams.recipientAddress === recipientAddress.value &&
+      swapParams.secretHash === secretHash.value &&
+      swapParams.expiration === parseTimestamp(expiration.value) &&
+      swapParams.value.eq(parseTokenUnits(value.value).toString())
+    )
+  }
+
   _createManager() {
-    return fcl.transaction`
-        import HTLCs from 0xdadbaee81662a80a
+    return fcl.transaction`\
+        import HTLCs from 0xHTLCADDRESS
         transaction {
           prepare(acct: AuthAccount) {
             let htlcManager <- HTLCs.createSwapManager()
@@ -49,11 +108,11 @@ export default class FlowSwapProvider extends Provider implements Partial<SwapPr
     `
   }
 
-  _createHTLC() {
-    return fcl.transaction`
-    import HTLCs from 0xdadbaee81662a80a
-    import FungibleToken from 0x9a0766d93b6608b7
-    import FlowToken from 0x7e60df042a9c0868
+  _createHTLC() { 
+    return fcl.transaction`\
+    import HTLCs from 0xHTLCADDRESS
+    import FungibleToken from 0xFUNGIBLETOKENADDRESS
+    import FlowToken from 0xFLOWTOKENADDRESS
     transaction (sellerAddress: Address, buyerAddress: Address, value: UFix64, expiry: UFix64, secretHash: String) {
       prepare(acct: AuthAccount) {
         let manager = acct.borrow<&HTLCs.HTLCManager>(from: HTLCs.HtlcManagerStoragePath)!
@@ -73,10 +132,11 @@ export default class FlowSwapProvider extends Provider implements Partial<SwapPr
   }
 
   _claimHTLC() {
-    return fcl.transaction`
-    import HTLCs from 0xdadbaee81662a80a
-    import FungibleToken from 0x9a0766d93b6608b7
-    import FlowToken from 0x7e60df042a9c0868
+    return fcl.transaction`\
+    import HTLCs from 0xHTLCADDRESS
+    import FungibleToken from 0xFUNGIBLETOKENADDRESS
+    import FlowToken from 0xFLOWTOKENADDRESS
+
     transaction(sellerAddress: Address, buyerAddress: Address, expiry: UFix64, secretHash: String, secret: String) {
       prepare(acct: AuthAccount) {
         let manager = getAccount(sellerAddress).getCapability<&HTLCs.HTLCManager{HTLCs.HTLCManagerPublic}>(HTLCs.HtlcManagerPublicPath).borrow()!
@@ -96,10 +156,10 @@ export default class FlowSwapProvider extends Provider implements Partial<SwapPr
   }
 
   _refundHTLC() {
-    ;`
-    import HTLCs from 0xdadbaee81662a80a
-    import FungibleToken from 0x9a0766d93b6608b7
-    import FlowToken from 0x7e60df042a9c0868
+    return fcl.transaction`\
+    import HTLCs from 0xHTLCADDRESS
+    import FungibleToken from 0xFUNGIBLETOKENADDRESS
+    import FlowToken from 0xFLOWTOKENADDRESS
     transaction(sellerAddress: Address, buyerAddress: Address, expiry: UFix64, secretHash: String) {
       prepare(acct: AuthAccount) {
         let manager = acct.borrow<&HTLCs.HTLCManager>(from: HTLCs.HtlcManagerStoragePath)!
@@ -115,5 +175,37 @@ export default class FlowSwapProvider extends Provider implements Partial<SwapPr
       }
     }
   `
+  }
+
+  _validateSwapParams(swapParams: SwapParams) {
+    const validateAddress = (address: string) => {
+      if (typeof address !== 'string' || !address.startsWith('0x') || address.length !== 18) {
+        throw new Error(`Invalid Address`)
+      }
+    }
+
+    validateValue(swapParams.value)
+    validateExpiration(swapParams.expiration)
+    validateSecretHash(swapParams.secretHash)
+    validateAddress(addressToString(swapParams.recipientAddress))
+    validateAddress(addressToString(swapParams.refundAddress))
+  }
+
+  _convertSwapParamsToArgs(swapParams: SwapParams) {
+    const { 
+      recipientAddress,
+      refundAddress,
+      expiration,
+      secretHash,
+      value 
+    } = swapParams;
+
+    return [
+      fcl.arg(refundAddress, types.Address),
+      fcl.arg(recipientAddress, types.Address),
+      fcl.arg(formatTokenUnits(value, 8), types.UFix64),
+      fcl.arg(formatTimestamp(expiration), types.UFix64),
+      fcl.arg(secretHash, types.String),
+    ]
   }
 }
