@@ -107,12 +107,19 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
 
     const authz = this.authz(addressToString(address), options.keyId || '0')
 
-    // sending flow tokens case
-    const tx = options.transaction || this._sendFlowToken()
-    const args = options.args || [
-      fcl.arg(formatTokenUnits(options.value, 8), types.UFix64),
-      fcl.arg(addressToString(options.to), types.Address)
-    ]
+    let tx
+    let args
+    if (!options.transaction) {
+      // default case: send flow tokens
+      tx = this._sendFlowToken()
+      args = [
+        fcl.arg(formatTokenUnits(options.value, 8), types.UFix64),
+        fcl.arg(addressToString(options.to), types.Address)
+      ]
+    } else {
+      tx = options.transaction
+      args = options.args || []
+    }
 
     // authorizations expects array!
     const response = await fcl
