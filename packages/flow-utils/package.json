@@ -19,7 +19,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "dependencies": {
-    "@babel/runtime": "^7.12.1",
+    "@babel/runtime": "^7.15.4",
     "@ethersproject/bignumber": "^5.4.2",
     "@ethersproject/units": "^5.4.0",
     "@liquality/errors": "^1.6.1",

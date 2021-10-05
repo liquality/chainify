@@ -43,6 +43,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
       .put('0xFUNGIBLETOKENADDRESS', this._network.fungibleTokenAddress)
       .put('0xFLOWTOKENADDRESS', this._network.flowTokenAddress)
       .put('0xFUSDTOKENADDRESS', this._network.fusdTokenAddress)
+      .put('')
   }
 
   async getAddresses(): Promise<Address[]> {
@@ -81,7 +82,11 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
   async signMessage(msgHex: string): Promise<string> {
     await this.getAddresses() // initialize wallet
 
-    return this.sign(msgHex)
+    const res = this.sign(msgHex)
+
+    console.log('res', res)
+
+    return res;
   }
 
   async getConnectedNetwork(): Promise<Network> {
@@ -146,6 +151,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
   sign(msgHex: string): string {
     const key = this._ec.keyFromPrivate(Buffer.from(this._privateKey, 'hex'))
     const sig = key.sign(this._hashMessage(msgHex))
+    
     const n = 32
     const r = sig.r.toArrayLike(Buffer, 'be', n)
     const s = sig.s.toArrayLike(Buffer, 'be', n)
@@ -173,6 +179,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
 
   // ===== HELPER METHODS =====
   private _hashMessage(message: string) {
+    console.log(message)
     const sha = new SHA3(256)
     sha.update(Buffer.from(message, 'hex'))
     return sha.digest()

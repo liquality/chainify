@@ -12,8 +12,8 @@ export default class FlowSwapProvider extends Provider implements Partial<SwapPr
     throw new Error('Method not implemented.')
   }
 
-  initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction<any>> {
-    throw new Error('Method not implemented.')
+  initiateSwap(swapParams: SwapParams): Promise<Transaction<any>> {
+    return null
   }
 
   verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
