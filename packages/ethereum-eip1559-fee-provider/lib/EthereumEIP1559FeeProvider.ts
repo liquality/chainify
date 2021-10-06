@@ -139,8 +139,6 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
 
       return this.calculateFees(baseFee, feeHistory)
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
       return FALLBACK_ESTIMATE
     }
   }
