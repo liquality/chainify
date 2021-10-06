@@ -82,7 +82,7 @@ export default class FlowWalletProvider extends WalletProvider implements Partia
   async signMessage(msgHex: string): Promise<string> {
     await this.getAddresses() // initialize wallet
 
-    return this.sign(this._hashMessage(msgHex, 'utf8'))
+    return this.sign(Buffer.from(msgHex))
   }
 
   async getConnectedNetwork(): Promise<Network> {
