@@ -7,6 +7,10 @@ import eip55 from 'eip55'
 
 const GWEI = 1e9
 
+function gwei(wei: BigNumber | number): BigNumber {
+  return new BigNumber(wei).times(GWEI)
+}
+
 /**
  * Converts a hex string to the ethereum format
  * @param {*} hash
@@ -140,6 +144,8 @@ function validateExpiration(expiration: number) {
 }
 
 export {
+  GWEI,
+  gwei,
   ensure0x,
   remove0x,
   hexToNumber,

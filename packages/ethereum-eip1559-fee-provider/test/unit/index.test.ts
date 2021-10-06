@@ -1,7 +1,8 @@
 /* eslint-env mocha */
 import { Client } from '../../../client/lib'
 
-import { EthereumEIP1559FeeProvider } from '../../dist'
+import { EthereumEIP1559FeeProvider } from '../../lib'
+import { EthereumRpcProvider } from '../../../ethereum-rpc-provider/lib'
 
 import mockJsonRpc from '../../../../test/mock/mockJsonRpc'
 import ethereumRpc from '../../../../test/mock/ethereum/rpc'
@@ -13,11 +14,12 @@ const { expect } = chai.use(chaiAsPromised)
 chai.config.truncateThreshold = 0
 
 describe('Ethereum EIP1559 Fee provider', () => {
-  let client
+  let client: Client
 
   beforeEach(() => {
     client = new Client()
-    client.addProvider(new EthereumEIP1559FeeProvider('http://localhost:8545'))
+    client.addProvider(new EthereumRpcProvider({ uri: 'http://localhost:8545' }))
+    client.addProvider(new EthereumEIP1559FeeProvider({ uri: 'http://localhost:8545' }))
 
     mockJsonRpc('http://localhost:8545', ethereumRpc, 100)
   })

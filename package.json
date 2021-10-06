@@ -92,7 +92,7 @@
   },
   "options": {
     "coverage": "--reporter=text-lcov",
-    "mocha": "--require ./test/ts.register.js --timeout 20000 --recursive",
+    "mocha": "--require ts-node/register --timeout 20000 --recursive",
     "eslint": "--ext .jsx,.ts,.tsx"
   },
   "nyc": {

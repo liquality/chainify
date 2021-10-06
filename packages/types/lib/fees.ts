@@ -1,3 +1,10 @@
+export interface FeeHistory {
+  baseFeePerGas: string[]
+  gasUsedRatio: number[]
+  reward?: string[][]
+  oldestBlock: string
+}
+
 export interface EIP1559Fee {
   // Fee price
   maxPriorityFeePerGas: number
