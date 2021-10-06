@@ -6,6 +6,7 @@
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
     "@babel/register": "^7.12.1",
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
@@ -91,7 +92,7 @@
   },
   "options": {
     "coverage": "--reporter=text-lcov",
-    "mocha": "--require ts-node/register --timeout 20000 --recursive",
+    "mocha": "--require ./test/ts.register.js --timeout 20000 --recursive",
     "eslint": "--ext .jsx,.ts,.tsx"
   },
   "nyc": {

@@ -2,7 +2,6 @@ const path = require('path')
 const cwd = process.cwd()
 const pkg = require(path.join(cwd, 'package.json'))
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const nodeExternals = require('webpack-node-externals')
 
 const isProdEnv = process.env.NODE_ENV === 'production'
 const isWatchEnv = process.env.WEBPACK_WATCH === 'true'
@@ -26,27 +25,24 @@ if (isProdEnv) {
 }
 
 module.exports = {
-  devtool: isProdEnv ? 'source-map' : 'eval',
+  devtool: 'inline-source-map',
   entry: './lib/index.ts',
   mode: isProdEnv ? 'production' : 'development',
   watch: isWatchEnv,
   target: 'node',
-  externals: [
-    nodeExternals({
-      allowlist: ['node-fetch']
-    })
-  ],
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-typescript']
+        }
       }
     ]
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.json'],
     fallback: {
       buffer: require.resolve('buffer'),
       stream: require.resolve('stream-browserify')
@@ -55,7 +51,9 @@ module.exports = {
   output: {
     filename: path.basename(pkg.main),
     path: path.resolve(cwd, 'dist'),
-    libraryTarget: 'commonjs2'
+    library: {
+      type: 'commonjs2'
+    }
   },
   plugins,
   optimization: {
