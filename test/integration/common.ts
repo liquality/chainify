@@ -15,6 +15,7 @@ import { BitcoinJsWalletProvider } from '../../packages/bitcoin-js-wallet-provid
 import { BitcoinRpcProvider } from '../../packages/bitcoin-rpc-provider/lib'
 import * as BitcoinUtils from '../../packages/bitcoin-utils/lib'
 import { EthereumRpcProvider } from '../../packages/ethereum-rpc-provider/lib'
+import { EthereumEIP1559FeeProvider } from '../../packages/ethereum-eip1559-fee-provider/lib'
 import { EthereumWalletApiProvider } from '../../packages/ethereum-wallet-api-provider/lib'
 import { EthereumSwapProvider } from '../../packages/ethereum-swap-provider/lib'
 import { EthereumLedgerProvider } from '../../packages/ethereum-ledger-provider/lib'
@@ -107,6 +108,7 @@ bitcoinWithJs.addProvider(new BitcoinSwapProvider({ network: config.bitcoin.netw
 
 const ethereumWithMetaMask = new Client()
 ethereumWithMetaMask.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+ethereumWithMetaMask.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 ethereumWithMetaMask.addProvider(
   new EthereumWalletApiProvider(metaMaskConnector.getProvider(), config.ethereum.network)
 )
@@ -114,10 +116,12 @@ ethereumWithMetaMask.addProvider(new EthereumSwapProvider())
 
 const ethereumWithNode = new Client()
 ethereumWithNode.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+ethereumWithNode.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 ethereumWithNode.addProvider(new EthereumSwapProvider())
 
 const ethereumWithLedger = new Client()
 ethereumWithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+ethereumWithLedger.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 ethereumWithLedger.addProvider(
   new EthereumLedgerProvider({
     network: config.ethereum.network,
@@ -129,6 +133,7 @@ ethereumWithLedger.addProvider(new EthereumSwapProvider())
 
 const ethereumWithJs = new Client()
 ethereumWithJs.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+ethereumWithJs.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 ethereumWithJs.addProvider(
   new EthereumJsWalletProvider({
     network: config.ethereum.network,
@@ -140,17 +145,20 @@ ethereumWithJs.addProvider(new EthereumSwapProvider())
 
 const erc20WithMetaMask = new Client()
 erc20WithMetaMask.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+erc20WithMetaMask.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 erc20WithMetaMask.addProvider(new EthereumWalletApiProvider(metaMaskConnector.getProvider(), config.ethereum.network))
 erc20WithMetaMask.addProvider(new EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithMetaMask.addProvider(new EthereumErc20SwapProvider())
 
 const erc20WithNode = new Client()
 erc20WithNode.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+erc20WithNode.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 erc20WithNode.addProvider(new EthereumErc20Provider(CONSTANTS.ETHEREUM_NON_EXISTING_CONTRACT))
 erc20WithNode.addProvider(new EthereumErc20SwapProvider())
 
 const erc20WithLedger = new Client()
 erc20WithLedger.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+erc20WithLedger.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 erc20WithLedger.addProvider(
   new EthereumLedgerProvider({
     network: config.ethereum.network,
@@ -163,6 +171,7 @@ erc20WithLedger.addProvider(new EthereumErc20SwapProvider())
 
 const erc20WithJs = new Client()
 erc20WithJs.addProvider(new EthereumRpcProvider({ uri: config.ethereum.rpc.host }))
+erc20WithJs.addProvider(new EthereumEIP1559FeeProvider({ uri: config.ethereum.rpc.host }))
 erc20WithJs.addProvider(
   new EthereumJsWalletProvider({
     network: config.ethereum.network,
