@@ -125,15 +125,9 @@ export default class TerraWalletProvider extends WalletProvider {
       }
     }
 
-    console.log(1)
-
     const tx = await this._wallet.createAndSignTx(txData)
 
-    console.log(2)
-
     const transaction = await this._broadcastTx(tx)
-
-    console.log(3)
 
     return {
       hash: transaction.txhash,
