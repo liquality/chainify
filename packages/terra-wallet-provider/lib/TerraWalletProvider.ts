@@ -111,7 +111,10 @@ export default class TerraWalletProvider extends WalletProvider {
       }
     } else {
       txData = {
-        msgs: [this._sendMessage(to, value)]
+        msgs: [this._sendMessage(to, value)],
+        gasPrices: new Coins({
+          [this._network.asset]: fee
+        })
       }
     }
 
