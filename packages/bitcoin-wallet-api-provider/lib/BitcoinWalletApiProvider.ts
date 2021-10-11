@@ -57,4 +57,8 @@ export default class BitcoinWalletApiProvider extends BitcoinWalletProvider(
     const addresses = await this.getAddresses()
     return addresses.length > 0
   }
+
+  async getPrivateKey() {
+    return 'FIXME'
+  }
 }

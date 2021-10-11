@@ -89,4 +89,8 @@ export default class Wallet implements WalletProvider {
     }
     return true
   }
+
+  async getPrivateKey() {
+    return 'FIXME'
+  }
 }

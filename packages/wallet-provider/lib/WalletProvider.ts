@@ -56,4 +56,6 @@ export default abstract class WalletProvider extends Provider implements IWallet
   abstract signMessage(message: string, from: string): Promise<string>
 
   abstract getConnectedNetwork(): Promise<any>
+
+  abstract getPrivateKey(): Promise<string>
 }

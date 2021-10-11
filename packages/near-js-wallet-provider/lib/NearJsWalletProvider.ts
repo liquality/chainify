@@ -28,6 +28,10 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
     this._addressCache = {}
   }
 
+  async getPrivateKey() {
+    return 'FIXME'
+  }
+
   async getAddresses(): Promise<Address[]> {
     if (this._addressCache[this._mnemonic]) {
       return [this._addressCache[this._mnemonic]]

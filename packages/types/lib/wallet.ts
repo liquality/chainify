@@ -56,4 +56,10 @@ export interface WalletProvider {
    * @return {Promise<Boolean>} True if wallet accepts fee updating
    */
   canUpdateFee?: boolean | (() => boolean)
+
+  /**
+   * Retrieve the private key for the account
+   * @return {Promise<string>} Resolves with the key as a string
+   */
+  getPrivateKey(): Promise<string>
 }

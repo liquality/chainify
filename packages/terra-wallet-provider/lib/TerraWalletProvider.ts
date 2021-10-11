@@ -53,6 +53,10 @@ export default class TerraWalletProvider extends WalletProvider {
     return addresses.length > 0
   }
 
+  async getPrivateKey() {
+    return 'FIXME'
+  }
+
   async getAddresses(): Promise<Address[]> {
     if (this._addressCache[this._mnemonic]) {
       return [this._addressCache[this._mnemonic]]

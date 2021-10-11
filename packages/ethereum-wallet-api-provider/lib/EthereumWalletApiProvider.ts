@@ -135,4 +135,8 @@ export default class EthereumWalletApiProvider extends WalletProvider {
 
     return (EthereumNetworks as { [key: string]: EthereumNetwork })[network]
   }
+
+  async getPrivateKey() {
+    return 'FIXME'
+  }
 }
