@@ -111,7 +111,10 @@ export default class TerraWalletProvider extends WalletProvider {
       }
     } else {
       txData = {
-        msgs: [this._sendMessage(to, value)]
+        msgs: [this._sendMessage(to, value)],
+        gasPrices: new Coins({
+          [this._network.asset]: fee
+        })
       }
     }
 
@@ -122,9 +125,15 @@ export default class TerraWalletProvider extends WalletProvider {
       }
     }
 
+    console.log(1)
+
     const tx = await this._wallet.createAndSignTx(txData)
 
+    console.log(2)
+
     const transaction = await this._broadcastTx(tx)
+
+    console.log(3)
 
     return {
       hash: transaction.txhash,
