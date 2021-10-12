@@ -15,7 +15,10 @@ export default {
     network: BitcoinNetworks.bitcoin_regtest,
     value: new BigNumber(1000000),
     mineBlocks: true,
-    privKeyRx: /^[5K]/ // WIF starts with 5 or K
+
+    // Wallet Import Format, 52 characters long
+    // starts with c on testnet, L or K or mainnet
+    privKeyRx: /^[cLK]\w{51}$/
   },
   ethereum: {
     rpc: {
