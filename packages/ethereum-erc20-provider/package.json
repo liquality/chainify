@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-erc20-provider",
-  "version": "1.6.9",
+  "version": "1.6.10",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,12 +20,12 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/crypto": "^1.6.9",
-    "@liquality/errors": "^1.6.9",
-    "@liquality/ethereum-utils": "^1.6.9",
-    "@liquality/provider": "^1.6.9",
-    "@liquality/types": "^1.6.9",
-    "@liquality/utils": "^1.6.9",
+    "@liquality/crypto": "^1.6.10",
+    "@liquality/errors": "^1.6.10",
+    "@liquality/ethereum-utils": "^1.6.10",
+    "@liquality/provider": "^1.6.10",
+    "@liquality/types": "^1.6.10",
+    "@liquality/utils": "^1.6.10",
     "bignumber.js": "^9.0.0",
     "lodash": "^4.17.20"
   },
