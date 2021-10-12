@@ -45,6 +45,10 @@ export default class SolanaRpcProvider extends NodeProvider implements FeeProvid
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
+  async getBlockByHash(): Promise<Block> {
+    throw new Error('Method not implemented.')
+  }
+
   async getBlockByNumber(blockNumber: number, includeTx?: boolean): Promise<Block> {
     const block = await this.connection.getBlock(blockNumber)
 

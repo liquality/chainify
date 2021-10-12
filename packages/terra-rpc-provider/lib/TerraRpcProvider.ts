@@ -29,6 +29,10 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     await new Promise((resolve) => setTimeout(resolve, numberOfBlocks * 20000))
   }
 
+  async getBlockByHash(): Promise<Block> {
+    throw new Error('Method not implemented.')
+  }
+
   async getBlockByNumber(
     blockNumber: number,
     includeTx?: boolean
@@ -95,6 +99,10 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     return promiseBalances
       .map((balance) => new BigNumber(balance))
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
+  }
+
+  sendRawTransaction(): Promise<string> {
+    throw new Error('Method not implemented.')
   }
 
   async getFees() {
