@@ -17,7 +17,7 @@ export const normalizeTransaction = (
   currentBlock?: number
 ): Transaction<terra.InputTransaction> => {
   const denom = Object.keys(data.tx.fee.amount._coins)[0]
-  
+
   const fee = data.tx.fee.amount._coins[denom].amount.toNumber()
   const msg = data.tx.msg?.[0] || data.tx.value?.msg?.[0]?.value
 
