@@ -64,9 +64,10 @@ function testWallet(chain: Chain, derivationPath: string) {
   })
 
   describe('exportPrivateKey', () => {
-    it('should return hex string', async () => {
+    it('should return a matching string', async () => {
       const key = await chain.client.wallet.exportPrivateKey()
-      expect(key).not.to.be.empty
+      // @ts-ignore
+      expect(key).to.match(config[chain.name].privKeyRx)
     })
   })
 }

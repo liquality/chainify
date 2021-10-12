@@ -58,7 +58,8 @@ export interface WalletProvider {
   canUpdateFee?: boolean | (() => boolean)
 
   /**
-   * Retrieve the private key for the account
+   * Exports the private key for the account
+   * see https://en.bitcoin.it/wiki/Wallet_import_format
    * @return {Promise<string>} Resolves with the key as a string
    */
   exportPrivateKey?: () => Promise<string>
