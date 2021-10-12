@@ -159,6 +159,14 @@ function testWallet(chain: Chain) {
       expect(signedMessage1).to.equal(signedMessage2)
     })
   })
+
+  // describe('exportPrivateKey', () => {
+  //   it('should return hex string', async () => {
+  //     const key = await chain.client.wallet.exportPrivateKey()
+  //     console.log(key)
+  //     expect(key).to.equal('foo')
+  //   })
+  // })
 }
 
 describe('Wallet Interaction', function () {

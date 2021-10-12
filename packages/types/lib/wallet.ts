@@ -61,5 +61,5 @@ export interface WalletProvider {
    * Retrieve the private key for the account
    * @return {Promise<string>} Resolves with the key as a string
    */
-  getPrivateKey(): Promise<string>
+  exportPrivateKey?: () => Promise<string>
 }

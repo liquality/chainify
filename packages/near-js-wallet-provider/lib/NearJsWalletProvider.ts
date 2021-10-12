@@ -28,8 +28,9 @@ export default class NearJsWalletProvider extends WalletProvider implements Part
     this._addressCache = {}
   }
 
-  async getPrivateKey() {
-    return 'FIXME'
+  async exportPrivateKey() {
+    const { secretKey } = parseSeedPhrase(this._mnemonic, this._derivationPath)
+    return secretKey
   }
 
   async getAddresses(): Promise<Address[]> {

@@ -224,8 +224,4 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
     const secret = sha256(signedMessage)
     return secret
   }
-
-  async getPrivateKey() {
-    return 'FIXME'
-  }
 }

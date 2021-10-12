@@ -129,8 +129,4 @@ export default abstract class LedgerProvider<TApp extends IApp> extends WalletPr
 
     throw new Error('Ledger: Wallet does not contain address')
   }
-
-  async getPrivateKey() {
-    return 'FIXME'
-  }
 }

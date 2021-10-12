@@ -90,7 +90,11 @@ export default class Wallet implements WalletProvider {
     return true
   }
 
-  async getPrivateKey() {
-    return 'FIXME'
+  /**
+   * Retrieve the private key for the account
+   * @return {Promise<string>} Resolves with the key as a string
+   */
+  exportPrivateKey(): Promise<string> {
+    return this.client.getMethod('exportPrivateKey')()
   }
 }

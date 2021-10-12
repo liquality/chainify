@@ -62,6 +62,13 @@ function testWallet(chain: Chain, derivationPath: string) {
       expect(signedMessage1).to.equal(signedMessage2)
     })
   })
+
+  describe('exportPrivateKey', () => {
+    it('should return hex string', async () => {
+      const key = await chain.client.wallet.exportPrivateKey()
+      expect(key).not.to.equal('FIXME')
+    })
+  })
 }
 
 describe('Wallet Interaction', function () {
