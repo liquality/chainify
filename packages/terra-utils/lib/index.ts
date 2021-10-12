@@ -16,6 +16,9 @@ export const normalizeTransaction = (
   asset: string,
   currentBlock?: number
 ): Transaction<terra.InputTransaction> => {
+  const denom = Object.keys(data.tx.fee.amount._coins)[0]
+
+  const fee = data.tx.fee.amount._coins[denom].amount.toNumber()
   const msg = data.tx.msg?.[0] || data.tx.value?.msg?.[0]?.value
 
   let value = 0
@@ -58,6 +61,7 @@ export const normalizeTransaction = (
     hash: data.txhash,
     confirmations: Math.min(currentBlock - data.height, 10),
     ...(txParams?.secret && { secret: txParams.secret }),
+    fee,
     _raw: {
       ...txParams,
       contractAddress
