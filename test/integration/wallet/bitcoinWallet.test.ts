@@ -160,13 +160,12 @@ function testWallet(chain: Chain) {
     })
   })
 
-  // describe('exportPrivateKey', () => {
-  //   it('should return hex string', async () => {
-  //     const key = await chain.client.wallet.exportPrivateKey()
-  //     console.log(key)
-  //     expect(key).to.equal('foo')
-  //   })
-  // })
+  describe('exportPrivateKey', () => {
+    it('should return hex string', async () => {
+      const key = await chain.client.wallet.exportPrivateKey()
+      expect(key).not.to.be.empty
+    })
+  })
 }
 
 describe('Wallet Interaction', function () {
