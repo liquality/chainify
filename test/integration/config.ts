@@ -14,7 +14,11 @@ export default {
     },
     network: BitcoinNetworks.bitcoin_regtest,
     value: new BigNumber(1000000),
-    mineBlocks: true
+    mineBlocks: true,
+
+    // Wallet Import Format, 52 characters long
+    // starts with c on testnet, L or K or mainnet
+    privKeyRx: /^[cLK]\w{51}$/
   },
   ethereum: {
     rpc: {
@@ -27,6 +31,7 @@ export default {
       chainId: 1337, // Default geth dev mode - * Needs to be <= 255 for ledger * https://github.com/ethereum/go-ethereum/issues/21120
       networkId: 1337
     },
+    privKeyRx: /"xpriv":\s*"xprv/,
     metaMaskConnector: {
       port: 3333
     }
@@ -41,6 +46,8 @@ export default {
     // sender
     senderAddress: '9eed84cfc2ac0068dd8fc10b8b3b71c8d0f74cfd09211e036bdb8561c2647472',
     senderMnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
+    privKeyRx: /^ed25519:4wRb35gLftuVgYCpNSLAF1SHUQuPFWEsbvh87WX2EDxHWV73vDf4J5sCsEPckeGBHSAf3vbvAyU4CpjidyTNFCcy$/,
+
     // receiver
     receiverAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',
     receiverMnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze'

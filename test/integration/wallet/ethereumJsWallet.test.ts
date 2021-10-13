@@ -62,6 +62,14 @@ function testWallet(chain: Chain, derivationPath: string) {
       expect(signedMessage1).to.equal(signedMessage2)
     })
   })
+
+  describe('exportPrivateKey', () => {
+    it('should return a matching string', async () => {
+      const key = await chain.client.wallet.exportPrivateKey()
+      // @ts-ignore
+      expect(key).to.match(config[chain.name].privKeyRx)
+    })
+  })
 }
 
 describe('Wallet Interaction', function () {

@@ -52,9 +52,17 @@ export default class BitcoinJsWalletProvider extends BitcoinWalletProvider(
   }
 
   async keyPair(derivationPath: string): Promise<ECPairInterface> {
-    const node = await this.seedNode()
-    const wif = node.derivePath(derivationPath).toWIF()
+    const wif = await this._toWIF(derivationPath)
     return ECPair.fromWIF(wif, this._network)
+  }
+
+  private async _toWIF(derivationPath: string): Promise<string> {
+    const node = await this.seedNode()
+    return node.derivePath(derivationPath).toWIF()
+  }
+
+  async exportPrivateKey() {
+    return this._toWIF(this._baseDerivationPath)
   }
 
   async signMessage(message: string, from: string) {
