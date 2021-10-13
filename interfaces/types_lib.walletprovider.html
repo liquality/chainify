@@ -84,6 +84,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.walletprovider.html#canupdatefee" class="tsd-kind-icon">can<wbr>Update<wbr>Fee</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.walletprovider.html#exportprivatekey" class="tsd-kind-icon">export<wbr>Private<wbr>Key</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -108,7 +109,7 @@
 					<div class="tsd-signature tsd-kind-icon">can<wbr>Update<wbr>Fee<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/c77f99c/packages/types/lib/wallet.ts#L58">packages/types/lib/wallet.ts:58</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L58">packages/types/lib/wallet.ts:58</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -120,6 +121,44 @@
 							<dd><p>True if wallet accepts fee updating</p>
 							</dd>
 						</dl>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="exportprivatekey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> export<wbr>Private<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">export<wbr>Private<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L67">packages/types/lib/wallet.ts:67</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Exports the private key for the account
+								for BTC, <a href="https://en.bitcoin.it/wiki/Wallet_import_format">https://en.bitcoin.it/wiki/Wallet_import_format</a>
+								for ETH, xpub/xpriv as JSON
+							for NEAR, the secretKey</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>returns</dt>
+							<dd><p>Resolves with the key as a string</p>
+							</dd>
+						</dl>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-interface">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
 					</div>
 				</section>
 			</section>
@@ -135,7 +174,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/c77f99c/packages/types/lib/wallet.ts#L13">packages/types/lib/wallet.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L13">packages/types/lib/wallet.ts:13</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -172,7 +211,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/c77f99c/packages/types/lib/wallet.ts#L46">packages/types/lib/wallet.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L46">packages/types/lib/wallet.ts:46</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -195,7 +234,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/c77f99c/packages/types/lib/wallet.ts#L32">packages/types/lib/wallet.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L32">packages/types/lib/wallet.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -229,7 +268,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/c77f99c/packages/types/lib/wallet.ts#L22">packages/types/lib/wallet.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L22">packages/types/lib/wallet.ts:22</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -260,7 +299,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/c77f99c/packages/types/lib/wallet.ts#L52">packages/types/lib/wallet.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L52">packages/types/lib/wallet.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -283,7 +322,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/c77f99c/packages/types/lib/wallet.ts#L40">packages/types/lib/wallet.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/721d6d8/packages/types/lib/wallet.ts#L40">packages/types/lib/wallet.ts:40</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -392,6 +431,9 @@
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="types_lib.walletprovider.html#canupdatefee" class="tsd-kind-icon">can<wbr>Update<wbr>Fee</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="types_lib.walletprovider.html#exportprivatekey" class="tsd-kind-icon">export<wbr>Private<wbr>Key</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="types_lib.walletprovider.html#getaddresses" class="tsd-kind-icon">get<wbr>Addresses</a>
