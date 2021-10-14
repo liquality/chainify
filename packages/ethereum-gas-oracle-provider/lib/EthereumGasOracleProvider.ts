@@ -2,7 +2,7 @@ import { NodeProvider } from '@liquality/node-provider'
 import { FeeProvider, FeeDetails, BigNumber } from '@liquality/types'
 
 export default class EthereumGasOracleProvider extends NodeProvider implements FeeProvider {
-  constructor({ baseURL = 'https://api.etherscan.io', apikey = '' }) {
+  constructor({ baseURL = 'https://api.etherscan.io', apikey = '' } = {}) {
     super({ baseURL, params: { apikey } })
   }
 

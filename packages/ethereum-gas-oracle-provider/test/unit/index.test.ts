@@ -15,7 +15,7 @@ describe('Ethereum Gas Fee provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    client.addProvider(new EthereumGasOracleProvider())
+    client.addProvider(new EthereumGasOracleProvider({ apikey: 'test' }))
   })
 
   describe('getFees', () => {
