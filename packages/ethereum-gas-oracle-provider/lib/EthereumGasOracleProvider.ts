@@ -1,11 +1,9 @@
 import { NodeProvider } from '@liquality/node-provider'
 import { FeeProvider, FeeDetails, BigNumber } from '@liquality/types'
 
-const ETHERSCAN_API_KEY = 'FIXME'
-
 export default class EthereumGasOracleProvider extends NodeProvider implements FeeProvider {
-  constructor(baseURL = 'https://api.etherscan.io') {
-    super({ baseURL, params: { apikey: ETHERSCAN_API_KEY } })
+  constructor({ baseURL = 'https://api.etherscan.io', apikey = '' }) {
+    super({ baseURL, params: { apikey } })
   }
 
   async getFees(): Promise<FeeDetails> {
