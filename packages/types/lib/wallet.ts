@@ -60,7 +60,7 @@ export interface WalletProvider {
   /**
    * Exports the private key for the account
    * for BTC, https://en.bitcoin.it/wiki/Wallet_import_format
-   * for ETH, xpub/xpriv as JSON
+   * for ETH, the privateKey
    * for NEAR, the secretKey
    * @return {Promise<string>} Resolves with the key as a string
    */
