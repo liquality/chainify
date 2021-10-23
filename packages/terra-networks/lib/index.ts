@@ -19,8 +19,8 @@ const terra_mainnet: TerraNetwork = {
   coinType: '370',
   isTestnet: false,
   chainID: 'columbus-5',
-  asset: 'luna',
-  codeId: 9344 // TODO: Replace after deploying contract on mainnet
+  asset: 'uluna',
+  codeId: 613
 }
 
 const terra_testnet: TerraNetwork = {
