@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-swap-provider",
-  "version": "1.6.12",
+  "version": "1.6.13",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,12 +20,12 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-networks": "^1.6.12",
-    "@liquality/bitcoin-utils": "^1.6.12",
-    "@liquality/errors": "^1.6.12",
-    "@liquality/provider": "^1.6.12",
-    "@liquality/types": "^1.6.12",
-    "@liquality/utils": "^1.6.12",
+    "@liquality/bitcoin-networks": "^1.6.13",
+    "@liquality/bitcoin-utils": "^1.6.13",
+    "@liquality/errors": "^1.6.13",
+    "@liquality/provider": "^1.6.13",
+    "@liquality/types": "^1.6.13",
+    "@liquality/utils": "^1.6.13",
     "@types/node": "^14.14.36",
     "bignumber.js": "^9.0.0",
     "bitcoinjs-lib": "^5.2.0"

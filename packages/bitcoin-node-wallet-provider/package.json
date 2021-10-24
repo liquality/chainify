@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-node-wallet-provider",
-  "version": "1.6.12",
+  "version": "1.6.13",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,13 +20,13 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-networks": "^1.6.12",
-    "@liquality/bitcoin-utils": "^1.6.12",
-    "@liquality/crypto": "^1.6.12",
-    "@liquality/jsonrpc-provider": "^1.6.12",
-    "@liquality/types": "^1.6.12",
-    "@liquality/utils": "^1.6.12",
-    "@liquality/wallet-provider": "^1.6.12",
+    "@liquality/bitcoin-networks": "^1.6.13",
+    "@liquality/bitcoin-utils": "^1.6.13",
+    "@liquality/crypto": "^1.6.13",
+    "@liquality/jsonrpc-provider": "^1.6.13",
+    "@liquality/types": "^1.6.13",
+    "@liquality/utils": "^1.6.13",
+    "@liquality/wallet-provider": "^1.6.13",
     "bignumber.js": "^9.0.0",
     "bitcoinjs-lib": "^5.2.0",
     "lodash": "^4.17.20"
