@@ -31,7 +31,7 @@ export default {
       chainId: 1337, // Default geth dev mode - * Needs to be <= 255 for ledger * https://github.com/ethereum/go-ethereum/issues/21120
       networkId: 1337
     },
-    privKeyRx: /"xpriv":\s*"xprv/,
+    privKeyRx: /\w{64}/,
     metaMaskConnector: {
       port: 3333
     }
