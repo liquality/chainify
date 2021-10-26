@@ -62,8 +62,6 @@ export default class TerraWalletProvider extends WalletProvider {
       mnemonic: this._mnemonic
     })
 
-    
-
     const result = new Address({
       address: wallet.accAddress,
       derivationPath: this._baseDerivationPath + `/0/0`,
@@ -112,7 +110,6 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const balance = await this.getMethod('getBalance')(addresses)
 
-    
     return await this.sendTransaction({ to: address, value: balance })
   }
 
@@ -156,9 +153,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     if (typeof data?.fee === 'string') {
       txData = {
-        fee: isProto
-        ? Fee.fromData(JSON.parse(data.fee as any))
-        : Fee.fromAmino(JSON.parse(data.fee as any)),
+        fee: isProto ? Fee.fromData(JSON.parse(data.fee as any)) : Fee.fromAmino(JSON.parse(data.fee as any))
       }
     } else if (data?.msgs) {
       txData = {
@@ -179,7 +174,7 @@ export default class TerraWalletProvider extends WalletProvider {
       }
     }
 
-    if(data?.memo) {
+    if (data?.memo) {
       txData = {
         ...txData,
         memo: data.memo
@@ -189,7 +184,9 @@ export default class TerraWalletProvider extends WalletProvider {
     if (!txData.msgs) {
       txData = {
         ...txData,
-        msgs: data.msgs.map((msg) => (typeof msg !== 'string' ? msg :  isProto ? Msg.fromData(JSON.parse(msg)) : Msg.fromAmino(JSON.parse(msg)))),
+        msgs: data.msgs.map((msg) =>
+          typeof msg !== 'string' ? msg : isProto ? Msg.fromData(JSON.parse(msg)) : Msg.fromAmino(JSON.parse(msg))
+        )
       }
     }
 
