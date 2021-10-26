@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-erc20-scraper-swap-find-provider",
-  "version": "1.6.14",
+  "version": "1.7.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,12 +20,12 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.6.14",
-    "@liquality/ethereum-erc20-swap-provider": "^1.6.14",
-    "@liquality/ethereum-scraper-swap-find-provider": "^1.6.14",
-    "@liquality/ethereum-utils": "^1.6.14",
-    "@liquality/types": "^1.6.14",
-    "@liquality/utils": "^1.6.14"
+    "@liquality/errors": "^1.7.0",
+    "@liquality/ethereum-erc20-swap-provider": "^1.7.0",
+    "@liquality/ethereum-scraper-swap-find-provider": "^1.7.0",
+    "@liquality/ethereum-utils": "^1.7.0",
+    "@liquality/types": "^1.7.0",
+    "@liquality/utils": "^1.7.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
