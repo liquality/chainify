@@ -84,7 +84,7 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
       addresses.map(async (address) => {
         try {
           const balance = await this._lcdClient.bank.balance(address)
-          const val = Number(balance.get(this._network.asset)?.amount) || 0
+          const val = Number(balance[0].get(this._network.asset)?.amount) || 0
 
           return new BigNumber(val)
         } catch (err) {
