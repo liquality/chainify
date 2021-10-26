@@ -1,6 +1,6 @@
 {
   "name": "@liquality/solana-networks",
-  "version": "1.6.13",
+  "version": "1.6.14",
   "description": "Network specific settings for Solana",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/types": "^1.6.13"
+    "@liquality/types": "^1.6.14"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
