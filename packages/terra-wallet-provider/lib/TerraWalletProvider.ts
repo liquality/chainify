@@ -112,11 +112,8 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const balance = await this.getMethod('getBalance')(addresses)
 
-    // const message = this._sendMessage(address, balance)
-
-    // const fee = await this._estimateFee(this._signer.accAddress, [message])
-
-    return await this.sendTransaction({ to: address, value: balance.minus(1000000) })
+    
+    return await this.sendTransaction({ to: address, value: balance })
   }
 
   canUpdateFee(): boolean {
@@ -149,21 +146,19 @@ export default class TerraWalletProvider extends WalletProvider {
     return await this._lcdClient.tx.broadcast(tx)
   }
 
-  // private async _estimateFee(payer: string, msgs: Msg[]): Promise<number> {
-  //   const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
-
-  //   return Number(fee.amount.get(this._network.asset).amount)
-  // }
-
   private composeTransaction(sendOptions: SendOptions) {
     const { to, value, fee } = sendOptions
 
     const data: CreateTxOptions = sendOptions.data as any
     let txData: any
 
+    const isProto = typeof data?.msgs[0] === 'string' && '@type' in JSON.parse(data?.msgs[0] as any)
+
     if (typeof data?.fee === 'string') {
       txData = {
-        fee: Fee.fromData(JSON.parse(data.fee as any))
+        fee: isProto
+        ? Fee.fromData(JSON.parse(data.fee as any))
+        : Fee.fromAmino(JSON.parse(data.fee as any)),
       }
     } else if (data?.msgs) {
       txData = {
@@ -176,28 +171,25 @@ export default class TerraWalletProvider extends WalletProvider {
     } else {
       txData = {
         msgs: [this._sendMessage(to, value)],
-        gasPrices: new Coins({
-          [this._network.asset]: fee
+        ...(fee && {
+          gasPrices: new Coins({
+            [this._network.asset]: fee
+          })
         })
       }
     }
 
-
-    console.log('msgs', data.msgs)
-
-    if (!txData.msgs) {
-      const isProto = typeof data.msgs[0] === 'string' && '@type' in JSON.parse(data.msgs[0] as any)
-
-      txData = {
-        ...txData,
-        msgs: data.msgs.map((msg) => (typeof msg !== 'string' ? msg : isProto ? Msg.fromData(JSON.parse(msg as any)) : Msg.fromAmino(JSON.parse(msg as any)))),
-      }
-    }
-
-    if(data.memo) {
+    if(data?.memo) {
       txData = {
         ...txData,
         memo: data.memo
+      }
+    }
+
+    if (!txData.msgs) {
+      txData = {
+        ...txData,
+        msgs: data.msgs.map((msg) => (typeof msg !== 'string' ? msg :  isProto ? Msg.fromData(JSON.parse(msg)) : Msg.fromAmino(JSON.parse(msg)))),
       }
     }
 
