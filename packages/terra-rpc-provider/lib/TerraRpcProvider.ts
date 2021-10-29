@@ -83,10 +83,19 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     const promiseBalances = await Promise.all(
       addresses.map(async (address) => {
         try {
-          const balance = await this._lcdClient.bank.balance(address)
-          const val = Number(balance[0].get(this._network.asset)?.amount) || 0
+          let balance = 0
 
-          return new BigNumber(val)
+          if (this._network.tokenAddress) {
+            const token = await this._lcdClient.wasm.contractQuery<{ balance: string }>(this._network.tokenAddress, {
+              balance: { address }
+            })
+            balance = Number(token.balance)
+          } else {
+            const coins = await this._lcdClient.bank.balance(address)
+            balance = Number(coins[0].get(this._network.asset)?.amount)
+          }
+
+          return new BigNumber(balance)
         } catch (err) {
           if (err.message && err.message.includes('does not exist while viewing')) {
             return new BigNumber(0)

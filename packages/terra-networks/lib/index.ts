@@ -8,6 +8,7 @@ export interface TerraNetwork extends Network {
   chainID: string
   asset: string
   codeId: number
+  tokenAddress?: string
 }
 
 const terra_mainnet: TerraNetwork = {
@@ -33,7 +34,7 @@ const terra_testnet: TerraNetwork = {
   isTestnet: true,
   chainID: 'bombay-12',
   asset: 'uluna',
-  codeId: 10696
+  codeId: 16133
 }
 
 const TerraNetworks = {

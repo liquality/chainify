@@ -12,7 +12,8 @@ import {
   Wallet,
   CreateTxOptions,
   Fee,
-  Tx
+  Tx,
+  MsgExecuteContract
 } from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
@@ -117,8 +118,21 @@ export default class TerraWalletProvider extends WalletProvider {
     return false
   }
 
-  _sendMessage(to: Address | string, value: BigNumber): MsgSend {
-    return new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
+  _sendMessage(to: Address | string, value: BigNumber): MsgSend | MsgExecuteContract {
+    const sender = addressToString(this._signer.accAddress)
+    const recipient = addressToString(to)
+    
+    if (this._network.tokenAddress) {
+      return new MsgExecuteContract(sender, this._network.tokenAddress, {
+        transfer: {
+          recipient,
+          amount: value.toString(),
+        }
+      })
+    }
+
+
+    return new MsgSend(addressToString(this._signer.accAddress), addressToString(recipient), {
       [this._network.asset]: value.toNumber()
     })
   }
@@ -164,11 +178,13 @@ export default class TerraWalletProvider extends WalletProvider {
         })
       }
     } else {
+      const feeAsset = this._network.tokenAddress ? 'uluna' : this._network.asset
+
       txData = {
         msgs: [this._sendMessage(to, value)],
         ...(fee && {
           gasPrices: new Coins({
-            [this._network.asset]: fee
+            [feeAsset]: fee
           })
         })
       }
