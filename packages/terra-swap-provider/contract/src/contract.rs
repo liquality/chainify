@@ -19,6 +19,10 @@ pub fn instantiate(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
+    if info.funds.len() != 1 {
+        return Err(ContractError::InvalidAmountOfCoins {});
+    }
+
     let state = State {
         buyer: msg.buyer.clone(),
         seller: msg.seller.clone(),
