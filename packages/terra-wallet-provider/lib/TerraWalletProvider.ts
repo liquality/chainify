@@ -121,16 +121,15 @@ export default class TerraWalletProvider extends WalletProvider {
   _sendMessage(to: Address | string, value: BigNumber): MsgSend | MsgExecuteContract {
     const sender = addressToString(this._signer.accAddress)
     const recipient = addressToString(to)
-    
+
     if (this._network.tokenAddress) {
       return new MsgExecuteContract(sender, this._network.tokenAddress, {
         transfer: {
           recipient,
-          amount: value.toString(),
+          amount: value.toString()
         }
       })
     }
-
 
     return new MsgSend(addressToString(this._signer.accAddress), addressToString(recipient), {
       [this._network.asset]: value.toNumber()
