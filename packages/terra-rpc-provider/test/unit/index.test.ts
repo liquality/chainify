@@ -14,7 +14,7 @@ describe('Solana RPC provider', () => {
 
   beforeEach(() => {
     client = new Client()
-    provider = new TerraRpcProvider(TerraNetworks.terra_testnet)
+    provider = new TerraRpcProvider(TerraNetworks.terra_testnet, 'uluna')
     client.addProvider(provider)
   })
 

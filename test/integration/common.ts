@@ -189,16 +189,19 @@ nearWithJs.addProvider(new NearSwapFindProvider(config.near.network.helperUrl))
 // Terra
 const terra = new Client()
 terra
-  .addProvider(new TerraRpcProvider(config.terra.network))
+  .addProvider(new TerraRpcProvider(config.terra.network, 'uluna'))
   .addProvider(
-    new TerraWalletProvider({
-      network: config.terra.network,
-      mnemonic: config.terra.senderMnemonic,
-      baseDerivationPath: `'m/44'/307'/0'`
-    })
+    new TerraWalletProvider(
+      {
+        network: config.terra.network,
+        mnemonic: config.terra.senderMnemonic,
+        baseDerivationPath: `'m/44'/307'/0'`
+      },
+      'uluna'
+    )
   )
-  .addProvider(new TerraSwapProvider(config.terra.network))
-  .addProvider(new TerraSwapFindProvider(config.terra.network))
+  .addProvider(new TerraSwapProvider(config.terra.network, 'uluna'))
+  .addProvider(new TerraSwapFindProvider(config.terra.network, 'uluna'))
 // Solana
 const solana = new Client()
 solana.addProvider(new SolanaRpcProvider(config.solana.network))

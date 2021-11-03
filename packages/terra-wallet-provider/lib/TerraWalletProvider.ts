@@ -30,9 +30,11 @@ export default class TerraWalletProvider extends WalletProvider {
   private _signer: MnemonicKey
   private _lcdClient: LCDClient
   private _wallet: Wallet
+  private _asset: string
+  private _tokenAddress: string
   _accAddressKey: string
 
-  constructor(options: TerraWalletProviderOptions) {
+  constructor(options: TerraWalletProviderOptions, asset: string, tokenAddress?: string) {
     const { network, mnemonic, baseDerivationPath } = options
     super({ network })
     this._network = network
@@ -122,8 +124,8 @@ export default class TerraWalletProvider extends WalletProvider {
     const sender = addressToString(this._signer.accAddress)
     const recipient = addressToString(to)
 
-    if (this._network.tokenAddress) {
-      return new MsgExecuteContract(sender, this._network.tokenAddress, {
+    if (this._tokenAddress) {
+      return new MsgExecuteContract(sender, this._tokenAddress, {
         transfer: {
           recipient,
           amount: value.toString()
@@ -132,7 +134,7 @@ export default class TerraWalletProvider extends WalletProvider {
     }
 
     return new MsgSend(addressToString(this._signer.accAddress), addressToString(recipient), {
-      [this._network.asset]: value.toNumber()
+      [this._asset]: value.toNumber()
     })
   }
 
@@ -172,12 +174,12 @@ export default class TerraWalletProvider extends WalletProvider {
       txData = {
         ...(fee && {
           gasPrices: new Coins({
-            [this._network.asset]: fee
+            [this._asset]: fee
           })
         })
       }
     } else {
-      const feeAsset = this._network.tokenAddress ? 'uluna' : this._network.asset
+      const feeAsset = this._tokenAddress ? 'uluna' : this._asset
 
       txData = {
         msgs: [this._sendMessage(to, value)],

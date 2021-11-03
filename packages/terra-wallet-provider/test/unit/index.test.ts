@@ -10,7 +10,7 @@ chai.config.truncateThreshold = 0
 
 const network = TerraNetworks.terra_testnet
 const baseDerivationPath = `'m/44'/307'/0'`
-const rpcProvider = new TerraRpcProvider(network)
+const rpcProvider = new TerraRpcProvider(network, 'uluna')
 
 describe('Terra Wallet Provider provider', () => {
   describe('getAddresses', () => {

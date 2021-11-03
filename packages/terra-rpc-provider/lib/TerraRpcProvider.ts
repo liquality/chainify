@@ -9,8 +9,10 @@ import { LCDClient } from '@terra-money/terra.js'
 export default class TerraRpcProvider extends NodeProvider implements FeeProvider, Partial<ChainProvider> {
   private _network: TerraNetwork
   private _lcdClient: LCDClient
+  private _asset: string
+  private _tokenAddress: string
 
-  constructor(network: TerraNetwork) {
+  constructor(network: TerraNetwork, asset: string, tokenAddress?: string) {
     super({
       baseURL: network.helperUrl,
       responseType: 'text',
@@ -23,6 +25,8 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     })
 
     this._network = network
+    this._asset = asset
+    this._tokenAddress = tokenAddress
   }
 
   async generateBlock(numberOfBlocks: number): Promise<void> {
@@ -47,7 +51,7 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
 
     const txs = await this._lcdClient.tx.txInfosByHeight(Number(block.block.header.height))
 
-    const transactions = txs.map((tx) => normalizeTransaction(tx, this._network.asset))
+    const transactions = txs.map((tx) => normalizeTransaction(tx, this._asset))
 
     return {
       ...parsedBlock,
@@ -74,7 +78,7 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
 
     const currentBlock = await this.getBlockHeight()
 
-    return normalizeTransaction(transaction, this._network.asset, currentBlock)
+    return normalizeTransaction(transaction, this._asset, currentBlock)
   }
 
   async getBalance(_addresses: (string | Address)[]): Promise<BigNumber> {
@@ -85,14 +89,14 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
         try {
           let balance = 0
 
-          if (this._network.tokenAddress) {
-            const token = await this._lcdClient.wasm.contractQuery<{ balance: string }>(this._network.tokenAddress, {
+          if (this._tokenAddress) {
+            const token = await this._lcdClient.wasm.contractQuery<{ balance: string }>(this._tokenAddress, {
               balance: { address }
             })
             balance = Number(token.balance)
           } else {
             const coins = await this._lcdClient.bank.balance(address)
-            balance = Number(coins[0].get(this._network.asset)?.amount)
+            balance = Number(coins[0].get(this._asset)?.amount)
           }
 
           return new BigNumber(balance)
@@ -119,13 +123,13 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
 
     return {
       slow: {
-        fee: Number(prices[this._network.asset])
+        fee: Number(prices[this._asset])
       },
       average: {
-        fee: Number(prices[this._network.asset])
+        fee: Number(prices[this._asset])
       },
       fast: {
-        fee: Number(prices[this._network.asset])
+        fee: Number(prices[this._asset])
       }
     }
   }
