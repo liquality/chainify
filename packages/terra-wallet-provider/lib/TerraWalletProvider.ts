@@ -12,13 +12,17 @@ import {
   Wallet,
   CreateTxOptions,
   Fee,
-  Tx
+  Tx,
+  MsgExecuteContract
 } from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
   mnemonic: string
   baseDerivationPath: string
+  asset: string
+  feeAsset: string
+  tokenAddress?: string
 }
 
 export default class TerraWalletProvider extends WalletProvider {
@@ -29,15 +33,21 @@ export default class TerraWalletProvider extends WalletProvider {
   private _signer: MnemonicKey
   private _lcdClient: LCDClient
   private _wallet: Wallet
+  private _asset: string
+  private _feeAsset: string
+  private _tokenAddress: string
   _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
-    const { network, mnemonic, baseDerivationPath } = options
+    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
     this._baseDerivationPath = baseDerivationPath
     this._addressCache = {}
+    this._asset = asset
+    this._feeAsset = feeAsset
+    this._tokenAddress = tokenAddress
 
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
@@ -117,9 +127,21 @@ export default class TerraWalletProvider extends WalletProvider {
     return false
   }
 
-  _sendMessage(to: Address | string, value: BigNumber): MsgSend {
-    return new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
-      [this._network.asset]: value.toNumber()
+  _sendMessage(to: Address | string, value: BigNumber): MsgSend | MsgExecuteContract {
+    const sender = addressToString(this._signer.accAddress)
+    const recipient = addressToString(to)
+
+    if (this._tokenAddress) {
+      return new MsgExecuteContract(sender, this._tokenAddress, {
+        transfer: {
+          recipient,
+          amount: value.toString()
+        }
+      })
+    }
+
+    return new MsgSend(addressToString(this._signer.accAddress), addressToString(recipient), {
+      [this._asset]: value.toNumber()
     })
   }
 
@@ -159,7 +181,7 @@ export default class TerraWalletProvider extends WalletProvider {
       txData = {
         ...(fee && {
           gasPrices: new Coins({
-            [this._network.asset]: fee
+            [this._asset]: fee
           })
         })
       }
@@ -168,7 +190,7 @@ export default class TerraWalletProvider extends WalletProvider {
         msgs: [this._sendMessage(to, value)],
         ...(fee && {
           gasPrices: new Coins({
-            [this._network.asset]: fee
+            [this._feeAsset]: fee
           })
         })
       }

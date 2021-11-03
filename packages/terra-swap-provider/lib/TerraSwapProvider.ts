@@ -8,10 +8,12 @@ import { MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.j
 
 export default class TerraSwapProvider extends Provider implements Partial<SwapProvider> {
   private _network: TerraNetwork
+  private _asset: string
 
-  constructor(network: TerraNetwork) {
+  constructor(network: TerraNetwork, asset: string) {
     super()
     this._network = network
+    this._asset = asset
   }
 
   async getSwapSecret(claimTxHash: string): Promise<string> {
@@ -101,7 +103,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
     const address = this.getMethod('_getAccAddressKey')()
 
-    const { asset, codeId } = this._network
+    const { codeId } = this._network
 
     return new MsgInstantiateContract(
       address,
@@ -114,7 +116,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
         value: swapParams.value.toNumber(),
         secret_hash: swapParams.secretHash
       },
-      { [asset]: swapParams.value.toNumber() }
+      { [this._asset]: swapParams.value.toNumber() }
     )
   }
 

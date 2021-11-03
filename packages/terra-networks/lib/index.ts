@@ -6,7 +6,6 @@ export interface TerraNetwork extends Network {
   helperUrl: string
   gasPricesUrl: string
   chainID: string
-  asset: string
   codeId: number
 }
 
@@ -19,7 +18,6 @@ const terra_mainnet: TerraNetwork = {
   coinType: '370',
   isTestnet: false,
   chainID: 'columbus-5',
-  asset: 'uluna',
   codeId: 773
 }
 
@@ -32,7 +30,6 @@ const terra_testnet: TerraNetwork = {
   coinType: '370',
   isTestnet: true,
   chainID: 'bombay-12',
-  asset: 'uluna',
   codeId: 16469
 }
 

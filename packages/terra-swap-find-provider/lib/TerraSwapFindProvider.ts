@@ -7,8 +7,9 @@ import { NodeProvider } from '@liquality/node-provider'
 
 export default class TerraSwapFindProvider extends NodeProvider implements Partial<SwapProvider> {
   private _network: TerraNetwork
+  private _asset: string
 
-  constructor(network: TerraNetwork) {
+  constructor(network: TerraNetwork, asset: string) {
     super({
       baseURL: network.helperUrl,
       responseType: 'text',
@@ -16,6 +17,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
     })
 
     this._network = network
+    this._asset = asset
   }
 
   async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<terra.InputTransaction>> {
@@ -26,7 +28,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
     const transactions = await this._getTransactionsForAddress(refundAddress)
 
     for (let i = 0; i < transactions.length; i++) {
-      const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
+      const parsedTx = normalizeTransaction(transactions[i], this._asset)
 
       if (doesTransactionMatchInitiation(swapParams, parsedTx._raw)) {
         return parsedTx
@@ -49,7 +51,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
     const transactions = await this._getTransactionsForAddress(contractAddress)
 
     for (let i = 0; i < transactions.length; i++) {
-      const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
+      const parsedTx = normalizeTransaction(transactions[i], this._asset)
 
       if (parsedTx.secret) {
         validateSecretAndHash(parsedTx.secret, swapParams.secretHash)
@@ -73,7 +75,7 @@ export default class TerraSwapFindProvider extends NodeProvider implements Parti
     const transactions = await this._getTransactionsForAddress(contractAddress)
 
     for (let i = 0; i < transactions.length; i++) {
-      const parsedTx = normalizeTransaction(transactions[i], this._network.asset)
+      const parsedTx = normalizeTransaction(transactions[i], this._asset)
 
       if (parsedTx._raw.method?.refund) {
         return parsedTx
