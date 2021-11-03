@@ -100,6 +100,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_swap_find_provider_lib.terraswapfindprovider.html#_asset" class="tsd-kind-icon">_asset</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_swap_find_provider_lib.terraswapfindprovider.html#_network" class="tsd-kind-icon">_network</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="terra_swap_find_provider_lib.terraswapfindprovider.html#_node" class="tsd-kind-icon">_node</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="terra_swap_find_provider_lib.terraswapfindprovider.html#client" class="tsd-kind-icon">client</a></li>
@@ -129,20 +130,23 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Terra<wbr>Swap<wbr>Find<wbr>Provider<span class="tsd-signature-symbol">(</span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TerraNetwork</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="terra_swap_find_provider_lib.terraswapfindprovider.html" class="tsd-signature-type" data-tsd-kind="Class">TerraSwapFindProvider</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Terra<wbr>Swap<wbr>Find<wbr>Provider<span class="tsd-signature-symbol">(</span>network<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TerraNetwork</span>, asset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="terra_swap_find_provider_lib.terraswapfindprovider.html" class="tsd-signature-type" data-tsd-kind="Class">TerraSwapFindProvider</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides NodeProvider.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L9">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L10">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>network: <span class="tsd-signature-type">TerraNetwork</span></h5>
+								</li>
+								<li>
+									<h5>asset: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="terra_swap_find_provider_lib.terraswapfindprovider.html" class="tsd-signature-type" data-tsd-kind="Class">TerraSwapFindProvider</a></h4>
@@ -153,12 +157,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_asset" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _asset</h3>
+					<div class="tsd-signature tsd-kind-icon">_asset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L10">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:10</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_network" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _network</h3>
 					<div class="tsd-signature tsd-kind-icon">_network<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TerraNetwork</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L9">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L9">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -197,7 +211,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L90">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L92">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:92</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -248,7 +262,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findClaimSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L39">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L41">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -275,7 +289,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findFundSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L86">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L88">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:88</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -293,7 +307,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findInitiateSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L21">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L23">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -317,7 +331,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findRefundSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L63">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts#L65">packages/terra-swap-find-provider/lib/TerraSwapFindProvider.ts:65</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -478,6 +492,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="terra_swap_find_provider_lib.terraswapfindprovider.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="terra_swap_find_provider_lib.terraswapfindprovider.html#_asset" class="tsd-kind-icon">_asset</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="terra_swap_find_provider_lib.terraswapfindprovider.html#_network" class="tsd-kind-icon">_network</a>

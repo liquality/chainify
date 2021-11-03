@@ -96,12 +96,15 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_accaddresskey" class="tsd-kind-icon">_acc<wbr>Address<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_addresscache" class="tsd-kind-icon">_address<wbr>Cache</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_asset" class="tsd-kind-icon">_asset</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_basederivationpath" class="tsd-kind-icon">_base<wbr>Derivation<wbr>Path</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_feeasset" class="tsd-kind-icon">_fee<wbr>Asset</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_lcdclient" class="tsd-kind-icon">_lcd<wbr>Client</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_methods" class="tsd-kind-icon">_methods</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_mnemonic" class="tsd-kind-icon">_mnemonic</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_network" class="tsd-kind-icon">_network</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_signer" class="tsd-kind-icon">_signer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_tokenaddress" class="tsd-kind-icon">_token<wbr>Address</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="terra_wallet_provider_lib.terrawalletprovider.html#_wallet" class="tsd-kind-icon">_wallet</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="terra_wallet_provider_lib.terrawalletprovider.html#client" class="tsd-kind-icon">client</a></li>
 							</ul>
@@ -146,7 +149,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides WalletProvider.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L32">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L39">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:39</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -168,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">_acc<wbr>Address<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L32">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L39">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -178,7 +181,7 @@
 					<div class="tsd-signature tsd-kind-icon">_address<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L27">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L31">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:31</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -190,13 +193,33 @@
 						</ul>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_asset" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _asset</h3>
+					<div class="tsd-signature tsd-kind-icon">_asset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L36">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:36</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="_basederivationpath" class="tsd-anchor"></a>
 					<h3>_base<wbr>Derivation<wbr>Path</h3>
 					<div class="tsd-signature tsd-kind-icon">_base<wbr>Derivation<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L26">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L30">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:30</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_feeasset" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _fee<wbr>Asset</h3>
+					<div class="tsd-signature tsd-kind-icon">_fee<wbr>Asset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L37">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -206,7 +229,7 @@
 					<div class="tsd-signature tsd-kind-icon">_lcd<wbr>Client<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">LCDClient</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L30">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L34">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -227,7 +250,7 @@
 					<div class="tsd-signature tsd-kind-icon">_mnemonic<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L28">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L32">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -238,7 +261,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides WalletProvider._network</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L25">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L29">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -248,7 +271,17 @@
 					<div class="tsd-signature tsd-kind-icon">_signer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MnemonicKey</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L29">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L33">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:33</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_tokenaddress" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _token<wbr>Address</h3>
+					<div class="tsd-signature tsd-kind-icon">_token<wbr>Address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L38">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -258,7 +291,7 @@
 					<div class="tsd-signature tsd-kind-icon">_wallet<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Wallet</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L31">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L35">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -286,7 +319,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L142">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:142</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L164">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:164</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -309,7 +342,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L136">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:136</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L158">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:158</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -332,7 +365,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L126">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L148">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:148</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -370,13 +403,13 @@
 					<a name="_sendmessage" class="tsd-anchor"></a>
 					<h3>_send<wbr>Message</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_send<wbr>Message<span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Address</span>, value<span class="tsd-signature-symbol">: </span><a href="types_lib.bignumber-1.html" class="tsd-signature-type" data-tsd-kind="Class">BigNumber</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">MsgSend</span></li>
+						<li class="tsd-signature tsd-kind-icon">_send<wbr>Message<span class="tsd-signature-symbol">(</span>to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Address</span>, value<span class="tsd-signature-symbol">: </span><a href="types_lib.bignumber-1.html" class="tsd-signature-type" data-tsd-kind="Class">BigNumber</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">MsgExecuteContract</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MsgSend</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L120">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L130">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:130</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -388,7 +421,7 @@
 									<h5>value: <a href="types_lib.bignumber-1.html" class="tsd-signature-type" data-tsd-kind="Class">BigNumber</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">MsgSend</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">MsgExecuteContract</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MsgSend</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -402,7 +435,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L130">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:130</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L152">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:152</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -437,7 +470,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L116">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L126">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:126</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -454,7 +487,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L146">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L168">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:168</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -478,7 +511,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides WalletProvider.getAddresses</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L56">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L66">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -496,7 +529,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides WalletProvider.getConnectedNetwork</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L90">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L100">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:100</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TerraNetwork</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -551,7 +584,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides WalletProvider.getUnusedAddress</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L79">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L89">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:89</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -569,7 +602,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides WalletProvider.getUsedAddresses</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L75">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L85">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:85</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -587,7 +620,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides WalletProvider.isWalletAvailable</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L51">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L61">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -604,7 +637,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L108">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:108</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L118">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -627,7 +660,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L94">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L104">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:104</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -683,7 +716,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides WalletProvider.signMessage</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/9dae12f/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L84">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/terra-wallet-provider/lib/TerraWalletProvider.ts#L94">packages/terra-wallet-provider/lib/TerraWalletProvider.ts:94</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -725,8 +758,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_addresscache" class="tsd-kind-icon">_address<wbr>Cache</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_asset" class="tsd-kind-icon">_asset</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_basederivationpath" class="tsd-kind-icon">_base<wbr>Derivation<wbr>Path</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_feeasset" class="tsd-kind-icon">_fee<wbr>Asset</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_lcdclient" class="tsd-kind-icon">_lcd<wbr>Client</a>
@@ -742,6 +781,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_signer" class="tsd-kind-icon">_signer</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_tokenaddress" class="tsd-kind-icon">_token<wbr>Address</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="terra_wallet_provider_lib.terrawalletprovider.html#_wallet" class="tsd-kind-icon">_wallet</a>
