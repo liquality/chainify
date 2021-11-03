@@ -191,14 +191,13 @@ const terra = new Client()
 terra
   .addProvider(new TerraRpcProvider(config.terra.network, 'uluna'))
   .addProvider(
-    new TerraWalletProvider(
-      {
-        network: config.terra.network,
-        mnemonic: config.terra.senderMnemonic,
-        baseDerivationPath: `'m/44'/307'/0'`
-      },
-      'uluna'
-    )
+    new TerraWalletProvider({
+      network: config.terra.network,
+      mnemonic: config.terra.senderMnemonic,
+      baseDerivationPath: `'m/44'/307'/0'`,
+      asset: 'uluna',
+      tokenAddress: ''
+    })
   )
   .addProvider(new TerraSwapProvider(config.terra.network, 'uluna'))
   .addProvider(new TerraSwapFindProvider(config.terra.network, 'uluna'))
@@ -309,11 +308,13 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
 
     case 'terra': {
       const terra = new Client()
-      terra.addProvider(new TerraRpcProvider(config.terra.network)).addProvider(
+      terra.addProvider(new TerraRpcProvider(config.terra.network, 'uluna')).addProvider(
         new TerraWalletProvider({
           network: config.terra.network,
           mnemonic: config.terra.senderMnemonic,
-          baseDerivationPath: `'m/44'/307'/0'`
+          baseDerivationPath: `'m/44'/307'/0'`,
+          asset: 'uluna',
+          tokenAddress: ''
         })
       )
 

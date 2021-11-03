@@ -20,6 +20,8 @@ interface TerraWalletProviderOptions {
   network: TerraNetwork
   mnemonic: string
   baseDerivationPath: string
+  asset: string
+  tokenAddress: string
 }
 
 export default class TerraWalletProvider extends WalletProvider {
@@ -34,13 +36,15 @@ export default class TerraWalletProvider extends WalletProvider {
   private _tokenAddress: string
   _accAddressKey: string
 
-  constructor(options: TerraWalletProviderOptions, asset: string, tokenAddress?: string) {
-    const { network, mnemonic, baseDerivationPath } = options
+  constructor(options: TerraWalletProviderOptions) {
+    const { network, mnemonic, baseDerivationPath, asset, tokenAddress } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
     this._baseDerivationPath = baseDerivationPath
     this._addressCache = {}
+    this._asset = asset
+    this._tokenAddress = tokenAddress
 
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
@@ -179,13 +183,11 @@ export default class TerraWalletProvider extends WalletProvider {
         })
       }
     } else {
-      const feeAsset = this._tokenAddress ? 'uluna' : this._asset
-
       txData = {
         msgs: [this._sendMessage(to, value)],
         ...(fee && {
           gasPrices: new Coins({
-            [feeAsset]: fee
+            [this._asset]: fee
           })
         })
       }

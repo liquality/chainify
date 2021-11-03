@@ -20,7 +20,9 @@ describe('Terra Wallet Provider provider', () => {
         network,
         mnemonic:
           'donkey ripple napkin pulp near program profit polar mutual receive gorilla choice whale shoot vendor seat draw cost sell winter arctic crane detect daughter',
-        baseDerivationPath
+        baseDerivationPath,
+        asset: 'uluna',
+        tokenAddress: ''
       })
       client.addProvider(provider)
       client.addProvider(rpcProvider)
@@ -34,7 +36,9 @@ describe('Terra Wallet Provider provider', () => {
         network,
         mnemonic:
           'base eternal trash tent twist fog palm summer crop oppose memory absent usual ahead subject spirit end fragile gauge defy month mercy grit frost',
-        baseDerivationPath
+        baseDerivationPath,
+        asset: 'uluna',
+        tokenAddress: ''
       })
       client.addProvider(provider)
       client.addProvider(rpcProvider)
