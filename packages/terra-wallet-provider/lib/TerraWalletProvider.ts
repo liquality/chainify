@@ -39,7 +39,7 @@ export default class TerraWalletProvider extends WalletProvider {
   _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
-    const { network, mnemonic, baseDerivationPath,  asset, feeAsset, tokenAddress } = options
+    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
