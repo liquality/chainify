@@ -11,8 +11,9 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
   private _lcdClient: LCDClient
   private _asset: string
   private _tokenAddress: string
+  private _feeAsset: string
 
-  constructor(network: TerraNetwork, asset: string, tokenAddress?: string) {
+  constructor(network: TerraNetwork, asset: string, feeAsset: string, tokenAddress?: string) {
     super({
       baseURL: network.helperUrl,
       responseType: 'text',
@@ -27,6 +28,7 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     this._network = network
     this._asset = asset
     this._tokenAddress = tokenAddress
+    this._feeAsset = feeAsset
   }
 
   async generateBlock(numberOfBlocks: number): Promise<void> {
@@ -123,13 +125,13 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
 
     return {
       slow: {
-        fee: Number(prices[this._asset])
+        fee: Number(prices[this._feeAsset])
       },
       average: {
-        fee: Number(prices[this._asset])
+        fee: Number(prices[this._feeAsset])
       },
       fast: {
-        fee: Number(prices[this._asset])
+        fee: Number(prices[this._feeAsset])
       }
     }
   }

@@ -10,7 +10,7 @@ chai.config.truncateThreshold = 0
 
 const network = TerraNetworks.terra_testnet
 const baseDerivationPath = `'m/44'/307'/0'`
-const rpcProvider = new TerraRpcProvider(network, 'uluna')
+const rpcProvider = new TerraRpcProvider(network, 'uluna', 'uluna')
 
 describe('Terra Wallet Provider provider', () => {
   describe('getAddresses', () => {
@@ -22,7 +22,8 @@ describe('Terra Wallet Provider provider', () => {
           'donkey ripple napkin pulp near program profit polar mutual receive gorilla choice whale shoot vendor seat draw cost sell winter arctic crane detect daughter',
         baseDerivationPath,
         asset: 'uluna',
-        tokenAddress: ''
+        tokenAddress: '',
+        feeAsset: 'uluna'
       })
       client.addProvider(provider)
       client.addProvider(rpcProvider)
@@ -38,7 +39,8 @@ describe('Terra Wallet Provider provider', () => {
           'base eternal trash tent twist fog palm summer crop oppose memory absent usual ahead subject spirit end fragile gauge defy month mercy grit frost',
         baseDerivationPath,
         asset: 'uluna',
-        tokenAddress: ''
+        tokenAddress: '',
+        feeAsset: 'uluna'
       })
       client.addProvider(provider)
       client.addProvider(rpcProvider)
