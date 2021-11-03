@@ -1,6 +1,6 @@
 {
   "name": "@liquality/crypto",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
