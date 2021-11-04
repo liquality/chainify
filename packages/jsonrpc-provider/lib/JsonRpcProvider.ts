@@ -27,7 +27,8 @@ export default class JsonRpcProvider extends NodeProvider {
 
   _prepareRequest(method: string, params: any[]) {
     const id = Date.now()
-    const req = { id, method, params }
+    const jsonrpc = '2.0'
+    const req = { id, method, jsonrpc, params }
 
     debug('jsonrpc request', req)
 
