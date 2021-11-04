@@ -127,7 +127,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides NodeProvider.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L12">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/1614de4/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L12">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:12</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -211,7 +211,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L37">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/1614de4/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L38">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -228,13 +228,13 @@
 					<a name="_preparerequest" class="tsd-anchor"></a>
 					<h3>_prepare<wbr>Request</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">_prepare<wbr>Request<span class="tsd-signature-symbol">(</span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></li>
+						<li class="tsd-signature tsd-kind-icon">_prepare<wbr>Request<span class="tsd-signature-symbol">(</span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>jsonrpc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L28">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/1614de4/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L28">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -246,10 +246,13 @@
 									<h5>params: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>jsonrpc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></h4>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter">
 									<h5>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li class="tsd-parameter">
+									<h5>jsonrpc<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li class="tsd-parameter">
 									<h5>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
@@ -308,7 +311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/79a5c92/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L59">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/1614de4/packages/jsonrpc-provider/lib/JsonRpcProvider.ts#L60">packages/jsonrpc-provider/lib/JsonRpcProvider.ts:60</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
