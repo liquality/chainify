@@ -13,7 +13,8 @@ import {
   CreateTxOptions,
   Fee,
   Tx,
-  MsgExecuteContract
+  MsgExecuteContract,
+  isTxError
 } from '@terra-money/terra.js'
 
 interface TerraWalletProviderOptions {
@@ -107,6 +108,12 @@ export default class TerraWalletProvider extends WalletProvider {
     const tx = await this._wallet.createAndSignTx(txData)
 
     const transaction = await this._broadcastTx(tx)
+
+    if (isTxError(transaction)) {
+      throw new Error(
+        `encountered an error while running the transaction: ${transaction.code} ${transaction.codespace}`
+      )
+    }
 
     return {
       hash: transaction.txhash,
