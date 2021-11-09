@@ -143,6 +143,6 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
     const _taxRate = taxRate.toNumber()
     const _taxCap = taxCap.amount.toNumber()
 
-    return Math.min((amount || 0) * _taxRate, (_taxCap / 1_000_000))
+    return Math.min((amount || 0) * _taxRate, _taxCap / 1_000_000)
   }
 }
