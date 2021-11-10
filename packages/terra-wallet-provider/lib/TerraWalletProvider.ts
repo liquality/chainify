@@ -130,6 +130,21 @@ export default class TerraWalletProvider extends WalletProvider {
     return await this.sendTransaction({ to: address, value: balance })
   }
 
+  async getTaxFees(amount: number, denom: string, max: boolean): Promise<any> {
+    const taxRate = await this._lcdClient.treasury.taxRate()
+    const taxCap = await this._lcdClient.treasury.taxCap(denom)
+
+    const _taxRate = taxRate.toNumber()
+    const _taxCap = taxCap.amount.toNumber()
+
+    const addresses = await this.getAddresses()
+    const balance = await this.getMethod('getBalance')(addresses)
+
+    console.log('max from CAL', max)
+
+    return Math.min((max ? balance : amount || 0) * _taxRate, _taxCap / 1_000_000)
+  }
+
   canUpdateFee(): boolean {
     return false
   }

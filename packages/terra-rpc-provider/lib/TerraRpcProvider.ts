@@ -135,14 +135,4 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
       }
     }
   }
-
-  async getTaxFees(amount: number, denom = 'uusd'): Promise<any> {
-    const taxRate = await this._lcdClient.treasury.taxRate()
-    const taxCap = await this._lcdClient.treasury.taxCap(denom)
-
-    const _taxRate = taxRate.toNumber()
-    const _taxCap = taxCap.amount.toNumber()
-
-    return Math.min((amount || 0) * _taxRate, _taxCap / 1_000_000)
-  }
 }
