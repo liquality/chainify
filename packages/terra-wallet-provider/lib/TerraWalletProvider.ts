@@ -140,8 +140,6 @@ export default class TerraWalletProvider extends WalletProvider {
     const addresses = await this.getAddresses()
     const balance = await this.getMethod('getBalance')(addresses)
 
-    console.log('max from CAL', max)
-
     return Math.min((max ? balance : amount || 0) * _taxRate, _taxCap / 1_000_000)
   }
 
