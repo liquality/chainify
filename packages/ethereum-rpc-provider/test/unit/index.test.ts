@@ -144,6 +144,7 @@ describe('Ethereum RPC provider', () => {
         hash: 'ca218db60aaad1a3e4d7ea815750e8bf44a89d967266c3662746f796800412cd',
         blockHash: '868b4c97d842aa758dfc97834088aee0687410365140adc4bebbc4c02b0eddc3',
         blockNumber: 1,
+        status: 1,
         value: 10000,
         confirmations: 11,
         feePrice: 20,
