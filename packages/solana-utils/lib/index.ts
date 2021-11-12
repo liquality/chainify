@@ -1,4 +1,4 @@
-import { Address, BigNumber, Block, solana, SwapParams, Transaction } from '@liquality/types'
+import { Address, BigNumber, Block, solana, SwapParams, Transaction, TxStatus } from '@liquality/types'
 import {
   addressToString,
   validateSecretAndHash,
@@ -121,6 +121,7 @@ export function normalizeTransaction(
     lamports: number
     programId: string
     confirmations?: number
+    status?: TxStatus
     _raw?: {
       buyer?: string
       seller?: string
@@ -176,11 +177,15 @@ export function normalizeTransaction(
 
   if (signatureStatus?.value?.confirmationStatus === 'finalized') {
     transactionData.confirmations = FINALIZED_CONFIRMATIONS
+    transactionData.status = signatureStatus?.value?.status?.Err ? TxStatus.Failed : TxStatus.Success
+  } else {
+    transactionData.status = TxStatus.Pending
   }
 
   return {
     hash,
     value: transactionData.lamports,
+    status: transactionData.status,
     ...(transactionData.secret && { secret: transactionData.secret }),
     ...(transactionData.confirmations && { confirmations: transactionData.confirmations }),
     _raw: {
