@@ -1,4 +1,4 @@
-import { near, SwapParams, Transaction, Address } from '@liquality/types'
+import { near, SwapParams, Transaction, Address, TxStatus } from '@liquality/types'
 import { validateValue, validateSecretHash, validateExpiration, addressToString } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 import BN from 'bn.js'
@@ -65,7 +65,7 @@ function fromNearTimestamp(ts: number): number {
 }
 
 function normalizeTransactionObject(tx: near.InputTransaction, currentHeight?: number) {
-  const normalizedTx = { confirmations: 0 } as Transaction<near.InputTransaction>
+  const normalizedTx = { confirmations: 0, status: TxStatus.Pending } as Transaction<near.InputTransaction>
 
   const blockNumber = tx.transaction.blockNumber || tx.blockNumber
   if (blockNumber) {
@@ -74,6 +74,7 @@ function normalizeTransactionObject(tx: near.InputTransaction, currentHeight?: n
     }
 
     normalizedTx.blockNumber = blockNumber
+    normalizedTx.status = tx.status.Failure ? TxStatus.Failed : TxStatus.Success
   }
 
   normalizedTx.blockHash = tx.blockHash
