@@ -3,6 +3,8 @@ export interface Transaction<T = any> {
   hash: string
   // The value of the transaction
   value: number
+  // transaction status
+  status?: TxStatus
   // Hash of the block containing the transaction
   blockHash?: string
   // The block number containing the trnasaction
@@ -17,4 +19,10 @@ export interface Transaction<T = any> {
   secret?: string
   // The raw transaction object
   _raw: T
+}
+
+export enum TxStatus {
+  Pending = 'PENDING',
+  Failed = 'FAILED',
+  Success = 'SUCCESS'
 }

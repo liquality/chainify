@@ -1,4 +1,4 @@
-import { Block, SwapParams, Transaction, terra } from '@liquality/types'
+import { Block, SwapParams, Transaction, terra, TxStatus } from '@liquality/types'
 import { addressToString, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 import { DateTime } from 'luxon'
@@ -56,12 +56,20 @@ export const normalizeTransaction = (
       .value ||
     ''
 
+  let status
+  if (currentBlock - data.height < 10) {
+    status = TxStatus.Pending
+  } else {
+    status = data.raw_log?.includes('failed to execute message') ? TxStatus.Failed : TxStatus.Success
+  }
+
   return {
     value: Number(value),
     hash: data.txhash,
     confirmations: Math.min(currentBlock - data.height, 10),
     ...(txParams?.secret && { secret: txParams.secret }),
     fee,
+    status,
     _raw: {
       ...txParams,
       contractAddress

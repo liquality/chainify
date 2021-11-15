@@ -1,6 +1,6 @@
 import { base58, padHexStart } from '@liquality/crypto'
 import { BitcoinNetworks, BitcoinNetwork } from '@liquality/bitcoin-networks'
-import { Address, Transaction, bitcoin as bT } from '@liquality/types'
+import { Address, Transaction, bitcoin as bT, TxStatus } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
 import { InvalidAddressError } from '@liquality/errors'
 
@@ -163,7 +163,8 @@ function normalizeTransactionObject(
     hash: tx.txid,
     value: value.toNumber(),
     _raw: tx,
-    confirmations: 0
+    confirmations: 0,
+    status: tx.confirmations > 0 ? TxStatus.Success : TxStatus.Pending
   }
 
   if (fee) {
