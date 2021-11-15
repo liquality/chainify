@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PsbtInputTarget | root</title>
+	<title>TxStatus | root</title>
 	<meta name="description" content="Documentation for root">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -58,60 +58,60 @@
 					<a href="../modules/types_lib.html">types/lib</a>
 				</li>
 				<li>
-					<a href="../modules/types_lib.bitcoin.html">bitcoin</a>
-				</li>
-				<li>
-					<a href="types_lib.bitcoin.psbtinputtarget.html">PsbtInputTarget</a>
+					<a href="types_lib.txstatus.html">TxStatus</a>
 				</li>
 			</ul>
-			<h1>Interface PsbtInputTarget</h1>
+			<h1>Enumeration TxStatus</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">PsbtInputTarget</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.bitcoin.psbtinputtarget.html#derivationpath" class="tsd-kind-icon">derivation<wbr>Path</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.bitcoin.psbtinputtarget.html#index" class="tsd-kind-icon">index</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types_lib.txstatus.html#failed" class="tsd-kind-icon">Failed</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types_lib.txstatus.html#pending" class="tsd-kind-icon">Pending</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="types_lib.txstatus.html#success" class="tsd-kind-icon">Success</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="derivationpath" class="tsd-anchor"></a>
-					<h3>derivation<wbr>Path</h3>
-					<div class="tsd-signature tsd-kind-icon">derivation<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="failed" class="tsd-anchor"></a>
+					<h3>Failed</h3>
+					<div class="tsd-signature tsd-kind-icon">Failed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;FAILED&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/6e5287f/packages/types/lib/bitcoin/index.ts#L73">packages/types/lib/bitcoin/index.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/6e5287f/packages/types/lib/transaction.ts#L26">packages/types/lib/transaction.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="index" class="tsd-anchor"></a>
-					<h3>index</h3>
-					<div class="tsd-signature tsd-kind-icon">index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="pending" class="tsd-anchor"></a>
+					<h3>Pending</h3>
+					<div class="tsd-signature tsd-kind-icon">Pending<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;PENDING&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/6e5287f/packages/types/lib/bitcoin/index.ts#L72">packages/types/lib/bitcoin/index.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/6e5287f/packages/types/lib/transaction.ts#L25">packages/types/lib/transaction.ts:25</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="success" class="tsd-anchor"></a>
+					<h3>Success</h3>
+					<div class="tsd-signature tsd-kind-icon">Success<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;SUCCESS&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/6e5287f/packages/types/lib/transaction.ts#L27">packages/types/lib/transaction.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -129,13 +129,8 @@
 							<li class=" tsd-kind-namespace tsd-parent-kind-module tsd-is-external">
 								<a href="../modules/types_lib.bignumber.html">Big<wbr>Number</a>
 							</li>
-							<li class="current tsd-kind-namespace tsd-parent-kind-module">
+							<li class=" tsd-kind-namespace tsd-parent-kind-module">
 								<a href="../modules/types_lib.bitcoin.html">bitcoin</a>
-								<ul>
-									<li class=" tsd-kind-namespace tsd-parent-kind-namespace">
-										<a href="../modules/types_lib.bitcoin.rpc.html">rpc</a>
-									</li>
-								</ul>
 							</li>
 							<li class=" tsd-kind-namespace tsd-parent-kind-module">
 								<a href="../modules/types_lib.ethereum.html">ethereum</a>
@@ -155,47 +150,65 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
-						<a href="../enums/types_lib.bitcoin.addresstype.html" class="tsd-kind-icon">Address<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-namespace">
-						<a href="../enums/types_lib.bitcoin.swapmode.html" class="tsd-kind-icon">Swap<wbr>Mode</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.bitcoin.input.html" class="tsd-kind-icon">Input</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.bitcoin.output.html" class="tsd-kind-icon">Output</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.bitcoin.outputtarget.html" class="tsd-kind-icon">Output<wbr>Target</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.bitcoin.psbtinputtarget.html" class="tsd-kind-icon">Psbt<wbr>Input<wbr>Target</a>
+					<li class="current tsd-kind-enum tsd-parent-kind-module">
+						<a href="types_lib.txstatus.html" class="tsd-kind-icon">Tx<wbr>Status</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types_lib.bitcoin.psbtinputtarget.html#derivationpath" class="tsd-kind-icon">derivation<wbr>Path</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types_lib.txstatus.html#failed" class="tsd-kind-icon">Failed</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types_lib.bitcoin.psbtinputtarget.html#index" class="tsd-kind-icon">index</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types_lib.txstatus.html#pending" class="tsd-kind-icon">Pending</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="types_lib.txstatus.html#success" class="tsd-kind-icon">Success</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.bitcoin.scriptpubkey.html" class="tsd-kind-icon">Script<wbr>Pub<wbr>Key</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/types_lib.address.html" class="tsd-kind-icon">Address</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.bitcoin.transaction.html" class="tsd-kind-icon">Transaction</a>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-is-external">
+						<a href="../classes/types_lib.bignumber-1.html" class="tsd-kind-icon">Big<wbr>Number</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.bitcoin.utxo.html" class="tsd-kind-icon">UTXO</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/types_lib.block.html" class="tsd-kind-icon">Block</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
-						<a href="../modules/types_lib.bitcoin.html#addresstxcounts" class="tsd-kind-icon">Address<wbr>TxCounts</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.chainprovider.html" class="tsd-kind-icon">Chain<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.feedetail.html" class="tsd-kind-icon">Fee<wbr>Detail</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.feedetails.html" class="tsd-kind-icon">Fee<wbr>Details</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.feeprovider.html" class="tsd-kind-icon">Fee<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.iclient.html" class="tsd-kind-icon">IClient</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.network.html" class="tsd-kind-icon">Network</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.sendoptions.html" class="tsd-kind-icon">Send<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.swapparams.html" class="tsd-kind-icon">Swap<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.swapprovider.html" class="tsd-kind-icon">Swap<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../interfaces/types_lib.transaction.html" class="tsd-kind-icon">Transaction</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/types_lib.walletprovider.html" class="tsd-kind-icon">Wallet<wbr>Provider</a>
 					</li>
 				</ul>
 			</nav>
@@ -216,7 +229,6 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
