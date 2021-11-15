@@ -171,7 +171,7 @@ describe('Bitcoin RPC provider', () => {
           blocktime: 1590563814
         },
         confirmations: 20,
-        status: 1,
+        status: 'SUCCESS',
         blockHash: '494a5c635fd483c82a4a684f3982f52af27a29ee5217a0409cdad45afc2709d7',
         blockNumber: 630,
         fee: 3740,

@@ -22,7 +22,7 @@ export interface Transaction<T = any> {
 }
 
 export enum TxStatus {
-  Pending = -1,
-  Failed = 0,
-  Success = 1
+  Pending = 'PENDING',
+  Failed = 'FAILED',
+  Success = 'SUCCESS'
 }
