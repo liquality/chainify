@@ -98,7 +98,6 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
       const estimatedPriorityFee = this.calculatePriorityFeeEstimate(feeHistory)
       const maxPriorityFeePerGas = BigNumber.max(estimatedPriorityFee ?? 0, DEFAULT_PRIORITY_FEE)
       const multiplier = this.getBaseFeeMultiplier(baseFee)
-
       const potentialMaxFee = baseFee.times(multiplier).div(100)
       const maxFeePerGas = maxPriorityFeePerGas.gt(potentialMaxFee)
         ? potentialMaxFee.plus(maxPriorityFeePerGas)
@@ -122,11 +121,9 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
   async estimateFees(): Promise<FeeEstimationResult> {
     try {
       const latestBlock = await this.jsonrpc('eth_getBlockByNumber', 'latest', false)
-
       if (!latestBlock.baseFeePerGas) {
         throw new Error('An error occurred while fetching current base fee, falling back')
       }
-
       const baseFee = new BigNumber(hexToNumber(latestBlock.baseFeePerGas))
       const blockNumber = latestBlock.number
 
@@ -139,12 +136,14 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
 
       return this.calculateFees(baseFee, feeHistory)
     } catch (err) {
+      console.log('error', err)
       return FALLBACK_ESTIMATE
     }
   }
 
   async getFees(): Promise<FeeDetails> {
-    const { maxPriorityFeePerGas, maxFeePerGas } = await this.estimateFees()
+    const { maxPriorityFeePerGas, maxFeePerGas, baseFee } = await this.estimateFees()
+    const gmaxBaseFee = new BigNumber(baseFee.toString()).div(GWEI)
     const gmaxPriorityFeePerGas = new BigNumber(maxPriorityFeePerGas.toString()).div(GWEI)
     const gmaxFeePerGas = new BigNumber(maxFeePerGas.toString()).div(GWEI)
 
@@ -155,18 +154,21 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
     const fees = {
       slow: {
         fee: {
+          baseFee: gmaxBaseFee.dp(0).toNumber(),
           maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._slowMultiplier).dp(0).toNumber()
         }
       },
       average: {
         fee: {
+          baseFee: gmaxBaseFee.dp(0).toNumber(),
           maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._averageMultiplier).dp(0).toNumber()
         }
       },
       fast: {
         fee: {
+          baseFee: gmaxBaseFee.dp(0).toNumber(),
           maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._fastMultiplier).dp(0).toNumber()
         }
