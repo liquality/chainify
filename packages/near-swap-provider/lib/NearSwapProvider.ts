@@ -126,7 +126,7 @@ export default class NearSwapProvider extends Provider implements Partial<SwapPr
     const parsedInitiationTx = parseReceipt(initiationTransaction)
     const txMatchInitiation = this.doesTransactionMatchInitiation(swapParams, parsedInitiationTx)
     return (
-      txMatchInitiation && !parsedInitiationTx._raw.status.Failure && parsedInitiationTx._raw.status.SuccessValue == ''
+      txMatchInitiation && !parsedInitiationTx._raw.status.Failure && parsedInitiationTx._raw.status.SuccessValue === ''
     )
   }
 
