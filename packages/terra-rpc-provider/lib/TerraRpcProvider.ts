@@ -1,10 +1,10 @@
 import { NodeProvider as NodeProvider } from '@liquality/node-provider'
 import { BigNumber, ChainProvider, Address, Block, Transaction, terra, FeeProvider } from '@liquality/types'
 import { addressToString } from '@liquality/utils'
-import { TxNotFoundError } from '@liquality/errors'
+import { StandardError, TxNotFoundError } from '@liquality/errors'
 import { normalizeBlock, normalizeTransaction } from '@liquality/terra-utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { LCDClient } from '@terra-money/terra.js'
+import { isTxError, LCDClient } from '@terra-money/terra.js'
 
 export default class TerraRpcProvider extends NodeProvider implements FeeProvider, Partial<ChainProvider> {
   private _network: TerraNetwork
@@ -76,6 +76,10 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
 
     if (!transaction) {
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
+    }
+
+    if(isTxError(transaction)) {
+      throw new StandardError(`Encountered an error while running the transaction: ${transaction.code} ${transaction.codespace}`)
     }
 
     const currentBlock = await this.getBlockHeight()
