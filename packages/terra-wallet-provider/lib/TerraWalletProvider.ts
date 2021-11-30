@@ -105,7 +105,9 @@ export default class TerraWalletProvider extends WalletProvider {
 
   async sendTransaction(sendOptions: SendOptions): Promise<Transaction<terra.InputTransaction>> {
     const txData = this.composeTransaction(sendOptions)
+
     const tx = await this._wallet.createAndSignTx(txData)
+
     const transaction = await this._broadcastTx(tx)
 
     if (isTxError(transaction)) {
