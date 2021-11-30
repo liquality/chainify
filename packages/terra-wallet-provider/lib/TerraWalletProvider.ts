@@ -110,7 +110,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     if (isTxError(transaction)) {
       throw new Error(
-        `encountered an error while running the transaction: ${transaction.code} ${transaction.codespace} ${transaction.raw_log}`
+        `Encountered an error while running the transaction: ${transaction.code} ${transaction.codespace} ${transaction.raw_log}`
       )
     }
 
@@ -200,15 +200,12 @@ export default class TerraWalletProvider extends WalletProvider {
       const gasPrice = data.fee as any
       const gasLimit = 800000
 
-      const fee = ceil(new BigNumber(gasLimit).times(gasPrice).toNumber());
-      const coins = new Coins({[this._feeAsset]: fee})
-      
+      const fee = ceil(new BigNumber(gasLimit).times(gasPrice).toNumber())
+      const coins = new Coins({ [this._feeAsset]: fee })
+
       txData = {
         ...(data.fee && {
-          fee: new Fee(
-            gasLimit,
-            coins
-          )
+          fee: new Fee(gasLimit, coins)
         })
       }
     } else {
