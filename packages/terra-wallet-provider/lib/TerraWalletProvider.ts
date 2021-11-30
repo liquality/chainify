@@ -16,6 +16,7 @@ import {
   MsgExecuteContract,
   isTxError
 } from '@terra-money/terra.js'
+import { ceil } from 'lodash'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
@@ -104,14 +105,12 @@ export default class TerraWalletProvider extends WalletProvider {
 
   async sendTransaction(sendOptions: SendOptions): Promise<Transaction<terra.InputTransaction>> {
     const txData = this.composeTransaction(sendOptions)
-
     const tx = await this._wallet.createAndSignTx(txData)
-
     const transaction = await this._broadcastTx(tx)
 
     if (isTxError(transaction)) {
       throw new Error(
-        `encountered an error while running the transaction: ${transaction.code} ${transaction.codespace}`
+        `encountered an error while running the transaction: ${transaction.code} ${transaction.codespace} ${transaction.raw_log}`
       )
     }
 
@@ -198,11 +197,18 @@ export default class TerraWalletProvider extends WalletProvider {
         fee: isProto ? Fee.fromData(JSON.parse(data.fee as any)) : Fee.fromAmino(JSON.parse(data.fee as any))
       }
     } else if (data?.msgs) {
+      const gasPrice = data.fee as any
+      const gasLimit = 800000
+
+      const fee = ceil(new BigNumber(gasLimit).times(gasPrice).toNumber());
+      const coins = new Coins({[this._feeAsset]: fee})
+      
       txData = {
-        ...(fee && {
-          gasPrices: new Coins({
-            [this._asset]: fee
-          })
+        ...(data.fee && {
+          fee: new Fee(
+            gasLimit,
+            coins
+          )
         })
       }
     } else {

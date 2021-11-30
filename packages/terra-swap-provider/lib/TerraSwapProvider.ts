@@ -26,14 +26,15 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     return transaction?.secret
   }
 
-  async initiateSwap(swapParams: SwapParams): Promise<Transaction<terra.InputTransaction>> {
+  async initiateSwap(swapParams: SwapParams, fee: any): Promise<Transaction<terra.InputTransaction>> {
     validateSwapParams(swapParams)
 
     const initContractMsg = this._instantiateContractMessage(swapParams)
 
     return await this.getMethod('sendTransaction')({
       data: {
-        msgs: [initContractMsg]
+        msgs: [initContractMsg],
+        fee
       }
     })
   }
