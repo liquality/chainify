@@ -111,7 +111,7 @@ export default class TerraWalletProvider extends WalletProvider {
 
     if (isTxError(transaction)) {
       throw new Error(
-        `encountered an error while running the transaction: ${transaction.code} ${transaction.codespace}`
+        `encountered an error while running the transaction: ${transaction.code} ${transaction.codespace} ${transaction.raw_log}`
       )
     }
 
