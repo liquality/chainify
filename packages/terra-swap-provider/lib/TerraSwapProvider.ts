@@ -4,7 +4,7 @@ import { TxNotFoundError, StandardError } from '@liquality/errors'
 import { validateSwapParams, doesTransactionMatchInitiation } from '@liquality/terra-utils'
 import { validateSecretAndHash } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js'
+import { isTxError, MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js'
 
 export default class TerraSwapProvider extends Provider implements Partial<SwapProvider> {
   private _network: TerraNetwork
@@ -95,6 +95,10 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
 
     if (!doesTransactionMatchInitiation(swapParams, initTx._raw)) {
       throw new StandardError('Transactions are not matching')
+    }
+
+    if (isTxError(initTx)) {
+      throw new StandardError(`Encountered an error while running the transaction: ${initTx.code} ${initTx.codespace}`)
     }
 
     return true
