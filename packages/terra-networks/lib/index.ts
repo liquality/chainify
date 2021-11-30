@@ -13,7 +13,7 @@ const terra_mainnet: TerraNetwork = {
   name: 'mainnet',
   networkId: 'mainnet',
   nodeUrl: 'https://lcd.terra.dev',
-  helperUrl: 'https://fcd.terra.dev',
+  helperUrl: 'https://fcd.terra.dev/v1',
   gasPricesUrl: 'https://fcd.terra.dev/v1/txs/gas_prices',
   coinType: '370',
   isTestnet: false,
