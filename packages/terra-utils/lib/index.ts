@@ -29,7 +29,7 @@ export const normalizeTransaction = (
     value = msg.init_coins.get(asset)?.amount
   }
 
-  let codeId = msg.code_id
+  const codeId = msg.code_id
   let txParams = msg?.init_msg || msg?.execute_msg || {}
 
   if (Object.keys(txParams).length) {
