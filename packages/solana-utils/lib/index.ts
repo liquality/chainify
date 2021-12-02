@@ -190,7 +190,8 @@ export function normalizeTransaction(
     ...(transactionData.confirmations && { confirmations: transactionData.confirmations }),
     _raw: {
       programId: transactionData.programId,
-      ...transactionData._raw
+      ...transactionData._raw,
+      value: new BigNumber(transactionData.lamports)
     }
   }
 }
