@@ -14,6 +14,8 @@ pub enum ContractError {
     NoBalance {},
     #[error("Query not implemented")]
     QueryNotImplemented {},
+    #[error("Invalid amount of coins")]
+    InvalidAmountOfCoins {},
     // Add any other custom errors you like here.
     // Look at https://docs.rs/thiserror/1.0.21/thiserror/ for details.
 }
