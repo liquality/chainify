@@ -18,7 +18,7 @@ const terra_mainnet: TerraNetwork = {
   coinType: '370',
   isTestnet: false,
   chainID: 'columbus-5',
-  codeId: 773
+  codeId: 1480
 }
 
 const terra_testnet: TerraNetwork = {
@@ -30,7 +30,7 @@ const terra_testnet: TerraNetwork = {
   coinType: '370',
   isTestnet: true,
   chainID: 'bombay-12',
-  codeId: 16469
+  codeId: 23733
 }
 
 const TerraNetworks = {

@@ -19,7 +19,7 @@ pub fn instantiate(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
-    if info.funds.len() != 1 {
+    if info.funds.len() != 1 || info.funds[0].amount != Uint128::from(msg.value) {
         return Err(ContractError::InvalidAmountOfCoins {});
     }
 
