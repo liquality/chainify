@@ -93,6 +93,10 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
       throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
     }
 
+    if (initTx._raw.codeId !== this._network.codeId) {
+      throw new StandardError(`Transaction is from different template: ${initTx.codeId}`)
+    }
+
     if (!doesTransactionMatchInitiation(swapParams, initTx._raw)) {
       throw new StandardError('Transactions are not matching')
     }
