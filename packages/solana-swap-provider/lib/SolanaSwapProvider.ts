@@ -130,7 +130,7 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
-    const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
+    const initTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
 
     if (initTransaction.status !== TxStatus.Success) {
       throw new StandardError(`Status for transaction ${initiationTxHash} is ${initTransaction.status}`)
