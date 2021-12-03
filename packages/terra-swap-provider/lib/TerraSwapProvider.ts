@@ -35,7 +35,8 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
       data: {
         msgs: [initContractMsg],
         fee
-      }
+      },
+      value: swapParams.value
     })
   }
 

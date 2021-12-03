@@ -25,6 +25,7 @@ interface TerraWalletProviderOptions {
   asset: string
   feeAsset: string
   tokenAddress?: string
+  stableFee?: boolean
 }
 
 export default class TerraWalletProvider extends WalletProvider {
@@ -38,10 +39,11 @@ export default class TerraWalletProvider extends WalletProvider {
   private _asset: string
   private _feeAsset: string
   private _tokenAddress: string
+  private _stableFee: boolean
   _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
-    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress } = options
+    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress, stableFee } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
@@ -50,7 +52,7 @@ export default class TerraWalletProvider extends WalletProvider {
     this._asset = asset
     this._feeAsset = feeAsset
     this._tokenAddress = tokenAddress
-
+    this._stableFee = stableFee
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
       chainID: network.chainID
@@ -104,7 +106,7 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   async sendTransaction(sendOptions: SendOptions): Promise<Transaction<terra.InputTransaction>> {
-    const txData = this.composeTransaction(sendOptions)
+    const txData = await this.composeTransaction(sendOptions)
 
     const tx = await this._wallet.createAndSignTx(txData)
 
@@ -186,7 +188,7 @@ export default class TerraWalletProvider extends WalletProvider {
     return await this._lcdClient.tx.broadcast(tx)
   }
 
-  private composeTransaction(sendOptions: SendOptions) {
+  private async composeTransaction(sendOptions: SendOptions) {
     const { to, value, fee } = sendOptions
 
     const data: CreateTxOptions = sendOptions.data as any
@@ -202,7 +204,17 @@ export default class TerraWalletProvider extends WalletProvider {
       const gasPrice = data.fee as any
       const gasLimit = 800000
 
-      const fee = ceil(new BigNumber(gasLimit).times(gasPrice).toNumber())
+      let taxFee
+      if (this._stableFee) {
+        taxFee = new BigNumber((await this.getTaxFees(value.toNumber() / 1_000_000, this._feeAsset, false)) * 1_000_000)
+      }
+
+      const fee = ceil(
+        new BigNumber(gasLimit)
+          .times(gasPrice)
+          .plus(taxFee || 0)
+          .toNumber()
+      )
       const coins = new Coins({ [this._feeAsset]: fee })
 
       txData = {
