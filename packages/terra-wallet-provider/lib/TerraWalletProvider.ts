@@ -141,9 +141,11 @@ export default class TerraWalletProvider extends WalletProvider {
     const _taxCap = taxCap.amount.toNumber()
 
     const addresses = await this.getAddresses()
-    const balance = await this.getMethod('getBalance')(addresses)
+    const balance = (await this.getMethod('getBalance')(addresses)).div(1_000_000)
 
-    return Math.min((max ? balance : amount || 0) * _taxRate, _taxCap / 1_000_000)
+    const _amount = max ? balance : amount || 0
+
+    return Math.min(Number((_amount * _taxRate).toFixed(6)), _taxCap / 1_000_000)
   }
 
   canUpdateFee(): boolean {
