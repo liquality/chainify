@@ -1,7 +1,7 @@
 import { Provider } from '@liquality/provider'
 import { padHexStart } from '@liquality/crypto'
 import { addressToString } from '@liquality/utils'
-import { ensure0x, hexToNumber, remove0x, numberToHex } from '@liquality/ethereum-utils'
+import { ensure0x, remove0x, numberToHex } from '@liquality/ethereum-utils'
 import { ChainProvider, SendOptions, BigNumber, Address } from '@liquality/types'
 import { InsufficientBalanceError } from '@liquality/errors'
 
@@ -83,7 +83,7 @@ export default class EthereumErc20Provider extends Provider implements Partial<C
     )
 
     return promiseBalances
-      .map((balance) => new BigNumber(hexToNumber(balance)))
+      .map((balance) => new BigNumber(balance))
       .filter((balance) => !balance.isNaN())
       .reduce((acc, balance) => acc.plus(balance), new BigNumber(0))
   }
