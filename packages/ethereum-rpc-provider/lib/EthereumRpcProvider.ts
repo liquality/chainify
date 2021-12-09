@@ -185,8 +185,8 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   async getTransactionByHash(txHash: string) {
     txHash = ensure0x(txHash)
 
-    const currentBlock = await this.getBlockHeight()
     const tx = await this.rpc<ethereum.Transaction>('eth_getTransactionByHash', txHash)
+    const currentBlock = await this.getBlockHeight()
 
     if (!tx) {
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
