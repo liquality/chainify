@@ -90,7 +90,9 @@
     "unlink:all": "lerna exec npm unlink"
   },
   "mocha": {
-    "require": ["ts-node/register"],
+    "require": [
+      "ts-node/register"
+    ],
     "timeout": 20000,
     "recursive": true
   },
