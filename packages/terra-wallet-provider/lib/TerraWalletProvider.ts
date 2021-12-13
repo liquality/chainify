@@ -60,6 +60,10 @@ export default class TerraWalletProvider extends WalletProvider {
     this._createWallet(this._signer)
   }
 
+  exportPrivateKey() {
+    return this._signer.privateKey.toString('hex')
+  }
+
   async isWalletAvailable(): Promise<boolean> {
     const addresses = await this.getAddresses()
     return addresses.length > 0
