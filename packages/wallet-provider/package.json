@@ -1,6 +1,6 @@
 {
   "name": "@liquality/wallet-provider",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,9 +20,9 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.11.1",
-    "@liquality/provider": "^1.11.1",
-    "@liquality/types": "^1.11.1",
+    "@liquality/errors": "^1.11.2",
+    "@liquality/provider": "^1.11.2",
+    "@liquality/types": "^1.11.2",
     "lodash": "^4.17.20"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
