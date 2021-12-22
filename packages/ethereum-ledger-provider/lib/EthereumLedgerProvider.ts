@@ -10,23 +10,27 @@ import {
   normalizeTransactionObject,
   hexToNumber
 } from '@liquality/ethereum-utils'
-import { toRpcSig } from 'ethereumjs-util'
+import { toRpcSig, rlp } from 'ethereumjs-util'
 
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
-import { Transaction as NewEthJsTransaction } from '@ethereumjs/tx'
+import { Transaction as LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
+import EthCommon from '@ethereumjs/common'
 
 interface EthereumLedgerProviderOptions {
   network: EthereumNetwork
   derivationPath: string
-  Transport: any
+  Transport: any,
+  hardfork?: string
 }
 
 export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
   _derivationPath: string
+  _hardfork: string
 
   constructor(options: EthereumLedgerProviderOptions) {
     super({ ...options, App: HwAppEthereum, ledgerScrambleKey: 'w0w' }) // srs!
     this._derivationPath = options.derivationPath
+    this._hardfork = options.hardfork || 'istanbul'
   }
 
   async signMessage(message: string, from: string) {
@@ -68,26 +72,60 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return this.getAddresses()
   }
 
-  async signTransaction(txData: ethereum.TransactionRequest, path: string) {
-    const chainId = numberToHex((this._network as EthereumNetwork).chainId)
+  async signTransaction(txData: ethereum.EIP1559TransactionRequest | ethereum.TransactionRequest, path: string) {
+    const network = this._network as EthereumNetwork
+
+    let common
+    if (network.name !== 'local') {
+      common = EthCommon.custom(
+        {
+          name: network.name,
+          chainId: network.chainId,
+          networkId: network.networkId
+        },
+        {
+          hardfork: this._hardfork
+        }
+      )
+    }
+
+    let _txData = {
+      gasLimit: txData.gas,
+      ...txData
+    }
+
+    let tx
+
+    if (_txData.gasPrice) {
+      tx = LegacyTransaction.fromTxData(_txData, { common })
+    } else {
+      tx = FeeMarketEIP1559Transaction.fromTxData(_txData as ethereum.EIP1559TransactionRequest, { common })
+    }
+
+    const msg = tx.getMessageToSign(false)
+    const encodedMessage = _txData.gasPrice
+      ? rlp.encode(msg)
+      : msg
+    const encodedMessageHex = encodedMessage.toString('hex')
+
     const app = await this.getApp()
-    const tx = NewEthJsTransaction.fromTxData({
-      ...txData,
-      // chainId: hexToNumber(chainId), // HEY Could be incorrect
-      v: chainId
-    })
-    const serializedTx = tx.serialize().toString('hex')
-    const txSig = await app.signTransaction(path, serializedTx)
+    const txSig = await app.signTransaction(path, encodedMessageHex)
+
     const signedTxData = {
-      ...txData,
+      ..._txData,
       v: ensure0x(txSig.v),
       r: ensure0x(txSig.r),
       s: ensure0x(txSig.s)
     }
 
-    const signedTx = NewEthJsTransaction.fromTxData(signedTxData)
-    const signedSerializedTx = signedTx.serialize().toString('hex')
-    return signedSerializedTx
+    let signedTx
+    if (_txData.gasPrice) {
+      signedTx = LegacyTransaction.fromTxData(signedTxData, { common })
+    } else {
+      signedTx = FeeMarketEIP1559Transaction.fromTxData(signedTxData as ethereum.EIP1559TransactionRequest, { common })
+    }
+
+    return signedTx.serialize().toString('hex')
   }
 
   async sendTransaction(options: SendOptions) {

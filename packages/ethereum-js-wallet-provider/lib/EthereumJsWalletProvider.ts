@@ -14,8 +14,8 @@ import { mnemonicToSeed } from 'bip39'
 import hdkey from 'hdkey'
 
 import { hashPersonalMessage, ecsign, toRpcSig, privateToAddress, privateToPublic } from 'ethereumjs-util'
-import { Transaction as NewEthJsTransaction } from '@ethereumjs/tx'
-import NewCommon, { Chain } from '@ethereumjs/common'
+import { Transaction as LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
+import EthCommon from '@ethereumjs/common'
 
 interface EthereumJsWalletProviderOptions {
   network: EthereumNetwork
@@ -81,27 +81,38 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     return this.getAddresses()
   }
 
-  async signTransaction(txData: ethereum.TransactionRequest): Promise<string> {
-    const hdKey = await this.hdKey()
+  async signTransaction(txData: ethereum.EIP1559TransactionRequest | ethereum.TransactionRequest): Promise<string> {
     let common
 
     if (this._network.name !== 'local') {
-      const baseChain = this._network.name in Chain ? this._network.name : 'mainnet'
-      const hf = txData.maxFeePerGas || txData.maxPriorityFeePerGas ? 'london' : this._hardfork
-
-      common = NewCommon.forCustomChain(
-        baseChain,
+      common = EthCommon.custom(
         {
-          ...this._network
+          name: this._network.name,
+          chainId: this._network.chainId,
+          networkId: this._network.networkId
         },
-        hf
+        {
+          hardfork: this._hardfork
+        }
       )
     }
 
-    const tx = NewEthJsTransaction.fromTxData(txData, { common })
-    tx.sign(hdKey.privateKey)
+    const _txData = {
+      gasLimit: txData.gas,
+      ...txData
+    }
 
-    return tx.serialize().toString('hex')
+    let tx
+
+    if (_txData.gasPrice) {
+      tx = LegacyTransaction.fromTxData(_txData, { common })
+    } else {
+      tx = FeeMarketEIP1559Transaction.fromTxData(_txData as ethereum.EIP1559TransactionRequest, { common })
+    }
+
+    const hdKey = await this.hdKey()
+    const signedTx = tx.sign(hdKey.privateKey)
+    return signedTx.serialize().toString('hex')
   }
 
   async sendTransaction(options: SendOptions) {

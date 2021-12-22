@@ -76,6 +76,10 @@ export interface TransactionRequest {
   nonce?: Hex
 }
 
+export interface EIP1559TransactionRequest extends TransactionRequest {
+  gasPrice: never
+}
+
 export interface PartialTransaction {
   hash?: Hex256
   nonce?: Hex
