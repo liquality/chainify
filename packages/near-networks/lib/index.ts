@@ -9,7 +9,7 @@ export interface NearNetwork extends Network {
 const near_mainnet: NearNetwork = {
   name: 'mainnet',
   networkId: 'mainnet',
-  nodeUrl: 'https://rpc.mainnet.near.org',
+  nodeUrl: 'https://archival-rpc.mainnet.near.org',
   helperUrl: 'https://helper.mainnet.near.org',
   coinType: '397',
   isTestnet: false
