@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-eip1559-fee-provider",
-  "version": "1.6.5",
+  "version": "1.11.2",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -20,9 +20,9 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/jsonrpc-provider": "^1.6.5",
-    "@liquality/ethereum-utils": "^1.6.5",
-    "@liquality/types": "^1.6.5",
+    "@liquality/jsonrpc-provider": "^1.11.2",
+    "@liquality/ethereum-utils": "^1.11.2",
+    "@liquality/types": "^1.11.2",
     "@mycrypto/gas-estimation": "^1.1.0",
     "bignumber.js": "^9.0.0"
   },
