@@ -6,6 +6,8 @@ export interface FeeHistory {
 }
 
 export interface EIP1559Fee {
+  // Base fee per gas
+  baseFeePerGas?: number
   // Fee price
   maxPriorityFeePerGas: number
   // Estimated time to confirmation

@@ -6,12 +6,13 @@ type FeeOptions = {
   slowMultiplier?: number
   averageMultiplier?: number
   fastMultiplier?: number
+  maxFeePerGasThreshold?: number
 }
 
 interface FeeEstimationResult {
   maxFeePerGas: BigNumber
   maxPriorityFeePerGas: BigNumber
-  baseFee: BigNumber | undefined
+  baseFeePerGas?: BigNumber
 }
 
 const MAX_GAS_FAST = gwei(1500)
@@ -27,7 +28,7 @@ const DEFAULT_PRIORITY_FEE = gwei(3)
 export const FALLBACK_ESTIMATE: FeeEstimationResult = {
   maxFeePerGas: gwei(20),
   maxPriorityFeePerGas: DEFAULT_PRIORITY_FEE,
-  baseFee: undefined
+  baseFeePerGas: undefined
 }
 const PRIORITY_FEE_INCREASE_BOUNDARY = 200 // %
 
@@ -35,22 +36,24 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
   _slowMultiplier: number
   _averageMultiplier: number
   _fastMultiplier: number
+  _maxFeePerGasThreshold: number
 
   constructor(options: { uri: string; username?: string; password?: string }, opts: FeeOptions = {}) {
     super(options.uri, options.username, options.password)
 
-    const { slowMultiplier = 1, averageMultiplier = 1.25, fastMultiplier = 1.4 } = opts
+    const { slowMultiplier = 1, averageMultiplier = 1.25, fastMultiplier = 1.4, maxFeePerGasThreshold = 1000 } = opts
     this._slowMultiplier = slowMultiplier
     this._averageMultiplier = averageMultiplier
     this._fastMultiplier = fastMultiplier
+    this._maxFeePerGasThreshold = maxFeePerGasThreshold
   }
 
-  getBaseFeeMultiplier(baseFee: BigNumber) {
-    if (baseFee.lte(gwei(40))) {
+  getBaseFeeMultiplier(baseFeePerGas: BigNumber) {
+    if (baseFeePerGas.lte(gwei(40))) {
       return 200
-    } else if (baseFee.lte(gwei(100))) {
+    } else if (baseFeePerGas.lte(gwei(100))) {
       return 160
-    } else if (baseFee.lte(gwei(200))) {
+    } else if (baseFeePerGas.lte(gwei(200))) {
       return 140
     } else {
       return 120
@@ -93,13 +96,13 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
     return values[Math.floor(values.length / 2)]
   }
 
-  calculateFees(baseFee: BigNumber, feeHistory?: FeeHistory): FeeEstimationResult {
+  calculateFees(baseFeePerGas: BigNumber, feeHistory?: FeeHistory): FeeEstimationResult {
     try {
       const estimatedPriorityFee = this.calculatePriorityFeeEstimate(feeHistory)
       const maxPriorityFeePerGas = BigNumber.max(estimatedPriorityFee ?? 0, DEFAULT_PRIORITY_FEE)
-      const multiplier = this.getBaseFeeMultiplier(baseFee)
+      const multiplier = this.getBaseFeeMultiplier(baseFeePerGas)
 
-      const potentialMaxFee = baseFee.times(multiplier).div(100)
+      const potentialMaxFee = baseFeePerGas.times(multiplier).div(100)
       const maxFeePerGas = maxPriorityFeePerGas.gt(potentialMaxFee)
         ? potentialMaxFee.plus(maxPriorityFeePerGas)
         : potentialMaxFee
@@ -111,7 +114,7 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
       return {
         maxFeePerGas: maxFeePerGas,
         maxPriorityFeePerGas: maxPriorityFeePerGas,
-        baseFee
+        baseFeePerGas
       }
     } catch (err) {
       console.error(err)
@@ -127,46 +130,51 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
         throw new Error('An error occurred while fetching current base fee, falling back')
       }
 
-      const baseFee = new BigNumber(hexToNumber(latestBlock.baseFeePerGas))
+      const baseFeePerGas = new BigNumber(hexToNumber(latestBlock.baseFeePerGas))
       const blockNumber = latestBlock.number
 
       const feeHistory =
-        baseFee >= PRIORITY_FEE_ESTIMATION_TRIGGER
+        baseFeePerGas >= PRIORITY_FEE_ESTIMATION_TRIGGER
           ? await this.getMethod('getFeeHistory')(numberToHex(FEE_HISTORY_BLOCKS), blockNumber, [
               FEE_HISTORY_PERCENTILE
             ])
           : undefined
 
-      return this.calculateFees(baseFee, feeHistory)
+      return this.calculateFees(baseFeePerGas, feeHistory)
     } catch (err) {
       return FALLBACK_ESTIMATE
     }
   }
 
   async getFees(): Promise<FeeDetails> {
-    const { maxPriorityFeePerGas, maxFeePerGas } = await this.estimateFees()
+    const { maxPriorityFeePerGas, maxFeePerGas, baseFeePerGas } = await this.estimateFees()
     const gmaxPriorityFeePerGas = new BigNumber(maxPriorityFeePerGas.toString()).div(GWEI)
     const gmaxFeePerGas = new BigNumber(maxFeePerGas.toString()).div(GWEI)
 
-    if (gmaxFeePerGas.gte(1000)) {
-      throw new Error('maxFeePerGas over 1000 Gwei detected.')
+    if (gmaxFeePerGas.gte(this._maxFeePerGasThreshold)) {
+      throw new Error(`maxFeePerGas over ${this._maxFeePerGasThreshold} Gwei detected.`)
     }
+
+    const extra = baseFeePerGas ? { baseFeePerGas: baseFeePerGas.dp(0).toNumber() } : {}
 
     const fees = {
       slow: {
         fee: {
+          ...extra,
           maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._slowMultiplier).dp(0).toNumber()
         }
       },
       average: {
         fee: {
+          ...extra,
           maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._averageMultiplier).dp(0).toNumber()
         }
       },
       fast: {
         fee: {
+          ...extra,
           maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._fastMultiplier).dp(0).toNumber()
         }
