@@ -162,8 +162,14 @@ export default class EthereumJsWalletProvider extends WalletProvider {
   async sendSweepTransaction(address: Address | ethereum.Address, gasPrice: EIP1559Fee | number) {
     const addresses = await this.getAddresses()
 
+    let fee = gasPrice
+
     const balance = await this.client.chain.getBalance(addresses)
-    const fee = gasPrice || ((await this.getMethod('getFees')()).average as EIP1559Fee)
+    if (!fee) {
+      // set fast fee by default
+      fee = (await this.getMethod('getFees')()).fast.fee
+    }
+
     const maxFee = new BigNumber(typeof fee === 'number' ? fee : fee.maxFeePerGas).times(21000)
     const amountToSend = balance.minus(maxFee)
 
