@@ -18,6 +18,9 @@
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
+  "engines": {
+    "node": "^14.18.1"
+  },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
     "type": "git",

@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "engines": {
+    "node": "^14.18.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.1",
