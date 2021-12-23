@@ -28,9 +28,9 @@ describe('Ethereum EIP1559 Fee provider', () => {
     it('Should return correct fees', async () => {
       const fees = await client.chain.getFees()
 
-      expect(fees.slow.fee).to.deep.equal({ maxFeePerGas: 143, maxPriorityFeePerGas: 3 })
-      expect(fees.average.fee).to.deep.equal({ maxFeePerGas: 143, maxPriorityFeePerGas: 4 })
-      expect(fees.fast.fee).to.deep.equal({ maxFeePerGas: 143, maxPriorityFeePerGas: 4 })
+      expect(fees.slow.fee).to.deep.equal({ baseFeePerGas: 102, maxFeePerGas: 143, maxPriorityFeePerGas: 3 })
+      expect(fees.average.fee).to.deep.equal({ baseFeePerGas: 102, maxFeePerGas: 143, maxPriorityFeePerGas: 4 })
+      expect(fees.fast.fee).to.deep.equal({ baseFeePerGas: 102, maxFeePerGas: 143, maxPriorityFeePerGas: 4 })
     })
   })
 })

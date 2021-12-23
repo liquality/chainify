@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@liquality/jsonrpc-provider'
 import { FeeProvider, FeeDetails, BigNumber, FeeHistory } from '@liquality/types'
-import { GWEI, gwei, hexToNumber, numberToHex } from '@liquality/ethereum-utils'
+import { gwei, toGwei, hexToNumber, numberToHex } from '@liquality/ethereum-utils'
 
 type FeeOptions = {
   slowMultiplier?: number
@@ -148,34 +148,36 @@ export default class EthereumEIP1559FeeProvider extends JsonRpcProvider implemen
 
   async getFees(): Promise<FeeDetails> {
     const { maxPriorityFeePerGas, maxFeePerGas, baseFeePerGas } = await this.estimateFees()
-    const gmaxPriorityFeePerGas = new BigNumber(maxPriorityFeePerGas.toString()).div(GWEI)
-    const gmaxFeePerGas = new BigNumber(maxFeePerGas.toString()).div(GWEI)
+    const gmaxPriorityFeePerGas = toGwei(maxPriorityFeePerGas)
+    const gmaxFeePerGas = toGwei(maxFeePerGas)
 
     if (gmaxFeePerGas.gte(this._maxFeePerGasThreshold)) {
       throw new Error(`maxFeePerGas over ${this._maxFeePerGasThreshold} Gwei detected.`)
     }
 
-    const extra = baseFeePerGas ? { baseFeePerGas: baseFeePerGas.dp(0).toNumber() } : {}
+    const numGmaxFeePerGas = gmaxFeePerGas.dp(0).toNumber() as number
+
+    const extra = baseFeePerGas ? { baseFeePerGas: toGwei(baseFeePerGas).dp(0).toNumber() } : {}
 
     const fees = {
       slow: {
         fee: {
           ...extra,
-          maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
+          maxFeePerGas: numGmaxFeePerGas,
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._slowMultiplier).dp(0).toNumber()
         }
       },
       average: {
         fee: {
           ...extra,
-          maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
+          maxFeePerGas: numGmaxFeePerGas,
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._averageMultiplier).dp(0).toNumber()
         }
       },
       fast: {
         fee: {
           ...extra,
-          maxFeePerGas: gmaxFeePerGas.dp(0).toNumber(),
+          maxFeePerGas: numGmaxFeePerGas,
           maxPriorityFeePerGas: gmaxPriorityFeePerGas.times(this._fastMultiplier).dp(0).toNumber()
         }
       }

@@ -11,6 +11,10 @@ function gwei(wei: BigNumber | number): BigNumber {
   return new BigNumber(wei).times(GWEI)
 }
 
+function toGwei(wei: BigNumber | number): BigNumber {
+  return new BigNumber(wei).div(GWEI)
+}
+
 /**
  * Converts a hex string to the ethereum format
  * @param {*} hash
@@ -145,6 +149,7 @@ function validateExpiration(expiration: number) {
 
 export {
   GWEI,
+  toGwei,
   gwei,
   ensure0x,
   remove0x,
