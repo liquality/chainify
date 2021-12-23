@@ -87,20 +87,16 @@ export default class EthereumJsWalletProvider extends WalletProvider {
   }
 
   async signTransaction(txData: ethereum.EIP1559TransactionRequest | ethereum.TransactionRequest): Promise<string> {
-    let common
-
-    if (this._network.name !== 'local') {
-      common = EthCommon.custom(
-        {
-          name: this._network.name,
-          chainId: this._network.chainId,
-          networkId: this._network.networkId
-        },
-        {
-          hardfork: this._hardfork
-        }
-      )
-    }
+    const common = EthCommon.custom(
+      {
+        name: this._network.name,
+        chainId: this._network.chainId,
+        networkId: this._network.networkId
+      },
+      {
+        hardfork: this._hardfork
+      }
+    )
 
     const _txData = {
       gasLimit: txData.gas,
@@ -134,15 +130,16 @@ export default class EthereumJsWalletProvider extends WalletProvider {
       nonce
     }
 
-    if (options.fee) {
-      if (typeof options.fee === 'number') {
-        txOptions.gasPrice = new BigNumber(options.fee)
-      } else {
-        txOptions.maxPriorityFeePerGas = new BigNumber(options.fee.maxPriorityFeePerGas)
-        txOptions.maxFeePerGas = new BigNumber(options.fee.maxFeePerGas)
-      }
+    let { fee } = options
+
+    if (!fee) {
+      // set average fee by default
+      fee = (await this.getMethod('getFees')()).average.fee
+    }
+
+    if (typeof fee === 'number') {
+      txOptions.gasPrice = new BigNumber(fee)
     } else {
-      const fee = (await this.getMethod('getFees')()).average as EIP1559Fee
       txOptions.maxPriorityFeePerGas = new BigNumber(fee.maxPriorityFeePerGas)
       txOptions.maxFeePerGas = new BigNumber(fee.maxFeePerGas)
     }

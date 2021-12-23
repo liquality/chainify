@@ -17,7 +17,8 @@ import {
   BigNumber,
   EIP1559Fee,
   FeeHistory,
-  TxStatus
+  TxStatus,
+  FeeDetails
 } from '@liquality/types'
 import { sleep, addressToString } from '@liquality/utils'
 import { InvalidDestinationAddressError, TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
@@ -244,6 +245,23 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   async getGasPrice(): Promise<BigNumber> {
     const gasPrice = await this.rpc<ethereum.Hex>('eth_gasPrice')
     return new BigNumber(gasPrice).div(1e9) // Gwei
+  }
+
+  async getFees(): Promise<FeeDetails> {
+    const gasPrice = await this.getGasPrice()
+    const gp = BigNumber.max(gasPrice, 1).dp(0).toNumber()
+
+    return {
+      slow: {
+        fee: gp
+      },
+      average: {
+        fee: gp
+      },
+      fast: {
+        fee: gp
+      }
+    }
   }
 
   async getBalance(_addresses: (Address | string)[]) {
