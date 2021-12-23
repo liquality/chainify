@@ -4,14 +4,16 @@ import { TxNotFoundError, StandardError } from '@liquality/errors'
 import { validateSwapParams, doesTransactionMatchInitiation } from '@liquality/terra-utils'
 import { validateSecretAndHash } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
-import { MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js'
+import { isTxError, MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js'
 
 export default class TerraSwapProvider extends Provider implements Partial<SwapProvider> {
   private _network: TerraNetwork
+  private _asset: string
 
-  constructor(network: TerraNetwork) {
+  constructor(network: TerraNetwork, asset: string) {
     super()
     this._network = network
+    this._asset = asset
   }
 
   async getSwapSecret(claimTxHash: string): Promise<string> {
@@ -24,14 +26,15 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
     return transaction?.secret
   }
 
-  async initiateSwap(swapParams: SwapParams): Promise<Transaction<terra.InputTransaction>> {
+  async initiateSwap(swapParams: SwapParams, fee: number): Promise<Transaction<terra.InputTransaction>> {
     validateSwapParams(swapParams)
 
     const initContractMsg = this._instantiateContractMessage(swapParams)
 
     return await this.getMethod('sendTransaction')({
       data: {
-        msgs: [initContractMsg]
+        msgs: [initContractMsg],
+        fee
       }
     })
   }
@@ -91,7 +94,15 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
       throw new TxNotFoundError(`Transaction not found: ${initiationTxHash}`)
     }
 
-    if (!doesTransactionMatchInitiation(swapParams, initTx._raw)) {
+    if (isTxError(initTx)) {
+      throw new StandardError(`Encountered an error while running the transaction: ${initTx.code} ${initTx.codespace}`)
+    }
+
+    if (initTx['_raw']['codeId'] !== this._network.codeId) {
+      throw new StandardError(`Transaction is from different template: ${initTx['codeId']}`)
+    }
+
+    if (!doesTransactionMatchInitiation(swapParams, initTx['_raw'])) {
       throw new StandardError('Transactions are not matching')
     }
 
@@ -101,7 +112,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   _instantiateContractMessage(swapParams: SwapParams): MsgInstantiateContract {
     const address = this.getMethod('_getAccAddressKey')()
 
-    const { asset, codeId } = this._network
+    const { codeId } = this._network
 
     return new MsgInstantiateContract(
       address,
@@ -114,7 +125,7 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
         value: swapParams.value.toNumber(),
         secret_hash: swapParams.secretHash
       },
-      { [asset]: swapParams.value.toNumber() }
+      { [this._asset]: swapParams.value.toNumber() }
     )
   }
 

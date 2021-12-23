@@ -1,4 +1,4 @@
-import { BigNumber, SwapParams, SwapProvider, Transaction } from '@liquality/types'
+import { BigNumber, SwapParams, SwapProvider, Transaction, TxStatus } from '@liquality/types'
 import { Provider } from '@liquality/provider'
 import { Keypair, SystemProgram, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import {
@@ -8,7 +8,7 @@ import {
   createRefundBuffer,
   validateSwapParams
 } from '@liquality/solana-utils'
-import { WalletError, TxNotFoundError, InvalidAddressError } from '@liquality/errors'
+import { WalletError, TxNotFoundError, InvalidAddressError, StandardError } from '@liquality/errors'
 import { SolanaNetwork } from '@liquality/solana-networks'
 
 export default class SolanaSwapProvider extends Provider implements Partial<SwapProvider> {
@@ -130,7 +130,12 @@ export default class SolanaSwapProvider extends Provider implements Partial<Swap
   }
 
   async verifyInitiateSwapTransaction(swapParams: SwapParams, initiationTxHash: string): Promise<boolean> {
-    const [initTransaction] = await this.getMethod('getTransactionReceipt')([initiationTxHash])
+    const initTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
+
+    if (initTransaction.status !== TxStatus.Success) {
+      throw new StandardError(`Status for transaction ${initiationTxHash} is ${initTransaction.status}`)
+    }
+
     return doesTransactionMatchInitiation(swapParams, initTransaction._raw)
   }
 

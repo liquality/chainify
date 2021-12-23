@@ -89,4 +89,12 @@ export default class Wallet implements WalletProvider {
     }
     return true
   }
+
+  /**
+   * Retrieve the private key for the account
+   * @return {Promise<string>} Resolves with the key as a string
+   */
+  exportPrivateKey(): Promise<string> {
+    return this.client.getMethod('exportPrivateKey')()
+  }
 }

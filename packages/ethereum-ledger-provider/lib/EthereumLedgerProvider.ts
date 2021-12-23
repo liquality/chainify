@@ -19,7 +19,7 @@ import EthCommon from '@ethereumjs/common'
 interface EthereumLedgerProviderOptions {
   network: EthereumNetwork
   derivationPath: string
-  Transport: any,
+  Transport: any
   hardfork?: string
 }
 
@@ -89,7 +89,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
       )
     }
 
-    let _txData = {
+    const _txData = {
       gasLimit: txData.gas,
       ...txData
     }
@@ -103,9 +103,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     }
 
     const msg = tx.getMessageToSign(false)
-    const encodedMessage = _txData.gasPrice
-      ? rlp.encode(msg)
-      : msg
+    const encodedMessage = _txData.gasPrice ? rlp.encode(msg) : msg
     const encodedMessageHex = encodedMessage.toString('hex')
 
     const app = await this.getApp()

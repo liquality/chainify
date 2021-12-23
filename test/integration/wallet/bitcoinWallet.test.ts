@@ -3,6 +3,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { TEST_TIMEOUT, Chain, chains, importBitcoinAddresses, fundAddress, describeExternal } from '../common'
+import config from '../config'
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 'TEST_TIMEOUT'
 
@@ -157,6 +158,13 @@ function testWallet(chain: Chain) {
       const signedMessage2 = await chain.client.wallet.signMessage('secret', address)
 
       expect(signedMessage1).to.equal(signedMessage2)
+    })
+  })
+
+  describe('exportPrivateKey', () => {
+    it('should return WIF string', async () => {
+      const key = await chain.client.wallet.exportPrivateKey()
+      expect(key).to.match(config.bitcoin.privKeyRx)
     })
   })
 }

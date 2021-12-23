@@ -16,7 +16,8 @@ import {
   ChainProvider,
   BigNumber,
   EIP1559Fee,
-  FeeHistory
+  FeeHistory,
+  TxStatus
 } from '@liquality/types'
 import { sleep, addressToString } from '@liquality/utils'
 import { InvalidDestinationAddressError, TxNotFoundError, BlockNotFoundError } from '@liquality/errors'
@@ -208,14 +209,23 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
   async getTransactionByHash(txHash: string) {
     txHash = ensure0x(txHash)
 
-    const currentBlock = await this.getBlockHeight()
     const tx = await this.rpc<ethereum.Transaction>('eth_getTransactionByHash', txHash)
+    const currentBlock = await this.getBlockHeight()
 
     if (!tx) {
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
     }
 
-    return normalizeTransactionObject(tx, currentBlock)
+    const txObj = normalizeTransactionObject(tx, currentBlock)
+
+    if (txObj.confirmations > 0) {
+      const receipt = await this.getTransactionReceipt(txHash)
+      txObj.status = Number(receipt.status) ? TxStatus.Success : TxStatus.Failed
+    } else {
+      txObj.status = TxStatus.Pending
+    }
+
+    return txObj
   }
 
   async getTransactionReceipt(txHash: string): Promise<ethereum.TransactionReceipt> {

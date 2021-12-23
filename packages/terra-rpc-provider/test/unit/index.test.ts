@@ -8,13 +8,13 @@ import { TerraNetworks } from '../../../terra-networks'
 
 chai.config.truncateThreshold = 0
 
-describe('Solana RPC provider', () => {
+describe('Terra RPC provider', () => {
   let client: Client
   let provider: any
 
   beforeEach(() => {
     client = new Client()
-    provider = new TerraRpcProvider(TerraNetworks.terra_testnet)
+    provider = new TerraRpcProvider(TerraNetworks.terra_testnet, 'uluna', 'uluna')
     client.addProvider(provider)
   })
 

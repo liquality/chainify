@@ -9,16 +9,22 @@ import {
   MnemonicKey,
   Msg,
   MsgSend,
-  StdTx,
   Wallet,
   CreateTxOptions,
-  StdFee
+  Fee,
+  Tx,
+  MsgExecuteContract,
+  isTxError
 } from '@terra-money/terra.js'
+import { ceil } from 'lodash'
 
 interface TerraWalletProviderOptions {
   network: TerraNetwork
   mnemonic: string
   baseDerivationPath: string
+  asset: string
+  feeAsset: string
+  tokenAddress?: string
 }
 
 export default class TerraWalletProvider extends WalletProvider {
@@ -29,15 +35,21 @@ export default class TerraWalletProvider extends WalletProvider {
   private _signer: MnemonicKey
   private _lcdClient: LCDClient
   private _wallet: Wallet
+  private _asset: string
+  private _feeAsset: string
+  private _tokenAddress: string
   _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
-    const { network, mnemonic, baseDerivationPath } = options
+    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
     this._baseDerivationPath = baseDerivationPath
     this._addressCache = {}
+    this._asset = asset
+    this._feeAsset = feeAsset
+    this._tokenAddress = tokenAddress
 
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
@@ -46,6 +58,10 @@ export default class TerraWalletProvider extends WalletProvider {
 
     this._setSigner()
     this._createWallet(this._signer)
+  }
+
+  exportPrivateKey() {
+    return this._signer.privateKey.toString('hex')
   }
 
   async isWalletAvailable(): Promise<boolean> {
@@ -65,7 +81,7 @@ export default class TerraWalletProvider extends WalletProvider {
     const result = new Address({
       address: wallet.accAddress,
       derivationPath: this._baseDerivationPath + `/0/0`,
-      publicKey: wallet.accPubKey
+      publicKey: wallet.publicKey.pubkeyAddress()
     })
 
     this._addressCache[this._mnemonic] = result
@@ -92,34 +108,17 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   async sendTransaction(sendOptions: SendOptions): Promise<Transaction<terra.InputTransaction>> {
-    const { to, value, fee } = sendOptions
-
-    const data: CreateTxOptions = sendOptions.data as any
-    let txData: any
-
-    if (typeof data?.fee === 'string') {
-      txData.fee = StdFee.fromData(JSON.parse(data.fee as any))
-    } else if (data?.msgs) {
-      txData = {
-        ...(fee && {
-          gasPrices: new Coins({
-            [this._network.asset]: fee as number
-          })
-        })
-      }
-    } else {
-      txData = {
-        msgs: [this._sendMessage(to, value)]
-      }
-    }
-
-    if (!txData.msgs) {
-      txData.msgs = data.msgs.map((msg) => (typeof msg === 'string' ? JSON.parse(msg) : msg))
-    }
+    const txData = this.composeTransaction(sendOptions)
 
     const tx = await this._wallet.createAndSignTx(txData)
 
     const transaction = await this._broadcastTx(tx)
+
+    if (isTxError(transaction)) {
+      throw new Error(
+        `Encountered an error while running the transaction: ${transaction.code} ${transaction.codespace} ${transaction.raw_log}`
+      )
+    }
 
     return {
       hash: transaction.txhash,
@@ -133,20 +132,41 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const balance = await this.getMethod('getBalance')(addresses)
 
-    const message = this._sendMessage(address, balance)
+    return await this.sendTransaction({ to: address, value: balance })
+  }
 
-    const fee = await this._estimateFee(this._signer.accAddress, [message])
+  async getTaxFees(amount: number, denom: string, max: boolean): Promise<any> {
+    const taxRate = await this._lcdClient.treasury.taxRate()
+    const taxCap = await this._lcdClient.treasury.taxCap(denom)
 
-    return await this.sendTransaction({ to: address, value: balance.minus(fee * 2) })
+    const _taxRate = taxRate.toNumber()
+    const _taxCap = taxCap.amount.toNumber()
+
+    const addresses = await this.getAddresses()
+    const balance = await this.getMethod('getBalance')(addresses)
+
+    return Math.min((max ? balance : amount || 0) * _taxRate, _taxCap / 1_000_000)
   }
 
   canUpdateFee(): boolean {
     return false
   }
 
-  _sendMessage(to: Address | string, value: BigNumber): MsgSend {
-    return new MsgSend(addressToString(this._signer.accAddress), addressToString(to), {
-      [this._network.asset]: value.toNumber()
+  _sendMessage(to: Address | string, value: BigNumber): MsgSend | MsgExecuteContract {
+    const sender = addressToString(this._signer.accAddress)
+    const recipient = addressToString(to)
+
+    if (this._tokenAddress) {
+      return new MsgExecuteContract(sender, this._tokenAddress, {
+        transfer: {
+          recipient,
+          amount: value.toString()
+        }
+      })
+    }
+
+    return new MsgSend(addressToString(this._signer.accAddress), addressToString(recipient), {
+      [this._asset]: value.toNumber()
     })
   }
 
@@ -166,13 +186,61 @@ export default class TerraWalletProvider extends WalletProvider {
     this._accAddressKey = this._wallet.key.accAddress
   }
 
-  private async _broadcastTx(tx: StdTx): Promise<BlockTxBroadcastResult> {
+  private async _broadcastTx(tx: Tx): Promise<BlockTxBroadcastResult> {
     return await this._lcdClient.tx.broadcast(tx)
   }
 
-  private async _estimateFee(payer: string, msgs: Msg[]): Promise<number> {
-    const fee = await this._lcdClient.tx.estimateFee(payer, msgs)
+  private composeTransaction(sendOptions: SendOptions) {
+    const { to, value, fee } = sendOptions
 
-    return Number(fee.amount.get(this._network.asset).amount)
+    const data: CreateTxOptions = sendOptions.data as any
+    let txData: any
+
+    const isProto = typeof data?.msgs[0] === 'string' && '@type' in JSON.parse(data?.msgs[0] as any)
+
+    if (typeof data?.fee === 'string') {
+      txData = {
+        fee: isProto ? Fee.fromData(JSON.parse(data.fee as any)) : Fee.fromAmino(JSON.parse(data.fee as any))
+      }
+    } else if (data?.msgs) {
+      const gasPrice = data.fee as any
+      const gasLimit = 800000
+
+      const fee = ceil(new BigNumber(gasLimit).times(gasPrice).toNumber())
+      const coins = new Coins({ [this._feeAsset]: fee })
+
+      txData = {
+        ...(data.fee && {
+          fee: new Fee(gasLimit, coins)
+        })
+      }
+    } else {
+      txData = {
+        msgs: [this._sendMessage(to, value)],
+        ...(fee && {
+          gasPrices: new Coins({
+            [this._feeAsset]: fee as number
+          })
+        })
+      }
+    }
+
+    if (data?.memo) {
+      txData = {
+        ...txData,
+        memo: data.memo
+      }
+    }
+
+    if (!txData.msgs) {
+      txData = {
+        ...txData,
+        msgs: data.msgs.map((msg) =>
+          typeof msg !== 'string' ? msg : isProto ? Msg.fromData(JSON.parse(msg)) : Msg.fromAmino(JSON.parse(msg))
+        )
+      }
+    }
+
+    return txData
   }
 }

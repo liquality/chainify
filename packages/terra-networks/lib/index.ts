@@ -6,7 +6,6 @@ export interface TerraNetwork extends Network {
   helperUrl: string
   gasPricesUrl: string
   chainID: string
-  asset: string
   codeId: number
 }
 
@@ -19,8 +18,7 @@ const terra_mainnet: TerraNetwork = {
   coinType: '370',
   isTestnet: false,
   chainID: 'columbus-5',
-  asset: 'luna',
-  codeId: 9344 // TODO: Replace after deploying contract on mainnet
+  codeId: 1480
 }
 
 const terra_testnet: TerraNetwork = {
@@ -31,9 +29,8 @@ const terra_testnet: TerraNetwork = {
   gasPricesUrl: 'https://bombay-fcd.terra.dev/v1/txs/gas_prices',
   coinType: '370',
   isTestnet: true,
-  chainID: 'bombay-11',
-  asset: 'uluna',
-  codeId: 9344
+  chainID: 'bombay-12',
+  codeId: 23733
 }
 
 const TerraNetworks = {

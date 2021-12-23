@@ -4,7 +4,7 @@ import { ChainProvider, SendOptions } from './chain'
 import { WalletProvider } from './wallet'
 
 import { FeeProvider, FeeDetails, FeeDetail, EIP1559Fee, FeeHistory } from './fees'
-import { Transaction } from './transaction'
+import { Transaction, TxStatus } from './transaction'
 import { Block } from './block'
 import { Address } from './address'
 import { Network } from './network'
@@ -39,6 +39,7 @@ export {
   EIP1559Fee,
   BigNumber,
   Transaction,
+  TxStatus,
   Block,
   FeeDetails,
   FeeDetail,
