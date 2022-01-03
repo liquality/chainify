@@ -7,7 +7,8 @@ import {
   buildTransaction,
   numberToHex,
   hexToNumber,
-  normalizeTransactionObject
+  normalizeTransactionObject,
+  GWEI
 } from '@liquality/ethereum-utils'
 
 import { mnemonicToSeed } from 'bip39'
@@ -124,7 +125,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
 
     const txOptions: ethereum.UnsignedTransaction = {
       from,
-      to: options.to ? addressToString(options.to) : (options.to as string),
+      to: addressToString(options.to),
       value: options.value,
       data: options.data,
       nonce
@@ -161,22 +162,20 @@ export default class EthereumJsWalletProvider extends WalletProvider {
 
   async sendSweepTransaction(address: Address | ethereum.Address, gasPrice: EIP1559Fee | number) {
     const addresses = await this.getAddresses()
+    const balance = await this.client.chain.getBalance(addresses)
 
     let fee = gasPrice
-
-    const balance = await this.client.chain.getBalance(addresses)
     if (!fee) {
       // set fast fee by default
       fee = (await this.getMethod('getFees')()).fast.fee
     }
 
-    const maxFee = new BigNumber(typeof fee === 'number' ? fee : fee.maxFeePerGas).times(21000)
+    const maxFee = new BigNumber(typeof fee === 'number' ? fee : fee.maxFeePerGas).times(GWEI).times(21000)
     const amountToSend = balance.minus(maxFee)
 
     const sendOptions: SendOptions = {
       to: address,
       value: amountToSend,
-      data: null,
       fee
     }
 
