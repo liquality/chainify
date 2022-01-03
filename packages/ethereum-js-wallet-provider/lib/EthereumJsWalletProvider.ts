@@ -125,10 +125,13 @@ export default class EthereumJsWalletProvider extends WalletProvider {
 
     const txOptions: ethereum.UnsignedTransaction = {
       from,
-      to: addressToString(options.to),
       value: options.value,
       data: options.data,
       nonce
+    }
+
+    if (options.to) {
+      txOptions.to = addressToString(options.to)
     }
 
     let { fee } = options
