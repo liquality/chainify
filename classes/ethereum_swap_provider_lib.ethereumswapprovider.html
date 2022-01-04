@@ -166,14 +166,14 @@
 					<a name="claimswap" class="tsd-anchor"></a>
 					<h3>claim<wbr>Swap</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">claim<wbr>Swap<span class="tsd-signature-symbol">(</span>swapParams<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SwapParams</span>, initiationTxHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, secret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">claim<wbr>Swap<span class="tsd-signature-symbol">(</span>swapParams<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SwapParams</span>, initiationTxHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, secret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.claimSwap</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L154">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L154">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:154</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -188,7 +188,7 @@
 									<h5>secret: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>gasPrice: <span class="tsd-signature-type">number</span></h5>
+									<h5>gasPrice: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -205,7 +205,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L16">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L16">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:16</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -228,7 +228,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L199">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:199</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L199">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:199</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -254,7 +254,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L190">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:190</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L190">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:190</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -281,7 +281,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findClaimSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L247">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:247</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L247">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:247</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -311,7 +311,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findFundSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L270">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:270</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L270">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:270</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -329,7 +329,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findInitiateSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L239">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:239</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L239">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:239</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -356,7 +356,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.findRefundSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L281">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:281</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L281">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:281</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -385,7 +385,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L230">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:230</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L230">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:230</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -433,7 +433,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.fundSwap</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L150">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L150">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:150</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -488,7 +488,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.getSwapSecret</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L274">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:274</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L274">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:274</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -505,14 +505,14 @@
 					<a name="initiateswap" class="tsd-anchor"></a>
 					<h3>initiate<wbr>Swap</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">initiate<wbr>Swap<span class="tsd-signature-symbol">(</span>swapParams<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SwapParams</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">initiate<wbr>Swap<span class="tsd-signature-symbol">(</span>swapParams<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SwapParams</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.initiateSwap</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L143">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:143</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L143">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:143</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -521,7 +521,7 @@
 									<h5>swapParams: <span class="tsd-signature-type">SwapParams</span></h5>
 								</li>
 								<li>
-									<h5>gasPrice: <span class="tsd-signature-type">number</span></h5>
+									<h5>gasPrice: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -532,14 +532,14 @@
 					<a name="refundswap" class="tsd-anchor"></a>
 					<h3>refund<wbr>Swap</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">refund<wbr>Swap<span class="tsd-signature-symbol">(</span>swapParams<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SwapParams</span>, initiationTxHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">refund<wbr>Swap<span class="tsd-signature-symbol">(</span>swapParams<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SwapParams</span>, initiationTxHash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.refundSwap</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L173">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L173">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:173</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -551,7 +551,7 @@
 									<h5>initiationTxHash: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>gasPrice: <span class="tsd-signature-type">number</span></h5>
+									<h5>gasPrice: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -600,7 +600,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L135">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L135">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -624,7 +624,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of Partial.verifyInitiateSwapTransaction</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L209">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts#L209">packages/ethereum-swap-provider/lib/EthereumSwapProvider.ts:209</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>

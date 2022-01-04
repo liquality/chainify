@@ -98,6 +98,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_transport" class="tsd-kind-icon">_<wbr>Transport</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_appinstance" class="tsd-kind-icon">_app<wbr>Instance</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_derivationpath" class="tsd-kind-icon">_derivation<wbr>Path</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_hardfork" class="tsd-kind-icon">_hardfork</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_ledgerscramblekey" class="tsd-kind-icon">_ledger<wbr>Scramble<wbr>Key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_methods" class="tsd-kind-icon">_methods</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_network" class="tsd-kind-icon">_network</a></li>
@@ -143,7 +144,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider&lt;HwAppEthereum&gt;.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L25">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L28">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -198,7 +199,17 @@
 					<div class="tsd-signature tsd-kind-icon">_derivation<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L25">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L27">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:27</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_hardfork" class="tsd-anchor"></a>
+					<h3>_hardfork</h3>
+					<div class="tsd-signature tsd-kind-icon">_hardfork<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L28">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -361,7 +372,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.getAddresses</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L41">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L45">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -452,7 +463,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.getUnusedAddress</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L53">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L57">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -470,7 +481,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.getUsedAddresses</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L67">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L71">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Address</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -512,7 +523,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.isWalletAvailable</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L58">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L62">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -529,7 +540,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L93">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L126">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:126</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -585,7 +596,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides LedgerProvider.signMessage</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L32">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L36">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -605,25 +616,25 @@
 					<a name="signtransaction" class="tsd-anchor"></a>
 					<h3>sign<wbr>Transaction</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">sign<wbr>Transaction<span class="tsd-signature-symbol">(</span>txData<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TransactionRequest</span>, path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">sign<wbr>Transaction<span class="tsd-signature-symbol">(</span>txData<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TransactionRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559TransactionRequest</span>, path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L71">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L75">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:75</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>txData: <span class="tsd-signature-type">TransactionRequest</span></h5>
+									<h5>txData: <span class="tsd-signature-type">TransactionRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559TransactionRequest</span></h5>
 								</li>
 								<li>
 									<h5>path: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -631,13 +642,13 @@
 					<a name="updatetransactionfee" class="tsd-anchor"></a>
 					<h3>update<wbr>Transaction<wbr>Fee</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">update<wbr>Transaction<wbr>Fee<span class="tsd-signature-symbol">(</span>tx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PartialTransaction</span><span class="tsd-signature-symbol">&gt;</span>, newGasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PartialTransaction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Transaction<wbr>Fee<span class="tsd-signature-symbol">(</span>tx<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PartialTransaction</span><span class="tsd-signature-symbol">&gt;</span>, newGasPrice<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PartialTransaction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/762fa9f/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L127">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts#L169">packages/ethereum-ledger-provider/lib/EthereumLedgerProvider.ts:169</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -646,7 +657,7 @@
 									<h5>tx: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PartialTransaction</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
-									<h5>newGasPrice: <span class="tsd-signature-type">number</span></h5>
+									<h5>newGasPrice: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">EIP1559Fee</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Transaction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">PartialTransaction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -687,6 +698,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_derivationpath" class="tsd-kind-icon">_derivation<wbr>Path</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_hardfork" class="tsd-kind-icon">_hardfork</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="ethereum_ledger_provider_lib.ethereumledgerprovider.html#_ledgerscramblekey" class="tsd-kind-icon">_ledger<wbr>Scramble<wbr>Key</a>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>NearBlockHeader | root</title>
+	<title>EIP1559Fee | root</title>
 	<meta name="description" content="Documentation for root">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -58,13 +58,10 @@
 					<a href="../modules/types_lib.html">types/lib</a>
 				</li>
 				<li>
-					<a href="../modules/types_lib.near.html">near</a>
-				</li>
-				<li>
-					<a href="types_lib.near.nearblockheader.html">NearBlockHeader</a>
+					<a href="types_lib.eip1559fee.html">EIP1559Fee</a>
 				</li>
 			</ul>
-			<h1>Interface NearBlockHeader</h1>
+			<h1>Interface EIP1559Fee</h1>
 		</div>
 	</div>
 </header>
@@ -75,7 +72,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">NearBlockHeader</span>
+						<span class="target">EIP1559Fee</span>
 					</li>
 				</ul>
 			</section>
@@ -86,11 +83,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.near.nearblockheader.html#hash" class="tsd-kind-icon">hash</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.near.nearblockheader.html#number" class="tsd-kind-icon">number</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.near.nearblockheader.html#size" class="tsd-kind-icon">size</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.near.nearblockheader.html#timestamp" class="tsd-kind-icon">timestamp</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.near.nearblockheader.html#transactions" class="tsd-kind-icon">transactions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.eip1559fee.html#basefeetrend" class="tsd-kind-icon">base<wbr>Fee<wbr>Trend</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.eip1559fee.html#currentbasefeepergas" class="tsd-kind-icon">current<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.eip1559fee.html#maxfeepergas" class="tsd-kind-icon">max<wbr>Fee<wbr>Per<wbr>Gas</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.eip1559fee.html#maxpriorityfeepergas" class="tsd-kind-icon">max<wbr>Priority<wbr>Fee<wbr>Per<wbr>Gas</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_lib.eip1559fee.html#suggestedbasefeepergas" class="tsd-kind-icon">suggested<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,52 +96,52 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="hash" class="tsd-anchor"></a>
-					<h3>hash</h3>
-					<div class="tsd-signature tsd-kind-icon">hash<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="basefeetrend" class="tsd-anchor"></a>
+					<h3>base<wbr>Fee<wbr>Trend</h3>
+					<div class="tsd-signature tsd-kind-icon">base<wbr>Fee<wbr>Trend<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/near/index.ts#L33">packages/types/lib/near/index.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/fees.ts#L2">packages/types/lib/fees.ts:2</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="number" class="tsd-anchor"></a>
-					<h3>number</h3>
-					<div class="tsd-signature tsd-kind-icon">number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="currentbasefeepergas" class="tsd-anchor"></a>
+					<h3>current<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas</h3>
+					<div class="tsd-signature tsd-kind-icon">current<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/near/index.ts#L32">packages/types/lib/near/index.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/fees.ts#L3">packages/types/lib/fees.ts:3</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="size" class="tsd-anchor"></a>
-					<h3>size</h3>
-					<div class="tsd-signature tsd-kind-icon">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="maxfeepergas" class="tsd-anchor"></a>
+					<h3>max<wbr>Fee<wbr>Per<wbr>Gas</h3>
+					<div class="tsd-signature tsd-kind-icon">max<wbr>Fee<wbr>Per<wbr>Gas<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/near/index.ts#L35">packages/types/lib/near/index.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/fees.ts#L6">packages/types/lib/fees.ts:6</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="timestamp" class="tsd-anchor"></a>
-					<h3>timestamp</h3>
-					<div class="tsd-signature tsd-kind-icon">timestamp<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="maxpriorityfeepergas" class="tsd-anchor"></a>
+					<h3>max<wbr>Priority<wbr>Fee<wbr>Per<wbr>Gas</h3>
+					<div class="tsd-signature tsd-kind-icon">max<wbr>Priority<wbr>Fee<wbr>Per<wbr>Gas<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/near/index.ts#L34">packages/types/lib/near/index.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/fees.ts#L5">packages/types/lib/fees.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="transactions" class="tsd-anchor"></a>
-					<h3>transactions</h3>
-					<div class="tsd-signature tsd-kind-icon">transactions<span class="tsd-signature-symbol">:</span> <a href="types_lib.near.normalizedtransaction.html" class="tsd-signature-type" data-tsd-kind="Interface">NormalizedTransaction</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="suggestedbasefeepergas" class="tsd-anchor"></a>
+					<h3>suggested<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas</h3>
+					<div class="tsd-signature tsd-kind-icon">suggested<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/near/index.ts#L36">packages/types/lib/near/index.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/liquality/chainabstractionlayer/blob/d1accc4/packages/types/lib/fees.ts#L4">packages/types/lib/fees.ts:4</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -168,7 +165,7 @@
 							<li class=" tsd-kind-namespace tsd-parent-kind-module">
 								<a href="../modules/types_lib.ethereum.html">ethereum</a>
 							</li>
-							<li class="current tsd-kind-namespace tsd-parent-kind-module">
+							<li class=" tsd-kind-namespace tsd-parent-kind-module">
 								<a href="../modules/types_lib.near.html">near</a>
 							</li>
 							<li class=" tsd-kind-namespace tsd-parent-kind-module">
@@ -183,53 +180,74 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.inputtransaction.html" class="tsd-kind-icon">Input<wbr>Transaction</a>
+					<li class=" tsd-kind-enum tsd-parent-kind-module">
+						<a href="../enums/types_lib.txstatus.html" class="tsd-kind-icon">Tx<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/types_lib.address.html" class="tsd-kind-icon">Address</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-is-external">
+						<a href="../classes/types_lib.bignumber-1.html" class="tsd-kind-icon">Big<wbr>Number</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="types_lib.block.html" class="tsd-kind-icon">Block</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.chainprovider.html" class="tsd-kind-icon">Chain<wbr>Provider</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.nearblockheader.html" class="tsd-kind-icon">Near<wbr>Block<wbr>Header</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.eip1559fee.html" class="tsd-kind-icon">EIP1559<wbr>Fee</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types_lib.near.nearblockheader.html#hash" class="tsd-kind-icon">hash</a>
+								<a href="types_lib.eip1559fee.html#basefeetrend" class="tsd-kind-icon">base<wbr>Fee<wbr>Trend</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types_lib.near.nearblockheader.html#number" class="tsd-kind-icon">number</a>
+								<a href="types_lib.eip1559fee.html#currentbasefeepergas" class="tsd-kind-icon">current<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types_lib.near.nearblockheader.html#size" class="tsd-kind-icon">size</a>
+								<a href="types_lib.eip1559fee.html#maxfeepergas" class="tsd-kind-icon">max<wbr>Fee<wbr>Per<wbr>Gas</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types_lib.near.nearblockheader.html#timestamp" class="tsd-kind-icon">timestamp</a>
+								<a href="types_lib.eip1559fee.html#maxpriorityfeepergas" class="tsd-kind-icon">max<wbr>Priority<wbr>Fee<wbr>Per<wbr>Gas</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="types_lib.near.nearblockheader.html#transactions" class="tsd-kind-icon">transactions</a>
+								<a href="types_lib.eip1559fee.html#suggestedbasefeepergas" class="tsd-kind-icon">suggested<wbr>Base<wbr>Fee<wbr>Per<wbr>Gas</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.nearchunk.html" class="tsd-kind-icon">Near<wbr>Chunk</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.feedetail.html" class="tsd-kind-icon">Fee<wbr>Detail</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.nearinputblockheader.html" class="tsd-kind-icon">Near<wbr>Input<wbr>Block<wbr>Header</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.feedetails.html" class="tsd-kind-icon">Fee<wbr>Details</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.nearsendoptions.html" class="tsd-kind-icon">Near<wbr>Send<wbr>Options</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.feeprovider.html" class="tsd-kind-icon">Fee<wbr>Provider</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.nearswaptransaction.html" class="tsd-kind-icon">Near<wbr>Swap<wbr>Transaction</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.iclient.html" class="tsd-kind-icon">IClient</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.normalizedtransaction.html" class="tsd-kind-icon">Normalized<wbr>Transaction</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.network.html" class="tsd-kind-icon">Network</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="types_lib.near.tx.html" class="tsd-kind-icon">Tx</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.sendoptions.html" class="tsd-kind-icon">Send<wbr>Options</a>
 					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
-						<a href="../modules/types_lib.near.html#nearscraperswap" class="tsd-kind-icon">Near<wbr>Scraper<wbr>Swap</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.swapparams.html" class="tsd-kind-icon">Swap<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.swapprovider.html" class="tsd-kind-icon">Swap<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="types_lib.transaction.html" class="tsd-kind-icon">Transaction</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="types_lib.walletprovider.html" class="tsd-kind-icon">Wallet<wbr>Provider</a>
 					</li>
 				</ul>
 			</nav>
