@@ -161,12 +161,14 @@ function testWallet(chain: Chain) {
     })
   })
 
-  describe('exportPrivateKey', () => {
-    it('should return WIF string', async () => {
-      const key = await chain.client.wallet.exportPrivateKey()
-      expect(key).to.match(config.bitcoin.privKeyRx)
+  if (!chain.id.includes('Ledger')) {
+    describe('exportPrivateKey', () => {
+      it('should return WIF string', async () => {
+        const key = await chain.client.wallet.exportPrivateKey()
+        expect(key).to.match(config.bitcoin.privKeyRx)
+      })
     })
-  })
+  }
 }
 
 describe('Wallet Interaction', function () {
