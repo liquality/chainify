@@ -11,7 +11,7 @@ function gwei(wei: BigNumber | number): BigNumber {
   return new BigNumber(wei).times(GWEI)
 }
 
-function toGwei(wei: BigNumber | number): BigNumber {
+function toGwei(wei: BigNumber | number | string): BigNumber {
   return new BigNumber(wei).div(GWEI)
 }
 

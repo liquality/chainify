@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/jsonrpc-provider": "^1.11.2",
+    "@ethersproject/providers": "^5.5.1",
+    "@liquality/provider": "^1.11.2",
     "@liquality/ethereum-utils": "^1.11.2",
     "@liquality/types": "^1.11.2",
-    "@mycrypto/gas-estimation": "^1.1.0",
-    "bignumber.js": "^9.0.0"
+    "@rainbow-me/fee-suggestions": "^1.7.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

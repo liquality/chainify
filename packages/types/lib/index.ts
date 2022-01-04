@@ -3,7 +3,7 @@ import { SwapProvider, SwapParams } from './swap'
 import { ChainProvider, SendOptions } from './chain'
 import { WalletProvider } from './wallet'
 
-import { FeeProvider, FeeDetails, FeeDetail, EIP1559Fee, FeeHistory } from './fees'
+import { FeeProvider, FeeDetails, FeeDetail, EIP1559Fee } from './fees'
 import { Transaction, TxStatus } from './transaction'
 import { Block } from './block'
 import { Address } from './address'
@@ -43,7 +43,6 @@ export {
   Block,
   FeeDetails,
   FeeDetail,
-  FeeHistory,
   Address,
   Network,
   SendOptions,

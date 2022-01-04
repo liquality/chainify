@@ -16,7 +16,6 @@ import {
   ChainProvider,
   BigNumber,
   EIP1559Fee,
-  FeeHistory,
   TxStatus,
   FeeDetails
 } from '@liquality/types'
@@ -179,14 +178,6 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     }
 
     return this.parseBlock(block, includeTx)
-  }
-
-  async getFeeHistory(
-    blockCount: number,
-    newestBlock: string | number,
-    rewardPercentiles: number[]
-  ): Promise<FeeHistory> {
-    return this.rpc<FeeHistory>('eth_feeHistory', blockCount, newestBlock, rewardPercentiles ?? [])
   }
 
   async getBlockByNumber(blockNumber: number, includeTx = false): Promise<Block> {
