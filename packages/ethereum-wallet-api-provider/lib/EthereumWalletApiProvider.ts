@@ -97,7 +97,15 @@ export default class EthereumWalletApiProvider extends WalletProvider {
       value: options.value,
       data: options.data
     }
-    if (options.fee) txOptions.gasPrice = new BigNumber(options.fee)
+
+    if (options.fee) {
+      if (typeof options.fee === 'number') {
+        txOptions.gasPrice = new BigNumber(options.fee)
+      } else {
+        txOptions.maxPriorityFeePerGas = new BigNumber(options.fee.maxPriorityFeePerGas)
+        txOptions.maxFeePerGas = new BigNumber(options.fee.maxFeePerGas)
+      }
+    }
 
     const txData = await buildTransaction(txOptions)
 

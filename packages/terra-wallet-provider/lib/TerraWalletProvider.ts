@@ -219,7 +219,7 @@ export default class TerraWalletProvider extends WalletProvider {
         msgs: [this._sendMessage(to, value)],
         ...(fee && {
           gasPrices: new Coins({
-            [this._feeAsset]: fee
+            [this._feeAsset]: fee as number
           })
         })
       }

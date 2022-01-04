@@ -18,8 +18,13 @@
   },
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
+  "engines": {
+    "node": "^14.18.1"
+  },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
+    "@ethereumjs/common": "^2.6.0",
+    "@ethereumjs/tx": "^3.4.0",
     "@liquality/ethereum-networks": "^1.11.2",
     "@liquality/ethereum-utils": "^1.11.2",
     "@liquality/types": "^1.11.2",
@@ -27,8 +32,6 @@
     "@liquality/wallet-provider": "^1.11.2",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
-    "ethereumjs-common": "^1.4.0",
-    "ethereumjs-tx": "^2.1.1",
     "ethereumjs-util": "^6.1.0",
     "hdkey": "^1.1.1"
   },

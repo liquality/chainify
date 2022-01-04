@@ -1,0 +1,44 @@
+{
+  "name": "@liquality/ethereum-eip1559-fee-provider",
+  "version": "1.11.2",
+  "description": "",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "engines": {
+    "node": "^14.18.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@ethersproject/providers": "^5.5.1",
+    "@liquality/provider": "^1.11.2",
+    "@liquality/ethereum-utils": "^1.11.2",
+    "@liquality/types": "^1.11.2",
+    "@rainbow-me/fee-suggestions": "^1.7.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}

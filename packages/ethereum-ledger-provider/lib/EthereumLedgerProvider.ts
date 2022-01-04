@@ -1,5 +1,5 @@
 import { LedgerProvider } from '@liquality/ledger-provider'
-import { Address, ethereum, SendOptions, Transaction, BigNumber } from '@liquality/types'
+import { Address, ethereum, SendOptions, Transaction, BigNumber, EIP1559Fee } from '@liquality/types'
 import { EthereumNetwork } from '@liquality/ethereum-networks'
 import { addressToString } from '@liquality/utils'
 import {
@@ -10,23 +10,27 @@ import {
   normalizeTransactionObject,
   hexToNumber
 } from '@liquality/ethereum-utils'
-import { toRpcSig } from 'ethereumjs-util'
+import { toRpcSig, rlp } from 'ethereumjs-util'
 
 import HwAppEthereum from '@ledgerhq/hw-app-eth'
-import EthereumJsTx from 'ethereumjs-tx'
+import { Transaction as LegacyTransaction, FeeMarketEIP1559Transaction } from '@ethereumjs/tx'
+import EthCommon from '@ethereumjs/common'
 
 interface EthereumLedgerProviderOptions {
   network: EthereumNetwork
   derivationPath: string
   Transport: any
+  hardfork?: string
 }
 
 export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum> {
   _derivationPath: string
+  _hardfork: string
 
   constructor(options: EthereumLedgerProviderOptions) {
     super({ ...options, App: HwAppEthereum, ledgerScrambleKey: 'w0w' }) // srs!
     this._derivationPath = options.derivationPath
+    this._hardfork = options.hardfork || 'istanbul'
   }
 
   async signMessage(message: string, from: string) {
@@ -68,26 +72,55 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return this.getAddresses()
   }
 
-  async signTransaction(txData: ethereum.TransactionRequest, path: string) {
-    const chainId = numberToHex((this._network as EthereumNetwork).chainId)
+  async signTransaction(txData: ethereum.EIP1559TransactionRequest | ethereum.TransactionRequest, path: string) {
+    const network = this._network as EthereumNetwork
+
+    const common = EthCommon.custom(
+      {
+        name: network.name,
+        chainId: network.chainId,
+        networkId: network.networkId
+      },
+      {
+        hardfork: this._hardfork
+      }
+    )
+
+    const _txData = {
+      gasLimit: txData.gas,
+      ...txData
+    }
+
+    let tx
+
+    if (_txData.gasPrice) {
+      tx = LegacyTransaction.fromTxData(_txData, { common })
+    } else {
+      tx = FeeMarketEIP1559Transaction.fromTxData(_txData as ethereum.EIP1559TransactionRequest, { common })
+    }
+
+    const msg = tx.getMessageToSign(false)
+    const encodedMessage = _txData.gasPrice ? rlp.encode(msg) : msg
+    const encodedMessageHex = encodedMessage.toString('hex')
+
     const app = await this.getApp()
-    const tx = new EthereumJsTx({
-      ...txData,
-      chainId: hexToNumber(chainId), // HEY Could be incorrect
-      v: chainId
-    })
-    const serializedTx = tx.serialize().toString('hex')
-    const txSig = await app.signTransaction(path, serializedTx)
+    const txSig = await app.signTransaction(path, encodedMessageHex)
+
     const signedTxData = {
-      ...txData,
+      ..._txData,
       v: ensure0x(txSig.v),
       r: ensure0x(txSig.r),
       s: ensure0x(txSig.s)
     }
 
-    const signedTx = new EthereumJsTx(signedTxData)
-    const signedSerializedTx = signedTx.serialize().toString('hex')
-    return signedSerializedTx
+    let signedTx
+    if (_txData.gasPrice) {
+      signedTx = LegacyTransaction.fromTxData(signedTxData, { common })
+    } else {
+      signedTx = FeeMarketEIP1559Transaction.fromTxData(signedTxData as ethereum.EIP1559TransactionRequest, { common })
+    }
+
+    return signedTx.serialize().toString('hex')
   }
 
   async sendTransaction(options: SendOptions) {
@@ -95,18 +128,27 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     const address = addresses[0]
     const from = address.address
 
-    const [nonce, gasPrice] = await Promise.all([
-      this.getMethod('getTransactionCount')(remove0x(from), 'pending'),
-      options.fee ? Promise.resolve(new BigNumber(options.fee)) : this.getMethod('getGasPrice')()
-    ])
-
+    const nonce = await this.getMethod('getTransactionCount')(remove0x(from), 'pending')
     const txOptions: ethereum.UnsignedTransaction = {
       from,
       to: options.to ? addressToString(options.to) : (options.to as string),
       value: options.value,
       data: options.data,
-      gasPrice,
       nonce
+    }
+
+    let { fee } = options
+
+    if (!fee) {
+      // set average fee by default
+      fee = (await this.getMethod('getFees')()).average.fee
+    }
+
+    if (typeof fee === 'number') {
+      txOptions.gasPrice = new BigNumber(fee)
+    } else {
+      txOptions.maxPriorityFeePerGas = new BigNumber(fee.maxPriorityFeePerGas)
+      txOptions.maxFeePerGas = new BigNumber(fee.maxFeePerGas)
     }
 
     const txData = buildTransaction(txOptions)
@@ -124,7 +166,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     return normalizeTransactionObject(txWithHash)
   }
 
-  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: number) {
+  async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: EIP1559Fee | number) {
     const transaction: Transaction<ethereum.Transaction> =
       typeof tx === 'string' ? await this.getMethod('getTransactionByHash')(tx) : tx
 
@@ -132,14 +174,19 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
       from: transaction._raw.from,
       to: transaction._raw.to,
       value: new BigNumber(transaction._raw.value),
-      gasPrice: new BigNumber(newGasPrice),
       data: transaction._raw.input,
       nonce: hexToNumber(transaction._raw.nonce)
     }
 
+    if (typeof newGasPrice === 'number') {
+      txOptions.gasPrice = new BigNumber(newGasPrice)
+    } else {
+      txOptions.maxPriorityFeePerGas = new BigNumber(newGasPrice.maxPriorityFeePerGas)
+      txOptions.maxFeePerGas = new BigNumber(newGasPrice.maxFeePerGas)
+    }
+
     const txData = await buildTransaction(txOptions)
-    const gas = await this.getMethod('estimateGas')(txData)
-    txData.gas = numberToHex(gas)
+    txData.gas = transaction._raw.gas
 
     const address = await this.getWalletAddress(txData.from)
     const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)

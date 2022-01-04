@@ -7,6 +7,14 @@ import eip55 from 'eip55'
 
 const GWEI = 1e9
 
+function gwei(wei: BigNumber | number): BigNumber {
+  return new BigNumber(wei).times(GWEI)
+}
+
+function toGwei(wei: BigNumber | number | string): BigNumber {
+  return new BigNumber(wei).div(GWEI)
+}
+
 /**
  * Converts a hex string to the ethereum format
  * @param {*} hash
@@ -90,8 +98,20 @@ function buildTransaction(txOptions: ethereum.UnsignedTransaction): ethereum.Tra
     value: txOptions.value ? numberToHex(txOptions.value) : '0x0'
   }
 
-  if (txOptions.gasPrice)
+  if (txOptions.gasPrice) {
     tx.gasPrice = ensure0x(txOptions.gasPrice.times(GWEI).dp(0, BigNumber.ROUND_CEIL).toString(16))
+  }
+
+  if (txOptions.maxPriorityFeePerGas) {
+    tx.maxPriorityFeePerGas = ensure0x(
+      txOptions.maxPriorityFeePerGas.times(GWEI).dp(0, BigNumber.ROUND_CEIL).toString(16)
+    )
+  }
+
+  if (txOptions.maxFeePerGas) {
+    tx.maxFeePerGas = ensure0x(txOptions.maxFeePerGas.times(GWEI).dp(0, BigNumber.ROUND_CEIL).toString(16))
+  }
+
   if (txOptions.to) tx.to = ensure0x(txOptions.to)
   if (txOptions.data) tx.data = ensure0x(txOptions.data)
   if (txOptions.nonce !== null && txOptions.nonce !== undefined) tx.nonce = ensure0x(txOptions.nonce.toString(16))
@@ -128,6 +148,9 @@ function validateExpiration(expiration: number) {
 }
 
 export {
+  GWEI,
+  toGwei,
+  gwei,
   ensure0x,
   remove0x,
   hexToNumber,

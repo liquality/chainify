@@ -14,15 +14,15 @@ services:
       -server
       -rpcworkqueue=400
   ethereum:
-    image: ethereum/client-go:v1.9.22
+    image: ethereum/client-go:v1.10.14
     ports:
       - '8545:8545'
     command: --dev
-      --rpc
-      --rpcapi eth,net,web3,miner,debug
-      --rpcport 8545
-      --rpccorsdomain "*"
-      --rpcaddr "0.0.0.0"
+      --http
+      --http.api eth,net,web3,miner,debug
+      --http.port 8545
+      --http.corsdomain "*"
+      --http.addr "0.0.0.0"
       --allow-insecure-unlock
     volumes:
       - .:/root

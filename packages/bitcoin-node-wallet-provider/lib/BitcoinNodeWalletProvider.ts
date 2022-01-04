@@ -73,7 +73,7 @@ export default class BitcoinNodeWalletProvider extends WalletProvider {
 
   async sendTransaction(options: SendOptions) {
     return options.fee
-      ? this.withTxFee(async () => this._sendTransaction(options), options.fee)
+      ? this.withTxFee(async () => this._sendTransaction(options), options.fee as number)
       : this._sendTransaction(options)
   }
 

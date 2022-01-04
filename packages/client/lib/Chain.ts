@@ -7,7 +7,8 @@ import {
   ChainProvider,
   FeeProvider,
   BigNumber,
-  Address
+  Address,
+  EIP1559Fee
 } from '@liquality/types'
 import { isBoolean, isNumber, isString, isObject } from 'lodash'
 
@@ -101,12 +102,12 @@ export default class Chain implements ChainProvider, FeeProvider {
   }
 
   /** @inheritdoc */
-  async sendSweepTransaction(address: Address | string, fee?: number): Promise<Transaction> {
+  async sendSweepTransaction(address: Address | string, fee?: EIP1559Fee | number): Promise<Transaction> {
     return this.client.getMethod('sendSweepTransaction')(address, fee)
   }
 
   /** @inheritdoc */
-  async updateTransactionFee(tx: string | Transaction, newFee: number): Promise<Transaction> {
+  async updateTransactionFee(tx: string | Transaction, newFee: EIP1559Fee | number): Promise<Transaction> {
     if (isObject(tx)) {
       this.client.assertValidTransaction(tx)
     } else {

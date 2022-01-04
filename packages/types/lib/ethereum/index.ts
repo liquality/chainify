@@ -57,6 +57,8 @@ export declare type UnsignedTransaction = {
   nonce?: number
   gas?: BigNumber
   gasPrice?: BigNumber
+  maxPriorityFeePerGas?: BigNumber
+  maxFeePerGas?: BigNumber
   data?: Hex
   value?: BigNumber
   chainId?: number
@@ -68,8 +70,14 @@ export interface TransactionRequest {
   value: Hex
   gas?: Hex
   gasPrice?: Hex
+  maxPriorityFeePerGas?: Hex
+  maxFeePerGas?: Hex
   data?: Hex
   nonce?: Hex
+}
+
+export interface EIP1559TransactionRequest extends TransactionRequest {
+  gasPrice: never
 }
 
 export interface PartialTransaction {

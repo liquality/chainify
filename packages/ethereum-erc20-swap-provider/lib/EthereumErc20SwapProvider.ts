@@ -9,7 +9,16 @@ import {
   validateSecretAndHash
 } from '@liquality/utils'
 import { remove0x, ensure0x, validateAddress, validateExpiration } from '@liquality/ethereum-utils'
-import { SwapProvider, SwapParams, Block, Transaction, BigNumber, Address, ethereum } from '@liquality/types'
+import {
+  SwapProvider,
+  SwapParams,
+  Block,
+  Transaction,
+  BigNumber,
+  Address,
+  ethereum,
+  EIP1559Fee
+} from '@liquality/types'
 import {
   PendingTxError,
   TxNotFoundError,
@@ -65,7 +74,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     validateExpiration(swapParams.expiration)
   }
 
-  async initiateSwap(swapParams: SwapParams, gasPrice: number) {
+  async initiateSwap(swapParams: SwapParams, gasPrice: EIP1559Fee | number) {
     this.validateSwapParams(swapParams)
 
     const addresses: Address[] = await this.getMethod('getAddresses')()
@@ -86,7 +95,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     })
   }
 
-  async fundSwap(swapParams: SwapParams, initiationTxHash: string, gasPrice: number) {
+  async fundSwap(swapParams: SwapParams, initiationTxHash: string, gasPrice: EIP1559Fee | number) {
     this.validateSwapParams(swapParams)
 
     const initiationTransaction = await this.getMethod('getTransactionByHash')(initiationTxHash)
@@ -131,7 +140,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     })
   }
 
-  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: number) {
+  async claimSwap(swapParams: SwapParams, initiationTxHash: string, secret: string, gasPrice: EIP1559Fee | number) {
     this.validateSwapParams(swapParams)
     validateSecret(secret)
     validateSecretAndHash(secret, swapParams.secretHash)
@@ -151,7 +160,7 @@ export default class EthereumErc20SwapProvider extends Provider implements Parti
     })
   }
 
-  async refundSwap(swapParams: SwapParams, initiationTxHash: string, gasPrice: number) {
+  async refundSwap(swapParams: SwapParams, initiationTxHash: string, gasPrice: EIP1559Fee | number) {
     this.validateSwapParams(swapParams)
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 

@@ -2,12 +2,13 @@ import BigNumber from 'bignumber.js'
 import { Block } from './block'
 import { Transaction } from './transaction'
 import { Address } from './address'
+import { EIP1559Fee } from './fees'
 
 export interface SendOptions {
   to: Address | string
   value: BigNumber
   data?: string
-  fee?: number
+  fee?: EIP1559Fee | number
 }
 
 export interface ChainProvider {
@@ -79,7 +80,7 @@ export interface ChainProvider {
    * @param {!string} to - Recepient address.
    * @param {!number} value - Value of transaction.
    * @param {!string} data - Data to be passed to the transaction.
-   * @param {!number} [fee] - Fee price in native unit (e.g. sat/b, wei)
+   * @param {!Fee} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
   sendTransaction(options: SendOptions): Promise<Transaction>
@@ -87,18 +88,18 @@ export interface ChainProvider {
   /**
    * Create, sign & broadcast a sweep transaction.
    * @param {!string} address - External address.
-   * @param {number} [fee] - Fee price in native unit (e.g. sat/b, wei)
+   * @param {Fee} [fee] - Fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
-  sendSweepTransaction(address: Address | string, fee?: number): Promise<Transaction>
+  sendSweepTransaction(address: Address | string, fee?: EIP1559Fee | number): Promise<Transaction>
 
   /**
    * Update the fee of a transaction.
    * @param {(string|Transaction)} tx - Transaction object or hash of the transaction to update
-   * @param {!number} newFee - New fee price in native unit (e.g. sat/b, wei)
+   * @param {!Fee} newFee - New fee price in native unit (e.g. sat/b, wei)
    * @return {Promise<Transaction>} Resolves with the new transaction
    */
-  updateTransactionFee(tx: string | Transaction, newFee: number): Promise<Transaction>
+  updateTransactionFee(tx: string | Transaction, newFee: EIP1559Fee | number): Promise<Transaction>
 
   /**
    * Create, sign & broad a transaction with multiple outputs.

@@ -1,6 +1,14 @@
+export interface EIP1559Fee {
+  baseFeeTrend: number
+  currentBaseFeePerGas: number
+  suggestedBaseFeePerGas: number
+  maxPriorityFeePerGas: number
+  maxFeePerGas: number
+}
+
 export interface FeeDetail {
   // Fee price
-  fee: number
+  fee: EIP1559Fee | number
   // Estimated time to confirmation
   wait?: number
 }
