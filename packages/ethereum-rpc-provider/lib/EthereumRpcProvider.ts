@@ -118,9 +118,7 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     }
 
     const txData = buildTransaction(txOptions)
-
-    const gas = await this.getMethod('estimateGas')(txData)
-    txData.gas = numberToHex(gas)
+    txData.gas = transaction._raw.gas
 
     const newTxHash = await this.rpc<ethereum.Hex>('eth_sendTransaction', txData)
 

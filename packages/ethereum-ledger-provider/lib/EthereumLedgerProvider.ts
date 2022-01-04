@@ -186,8 +186,7 @@ export default class EthereumLedgerProvider extends LedgerProvider<HwAppEthereum
     }
 
     const txData = await buildTransaction(txOptions)
-    const gas = await this.getMethod('estimateGas')(txData)
-    txData.gas = numberToHex(gas)
+    txData.gas = transaction._raw.gas
 
     const address = await this.getWalletAddress(txData.from)
     const signedSerializedTx = await this.signTransaction(txData, address.derivationPath)

@@ -205,8 +205,7 @@ export default class EthereumJsWalletProvider extends WalletProvider {
     }
 
     const txData = await buildTransaction(txOptions)
-    const gas = await this.getMethod('estimateGas')(txData)
-    txData.gas = numberToHex(gas)
+    txData.gas = transaction._raw.gas
 
     const serializedTx = await this.signTransaction(txData)
     const newTxHash = await this.getMethod('sendRawTransaction')(serializedTx)
