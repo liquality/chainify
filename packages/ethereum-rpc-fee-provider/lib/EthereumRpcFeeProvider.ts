@@ -23,7 +23,7 @@ export default class EthereumRpcFeeProvider extends Provider implements FeeProvi
   }
 
   calculateFee(base: number, multiplier: number) {
-    return new BigNumber(base).times(new BigNumber(multiplier)).toNumber()
+    return new BigNumber(base).times(multiplier).toNumber()
   }
 
   async getFees() {
