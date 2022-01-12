@@ -13,7 +13,7 @@ import {
 
 import Bytecode from './bytecode'
 
-const CONTRACT_CODE = 'wnGY4a+YYkfbkBqYqyhdQjjtHRl9Auyh7yxCGtXL8JI='
+const CONTRACT_CODE = 'jrBWhtpuyGJ44vtP+Ib+I32tuUUtfKQBuBdQ8y3M6Ro='
 
 const ABI = {
   init: { method: 'init', gas: '10000000000000' },
