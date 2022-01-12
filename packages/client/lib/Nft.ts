@@ -8,14 +8,19 @@ export default class Nft implements NftProvider {
   }
 
   /** @inheritdoc */
-  async balance(contract: Address | string): Promise<BigNumber> {
-    const balance = await this.client.getMethod('balance')(contract)
+  async balance(contract: Address | string, tokenIDs?: BigNumber | BigNumber[]): Promise<BigNumber | BigNumber[]> {
+    const balance = await this.client.getMethod('balance')(contract, tokenIDs)
     return balance
   }
 
   /** @inheritdoc */
-  async transfer(contract: Address | string, receiver: Address | string, tokenId: BigNumber): Promise<Transaction> {
-    const transaction = await this.client.getMethod('transfer')(contract, receiver, tokenId)
+  async transfer(
+    contract: Address | string,
+    receiver: Address | string,
+    tokenIds: BigNumber | BigNumber[],
+    values?: BigNumber[]
+  ): Promise<Transaction> {
+    const transaction = await this.client.getMethod('transfer')(contract, receiver, tokenIds, values)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
