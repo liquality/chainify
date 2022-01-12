@@ -52,9 +52,8 @@ export default class NftErc721Provider extends Provider implements Partial<NftPr
     return normalizeTransactionObject(txWithHash)
   }
 
-  async approveAll(contract: Address | string, receiver: Address | string, state?: boolean) {
+  async approveAll(contract: Address | string, receiver: Address | string, state = true) {
     this._attach(contract)
-    if (state === undefined) state = true
 
     const txWithHash = await this._contract.functions.setApprovalForAll(ensure0x(addressToString(receiver)), state)
     return normalizeTransactionObject(txWithHash)
