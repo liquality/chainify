@@ -4,7 +4,7 @@ import { ensure0x, normalizeTransactionObject } from '@liquality/ethereum-utils'
 import { NftProvider, Address, BigNumber } from '@liquality/types'
 
 import { Contract } from '@ethersproject/contracts'
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Wallet } from '@ethersproject/wallet'
 
 import NftErc721_ABI from './NftErc721_ABI.json'
@@ -12,18 +12,20 @@ import NftErc721_ABI from './NftErc721_ABI.json'
 export default class NftErc721Provider extends Provider implements Partial<NftProvider> {
   _contract: Contract
   _wallet: Wallet
-  _jsonRpcProvider: JsonRpcProvider
+  _jsonRpcProvider: StaticJsonRpcProvider
 
   constructor(options: { uri: string; mnemonic: string; derivationPath: string }) {
     super()
 
     this._wallet = Wallet.fromMnemonic(options.mnemonic, options.derivationPath)
-    this._wallet = this._wallet.connect(new JsonRpcProvider(options.uri))
+    this._wallet = this._wallet.connect(new StaticJsonRpcProvider(options.uri))
     this._contract = new Contract('0x0000000000000000000000000000000000000000', NftErc721_ABI, this._wallet)
   }
 
   private _attach(contract: Address | string) {
-    if (this._contract.address != contract) this._contract = this._contract.attach(ensure0x(addressToString(contract)))
+    if (this._contract.address != contract) {
+      this._contract = this._contract.attach(ensure0x(addressToString(contract)))
+    }
   }
 
   async balance(contract: Address | string) {
