@@ -17,6 +17,7 @@ import Ajv from 'ajv'
 import Chain from './Chain'
 import Wallet from './Wallet'
 import Swap from './Swap'
+import Nft from './Nft'
 
 export default class Client implements IClient {
   static debug(namespace = '*') {
@@ -35,6 +36,7 @@ export default class Client implements IClient {
   _chain: Chain
   _wallet: Wallet
   _swap: Swap
+  _nft: Nft
 
   /**
    * Client
@@ -63,6 +65,7 @@ export default class Client implements IClient {
     this._chain = new Chain(this)
     this._wallet = new Wallet(this)
     this._swap = new Swap(this)
+    this._nft = new Nft(this)
   }
 
   /**
@@ -167,5 +170,9 @@ export default class Client implements IClient {
 
   get swap() {
     return this._swap
+  }
+
+  get nft() {
+    return this._nft
   }
 }
