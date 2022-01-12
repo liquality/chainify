@@ -155,6 +155,32 @@ function testSwap(chain: Chain) {
   }
 }
 
+function testClaimSucceedAfterExpiration(chain: Chain) {
+  it(`Claim works after expiration - ${chain.name}`, async () => {
+    const secret = await chain.client.swap.generateSecret('secret')
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain, secretHash)
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 1 // 1 second expiration
+
+    const initiationTxId = await initiateAndVerify(chain, swapParams)
+    let claimTx: Transaction
+
+    await mineUntilTimestamp(chain, swapParams.expiration)
+
+    await expectBalance(
+      chain,
+      swapParams.recipientAddress,
+      async () => {
+        claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams)
+      },
+      (before, after) => expect(after.gt(before)).to.be.true
+    )
+
+    const revealedSecret = claimTx.secret
+    expect(revealedSecret).to.equal(secret)
+  })
+}
+
 function testEthereumBalance(chain: Chain) {
   it('Balance - Claim', async () => {
     const secretHash = crypto.sha256(mockSecret)
@@ -424,6 +450,14 @@ function testFee(chain: Chain) {
 
 describe('Swap Single Chain Flow', function () {
   this.timeout(TEST_TIMEOUT)
+
+  describeExternal('Claim works after expiration', () => {
+    testClaimSucceedAfterExpiration(chains.nearWithJs)
+    testClaimSucceedAfterExpiration(chains.terra)
+    testClaimSucceedAfterExpiration(chains.solana)
+    testClaimSucceedAfterExpiration(chains.ethereumWithJs)
+    testClaimSucceedAfterExpiration(chains.bitcoinWithNode)
+  })
 
   describeExternal('Terra', () => {
     testSwap(chains.terra)
