@@ -69,7 +69,7 @@
     "bootstrap": "lerna bootstrap --force-local",
     "docs": "typedoc",
     "test": "run-s test:unit env:integration env:integration:bootup test:integration",
-    "test:unit": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha packages/*/test/unit/*.test.ts",
+    "test:unit": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha packages/nft-erc721-provider/test/unit/unit.test.ts",
     "env:integration": "docker-compose -f test/integration/environment/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
     "env:integration:bootup": "sleep 10",
     "test:integration:chain": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/chain/*.test.ts",
