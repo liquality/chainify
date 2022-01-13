@@ -35,29 +35,45 @@ export default class NftErc721Provider extends Provider implements Partial<NftPr
     return amount
   }
 
-  async transfer(contract: Address | string, receiver: Address | string, tokenId: BigNumber) {
+  async transfer(contract: Address | string, receiver: Address | string, tokenID: BigNumber) {
     this._attach(contract)
-    console.log(this._contract)
 
     const txWithHash = await this._contract['safeTransferFrom(address,address,uint256)'](
       this._wallet.getAddress(),
       ensure0x(addressToString(receiver)),
-      tokenId.toString()
+      tokenID.toString()
     )
     return normalizeTransactionObject(txWithHash)
   }
 
-  async approve(contract: Address | string, receiver: Address | string, tokenId: BigNumber) {
+  async approve(contract: Address | string, operator: Address | string, tokenID: BigNumber) {
     this._attach(contract)
 
-    const txWithHash = await this._contract.functions.approve(ensure0x(addressToString(receiver)), tokenId.toString())
+    const txWithHash = await this._contract.functions.approve(ensure0x(addressToString(operator)), tokenID.toString())
     return normalizeTransactionObject(txWithHash)
   }
 
-  async approveAll(contract: Address | string, receiver: Address | string, state = true) {
+  async isApproved(contract: Address | string, tokenID: BigNumber) {
     this._attach(contract)
 
-    const txWithHash = await this._contract.functions.setApprovalForAll(ensure0x(addressToString(receiver)), state)
+    const operator = await this._contract.functions.getApproved(tokenID.toString())
+    return operator
+  }
+
+  async approveAll(contract: Address | string, operator: Address | string, state = true) {
+    this._attach(contract)
+
+    const txWithHash = await this._contract.functions.setApprovalForAll(ensure0x(addressToString(operator)), state)
     return normalizeTransactionObject(txWithHash)
+  }
+
+  async isApprovedForAll(contract: Address | string, owner: Address | string, operator: Address | string) {
+    this._attach(contract)
+
+    const state = await this._contract.functions.isApprovedForAll(
+      ensure0x(addressToString(owner)),
+      ensure0x(addressToString(operator))
+    )
+    return state
   }
 }
