@@ -1,4 +1,4 @@
-import { NftProvider, BigNumber, Address, Transaction } from '@liquality/types'
+import { NftProvider, Address, Transaction } from '@liquality/types'
 
 export default class Nft implements NftProvider {
   client: any
@@ -8,7 +8,7 @@ export default class Nft implements NftProvider {
   }
 
   /** @inheritdoc */
-  async balance(contract: Address | string, tokenIDs?: BigNumber[]): Promise<BigNumber | BigNumber[]> {
+  async balance(contract: Address | string, tokenIDs?: number): Promise<number> {
     const balance = await this.client.getMethod('balance')(contract, tokenIDs)
     return balance
   }
@@ -17,8 +17,8 @@ export default class Nft implements NftProvider {
   async transfer(
     contract: Address | string,
     receiver: Address | string,
-    tokenIDs: BigNumber | BigNumber[],
-    values?: BigNumber[]
+    tokenIDs: number | number[],
+    values?: number[]
   ): Promise<Transaction> {
     const transaction = await this.client.getMethod('transfer')(contract, receiver, tokenIDs, values)
     this.client.assertValidTransaction(transaction)
@@ -26,14 +26,14 @@ export default class Nft implements NftProvider {
   }
 
   /** @inheritdoc */
-  async approve(contract: Address | string, operator: Address | string, tokenID: BigNumber): Promise<Transaction> {
+  async approve(contract: Address | string, operator: Address | string, tokenID: number): Promise<Transaction> {
     const transaction = await this.client.getMethod('approve')(contract, operator, tokenID)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
 
   /** @inheritdoc */
-  async isApproved(contract: Address | string, tokenID: BigNumber): Promise<Address> {
+  async isApproved(contract: Address | string, tokenID: number): Promise<Address> {
     const operator = await this.client.getMethod('isApproved')(contract, tokenID)
     return operator
   }
@@ -46,12 +46,8 @@ export default class Nft implements NftProvider {
   }
 
   /** @inheritdoc */
-  async isApprovedForAll(
-    contract: Address | string,
-    owner: Address | string,
-    operator: Address | string
-  ): Promise<boolean> {
-    const state = await this.client.getMethod('isApprovedForAll')(contract, owner, operator)
+  async isApprovedForAll(contract: Address | string, operator: Address | string): Promise<boolean> {
+    const state = await this.client.getMethod('isApprovedForAll')(contract, operator)
     return state
   }
 }

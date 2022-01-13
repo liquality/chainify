@@ -1,7 +1,7 @@
 import { Provider } from '@liquality/provider'
 import { addressToString } from '@liquality/utils'
 import { ensure0x, normalizeTransactionObject } from '@liquality/ethereum-utils'
-import { NftProvider, Address, BigNumber } from '@liquality/types'
+import { NftProvider, Address } from '@liquality/types'
 
 import { Contract } from '@ethersproject/contracts'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
@@ -31,33 +31,33 @@ export default class NftErc721Provider extends Provider implements Partial<NftPr
   async balance(contract: Address | string) {
     this._attach(contract)
 
-    const amount = await this._contract.functions.balanceOf(this._wallet.getAddress())
-    return amount
+    const amount = await this._contract.functions.balanceOf(await this._wallet.getAddress())
+    return amount[0].toNumber()
   }
 
-  async transfer(contract: Address | string, receiver: Address | string, tokenID: BigNumber) {
+  async transfer(contract: Address | string, receiver: Address | string, tokenID: number) {
     this._attach(contract)
 
     const txWithHash = await this._contract['safeTransferFrom(address,address,uint256)'](
-      this._wallet.getAddress(),
+      await this._wallet.getAddress(),
       ensure0x(addressToString(receiver)),
       tokenID.toString()
     )
     return normalizeTransactionObject(txWithHash)
   }
 
-  async approve(contract: Address | string, operator: Address | string, tokenID: BigNumber) {
+  async approve(contract: Address | string, operator: Address | string, tokenID: number) {
     this._attach(contract)
 
     const txWithHash = await this._contract.functions.approve(ensure0x(addressToString(operator)), tokenID.toString())
     return normalizeTransactionObject(txWithHash)
   }
 
-  async isApproved(contract: Address | string, tokenID: BigNumber) {
+  async isApproved(contract: Address | string, tokenID: number) {
     this._attach(contract)
 
     const operator = await this._contract.functions.getApproved(tokenID.toString())
-    return operator
+    return operator[0]
   }
 
   async approveAll(contract: Address | string, operator: Address | string, state = true) {
@@ -67,13 +67,13 @@ export default class NftErc721Provider extends Provider implements Partial<NftPr
     return normalizeTransactionObject(txWithHash)
   }
 
-  async isApprovedForAll(contract: Address | string, owner: Address | string, operator: Address | string) {
+  async isApprovedForAll(contract: Address | string, operator: Address | string) {
     this._attach(contract)
 
     const state = await this._contract.functions.isApprovedForAll(
-      ensure0x(addressToString(owner)),
+      await this._wallet.getAddress(),
       ensure0x(addressToString(operator))
     )
-    return state
+    return state[0]
   }
 }

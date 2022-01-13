@@ -1,7 +1,7 @@
 import { Provider } from '@liquality/provider'
 import { addressToString } from '@liquality/utils'
 import { ensure0x, normalizeTransactionObject } from '@liquality/ethereum-utils'
-import { NftProvider, Address, BigNumber } from '@liquality/types'
+import { NftProvider, Address } from '@liquality/types'
 
 import { Contract } from '@ethersproject/contracts'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
@@ -23,36 +23,37 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
   }
 
   private _attach(contract: Address | string) {
-    if (this._contract.address != contract) {
+    if (this._contract.address !== contract) {
       this._contract = this._contract.attach(ensure0x(addressToString(contract)))
     }
   }
 
-  async balance(contract: Address | string, tokenIDs?: BigNumber | BigNumber[]) {
+  async balance(contract: Address | string, tokenID?: number) {
     this._attach(contract)
 
-    let amount = [new BigNumber(0)]
-    if (tokenIDs && tokenIDs.constructor === Array) {
-      amount = await this._contract.functions.balanceOfBatch([this._wallet.getAddress()], tokenIDs)
+    if (tokenID) {
+      const amount = await this._contract.functions.balanceOf(await this._wallet.getAddress(), tokenID)
+      return amount[0].toNumber()
     }
 
-    return amount
+    return 0
   }
 
   async transfer(
     contract: Address | string,
     receiver: Address | string,
-    tokenIDs: BigNumber | BigNumber[],
-    values?: BigNumber[]
+    tokenIDs: number | number[],
+    values?: number[]
   ) {
     this._attach(contract)
 
     if (tokenIDs && tokenIDs.constructor === Array) {
       const txWithHash = await this._contract.functions.safeBatchTransferFrom(
-        this._wallet.getAddress(),
+        await this._wallet.getAddress(),
         ensure0x(addressToString(receiver)),
         tokenIDs,
-        values
+        values,
+        '0x00'
       )
       return normalizeTransactionObject(txWithHash)
     }
@@ -67,13 +68,13 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     return normalizeTransactionObject(txWithHash)
   }
 
-  async isApprovedForAll(contract: Address | string, owner: Address | string, operator: Address | string) {
+  async isApprovedForAll(contract: Address | string, operator: Address | string) {
     this._attach(contract)
 
     const state = await this._contract.functions.isApprovedForAll(
-      ensure0x(addressToString(owner)),
+      await this._wallet.getAddress(),
       ensure0x(addressToString(operator))
     )
-    return state
+    return state[0]
   }
 }
