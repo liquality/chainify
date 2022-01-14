@@ -28,8 +28,7 @@
     "@liquality/types": "^1.12.0-next.0",
     "@liquality/utils": "^1.12.0-next.0",
     "@ethersproject/contracts": "^5.5.0",
-    "@ethersproject/providers": "^5.5.0",
-    "@ethersproject/wallet": "^5.5.0"
+    "@ethersproject/abstract-signer": "^5.5.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

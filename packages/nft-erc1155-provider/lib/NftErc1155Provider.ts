@@ -5,22 +5,19 @@ import { NftProvider, Address } from '@liquality/types'
 import { StandardError } from '@liquality/errors'
 
 import { Contract } from '@ethersproject/contracts'
-import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Wallet } from '@ethersproject/wallet'
+import { Signer } from '@ethersproject/abstract-signer'
 
 import NftErc1155_ABI from './NftErc1155_ABI.json'
 
 export default class NftErc1155Provider extends Provider implements Partial<NftProvider> {
   _contract: Contract
-  _wallet: Wallet
-  _jsonRpcProvider: StaticJsonRpcProvider
+  _signer: Signer
 
-  constructor(options: { uri: string; mnemonic: string; derivationPath: string }) {
+  constructor(signer: Signer) {
     super()
 
-    this._wallet = Wallet.fromMnemonic(options.mnemonic, options.derivationPath)
-    this._wallet = this._wallet.connect(new StaticJsonRpcProvider(options.uri))
-    this._contract = new Contract('0x0000000000000000000000000000000000000000', NftErc1155_ABI, this._wallet)
+    this._signer = signer
+    this._contract = new Contract('0x0000000000000000000000000000000000000000', NftErc1155_ABI, this._signer)
   }
 
   private _attach(contract: Address | string) {
@@ -35,12 +32,12 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     if (!tokenIDs) return 0
 
     if (tokenIDs.constructor === Array) {
-      const addresses = Array.from({ length: tokenIDs.length }).fill(await this._wallet.getAddress())
+      const addresses = Array.from({ length: tokenIDs.length }).fill(await this._signer.getAddress())
       const amounts = await this._contract.functions.balanceOfBatch(addresses, tokenIDs)
       return amounts[0].map((amount: any) => amount.toNumber())
     }
 
-    const amount = await this._contract.functions.balanceOf(await this._wallet.getAddress(), tokenIDs)
+    const amount = await this._contract.functions.balanceOf(await this._signer.getAddress(), tokenIDs)
     return amount[0].toNumber()
   }
 
@@ -63,7 +60,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
       let txWithHash
       if (tokenIDs.length === 1) {
         txWithHash = await this._contract.functions.safeTransferFrom(
-          await this._wallet.getAddress(),
+          await this._signer.getAddress(),
           ensure0x(addressToString(receiver)),
           tokenIDs[0],
           values[0],
@@ -71,7 +68,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
         )
       } else {
         txWithHash = await this._contract.functions.safeBatchTransferFrom(
-          await this._wallet.getAddress(),
+          await this._signer.getAddress(),
           ensure0x(addressToString(receiver)),
           tokenIDs,
           values,
@@ -95,7 +92,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     this._attach(contract)
 
     const state = await this._contract.functions.isApprovedForAll(
-      await this._wallet.getAddress(),
+      await this._signer.getAddress(),
       ensure0x(addressToString(operator))
     )
     return state[0]
