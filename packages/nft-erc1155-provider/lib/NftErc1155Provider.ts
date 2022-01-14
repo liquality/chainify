@@ -2,6 +2,7 @@ import { Provider } from '@liquality/provider'
 import { addressToString } from '@liquality/utils'
 import { ensure0x, normalizeTransactionObject } from '@liquality/ethereum-utils'
 import { NftProvider, Address } from '@liquality/types'
+import { StandardError } from '@liquality/errors'
 
 import { Contract } from '@ethersproject/contracts'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
@@ -80,7 +81,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
       return normalizeTransactionObject(txWithHash)
     }
 
-    // TODO: return error
+    throw new StandardError(`Incorrect input arguments in transfer method of ERC1155 Provider`)
   }
 
   async approveAll(contract: Address | string, receiver: Address | string, state = true) {
