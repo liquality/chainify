@@ -8,7 +8,7 @@ export default class Nft implements NftProvider {
   }
 
   /** @inheritdoc */
-  async balance(contract: Address | string, tokenIDs?: number): Promise<number> {
+  async balance(contract: Address | string, tokenIDs?: number | number[]): Promise<number | number[]> {
     const balance = await this.client.getMethod('balance')(contract, tokenIDs)
     return balance
   }

@@ -8,7 +8,7 @@ export interface NftProvider {
    * @param {number} [tokenID] - NFT ids for ERC1155 standard.
    * @return {number} Resolves with in case of ERC721 - amount of NFTs, in case of ERC1155 - amount of copies owned from a NFT with specified id.
    */
-  balance(contract: Address | string, tokenID: number): Promise<number>
+  balance(contract: Address | string, tokenIDs: number | number[]): Promise<number | number[]>
 
   /**
    * transfer NFT (ERC721 & ERC1155)

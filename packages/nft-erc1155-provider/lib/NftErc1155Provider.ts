@@ -28,15 +28,19 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     }
   }
 
-  async balance(contract: Address | string, tokenID?: number) {
+  async balance(contract: Address | string, tokenIDs?: number | number[]) {
     this._attach(contract)
 
-    if (tokenID) {
-      const amount = await this._contract.functions.balanceOf(await this._wallet.getAddress(), tokenID)
-      return amount[0].toNumber()
+    if (!tokenIDs) return 0
+
+    if (tokenIDs.constructor === Array) {
+      const addresses = Array.from({ length: tokenIDs.length }).fill(await this._wallet.getAddress())
+      const amounts = await this._contract.functions.balanceOfBatch(addresses, tokenIDs)
+      return amounts[0].map((amount: any) => amount.toNumber())
     }
 
-    return 0
+    const amount = await this._contract.functions.balanceOf(await this._wallet.getAddress(), tokenIDs)
+    return amount[0].toNumber()
   }
 
   async transfer(
