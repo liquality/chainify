@@ -51,4 +51,10 @@ export default class Nft implements NftProvider {
     const state = await this.client.getMethod('isApprovedForAll')(contract, operator)
     return state
   }
+
+  /** @inheritdoc */
+  async fetch(): Promise<any> {
+    const nftData = await this.client.getMethod('fetch')()
+    return nftData
+  }
 }

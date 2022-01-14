@@ -18,6 +18,7 @@ export interface NftProvider {
    * @param {number[]} [values] - Amount of NFT copies to be transferred from each tokenID.
    * @param {string} [data] - Additional data (0x00 by default).
    * @return {Promise<Transaction>} Resolves with a signed transaction.
+   * @throws {StandardError} When incorrect input data is passed to method.
    */
   transfer(
     contract: Address | string,
@@ -61,11 +62,9 @@ export interface NftProvider {
    */
   isApprovedForAll(contract: Address | string, operator: Address | string): Promise<boolean>
 
-  // TODO:
-  //   /**
-  //    * Fetch all user's NFT
-  //    * @param {!string} contract - NFT contract address.
-  //    * @return {Promise<>} Resolves with a signed transaction.
-  //    */
-  //   fetch(user: Address | string): Promise<>
+  /**
+   * Fetch all user's NFT (ERC721 & ERC1155)
+   * @return {Promise<>} Resolves with all user's nfts.
+   */
+  fetch(): Promise<any>
 }
