@@ -1,0 +1,47 @@
+{
+  "name": "@liquality/nft-aggregator-provider",
+  "version": "1.12.0-next.0",
+  "description": "",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "engines": {
+    "node": "^14.18.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@liquality/ethereum-utils": "^1.12.0-next.0",
+    "@liquality/node-provider": "^1.12.0-next.0",
+    "@liquality/types": "^1.12.0-next.0",
+    "@liquality/utils": "^1.12.0-next.0",
+    "@liquality/nft-erc721-provider": "^1.12.0-next.0",
+    "@liquality/nft-erc1155-provider": "^1.12.0-next.0",
+    "@ethersproject/providers": "^5.5.0",
+    "@ethersproject/wallet": "^5.5.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}
