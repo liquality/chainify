@@ -15,14 +15,16 @@ export interface NftProvider {
    * @param {!string} contract - NFT contract address.
    * @param {!string} receiver - Transfer to address.
    * @param {!number} tokenIDs - Token IDs.
-   * @param {number[]} [values] - Amount of NFT copies to be transferred from each tokenID
+   * @param {number[]} [values] - Amount of NFT copies to be transferred from each tokenID.
+   * @param {string} [data] - Additional data (0x00 by default).
    * @return {Promise<Transaction>} Resolves with a signed transaction.
    */
   transfer(
     contract: Address | string,
     receiver: Address | string,
     tokenIDs: number | number[],
-    values?: number[]
+    values?: number[],
+    data?: string
   ): Promise<Transaction>
 
   /**

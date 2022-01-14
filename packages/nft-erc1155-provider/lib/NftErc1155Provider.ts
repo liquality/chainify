@@ -28,7 +28,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     }
   }
 
-  async balance(contract: Address | string, tokenIDs?: number | number[]) {
+  async balance(contract: Address | string, tokenIDs: number | number[]) {
     this._attach(contract)
 
     if (!tokenIDs) return 0
@@ -47,22 +47,40 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     contract: Address | string,
     receiver: Address | string,
     tokenIDs: number | number[],
-    values?: number[]
+    values: number[],
+    data = '0x00'
   ) {
     this._attach(contract)
 
-    if (tokenIDs && tokenIDs.constructor === Array) {
-      const txWithHash = await this._contract.functions.safeBatchTransferFrom(
-        await this._wallet.getAddress(),
-        ensure0x(addressToString(receiver)),
-        tokenIDs,
-        values,
-        '0x00'
-      )
+    if (
+      tokenIDs &&
+      tokenIDs.constructor === Array &&
+      values &&
+      values.constructor === Array &&
+      tokenIDs.length === values.length
+    ) {
+      let txWithHash
+      if (tokenIDs.length === 1) {
+        txWithHash = await this._contract.functions.safeTransferFrom(
+          await this._wallet.getAddress(),
+          ensure0x(addressToString(receiver)),
+          tokenIDs[0],
+          values[0],
+          data
+        )
+      } else {
+        txWithHash = await this._contract.functions.safeBatchTransferFrom(
+          await this._wallet.getAddress(),
+          ensure0x(addressToString(receiver)),
+          tokenIDs,
+          values,
+          data
+        )
+      }
       return normalizeTransactionObject(txWithHash)
     }
 
-    // TODO: maybe return error
+    // TODO: return error
   }
 
   async approveAll(contract: Address | string, receiver: Address | string, state = true) {

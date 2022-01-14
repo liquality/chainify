@@ -18,9 +18,10 @@ export default class Nft implements NftProvider {
     contract: Address | string,
     receiver: Address | string,
     tokenIDs: number | number[],
-    values?: number[]
+    values?: number[],
+    data?: string
   ): Promise<Transaction> {
-    const transaction = await this.client.getMethod('transfer')(contract, receiver, tokenIDs, values)
+    const transaction = await this.client.getMethod('transfer')(contract, receiver, tokenIDs, values, data)
     this.client.assertValidTransaction(transaction)
     return transaction
   }
