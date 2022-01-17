@@ -1,6 +1,7 @@
 import { Interface } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/providers'
 import { Contract } from '@ethersproject/contracts'
+import { BigNumber } from '@ethersproject/bignumber'
 
 import { Call, ContractCall } from './types'
 import multicallAbi from './abi'
@@ -17,6 +18,10 @@ export class EvmMulticallProvider {
 
   private getAddressForChainId(chainId: number) {
     return multicallAddresses[chainId]
+  }
+
+  public async getEthBalance(address: string): Promise<BigNumber> {
+    return await this._multicallContract.getEthBalance(address)
   }
 
   public async multicall<T extends any[] = any[]>(calls: ReadonlyArray<Call>): Promise<T> {

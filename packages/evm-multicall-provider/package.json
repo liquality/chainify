@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
+    "@ethersproject/bignumber": "^5.5.0",
     "@ethersproject/contracts": "^5.5.0",
     "@ethersproject/providers": "^5.5.2"
   }

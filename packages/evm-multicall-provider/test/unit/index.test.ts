@@ -3,6 +3,8 @@
 import { EvmMulticallProvider } from '../../lib'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { expect } from 'chai'
+import addresses from '../../lib/addresses'
+import abi from '../../lib/abi'
 
 const ERC20BalanceABI = [
   {
@@ -25,7 +27,7 @@ describe('EVM Multicall Provider', () => {
   })
 
   describe('aggregates static calls', () => {
-    it('should fetch balance of two tokens', async () => {
+    it('should fetch balance of ether and two erc20 tokens', async () => {
       const result = await provider.multicall([
         {
           target: '0xc8b23857d66ae204d195968714840a75d28dc217',
@@ -38,9 +40,16 @@ describe('EVM Multicall Provider', () => {
           abi: ERC20BalanceABI,
           name: 'balanceOf',
           params: ['0xF180525Ef03D5e5bFd09156823e0eA49da561c5F']
+        },
+        {
+          target: addresses[3],
+          abi: abi,
+          name: 'getEthBalance',
+          params: ['0xF180525Ef03D5e5bFd09156823e0eA49da561c5F']
         }
       ])
-      expect(result.length == 2)
+
+      expect(result.length).to.be.equal(3)
     })
   })
 })
