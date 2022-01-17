@@ -4,6 +4,7 @@ import { ensure0x, normalizeTransactionObject } from '@liquality/ethereum-utils'
 import { NftProvider, Address } from '@liquality/types'
 import { StandardError } from '@liquality/errors'
 
+import { isArray } from 'lodash'
 import { Contract } from '@ethersproject/contracts'
 import { Signer } from '@ethersproject/abstract-signer'
 
@@ -25,17 +26,20 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
   }
 
   async balance(contract: Address | string, tokenIDs: number | number[]) {
+    if (!tokenIDs) {
+      return 0
+    }
+
     await this._attach(contract)
+    const owner = await this._signer.getAddress()
 
-    if (!tokenIDs) return 0
-
-    if (tokenIDs.constructor === Array) {
-      const addresses = Array.from({ length: tokenIDs.length }).fill(await this._signer.getAddress())
+    if (isArray(tokenIDs)) {
+      const addresses = Array.from({ length: tokenIDs.length }).fill(owner)
       const amounts = await this._contract.functions.balanceOfBatch(addresses, tokenIDs)
       return amounts[0].map((amount: any) => amount.toNumber())
     }
 
-    const amount = await this._contract.functions.balanceOf(await this._signer.getAddress(), tokenIDs)
+    const amount = await this._contract.functions.balanceOf(owner, tokenIDs)
     return amount[0].toNumber()
   }
 
@@ -48,13 +52,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
   ) {
     await this._attach(contract)
 
-    if (
-      tokenIDs &&
-      tokenIDs.constructor === Array &&
-      values &&
-      values.constructor === Array &&
-      tokenIDs.length === values.length
-    ) {
+    if (isArray(tokenIDs) && isArray(values) && tokenIDs.length === values.length) {
       let txWithHash
       if (tokenIDs.length === 1) {
         txWithHash = await this._contract.functions.safeTransferFrom(
