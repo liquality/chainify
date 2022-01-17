@@ -21,6 +21,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
 
     this._signer = signer
     this._contract = new Contract('0x0000000000000000000000000000000000000000', NftErc1155_ABI, this._signer)
+    this._contractCache = {}
   }
 
   async balance(contract: Address | string, tokenIDs: number | number[]) {
@@ -96,12 +97,15 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
   }
 
   private async _supportsInterface(contractInstance: Contract) {
-    if (this._contractCache[contractInstance.address] !== undefined)
-      return this._contractCache[contractInstance.address]
+    const contractAddress = contractInstance.address.toLowerCase()
+
+    if (this._contractCache[contractAddress] !== undefined) {
+      return this._contractCache[contractAddress]
+    }
 
     const state = await contractInstance.functions.supportsInterface(erc1155InterfaceID)
-    this._contractCache[contractInstance.address] = state // store in cache
-    return state
+    this._contractCache[contractAddress] = state[0] // store in cache
+    return state[0]
   }
 
   private async _attach(contract: Address | string) {
