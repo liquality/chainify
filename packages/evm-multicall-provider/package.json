@@ -1,0 +1,37 @@
+{
+  "name": "@liquality/evm-multicall-provider",
+  "version": "1.12.0",
+  "description": "> TODO: description",
+  "author": "Liquality <info@liquality.io>",
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "license": "MIT",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "engines": {
+    "node": "^14.18.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "dependencies": {
+    "@ethersproject/abi": "^5.5.0",
+    "@ethersproject/contracts": "^5.5.0",
+    "@ethersproject/providers": "^5.5.2"
+  }
+}
