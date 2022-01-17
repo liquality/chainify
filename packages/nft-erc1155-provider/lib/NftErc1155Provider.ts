@@ -9,9 +9,12 @@ import { Signer } from '@ethersproject/abstract-signer'
 
 import NftErc1155_ABI from './NftErc1155_ABI.json'
 
+const erc1155InterfaceID = '0xd9b67a26'
+
 export default class NftErc1155Provider extends Provider implements Partial<NftProvider> {
   _contract: Contract
   _signer: Signer
+  _contractCache: { [address: string]: boolean }
 
   constructor(signer: Signer) {
     super()
@@ -20,14 +23,8 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     this._contract = new Contract('0x0000000000000000000000000000000000000000', NftErc1155_ABI, this._signer)
   }
 
-  private _attach(contract: Address | string) {
-    if (this._contract.address !== contract) {
-      this._contract = this._contract.attach(ensure0x(addressToString(contract)))
-    }
-  }
-
   async balance(contract: Address | string, tokenIDs: number | number[]) {
-    this._attach(contract)
+    await this._attach(contract)
 
     if (!tokenIDs) return 0
 
@@ -48,7 +45,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
     values: number[],
     data = '0x00'
   ) {
-    this._attach(contract)
+    await this._attach(contract)
 
     if (
       tokenIDs &&
@@ -82,19 +79,44 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
   }
 
   async approveAll(contract: Address | string, receiver: Address | string, state = true) {
-    this._attach(contract)
+    await this._attach(contract)
 
     const txWithHash = await this._contract.functions.setApprovalForAll(ensure0x(addressToString(receiver)), state)
     return normalizeTransactionObject(txWithHash)
   }
 
   async isApprovedForAll(contract: Address | string, operator: Address | string) {
-    this._attach(contract)
+    await this._attach(contract)
 
     const state = await this._contract.functions.isApprovedForAll(
       await this._signer.getAddress(),
       ensure0x(addressToString(operator))
     )
     return state[0]
+  }
+
+  private async _supportsInterface(contractInstance: Contract) {
+    if (this._contractCache[contractInstance.address] !== undefined)
+      return this._contractCache[contractInstance.address]
+
+    const state = await contractInstance.functions.supportsInterface(erc1155InterfaceID)
+    this._contractCache[contractInstance.address] = state // store in cache
+    return state
+  }
+
+  private async _attach(contract: Address | string) {
+    const _contractAddress = ensure0x(addressToString(contract))
+
+    if (this._contract.address !== _contractAddress) {
+      const contractInstance = this._contract.attach(_contractAddress)
+      // contract validation
+      if (await this._supportsInterface(contractInstance)) {
+        this._contract = contractInstance
+      } else {
+        throw new StandardError(
+          `Contract on address: ${_contractAddress} does not support EIP1155 interface (id: ${erc1155InterfaceID})`
+        )
+      }
+    }
   }
 }
