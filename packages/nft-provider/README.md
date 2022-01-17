@@ -1,10 +1,10 @@
-# `@liquality/nft-aggregator-provider` <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
+# `@liquality/nft-provider` <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
 
 [![Build Status](https://travis-ci.com/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.com/liquality/chainabstractionlayer)
 [![Coverage Status](https://coveralls.io/repos/github/liquality/chainabstractionlayer/badge.svg?branch=master)](https://coveralls.io/github/liquality/chainabstractionlayer?branch=master)
 [![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](../../LICENSE.md)
-[![@liquality/nft-aggregator-provider](https://img.shields.io/npm/dt/@liquality/nft-aggregator-provider.svg)](https://npmjs.com/package/@liquality/nft-aggregator-provider)
+[![@liquality/nft-provider](https://img.shields.io/npm/dt/@liquality/nft-provider.svg)](https://npmjs.com/package/@liquality/nft-provider)
 [![Gitter](https://img.shields.io/gitter/room/liquality/Lobby.svg)](https://gitter.im/liquality/Lobby?source=orgpage)
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality) [![Greenkeeper badge](https://badges.greenkeeper.io/liquality/chainabstractionlayer.svg)](https://greenkeeper.io/)
 
@@ -17,15 +17,15 @@ Query different blockchains with account management using a single and simple in
 ## Installation
 
 ```bash
-npm i @liquality/nft-aggregator-provider
+npm i @liquality/nft-provider
 ```
 
 or
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquality/nft-aggregator-provider@0.2.3/dist/nft-aggregator-provider.min.js"></script>
-<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/nft-aggregator-provider@0.2.3/dist/nft-aggregator-provider.min.js.map -->
-<!-- available as window.NftAggregatorProvider -->
+<script src="https://cdn.jsdelivr.net/npm/@liquality/nft-provider@0.2.3/dist/nft-provider.min.js"></script>
+<!-- sourceMap at https://cdn.jsdelivr.net/npm/@liquality/nft-provider@0.2.3/dist/nft-provider.min.js.map -->
+<!-- available as window.NftProvider -->
 ```
 
 ## License
