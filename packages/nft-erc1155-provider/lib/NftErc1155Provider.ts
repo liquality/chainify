@@ -46,7 +46,7 @@ export default class NftErc1155Provider extends Provider implements Partial<NftP
   async transfer(
     contract: Address | string,
     receiver: Address | string,
-    tokenIDs: number | number[],
+    tokenIDs: number[],
     values: number[],
     data = '0x00'
   ) {
