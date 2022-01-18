@@ -1,0 +1,46 @@
+{
+  "name": "@liquality/nft-base-provider",
+  "version": "1.12.0-next.0",
+  "description": "",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/lib/index.d.ts",
+  "directories": {
+    "dist": "dist",
+    "src": "lib"
+  },
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "build": "webpack --config ../../webpack/webpack.config.js"
+  },
+  "author": "Liquality <info@liquality.io>",
+  "license": "MIT",
+  "engines": {
+    "node": "^14.18.1"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@ethersproject/abstract-signer": "^5.5.0",
+    "@ethersproject/contracts": "^5.5.0",
+    "@liquality/errors": "^1.12.0-next.0",
+    "@liquality/ethereum-utils": "^1.12.0-next.0",
+    "@liquality/provider": "^1.12.0-next.0",
+    "@liquality/types": "^1.12.0-next.0",
+    "@liquality/utils": "^1.12.0-next.0"
+  },
+  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/liquality/chainabstractionlayer/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}
