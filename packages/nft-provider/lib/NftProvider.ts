@@ -10,16 +10,19 @@ import { NftErc1155Provider } from '@liquality/nft-erc1155-provider'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Wallet } from '@ethersproject/wallet'
 
-export default class NftProvider extends NodeProvider implements Partial<INftProvider> {
+export default class NftProvider extends NodeProvider implements INftProvider {
   _wallet: Wallet
   _subProviders: { [type: string]: NftBaseProvider }
   _nftContractsCache: { [address: string]: NftBaseProvider }
 
-  constructor(apiURI: string, options: { uri: string; mnemonic: string; derivationPath: string }) {
+  constructor(options: { uri: string; mnemonic: string; derivationPath: string }, apiURI: string, apiKey = '') {
     super({
       baseURL: apiURI,
       responseType: 'text',
-      transformResponse: undefined
+      transformResponse: undefined,
+      headers: {
+        'X-Api-Key': apiKey
+      }
     })
 
     this._wallet = Wallet.fromMnemonic(options.mnemonic, options.derivationPath)
