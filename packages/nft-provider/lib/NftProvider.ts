@@ -3,6 +3,7 @@ import { addressToString } from '@liquality/utils'
 import { ensure0x } from '@liquality/ethereum-utils'
 import { NftProvider as INftProvider, Address } from '@liquality/types'
 
+import { NftBaseProvider } from '@liquality/nft-base-provider'
 import { NftErc721Provider } from '@liquality/nft-erc721-provider'
 import { NftErc1155Provider } from '@liquality/nft-erc1155-provider'
 
@@ -11,8 +12,8 @@ import { Wallet } from '@ethersproject/wallet'
 
 export default class NftProvider extends NodeProvider implements Partial<INftProvider> {
   _wallet: Wallet
-  _subProviders: { [type: string]: Partial<INftProvider> }
-  _nftContractsCache: { [address: string]: Partial<INftProvider> }
+  _subProviders: { [type: string]: NftBaseProvider }
+  _nftContractsCache: { [address: string]: NftBaseProvider }
 
   constructor(apiURI: string, options: { uri: string; mnemonic: string; derivationPath: string }) {
     super({

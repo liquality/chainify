@@ -27,6 +27,7 @@
     "@liquality/node-provider": "^1.12.0-next.0",
     "@liquality/types": "^1.12.0-next.0",
     "@liquality/utils": "^1.12.0-next.0",
+    "@liquality/nft-base-provider": "^1.12.0-next.0",
     "@liquality/nft-erc721-provider": "^1.12.0-next.0",
     "@liquality/nft-erc1155-provider": "^1.12.0-next.0",
     "@ethersproject/providers": "^5.5.0",
