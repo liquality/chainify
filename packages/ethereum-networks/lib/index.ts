@@ -136,8 +136,8 @@ const fuse_mainnet: EthereumNetwork = {
 const fuse_testnet: EthereumNetwork = {
   name: 'fuse_testnet',
   coinType: '60',
-  networkId: 122,
-  chainId: 122,
+  networkId: 123,
+  chainId: 123,
   isTestnet: true
 }
 
