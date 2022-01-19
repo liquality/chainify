@@ -25,19 +25,25 @@ xdescribe('Nft provider', () => {
     clients = [new Client(), new Client()]
 
     clients[0].addProvider(
-      new NftProvider(openSeaAPI, {
-        uri: infura,
-        mnemonic: mnemonic,
-        derivationPath: derivationPath_base + '/0'
-      })
+      new NftProvider(
+        {
+          uri: infura,
+          mnemonic: mnemonic,
+          derivationPath: derivationPath_base + '/0'
+        },
+        openSeaAPI
+      )
     )
 
     clients[1].addProvider(
-      new NftProvider(openSeaAPI, {
-        uri: infura,
-        mnemonic: mnemonic,
-        derivationPath: derivationPath_base + '/1'
-      })
+      new NftProvider(
+        {
+          uri: infura,
+          mnemonic: mnemonic,
+          derivationPath: derivationPath_base + '/1'
+        },
+        openSeaAPI
+      )
     )
   })
 
