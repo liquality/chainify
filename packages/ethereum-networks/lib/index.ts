@@ -136,8 +136,24 @@ const fuse_mainnet: EthereumNetwork = {
 const fuse_testnet: EthereumNetwork = {
   name: 'fuse_testnet',
   coinType: '60',
-  networkId: 122,
-  chainId: 122,
+  networkId: 123,
+  chainId: 123,
+  isTestnet: true
+}
+
+const avax_mainnet: EthereumNetwork = {
+  name: 'avalanche_mainnet',
+  coinType: '60',
+  networkId: 43114,
+  chainId: 43114,
+  isTestnet: false
+}
+
+const avax_testnet: EthereumNetwork = {
+  name: 'avalanche_testnet',
+  coinType: '60',
+  networkId: 43113,
+  chainId: 43113,
   isTestnet: true
 }
 
@@ -167,6 +183,8 @@ const EthereumNetworks = {
   arbitrum_mainnet,
   fuse_testnet,
   fuse_mainnet,
+  avax_testnet,
+  avax_mainnet,
   local
 }
 

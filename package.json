@@ -74,6 +74,7 @@
     "env:integration:bootup": "sleep 10",
     "test:integration:chain": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/chain/*.test.ts",
     "test:integration:swap": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/swap/*.test.ts",
+    "test:integration:swap:single": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/swap/singleChain.test.ts",
     "test:integration:tx": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/tx/*.test.ts",
     "test:integration:wallet": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/wallet/*.test.ts",
     "test:integration:contract": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/contract/*.test.ts",

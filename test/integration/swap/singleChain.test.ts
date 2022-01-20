@@ -155,6 +155,32 @@ function testSwap(chain: Chain) {
   }
 }
 
+function testClaimSucceedAfterExpiration(chain: Chain) {
+  it(`Claim works after expiration - ${chain.name}`, async () => {
+    const secret = await chain.client.swap.generateSecret('secret')
+    const secretHash = crypto.sha256(secret)
+    const swapParams = await getSwapParams(chain, secretHash)
+    swapParams.expiration = Math.floor(Date.now() / 1000) + 1 // 1 second expiration
+
+    const initiationTxId = await initiateAndVerify(chain, swapParams)
+    let claimTx: Transaction
+
+    await mineUntilTimestamp(chain, swapParams.expiration)
+
+    await expectBalance(
+      chain,
+      swapParams.recipientAddress,
+      async () => {
+        claimTx = await claimAndVerify(chain, initiationTxId, secret, swapParams)
+      },
+      (before, after) => expect(after.gt(before)).to.be.true
+    )
+
+    const revealedSecret = claimTx.secret
+    expect(revealedSecret).to.equal(secret)
+  })
+}
+
 function testEthereumBalance(chain: Chain) {
   it('Balance - Claim', async () => {
     const secretHash = crypto.sha256(mockSecret)
@@ -428,16 +454,19 @@ describe('Swap Single Chain Flow', function () {
   describeExternal('Terra', () => {
     testSwap(chains.terra)
     testTerraRefund(chains.terra)
+    testClaimSucceedAfterExpiration(chains.terra)
   })
 
   describeExternal('Solana', () => {
     testSwap(chains.solana)
     testSolanaRefund(chains.solana)
+    testClaimSucceedAfterExpiration(chains.solana)
   })
 
   describeExternal('Near - JS', () => {
     testSwap(chains.nearWithJs)
     testNearRefund(chains.nearWithJs)
+    testClaimSucceedAfterExpiration(chains.nearWithJs)
   })
 
   describeExternal('Bitcoin - Ledger', () => {
@@ -448,12 +477,14 @@ describe('Swap Single Chain Flow', function () {
     testSwap(chains.bitcoinWithLedger)
     testBitcoinBalance(chains.bitcoinWithLedger)
     testFee(chains.bitcoinWithLedger)
+    testClaimSucceedAfterExpiration(chains.bitcoinWithLedger)
   })
 
   describe('Bitcoin - Node', () => {
     testSwap(chains.bitcoinWithNode)
     testBitcoinBalance(chains.bitcoinWithNode)
     testFee(chains.bitcoinWithNode)
+    testClaimSucceedAfterExpiration(chains.bitcoinWithNode)
   })
 
   describe('Bitcoin - Js', () => {
@@ -464,6 +495,7 @@ describe('Swap Single Chain Flow', function () {
     testSwap(chains.bitcoinWithJs)
     testBitcoinBalance(chains.bitcoinWithJs)
     testFee(chains.bitcoinWithJs)
+    testClaimSucceedAfterExpiration(chains.bitcoinWithJs)
   })
 
   describe('Ethereum', () => {
@@ -477,12 +509,14 @@ describe('Swap Single Chain Flow', function () {
       testSwap(chains.ethereumWithMetaMask)
       testEthereumBalance(chains.ethereumWithMetaMask)
       testFee(chains.ethereumWithMetaMask)
+      testClaimSucceedAfterExpiration(chains.ethereumWithMetaMask)
     })
 
     describe('Ethereum - Node', () => {
       testSwap(chains.ethereumWithNode)
       testEthereumBalance(chains.ethereumWithNode)
       testFee(chains.ethereumWithNode)
+      testClaimSucceedAfterExpiration(chains.ethereumWithNode)
     })
 
     describeExternal('Ethereum - Ledger', () => {
@@ -492,6 +526,7 @@ describe('Swap Single Chain Flow', function () {
       testSwap(chains.ethereumWithLedger)
       testEthereumBalance(chains.ethereumWithLedger)
       testFee(chains.ethereumWithLedger)
+      testClaimSucceedAfterExpiration(chains.ethereumWithLedger)
     })
 
     describe('Ethereum - Js', () => {
@@ -501,6 +536,7 @@ describe('Swap Single Chain Flow', function () {
       testSwap(chains.ethereumWithJs)
       testEthereumBalance(chains.ethereumWithJs)
       testFee(chains.ethereumWithJs)
+      testClaimSucceedAfterExpiration(chains.ethereumWithJs)
     })
 
     describeExternal('ERC20 - MetaMask', () => {
@@ -513,6 +549,7 @@ describe('Swap Single Chain Flow', function () {
       testSwap(chains.erc20WithMetaMask)
       testEthereumBalance(chains.erc20WithMetaMask)
       testFee(chains.erc20WithMetaMask)
+      testClaimSucceedAfterExpiration(chains.erc20WithMetaMask)
     })
 
     describe('ERC20 - Node', async () => {
@@ -523,6 +560,7 @@ describe('Swap Single Chain Flow', function () {
       testSwap(chains.erc20WithNode)
       testEthereumBalance(chains.erc20WithNode)
       testFee(chains.erc20WithNode)
+      testClaimSucceedAfterExpiration(chains.erc20WithNode)
     })
 
     describeExternal('ERC20 - Ledger', () => {
@@ -533,6 +571,7 @@ describe('Swap Single Chain Flow', function () {
       testSwap(chains.erc20WithLedger)
       testEthereumBalance(chains.erc20WithLedger)
       testFee(chains.erc20WithLedger)
+      testClaimSucceedAfterExpiration(chains.erc20WithLedger)
     })
 
     describe('ERC20 - JS', () => {
@@ -543,6 +582,7 @@ describe('Swap Single Chain Flow', function () {
       testSwap(chains.erc20WithJs)
       testEthereumBalance(chains.erc20WithJs)
       testFee(chains.erc20WithJs)
+      testClaimSucceedAfterExpiration(chains.erc20WithJs)
     })
   })
 })
