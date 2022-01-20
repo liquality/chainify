@@ -1,13 +1,13 @@
 import { Provider } from '@liquality/provider'
 import { addressToString } from '@liquality/utils'
 import { ensure0x } from '@liquality/ethereum-utils'
-import { NftProvider, Address, Transaction } from '@liquality/types'
+import { Address } from '@liquality/types'
 import { StandardError } from '@liquality/errors'
 
 import { Contract } from '@ethersproject/contracts'
 import { Signer } from '@ethersproject/abstract-signer'
 
-export default abstract class NftBaseProvider extends Provider implements Partial<NftProvider> {
+export default abstract class NftBaseProvider extends Provider {
   _contract: Contract
   _signer: Signer
   _contractCache: { [address: string]: boolean }
@@ -22,44 +22,6 @@ export default abstract class NftBaseProvider extends Provider implements Partia
     this._interfaceID = interfaceID
   }
 
-  /* eslint-disable */
-  async balance(contract: Address | string, tokenIDs?: number | number[]): Promise<number | number[]> {
-    await this._attach(contract)
-    return
-  }
-
-  async transfer(
-    contract: Address | string,
-    receiver: Address | string,
-    tokenIDs: number | number[],
-    values?: number[],
-    data?: string
-  ): Promise<Transaction> {
-    await this._attach(contract)
-    return
-  }
-
-  async approve(contract: Address | string, operator: Address | string, tokenID: number): Promise<Transaction> {
-    await this._attach(contract)
-    return
-  }
-
-  async isApproved(contract: Address | string, tokenID: number): Promise<Address> {
-    await this._attach(contract)
-    return
-  }
-
-  async approveAll(contract: Address | string, operator: Address | string, state?: boolean): Promise<Transaction> {
-    await this._attach(contract)
-    return
-  }
-
-  async isApprovedForAll(contract: Address | string, operator: Address | string): Promise<boolean> {
-    await this._attach(contract)
-    return
-  }
-  /* eslint-enable */
-
   private async _supportsInterface(contractInstance: Contract) {
     const contractAddress = contractInstance.address.toLowerCase()
 
@@ -72,7 +34,7 @@ export default abstract class NftBaseProvider extends Provider implements Partia
     return state[0]
   }
 
-  private async _attach(contract: Address | string) {
+  protected async setContract(contract: Address | string) {
     const _contractAddress = ensure0x(addressToString(contract))
 
     if (this._contract.address !== _contractAddress) {

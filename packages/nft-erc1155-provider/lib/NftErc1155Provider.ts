@@ -1,6 +1,6 @@
 import { addressToString } from '@liquality/utils'
 import { ensure0x, normalizeTransactionObject } from '@liquality/ethereum-utils'
-import { Address } from '@liquality/types'
+import { NftProvider, Address } from '@liquality/types'
 import { StandardError } from '@liquality/errors'
 import { NftBaseProvider } from '@liquality/nft-base-provider'
 
@@ -10,7 +10,7 @@ import { Signer } from '@ethersproject/abstract-signer'
 import NftErc1155_ABI from './NftErc1155_ABI.json'
 const erc1155InterfaceID = '0xd9b67a26'
 
-export default class NftErc1155Provider extends NftBaseProvider {
+export default class NftErc1155Provider extends NftBaseProvider implements Partial<NftProvider> {
   constructor(signer: Signer) {
     super(signer, NftErc1155_ABI as any, erc1155InterfaceID)
   }
@@ -20,7 +20,7 @@ export default class NftErc1155Provider extends NftBaseProvider {
       return 0
     }
 
-    await super.balance(contract, tokenIDs)
+    await super.setContract(contract)
 
     const owner = await this._signer.getAddress()
 
@@ -41,7 +41,7 @@ export default class NftErc1155Provider extends NftBaseProvider {
     values: number[],
     data = '0x00'
   ) {
-    await super.transfer(contract, receiver, tokenIDs, values, data)
+    await super.setContract(contract)
 
     if (isArray(tokenIDs) && isArray(values) && tokenIDs.length === values.length) {
       let txWithHash
@@ -69,14 +69,14 @@ export default class NftErc1155Provider extends NftBaseProvider {
   }
 
   async approveAll(contract: Address | string, receiver: Address | string, state = true) {
-    await super.approveAll(contract, receiver, state)
+    await super.setContract(contract)
 
     const txWithHash = await this._contract.functions.setApprovalForAll(ensure0x(addressToString(receiver)), state)
     return normalizeTransactionObject(txWithHash)
   }
 
   async isApprovedForAll(contract: Address | string, operator: Address | string) {
-    await super.isApprovedForAll(contract, operator)
+    await super.setContract(contract)
 
     const state = await this._contract.functions.isApprovedForAll(
       await this._signer.getAddress(),
