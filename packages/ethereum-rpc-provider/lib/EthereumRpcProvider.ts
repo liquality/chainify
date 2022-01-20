@@ -96,6 +96,10 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     return normalizeTransactionObject(txWithHash)
   }
 
+  async call(to: Address | string, data: string) {
+    return this.rpc<ethereum.Hex>('eth_call', { data, to }, 'latest')
+  }
+
   async updateTransactionFee(tx: Transaction<ethereum.PartialTransaction> | string, newGasPrice: EIP1559Fee | number) {
     const txHash = typeof tx === 'string' ? tx : tx.hash
     const transaction = await this.getTransactionByHash(txHash)

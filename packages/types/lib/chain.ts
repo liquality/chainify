@@ -86,6 +86,14 @@ export interface ChainProvider {
   sendTransaction(options: SendOptions): Promise<Transaction>
 
   /**
+   * Call view method of a contract.
+   * @param {!string} to - contract address.
+   * @param {!string} data - Data to be passed to the call.
+   * @return {Promise<string>} Resolves with an encoded data.
+   */
+  call(to: Address | string, data: string): Promise<string>
+
+  /**
    * Create, sign & broadcast a sweep transaction.
    * @param {!string} address - External address.
    * @param {Fee} [fee] - Fee price in native unit (e.g. sat/b, wei)
