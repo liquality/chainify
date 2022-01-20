@@ -43,29 +43,37 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
   ) {
     await super.setContract(contract)
 
-    if (isArray(tokenIDs) && isArray(values) && tokenIDs.length === values.length) {
-      let txWithHash
-      if (tokenIDs.length === 1) {
-        txWithHash = await this._contract.functions.safeTransferFrom(
-          await this._signer.getAddress(),
-          ensure0x(addressToString(receiver)),
-          tokenIDs[0],
-          values[0],
-          data
-        )
-      } else {
-        txWithHash = await this._contract.functions.safeBatchTransferFrom(
-          await this._signer.getAddress(),
-          ensure0x(addressToString(receiver)),
-          tokenIDs,
-          values,
-          data
-        )
-      }
-      return normalizeTransactionObject(txWithHash)
+    if (!isArray(tokenIDs)) {
+      throw new StandardError(`'tokenIDs' input argument must be a numeric array`)
     }
 
-    throw new StandardError(`Incorrect input arguments in transfer method of ERC1155 Provider`)
+    if (!isArray(values)) {
+      throw new StandardError(`'values' input argument must be a numeric array`)
+    }
+
+    if (tokenIDs.length !== values.length) {
+      throw new StandardError(`'tokenIDs' && 'values' must have a matching length`)
+    }
+
+    let txWithHash
+    if (tokenIDs.length === 1) {
+      txWithHash = await this._contract.functions.safeTransferFrom(
+        await this._signer.getAddress(),
+        ensure0x(addressToString(receiver)),
+        tokenIDs[0],
+        values[0],
+        data
+      )
+    } else {
+      txWithHash = await this._contract.functions.safeBatchTransferFrom(
+        await this._signer.getAddress(),
+        ensure0x(addressToString(receiver)),
+        tokenIDs,
+        values,
+        data
+      )
+    }
+    return normalizeTransactionObject(txWithHash)
   }
 
   async approveAll(contract: Address | string, receiver: Address | string, state = true) {
