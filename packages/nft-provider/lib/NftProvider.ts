@@ -9,10 +9,12 @@ import { NftErc1155Provider } from '@liquality/nft-erc1155-provider'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { Wallet } from '@ethersproject/wallet'
 
+type AssetMap = Record<string, Partial<INftProvider>>
+
 export default class NftProvider extends NodeProvider implements INftProvider {
   _wallet: Wallet
-  _subProviders: { [type: string]: Partial<INftProvider> }
-  _nftContractsCache: { [address: string]: Partial<INftProvider> }
+  _subProviders: AssetMap
+  _nftContractsCache: AssetMap
 
   constructor(options: { uri: string; mnemonic: string; derivationPath: string }, apiURI: string, apiKey = '') {
     super({
