@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@ethersproject/abstract-signer": "^5.5.0",
     "@ethersproject/contracts": "^5.5.0",
     "@liquality/errors": "^1.12.0-next.0",
     "@liquality/ethereum-utils": "^1.12.0-next.0",

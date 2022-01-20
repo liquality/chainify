@@ -1,18 +1,17 @@
 import { addressToString } from '@liquality/utils'
-import { ensure0x, normalizeTransactionObject } from '@liquality/ethereum-utils'
-import { NftProvider, Address } from '@liquality/types'
+import { ensure0x } from '@liquality/ethereum-utils'
+import { NftProvider, Address, BigNumber } from '@liquality/types'
 import { StandardError } from '@liquality/errors'
 import { NftBaseProvider } from '@liquality/nft-base-provider'
 
 import { isArray } from 'lodash'
-import { Signer } from '@ethersproject/abstract-signer'
 
 import NftErc1155_ABI from './NftErc1155_ABI.json'
 const erc1155InterfaceID = '0xd9b67a26'
 
 export default class NftErc1155Provider extends NftBaseProvider implements Partial<NftProvider> {
-  constructor(signer: Signer) {
-    super(signer, NftErc1155_ABI as any, erc1155InterfaceID)
+  constructor() {
+    super(NftErc1155_ABI as any, erc1155InterfaceID)
   }
 
   async balance(contract: Address | string, tokenIDs: number | number[]) {
@@ -21,17 +20,20 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
     }
 
     await super.setContract(contract)
-
-    const owner = await this._signer.getAddress()
+    const owner = ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))
 
     if (isArray(tokenIDs)) {
       const addresses = Array.from({ length: tokenIDs.length }).fill(owner)
-      const amounts = await this._contract.functions.balanceOfBatch(addresses, tokenIDs)
-      return amounts[0].map((amount: any) => amount.toNumber())
+      const callData = await this._contract.populateTransaction.balanceOfBatch(addresses, tokenIDs)
+      const amountsEncoded = await this.client.chain.call(callData.to, callData.data)
+      const amountsDecoded = this._contract.interface.decodeFunctionResult('balanceOfBatch', amountsEncoded)
+      return amountsDecoded[0].map((amount: any) => amount.toNumber())
     }
 
-    const amount = await this._contract.functions.balanceOf(owner, tokenIDs)
-    return amount[0].toNumber()
+    const callData = await this._contract.populateTransaction.balanceOf(owner, tokenIDs)
+    const amountEncoded = await this.client.chain.call(callData.to, callData.data)
+    const amountsDecoded = this._contract.interface.decodeFunctionResult('balanceOf', amountEncoded)
+    return amountsDecoded[0].toNumber()
   }
 
   async transfer(
@@ -41,8 +43,6 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
     values: number[],
     data = '0x00'
   ) {
-    await super.setContract(contract)
-
     if (!isArray(tokenIDs)) {
       throw new StandardError(`'tokenIDs' input argument must be a numeric array`)
     }
@@ -55,41 +55,73 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
       throw new StandardError(`'tokenIDs' && 'values' must have a matching length`)
     }
 
-    let txWithHash
+    await super.setContract(contract)
+    const owner = ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))
+
     if (tokenIDs.length === 1) {
-      txWithHash = await this._contract.functions.safeTransferFrom(
-        await this._signer.getAddress(),
+      const txData = await this._contract.populateTransaction.safeTransferFrom(
+        owner,
         ensure0x(addressToString(receiver)),
         tokenIDs[0],
         values[0],
         data
       )
-    } else {
-      txWithHash = await this._contract.functions.safeBatchTransferFrom(
-        await this._signer.getAddress(),
-        ensure0x(addressToString(receiver)),
-        tokenIDs,
-        values,
-        data
-      )
+
+      const tx = await this.client.chain.sendTransaction({
+        to: txData.to,
+        value: new BigNumber(0),
+        data: txData.data
+      })
+
+      return tx
     }
-    return normalizeTransactionObject(txWithHash)
+
+    const txData = await this._contract.populateTransaction.safeBatchTransferFrom(
+      owner,
+      ensure0x(addressToString(receiver)),
+      tokenIDs,
+      values,
+      data
+    )
+
+    const tx = await this.client.chain.sendTransaction({
+      to: txData.to,
+      value: new BigNumber(0),
+      data: txData.data
+    })
+
+    return tx
   }
 
   async approveAll(contract: Address | string, receiver: Address | string, state = true) {
     await super.setContract(contract)
 
-    const txWithHash = await this._contract.functions.setApprovalForAll(ensure0x(addressToString(receiver)), state)
-    return normalizeTransactionObject(txWithHash)
+    const txData = await this._contract.populateTransaction.setApprovalForAll(
+      ensure0x(addressToString(receiver)),
+      state
+    )
+
+    const tx = await this.client.chain.sendTransaction({
+      to: txData.to,
+      value: new BigNumber(0),
+      data: txData.data
+    })
+
+    return tx
   }
 
   async isApprovedForAll(contract: Address | string, operator: Address | string) {
     await super.setContract(contract)
 
-    const state = await this._contract.functions.isApprovedForAll(
-      await this._signer.getAddress(),
+    const owner = ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))
+
+    const callData = await this._contract.populateTransaction.isApprovedForAll(
+      owner,
       ensure0x(addressToString(operator))
     )
-    return state[0]
+    const stateEncoded = await this.client.chain.call(callData.to, callData.data)
+    const stateDecoded = this._contract.interface.decodeFunctionResult('isApprovedForAll', stateEncoded)
+
+    return stateDecoded[0]
   }
 }

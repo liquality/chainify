@@ -3,6 +3,11 @@
 import { Client } from '../../../client/lib'
 import { NftProvider } from '../../lib'
 
+import { EthereumRpcProvider } from '../../../ethereum-rpc-provider/lib'
+import { EthereumJsWalletProvider } from '../../../ethereum-js-wallet-provider/lib'
+import { EthereumNetworks } from '../../../ethereum-networks/lib'
+import { EthereumEIP1559FeeProvider } from '../../../ethereum-eip1559-fee-provider/lib'
+
 import chai, { expect } from 'chai'
 
 chai.config.truncateThreshold = 0
@@ -10,7 +15,6 @@ chai.config.truncateThreshold = 0
 const openSeaAPI = 'https://rinkeby-api.opensea.io/api/v1/'
 const infura = '' // 'https://rinkeby.infura.io/v3/...'
 const mnemonic = ''
-const derivationPath_base = '' // `m/44'/60'/0'/0`
 
 const contract721 = '0xE5BB2D0e0C86021Bb68fF6a47447e37fe0eC2A27'
 const contract1155 = '0x6d8bE0FFbBdF508d669AdFb04F7d8aD414de44b0'
@@ -24,27 +28,29 @@ xdescribe('Nft provider', () => {
   beforeEach(() => {
     clients = [new Client(), new Client()]
 
+    clients[0].addProvider(new EthereumRpcProvider({ uri: infura }))
+    clients[0].addProvider(new EthereumEIP1559FeeProvider({ uri: infura }))
     clients[0].addProvider(
-      new NftProvider(
-        {
-          uri: infura,
-          mnemonic: mnemonic,
-          derivationPath: derivationPath_base + '/0'
-        },
-        openSeaAPI
-      )
+      new EthereumJsWalletProvider({
+        network: EthereumNetworks.rinkeby,
+        mnemonic: mnemonic,
+        derivationPath: `m/44'/${EthereumNetworks.rinkeby.coinType}'/0'/0/0`,
+        hardfork: 'london'
+      })
     )
+    clients[0].addProvider(new NftProvider(openSeaAPI))
 
+    clients[1].addProvider(new EthereumRpcProvider({ uri: infura }))
+    clients[1].addProvider(new EthereumEIP1559FeeProvider({ uri: infura }))
     clients[1].addProvider(
-      new NftProvider(
-        {
-          uri: infura,
-          mnemonic: mnemonic,
-          derivationPath: derivationPath_base + '/1'
-        },
-        openSeaAPI
-      )
+      new EthereumJsWalletProvider({
+        network: EthereumNetworks.rinkeby,
+        mnemonic: mnemonic,
+        derivationPath: `m/44'/${EthereumNetworks.rinkeby.coinType}'/0'/0/1`,
+        hardfork: 'london'
+      })
     )
+    clients[1].addProvider(new NftProvider(openSeaAPI))
   })
 
   describe('fetch', () => {

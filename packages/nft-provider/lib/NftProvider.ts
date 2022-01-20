@@ -3,20 +3,18 @@ import { addressToString } from '@liquality/utils'
 import { ensure0x } from '@liquality/ethereum-utils'
 import { NftProvider as INftProvider, Address } from '@liquality/types'
 
+import { NftBaseProvider } from '@liquality/nft-base-provider'
 import { NftErc721Provider } from '@liquality/nft-erc721-provider'
 import { NftErc1155Provider } from '@liquality/nft-erc1155-provider'
 
-import { StaticJsonRpcProvider } from '@ethersproject/providers'
-import { Wallet } from '@ethersproject/wallet'
-
-type AssetMap = Record<string, Partial<INftProvider>>
+type AssetMap = Record<string, Partial<INftProvider> & NftBaseProvider>
 
 export default class NftProvider extends NodeProvider implements INftProvider {
-  _wallet: Wallet
   _subProviders: AssetMap
   _nftContractsCache: AssetMap
+  _clientAttached: boolean
 
-  constructor(options: { uri: string; mnemonic: string; derivationPath: string }, apiURI: string, apiKey = '') {
+  constructor(apiURI: string, apiKey = '') {
     super({
       baseURL: apiURI,
       responseType: 'text',
@@ -26,17 +24,16 @@ export default class NftProvider extends NodeProvider implements INftProvider {
       }
     })
 
-    this._wallet = Wallet.fromMnemonic(options.mnemonic, options.derivationPath)
-    this._wallet = this._wallet.connect(new StaticJsonRpcProvider(options.uri))
-
     this._subProviders = {}
-    this._subProviders['ERC721'] = new NftErc721Provider(this._wallet)
-    this._subProviders['ERC1155'] = new NftErc1155Provider(this._wallet)
+    this._subProviders['ERC721'] = new NftErc721Provider()
+    this._subProviders['ERC1155'] = new NftErc1155Provider()
 
     this._nftContractsCache = {}
+    this._clientAttached = false
   }
 
   async balance(contract: Address | string, tokenIDs: number | number[]) {
+    this._setClientToSubProviders()
     return (await this._cacheGet(contract)).balance(contract, tokenIDs)
   }
 
@@ -47,27 +44,34 @@ export default class NftProvider extends NodeProvider implements INftProvider {
     values: number[],
     data: string
   ) {
+    this._setClientToSubProviders()
     return (await this._cacheGet(contract)).transfer(contract, receiver, tokenIDs, values, data)
   }
 
   async approve(contract: Address | string, operator: Address | string, tokenID: number) {
+    this._setClientToSubProviders()
     return (await this._cacheGet(contract)).approve(contract, operator, tokenID)
   }
 
   async isApproved(contract: Address | string, tokenID: number): Promise<Address> {
+    this._setClientToSubProviders()
     return (await this._cacheGet(contract)).isApproved(contract, tokenID)
   }
 
   async approveAll(contract: Address | string, operator: Address | string, state: boolean) {
+    this._setClientToSubProviders()
     return (await this._cacheGet(contract)).approveAll(contract, operator, state)
   }
 
   async isApprovedForAll(contract: Address | string, operator: Address | string): Promise<boolean> {
+    this._setClientToSubProviders()
     return (await this._cacheGet(contract)).isApprovedForAll(contract, operator)
   }
 
   async fetch() {
-    const nfts = await this.nodeGet(`assets?owner=${await this._wallet.getAddress()}`)
+    const nfts = await this.nodeGet(
+      `assets?owner=${ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))}`
+    )
 
     // storing cache
     nfts.assets.map((nft: any) => {
@@ -75,6 +79,16 @@ export default class NftProvider extends NodeProvider implements INftProvider {
     })
 
     return nfts
+  }
+
+  private _setClientToSubProviders() {
+    if (!this._clientAttached && this.client) {
+      for (const provider in this._subProviders) {
+        this._subProviders[provider].setClient(this.client)
+      }
+
+      this._clientAttached = true
+    }
   }
 
   private _cacheAdd(address: Address | string, standard: string) {
