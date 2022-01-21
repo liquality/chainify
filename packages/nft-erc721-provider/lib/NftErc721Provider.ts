@@ -22,15 +22,21 @@ export default class NftErc721Provider extends NftBaseProvider implements Partia
     return amountsDecoded[0].toNumber()
   }
 
-  // TODO: data
-  async transfer(contract: Address | string, receiver: Address | string, tokenID: number) {
+  async transfer(
+    contract: Address | string,
+    receiver: Address | string,
+    tokenID: number,
+    values?: number[],
+    data = '0x00'
+  ) {
     await super.setContract(contract)
     const owner = ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))
 
-    const txData = await this._contract.populateTransaction['safeTransferFrom(address,address,uint256)'](
+    const txData = await this._contract.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](
       owner,
       ensure0x(addressToString(receiver)),
-      tokenID.toString()
+      tokenID.toString(),
+      data
     )
 
     const tx = await this.client.chain.sendTransaction({

@@ -32,8 +32,8 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
 
     const callData = await this._contract.populateTransaction.balanceOf(owner, tokenIDs)
     const amountEncoded = await this.client.chain.call(callData.to, callData.data)
-    const amountsDecoded = this._contract.interface.decodeFunctionResult('balanceOf', amountEncoded)
-    return amountsDecoded[0].toNumber()
+    const amountDecoded = this._contract.interface.decodeFunctionResult('balanceOf', amountEncoded)
+    return amountDecoded[0].toNumber()
   }
 
   async transfer(
