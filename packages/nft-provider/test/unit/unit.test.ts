@@ -72,10 +72,6 @@ xdescribe('Nft provider', () => {
       expect(balance1155).to.deep.equal([1, 1, 1, 0])
 
       balance1155 = await clients[0].nft.balance(contract1155, [2])
-      expect(balance1155).to.be.an('array')
-      expect(balance1155).to.deep.equal([1])
-
-      balance1155 = await clients[0].nft.balance(contract1155, 2)
       expect(balance1155).not.to.be.an('array')
       expect(balance1155).to.be.equal(1)
     })
@@ -83,7 +79,7 @@ xdescribe('Nft provider', () => {
 
   describe('transfer', () => {
     it('Should transfer nfts ERC721', async () => {
-      const tx721 = await clients[0].nft.transfer(contract721, address_2, 1)
+      const tx721 = await clients[0].nft.transfer(contract721, address_2, [1])
       expect(tx721).to.have.deep.property('hash')
 
       await new Promise((resolve) => setTimeout(resolve, 30000))
@@ -94,7 +90,7 @@ xdescribe('Nft provider', () => {
       expect(balance_2).to.be.equal(1)
 
       // return back to initial owner
-      await clients[1].nft.transfer(contract721, address_1, 1)
+      await clients[1].nft.transfer(contract721, address_1, [1])
       await new Promise((resolve) => setTimeout(resolve, 30000))
     }).timeout(120000)
 

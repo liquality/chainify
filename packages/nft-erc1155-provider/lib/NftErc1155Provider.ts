@@ -7,31 +7,32 @@ import { NftBaseProvider } from '@liquality/nft-base-provider'
 import { isArray } from 'lodash'
 
 import NftErc1155_ABI from './NftErc1155_ABI.json'
+const erc1155ProtocolName = 'ERC1155'
 const erc1155InterfaceID = '0xd9b67a26'
 
 export default class NftErc1155Provider extends NftBaseProvider implements Partial<NftProvider> {
   constructor() {
-    super(NftErc1155_ABI as any, erc1155InterfaceID)
+    super(NftErc1155_ABI as any, erc1155InterfaceID, erc1155ProtocolName)
   }
 
-  async balance(contract: Address | string, tokenIDs: number | number[]) {
-    if (!tokenIDs) {
-      return 0
+  async balance(contract: Address | string, tokenIDs: number[]) {
+    if (!isArray(tokenIDs)) {
+      throw new StandardError(`'tokenIDs' input argument must be a numeric array`)
     }
 
-    await super.setContract(contract)
+    await super.supportsInterface(contract)
     const owner = ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))
 
-    if (isArray(tokenIDs)) {
+    if (tokenIDs.length > 1) {
       const addresses = Array.from({ length: tokenIDs.length }).fill(owner)
       const callData = await this._contract.populateTransaction.balanceOfBatch(addresses, tokenIDs)
-      const amountsEncoded = await this.client.chain.call(callData.to, callData.data)
+      const amountsEncoded = await this.getMethod('call')(ensure0x(addressToString(contract)), callData.data)
       const amountsDecoded = this._contract.interface.decodeFunctionResult('balanceOfBatch', amountsEncoded)
       return amountsDecoded[0].map((amount: any) => amount.toNumber())
     }
 
-    const callData = await this._contract.populateTransaction.balanceOf(owner, tokenIDs)
-    const amountEncoded = await this.client.chain.call(callData.to, callData.data)
+    const callData = await this._contract.populateTransaction.balanceOf(owner, tokenIDs[0])
+    const amountEncoded = await this.getMethod('call')(ensure0x(addressToString(contract)), callData.data)
     const amountDecoded = this._contract.interface.decodeFunctionResult('balanceOf', amountEncoded)
     return amountDecoded[0].toNumber()
   }
@@ -55,7 +56,7 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
       throw new StandardError(`'tokenIDs' && 'values' must have a matching length`)
     }
 
-    await super.setContract(contract)
+    await super.supportsInterface(contract)
     const owner = ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))
 
     if (tokenIDs.length === 1) {
@@ -68,7 +69,7 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
       )
 
       const tx = await this.client.chain.sendTransaction({
-        to: txData.to,
+        to: ensure0x(addressToString(contract)),
         value: new BigNumber(0),
         data: txData.data
       })
@@ -85,7 +86,7 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
     )
 
     const tx = await this.client.chain.sendTransaction({
-      to: txData.to,
+      to: ensure0x(addressToString(contract)),
       value: new BigNumber(0),
       data: txData.data
     })
@@ -94,7 +95,7 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
   }
 
   async approveAll(contract: Address | string, receiver: Address | string, state = true) {
-    await super.setContract(contract)
+    await super.supportsInterface(contract)
 
     const txData = await this._contract.populateTransaction.setApprovalForAll(
       ensure0x(addressToString(receiver)),
@@ -102,7 +103,7 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
     )
 
     const tx = await this.client.chain.sendTransaction({
-      to: txData.to,
+      to: ensure0x(addressToString(contract)),
       value: new BigNumber(0),
       data: txData.data
     })
@@ -111,7 +112,7 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
   }
 
   async isApprovedForAll(contract: Address | string, operator: Address | string) {
-    await super.setContract(contract)
+    await super.supportsInterface(contract)
 
     const owner = ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))
 
@@ -119,7 +120,7 @@ export default class NftErc1155Provider extends NftBaseProvider implements Parti
       owner,
       ensure0x(addressToString(operator))
     )
-    const stateEncoded = await this.client.chain.call(callData.to, callData.data)
+    const stateEncoded = await this.getMethod('call')(ensure0x(addressToString(contract)), callData.data)
     const stateDecoded = this._contract.interface.decodeFunctionResult('isApprovedForAll', stateEncoded)
 
     return stateDecoded[0]
