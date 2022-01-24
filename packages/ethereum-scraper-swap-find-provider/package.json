@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-scraper-swap-find-provider",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.12.0",
-    "@liquality/ethereum-utils": "^1.12.0",
-    "@liquality/node-provider": "^1.12.0",
-    "@liquality/types": "^1.12.0",
-    "@liquality/utils": "^1.12.0"
+    "@liquality/errors": "^1.13.0",
+    "@liquality/ethereum-utils": "^1.13.0",
+    "@liquality/node-provider": "^1.13.0",
+    "@liquality/types": "^1.13.0",
+    "@liquality/utils": "^1.13.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
