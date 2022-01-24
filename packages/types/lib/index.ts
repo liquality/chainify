@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { SwapProvider, SwapParams } from './swap'
 import { ChainProvider, SendOptions } from './chain'
+import { NftProvider } from './nft'
 import { WalletProvider } from './wallet'
 
 import { FeeProvider, FeeDetails, FeeDetail, EIP1559Fee } from './fees'
@@ -34,6 +35,7 @@ export {
   IClient,
   SwapProvider,
   ChainProvider,
+  NftProvider,
   WalletProvider,
   FeeProvider,
   EIP1559Fee,
