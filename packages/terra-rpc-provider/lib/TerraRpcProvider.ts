@@ -98,7 +98,7 @@ export default class TerraRpcProvider extends NodeProvider implements FeeProvide
             balance = Number(token.balance)
           } else {
             const coins = await this._lcdClient.bank.balance(address)
-            balance = Number(coins[0].get(this._asset)?.amount)
+            balance = Number(coins[0].get(this._asset)?.amount) || 0
           }
 
           return new BigNumber(balance)

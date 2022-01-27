@@ -57,12 +57,7 @@ export const normalizeTransaction = (
       .value ||
     ''
 
-  let status
-  if (currentBlock - data.height < 10) {
-    status = TxStatus.Pending
-  } else {
-    status = data.raw_log?.includes('failed to execute message') ? TxStatus.Failed : TxStatus.Success
-  }
+  const status = data.raw_log?.includes('failed to execute message') ? TxStatus.Failed : TxStatus.Success
 
   return {
     value: Number(value),
