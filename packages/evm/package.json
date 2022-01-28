@@ -1,0 +1,23 @@
+{
+    "name": "@liquality/evm",
+    "version": "0.0.0",
+    "description": "> TODO: description",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@ethersproject/providers": "^5.5.2",
+        "@ethersproject/wallet": "^5.5.0",
+        "@liquality/client": "workspace:*",
+        "@liquality/types": "workspace:*"
+    }
+}

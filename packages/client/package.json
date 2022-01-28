@@ -1,0 +1,22 @@
+{
+    "name": "@liquality/client",
+    "version": "0.0.0",
+    "description": "> TODO: description",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@ethersproject/sha2": "^5.5.0",
+        "@liquality/types": "workspace:*",
+        "@liquality/utils": "workspace:*"
+    }
+}

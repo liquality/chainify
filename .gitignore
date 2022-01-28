@@ -1,0 +1,10 @@
+node_modules
+dist
+.turbo
+.pnpm-debug.log
+.DS_Store
+
+.yarn/cache
+.yarn/versions
+.yarn/install-state.gz
+.yarn/unplugged
