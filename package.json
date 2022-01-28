@@ -1,0 +1,23 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "lerna": "^3.22.1",
+    "turbo": "*",
+    "typescript": "^4.5.5"
+  },
+  "scripts": {
+    "dev": "turbo run dev --parallel --no-cache",
+    "test": "turbo run test",
+    "build": "turbo run build",
+    "prepublish": "lerna run prepublish",
+    "publish-canary": "lerna version prerelease --preid canary --force-publish",
+    "publish-stable": "lerna version --force-publish && release && node ./scripts/release-notes.js"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@1.22.10",
+  "version": "0.0.0"
+}
