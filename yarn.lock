@@ -856,6 +856,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@liquality/bitcoin@workspace:packages/bitcoin":
+  version: 0.0.0-use.local
+  resolution: "@liquality/bitcoin@workspace:packages/bitcoin"
+  dependencies:
+    "@liquality/client": "workspace:*"
+    "@liquality/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@liquality/client@workspace:*, @liquality/client@workspace:packages/client":
   version: 0.0.0-use.local
   resolution: "@liquality/client@workspace:packages/client"
@@ -872,6 +881,33 @@ __metadata:
   dependencies:
     "@ethersproject/providers": ^5.5.2
     "@ethersproject/wallet": ^5.5.0
+    "@liquality/client": "workspace:*"
+    "@liquality/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@liquality/near@workspace:packages/near":
+  version: 0.0.0-use.local
+  resolution: "@liquality/near@workspace:packages/near"
+  dependencies:
+    "@liquality/client": "workspace:*"
+    "@liquality/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@liquality/solana@workspace:packages/solana":
+  version: 0.0.0-use.local
+  resolution: "@liquality/solana@workspace:packages/solana"
+  dependencies:
+    "@liquality/client": "workspace:*"
+    "@liquality/types": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@liquality/terra@workspace:packages/terra":
+  version: 0.0.0-use.local
+  resolution: "@liquality/terra@workspace:packages/terra"
+  dependencies:
     "@liquality/client": "workspace:*"
     "@liquality/types": "workspace:*"
   languageName: unknown
