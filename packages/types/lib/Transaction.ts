@@ -21,9 +21,12 @@ export interface Transaction<TransactionType = any> {
     fee?: BigNumberish;
     // The raw transaction object
     _raw: TransactionType;
+    // The transaction logs/events
+    logs?: any;
 }
 
 export interface SwapParams {
+    asset: Asset;
     // The amount of native value locked in the swap
     value: BigNumberish;
     //Recepient address of the swap
