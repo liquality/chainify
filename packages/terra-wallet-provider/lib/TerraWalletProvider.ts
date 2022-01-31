@@ -192,7 +192,7 @@ export default class TerraWalletProvider extends WalletProvider {
       .then(async (result) => {
         /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
         while (true) {
-          const data = await this._lcdClient.tx.txInfo(result.txhash).catch()
+          const data = await this._lcdClient.tx.txInfo(result.txhash).catch(() => undefined)
           if (data) return data
           await new Promise((resolve) => setTimeout(resolve, 250))
         }
