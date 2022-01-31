@@ -3,7 +3,6 @@ import { Address, BigNumber, Transaction, terra, SendOptions } from '@liquality/
 import { addressToString } from '@liquality/utils'
 import { TerraNetwork } from '@liquality/terra-networks'
 import {
-  BlockTxBroadcastResult,
   Coins,
   LCDClient,
   MnemonicKey,
@@ -14,7 +13,8 @@ import {
   Fee,
   Tx,
   MsgExecuteContract,
-  isTxError
+  isTxError,
+  TxInfo
 } from '@terra-money/terra.js'
 import { ceil } from 'lodash'
 
@@ -186,8 +186,22 @@ export default class TerraWalletProvider extends WalletProvider {
     this._accAddressKey = this._wallet.key.accAddress
   }
 
-  private async _broadcastTx(tx: Tx): Promise<BlockTxBroadcastResult> {
-    return await this._lcdClient.tx.broadcast(tx)
+  private async _broadcastTx(tx: Tx): Promise<TxInfo> {
+    return this._lcdClient.tx.broadcastSync(tx)
+      .then(async result => {
+        // TODO: use a for or add a timeout to prevent infinite loops 
+        while(true){
+          // query txhash
+          const data = await this._lcdClient.tx.txInfo(result.txhash)
+            .catch(() => {})
+          // if hash is onchain return data
+          if(data) return data
+          // else wait 250ms and then repeat
+          await new Promise(resolve => setTimeout(resolve, 250))
+        }
+      }).then(result => {
+        return result
+      })
   }
 
   private composeTransaction(sendOptions: SendOptions) {
