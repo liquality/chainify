@@ -4,18 +4,18 @@ import { sha256 } from '@ethersproject/sha2';
 
 import Wallet from './Wallet';
 
-export default abstract class Swap<T> {
-    protected walletProvider: Wallet<T>;
+export default abstract class Swap<T, S> {
+    protected walletProvider: Wallet<T, S>;
 
-    constructor(walletProvider?: Wallet<T>) {
+    constructor(walletProvider?: Wallet<T, S>) {
         this.walletProvider = walletProvider;
     }
 
-    public setWallet(wallet: Wallet<T>): void {
+    public setWallet(wallet: Wallet<T, S>): void {
         this.walletProvider = wallet;
     }
 
-    public getWallet(): Wallet<T> {
+    public getWallet(): Wallet<T, S> {
         return this.walletProvider;
     }
 

@@ -1,7 +1,7 @@
 import { AddressType, BigNumberish, FeeData, Transaction, TransactionRequest } from '@liquality/types';
 import Chain from './Chain';
 
-export default abstract class Wallet<T> {
+export default abstract class Wallet<T, S> {
     protected chainProvider: Chain<T>;
 
     constructor(chainProvider?: Chain<T>) {
@@ -15,6 +15,8 @@ export default abstract class Wallet<T> {
     getChainProvider(): Chain<T> {
         return this.chainProvider;
     }
+
+    public abstract getSigner(): S;
 
     public abstract getAddress(): Promise<AddressType>;
 

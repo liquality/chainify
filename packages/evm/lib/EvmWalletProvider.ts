@@ -1,15 +1,14 @@
-import { Chain, Wallet } from '@liquality/client';
-import { AddressType, BigNumberish, Transaction, WalletOptions } from '@liquality/types';
-import { BaseProvider } from '@ethersproject/providers';
+import { Chain } from '@liquality/client';
+import { AddressType, WalletOptions } from '@liquality/types';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
+import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 
-import { EthereumTransactionRequest, EthereumTransaction, EthereumFeeData } from './types';
-
-export class EvmWalletProvider extends Wallet<BaseProvider> {
+export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider> {
     private _wallet: EthersWallet;
     private _walletOptions: WalletOptions;
 
-    constructor(walletOptions: WalletOptions, chainProvider?: Chain<BaseProvider>) {
+    constructor(walletOptions: WalletOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
         super(chainProvider);
         this._walletOptions = walletOptions;
         this._wallet = EthersWallet.fromMnemonic(walletOptions.mnemonic, walletOptions.derivationPath + walletOptions.index);
@@ -17,6 +16,8 @@ export class EvmWalletProvider extends Wallet<BaseProvider> {
         if (chainProvider) {
             this._wallet = this._wallet.connect(chainProvider.getProvider());
         }
+
+        this.signer = this._wallet;
     }
 
     public async getAddress(): Promise<AddressType> {
@@ -37,68 +38,6 @@ export class EvmWalletProvider extends Wallet<BaseProvider> {
             result.push(EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + i).address);
         }
         return result;
-    }
-
-    public signMessage(message: string, _from: AddressType): Promise<string> {
-        return this._wallet.signMessage(message);
-    }
-
-    public async sendTransaction(txRequest: EthereumTransactionRequest): Promise<Transaction<EthereumTransaction>> {
-        const result = await this._wallet.sendTransaction({
-            ...txRequest,
-            to: txRequest.to.toString(),
-            from: txRequest.from.toString(),
-            nonce: txRequest.nonce.toString(),
-            value: txRequest.value.toString(),
-            gasPrice: txRequest.gasPrice.toString(),
-            gasLimit: txRequest.gasLimit.toString(),
-            maxFeePerGas: txRequest.maxFeePerGas.toString(),
-            maxPriorityFeePerGas: txRequest.maxPriorityFeePerGas.toString(),
-        });
-        return {
-            ...result,
-            _raw: result,
-            value: result.value.toString(),
-            blockNumber: result.blockNumber.toString(),
-            confirmations: result.confirmations.toString(),
-        };
-    }
-
-    public async sendBatchTransaction(txRequests: EthereumTransactionRequest[]): Promise<Transaction<EthereumTransaction>[]> {
-        const result: Transaction<EthereumTransaction>[] = [];
-        for (const txRequest of txRequests) {
-            const tx = await this._wallet.sendTransaction({
-                ...txRequest,
-                to: txRequest.to.toString(),
-                from: txRequest.from.toString(),
-                nonce: txRequest.nonce.toString(),
-                value: txRequest.value.toString(),
-                gasPrice: txRequest.gasPrice.toString(),
-                gasLimit: txRequest.gasLimit.toString(),
-                maxFeePerGas: txRequest.maxFeePerGas.toString(),
-                maxPriorityFeePerGas: txRequest.maxPriorityFeePerGas.toString(),
-            });
-            result.push({
-                ...tx,
-                _raw: tx,
-                value: tx.value.toString(),
-                blockNumber: tx.blockNumber.toString(),
-                confirmations: tx.confirmations.toString(),
-            });
-        }
-        return result;
-    }
-
-    public sendSweepTransaction(_address: AddressType, _fee?: EthereumFeeData): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
-    }
-
-    public updateTransactionFee(_tx: string | Transaction<any>, _newFee: EthereumFeeData): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
-    }
-
-    public getBalance(_assets?: string[]): Promise<BigNumberish | BigNumberish[]> {
-        throw new Error('Method not implemented.');
     }
 
     public async exportPrivateKey(): Promise<string> {
