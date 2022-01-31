@@ -44,6 +44,7 @@ export class EvmChainProvider extends Chain<BaseProvider> {
         if (result.confirmations > 0) {
             const receipt = await this.provider.getTransactionReceipt(txHash);
             result.status = Number(receipt?.status) > 0 ? TxStatus.Success : TxStatus.Failed;
+            result.logs = receipt.logs;
         } else {
             result.status = TxStatus.Pending;
         }
