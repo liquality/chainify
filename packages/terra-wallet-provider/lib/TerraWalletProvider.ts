@@ -187,19 +187,17 @@ export default class TerraWalletProvider extends WalletProvider {
   }
 
   private async _broadcastTx(tx: Tx): Promise<TxInfo> {
-    return this._lcdClient.tx.broadcastSync(tx)
-      .then(async result => {
-        // TODO: use a for or add a timeout to prevent infinite loops 
-        while(true){
-          // query txhash
-          const data = await this._lcdClient.tx.txInfo(result.txhash)
-            .catch(() => {})
-          // if hash is onchain return data
-          if(data) return data
-          // else wait 250ms and then repeat
-          await new Promise(resolve => setTimeout(resolve, 250))
+    return this._lcdClient.tx
+      .broadcastSync(tx)
+      .then(async (result) => {
+        /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
+        while (true) {
+          const data = await this._lcdClient.tx.txInfo(result.txhash).catch()
+          if (data) return data
+          await new Promise((resolve) => setTimeout(resolve, 250))
         }
-      }).then(result => {
+      })
+      .then((result) => {
         return result
       })
   }
