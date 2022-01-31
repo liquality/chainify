@@ -1,6 +1,6 @@
 {
   "name": "@liquality/near-utils",
-  "version": "1.13.1",
+  "version": "1.13.2",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.13.1",
-    "@liquality/types": "^1.13.1",
-    "@liquality/utils": "^1.13.1",
+    "@liquality/errors": "^1.13.2",
+    "@liquality/types": "^1.13.2",
+    "@liquality/utils": "^1.13.2",
     "bn.js": "^5.2.0",
     "near-api-js": "^0.42.0"
   },
