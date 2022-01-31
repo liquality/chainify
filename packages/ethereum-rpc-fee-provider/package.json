@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-rpc-fee-provider",
-  "version": "1.13.2",
+  "version": "1.13.3",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/provider": "^1.13.2",
-    "@liquality/types": "^1.13.2",
+    "@liquality/provider": "^1.13.3",
+    "@liquality/types": "^1.13.3",
     "bignumber.js": "^9.0.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
