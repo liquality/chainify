@@ -2,6 +2,7 @@ import { Chain, Wallet } from '@liquality/client';
 import { AddressType, BigNumberish, Transaction } from '@liquality/types';
 import { Signer } from '@ethersproject/abstract-signer';
 
+import { parseTxRequest, parseTxResponse } from './utils';
 import { EthereumTransactionRequest, EthereumTransaction, EthereumFeeData } from './types';
 
 export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, Signer> {
@@ -24,48 +25,16 @@ export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, S
     }
 
     public async sendTransaction(txRequest: EthereumTransactionRequest): Promise<Transaction<EthereumTransaction>> {
-        const result = await this.signer.sendTransaction({
-            ...txRequest,
-            to: txRequest.to?.toString(),
-            from: txRequest.from?.toString(),
-            nonce: txRequest.nonce?.toString(),
-            value: txRequest.value?.toString(),
-            gasPrice: txRequest.gasPrice?.toString(),
-            gasLimit: txRequest.gasLimit?.toString(),
-            maxFeePerGas: txRequest.maxFeePerGas?.toString(),
-            maxPriorityFeePerGas: txRequest.maxPriorityFeePerGas?.toString(),
-            chainId: Number(this.chainProvider.getNetwork().chainId),
-        });
-        return {
-            ...result,
-            _raw: result,
-            value: result.value.toString(),
-            blockNumber: result.blockNumber.toString(),
-            confirmations: result.confirmations.toString(),
-        };
+        const chainId = Number(this.chainProvider.getNetwork().chainId);
+        const result = await this.signer.sendTransaction(parseTxRequest({ chainId, ...txRequest }));
+        return parseTxResponse(result);
     }
 
     public async sendBatchTransaction(txRequests: EthereumTransactionRequest[]): Promise<Transaction<EthereumTransaction>[]> {
         const result: Transaction<EthereumTransaction>[] = [];
         for (const txRequest of txRequests) {
-            const tx = await this.signer.sendTransaction({
-                ...txRequest,
-                to: txRequest.to.toString(),
-                from: txRequest.from.toString(),
-                nonce: txRequest.nonce.toString(),
-                value: txRequest.value.toString(),
-                gasPrice: txRequest.gasPrice.toString(),
-                gasLimit: txRequest.gasLimit.toString(),
-                maxFeePerGas: txRequest.maxFeePerGas.toString(),
-                maxPriorityFeePerGas: txRequest.maxPriorityFeePerGas.toString(),
-            });
-            result.push({
-                ...tx,
-                _raw: tx,
-                value: tx.value.toString(),
-                blockNumber: tx.blockNumber.toString(),
-                confirmations: tx.confirmations.toString(),
-            });
+            const tx = await this.sendTransaction(txRequest);
+            result.push(tx);
         }
         return result;
     }

@@ -1,6 +1,7 @@
 import { Chain } from '@liquality/client';
-import { Block, Transaction, AddressType, BigNumber, Network, TxStatus } from '@liquality/types';
+import { Block, Transaction, AddressType, BigNumber, Network } from '@liquality/types';
 import { StaticJsonRpcProvider, JsonRpcProvider, BaseProvider } from '@ethersproject/providers';
+import { parseBlockResponse, parseTxResponse } from './utils';
 import { EthereumBlock, EthereumTransaction, EthereumBlockWithTransactions, EthereumFeeData } from './types';
 
 export class EvmChainProvider extends Chain<BaseProvider> {
@@ -15,14 +16,14 @@ export class EvmChainProvider extends Chain<BaseProvider> {
     public async getBlockByHash(
         blockHash: string,
         includeTx = false
-    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction>> {
+    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, Transaction<EthereumTransaction>>> {
         return this._getBlock(blockHash, includeTx);
     }
 
     public async getBlockByNumber(
         blockNumber: number,
         includeTx = false
-    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction>> {
+    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, Transaction<EthereumTransaction>>> {
         return this._getBlock(blockNumber, includeTx);
     }
 
@@ -32,22 +33,13 @@ export class EvmChainProvider extends Chain<BaseProvider> {
 
     public async getTransactionByHash(txHash: string): Promise<Transaction<EthereumTransaction>> {
         const tx = await this.provider.getTransaction(txHash);
-        const result: Transaction<EthereumTransaction> = {
-            hash: tx.hash,
-            value: tx.value.toString(),
-            blockHash: tx.blockHash,
-            blockNumber: tx.blockNumber,
-            confirmations: tx.confirmations,
-            feePrice: tx.gasPrice.toString(),
-            _raw: tx,
-        };
+        const result = parseTxResponse(tx);
+
         if (result.confirmations > 0) {
             const receipt = await this.provider.getTransactionReceipt(txHash);
-            result.status = Number(receipt?.status) > 0 ? TxStatus.Success : TxStatus.Failed;
-            result.logs = receipt.logs;
-        } else {
-            result.status = TxStatus.Pending;
+            return parseTxResponse(tx, receipt);
         }
+
         return result;
     }
 
@@ -77,23 +69,11 @@ export class EvmChainProvider extends Chain<BaseProvider> {
 
     private async _getBlock(blockTag: number | string, includeTx?: boolean) {
         if (includeTx) {
-            const block = await this.provider.getBlock(blockTag);
-            return {
-                number: block.number,
-                hash: block.hash,
-                timestamp: block.timestamp,
-                parentHash: block.parentHash,
-                difficulty: block.difficulty,
-                nonce: Number(block.nonce),
-                _raw: block,
-            };
-        } else {
             const blockWithTx = await this.provider.getBlockWithTransactions(blockTag);
-            return {
-                ...blockWithTx,
-                nonce: Number(blockWithTx.nonce),
-                _raw: blockWithTx,
-            };
+            return parseBlockResponse(blockWithTx, blockWithTx.transactions);
+        } else {
+            const block = await this.provider.getBlock(blockTag);
+            return parseBlockResponse(block);
         }
     }
 }
