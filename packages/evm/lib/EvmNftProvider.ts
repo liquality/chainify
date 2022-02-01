@@ -25,9 +25,8 @@ export class NftProvider extends Nft<BaseProvider, Signer> {
 
         this._erc721 = ERC721__factory.connect(AddressZero, this.walletProvider.getSigner());
         this._erc1155 = ERC1155__factory.connect(AddressZero, this.walletProvider.getSigner());
-
+        this._cache = {};
         this._schemas = { ERC721: this._erc721, ERC1155: this._erc1155 };
-
         this._httpClient = new HttpClient(httpConfig);
     }
 
