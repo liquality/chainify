@@ -7,7 +7,7 @@ import { toStringDeep } from '@liquality/utils';
 
 import { toEthereumTxRequest } from './utils';
 import { EthereumFeeData } from './types';
-import { LiqualityHTLC } from './typechain';
+import { LiqualityHTLC, LiqualityHTLC__factory } from './typechain';
 import { HTLCDataStruct } from './typechain/LiqualityHTLC';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 
@@ -19,8 +19,7 @@ export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
         super(walletProvider);
 
         if (walletProvider) {
-            this._contract.connect(walletProvider.getSigner());
-            this._contract.attach(swapOptions.contractAddress);
+            this._contract = LiqualityHTLC__factory.connect(swapOptions.contractAddress);
         }
     }
 
@@ -30,7 +29,7 @@ export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
 
     public async initiateSwap(swapParams: SwapParams, fee: EthereumFeeData): Promise<Transaction<any>> {
         const tx = await this._contract.populateTransaction.initiate(toStringDeep<SwapParams, HTLCDataStruct>(swapParams));
-        const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, swapParams, fee));
+        const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
         return txResponse;
     }
 
@@ -44,7 +43,7 @@ export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
         await this.verifyInitiateSwapTransaction(swapParams, initTx);
 
         const tx = await this._contract.populateTransaction.claim('0', secret);
-        const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, swapParams, fee));
+        const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
         return txResponse;
     }
 
@@ -53,7 +52,7 @@ export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
         await this.verifyInitiateSwapTransaction(swapParams, initTx);
 
         const tx = await this._contract.populateTransaction.refund('0');
-        const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, swapParams, fee));
+        const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
         return txResponse;
     }
 
