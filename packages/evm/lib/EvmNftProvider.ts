@@ -13,7 +13,7 @@ import { EthereumFeeData, EthereumTransaction, PopulatedTransaction, NftTypes } 
 type NftContract = ERC721 | ERC1155;
 type NftInfo = { contract: NftContract; schema: NftTypes };
 
-export class NftProvider extends Nft<BaseProvider, Signer> {
+export class EvmNftProvider extends Nft<BaseProvider, Signer> {
     private _erc721: ERC721;
     private _erc1155: ERC1155;
     private _cache: Record<string, NftInfo>;
