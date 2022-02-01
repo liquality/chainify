@@ -17,6 +17,7 @@
     "dependencies": {
         "@ethersproject/sha2": "^5.5.0",
         "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:*"
+        "@liquality/utils": "workspace:*",
+        "axios": "^0.25.0"
     }
 }

@@ -46,7 +46,7 @@ export enum TxStatus {
 }
 
 export type TransactionRequest = {
-    asset: Asset;
+    asset?: Asset;
     to?: AddressType;
     data?: string;
     value?: BigNumberish;

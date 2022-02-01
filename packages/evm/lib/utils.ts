@@ -1,12 +1,11 @@
 import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { PopulatedTransaction } from '@ethersproject/contracts';
-import { Transaction, TxStatus, Block, SwapParams } from '@liquality/types';
+import { Transaction, TxStatus, Block } from '@liquality/types';
 import { EthereumBlock, EthereumBlockWithTransactions, EthereumFeeData, EthereumTransaction, EthereumTransactionRequest } from './types';
 
-export function toEthereumTxRequest(tx: PopulatedTransaction, swapParams: SwapParams, fee?: EthereumFeeData): EthereumTransactionRequest {
+export function toEthereumTxRequest(tx: PopulatedTransaction, fee?: EthereumFeeData): EthereumTransactionRequest {
     return {
         ...tx,
-        asset: swapParams.asset,
         value: tx.value.toString(),
         gasLimit: tx.gasLimit.toString(),
         gasPrice: fee.gasPrice.toString(),
