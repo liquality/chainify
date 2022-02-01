@@ -20,20 +20,15 @@ export class NftProvider extends Nft<BaseProvider, Signer> {
     private _schemas: Record<string, NftContract>;
     private _httpClient: HttpClient;
 
-    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, httpConfig?: ClientTypes.AxiosRequestConfig) {
+    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, httpConfig: ClientTypes.AxiosRequestConfig) {
         super(walletProvider);
 
         this._erc721 = ERC721__factory.connect(AddressZero, this.walletProvider.getSigner());
         this._erc1155 = ERC1155__factory.connect(AddressZero, this.walletProvider.getSigner());
 
-        this._schemas = {
-            ERC721: this._erc721,
-            ERC1155: this._erc1155,
-        };
+        this._schemas = { ERC721: this._erc721, ERC1155: this._erc1155 };
 
-        if (httpConfig) {
-            this._httpClient = new HttpClient(httpConfig);
-        }
+        this._httpClient = new HttpClient(httpConfig);
     }
 
     public async transfer(
@@ -158,10 +153,6 @@ export class NftProvider extends Nft<BaseProvider, Signer> {
     }
 
     async fetch() {
-        if (!this._httpClient) {
-            throw new Error('You must provide http config to use that functionality');
-        }
-
         const userAddress = await this.walletProvider.getAddress();
         const nfts = await this._httpClient.nodeGet(`assets?owner=${userAddress}`);
 
