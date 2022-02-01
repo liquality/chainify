@@ -180,7 +180,7 @@ export class NftProvider extends Nft<BaseProvider, Signer> {
             }
 
             this._cache[_contractAddress] = {
-                contract: this._schemas[result.schema_name].attach(_contractAddress),
+                contract: this._schemas[result.schema_name]?.attach(_contractAddress),
                 schema: result.schema_name as NftTypes,
             };
         }
