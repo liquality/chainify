@@ -73,7 +73,9 @@ function normalizeTransactionObject<TxType extends ethereum.PartialTransaction =
     normalizedTx.blockNumber = hexToNumber(tx.blockNumber)
     normalizedTx.blockHash = remove0x(tx.blockHash)
     if (currentHeight) {
-      normalizedTx.confirmations = currentHeight - normalizedTx.blockNumber + 1
+      // Prevent < 0 confirmations in case of sync problems
+      const confirmations = Math.max(currentHeight - normalizedTx.blockNumber + 1, 0)
+      normalizedTx.confirmations = confirmations
     }
   }
 
