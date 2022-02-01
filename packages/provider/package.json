@@ -1,6 +1,6 @@
 {
   "name": "@liquality/provider",
-  "version": "1.13.3",
+  "version": "1.13.4",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
     "node": "^14.18.1"
   },
   "dependencies": {
-    "@liquality/types": "^1.13.3"
+    "@liquality/types": "^1.13.4"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

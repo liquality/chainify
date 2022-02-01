@@ -1,6 +1,6 @@
 {
   "name": "@liquality/terra-swap-provider",
-  "version": "1.13.3",
+  "version": "1.13.4",
   "description": "Swap Provider implementation for Terra",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,13 +23,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/crypto": "^1.13.3",
-    "@liquality/errors": "^1.13.3",
-    "@liquality/provider": "^1.13.3",
-    "@liquality/terra-networks": "^1.13.3",
-    "@liquality/terra-utils": "^1.13.3",
-    "@liquality/types": "^1.13.3",
-    "@liquality/utils": "^1.13.3",
+    "@liquality/crypto": "^1.13.4",
+    "@liquality/errors": "^1.13.4",
+    "@liquality/provider": "^1.13.4",
+    "@liquality/terra-networks": "^1.13.4",
+    "@liquality/terra-utils": "^1.13.4",
+    "@liquality/types": "^1.13.4",
+    "@liquality/utils": "^1.13.4",
     "@terra-money/terra.js": "~2.1.18"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
