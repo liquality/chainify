@@ -1,16 +1,21 @@
 import { Chain } from '@liquality/client';
-import { Block, Transaction, AddressType, BigNumber, Network } from '@liquality/types';
+import { Block, Transaction, AddressType, Network, Asset, BigNumberish } from '@liquality/types';
 import { StaticJsonRpcProvider, JsonRpcProvider, BaseProvider } from '@ethersproject/providers';
 import { parseBlockResponse, parseTxResponse } from './utils';
 import { EthereumBlock, EthereumTransaction, EthereumBlockWithTransactions, EthereumFeeData } from './types';
+import { EvmMulticallProvider } from './EvmMulticallProvider';
 
 export class EvmChainProvider extends Chain<BaseProvider> {
+    protected multicall: EvmMulticallProvider;
+
     constructor(network: Network, provider?: BaseProvider) {
         super(network, provider);
 
         if (this.network.rpcUrl) {
             this.provider = new StaticJsonRpcProvider(this.network.rpcUrl, this.network.chainId);
         }
+
+        this.multicall = new EvmMulticallProvider(this.provider, Number(network.chainId));
     }
 
     public async getBlockByHash(
@@ -43,8 +48,8 @@ export class EvmChainProvider extends Chain<BaseProvider> {
         return result;
     }
 
-    public async getBalance(_addresses: AddressType[], _assets: string[]): Promise<BigNumber[]> {
-        throw new Error('Method not implemented.');
+    public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumberish[]> {
+        return await this.multicall.getMultipleBalances(addresses[0], assets);
     }
 
     public async sendRawTransaction(rawTransaction: string): Promise<string> {

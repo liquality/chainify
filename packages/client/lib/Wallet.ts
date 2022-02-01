@@ -1,4 +1,4 @@
-import { AddressType, BigNumberish, FeeData, Transaction, TransactionRequest } from '@liquality/types';
+import { AddressType, Asset, BigNumberish, FeeData, Transaction, TransactionRequest } from '@liquality/types';
 import Chain from './Chain';
 
 export default abstract class Wallet<T, S> {
@@ -32,11 +32,11 @@ export default abstract class Wallet<T, S> {
 
     public abstract sendBatchTransaction(txRequests: TransactionRequest[]): Promise<Transaction[]>;
 
-    public abstract sendSweepTransaction(address: AddressType, fee?: FeeData): Promise<Transaction>;
+    public abstract sendSweepTransaction(address: AddressType, asset: Asset, fee?: FeeData): Promise<Transaction>;
 
     public abstract updateTransactionFee(tx: string | Transaction, newFee: FeeData): Promise<Transaction>;
 
-    public abstract getBalance(assets?: string[]): Promise<BigNumberish | BigNumberish[]>;
+    public abstract getBalance(assets: Asset[]): Promise<BigNumberish[]>;
 
     public abstract exportPrivateKey(): Promise<string>;
 

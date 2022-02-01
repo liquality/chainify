@@ -1,5 +1,5 @@
 import { Chain, Wallet } from '@liquality/client';
-import { AddressType, BigNumberish, Transaction } from '@liquality/types';
+import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types';
 import { Signer } from '@ethersproject/abstract-signer';
 
 import { parseTxRequest, parseTxResponse } from './utils';
@@ -39,15 +39,24 @@ export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, S
         return result;
     }
 
-    public async sendSweepTransaction(_address: AddressType, _fee?: EthereumFeeData): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
+    public async sendSweepTransaction(address: AddressType, asset: Asset, fee?: EthereumFeeData): Promise<Transaction<any>> {
+        const balance = (await this.getBalance([asset]))[0];
+        const tx: EthereumTransactionRequest = { to: address, value: balance, ...fee };
+        return await this.sendTransaction(tx);
     }
 
-    public async updateTransactionFee(_tx: string | Transaction<any>, _newFee: EthereumFeeData): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
+    public async updateTransactionFee(
+        tx: string | Transaction<EthereumTransaction>,
+        newFee: EthereumFeeData
+    ): Promise<Transaction<EthereumTransaction>> {
+        const transaction: Transaction<EthereumTransaction> =
+            typeof tx === 'string' ? await this.chainProvider.getTransactionByHash(tx) : tx;
+        const newTransaction = { ...transaction, ...newFee };
+        return this.sendTransaction(newTransaction);
     }
 
-    public async getBalance(_assets?: string[]): Promise<BigNumberish | BigNumberish[]> {
-        throw new Error('Method not implemented.');
+    public async getBalance(assets: Asset[]): Promise<BigNumberish[]> {
+        const user = await this.getAddress();
+        return await this.chainProvider.getBalance([user], assets);
     }
 }

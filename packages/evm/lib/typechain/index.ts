@@ -9,3 +9,6 @@ export { ERC1155__factory } from './ERC1155__factory';
 
 export type { Multicall } from './Multicall';
 export { Multicall__factory } from './Multicall__factory';
+
+export type { ERC20 } from './ERC20';
+export { ERC20__factory } from './ERC20__factory';

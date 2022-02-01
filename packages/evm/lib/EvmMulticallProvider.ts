@@ -1,13 +1,14 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { BaseProvider } from '@ethersproject/providers';
 import { Interface, JsonFragment, Fragment } from '@ethersproject/abi';
-import { Chain } from '@liquality/client';
 
-import { Multicall__factory, Multicall } from './typechain';
+import { AddressType, Asset, BigNumberish } from '@liquality/types';
+
+import { Multicall__factory, Multicall, ERC20__factory } from './typechain';
 
 interface Call {
     target: string;
-    abi: string | ReadonlyArray<Fragment | JsonFragment | string>;
+    abi: ReadonlyArray<Fragment | JsonFragment | string>;
     name: string;
     params: ReadonlyArray<Fragment | JsonFragment | string>;
 }
@@ -35,9 +36,9 @@ export class EvmMulticallProvider {
     private _multicallAddress: string;
     private _multicall: Multicall;
 
-    constructor(chainProvider: Chain<BaseProvider>, chainId = 1 /* Ethereum Mainnet */) {
-        this._multicallAddress = this.getAddressForChainId(Number(chainProvider.getNetwork()?.chainId) || chainId);
-        this._multicall = Multicall__factory.connect(this._multicallAddress, chainProvider.getProvider());
+    constructor(chainProvider: BaseProvider, chainId = 1 /* Ethereum Mainnet */) {
+        this._multicallAddress = this.getAddressForChainId(chainId);
+        this._multicall = Multicall__factory.connect(this._multicallAddress, chainProvider);
     }
 
     private getAddressForChainId(chainId: number) {
@@ -46,6 +47,28 @@ export class EvmMulticallProvider {
 
     public async getEthBalance(address: string): Promise<BigNumber> {
         return await this._multicall.getEthBalance(address);
+    }
+
+    public async getMultipleBalances(address: AddressType, assets: Asset[]): Promise<BigNumberish[]> {
+        return await this.multicall<BigNumberish[]>(
+            assets.map((asset: Asset) => {
+                if (asset.isNative) {
+                    return {
+                        target: this._multicallAddress,
+                        abi: Multicall__factory.abi,
+                        name: 'getEthBalance',
+                        params: [address.toString()],
+                    };
+                } else {
+                    return {
+                        target: asset.contractAddress,
+                        abi: ERC20__factory.abi,
+                        name: 'balanceOf',
+                        params: [address.toString()],
+                    };
+                }
+            })
+        );
     }
 
     public async multicall<T extends any[] = any[]>(calls: ReadonlyArray<Call>): Promise<T> {

@@ -1,4 +1,4 @@
-import { AddressType, Block, Network, Transaction, BigNumber, BigNumberish, FeeData } from '@liquality/types';
+import { AddressType, Block, Network, Transaction, BigNumberish, FeeData, Asset } from '@liquality/types';
 
 export default abstract class Chain<T> {
     protected network: Network;
@@ -35,7 +35,7 @@ export default abstract class Chain<T> {
 
     public abstract getTransactionByHash(txHash: string): Promise<Transaction>;
 
-    public abstract getBalance(addresses: AddressType[], assets: string[]): Promise<BigNumber[]>;
+    public abstract getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumberish[]>;
 
     public abstract getFees(): Promise<FeeData>;
 
