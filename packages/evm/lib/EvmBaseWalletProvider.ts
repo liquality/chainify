@@ -2,7 +2,7 @@ import { Chain, Wallet } from '@liquality/client';
 import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types';
 import { Signer } from '@ethersproject/abstract-signer';
 
-import { parseTxRequest, parseTxResponse } from './utils';
+import { parseTxRequest, parseTxResponse, remove0x } from './utils';
 import { EthereumTransactionRequest, EthereumTransaction, EthereumFeeData } from './types';
 
 export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, Signer> {
@@ -21,7 +21,8 @@ export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, S
     }
 
     public async signMessage(message: string, _from: AddressType): Promise<string> {
-        return this.signer.signMessage(message);
+        const signedMessage = await this.signer.signMessage(message);
+        return remove0x(signedMessage);
     }
 
     public async sendTransaction(txRequest: EthereumTransactionRequest): Promise<Transaction<EthereumTransaction>> {

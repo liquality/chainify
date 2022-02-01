@@ -1,8 +1,9 @@
 import { Chain } from '@liquality/client';
-import { AddressType, WalletOptions } from '@liquality/types';
+import { Address, AddressType, WalletOptions } from '@liquality/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
+import { remove0x } from './utils';
 
 export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider> {
     private _wallet: EthersWallet;
@@ -21,27 +22,38 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     }
 
     public async getAddress(): Promise<AddressType> {
+        return new Address({
+            address: this._wallet.address,
+            derivationPath: this._walletOptions.derivationPath + this._walletOptions.index,
+            publicKey: this._wallet.publicKey,
+        });
+    }
+
+    public async getUnusedAddress(): Promise<AddressType> {
         return this._wallet.address;
     }
 
-    public async getUnusedAddress(_change: boolean, _numAddressPerCall: number): Promise<AddressType> {
-        return this._wallet.address;
-    }
-
-    public async getUsedAddresses(numAddresses?: number): Promise<AddressType[]> {
+    public async getUsedAddresses(numAddresses: number = 1): Promise<AddressType[]> {
         return this.getAddresses(0, numAddresses, false);
     }
 
-    public async getAddresses(start: number, numAddresses: number, _change: boolean): Promise<AddressType[]> {
+    public async getAddresses(start: number = 0, numAddresses: number = 1, _change: boolean = false): Promise<AddressType[]> {
         const result: AddressType[] = [];
         for (let i = start; i < start + numAddresses; i++) {
-            result.push(EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + i).address);
+            const tempWallet = EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + i);
+            result.push(
+                new Address({
+                    publicKey: tempWallet.publicKey,
+                    address: tempWallet.address,
+                    derivationPath: this._walletOptions.derivationPath + i,
+                })
+            );
         }
         return result;
     }
 
     public async exportPrivateKey(): Promise<string> {
-        return this._wallet.privateKey;
+        return remove0x(this._wallet.privateKey);
     }
 
     public async isWalletAvailable(): Promise<boolean> {

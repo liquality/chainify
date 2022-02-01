@@ -20,11 +20,11 @@ export default abstract class Wallet<T, S> {
 
     public abstract getAddress(): Promise<AddressType>;
 
-    public abstract getUnusedAddress(change: boolean, numAddressPerCall: number): Promise<AddressType>;
+    public abstract getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<AddressType>;
 
-    public abstract getUsedAddresses(numAddressPerCall: number): Promise<AddressType[]>;
+    public abstract getUsedAddresses(numAddressPerCall?: number): Promise<AddressType[]>;
 
-    public abstract getAddresses(start: number, numAddresses: number, change: boolean): Promise<AddressType[]>;
+    public abstract getAddresses(start?: number, numAddresses?: number, change?: boolean): Promise<AddressType[]>;
 
     public abstract signMessage(message: string, from: AddressType): Promise<string>;
 

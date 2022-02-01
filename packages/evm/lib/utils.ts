@@ -41,7 +41,7 @@ export function parseTxResponse(response: EthereumTransaction, receipt?: Transac
         blockHash: response.blockHash,
         blockNumber: response.blockNumber,
         confirmations: response.confirmations,
-        feePrice: response.gasPrice.toString(),
+        feePrice: response.gasPrice?.toString(),
         _raw: response,
     };
 
@@ -58,7 +58,7 @@ export function parseTxResponse(response: EthereumTransaction, receipt?: Transac
 export function parseBlockResponse(
     block: EthereumBlock | EthereumBlockWithTransactions,
     transactions?: EthereumTransaction[]
-): Block<EthereumBlock | EthereumBlockWithTransactions, Transaction<EthereumTransaction>> {
+): Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction> {
     return {
         number: block.number,
         hash: block.hash,
@@ -69,4 +69,8 @@ export function parseBlockResponse(
         transactions: transactions?.map((t) => parseTxResponse(t)),
         _raw: block,
     };
+}
+
+export function remove0x(hash: string) {
+    return hash.startsWith('0x') ? hash.slice(2) : hash;
 }

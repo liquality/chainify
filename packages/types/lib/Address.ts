@@ -10,9 +10,9 @@ export class Address {
         }
     }
 
-    static addressToString(address: Address | string): string {
-        return typeof address === 'string' ? address : address.address;
-    }
+    public toString = () => {
+        return this.address;
+    };
 }
 
 export type AddressType = Address | string;

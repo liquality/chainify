@@ -1,14 +1,14 @@
 import { Chain } from '@liquality/client';
 import { Block, Transaction, AddressType, Network, Asset, BigNumberish } from '@liquality/types';
-import { StaticJsonRpcProvider, JsonRpcProvider, BaseProvider } from '@ethersproject/providers';
+import { StaticJsonRpcProvider, JsonRpcProvider } from '@ethersproject/providers';
 import { parseBlockResponse, parseTxResponse } from './utils';
 import { EthereumBlock, EthereumTransaction, EthereumBlockWithTransactions, EthereumFeeData } from './types';
 import { EvmMulticallProvider } from './EvmMulticallProvider';
 
-export class EvmChainProvider extends Chain<BaseProvider> {
+export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     protected multicall: EvmMulticallProvider;
 
-    constructor(network: Network, provider?: BaseProvider) {
+    constructor(network: Network, provider?: StaticJsonRpcProvider) {
         super(network, provider);
 
         if (this.network.rpcUrl) {
@@ -21,14 +21,14 @@ export class EvmChainProvider extends Chain<BaseProvider> {
     public async getBlockByHash(
         blockHash: string,
         includeTx = false
-    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, Transaction<EthereumTransaction>>> {
+    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction>> {
         return this._getBlock(blockHash, includeTx);
     }
 
     public async getBlockByNumber(
         blockNumber: number,
         includeTx = false
-    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, Transaction<EthereumTransaction>>> {
+    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction>> {
         return this._getBlock(blockNumber, includeTx);
     }
 

@@ -1,3 +1,5 @@
+import { Transaction } from './Transaction';
+
 export interface Block<BlockType = any, TransactionType = any> {
     // Block number
     number: number;
@@ -14,7 +16,7 @@ export interface Block<BlockType = any, TransactionType = any> {
     // The size of this block in bytes
     size?: number;
     // List of transactions
-    transactions?: TransactionType[];
+    transactions?: Transaction<TransactionType>[];
     // The chain specific block data
     _raw: BlockType;
 }
