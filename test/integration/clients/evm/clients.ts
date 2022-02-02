@@ -1,4 +1,4 @@
-import * as EVM from '../../../../packages/evm/dist/lib';
+import * as EVM from '@liquality/evm';
 import { Client } from '@liquality/client';
 import { Network, WalletOptions } from '@liquality/types';
 

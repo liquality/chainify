@@ -9,8 +9,6 @@ export async function startGanache(_options: any = {}) {
         port: 8545,
         network_id: '1337',
         chainId: '1337',
-        // _chainId: '1337',
-        // _chainIdRpc: '1337',
         quiet: true,
         blockTime: 0,
         instamine: 'eager',

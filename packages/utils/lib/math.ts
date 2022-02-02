@@ -8,6 +8,10 @@ export function sub(a: BigNumberish, b: BigNumberish) {
     return new BigNumber(a).minus(b);
 }
 
+export function mul(a: BigNumberish, b: BigNumberish) {
+    return new BigNumber(a).multipliedBy(b);
+}
+
 export function eq(a: BigNumberish, b: BigNumberish) {
     return new BigNumber(a).eq(b);
 }

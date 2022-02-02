@@ -1,4 +1,4 @@
-import { Client } from '../../../packages/client';
+import { Client } from '@liquality/client';
 
 import { deployEvmContracts } from './evm';
 

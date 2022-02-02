@@ -1,3 +1,4 @@
+import { TransactionTypes } from '@ethersproject/transactions';
 import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { Transaction, TxStatus, Block } from '@liquality/types';
 import {
@@ -21,6 +22,13 @@ export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee?: Ethere
 }
 
 export function parseTxRequest(request: EthereumTransactionRequest | TransactionRequest): TransactionRequest {
+    if (request.maxFeePerGas && request.maxPriorityFeePerGas) {
+        request.gasPrice = null;
+        request.type = TransactionTypes.eip1559;
+    } else {
+        request.type = TransactionTypes.legacy;
+    }
+
     const result = {
         to: request.to?.toString(),
         from: request.from?.toString(),
@@ -42,7 +50,9 @@ export function parseTxRequest(request: EthereumTransactionRequest | Transaction
 
 export function parseTxResponse(response: EthersTransactionResponse, receipt?: TransactionReceipt): Transaction<EthersTransactionResponse> {
     const result: Transaction<EthersTransactionResponse> = {
+        to: response.to,
         hash: response.hash,
+        data: response.data,
         value: response.value.toString(),
         blockHash: response.blockHash,
         blockNumber: response.blockNumber,

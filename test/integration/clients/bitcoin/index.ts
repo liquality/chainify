@@ -3,7 +3,7 @@ export function shouldBehaveLikeBitcoinClient() {
         // await deploy(EthereumClient);
     });
 
-    describe('Bitcoin Client', async () => {
+    describe('Bitcoin Client', () => {
         // shouldBehaveLikeChainProvider(EthereumClient, EVMConfig);
         // shouldBehaveLikeWalletProvider(EthereumClient, EVMConfig);
     });

@@ -53,7 +53,25 @@ export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, S
     ): Promise<Transaction<EthersTransactionResponse>> {
         const transaction: Transaction<EthersTransactionResponse> =
             typeof tx === 'string' ? await this.chainProvider.getTransactionByHash(tx) : tx;
-        const newTransaction = { ...transaction, ...newFee };
+
+        const { gasPrice, maxPriorityFeePerGas, maxFeePerGas } = transaction._raw;
+
+        if (maxPriorityFeePerGas && newFee.maxPriorityFeePerGas && maxFeePerGas && newFee.maxFeePerGas) {
+            if (maxPriorityFeePerGas.gte(newFee.maxPriorityFeePerGas.toString())) {
+                throw new Error('Replace transaction underpriced: provide more maxPriorityFeePerGas');
+            }
+            if (maxFeePerGas.gte(newFee.maxFeePerGas.toString())) {
+                throw new Error('Replace transaction underpriced: provide more maxFeePerGas');
+            }
+        } else if (gasPrice && newFee.gasPrice) {
+            if (gasPrice.gte(newFee.gasPrice.toString())) {
+                throw new Error('Replace transaction underpriced: provide more gasPrice');
+            }
+        } else {
+            throw new Error('Replace transaction underpriced');
+        }
+
+        const newTransaction = { ...transaction, nonce: transaction._raw.nonce, ...newFee };
         return this.sendTransaction(newTransaction);
     }
 

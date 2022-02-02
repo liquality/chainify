@@ -1,5 +1,6 @@
+import { ChainId } from '@liquality/types';
+
 import { IConfig } from '../../types';
-import { ChainId } from '../../../../packages/types';
 
 export const EVMConfig: IConfig = {
     walletOptions: {

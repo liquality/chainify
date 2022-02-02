@@ -1,6 +1,8 @@
 import { expect } from 'chai';
+
+import { Client } from '@liquality/client';
+
 import { IConfig } from '../types';
-import { Client } from '../../../packages/client';
 
 export function shouldBehaveLikeChainProvider(client: Client, config: IConfig) {
     describe(`${client.chain.getNetwork().name} Chain Provider`, function () {

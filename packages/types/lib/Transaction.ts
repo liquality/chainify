@@ -7,6 +7,8 @@ export interface Transaction<TransactionType = any> {
     hash: string;
     // The value of the transaction
     value: BigNumberish;
+    // transaction recipient
+    to?: string;
     // transaction status
     status?: TxStatus;
     // Hash of the block containing the transaction
@@ -15,6 +17,8 @@ export interface Transaction<TransactionType = any> {
     blockNumber?: BigNumberish;
     // The number of confirmations of the transaction
     confirmations?: BigNumberish;
+    // Transaction data
+    data?: string;
     // The price per unit of fee
     feePrice?: BigNumberish;
     // The total fee paid for the transaction

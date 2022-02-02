@@ -19,6 +19,7 @@
         "@ethersproject/abstract-signer": "^5.5.0",
         "@ethersproject/contracts": "^5.5.0",
         "@ethersproject/providers": "^5.5.2",
+        "@ethersproject/transactions": "^5.5.0",
         "@ethersproject/wallet": "^5.5.0",
         "@liquality/client": "workspace:*",
         "@liquality/types": "workspace:*",

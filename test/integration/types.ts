@@ -1,4 +1,4 @@
-import { Asset } from '../../packages/types';
+import { Asset } from '@liquality/types';
 
 export interface IConfig {
     walletOptions: Record<string, any>;
