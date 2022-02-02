@@ -53,8 +53,8 @@ export function shouldBehaveLikeWalletProvider(client: Client, config: IConfig) 
             expect(privateKey).to.be.equal(config.walletExpectedResult.privateKey);
         });
 
-        it('should send transaction', async () => {
-            const tx = await client.wallet.sendTransaction({ to: config.recipientAddress, value: 1 });
+        it('should send native asset transaction', async () => {
+            const tx = await client.wallet.sendTransaction({ to: config.recipientAddress, value: 1, asset: config.assets[0] });
             const txReceipt = await client.chain.getTransactionByHash(tx.hash);
             expect(txReceipt.value.toString() === '1').to.be.true;
         });
