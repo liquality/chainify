@@ -1,9 +1,11 @@
+import { StaticJsonRpcProvider, JsonRpcProvider } from '@ethersproject/providers';
+
 import { Chain } from '@liquality/client';
 import { Block, Transaction, AddressType, Network, Asset, BigNumberish } from '@liquality/types';
-import { StaticJsonRpcProvider, JsonRpcProvider } from '@ethersproject/providers';
+
 import { parseBlockResponse, parseTxResponse } from './utils';
-import { EthereumBlock, EthereumTransaction, EthereumBlockWithTransactions, EthereumFeeData } from './types';
 import { EvmMulticallProvider } from './EvmMulticallProvider';
+import { EthersBlock, EthersTransactionResponse, EthersBlockWithTransactions, EthereumFeeData } from './types';
 
 export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     protected multicall: EvmMulticallProvider;
@@ -21,14 +23,14 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     public async getBlockByHash(
         blockHash: string,
         includeTx = false
-    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction>> {
+    ): Promise<Block<EthersBlock | EthersBlockWithTransactions, EthersTransactionResponse>> {
         return this._getBlock(blockHash, includeTx);
     }
 
     public async getBlockByNumber(
         blockNumber: number,
         includeTx = false
-    ): Promise<Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction>> {
+    ): Promise<Block<EthersBlock | EthersBlockWithTransactions, EthersTransactionResponse>> {
         return this._getBlock(blockNumber, includeTx);
     }
 
@@ -36,7 +38,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
         return this.provider.getBlockNumber();
     }
 
-    public async getTransactionByHash(txHash: string): Promise<Transaction<EthereumTransaction>> {
+    public async getTransactionByHash(txHash: string): Promise<Transaction<EthersTransactionResponse>> {
         const tx = await this.provider.getTransaction(txHash);
         const result = parseTxResponse(tx);
 
@@ -49,7 +51,8 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     }
 
     public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumberish[]> {
-        return await this.multicall.getMultipleBalances(addresses[0], assets);
+        const balances = await this.multicall.getMultipleBalances(addresses[0], assets);
+        return balances.map((b) => b.toString());
     }
 
     public async sendRawTransaction(rawTransaction: string): Promise<string> {

@@ -1,8 +1,8 @@
-import { AddressType, BigNumberish, FeeData, TransactionRequest } from '@liquality/types';
+import { PopulatedTransaction as EthersPopulatedTransaction } from '@ethersproject/contracts';
+import { BlockWithTransactions as EthersBlockWithTransactions } from '@ethersproject/abstract-provider';
+import { TransactionResponse as EthersTransactionResponse, Block as EthersBlock } from '@ethersproject/providers';
 
-import { PopulatedTransaction } from '@ethersproject/contracts';
-import { BlockWithTransactions as EthereumBlockWithTransactions } from '@ethersproject/abstract-provider';
-import { TransactionResponse as EthereumTransaction, Block as EthereumBlock } from '@ethersproject/providers';
+import { AddressType, BigNumberish, FeeData, TransactionRequest } from '@liquality/types';
 
 export type EthereumTransactionRequest = TransactionRequest & {
     from?: AddressType;
@@ -21,7 +21,7 @@ export type EthereumFeeData = FeeData & {
     gasPrice?: null | BigNumberish;
 };
 
-export { EthereumTransaction, EthereumBlock, EthereumBlockWithTransactions, PopulatedTransaction };
+export { EthersTransactionResponse, EthersBlock, EthersBlockWithTransactions, EthersPopulatedTransaction };
 
 export enum NftTypes {
     ERC721 = 'ERC721',

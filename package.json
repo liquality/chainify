@@ -18,6 +18,7 @@
         "cross-env": "^7.0.3",
         "eslint": "^8.7.0",
         "eslint-config-prettier": "^8.3.0",
+        "ethers": "^5.5.4",
         "ganache": "^7.0.1",
         "husky": "^7.0.4",
         "lint-staged": "^12.3.2",
@@ -29,7 +30,7 @@
     },
     "scripts": {
         "dev": "turbo run dev --parallel --no-cache",
-        "test": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha test/integration/index.ts",
+        "test": "cross-env NODE_ENV=test TS_NODE_FILES=true mocha --exit test/integration/index.ts",
         "build": "turbo run build",
         "clean": "yarn workspaces foreach run clean",
         "lint": "yarn lint:ts && yarn prettier:check",

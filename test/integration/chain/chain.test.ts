@@ -1,7 +1,8 @@
 import { expect } from 'chai';
+import { IConfig } from '../types';
 import { Client } from '../../../packages/client';
 
-export function shouldBehaveLikeChainProvider(client: Client) {
+export function shouldBehaveLikeChainProvider(client: Client, config: IConfig) {
     describe(`${client.chain.getNetwork().name} Chain Provider`, function () {
         it('should return network', async () => {
             const network = client.chain.getNetwork();
@@ -33,6 +34,11 @@ export function shouldBehaveLikeChainProvider(client: Client) {
                 expect(receipt.value).to.be.eq(tx.value);
                 expect(receipt.feePrice).to.be.eq(tx.feePrice);
             }
+        });
+
+        it('should fetch multiple balances at once', async () => {
+            const balances = await client.chain.getBalance([config.walletExpectedResult.address], config.assets);
+            expect(balances.length).to.equal(config.assets.length);
         });
     });
 }

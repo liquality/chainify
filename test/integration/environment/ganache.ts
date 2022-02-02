@@ -7,10 +7,10 @@ export async function startGanache(_options: any = {}) {
         mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
         totalAccounts: 10,
         port: 8545,
-        network_id: '1',
-        _chainId: '1',
-        chainId: '1',
-        _chainIdRpc: '1',
+        network_id: '1337',
+        chainId: '1337',
+        // _chainId: '1337',
+        // _chainIdRpc: '1337',
         quiet: true,
         blockTime: 0,
         instamine: 'eager',
@@ -43,7 +43,7 @@ export async function startGanache(_options: any = {}) {
 }
 
 export async function closeGanache() {
-    if (server && (server.status & ServerStatus.openingOrOpen) !== 0) {
+    if (server) {
         await server.close();
     }
 }

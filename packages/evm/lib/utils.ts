@@ -1,9 +1,15 @@
 import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
-import { PopulatedTransaction } from '@ethersproject/contracts';
 import { Transaction, TxStatus, Block } from '@liquality/types';
-import { EthereumBlock, EthereumBlockWithTransactions, EthereumFeeData, EthereumTransaction, EthereumTransactionRequest } from './types';
+import {
+    EthersBlock,
+    EthersBlockWithTransactions,
+    EthereumFeeData,
+    EthersTransactionResponse,
+    EthereumTransactionRequest,
+    EthersPopulatedTransaction,
+} from './types';
 
-export function toEthereumTxRequest(tx: PopulatedTransaction, fee?: EthereumFeeData): EthereumTransactionRequest {
+export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee?: EthereumFeeData): EthereumTransactionRequest {
     return {
         ...tx,
         value: tx.value.toString(),
@@ -34,8 +40,8 @@ export function parseTxRequest(request: EthereumTransactionRequest | Transaction
     return result;
 }
 
-export function parseTxResponse(response: EthereumTransaction, receipt?: TransactionReceipt): Transaction<EthereumTransaction> {
-    const result: Transaction<EthereumTransaction> = {
+export function parseTxResponse(response: EthersTransactionResponse, receipt?: TransactionReceipt): Transaction<EthersTransactionResponse> {
+    const result: Transaction<EthersTransactionResponse> = {
         hash: response.hash,
         value: response.value.toString(),
         blockHash: response.blockHash,
@@ -56,9 +62,9 @@ export function parseTxResponse(response: EthereumTransaction, receipt?: Transac
 }
 
 export function parseBlockResponse(
-    block: EthereumBlock | EthereumBlockWithTransactions,
-    transactions?: EthereumTransaction[]
-): Block<EthereumBlock | EthereumBlockWithTransactions, EthereumTransaction> {
+    block: EthersBlock | EthersBlockWithTransactions,
+    transactions?: EthersTransactionResponse[]
+): Block<EthersBlock | EthersBlockWithTransactions, EthersTransactionResponse> {
     return {
         number: block.number,
         hash: block.hash,

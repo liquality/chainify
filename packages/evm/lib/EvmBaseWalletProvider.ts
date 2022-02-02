@@ -1,9 +1,10 @@
-import { Chain, Wallet } from '@liquality/client';
-import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types';
 import { Signer } from '@ethersproject/abstract-signer';
 
+import { Chain, Wallet } from '@liquality/client';
+import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types';
+
 import { parseTxRequest, parseTxResponse, remove0x } from './utils';
-import { EthereumTransactionRequest, EthereumTransaction, EthereumFeeData } from './types';
+import { EthereumTransactionRequest, EthersTransactionResponse, EthereumFeeData } from './types';
 
 export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, Signer> {
     protected signer: Signer;
@@ -25,14 +26,14 @@ export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, S
         return remove0x(signedMessage);
     }
 
-    public async sendTransaction(txRequest: EthereumTransactionRequest): Promise<Transaction<EthereumTransaction>> {
+    public async sendTransaction(txRequest: EthereumTransactionRequest): Promise<Transaction<EthersTransactionResponse>> {
         const chainId = Number(this.chainProvider.getNetwork().chainId);
         const result = await this.signer.sendTransaction(parseTxRequest({ chainId, ...txRequest }));
         return parseTxResponse(result);
     }
 
-    public async sendBatchTransaction(txRequests: EthereumTransactionRequest[]): Promise<Transaction<EthereumTransaction>[]> {
-        const result: Transaction<EthereumTransaction>[] = [];
+    public async sendBatchTransaction(txRequests: EthereumTransactionRequest[]): Promise<Transaction<EthersTransactionResponse>[]> {
+        const result: Transaction<EthersTransactionResponse>[] = [];
         for (const txRequest of txRequests) {
             const tx = await this.sendTransaction(txRequest);
             result.push(tx);
@@ -47,10 +48,10 @@ export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, S
     }
 
     public async updateTransactionFee(
-        tx: string | Transaction<EthereumTransaction>,
+        tx: string | Transaction<EthersTransactionResponse>,
         newFee: EthereumFeeData
-    ): Promise<Transaction<EthereumTransaction>> {
-        const transaction: Transaction<EthereumTransaction> =
+    ): Promise<Transaction<EthersTransactionResponse>> {
+        const transaction: Transaction<EthersTransactionResponse> =
             typeof tx === 'string' ? await this.chainProvider.getTransactionByHash(tx) : tx;
         const newTransaction = { ...transaction, ...newFee };
         return this.sendTransaction(newTransaction);

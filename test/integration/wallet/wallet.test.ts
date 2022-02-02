@@ -1,6 +1,6 @@
 import { expect } from 'chai';
+import { IConfig } from '../types';
 import { Client } from '../../../packages/client';
-import { IConfig } from '../config';
 
 export function shouldBehaveLikeWalletProvider(client: Client, config: IConfig) {
     describe(`${client.chain.getNetwork().name} Wallet Provider`, function () {
@@ -56,6 +56,7 @@ export function shouldBehaveLikeWalletProvider(client: Client, config: IConfig) 
         });
 
         it('should send transaction', async () => {
+            // TODO: check balances before and after execution
             await client.wallet.sendTransaction({ to: config.recipientAddress, value: 1 });
         });
     });

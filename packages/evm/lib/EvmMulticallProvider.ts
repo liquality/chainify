@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber';
 import { BaseProvider } from '@ethersproject/providers';
 import { Interface, JsonFragment, Fragment } from '@ethersproject/abi';
 
@@ -27,7 +26,7 @@ const multicallAddresses = {
     56: '0x1Ee38d535d541c55C9dae27B12edf090C608E6Fb',
     100: '0xb5b692a88bdfc81ca69dcb1d924f59f0413a602a',
     137: '0xc4f1501f337079077842343Ce02665D8960150B0',
-    1337: '0x77dca2c955b15e9de4dbbcf1246b4b85b651e50e',
+    1337: '0x08579f8763415cfCEa1B0F0dD583b1A0DEbfBe2b',
     43114: '0xdDCbf776dF3dE60163066A5ddDF2277cB445E0F3',
     80001: '0x5a0439824F4c0275faa88F2a7C5037F9833E29f1',
 } as Record<number, string>;
@@ -45,8 +44,8 @@ export class EvmMulticallProvider {
         return multicallAddresses[chainId];
     }
 
-    public async getEthBalance(address: string): Promise<BigNumber> {
-        return await this._multicall.getEthBalance(address);
+    public async getEthBalance(address: string): Promise<BigNumberish> {
+        return (await this._multicall.getEthBalance(address)).toString();
     }
 
     public async getMultipleBalances(address: AddressType, assets: Asset[]): Promise<BigNumberish[]> {

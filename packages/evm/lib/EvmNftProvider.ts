@@ -1,6 +1,6 @@
+import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider } from '@ethersproject/providers';
 import { Signer } from '@ethersproject/abstract-signer';
-import { AddressZero } from '@ethersproject/constants';
 
 import { Nft, HttpClient, ClientTypes } from '@liquality/client';
 import { AddressType, BigNumberish, Transaction } from '@liquality/types';
@@ -8,7 +8,7 @@ import { AddressType, BigNumberish, Transaction } from '@liquality/types';
 import { toEthereumTxRequest } from './utils';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from './typechain';
-import { EthereumFeeData, EthereumTransaction, PopulatedTransaction, NftTypes } from './types';
+import { EthereumFeeData, EthersTransactionResponse, EthersPopulatedTransaction, NftTypes } from './types';
 
 type NftContract = ERC721 | ERC1155;
 type NftInfo = { contract: NftContract; schema: NftTypes };
@@ -37,12 +37,12 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         amounts?: number[],
         data?: string,
         fee?: EthereumFeeData
-    ): Promise<Transaction<EthereumTransaction>> {
+    ): Promise<Transaction<EthersTransactionResponse>> {
         const nftInfo = await this._cacheGet(contractAddress);
         const owner = (await this.walletProvider.getAddress()).toString();
         const to = receiver.toString();
 
-        let tx: PopulatedTransaction;
+        let tx: EthersPopulatedTransaction;
 
         switch (nftInfo.schema) {
             case NftTypes.ERC721: {
@@ -109,11 +109,11 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         operator: AddressType,
         tokenID: number,
         fee?: EthereumFeeData
-    ): Promise<Transaction<EthereumTransaction>> {
+    ): Promise<Transaction<EthersTransactionResponse>> {
         const nftInfo = await this._cacheGet(contractAddress);
         const _operator = operator.toString();
 
-        let tx: PopulatedTransaction;
+        let tx: EthersPopulatedTransaction;
 
         switch (nftInfo.schema) {
             case NftTypes.ERC721: {
@@ -145,7 +145,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         operator: AddressType,
         state: boolean,
         fee?: EthereumFeeData
-    ): Promise<Transaction<EthereumTransaction>> {
+    ): Promise<Transaction<EthersTransactionResponse>> {
         const nft = (await this._cacheGet(contractAddress)).contract;
         const tx = await nft.populateTransaction.setApprovalForAll(operator.toString(), state);
         return this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));

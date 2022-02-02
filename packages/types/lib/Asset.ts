@@ -19,7 +19,6 @@ export interface Asset {
     chain: ChainId;
     isNative: boolean;
     type: AssetType;
-    code: string;
     decimals: number;
     contractAddress?: string;
 }

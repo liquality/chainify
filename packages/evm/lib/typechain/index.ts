@@ -12,3 +12,6 @@ export { Multicall__factory } from './Multicall__factory';
 
 export type { ERC20 } from './ERC20';
 export { ERC20__factory } from './ERC20__factory';
+
+export type { TestERC20 } from './TestERC20';
+export { TestERC20__factory } from './TestERC20__factory';

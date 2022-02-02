@@ -2,15 +2,14 @@ import { BaseProvider } from '@ethersproject/providers';
 import { Signer } from '@ethersproject/abstract-signer';
 
 import { Swap } from '@liquality/client';
-import { SwapParams, Transaction } from '@liquality/types';
 import { toStringDeep } from '@liquality/utils';
+import { SwapParams, Transaction } from '@liquality/types';
 
-import { toEthereumTxRequest } from './utils';
 import { EthereumFeeData } from './types';
-import { LiqualityHTLC, LiqualityHTLC__factory } from './typechain';
+import { toEthereumTxRequest } from './utils';
 import { HTLCDataStruct } from './typechain/LiqualityHTLC';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
-
+import { LiqualityHTLC, LiqualityHTLC__factory } from './typechain';
 export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
     protected walletProvider: EvmBaseWalletProvider<BaseProvider>;
     private _contract: LiqualityHTLC;
