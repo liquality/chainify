@@ -1,13 +1,9 @@
-import Chain from './Chain';
-import Swap from './Swap';
-import Wallet from './Wallet';
+export default class Client<ChainType = any, WalletType = any, SwapType = any> {
+    private _chain: ChainType;
+    private _wallet: WalletType;
+    private _swap: SwapType;
 
-export default class Client<ProviderType = any, SignerType = any> {
-    private _chain: Chain<ProviderType>;
-    private _wallet: Wallet<ProviderType, SignerType>;
-    private _swap: Swap<ProviderType, SignerType>;
-
-    constructor(chain?: Chain<ProviderType>, wallet?: Wallet<ProviderType, SignerType>, swap?: Swap<ProviderType, SignerType>) {
+    constructor(chain?: ChainType, wallet?: WalletType, swap?: SwapType) {
         this._chain = chain;
         this._wallet = wallet;
         this._swap = swap;
@@ -17,7 +13,7 @@ export default class Client<ProviderType = any, SignerType = any> {
         return this._chain;
     }
 
-    set chain(chain: Chain<ProviderType>) {
+    set chain(chain: ChainType) {
         this._chain = chain;
     }
 
@@ -25,7 +21,7 @@ export default class Client<ProviderType = any, SignerType = any> {
         return this._wallet;
     }
 
-    set wallet(wallet: Wallet<ProviderType, SignerType>) {
+    set wallet(wallet: WalletType) {
         this._wallet = wallet;
     }
 
@@ -33,7 +29,7 @@ export default class Client<ProviderType = any, SignerType = any> {
         return this._swap;
     }
 
-    set swap(swap: Swap<ProviderType, SignerType>) {
+    set swap(swap: SwapType) {
         this._swap = swap;
     }
 }
