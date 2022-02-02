@@ -208,7 +208,9 @@ export default class TerraWalletProvider extends WalletProvider {
 
       let taxFee
       if (this._stableFee) {
-        taxFee = new BigNumber((await this.getTaxFees(value.toNumber() / 1_000_000, this._feeAsset, false)) * 1_000_000)
+        const _value = value.toNumber() / 1_000_000
+        const taxFees = await this.getTaxFees(_value, this._feeAsset, false)
+        taxFee = new BigNumber(taxFees * 1_000_000)
       }
 
       const fee = ceil(
