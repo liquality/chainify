@@ -60,17 +60,25 @@ export default class NftProvider extends NodeProvider implements INftProvider {
     return (await this._cacheGet(contract)).isApprovedForAll(contract, operator)
   }
 
-  async fetch() {
-    const nfts = await this.nodeGet(
-      `assets?owner=${ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0]))}`
-    )
+  async fetch(owners?: Address[] | string[]) {
+    const _owners: string[] = []
+    if (owners) {
+      owners.map((owner: any) => _owners.push(ensure0x(addressToString(owner))))
+    } else {
+      _owners.push(ensure0x(addressToString((await this.client.getMethod('getAddresses')())[0])))
+    }
+
+    const nfts = await Promise.all(_owners.map(async (owner) => await this.nodeGet(`assets?owner=${owner}`)))
+
+    let assets: any[] = []
+    nfts.map((nft) => (assets = assets.concat(nft.assets)))
 
     // storing cache
-    nfts.assets.map((nft: any) => {
+    assets.map((nft: any) => {
       this._cacheAdd(nft.asset_contract.address, nft.asset_contract.schema_name)
     })
 
-    return nfts
+    return { assets: assets }
   }
 
   setClient(client: IClient): void {

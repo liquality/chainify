@@ -64,7 +64,9 @@ export interface NftProvider {
 
   /**
    * Fetch all user's NFT (ERC721 & ERC1155)
+   * @param {Address} [owners] - Multiple owners. By default if this param is undefined, fetch will
+   * return only the nfts of first wallet address.
    * @return {Promise<>} Resolves with all user's nfts.
    */
-  fetch(): Promise<any>
+  fetch(owners?: Address[] | string[]): Promise<any>
 }

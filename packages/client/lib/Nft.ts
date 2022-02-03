@@ -53,8 +53,8 @@ export default class Nft implements NftProvider {
   }
 
   /** @inheritdoc */
-  async fetch(): Promise<any> {
-    const nftData = await this.client.getMethod('fetch')()
+  async fetch(owners?: Address[] | string[]): Promise<any> {
+    const nftData = await this.client.getMethod('fetch')(owners)
     return nftData
   }
 }
