@@ -11,8 +11,8 @@
         "dist/**"
     ],
     "scripts": {
-        "build": "tsc",
-        "clean": "rm -rf node_modules .turbo dist"
+        "build": "cp -R ../../node_modules/@liquality/evm-contracts/artifacts . && hardhat --config ./hardhat.config.ts typechain && tsc",
+        "clean": "rm -rf node_modules .turbo dist ./lib/typechain"
     },
     "dependencies": {
         "@ethersproject/abi": "^5.5.0",
@@ -22,6 +22,7 @@
         "@ethersproject/transactions": "^5.5.0",
         "@ethersproject/wallet": "^5.5.0",
         "@liquality/client": "workspace:*",
+        "@liquality/evm-contracts": "workspace:^",
         "@liquality/types": "workspace:*",
         "ethers": "^5.5.4"
     }

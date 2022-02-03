@@ -2,7 +2,7 @@ import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 import { Chain } from '@liquality/client';
-import { Address, AddressType, WalletOptions } from '@liquality/types';
+import { Address, AddressType, BigNumberish, WalletOptions } from '@liquality/types';
 
 import { remove0x } from './utils';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
@@ -29,6 +29,11 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
             derivationPath: this._walletOptions.derivationPath + this._walletOptions.index,
             publicKey: this._wallet.publicKey,
         });
+    }
+
+    public async setWalletIndex(index: BigNumberish): Promise<AddressType> {
+        this._wallet = EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + index);
+        return this.getAddress();
     }
 
     public async getUnusedAddress(): Promise<AddressType> {

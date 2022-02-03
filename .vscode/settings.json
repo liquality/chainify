@@ -1,0 +1,7 @@
+{
+    "[typescript]": {
+        "editor.formatOnSave": true
+    },
+    "eslint.packageManager": "yarn",
+    "npm.packageManager": "yarn"
+}
