@@ -4,12 +4,12 @@ import { Signer } from '@ethersproject/abstract-signer';
 import { Swap } from '@liquality/client';
 import { toStringDeep } from '@liquality/utils';
 import { SwapParams, Transaction } from '@liquality/types';
+import { LiqualityHTLC, LiqualityHTLC__factory } from './typechain';
 
 import { EthereumFeeData } from './types';
 import { toEthereumTxRequest } from './utils';
-import { HTLCDataStruct } from './typechain/LiqualityHTLC';
+import { ILiqualityHTLC } from './typechain/LiqualityHTLC';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
-import { LiqualityHTLC, LiqualityHTLC__factory } from './typechain';
 export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
     protected walletProvider: EvmBaseWalletProvider<BaseProvider>;
     private _contract: LiqualityHTLC;
@@ -18,7 +18,7 @@ export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
         super(walletProvider);
 
         if (walletProvider) {
-            this._contract = LiqualityHTLC__factory.connect(swapOptions.contractAddress);
+            this._contract = LiqualityHTLC__factory.connect(swapOptions.contractAddress, null);
         }
     }
 
@@ -27,7 +27,7 @@ export class EvmSwapProvider extends Swap<BaseProvider, Signer> {
     }
 
     public async initiateSwap(swapParams: SwapParams, fee: EthereumFeeData): Promise<Transaction<any>> {
-        const tx = await this._contract.populateTransaction.initiate(toStringDeep<SwapParams, HTLCDataStruct>(swapParams));
+        const tx = await this._contract.populateTransaction.initiate(toStringDeep<SwapParams, ILiqualityHTLC.HTLCDataStruct>(swapParams));
         const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
         return txResponse;
     }
