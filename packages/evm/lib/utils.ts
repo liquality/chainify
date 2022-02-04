@@ -1,6 +1,9 @@
 import { TransactionTypes } from '@ethersproject/transactions';
+import { AddressZero } from '@ethersproject/constants';
+import { sha256 } from '@ethersproject/solidity';
 import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
-import { Transaction, TxStatus, Block } from '@liquality/types';
+import { ensure0x } from '@liquality/utils';
+import { Transaction, TxStatus, Block, SwapParams } from '@liquality/types';
 import {
     EthersBlock,
     EthersBlockWithTransactions,
@@ -9,15 +12,27 @@ import {
     EthereumTransactionRequest,
     EthersPopulatedTransaction,
 } from './types';
+import { ILiqualityHTLC } from './typechain';
 
 export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee?: EthereumFeeData): EthereumTransactionRequest {
     return {
         ...tx,
-        value: tx.value.toString(),
-        gasLimit: tx.gasLimit.toString(),
-        gasPrice: fee.gasPrice.toString(),
-        maxFeePerGas: fee.maxFeePerGas.toString(),
-        maxPriorityFeePerGas: fee.maxPriorityFeePerGas.toString(),
+        value: tx.value?.toString(),
+        gasLimit: tx.gasLimit?.toString(),
+        gasPrice: fee?.gasPrice?.toString(),
+        maxFeePerGas: fee?.maxFeePerGas?.toString(),
+        maxPriorityFeePerGas: fee?.maxPriorityFeePerGas?.toString(),
+    };
+}
+
+export function parseSwapParams(tx: SwapParams): ILiqualityHTLC.HTLCDataStruct {
+    return {
+        amount: tx.value.toString(),
+        expiration: tx.expiration,
+        secretHash: ensure0x(tx.secretHash),
+        tokenAddress: tx.asset.isNative ? AddressZero : tx.asset.contractAddress,
+        refundAddress: tx.refundAddress.toString(),
+        recipientAddress: tx.recipientAddress.toString(),
     };
 }
 
@@ -87,6 +102,16 @@ export function parseBlockResponse(
     };
 }
 
-export function remove0x(hash: string) {
-    return hash.startsWith('0x') ? hash.slice(2) : hash;
+export function generateId(htlcData: ILiqualityHTLC.HTLCDataStruct, blockTimestamp: number) {
+    return sha256(
+        ['address', 'uint256', 'uint256', 'uint256', 'bytes32', 'address'],
+        [
+            htlcData.refundAddress,
+            blockTimestamp,
+            htlcData.amount.toString(),
+            htlcData.expiration,
+            htlcData.secretHash,
+            htlcData.recipientAddress,
+        ]
+    );
 }

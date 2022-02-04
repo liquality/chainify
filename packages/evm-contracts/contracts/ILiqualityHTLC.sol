@@ -16,10 +16,10 @@ interface ILiqualityHTLC {
     event Initiate(bytes32 id, HTLCData htlc);
 
     /// @notice Emitted when a successful Refund was performed
-    event Refund(bytes32 id);
+    event Refund(bytes32 indexed id);
 
     /// @notice Emitted when a successful Claim was performed
-    event Claim(bytes32 id, bytes32 secret);
+    event Claim(bytes32 indexed id, bytes32 secret);
 
     /// @notice Initiates a HTLC based on the input parameters.
     function initiate(HTLCData calldata htlc) external payable;
@@ -50,6 +50,9 @@ interface ILiqualityHTLC {
 
     /// @notice Emitted when the generated id already exists
     error LiqualityHTLC__SwapAlreadyExists();
+
+    /// @notice Emitted when the generated swap does not exists
+    error LiqualityHTLC__SwapDoesNotExist();
 
     /// @notice Emitted when there is an attempt for refund when the swap is not expired
     error LiqualityHTLC__SwapNotExpired();

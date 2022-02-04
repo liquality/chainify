@@ -20,6 +20,10 @@ export const EVMConfig: IConfig = {
         contractAddress: '0x91441284dfAc14425c9Bf7b3f159CE480d0dd018',
     },
 
+    swapParams: {
+        value: '1',
+    },
+
     recipientAddress: '0xe862a41cef3bbcc6d85bff8b9c36801a6bc4453e',
     multicallAddress: '0x08579f8763415cfCEa1B0F0dD583b1A0DEbfBe2b',
 

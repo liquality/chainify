@@ -1,12 +1,13 @@
 import { assert } from 'chai';
 
 import { EvmTypes } from '@liquality/evm';
-import { Client } from '@liquality/client';
 import { Math } from '@liquality/utils';
 
-import { IConfig } from '../../types';
+import { Chain } from '../../types';
 
-export function shouldUpdateTransactionFee(client: Client, config: IConfig) {
+export function shouldUpdateTransactionFee(chain: Chain) {
+    const { client, config } = chain;
+
     describe('Ethereum Update Transaction Fee', () => {
         beforeEach(async () => {
             await client.chain.sendRpcRequest('miner_stop', []);

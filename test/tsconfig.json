@@ -6,6 +6,5 @@
         "rootDir": "./",
         "esModuleInterop": true,
         "noImplicitAny": false // we need that for lib/typechain
-    },
-    "include": ["lib"]
+    }
 }

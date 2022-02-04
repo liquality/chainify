@@ -1,5 +1,7 @@
-export function compare(a: string, b: string) {
-    return a.toLowerCase() === b.toLowerCase();
+import { BigNumberish } from '@liquality/types';
+
+export function compare(a: BigNumberish, b: BigNumberish) {
+    return a?.toString().toLowerCase() === b?.toString().toLowerCase();
 }
 
 export function toStringDeep<I, O>(input: I): O {

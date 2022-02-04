@@ -15,6 +15,7 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
+        "@ethersproject/bignumber": "^5.5.0",
         "bignumber.js": "^9.0.2"
     }
 }

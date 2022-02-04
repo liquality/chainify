@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 
-import { Client } from '@liquality/client';
+import { Chain } from '../types';
 
-import { IConfig } from '../types';
+export function shouldBehaveLikeChainProvider(chain: Chain) {
+    const { client, config } = chain;
 
-export function shouldBehaveLikeChainProvider(client: Client, config: IConfig) {
     describe(`${client.chain.getNetwork().name} Chain Provider`, function () {
         it('should return network', async () => {
             const network = client.chain.getNetwork();

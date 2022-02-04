@@ -1,10 +1,11 @@
 import { Signer } from '@ethersproject/abstract-signer';
 
+import { remove0x } from '@liquality/utils';
 import { Chain, Wallet } from '@liquality/client';
 import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types';
 
-import { parseTxRequest, parseTxResponse, remove0x } from './utils';
-import { EthereumTransactionRequest, EthersTransactionResponse, EthereumFeeData } from './types';
+import { parseTxRequest, parseTxResponse } from '../utils';
+import { EthereumTransactionRequest, EthersTransactionResponse, EthereumFeeData } from '../types';
 
 export abstract class EvmBaseWalletProvider<Provider> extends Wallet<Provider, Signer> {
     protected signer: Signer;

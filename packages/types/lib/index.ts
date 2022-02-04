@@ -1,3 +1,4 @@
+import { BigNumberish as EthersBigNumberish } from '@ethersproject/bignumber';
 import BigNumber from 'bignumber.js';
 
 export * from './Asset';
@@ -9,4 +10,4 @@ export * from './Wallet';
 
 export { BigNumber };
 
-export type BigNumberish = BigNumber | string | number;
+export type BigNumberish = string | number | EthersBigNumberish | BigNumber;

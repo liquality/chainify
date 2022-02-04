@@ -1,4 +1,5 @@
-import { Asset } from '@liquality/types';
+import { Client } from '@liquality/client';
+import { Asset, BigNumberish, Network } from '@liquality/types';
 
 export interface IConfig {
     walletOptions: Record<string, any>;
@@ -10,7 +11,24 @@ export interface IConfig {
     swapOptions: {
         contractAddress: string;
     };
+    swapParams: {
+        value: BigNumberish;
+    };
     assets: Asset[];
     recipientAddress: string;
     multicallAddress?: string;
+}
+
+export enum ChainType {
+    evm = 'evm',
+}
+
+export interface Chain {
+    id: string;
+    name: string;
+    client: Client;
+    config: IConfig;
+    network?: Network;
+    segwitFeeImplemented?: boolean;
+    funded?: boolean;
 }

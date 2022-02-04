@@ -3,5 +3,6 @@
         "editor.formatOnSave": true
     },
     "eslint.packageManager": "yarn",
-    "npm.packageManager": "yarn"
+    "npm.packageManager": "yarn",
+    "cSpell.words": ["Liquality"]
 }

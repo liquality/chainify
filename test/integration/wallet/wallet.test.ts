@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 
-import { Client } from '@liquality/client';
+import { Chain } from '../types';
 
-import { IConfig } from '../types';
+export function shouldBehaveLikeWalletProvider(chain: Chain) {
+    const { client, config } = chain;
 
-export function shouldBehaveLikeWalletProvider(client: Client, config: IConfig) {
     describe(`${client.chain.getNetwork().name} Wallet Provider`, function () {
         it('should use the expected address', async () => {
             const address = await client.wallet.getAddress();

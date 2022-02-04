@@ -1,4 +1,8 @@
-export default class Client<ChainType = any, WalletType = any, SwapType = any> {
+import Chain from './Chain';
+import Swap from './Swap';
+import Wallet from './Wallet';
+
+export default class Client<ChainType = Chain<any>, WalletType = Wallet<any, any>, SwapType = Swap<any, any>> {
     private _chain: ChainType;
     private _wallet: WalletType;
     private _swap: SwapType;

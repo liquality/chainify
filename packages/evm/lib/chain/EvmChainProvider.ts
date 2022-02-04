@@ -3,9 +3,9 @@ import { StaticJsonRpcProvider, JsonRpcProvider } from '@ethersproject/providers
 import { Chain } from '@liquality/client';
 import { Block, Transaction, AddressType, Network, Asset, BigNumberish } from '@liquality/types';
 
-import { parseBlockResponse, parseTxResponse } from './utils';
+import { parseBlockResponse, parseTxResponse } from '../utils';
 import { EvmMulticallProvider } from './EvmMulticallProvider';
-import { EthersBlock, EthersTransactionResponse, EthersBlockWithTransactions, EthereumFeeData } from './types';
+import { EthersBlock, EthersTransactionResponse, EthersBlockWithTransactions, EthereumFeeData } from '../types';
 
 export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     protected multicall: EvmMulticallProvider;
