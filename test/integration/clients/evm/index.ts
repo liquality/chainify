@@ -1,19 +1,20 @@
-import { EVMConfig } from './config';
-import { EthereumClient } from './clients';
+import { Chains } from '../../common';
 
 import { deploy } from '../../deploy';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
 import { shouldUpdateTransactionFee } from './updateTransactionFee.behavior';
+import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
 
 export function shouldBehaveLikeEvmClient() {
     before(async () => {
-        await deploy(EthereumClient);
+        await deploy(Chains.evm.client);
     });
 
     describe('EVM Client', () => {
-        shouldBehaveLikeChainProvider(EthereumClient, EVMConfig);
-        shouldBehaveLikeWalletProvider(EthereumClient, EVMConfig);
-        shouldUpdateTransactionFee(EthereumClient, EVMConfig);
+        shouldBehaveLikeChainProvider(Chains.evm);
+        shouldBehaveLikeWalletProvider(Chains.evm);
+        shouldUpdateTransactionFee(Chains.evm);
+        shouldBehaveLikeSwapProvider(Chains.evm);
     });
 }

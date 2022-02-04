@@ -4,7 +4,8 @@
             "dependsOn": ["^build"],
             "outputs": ["dist/**"]
         },
-        "test": {
+        "test:integration": {
+            "dependsOn": ["^build"],
             "outputs": []
         },
         "dev": {

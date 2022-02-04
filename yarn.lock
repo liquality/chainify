@@ -743,7 +743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/abstract-provider@npm:5.5.1, @ethersproject/abstract-provider@npm:^5.5.0":
+"@ethersproject/abstract-provider@npm:5.5.1, @ethersproject/abstract-provider@npm:^5.5.0, @ethersproject/abstract-provider@npm:^5.5.1":
   version: 5.5.1
   resolution: "@ethersproject/abstract-provider@npm:5.5.1"
   dependencies:
@@ -1024,7 +1024,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/solidity@npm:5.5.0":
+"@ethersproject/solidity@npm:5.5.0, @ethersproject/solidity@npm:^5.5.0":
   version: 5.5.0
   resolution: "@ethersproject/solidity@npm:5.5.0"
   dependencies:
@@ -1171,7 +1171,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@liquality/evm-contracts@workspace:^, @liquality/evm-contracts@workspace:packages/evm-contracts":
+"@liquality/evm-contracts@workspace:*, @liquality/evm-contracts@workspace:packages/evm-contracts":
   version: 0.0.0-use.local
   resolution: "@liquality/evm-contracts@workspace:packages/evm-contracts"
   dependencies:
@@ -1230,15 +1230,23 @@ __metadata:
   resolution: "@liquality/evm@workspace:packages/evm"
   dependencies:
     "@ethersproject/abi": ^5.5.0
+    "@ethersproject/abstract-provider": ^5.5.1
     "@ethersproject/abstract-signer": ^5.5.0
+    "@ethersproject/constants": ^5.5.0
     "@ethersproject/contracts": ^5.5.0
     "@ethersproject/providers": ^5.5.2
+    "@ethersproject/solidity": ^5.5.0
     "@ethersproject/transactions": ^5.5.0
     "@ethersproject/wallet": ^5.5.0
     "@liquality/client": "workspace:*"
-    "@liquality/evm-contracts": "workspace:^"
+    "@liquality/evm-contracts": "workspace:*"
     "@liquality/types": "workspace:*"
+    "@liquality/utils": "workspace:*"
+    "@nomiclabs/hardhat-ethers": ^2.0.4
+    "@nomiclabs/hardhat-waffle": ^2.0.2
+    "@typechain/hardhat": ^4.0.0
     ethers: ^5.5.4
+    hardhat: ^2.8.3
   languageName: unknown
   linkType: soft
 
@@ -1273,6 +1281,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/types@workspace:packages/types"
   dependencies:
+    "@ethersproject/bignumber": ^5.5.0
     bignumber.js: ^9.0.2
   languageName: unknown
   linkType: soft
@@ -1281,6 +1290,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/utils@workspace:packages/utils"
   dependencies:
+    "@ethersproject/sha2": ^5.5.0
     "@liquality/types": "workspace:*"
   languageName: unknown
   linkType: soft

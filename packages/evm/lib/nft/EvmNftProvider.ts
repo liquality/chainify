@@ -4,11 +4,11 @@ import { Signer } from '@ethersproject/abstract-signer';
 
 import { Nft, HttpClient, ClientTypes } from '@liquality/client';
 import { AddressType, BigNumberish, Transaction } from '@liquality/types';
-import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from './typechain';
 
-import { toEthereumTxRequest } from './utils';
-import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
-import { EthereumFeeData, EthersTransactionResponse, EthersPopulatedTransaction, NftTypes } from './types';
+import { toEthereumTxRequest } from '../utils';
+import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
+import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from '../typechain';
+import { EthereumFeeData, EthersTransactionResponse, EthersPopulatedTransaction, NftTypes } from '../types';
 
 type NftContract = ERC721 | ERC1155;
 type NftInfo = { contract: NftContract; schema: NftTypes };

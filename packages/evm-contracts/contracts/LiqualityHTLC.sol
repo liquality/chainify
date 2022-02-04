@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
-import "./ILiqualityHTLC.sol";
+import './ILiqualityHTLC.sol';
 
 /// @title LiqualityHTLC
 /// @notice HTLC contract to support Liquality's cross-chain swaps.
@@ -38,14 +38,7 @@ contract LiqualityHTLC is ILiqualityHTLC {
         }
 
         bytes32 id = sha256(
-            abi.encodePacked(
-                htlc.refundAddress,
-                block.timestamp,
-                htlc.amount,
-                htlc.expiration,
-                htlc.secretHash,
-                htlc.recipientAddress
-            )
+            abi.encodePacked(htlc.refundAddress, block.timestamp, htlc.amount, htlc.expiration, htlc.secretHash, htlc.recipientAddress)
         );
 
         if (htlcs[id].expiration != 0) {
@@ -58,11 +51,15 @@ contract LiqualityHTLC is ILiqualityHTLC {
 
     /// @inheritdoc ILiqualityHTLC
     function claim(bytes32 id, bytes32 secret) external {
-        HTLCData memory h = htlcs[id];
-
         // sig(4) + id(32) + secret(32)
         if (msg.data.length != 68) {
             revert LiqualityHTLC__BadSecretLength(msg.data.length);
+        }
+
+        HTLCData memory h = htlcs[id];
+
+        if (h.refundAddress == address(0x0)) {
+            revert LiqualityHTLC__SwapDoesNotExist();
         }
 
         if (sha256(abi.encodePacked(secret)) != h.secretHash) {
@@ -86,6 +83,10 @@ contract LiqualityHTLC is ILiqualityHTLC {
     /// @inheritdoc ILiqualityHTLC
     function refund(bytes32 id) external {
         HTLCData memory h = htlcs[id];
+
+        if (h.refundAddress == address(0x0)) {
+            revert LiqualityHTLC__SwapDoesNotExist();
+        }
 
         if (block.timestamp <= h.expiration) {
             revert LiqualityHTLC__SwapNotExpired();

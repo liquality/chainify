@@ -3,7 +3,7 @@ import { Interface, JsonFragment, Fragment } from '@ethersproject/abi';
 
 import { AddressType, Asset, BigNumberish } from '@liquality/types';
 
-import { Multicall__factory, Multicall, ERC20__factory } from './typechain';
+import { Multicall__factory, Multicall, ERC20__factory } from '../typechain';
 
 interface Call {
     target: string;
