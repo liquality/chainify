@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { Chain } from '../types';
-import { getSwapParams, mineBlock, increaseTime } from '../common';
+import { getSwapParams, increaseTime, initiateAndVerify, claimAndVerify, refundAndVerify } from '../common';
 
 export function shouldBehaveLikeSwapProvider(chain: Chain) {
     const { client, config } = chain;
@@ -13,46 +13,98 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
             expect(secret1).to.not.equal(secret2);
         });
 
-        it('should initiate and claim - happy route', async () => {
-            // Initiate
-            const { swapParams, secret } = await getSwapParams(client, config);
-            const initTx = await client.swap.initiateSwap(swapParams);
-            await mineBlock(chain);
-
-            // Find init tx
-            const foundInitiateTx = await client.swap.findInitiateSwapTransaction(swapParams);
-            await client.swap.verifyInitiateSwapTransaction(swapParams, foundInitiateTx.hash);
-            expect(initTx.hash).to.equal(foundInitiateTx.hash);
-
-            // Claim
-            const claimTx = await client.swap.claimSwap(swapParams, foundInitiateTx.hash, secret);
-            await mineBlock(chain);
-
-            // Find and verify claim
-            const foundClaim = await client.swap.findClaimSwapTransaction(swapParams, foundInitiateTx.hash);
-            const foundSecret = await client.swap.getSwapSecret(foundClaim.hash);
-            expect(secret).to.equal(foundSecret);
-            expect(foundClaim.hash).to.equal(claimTx.hash);
+        describe(`Initiate`, async () => {
+            it('should initiate, verify find the initiate tx', async () => {
+                const { swapParams } = await getSwapParams(client, config);
+                await initiateAndVerify(chain, swapParams);
+            });
         });
 
-        it('should initiate and refund', async () => {
-            // Initiate with short expiration
-            const { swapParams } = await getSwapParams(client, config, 5);
-            const initTx = await client.swap.initiateSwap(swapParams);
-            await mineBlock(chain);
+        describe(`Claim`, async () => {
+            it('should claim successfully', async () => {
+                // Initiate
+                const { swapParams, secret } = await getSwapParams(client, config);
+                const initTx = await initiateAndVerify(chain, swapParams);
 
-            // Find init tx
-            const foundInitiateTx = await client.swap.findInitiateSwapTransaction(swapParams);
-            expect(initTx.hash).to.equal(foundInitiateTx.hash);
+                // Claim and verify
+                await claimAndVerify(chain, swapParams, initTx.hash, secret);
+            });
 
-            // Wait for expiration and refund
-            await increaseTime(chain, 5);
-            const refundTx = await client.swap.refundSwap(swapParams, foundInitiateTx.hash);
-            await mineBlock(chain);
+            it('should claim only using correct secret', async () => {
+                // Initiate and verify
+                const { swapParams, secret } = await getSwapParams(client, config);
+                const initTx = await initiateAndVerify(chain, swapParams);
 
-            // Find and verify refund
-            const foundRefund = await client.swap.findRefundSwapTransaction(swapParams, foundInitiateTx.hash);
-            expect(refundTx.hash).to.equal(foundRefund.hash);
+                // Try claiming using wrong secrets
+                const wrongSecret = await client.swap.generateSecret('wrong-secret');
+                const emptySecret = '';
+                const bigSizedSecret = secret + '0';
+                const shortSizedSecret = secret.substring(0, secret.length - 4);
+                await expect(claimAndVerify(chain, swapParams, initTx.hash, wrongSecret)).to.be.rejected;
+                await expect(claimAndVerify(chain, swapParams, initTx.hash, emptySecret)).to.be.rejected;
+                await expect(claimAndVerify(chain, swapParams, initTx.hash, bigSizedSecret)).to.be.rejected;
+                await expect(claimAndVerify(chain, swapParams, initTx.hash, shortSizedSecret)).to.be.rejected;
+
+                // Claim successfully using the correct secret
+                await claimAndVerify(chain, swapParams, initTx.hash, secret);
+            });
+
+            it('should claim after expiration', async () => {
+                // Initiate
+                const { swapParams, secret } = await getSwapParams(client, config, 10);
+                const initTx = await initiateAndVerify(chain, swapParams);
+
+                // Claim after expiration
+                await increaseTime(chain, swapParams.expiration + 10);
+                await claimAndVerify(chain, swapParams, initTx.hash, secret);
+            });
+
+            it('should not allow claiming multiple times', async () => {
+                // Initiate
+                const { swapParams, secret } = await getSwapParams(client, config, 10);
+                const initTx = await initiateAndVerify(chain, swapParams);
+
+                // Claim after expiration
+                await increaseTime(chain, swapParams.expiration + 10);
+                await claimAndVerify(chain, swapParams, initTx.hash, secret);
+                await expect(claimAndVerify(chain, swapParams, initTx.hash, secret)).to.be.rejected;
+            });
+        });
+
+        describe(`Refund`, async () => {
+            it('should refund successfully', async () => {
+                // Initiate
+                const { swapParams } = await getSwapParams(client, config, 10);
+                const initTx = await initiateAndVerify(chain, swapParams);
+
+                // Refund and verify
+                await increaseTime(chain, swapParams.expiration + 10);
+                await refundAndVerify(chain, swapParams, initTx.hash);
+            });
+
+            it('should not allow refund after claim', async () => {
+                // Initiate
+                const { swapParams, secret } = await getSwapParams(client, config, 10);
+                const initTx = await initiateAndVerify(chain, swapParams);
+
+                // Claim
+                await claimAndVerify(chain, swapParams, initTx.hash, secret);
+
+                // Refund should fail
+                await increaseTime(chain, swapParams.expiration + 10);
+                await expect(refundAndVerify(chain, swapParams, initTx.hash)).to.be.rejected;
+            });
+
+            it('should not allow multiple refunds of the same htlc', async () => {
+                // Initiate
+                const { swapParams } = await getSwapParams(client, config, 10);
+                const initTx = await initiateAndVerify(chain, swapParams);
+
+                // Refund and verify
+                await increaseTime(chain, swapParams.expiration + 10);
+                await refundAndVerify(chain, swapParams, initTx.hash);
+                await expect(refundAndVerify(chain, swapParams, initTx.hash)).to.be.rejected;
+            });
         });
     });
 }

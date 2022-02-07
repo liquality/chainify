@@ -12,6 +12,7 @@ export async function startGanache(_options: any = {}) {
         quiet: true,
         blockTime: 0,
         instamine: 'eager',
+        defaultGasPrice: 0,
         ..._options,
     };
     server = Ganache.server(defaultOptions);

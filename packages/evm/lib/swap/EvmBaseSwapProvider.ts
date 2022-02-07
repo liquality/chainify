@@ -93,13 +93,15 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
             }
         }
 
-        return (
-            Math.eq(htlcArgs.htlc.amount, swapParams.value) &&
-            Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
-            compare(htlcArgs.htlc.recipientAddress, swapParams.recipientAddress.toString()) &&
-            compare(htlcArgs.htlc.refundAddress, swapParams.refundAddress.toString()) &&
-            compare(htlcArgs.htlc.secretHash, swapParams.secretHash.toString())
-        );
+        if (htlcArgs) {
+            return (
+                Math.eq(htlcArgs.htlc.amount, swapParams.value) &&
+                Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
+                compare(htlcArgs.htlc.recipientAddress, swapParams.recipientAddress.toString()) &&
+                compare(htlcArgs.htlc.refundAddress, swapParams.refundAddress.toString()) &&
+                compare(htlcArgs.htlc.secretHash, swapParams.secretHash.toString())
+            );
+        }
     }
 
     async getSwapSecret(claimTx: string): Promise<string> {
