@@ -72,7 +72,6 @@ contract LiqualityHTLC is ILiqualityHTLC {
 
         // handle Ether claims
         if (h.tokenAddress == address(0x0)) {
-            payable(h.recipientAddress).transfer(h.amount);
             LibTransfer.transferEth(h.recipientAddress, h.amount);
         }
         // handle ERC20 claims
