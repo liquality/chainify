@@ -29,7 +29,7 @@ export default abstract class Chain<T> {
 
     public abstract getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block>;
 
-    public abstract getBlockByNumber(blockNumber: BigNumberish, includeTx?: boolean): Promise<Block>;
+    public abstract getBlockByNumber(blockNumber?: BigNumberish, includeTx?: boolean): Promise<Block>;
 
     public abstract getBlockHeight(): Promise<BigNumberish>;
 
