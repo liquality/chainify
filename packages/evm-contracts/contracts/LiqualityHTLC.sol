@@ -4,6 +4,7 @@ pragma solidity 0.8.11;
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 import './ILiqualityHTLC.sol';
+import './LibTransfer.sol';
 
 /// @title LiqualityHTLC
 /// @notice HTLC contract to support Liquality's cross-chain swaps.
@@ -66,17 +67,19 @@ contract LiqualityHTLC is ILiqualityHTLC {
             revert LiqualityHTLC__WrongSecret();
         }
 
+        // free some storage for gas refund
+        delete htlcs[id];
+
         // handle Ether claims
         if (h.tokenAddress == address(0x0)) {
             payable(h.recipientAddress).transfer(h.amount);
+            LibTransfer.transferEth(h.recipientAddress, h.amount);
         }
         // handle ERC20 claims
         else {
             IERC20(h.tokenAddress).safeTransfer(h.recipientAddress, h.amount);
         }
 
-        // free some storage for gas refund
-        delete htlcs[id];
         emit Claim(id, secret);
     }
 
@@ -92,17 +95,18 @@ contract LiqualityHTLC is ILiqualityHTLC {
             revert LiqualityHTLC__SwapNotExpired();
         }
 
+        // free some storage for gas refund
+        delete htlcs[id];
+
         // handle Ether refunds
         if (h.tokenAddress == address(0x0)) {
-            payable(h.refundAddress).transfer(h.amount);
+            LibTransfer.transferEth(h.refundAddress, h.amount);
         }
         // handle ERC20 refunds
         else {
             IERC20(h.tokenAddress).safeTransfer(h.refundAddress, h.amount);
         }
 
-        // free some storage for gas refund
-        delete htlcs[id];
         emit Refund(id);
     }
 }
