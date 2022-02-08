@@ -13,7 +13,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     constructor(network: Network, provider?: StaticJsonRpcProvider) {
         super(network, provider);
 
-        if (this.network.rpcUrl) {
+        if (!provider && this.network.rpcUrl) {
             this.provider = new StaticJsonRpcProvider(this.network.rpcUrl, this.network.chainId);
         }
 
