@@ -41,10 +41,10 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     }
 
     public async getUsedAddresses(numAddresses: number = 1): Promise<AddressType[]> {
-        return this.getAddresses(0, numAddresses, false);
+        return this.getAddresses(0, numAddresses);
     }
 
-    public async getAddresses(start: number = 0, numAddresses: number = 1, _change: boolean = false): Promise<AddressType[]> {
+    public async getAddresses(start: number = 0, numAddresses: number = 1): Promise<AddressType[]> {
         const result: AddressType[] = [];
         for (let i = start; i < start + numAddresses; i++) {
             const tempWallet = EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + i);
