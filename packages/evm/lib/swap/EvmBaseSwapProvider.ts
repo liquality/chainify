@@ -109,6 +109,10 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
     async getSwapSecret(claimTx: string): Promise<string> {
         const transaction: Transaction<ClaimEvent> = await this.walletProvider.getChainProvider().getTransactionByHash(claimTx);
 
+        if (!transaction) {
+            throw new Error(`Transaction not found: ${claimTx}`);
+        }
+
         if (transaction?.logs) {
             for (const log of transaction.logs as Log[]) {
                 const claim = this.contract.interface.parseLog(log);
