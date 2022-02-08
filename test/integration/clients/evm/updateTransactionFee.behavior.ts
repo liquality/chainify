@@ -8,7 +8,7 @@ import { Chain } from '../../types';
 export function shouldUpdateTransactionFee(chain: Chain) {
     const { client, config } = chain;
 
-    describe('Ethereum Update Transaction Fee', () => {
+    describe('EVM Update Transaction Fee', () => {
         beforeEach(async () => {
             await client.chain.sendRpcRequest('miner_stop', []);
         });
