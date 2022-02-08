@@ -1,8 +1,4 @@
-import { Network } from '@liquality/types';
-
-export interface NearNetwork extends Network {
-    helperUrl: string;
-}
+import { NearNetwork } from './types';
 
 const near_mainnet: NearNetwork = {
     name: 'Near Mainnet',

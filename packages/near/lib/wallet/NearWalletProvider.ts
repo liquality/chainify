@@ -1,9 +1,9 @@
 import { Chain, Wallet } from '@liquality/client';
 import { Address, AddressType, Asset, BigNumberish, FeeData, Transaction, WalletOptions } from '@liquality/types';
 
-import BN from 'bn.js';
 import { parseTxResponse } from '../utils';
 import {
+    BN,
     keyStores,
     providers,
     parseSeedPhrase,
@@ -13,6 +13,7 @@ import {
     NearTxRequest,
     NearAccount,
     NearTxResponse,
+    NearTxLog,
 } from '../types';
 
 export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemorySigner> {
@@ -44,6 +45,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         const { publicKey, secretKey } = this._wallet;
         const keyPair = KeyPair.fromString(secretKey);
 
+        // TODO: check if implicit accounts exist for that public key
         let address = null;
         // let address = await this.getMethod('getImplicitAccount')(publicKey, 0);
 
@@ -108,7 +110,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         return Buffer.from(signed.signature).toString('hex');
     }
 
-    public async sendTransaction(txRequest: NearTxRequest): Promise<Transaction<NearTxResponse>> {
+    public async sendTransaction(txRequest: NearTxRequest): Promise<Transaction<NearTxLog>> {
         const address = await this.getAddress();
         const from = this.getAccount(address.toString());
 
@@ -126,8 +128,8 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         }
     }
 
-    public async sendBatchTransaction(txRequests: NearTxRequest[]): Promise<Transaction<NearTxResponse>[]> {
-        const result: Transaction<NearTxResponse>[] = [];
+    public async sendBatchTransaction(txRequests: NearTxRequest[]): Promise<Transaction<NearTxLog>[]> {
+        const result: Transaction<NearTxLog>[] = [];
         for (const txRequest of txRequests) {
             const tx = await this.sendTransaction(txRequest);
             result.push(tx);
@@ -135,7 +137,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         return result;
     }
 
-    public async sendSweepTransaction(to: AddressType, _asset: Asset, _fee?: FeeData): Promise<Transaction<NearTxResponse>> {
+    public async sendSweepTransaction(to: AddressType, _asset: Asset, _fee?: FeeData): Promise<Transaction<NearTxLog>> {
         const address = await this.getAddress();
         const from = this.getAccount(address.toString());
         const tx = (await from.deleteAccount(to.toString())) as NearTxResponse;
