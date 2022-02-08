@@ -11,3 +11,5 @@ export { EvmNftProvider } from './nft/EvmNftProvider';
 
 export * as EvmTypes from './types';
 export * as EvmUtils from './utils';
+
+export { EvmNetworks } from './networks';

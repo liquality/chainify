@@ -3,6 +3,7 @@ export interface Network {
     coinType: string;
     isTestnet: boolean;
     chainId?: string | number;
+    networkId?: string | number;
     rpcUrl?: string;
     scraperUrl?: string;
     explorerUrl?: string;
