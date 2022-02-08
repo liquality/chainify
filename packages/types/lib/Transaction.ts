@@ -9,6 +9,8 @@ export interface Transaction<TransactionType = any> {
     value: BigNumberish;
     // transaction recipient
     to?: string;
+    // transaction sender
+    from?: string;
     // transaction status
     status?: TxStatus;
     // Hash of the block containing the transaction
@@ -47,6 +49,7 @@ export enum TxStatus {
     Pending = 'PENDING',
     Failed = 'FAILED',
     Success = 'SUCCESS',
+    Unknown = 'UNKNOWN',
 }
 
 export type TransactionRequest = {
