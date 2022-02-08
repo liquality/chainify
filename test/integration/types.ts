@@ -14,6 +14,9 @@ export interface IConfig {
     swapParams: {
         value: BigNumberish;
     };
+    sendParams: {
+        value: BigNumberish;
+    };
     assets: Asset[];
     recipientAddress: string;
     multicallAddress?: string;
@@ -21,6 +24,7 @@ export interface IConfig {
 
 export enum ChainType {
     evm = 'evm',
+    near = 'near',
 }
 
 export interface Chain {

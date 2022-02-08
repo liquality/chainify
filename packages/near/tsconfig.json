@@ -4,7 +4,8 @@
         "outDir": "./dist",
         "baseUrl": "./",
         "rootDir": "./",
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "target": "ES6"
     },
     "include": ["lib"]
 }

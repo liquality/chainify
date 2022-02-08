@@ -54,9 +54,13 @@ export function shouldBehaveLikeWalletProvider(chain: Chain) {
         });
 
         it('should send native asset transaction', async () => {
-            const tx = await client.wallet.sendTransaction({ to: config.recipientAddress, value: 1, asset: config.assets[0] });
+            const tx = await client.wallet.sendTransaction({
+                to: config.recipientAddress,
+                value: config.sendParams.value,
+                asset: config.assets[0],
+            });
             const txReceipt = await client.chain.getTransactionByHash(tx.hash);
-            expect(txReceipt.value.toString() === '1').to.be.true;
+            expect(txReceipt.value.toString() === config.sendParams.value).to.be.true;
         });
     });
 }

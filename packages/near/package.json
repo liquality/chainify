@@ -16,6 +16,10 @@
     },
     "dependencies": {
         "@liquality/client": "workspace:*",
-        "@liquality/types": "workspace:*"
+        "@liquality/types": "workspace:*",
+        "@liquality/utils": "workspace:*",
+        "bn.js": "^5.2.0",
+        "near-api-js": "^0.44.2",
+        "near-seed-phrase": "^0.2.0"
     }
 }

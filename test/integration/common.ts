@@ -1,18 +1,27 @@
 import { sha256 } from '@ethersproject/sha2';
 
+import { EvmNetworks } from '@liquality/evm';
+import { NearNetworks } from '@liquality/near';
+
 import { Client } from '@liquality/client';
 import { FeeData, SwapParams, Transaction } from '@liquality/types';
 import { expect } from 'chai';
-import { EthereumClient } from './clients';
-import { EVMConfig } from './config';
+import { EthereumClient, NearClient } from './clients';
+import { EVMConfig, NearConfig } from './config';
 import { Chain, ChainType, IConfig } from './types';
 
 export const Chains: { [key in ChainType]: Chain } = {
     [ChainType.evm]: {
         id: 'EVM',
         name: 'evm',
-        config: EVMConfig,
+        config: EVMConfig(EvmNetworks.ganache),
         client: EthereumClient,
+    },
+    [ChainType.near]: {
+        id: 'NEAR',
+        name: 'near',
+        config: NearConfig(NearNetworks.near_testnet),
+        client: NearClient,
     },
 };
 
