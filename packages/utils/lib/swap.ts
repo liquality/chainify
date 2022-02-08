@@ -1,6 +1,8 @@
-import { sha256 } from '@ethersproject/sha2';
+import { sha256 as ethersSha256 } from '@ethersproject/sha2';
+
 import { BigNumberish } from '@liquality/types';
-import { remove0x } from './hex';
+
+import { ensure0x, remove0x } from './hex';
 import { lte } from './math';
 
 export function validateExpiration(expiration: number) {
@@ -18,11 +20,13 @@ export function validateSecret(secret: string) {
         throw new Error(`Invalid secret type`);
     }
 
-    if (Buffer.from(secret, 'hex').toString('hex') !== secret) {
+    const _secret = remove0x(secret);
+
+    if (Buffer.from(_secret, 'hex').toString('hex') !== _secret) {
         throw new Error(`Invalid secret. Not Hex.`);
     }
 
-    const secretBuff = Buffer.from(secret, 'hex');
+    const secretBuff = Buffer.from(_secret, 'hex');
     if (secretBuff.length !== 32) {
         throw new Error(`Invalid secret size`);
     }
@@ -54,7 +58,7 @@ export function validateSecretAndHash(secret: string, secretHash: string) {
     validateSecretHash(secretHash);
 
     const computedSecretHash = Buffer.from(sha256(secret), 'hex');
-    if (!computedSecretHash.equals(Buffer.from(secretHash, 'hex'))) {
+    if (!computedSecretHash.equals(Buffer.from(remove0x(secretHash), 'hex'))) {
         throw new Error(`Invalid secret: Does not match expected secret hash: ${secretHash}`);
     }
 }
@@ -63,4 +67,8 @@ export function validateValue(value: BigNumberish) {
     if (lte(value, 0)) {
         throw new Error(`Invalid value: ${value}`);
     }
+}
+
+export function sha256(data: string) {
+    return remove0x(ethersSha256(ensure0x(data)));
 }

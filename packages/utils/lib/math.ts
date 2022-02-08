@@ -12,6 +12,10 @@ export function mul(a: BigNumberish, b: BigNumberish) {
     return new BigNumber(a.toString()).multipliedBy(b.toString());
 }
 
+export function div(a: BigNumberish, b: BigNumberish) {
+    return new BigNumber(a.toString()).dividedBy(b.toString());
+}
+
 export function eq(a: BigNumberish, b: BigNumberish) {
     return new BigNumber(a.toString()).eq(b.toString());
 }

@@ -1,6 +1,5 @@
-import { ensure0x, validateValue, validateSecretHash, validateExpiration } from '@liquality/utils';
 import { Transaction, FeeData, SwapParams, BigNumberish, TxStatus } from '@liquality/types';
-import { sha256 } from '@ethersproject/sha2';
+import { validateValue, validateSecretHash, validateExpiration, sha256 } from '@liquality/utils';
 
 import Wallet from './Wallet';
 
@@ -22,6 +21,11 @@ export default abstract class Swap<T, S> {
     public async verifyInitiateSwapTransaction(swapParams: SwapParams, initTx: string | Transaction): Promise<void> {
         this.validateSwapParams(swapParams);
         const transaction = typeof initTx === 'string' ? await this.walletProvider.getChainProvider().getTransactionByHash(initTx) : initTx;
+
+        if (!transaction) {
+            throw new Error(`Transaction not found: ${initTx}`);
+        }
+
         const doesMatch = await this.doesTransactionMatchInitiation(swapParams, transaction);
 
         if (transaction.status !== TxStatus.Success) {
@@ -46,7 +50,7 @@ export default abstract class Swap<T, S> {
     public async generateSecret(message: string): Promise<string> {
         const address = await this.walletProvider.getAddress();
         const signedMessage = await this.walletProvider.signMessage(message, address);
-        const secret = sha256(ensure0x(signedMessage));
+        const secret = sha256(signedMessage);
         return secret;
     }
 

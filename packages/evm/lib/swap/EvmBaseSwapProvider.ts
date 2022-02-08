@@ -2,7 +2,7 @@ import { BaseProvider, Log } from '@ethersproject/providers';
 import { Signer } from '@ethersproject/abstract-signer';
 
 import { Swap } from '@liquality/client';
-import { compare, Math } from '@liquality/utils';
+import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
 import { SwapParams, Transaction } from '@liquality/types';
 
 import { parseSwapParams, toEthereumTxRequest } from '../utils';
@@ -39,8 +39,10 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
         secret: string,
         fee: EthereumFeeData
     ): Promise<Transaction<EthersTransactionResponse>> {
-        const transaction: Transaction<InitiateEvent> = await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash);
+        validateSecret(secret);
+        validateSecretAndHash(secret, swapParams.secretHash);
 
+        const transaction: Transaction<InitiateEvent> = await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash);
         await this.verifyInitiateSwapTransaction(swapParams, transaction);
 
         if (transaction?.logs) {
@@ -48,7 +50,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
                 const initiate = this.contract.interface.parseLog(log);
 
                 if (initiate?.args?.id) {
-                    const tx = await this.contract.populateTransaction.claim(initiate.args.id, secret);
+                    const tx = await this.contract.populateTransaction.claim(initiate.args.id, ensure0x(secret));
                     const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
                     return txResponse;
                 }
@@ -99,7 +101,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
                 Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
                 compare(htlcArgs.htlc.recipientAddress, swapParams.recipientAddress.toString()) &&
                 compare(htlcArgs.htlc.refundAddress, swapParams.refundAddress.toString()) &&
-                compare(htlcArgs.htlc.secretHash, swapParams.secretHash.toString())
+                compare(remove0x(htlcArgs.htlc.secretHash), remove0x(swapParams.secretHash))
             );
         }
     }
@@ -112,7 +114,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
                 const claim = this.contract.interface.parseLog(log);
 
                 if (claim?.args?.id && claim.args.secret) {
-                    return claim.args.secret;
+                    return remove0x(claim.args.secret);
                 }
             }
         }

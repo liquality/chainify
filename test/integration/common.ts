@@ -1,8 +1,7 @@
-import { sha256 } from '@ethersproject/sha2';
-
 import { EvmNetworks } from '@liquality/evm';
 import { NearNetworks } from '@liquality/near';
 
+import { sha256 } from '@liquality/utils';
 import { Client } from '@liquality/client';
 import { FeeData, SwapParams, Transaction } from '@liquality/types';
 import { expect } from 'chai';
@@ -66,6 +65,10 @@ export async function mineBlock(chain: Chain) {
             await chain.client.chain.sendRpcRequest('evm_mine', []);
             break;
         }
+        case 'NEAR': {
+            await sleep(10);
+            break;
+        }
     }
 }
 
@@ -110,7 +113,7 @@ export async function claimAndVerify(
     return foundClaimTx;
 }
 
-export const retry = async <T>(method: () => Promise<T>, startWaitTime = 500, waitBackoff = 2, retryNumber = 5) => {
+export const retry = async <T>(method: () => Promise<T>, startWaitTime = 0.5, waitBackoff = 2, retryNumber = 5) => {
     let waitTime = startWaitTime;
     for (let i = 0; i < retryNumber; i++) {
         try {
