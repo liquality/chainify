@@ -9,7 +9,7 @@ const ethereum_mainnet: Network = {
 };
 
 const ganache: Network = {
-    name: 'evm_ganache',
+    name: 'Ganache-EVM',
     coinType: '60',
     isTestnet: true,
     chainId: 1337, // Ganache
