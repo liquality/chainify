@@ -22,7 +22,7 @@ export const NearConfig = (network: Network): IConfig => {
         },
 
         swapParams: {
-            value: '1',
+            value: '5000000000000000000000000',
         },
 
         sendParams: {

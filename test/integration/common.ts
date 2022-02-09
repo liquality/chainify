@@ -56,6 +56,13 @@ export async function increaseTime(chain: Chain, seconds: number) {
             await chain.client.chain.sendRpcRequest('evm_mine', []);
             break;
         }
+
+        case 'NEAR': {
+            const currentTime = Math.round(Date.now() / 1000);
+            const sleepAmount = seconds - currentTime;
+            await sleep(sleepAmount > 0 ? sleepAmount : 1);
+            break;
+        }
     }
 }
 

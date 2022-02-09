@@ -45,12 +45,20 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
         } as NearTxRequest);
     }
 
-    public async findClaimSwapTransaction(
-        _swapParams: SwapParams,
-        _initTxHash: string,
-        _blockNumber?: number
-    ): Promise<Transaction<NearTxLog>> {
-        throw new Error('Method not implemented.');
+    public async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<NearTxLog>> {
+        this.validateSwapParams(swapParams);
+
+        const initTx = (await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash)) as Transaction<NearTxLog>;
+        if (!initTx) {
+            throw new Error(`Transaction receipt is not available: ${initTxHash}`);
+        }
+
+        const tx = await this.findAddressTransaction(initTx._raw.receiver.toString(), (tx) => tx?._raw?.htlc?.method === 'claim');
+
+        if (tx?._raw?.htlc?.secret) {
+            validateSecretAndHash(tx?._raw?.htlc?.secret, swapParams.secretHash);
+            return tx;
+        }
     }
 
     public async refundSwap(swapParams: SwapParams, initTxHash: string): Promise<Transaction<NearTxLog>> {
@@ -64,12 +72,14 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
         } as NearTxRequest);
     }
 
-    public async findRefundSwapTransaction(
-        _swapParams: SwapParams,
-        _initiationTxHash: string,
-        _blockNumber?: number
-    ): Promise<Transaction<NearTxLog>> {
-        throw new Error('Method not implemented.');
+    public async findRefundSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<NearTxLog>> {
+        this.validateSwapParams(swapParams);
+
+        const initTx = (await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash)) as Transaction<NearTxLog>;
+        if (!initTx) {
+            throw new Error(`Transaction receipt is not available: ${initTxHash}`);
+        }
+        return await this.findAddressTransaction(initTx._raw.receiver.toString(), (tx) => tx?._raw?.htlc?.method === 'refund');
     }
 
     public async getSwapSecret(claimTxHash: string): Promise<string> {

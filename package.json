@@ -35,7 +35,7 @@
     "scripts": {
         "dev": "turbo run dev --parallel --no-cache",
         "test:integration": "cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --exit test/integration/index.ts",
-        "build": "turbo run build",
+        "build": "turbo run build --concurrency=10",
         "clean": "yarn workspaces foreach run clean && rm -rf node_modules ",
         "lint": "yarn lint:ts && yarn prettier:check",
         "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",

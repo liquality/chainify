@@ -172,7 +172,7 @@ function parseTxActions(tx: NearTransaction) {
         value: 0,
         sender: tx.signer_id,
         receiver: tx.receiver_id,
-        hash: tx.hash,
+        hash: `${tx.hash}_${tx.signer_id}`,
     } as NearTxLog;
 
     for (const action of tx.actions as any[]) {

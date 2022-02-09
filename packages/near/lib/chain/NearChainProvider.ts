@@ -19,12 +19,12 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
         return this._getBlockById(blockHash, includeTx);
     }
 
-    public async getBlockByNumber(blockNumber?: BigNumberish, _includeTx?: boolean): Promise<Block<any, any>> {
+    public async getBlockByNumber(blockNumber?: BigNumberish, includeTx?: boolean): Promise<Block<any, any>> {
         if (!blockNumber) {
             const latestBlock = await this.getBlockHeight();
-            return this._getBlockById(Number(latestBlock), _includeTx);
+            return this._getBlockById(Number(latestBlock), includeTx);
         }
-        return this._getBlockById(Number(blockNumber), _includeTx);
+        return this._getBlockById(Number(blockNumber), includeTx);
     }
 
     public async getBlockHeight(): Promise<BigNumberish> {
