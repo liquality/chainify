@@ -116,12 +116,6 @@ export default class TerraWalletProvider extends WalletProvider {
 
     const transaction = await this._broadcastTx(tx)
 
-    if (isTxError(transaction)) {
-      throw new Error(
-        `Encountered an error while running the transaction: ${transaction.code} ${transaction.codespace} ${transaction.raw_log}`
-      )
-    }
-
     return {
       hash: transaction.txhash,
       value: sendOptions.value?.toNumber() || 0,
@@ -194,11 +188,18 @@ export default class TerraWalletProvider extends WalletProvider {
     return this._lcdClient.tx
       .broadcastSync(tx)
       .then(async (result) => {
+        if (isTxError(result)) {
+          throw new Error(
+            `Encountered an error while running the transaction: ${result.code} ${result.codespace} ${result.raw_log}`
+          )
+        }
+
         /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
         let retryTimes = 0
+
         while (true) {
-          if (retryTimes === 20) {
-            // That means 30 seconds passed and there is no resp
+          if (retryTimes === 40) {
+            // That means 1 minute passed and there is no resp
             throw new Error(`Timeout: Transaction have not been processed for 30 seconds`)
           }
 
