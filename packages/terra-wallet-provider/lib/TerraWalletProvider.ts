@@ -195,9 +195,16 @@ export default class TerraWalletProvider extends WalletProvider {
       .broadcastSync(tx)
       .then(async (result) => {
         /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
+        let retryTimes = 0
         while (true) {
+          if (retryTimes === 20) {
+            // That means 30 seconds passed and there is no resp
+            throw new Error(`Timeout: Transaction have not been processed for 30 seconds`)
+          }
+
           const data = await this._lcdClient.tx.txInfo(result.txhash).catch(() => null)
           if (data) return data
+          retryTimes++
           await new Promise((resolve) => setTimeout(resolve, 1500))
         }
       })
@@ -223,7 +230,7 @@ export default class TerraWalletProvider extends WalletProvider {
       const gasLimit = 800000
 
       let taxFee
-      if (this._stableFee) {
+      if (this._stableFee && value) {
         const _value = value.toNumber() / 1_000_000
         const taxFees = await this.getTaxFees(_value, this._feeAsset, false)
         taxFee = new BigNumber(taxFees * 1_000_000)
