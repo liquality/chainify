@@ -7,7 +7,7 @@ import { Address, AddressType, BigNumberish, WalletOptions } from '@liquality/ty
 
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 
-export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider> {
+export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider, EthersWallet> {
     private _wallet: EthersWallet;
     private _walletOptions: WalletOptions;
 
