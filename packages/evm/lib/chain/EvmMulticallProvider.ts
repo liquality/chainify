@@ -1,3 +1,4 @@
+import { StandardError } from '@liquality/errors';
 import { BaseProvider } from '@ethersproject/providers';
 import { Interface, JsonFragment, Fragment } from '@ethersproject/abi';
 
@@ -78,7 +79,7 @@ export class EvmMulticallProvider {
 
         const result = await this._multicall.callStatic.aggregate(aggregatedCallData);
         if (!result.returnData) {
-            throw new Error(`Could not make call with data: ${aggregatedCallData}`);
+            throw new StandardError(`Could not make call with data: ${aggregatedCallData}`);
         }
 
         return calls.map((call: Call, index: number) => {

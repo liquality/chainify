@@ -25,6 +25,7 @@
         "@ethersproject/transactions": "^5.5.0",
         "@ethersproject/wallet": "^5.5.0",
         "@liquality/client": "workspace:*",
+        "@liquality/errors": "workspace:*",
         "@liquality/types": "workspace:*",
         "@liquality/utils": "workspace:*",
         "ethers": "^5.5.4"

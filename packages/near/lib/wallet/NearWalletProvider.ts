@@ -1,4 +1,5 @@
 import { Chain, Wallet } from '@liquality/client';
+import { UnimplementedMethodError } from '@liquality/errors';
 import { Address, AddressType, Asset, BigNumberish, FeeData, Transaction, WalletOptions } from '@liquality/types';
 
 import { parseTxResponse } from '../utils';
@@ -162,7 +163,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
     }
 
     public async updateTransactionFee(_tx: string | Transaction<any>, _newFee: FeeData): Promise<Transaction<NearTxResponse>> {
-        throw new Error('Method not supported for Near');
+        throw new UnimplementedMethodError('Method not supported for Near');
     }
 
     private getAccount(accountId: string): NearAccount {

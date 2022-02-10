@@ -2,6 +2,7 @@ import { Signer } from '@ethersproject/abstract-signer';
 
 import { remove0x } from '@liquality/utils';
 import { Chain, Wallet } from '@liquality/client';
+import { ReplaceFeeInsufficientError } from '@liquality/errors';
 import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types';
 
 import { parseTxRequest, parseTxResponse } from '../utils';
@@ -59,17 +60,17 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
 
         if (maxPriorityFeePerGas && newFee.maxPriorityFeePerGas && maxFeePerGas && newFee.maxFeePerGas) {
             if (maxPriorityFeePerGas.gte(newFee.maxPriorityFeePerGas.toString())) {
-                throw new Error('Replace transaction underpriced: provide more maxPriorityFeePerGas');
+                throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxPriorityFeePerGas');
             }
             if (maxFeePerGas.gte(newFee.maxFeePerGas.toString())) {
-                throw new Error('Replace transaction underpriced: provide more maxFeePerGas');
+                throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxFeePerGas');
             }
         } else if (gasPrice && newFee.gasPrice) {
             if (gasPrice.gte(newFee.gasPrice.toString())) {
-                throw new Error('Replace transaction underpriced: provide more gasPrice');
+                throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more gasPrice');
             }
         } else {
-            throw new Error('Replace transaction underpriced');
+            throw new ReplaceFeeInsufficientError('Replace transaction underpriced');
         }
 
         const newTransaction = { ...transaction, nonce: transaction._raw.nonce, ...newFee };

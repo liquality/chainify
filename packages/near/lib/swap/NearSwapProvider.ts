@@ -1,3 +1,4 @@
+import { TxNotFoundError } from '@liquality/errors';
 import { ClientTypes, HttpClient, Swap, Wallet } from '@liquality/client';
 import { SwapParams, Transaction, BigNumberish } from '@liquality/types';
 import { compare, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
@@ -50,7 +51,7 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
 
         const initTx = (await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash)) as Transaction<NearTxLog>;
         if (!initTx) {
-            throw new Error(`Transaction receipt is not available: ${initTxHash}`);
+            throw new TxNotFoundError(`Transaction receipt is not available: ${initTxHash}`);
         }
 
         const tx = await this.findAddressTransaction(initTx._raw.receiver.toString(), (tx) => tx?._raw?.htlc?.method === 'claim');
@@ -77,7 +78,7 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
 
         const initTx = (await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash)) as Transaction<NearTxLog>;
         if (!initTx) {
-            throw new Error(`Transaction receipt is not available: ${initTxHash}`);
+            throw new TxNotFoundError(`Transaction receipt is not available: ${initTxHash}`);
         }
         return await this.findAddressTransaction(initTx._raw.receiver.toString(), (tx) => tx?._raw?.htlc?.method === 'refund');
     }
@@ -85,7 +86,7 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
     public async getSwapSecret(claimTxHash: string): Promise<string> {
         const tx = (await this.walletProvider.getChainProvider().getTransactionByHash(claimTxHash)) as Transaction<NearTxLog>;
         if (!tx) {
-            throw new Error(`Transaction not found: ${claimTxHash}`);
+            throw new TxNotFoundError(`Transaction not found: ${claimTxHash}`);
         }
         return tx._raw.htlc.secret;
     }

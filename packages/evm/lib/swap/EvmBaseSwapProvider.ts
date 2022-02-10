@@ -2,8 +2,9 @@ import { BaseProvider, Log } from '@ethersproject/providers';
 import { Signer } from '@ethersproject/abstract-signer';
 
 import { Swap } from '@liquality/client';
-import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
+import { TxNotFoundError } from '@liquality/errors';
 import { SwapParams, Transaction } from '@liquality/types';
+import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
 
 import { parseSwapParams, toEthereumTxRequest } from '../utils';
 import { LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
@@ -110,7 +111,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
         const transaction: Transaction<ClaimEvent> = await this.walletProvider.getChainProvider().getTransactionByHash(claimTx);
 
         if (!transaction) {
-            throw new Error(`Transaction not found: ${claimTx}`);
+            throw new TxNotFoundError(`Transaction not found: ${claimTx}`);
         }
 
         if (transaction?.logs) {

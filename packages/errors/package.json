@@ -1,5 +1,5 @@
 {
-    "name": "@liquality/near",
+    "name": "@liquality/errors",
     "version": "0.0.0",
     "description": "> TODO: description",
     "author": "Liquality <info@liquality.io>",
@@ -15,12 +15,9 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
-        "@liquality/client": "workspace:*",
-        "@liquality/errors": "workspace:*",
-        "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:*",
-        "bn.js": "^5.2.0",
-        "near-api-js": "^0.44.2",
-        "near-seed-phrase": "^0.2.0"
+        "standard-error": "^1.1.0"
+    },
+    "devDependencies": {
+        "@types/standard-error": "^1.1.0"
     }
 }

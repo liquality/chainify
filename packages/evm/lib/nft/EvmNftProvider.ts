@@ -2,6 +2,7 @@ import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider } from '@ethersproject/providers';
 import { Signer } from '@ethersproject/abstract-signer';
 
+import { UnsupportedMethodError } from '@liquality/errors';
 import { Nft, HttpClient, ClientTypes } from '@liquality/client';
 import { AddressType, BigNumberish, Transaction } from '@liquality/types';
 
@@ -69,7 +70,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
             }
 
             default: {
-                throw new Error(`Unsupported NFT type: ${nftInfo.schema}`);
+                throw new UnsupportedMethodError(`Unsupported NFT type: ${nftInfo.schema}`);
             }
         }
 
@@ -99,7 +100,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
             }
 
             default: {
-                throw new Error(`Unsupported NFT type: ${nftInfo.schema}`);
+                throw new UnsupportedMethodError(`Unsupported NFT type: ${nftInfo.schema}`);
             }
         }
     }
@@ -127,7 +128,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
             }
 
             default: {
-                throw new Error(`Unsupported NFT type: ${nftInfo.schema}`);
+                throw new UnsupportedMethodError(`Unsupported NFT type: ${nftInfo.schema}`);
             }
         }
 
@@ -175,7 +176,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
             const result = await this._httpClient.nodeGet<null, { schema_name: string }>(`asset_contract/${_contractAddress}`);
 
             if (!result.schema_name) {
-                throw new Error(`Cannot find the data for ${_contractAddress}`);
+                throw new UnsupportedMethodError(`Cannot find the data for ${_contractAddress}`);
             }
 
             this._cache[_contractAddress] = {

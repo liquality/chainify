@@ -1165,9 +1165,19 @@ __metadata:
   resolution: "@liquality/client@workspace:packages/client"
   dependencies:
     "@ethersproject/sha2": ^5.5.0
+    "@liquality/errors": "workspace:^"
     "@liquality/types": "workspace:*"
     "@liquality/utils": "workspace:*"
     axios: ^0.25.0
+  languageName: unknown
+  linkType: soft
+
+"@liquality/errors@workspace:*, @liquality/errors@workspace:^, @liquality/errors@workspace:packages/errors":
+  version: 0.0.0-use.local
+  resolution: "@liquality/errors@workspace:packages/errors"
+  dependencies:
+    "@types/standard-error": ^1.1.0
+    standard-error: ^1.1.0
   languageName: unknown
   linkType: soft
 
@@ -1239,6 +1249,7 @@ __metadata:
     "@ethersproject/transactions": ^5.5.0
     "@ethersproject/wallet": ^5.5.0
     "@liquality/client": "workspace:*"
+    "@liquality/errors": "workspace:*"
     "@liquality/evm-contracts": "workspace:*"
     "@liquality/types": "workspace:*"
     "@liquality/utils": "workspace:*"
@@ -1255,6 +1266,7 @@ __metadata:
   resolution: "@liquality/near@workspace:packages/near"
   dependencies:
     "@liquality/client": "workspace:*"
+    "@liquality/errors": "workspace:^"
     "@liquality/types": "workspace:*"
     "@liquality/utils": "workspace:*"
     bn.js: ^5.2.0
@@ -1295,6 +1307,7 @@ __metadata:
   resolution: "@liquality/utils@workspace:packages/utils"
   dependencies:
     "@ethersproject/sha2": ^5.5.0
+    "@liquality/errors": "workspace:^"
     "@liquality/types": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -2016,6 +2029,13 @@ __metadata:
   dependencies:
     "@sinonjs/fake-timers": ^7.1.0
   checksum: 3169f8a53adcabeb44418f6cf3340c565653044164d9deb87602747142f0ee7a1d51be9dc2d2840aa77d6358c76e90c58ba0815f358724f67241f5e71d2bc12d
+  languageName: node
+  linkType: hard
+
+"@types/standard-error@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@types/standard-error@npm:1.1.0"
+  checksum: 15556aa639845b1321394412b897b94461f729304c79f1977063af3c3e6eceeb788ad3f208818a8005f6f0a917d645d5c048e7c9f954fe54dbf9dc321e6c2cf8
   languageName: node
   linkType: hard
 
@@ -14556,6 +14576,13 @@ __metadata:
   dependencies:
     type-fest: ^0.7.1
   checksum: f4fbddfc09121d91e587b60de4beb4941108e967d71ad3a171812dc839b010ca374d064ad0a296295fed13acd103609d99a4224a25b4e67de13cae131f1901ee
+  languageName: node
+  linkType: hard
+
+"standard-error@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "standard-error@npm:1.1.0"
+  checksum: 19dd2d05a0dd8aeadee2cbbe38298fad7c60f32ba809e7eb7357f05a38bf8b32288d7b66038cbccd51bbfd57162a76ec64c5cfe0311c417712b042697af6fdeb
   languageName: node
   linkType: hard
 
