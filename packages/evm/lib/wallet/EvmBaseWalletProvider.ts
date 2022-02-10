@@ -7,7 +7,7 @@ import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types'
 import { parseTxRequest, parseTxResponse } from '../utils';
 import { EthereumTransactionRequest, EthersTransactionResponse, EthereumFeeData } from '../types';
 
-export abstract class EvmBaseWalletProvider<Provider, S extends Signer> extends Wallet<Provider, S> {
+export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;
 
     constructor(chainProvider?: Chain<Provider>) {
