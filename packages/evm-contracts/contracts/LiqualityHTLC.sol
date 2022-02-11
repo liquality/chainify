@@ -14,11 +14,7 @@ contract LiqualityHTLC is ILiqualityHTLC {
     mapping(bytes32 => HTLCData) public htlcs;
 
     /// @inheritdoc ILiqualityHTLC
-    function initiate(HTLCData calldata htlc) external payable {
-        if (htlc.refundAddress != msg.sender) {
-            revert LiqualityHTLC__InvalidSender();
-        }
-
+    function initiate(HTLCData calldata htlc) external payable returns (bytes32 id) {
         if (htlc.expiration < block.timestamp) {
             revert LiqualityHTLC__InvalidExpiration();
         }
@@ -38,7 +34,7 @@ contract LiqualityHTLC is ILiqualityHTLC {
             IERC20(htlc.tokenAddress).safeTransferFrom(htlc.refundAddress, address(this), htlc.amount);
         }
 
-        bytes32 id = sha256(
+        id = sha256(
             abi.encodePacked(htlc.refundAddress, block.timestamp, htlc.amount, htlc.expiration, htlc.secretHash, htlc.recipientAddress)
         );
 

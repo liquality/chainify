@@ -22,7 +22,7 @@ interface ILiqualityHTLC {
     event Claim(bytes32 indexed id, bytes32 secret);
 
     /// @notice Initiates a HTLC based on the input parameters.
-    function initiate(HTLCData calldata htlc) external payable;
+    function initiate(HTLCData calldata htlc) external payable returns (bytes32);
 
     /// @notice Claims an existing HTLC for the provided `id` using the `secret`.
     /// @param id htlc id
