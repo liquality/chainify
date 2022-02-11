@@ -1,10 +1,8 @@
-import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-
+import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { Chain } from '@liquality/client';
-import { remove0x } from '@liquality/utils';
 import { Address, AddressType, Network, WalletOptions } from '@liquality/types';
-
+import { remove0x } from '@liquality/utils';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 
 export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider, EthersWallet> {

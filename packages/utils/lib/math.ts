@@ -1,4 +1,4 @@
-import { BigNumberish, BigNumber } from '@liquality/types';
+import { BigNumber, BigNumberish } from '@liquality/types';
 
 export function add(a: BigNumberish, b: BigNumberish) {
     return new BigNumber(a.toString()).plus(b.toString());

@@ -1,8 +1,6 @@
 import { sha256 as ethersSha256 } from '@ethersproject/sha2';
 import { InvalidExpirationError, InvalidSecretError, InvalidValueError } from '@liquality/errors';
-
 import { BigNumberish } from '@liquality/types';
-
 import { ensure0x, remove0x } from './hex';
 import { lte } from './math';
 

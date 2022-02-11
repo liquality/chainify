@@ -1,17 +1,15 @@
-import { AddressZero } from '@ethersproject/constants';
 import { Signer } from '@ethersproject/abstract-signer';
+import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider, Log } from '@ethersproject/providers';
-
 import { Swap } from '@liquality/client';
 import { TxNotFoundError } from '@liquality/errors';
 import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
-
+import { LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
+import { ClaimEvent, InitiateEvent, RefundEvent } from '../typechain/LiqualityHTLC';
 import { EthersTransactionResponse } from '../types';
 import { parseSwapParams, toEthereumTxRequest } from '../utils';
-import { LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
-import { InitiateEvent, ClaimEvent, RefundEvent } from '../typechain/LiqualityHTLC';
 
 export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
     protected walletProvider: EvmBaseWalletProvider<BaseProvider>;

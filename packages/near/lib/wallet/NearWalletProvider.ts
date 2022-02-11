@@ -1,21 +1,20 @@
 import { Chain, Wallet } from '@liquality/client';
 import { UnimplementedMethodError } from '@liquality/errors';
 import { Address, AddressType, Asset, BigNumber, Network, Transaction, WalletOptions } from '@liquality/types';
-
-import { parseTxResponse } from '../utils';
 import {
     BN,
-    keyStores,
-    providers,
-    parseSeedPhrase,
     InMemorySigner,
     KeyPair,
-    NearWallet,
-    NearTxRequest,
+    keyStores,
     NearAccount,
-    NearTxResponse,
     NearTxLog,
+    NearTxRequest,
+    NearTxResponse,
+    NearWallet,
+    parseSeedPhrase,
+    providers,
 } from '../types';
+import { parseTxResponse } from '../utils';
 
 export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemorySigner> {
     private _wallet: NearWallet;

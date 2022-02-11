@@ -1,10 +1,8 @@
-import { StandardError } from '@liquality/errors';
+import { Fragment, Interface, JsonFragment } from '@ethersproject/abi';
 import { BaseProvider } from '@ethersproject/providers';
-import { Interface, JsonFragment, Fragment } from '@ethersproject/abi';
-
+import { StandardError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber } from '@liquality/types';
-
-import { Multicall__factory, Multicall, ERC20__factory } from '../typechain';
+import { ERC20__factory, Multicall, Multicall__factory } from '../typechain';
 
 interface Call {
     target: string;

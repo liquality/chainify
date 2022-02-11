@@ -4,5 +4,16 @@
     },
     "eslint.packageManager": "yarn",
     "npm.packageManager": "yarn",
-    "cSpell.words": ["Liquality"]
+    "cSpell.words": [
+        "arbitrum",
+        "changesets",
+        "commitlint",
+        "eslintignore",
+        "Liquality",
+        "Multicall",
+        "prettierrc",
+        "regtest",
+        "trivago",
+        "typechain"
+    ]
 }

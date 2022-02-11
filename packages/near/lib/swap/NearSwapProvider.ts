@@ -1,9 +1,8 @@
-import { TxNotFoundError } from '@liquality/errors';
 import { ClientTypes, HttpClient, Swap, Wallet } from '@liquality/client';
+import { TxNotFoundError } from '@liquality/errors';
 import { SwapParams, Transaction } from '@liquality/types';
 import { compare, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
-
-import { NearScraperData, NearTxLog, NearTxRequest, providers, InMemorySigner } from '../types';
+import { InMemorySigner, NearScraperData, NearTxLog, NearTxRequest, providers } from '../types';
 import { getClaimActions, getHtlcActions, getRefundActions, parseScraperTransaction } from '../utils';
 
 const ONE_DAY_IN_NS = 24 * 60 * 60 * 1000 * 1000 * 1000;

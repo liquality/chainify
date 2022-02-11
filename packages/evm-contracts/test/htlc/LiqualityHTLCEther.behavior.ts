@@ -1,9 +1,8 @@
 import { expect } from 'chai';
-import { ethers } from 'hardhat';
-import hre from 'hardhat';
-import { generateId, getDefaultHtlcData, getDefaultSecret } from '../utils';
+import hre, { ethers } from 'hardhat';
 import { LiqualityHTLC__factory } from '../../src/types/factories/LiqualityHTLC__factory';
 import { LiqualityHTLC } from '../../src/types/LiqualityHTLC';
+import { generateId, getDefaultHtlcData, getDefaultSecret } from '../utils';
 
 export function shouldBehaveLikeLiqualityHTLCForEther(): void {
     beforeEach(async function () {
@@ -11,15 +10,15 @@ export function shouldBehaveLikeLiqualityHTLCForEther(): void {
         this.htlc = <LiqualityHTLC>await htlcFactory.deploy();
     });
 
-    describe('Initiate', function () {
+    describe('Initiate', () => {
         shouldInitiateEther();
     });
 
-    describe('Claim', function () {
+    describe('Claim', () => {
         shouldClaimEther();
     });
 
-    describe('Refund', function () {
+    describe('Refund', () => {
         shouldRefundEther();
     });
 }

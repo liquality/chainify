@@ -1,11 +1,10 @@
 import { expect } from 'chai';
-import { ethers } from 'hardhat';
-import hre from 'hardhat';
-import { generateId, getDefaultHtlcData, getDefaultSecret } from '../utils';
+import hre, { ethers } from 'hardhat';
 import { LiqualityHTLC__factory } from '../../src/types/factories/LiqualityHTLC__factory';
-import { LiqualityHTLC } from '../../src/types/LiqualityHTLC';
 import { TestERC20__factory } from '../../src/types/factories/TestERC20__factory';
+import { LiqualityHTLC } from '../../src/types/LiqualityHTLC';
 import { TestERC20 } from '../../src/types/TestERC20';
+import { generateId, getDefaultHtlcData, getDefaultSecret } from '../utils';
 
 export function shouldBehaveLikeLiqualityHTLCForERC20(): void {
     beforeEach(async function () {

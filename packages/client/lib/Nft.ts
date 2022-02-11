@@ -1,5 +1,4 @@
 import { AddressType, BigNumber, FeeType, Transaction } from '@liquality/types';
-
 import Wallet from './Wallet';
 
 export default abstract class Nft<T, S> {

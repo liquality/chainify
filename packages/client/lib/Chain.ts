@@ -1,5 +1,4 @@
-import { AddressType, Block, Network, Transaction, FeeDetails, Asset, ChainProvider, BigNumber } from '@liquality/types';
-
+import { AddressType, Asset, BigNumber, Block, ChainProvider, FeeDetails, Network, Transaction } from '@liquality/types';
 import { Fee } from '.';
 
 export default abstract class Chain<T> implements ChainProvider {

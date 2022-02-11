@@ -1,3 +1,5 @@
 dist
 .turbo
 node_modules
+typechain
+*.json

@@ -1,12 +1,10 @@
 import { Signer } from '@ethersproject/abstract-signer';
-
-import { remove0x } from '@liquality/utils';
 import { Chain, Wallet } from '@liquality/client';
 import { ReplaceFeeInsufficientError } from '@liquality/errors';
-import { AddressType, Asset, Transaction, BigNumber, FeeType } from '@liquality/types';
-
-import { parseTxRequest, parseTxResponse, extractFeeData } from '../utils';
+import { AddressType, Asset, BigNumber, FeeType, Transaction } from '@liquality/types';
+import { remove0x } from '@liquality/utils';
 import { EthereumTransactionRequest, EthersTransactionResponse } from '../types';
+import { extractFeeData, parseTxRequest, parseTxResponse } from '../utils';
 
 export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;

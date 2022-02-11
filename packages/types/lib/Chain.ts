@@ -1,6 +1,6 @@
 import { Asset, BigNumber } from '.';
-import { Block } from './Block';
 import { AddressType } from './Address';
+import { Block } from './Block';
 import { Transaction } from './Transaction';
 
 export interface ChainProvider {

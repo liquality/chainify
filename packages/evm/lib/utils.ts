@@ -1,17 +1,17 @@
-import { TransactionTypes } from '@ethersproject/transactions';
 import { AddressZero } from '@ethersproject/constants';
-import { sha256 } from '@ethersproject/solidity';
 import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
+import { sha256 } from '@ethersproject/solidity';
+import { TransactionTypes } from '@ethersproject/transactions';
+import { BigNumber, Block, FeeType, SwapParams, Transaction, TxStatus } from '@liquality/types';
 import { ensure0x } from '@liquality/utils';
-import { Transaction, TxStatus, Block, SwapParams, BigNumber, FeeType } from '@liquality/types';
+import { ILiqualityHTLC } from './typechain';
 import {
+    EthereumTransactionRequest,
     EthersBlock,
     EthersBlockWithTransactions,
-    EthersTransactionResponse,
-    EthereumTransactionRequest,
     EthersPopulatedTransaction,
+    EthersTransactionResponse,
 } from './types';
-import { ILiqualityHTLC } from './typechain';
 
 export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee: FeeType): EthereumTransactionRequest {
     return {

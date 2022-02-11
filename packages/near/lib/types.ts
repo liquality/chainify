@@ -1,15 +1,15 @@
+import { AddressType, Network, TransactionRequest } from '@liquality/types';
 import BN from 'bn.js';
 import { Account, Connection } from 'near-api-js';
-import { Action } from 'near-api-js/lib/transaction';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
-import { Transaction, ChunkResult } from 'near-api-js/lib/providers/provider';
-import { Network, AddressType, TransactionRequest } from '@liquality/types';
+import { ChunkResult, Transaction } from 'near-api-js/lib/providers/provider';
+import { Action } from 'near-api-js/lib/transaction';
 
+export { Account, InMemorySigner, KeyPair, keyStores, providers, transactions } from 'near-api-js';
+export { BlockResult } from 'near-api-js/lib/providers/provider';
+export { parseSeedPhrase } from 'near-seed-phrase';
 export { Action };
 export { BN };
-export { parseSeedPhrase } from 'near-seed-phrase';
-export { transactions, Account, InMemorySigner, providers, KeyPair, keyStores } from 'near-api-js';
-export { BlockResult } from 'near-api-js/lib/providers/provider';
 
 export interface NearNetwork extends Network {
     helperUrl: string;

@@ -3,16 +3,16 @@
 ## Gas usage
 
 ### Ether HTLC
+
 <img width="900" alt="Screenshot 2022-01-27 at 16 25 27" src="https://user-images.githubusercontent.com/7030722/151378268-0c503bc1-5915-4e9e-8825-1a0892074bef.png">
 
 ### ERC20 HTLC
+
 <img width="903" alt="Screenshot 2022-01-27 at 16 26 07" src="https://user-images.githubusercontent.com/7030722/151378336-de923bf3-d743-4941-a6e1-f8dc18e9ddd4.png">
 
 ### Coverage
+
 <img width="741" alt="Screenshot 2022-01-27 at 16 28 40" src="https://user-images.githubusercontent.com/7030722/151378625-715934a4-f358-4712-bc8f-840ba2a2f179.png">
-
-
-
 
 ## Usage
 
@@ -107,8 +107,8 @@ compiler version is to add the following fields to your VSCode user settings:
 
 ```json
 {
-  "solidity.compileUsingRemoteVersion": "v0.8.4+commit.c7e474f2",
-  "solidity.defaultCompiler": "remote"
+    "solidity.compileUsingRemoteVersion": "v0.8.4+commit.c7e474f2",
+    "solidity.defaultCompiler": "remote"
 }
 ```
 

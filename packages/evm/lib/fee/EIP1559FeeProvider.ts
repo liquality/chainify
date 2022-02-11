@@ -1,9 +1,7 @@
-import { suggestFees } from '@rainbow-me/fee-suggestions';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-
 import { Fee } from '@liquality/client';
-import { FeeDetails, BigNumber } from '@liquality/types';
-
+import { BigNumber, FeeDetails } from '@liquality/types';
+import { suggestFees } from '@rainbow-me/fee-suggestions';
 import { toGwei } from '../utils';
 
 export class EIP1559FeeProvider extends Fee {

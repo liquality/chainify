@@ -1,10 +1,8 @@
-import { providers } from 'near-api-js';
-
 import { Chain } from '@liquality/client';
-import { Block, Transaction, AddressType, Asset, BigNumber, FeeDetails } from '@liquality/types';
-
+import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@liquality/types';
+import { providers } from 'near-api-js';
+import { BlockResult, NearAccount, NearChunk, NearNetwork, NearTransaction, NearTxLog, NearTxResponse } from '../types';
 import { parseBlockResponse, parseNearBlockTx, parseTxResponse } from '../utils';
-import { NearAccount, NearChunk, NearNetwork, NearTransaction, NearTxLog, NearTxResponse, BlockResult } from '../types';
 
 export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
     constructor(network: NearNetwork, provider?: providers.JsonRpcProvider) {

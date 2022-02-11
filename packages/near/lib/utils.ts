@@ -1,10 +1,8 @@
-import { BlockResult } from 'near-api-js/lib/providers/provider';
-
-import { Math, remove0x } from '@liquality/utils';
 import { Block, SwapParams, Transaction, TxStatus } from '@liquality/types';
-
+import { Math, remove0x } from '@liquality/utils';
+import { BlockResult } from 'near-api-js/lib/providers/provider';
 import ProgramBytecode from './swap/bytecode';
-import { NearTransaction, NearTxResponse, transactions, NearTxLog, NearScraperData, BN } from './types';
+import { BN, NearScraperData, NearTransaction, NearTxLog, NearTxResponse, transactions } from './types';
 
 export function parseBlockResponse(block: BlockResult, transactions?: Transaction[]): Block<BlockResult> {
     return {

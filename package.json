@@ -28,6 +28,7 @@
         "mocha": "^9.2.0",
         "plop": "^3.0.5",
         "prettier": "^2.5.1",
+        "prettier-plugin-organize-imports": "^2.3.4",
         "turbo": "*",
         "typechain": "^7.0.0",
         "typescript": "^4.5.5"

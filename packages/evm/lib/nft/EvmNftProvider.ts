@@ -1,15 +1,13 @@
+import { Signer } from '@ethersproject/abstract-signer';
 import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider } from '@ethersproject/providers';
-import { Signer } from '@ethersproject/abstract-signer';
-
+import { ClientTypes, HttpClient, Nft } from '@liquality/client';
 import { UnsupportedMethodError } from '@liquality/errors';
-import { Nft, HttpClient, ClientTypes } from '@liquality/client';
 import { AddressType, BigNumber, FeeType, Transaction } from '@liquality/types';
-
+import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from '../typechain';
+import { EthersPopulatedTransaction, EthersTransactionResponse, NftTypes } from '../types';
 import { toEthereumTxRequest } from '../utils';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
-import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from '../typechain';
-import { EthersTransactionResponse, EthersPopulatedTransaction, NftTypes } from '../types';
 
 type NftContract = ERC721 | ERC1155;
 type NftInfo = { contract: NftContract; schema: NftTypes };

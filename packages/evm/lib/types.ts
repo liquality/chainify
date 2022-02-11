@@ -1,7 +1,6 @@
-import { PopulatedTransaction as EthersPopulatedTransaction } from '@ethersproject/contracts';
 import { BlockWithTransactions as EthersBlockWithTransactions } from '@ethersproject/abstract-provider';
-import { TransactionResponse as EthersTransactionResponse, Block as EthersBlock } from '@ethersproject/providers';
-
+import { PopulatedTransaction as EthersPopulatedTransaction } from '@ethersproject/contracts';
+import { Block as EthersBlock, TransactionResponse as EthersTransactionResponse } from '@ethersproject/providers';
 import { AddressType, FeeType, TransactionRequest } from '@liquality/types';
 
 export type EthereumTransactionRequest = TransactionRequest & {

@@ -9,7 +9,6 @@ import {
     TransactionRequest,
     WalletProvider,
 } from '@liquality/types';
-
 import Chain from './Chain';
 
 export default abstract class Wallet<T, S> implements WalletProvider {
