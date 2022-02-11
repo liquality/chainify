@@ -1,14 +1,16 @@
-import { AddressType, Block, Network, Transaction, BigNumberish, FeeData, Asset } from '@liquality/types';
+import { AddressType, Block, Network, Transaction, FeeDetails, Asset, ChainProvider, BigNumber } from '@liquality/types';
 
-export default abstract class Chain<T> {
+import { Fee } from '.';
+
+export default abstract class Chain<T> implements ChainProvider {
+    protected feeProvider: Fee;
     protected network: Network;
     protected provider: T;
 
-    constructor(network: Network, provider?: T) {
+    constructor(network: Network, provider?: T, feeProvider?: Fee) {
         this.network = network;
-        if (provider) {
-            this.provider = provider;
-        }
+        this.provider = provider;
+        this.feeProvider = feeProvider;
     }
 
     public setNetwork(network: Network): void {
@@ -27,17 +29,25 @@ export default abstract class Chain<T> {
         this.provider = provider;
     }
 
+    public async setFeeProvider(feeProvider: Fee) {
+        this.feeProvider = feeProvider;
+    }
+
+    public async getFeeProvider() {
+        return this.feeProvider;
+    }
+
     public abstract getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block>;
 
-    public abstract getBlockByNumber(blockNumber?: BigNumberish, includeTx?: boolean): Promise<Block>;
+    public abstract getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block>;
 
-    public abstract getBlockHeight(): Promise<BigNumberish>;
+    public abstract getBlockHeight(): Promise<number>;
 
     public abstract getTransactionByHash(txHash: string): Promise<Transaction>;
 
-    public abstract getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumberish[]>;
+    public abstract getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]>;
 
-    public abstract getFees(): Promise<FeeData>;
+    public abstract getFees(): Promise<FeeDetails>;
 
     public abstract sendRawTransaction(rawTransaction: string): Promise<string>;
 

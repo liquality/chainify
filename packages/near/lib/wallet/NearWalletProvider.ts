@@ -1,6 +1,6 @@
 import { Chain, Wallet } from '@liquality/client';
 import { UnimplementedMethodError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumberish, FeeData, Transaction, WalletOptions } from '@liquality/types';
+import { Address, AddressType, Asset, BigNumber, Network, Transaction, WalletOptions } from '@liquality/types';
 
 import { parseTxResponse } from '../utils';
 import {
@@ -38,7 +38,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         return new InMemorySigner(this._keyStore);
     }
 
-    public async getAddress(): Promise<AddressType> {
+    public async getAddress(): Promise<Address> {
         if (this._addressCache[this._derivationPath]) {
             return this._addressCache[this._derivationPath];
         }
@@ -63,20 +63,16 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         return result;
     }
 
-    public async getUnusedAddress(): Promise<AddressType> {
-        if (this._wallet.address) {
-            return this._wallet.address;
-        } else {
-            return this.getAddress();
-        }
+    public async getUnusedAddress(): Promise<Address> {
+        return this.getAddress();
     }
 
-    public async getUsedAddresses(numAddresses: number = 1): Promise<AddressType[]> {
+    public async getUsedAddresses(numAddresses: number = 1): Promise<Address[]> {
         return this.getAddresses(0, numAddresses);
     }
 
-    public async getAddresses(start: number = 0, numAddresses: number = 1): Promise<AddressType[]> {
-        const result: AddressType[] = [];
+    public async getAddresses(start: number = 0, numAddresses: number = 1): Promise<Address[]> {
+        const result: Address[] = [];
         for (let i = start; i < start + numAddresses; i++) {
             const derivationPath = `${this._walletOptions.derivationPath}${i}'`;
             const tempWallet: NearWallet = parseSeedPhrase(this._walletOptions.mnemonic, derivationPath);
@@ -117,7 +113,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
 
         // sending Near
         if (!txRequest.actions) {
-            const tx = (await from.sendMoney(txRequest.to.toString(), new BN(txRequest.value.toString()))) as NearTxResponse;
+            const tx = (await from.sendMoney(txRequest.to.toString(), new BN(txRequest.value.toFixed(0)))) as NearTxResponse;
             return parseTxResponse(tx);
         } else {
             const tx = (await from.signAndSendTransaction({
@@ -138,14 +134,14 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         return result;
     }
 
-    public async sendSweepTransaction(to: AddressType, _asset: Asset, _fee?: FeeData): Promise<Transaction<NearTxLog>> {
+    public async sendSweepTransaction(to: AddressType, _asset: Asset): Promise<Transaction<NearTxLog>> {
         const address = await this.getAddress();
         const from = this.getAccount(address.toString());
         const tx = (await from.deleteAccount(to.toString())) as NearTxResponse;
         return parseTxResponse(tx);
     }
 
-    public async getBalance(_assets: Asset[]): Promise<BigNumberish[]> {
+    public async getBalance(_assets: Asset[]): Promise<BigNumber[]> {
         const user = await this.getAddress();
         return await this.chainProvider.getBalance([user], _assets);
     }
@@ -162,8 +158,12 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         return false;
     }
 
-    public async updateTransactionFee(_tx: string | Transaction<any>, _newFee: FeeData): Promise<Transaction<NearTxResponse>> {
+    public async updateTransactionFee(_tx: string | Transaction<any>): Promise<Transaction<NearTxResponse>> {
         throw new UnimplementedMethodError('Method not supported for Near');
+    }
+
+    public async getConnectedNetwork(): Promise<Network> {
+        return this.chainProvider.getNetwork();
     }
 
     private getAccount(accountId: string): NearAccount {

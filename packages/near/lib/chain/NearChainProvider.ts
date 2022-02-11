@@ -1,10 +1,10 @@
 import { providers } from 'near-api-js';
 
 import { Chain } from '@liquality/client';
-import { Block, Transaction, AddressType, Asset, BigNumberish, FeeData, BigNumber } from '@liquality/types';
+import { Block, Transaction, AddressType, Asset, BigNumber, FeeDetails } from '@liquality/types';
 
 import { parseBlockResponse, parseNearBlockTx, parseTxResponse } from '../utils';
-import { NearAccount, NearChunk, NearNetwork, NearTransaction, NearTxResponse } from '../types';
+import { NearAccount, NearChunk, NearNetwork, NearTransaction, NearTxLog, NearTxResponse, BlockResult } from '../types';
 
 export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
     constructor(network: NearNetwork, provider?: providers.JsonRpcProvider) {
@@ -15,34 +15,33 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
         }
     }
 
-    public async getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<any, any>> {
+    public async getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block<BlockResult, Transaction>> {
         return this._getBlockById(blockHash, includeTx);
     }
 
-    public async getBlockByNumber(blockNumber?: BigNumberish, includeTx?: boolean): Promise<Block<any, any>> {
+    public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockResult, Transaction>> {
         if (!blockNumber) {
             const latestBlock = await this.getBlockHeight();
-            return this._getBlockById(Number(latestBlock), includeTx);
+            return this._getBlockById(latestBlock, includeTx);
         }
-        return this._getBlockById(Number(blockNumber), includeTx);
+        return this._getBlockById(blockNumber, includeTx);
     }
 
-    public async getBlockHeight(): Promise<BigNumberish> {
+    public async getBlockHeight(): Promise<number> {
         const result = await this.provider.block({ finality: 'final' });
         return result.header.height;
     }
 
-    public async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
+    public async getTransactionByHash(txHash: string): Promise<Transaction<NearTxLog>> {
         const currentHeight = await this.getBlockHeight();
         const [hash, accountId] = txHash.split('_');
         const tx = (await this.provider.txStatus(hash, accountId)) as NearTxResponse;
         const blockHash = (tx.transaction_outcome as any).block_hash;
         const block = await this.getBlockByHash(blockHash);
-        await this.getFees();
         return parseTxResponse(tx, block.number, Number(currentHeight));
     }
 
-    public async getBalance(addresses: AddressType[], _assets: Asset[]): Promise<BigNumberish[]> {
+    public async getBalance(addresses: AddressType[], _assets: Asset[]): Promise<BigNumber[]> {
         const promiseBalances = await Promise.all(
             addresses.map(async (address) => {
                 try {
@@ -60,9 +59,10 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
         return [promiseBalances.map((balance) => new BigNumber(balance)).reduce((acc, balance) => acc.plus(balance), new BigNumber(0))];
     }
 
-    public async getFees(): Promise<FeeData> {
+    public async getFees(): Promise<FeeDetails> {
         const gasPrice = await this.sendRpcRequest('gas_price', [null]);
-        return { fee: gasPrice.gas_price };
+        const fee = { fee: gasPrice.gas_price };
+        return { slow: fee, average: fee, fast: fee };
     }
 
     public async sendRawTransaction(rawTransaction: string): Promise<string> {

@@ -1,4 +1,5 @@
-import { AddressType, BigNumberish, FeeData, Transaction } from '@liquality/types';
+import { AddressType, BigNumber, FeeType, Transaction } from '@liquality/types';
+
 import Wallet from './Wallet';
 
 export default abstract class Nft<T, S> {
@@ -22,14 +23,10 @@ export default abstract class Nft<T, S> {
         tokenIDs: number[],
         values?: number[],
         data?: string,
-        fee?: FeeData
+        fee?: FeeType
     ): Promise<Transaction>;
 
-    public abstract balanceOf(
-        contractAddress: AddressType,
-        owners: AddressType[],
-        tokenIDs: number[]
-    ): Promise<BigNumberish | BigNumberish[]>;
+    public abstract balanceOf(contractAddress: AddressType, owners: AddressType[], tokenIDs: number[]): Promise<BigNumber | BigNumber[]>;
 
     public abstract approve(contract: AddressType, operator: AddressType, tokenID: number): Promise<Transaction>;
 

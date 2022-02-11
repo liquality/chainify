@@ -1,17 +1,17 @@
 import { StaticJsonRpcProvider, JsonRpcProvider } from '@ethersproject/providers';
 
-import { Chain } from '@liquality/client';
-import { Block, Transaction, AddressType, Network, Asset, BigNumberish } from '@liquality/types';
+import { Chain, Fee } from '@liquality/client';
+import { Block, Transaction, AddressType, Network, Asset, BigNumber, FeeDetails } from '@liquality/types';
 
-import { parseBlockResponse, parseTxResponse } from '../utils';
+import { calculateFee, parseBlockResponse, parseTxResponse } from '../utils';
 import { EvmMulticallProvider } from './EvmMulticallProvider';
-import { EthersBlock, EthersTransactionResponse, EthersBlockWithTransactions, EthereumFeeData } from '../types';
+import { EthersBlock, EthersTransactionResponse, EthersBlockWithTransactions } from '../types';
 
 export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     protected multicall: EvmMulticallProvider;
 
-    constructor(network: Network, provider?: StaticJsonRpcProvider) {
-        super(network, provider);
+    constructor(network: Network, provider?: StaticJsonRpcProvider, feeProvider?: Fee) {
+        super(network, provider, feeProvider);
 
         if (!provider && this.network.rpcUrl) {
             this.provider = new StaticJsonRpcProvider(this.network.rpcUrl, this.network.chainId);
@@ -54,9 +54,9 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
         return result;
     }
 
-    public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumberish[]> {
+    public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]> {
         const balances = await this.multicall.getMultipleBalances(addresses[0], assets);
-        return balances.map((b) => b.toString());
+        return balances.map((b) => new BigNumber(b.toString()));
     }
 
     public async sendRawTransaction(rawTransaction: string): Promise<string> {
@@ -64,13 +64,18 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
         return tx.hash;
     }
 
-    public async getFees(): Promise<EthereumFeeData> {
-        const feeData = await this.provider.getFeeData();
-        return {
-            maxFeePerGas: feeData.maxFeePerGas.toString(),
-            maxPriorityFeePerGas: feeData.maxPriorityFeePerGas.toString(),
-            gasPrice: feeData.gasPrice.toString(),
-        };
+    public async getFees(): Promise<FeeDetails> {
+        if (this.feeProvider) {
+            return this.feeProvider.getFees();
+        } else {
+            // Return legacy fees, because not all EVM chains support EIP1559
+            const baseGasPrice = (await this.provider.getFeeData()).gasPrice?.toNumber();
+            return {
+                slow: { fee: calculateFee(baseGasPrice, 1) },
+                average: { fee: calculateFee(baseGasPrice, 1.5) },
+                fast: { fee: calculateFee(baseGasPrice, 2) },
+            };
+        }
     }
 
     public async sendRpcRequest(method: string, params: any[]): Promise<any> {

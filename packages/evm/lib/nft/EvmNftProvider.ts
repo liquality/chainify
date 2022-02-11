@@ -4,12 +4,12 @@ import { Signer } from '@ethersproject/abstract-signer';
 
 import { UnsupportedMethodError } from '@liquality/errors';
 import { Nft, HttpClient, ClientTypes } from '@liquality/client';
-import { AddressType, BigNumberish, Transaction } from '@liquality/types';
+import { AddressType, BigNumber, FeeType, Transaction } from '@liquality/types';
 
 import { toEthereumTxRequest } from '../utils';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from '../typechain';
-import { EthereumFeeData, EthersTransactionResponse, EthersPopulatedTransaction, NftTypes } from '../types';
+import { EthersTransactionResponse, EthersPopulatedTransaction, NftTypes } from '../types';
 
 type NftContract = ERC721 | ERC1155;
 type NftInfo = { contract: NftContract; schema: NftTypes };
@@ -37,7 +37,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         tokenIDs: number[],
         amounts?: number[],
         data?: string,
-        fee?: EthereumFeeData
+        fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
         const nftInfo = await this._cacheGet(contractAddress);
         const owner = (await this.walletProvider.getAddress()).toString();
@@ -77,25 +77,21 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         return await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
     }
 
-    public async balanceOf(
-        contractAddress: AddressType,
-        owners: AddressType[],
-        tokenIDs: number[]
-    ): Promise<BigNumberish | BigNumberish[]> {
+    public async balanceOf(contractAddress: AddressType, owners: AddressType[], tokenIDs: number[]): Promise<BigNumber | BigNumber[]> {
         const nftInfo = await this._cacheGet(contractAddress);
         const _owners = owners.map((owner) => owner.toString());
 
         switch (nftInfo.schema) {
             case NftTypes.ERC721: {
-                return (await this._erc721.balanceOf(_owners[0])).toString();
+                return new BigNumber((await this._erc721.balanceOf(_owners[0])).toString());
             }
 
             case NftTypes.ERC1155: {
                 if (tokenIDs.length > 1) {
                     const balances = await this._erc1155.balanceOfBatch(_owners, tokenIDs);
-                    return balances.map((b) => b.toString());
+                    return balances.map((b) => new BigNumber(b.toString()));
                 } else {
-                    return (await this._erc1155.balanceOf(_owners[0], tokenIDs[0])).toString();
+                    return new BigNumber((await this._erc1155.balanceOf(_owners[0], tokenIDs[0])).toString());
                 }
             }
 
@@ -109,7 +105,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         contractAddress: AddressType,
         operator: AddressType,
         tokenID: number,
-        fee?: EthereumFeeData
+        fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
         const nftInfo = await this._cacheGet(contractAddress);
         const _operator = operator.toString();
@@ -145,7 +141,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         contractAddress: AddressType,
         operator: AddressType,
         state: boolean,
-        fee?: EthereumFeeData
+        fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
         const nft = (await this._cacheGet(contractAddress)).contract;
         const tx = await nft.populateTransaction.setApprovalForAll(operator.toString(), state);

@@ -3,7 +3,7 @@ import { NearNetworks } from '@liquality/near';
 
 import { sha256 } from '@liquality/utils';
 import { Client } from '@liquality/client';
-import { FeeData, SwapParams, Transaction } from '@liquality/types';
+import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { expect } from 'chai';
 import { EthereumClient, NearClient } from './clients';
 import { EVMConfig, NearConfig } from './config';
@@ -83,7 +83,7 @@ export async function sleep(seconds: number) {
     await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 
-export async function refundAndVerify(chain: Chain, swapParams: SwapParams, initiationTxId: string, fee?: FeeData): Promise<Transaction> {
+export async function refundAndVerify(chain: Chain, swapParams: SwapParams, initiationTxId: string, fee?: FeeType): Promise<Transaction> {
     const refundTx = await chain.client.swap.refundSwap(swapParams, initiationTxId, fee);
     await mineBlock(chain);
     const currentBlock = await chain.client.chain.getBlockHeight();
@@ -92,7 +92,7 @@ export async function refundAndVerify(chain: Chain, swapParams: SwapParams, init
     return foundRefundTx;
 }
 
-export async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: FeeData): Promise<Transaction> {
+export async function initiateAndVerify(chain: Chain, swapParams: SwapParams, fee?: FeeType): Promise<Transaction> {
     const initTx = await chain.client.swap.initiateSwap(swapParams, fee);
     await mineBlock(chain);
     const currentBlock = await chain.client.chain.getBlockHeight();
@@ -107,7 +107,7 @@ export async function claimAndVerify(
     swapParams: SwapParams,
     initiationTxId: string,
     secret: string,
-    fee?: FeeData
+    fee?: FeeType
 ): Promise<Transaction> {
     const claimTx = await chain.client.swap.claimSwap(swapParams, initiationTxId, secret, fee);
     await mineBlock(chain);

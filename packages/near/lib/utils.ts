@@ -22,7 +22,7 @@ export function parseNearBlockTx(tx: NearTransaction, currentBlock: number, txBl
     return {
         hash: `${tx.hash}_${tx.signer_id}`,
         value: 0,
-        confirmations: currentBlock && txBlock && Math.sub(currentBlock, txBlock).toString(),
+        confirmations: currentBlock && txBlock && Math.sub(currentBlock, txBlock).toNumber(),
         _raw: tx,
         ...parseTxActions(tx),
     };
@@ -41,7 +41,7 @@ export function parseTxResponse(response: NearTxResponse, blockNumber?: number, 
     };
 
     if (blockNumber && latestBlock) {
-        result.confirmations = Math.sub(latestBlock, blockNumber).toString();
+        result.confirmations = Math.sub(latestBlock, blockNumber).toNumber();
     }
 
     result.status = TxStatus.Unknown;
@@ -66,7 +66,7 @@ export function parseTxResponse(response: NearTxResponse, blockNumber?: number, 
 export function getHtlcActions(swapParams: SwapParams) {
     return [
         transactions.createAccount(),
-        transactions.transfer(new BN(swapParams.value.toString())),
+        transactions.transfer(new BN(swapParams.value.toFixed(0))),
         transactions.deployContract(new Uint8Array(ProgramBytecode)),
         transactions.functionCall(ABI.init.method, formatSwapParams(swapParams), new BN(ABI.init.gas), new BN(0)),
     ];
@@ -99,7 +99,7 @@ export function parseScraperTransaction(tx: NearScraperData): NearTxLog {
 
         case 'TRANSFER': {
             const value = tx.args.deposit;
-            normalizedTx.value = value;
+            normalizedTx.value = Number(value);
             break;
         }
 
@@ -177,7 +177,7 @@ function parseTxActions(tx: NearTransaction) {
 
     for (const action of tx.actions as any[]) {
         if (action.Transfer) {
-            result.value = Math.add(action.Transfer.deposit.toString(), result.value).toString();
+            result.value = Math.add(action.Transfer.deposit.toString(), result.value).toNumber();
         }
 
         if (action.DeployContract) {

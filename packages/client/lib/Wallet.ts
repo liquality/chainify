@@ -1,7 +1,18 @@
-import { AddressType, Asset, BigNumberish, FeeData, Transaction, TransactionRequest } from '@liquality/types';
+import {
+    Address,
+    AddressType,
+    Asset,
+    BigNumber,
+    FeeType,
+    Network,
+    Transaction,
+    TransactionRequest,
+    WalletProvider,
+} from '@liquality/types';
+
 import Chain from './Chain';
 
-export default abstract class Wallet<T, S> {
+export default abstract class Wallet<T, S> implements WalletProvider {
     protected chainProvider: Chain<T>;
 
     constructor(chainProvider?: Chain<T>) {
@@ -16,15 +27,17 @@ export default abstract class Wallet<T, S> {
         return this.chainProvider;
     }
 
+    public abstract getConnectedNetwork(): Promise<Network>;
+
     public abstract getSigner(): S;
 
     public abstract getAddress(): Promise<AddressType>;
 
-    public abstract getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<AddressType>;
+    public abstract getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<Address>;
 
-    public abstract getUsedAddresses(numAddressPerCall?: number): Promise<AddressType[]>;
+    public abstract getUsedAddresses(numAddressPerCall?: number): Promise<Address[]>;
 
-    public abstract getAddresses(start?: number, numAddresses?: number, change?: boolean): Promise<AddressType[]>;
+    public abstract getAddresses(start?: number, numAddresses?: number, change?: boolean): Promise<Address[]>;
 
     public abstract signMessage(message: string, from: AddressType): Promise<string>;
 
@@ -32,11 +45,11 @@ export default abstract class Wallet<T, S> {
 
     public abstract sendBatchTransaction(txRequests: TransactionRequest[]): Promise<Transaction[]>;
 
-    public abstract sendSweepTransaction(address: AddressType, asset: Asset, fee?: FeeData): Promise<Transaction>;
+    public abstract sendSweepTransaction(address: AddressType, asset: Asset, fee?: FeeType): Promise<Transaction>;
 
-    public abstract updateTransactionFee(tx: string | Transaction, newFee: FeeData): Promise<Transaction>;
+    public abstract updateTransactionFee(tx: string | Transaction, newFee: FeeType): Promise<Transaction>;
 
-    public abstract getBalance(assets: Asset[]): Promise<BigNumberish[]>;
+    public abstract getBalance(assets: Asset[]): Promise<BigNumber[]>;
 
     public abstract exportPrivateKey(): Promise<string>;
 

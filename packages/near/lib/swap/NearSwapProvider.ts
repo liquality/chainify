@@ -1,6 +1,6 @@
 import { TxNotFoundError } from '@liquality/errors';
 import { ClientTypes, HttpClient, Swap, Wallet } from '@liquality/client';
-import { SwapParams, Transaction, BigNumberish } from '@liquality/types';
+import { SwapParams, Transaction } from '@liquality/types';
 import { compare, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
 
 import { NearScraperData, NearTxLog, NearTxRequest, providers, InMemorySigner } from '../types';
@@ -26,7 +26,7 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
         } as NearTxRequest);
     }
 
-    public async findInitiateSwapTransaction(swapParams: SwapParams, _blockNumber?: BigNumberish): Promise<Transaction<NearTxLog>> {
+    public async findInitiateSwapTransaction(swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<NearTxLog>> {
         return await this.findAddressTransaction(swapParams.refundAddress.toString(), (tx: Transaction<NearTxLog>) =>
             this.doesTransactionMatchInitiation(swapParams, tx)
         );

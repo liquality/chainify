@@ -1,5 +1,5 @@
 import { Client } from '@liquality/client';
-import { Asset, BigNumberish, Network } from '@liquality/types';
+import { Asset, BigNumber, Network } from '@liquality/types';
 
 export interface IConfig {
     walletOptions: Record<string, any>;
@@ -12,10 +12,10 @@ export interface IConfig {
         contractAddress: string;
     };
     swapParams: {
-        value: BigNumberish;
+        value: BigNumber;
     };
     sendParams: {
-        value: BigNumberish;
+        value: BigNumber;
     };
     assets: Asset[];
     recipientAddress: string;

@@ -952,7 +952,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.5.3, @ethersproject/providers@npm:^5.5.2, @ethersproject/providers@npm:^5.5.3":
+"@ethersproject/providers@npm:5.5.3, @ethersproject/providers@npm:^5.5.0, @ethersproject/providers@npm:^5.5.2, @ethersproject/providers@npm:^5.5.3":
   version: 5.5.3
   resolution: "@ethersproject/providers@npm:5.5.3"
   dependencies:
@@ -1165,14 +1165,14 @@ __metadata:
   resolution: "@liquality/client@workspace:packages/client"
   dependencies:
     "@ethersproject/sha2": ^5.5.0
-    "@liquality/errors": "workspace:^"
+    "@liquality/errors": "workspace:*"
     "@liquality/types": "workspace:*"
     "@liquality/utils": "workspace:*"
     axios: ^0.25.0
   languageName: unknown
   linkType: soft
 
-"@liquality/errors@workspace:*, @liquality/errors@workspace:^, @liquality/errors@workspace:packages/errors":
+"@liquality/errors@workspace:*, @liquality/errors@workspace:packages/errors":
   version: 0.0.0-use.local
   resolution: "@liquality/errors@workspace:packages/errors"
   dependencies:
@@ -1255,6 +1255,7 @@ __metadata:
     "@liquality/utils": "workspace:*"
     "@nomiclabs/hardhat-ethers": ^2.0.4
     "@nomiclabs/hardhat-waffle": ^2.0.2
+    "@rainbow-me/fee-suggestions": ^2.0.0
     "@typechain/hardhat": ^4.0.0
     ethers: ^5.5.4
     hardhat: ^2.8.3
@@ -1266,7 +1267,7 @@ __metadata:
   resolution: "@liquality/near@workspace:packages/near"
   dependencies:
     "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:^"
+    "@liquality/errors": "workspace:*"
     "@liquality/types": "workspace:*"
     "@liquality/utils": "workspace:*"
     bn.js: ^5.2.0
@@ -1307,7 +1308,7 @@ __metadata:
   resolution: "@liquality/utils@workspace:packages/utils"
   dependencies:
     "@ethersproject/sha2": ^5.5.0
-    "@liquality/errors": "workspace:^"
+    "@liquality/errors": "workspace:*"
     "@liquality/types": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1414,6 +1415,18 @@ __metadata:
   version: 4.4.2
   resolution: "@openzeppelin/contracts@npm:4.4.2"
   checksum: 5c6be7bfe757c6a43eb5b24aa9c61a79deaed9de4bc5f59356b35f5519b0fb340f4da8b4df99588bded5e6b6a773fc54961917a1c657063247c1763f9752bd0e
+  languageName: node
+  linkType: hard
+
+"@rainbow-me/fee-suggestions@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@rainbow-me/fee-suggestions@npm:2.0.0"
+  dependencies:
+    "@ethersproject/providers": ^5.5.0
+    bignumber.js: ^9.0.1
+    ethers: ^5.4.2
+    moving-averages: ^4.0.6
+  checksum: da2e012b18dce802cd45a651926162826c36a44130e78842ccac1dff57089efd3e3f57665f25429d21ff0e270431acf7eb55f9c84e3346b8345a11c5113e6fe6
   languageName: node
   linkType: hard
 
@@ -3579,7 +3592,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bignumber.js@npm:^9.0.0, bignumber.js@npm:^9.0.2":
+"bignumber.js@npm:^9.0.0, bignumber.js@npm:^9.0.1, bignumber.js@npm:^9.0.2":
   version: 9.0.2
   resolution: "bignumber.js@npm:9.0.2"
   checksum: 8637b71d0a99104b20413c47578953970006fec6b4df796b9dcfd9835ea9c402ea0e727eba9a5ca9f9a393c1d88b6168c5bbe0887598b708d4f8b4870ad62e1f
@@ -6805,7 +6818,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.4.7, ethers@npm:^5.5.2, ethers@npm:^5.5.4":
+"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.4.2, ethers@npm:^5.4.7, ethers@npm:^5.5.2, ethers@npm:^5.5.4":
   version: 5.5.4
   resolution: "ethers@npm:5.5.4"
   dependencies:
@@ -11255,6 +11268,13 @@ __metadata:
   version: 4.14.0
   resolution: "mock-fs@npm:4.14.0"
   checksum: dccd976a8d753e19d3c7602ea422d1f7137def3c1128c177e1f5500fe8c50ec15fe0937cfc3a15c4577fe7adb9a37628b92da9294d13d90f08be4b669b0fca76
+  languageName: node
+  linkType: hard
+
+"moving-averages@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "moving-averages@npm:4.0.6"
+  checksum: f37287935009b589cb3ab017ccf73b7e6f5a576d32583bd07df7d66039c9e4b6de0f93746635cdbdb70d3f76b7cb33ea29c517f89dd380929fa6caf015a71d7c
   languageName: node
   linkType: hard
 

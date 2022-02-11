@@ -3,25 +3,25 @@ import { AddressZero } from '@ethersproject/constants';
 import { sha256 } from '@ethersproject/solidity';
 import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { ensure0x } from '@liquality/utils';
-import { Transaction, TxStatus, Block, SwapParams } from '@liquality/types';
+import { Transaction, TxStatus, Block, SwapParams, BigNumber, FeeType } from '@liquality/types';
 import {
     EthersBlock,
     EthersBlockWithTransactions,
-    EthereumFeeData,
     EthersTransactionResponse,
     EthereumTransactionRequest,
     EthersPopulatedTransaction,
 } from './types';
 import { ILiqualityHTLC } from './typechain';
 
-export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee?: EthereumFeeData): EthereumTransactionRequest {
+export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee: FeeType): EthereumTransactionRequest {
     return {
         ...tx,
-        value: tx.value?.toString(),
-        gasLimit: tx.gasLimit?.toString(),
-        gasPrice: fee?.gasPrice?.toString(),
-        maxFeePerGas: fee?.maxFeePerGas?.toString(),
-        maxPriorityFeePerGas: fee?.maxPriorityFeePerGas?.toString(),
+        value: tx.value && new BigNumber(tx.value.toString()),
+        gasLimit: tx.gasLimit?.toNumber(),
+        gasPrice: tx.gasPrice?.toNumber(),
+        maxFeePerGas: tx.maxFeePerGas?.toNumber(),
+        maxPriorityFeePerGas: tx.maxPriorityFeePerGas?.toNumber(),
+        fee,
     };
 }
 
@@ -69,11 +69,11 @@ export function parseTxResponse(response: EthersTransactionResponse, receipt?: T
         from: response.from,
         hash: response.hash,
         data: response.data,
-        value: response.value.toString(),
+        value: response.value?.toNumber(),
         blockHash: response.blockHash,
         blockNumber: response.blockNumber,
         confirmations: response.confirmations,
-        feePrice: response.gasPrice?.toString(),
+        feePrice: response.gasPrice?.toNumber(),
         _raw: response,
     };
 
@@ -115,4 +115,16 @@ export function generateId(htlcData: ILiqualityHTLC.HTLCDataStruct, blockTimesta
             htlcData.recipientAddress,
         ]
     );
+}
+
+export function extractFeeData(fee: FeeType) {
+    return typeof fee === 'number' ? { gasPrice: fee } : { ...fee };
+}
+
+export function toGwei(wei: BigNumber | number | string): BigNumber {
+    return new BigNumber(wei).div(1e9);
+}
+
+export function calculateFee(base: number, multiplier: number) {
+    return Number(new BigNumber(base).times(multiplier).toFixed(0));
 }

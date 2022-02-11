@@ -2,23 +2,23 @@ import { PopulatedTransaction as EthersPopulatedTransaction } from '@ethersproje
 import { BlockWithTransactions as EthersBlockWithTransactions } from '@ethersproject/abstract-provider';
 import { TransactionResponse as EthersTransactionResponse, Block as EthersBlock } from '@ethersproject/providers';
 
-import { AddressType, BigNumberish, FeeData, TransactionRequest } from '@liquality/types';
+import { AddressType, FeeType, TransactionRequest } from '@liquality/types';
 
 export type EthereumTransactionRequest = TransactionRequest & {
     from?: AddressType;
-    nonce?: BigNumberish;
-    gasLimit?: BigNumberish;
-    gasPrice?: BigNumberish;
+    nonce?: number;
+    gasLimit?: number;
+    gasPrice?: number;
     chainId?: number;
     type?: number;
-    maxPriorityFeePerGas?: BigNumberish;
-    maxFeePerGas?: BigNumberish;
+    maxPriorityFeePerGas?: number;
+    maxFeePerGas?: number;
 };
 
-export type EthereumFeeData = FeeData & {
-    maxFeePerGas?: null | BigNumberish;
-    maxPriorityFeePerGas?: null | BigNumberish;
-    gasPrice?: null | BigNumberish;
+export type EthereumFeeData = FeeType & {
+    maxFeePerGas?: null | number;
+    maxPriorityFeePerGas?: null | number;
+    gasPrice?: null | number;
 };
 
 export { EthersTransactionResponse, EthersBlock, EthersBlockWithTransactions, EthersPopulatedTransaction };

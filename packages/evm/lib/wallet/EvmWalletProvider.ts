@@ -3,7 +3,7 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 import { Chain } from '@liquality/client';
 import { remove0x } from '@liquality/utils';
-import { Address, AddressType, BigNumberish, WalletOptions } from '@liquality/types';
+import { Address, AddressType, Network, WalletOptions } from '@liquality/types';
 
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 
@@ -23,7 +23,7 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
         this.signer = this._wallet;
     }
 
-    public async getAddress(): Promise<AddressType> {
+    public async getAddress(): Promise<Address> {
         return new Address({
             address: this._wallet.address,
             derivationPath: this._walletOptions.derivationPath + this._walletOptions.index,
@@ -31,21 +31,21 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
         });
     }
 
-    public async setWalletIndex(index: BigNumberish): Promise<AddressType> {
+    public async setWalletIndex(index: number): Promise<AddressType> {
         this._wallet = EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + index);
         return this.getAddress();
     }
 
-    public async getUnusedAddress(): Promise<AddressType> {
-        return this._wallet.address;
+    public async getUnusedAddress(): Promise<Address> {
+        return this.getAddress();
     }
 
-    public async getUsedAddresses(numAddresses: number = 1): Promise<AddressType[]> {
+    public async getUsedAddresses(numAddresses: number = 1): Promise<Address[]> {
         return this.getAddresses(0, numAddresses);
     }
 
-    public async getAddresses(start: number = 0, numAddresses: number = 1): Promise<AddressType[]> {
-        const result: AddressType[] = [];
+    public async getAddresses(start: number = 0, numAddresses: number = 1): Promise<Address[]> {
+        const result: Address[] = [];
         for (let i = start; i < start + numAddresses; i++) {
             const tempWallet = EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + i);
             result.push(
@@ -69,5 +69,9 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
 
     public canUpdateFee(): boolean {
         return true;
+    }
+
+    public async getConnectedNetwork(): Promise<Network> {
+        return this.chainProvider.getNetwork();
     }
 }

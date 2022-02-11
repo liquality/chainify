@@ -3,16 +3,18 @@ import { Account, Connection } from 'near-api-js';
 import { Action } from 'near-api-js/lib/transaction';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
 import { Transaction, ChunkResult } from 'near-api-js/lib/providers/provider';
-import { Network, AddressType, BigNumberish, TransactionRequest } from '@liquality/types';
+import { Network, AddressType, TransactionRequest } from '@liquality/types';
 
 export { Action };
 export { BN };
 export { parseSeedPhrase } from 'near-seed-phrase';
 export { transactions, Account, InMemorySigner, providers, KeyPair, keyStores } from 'near-api-js';
+export { BlockResult } from 'near-api-js/lib/providers/provider';
 
 export interface NearNetwork extends Network {
     helperUrl: string;
 }
+
 export interface NearScraperData {
     block_hash: string;
     block_timestamp: string;
@@ -23,13 +25,14 @@ export interface NearScraperData {
     action_kind: string;
     args: Args;
 }
+
 export interface NearTxLog {
     hash: string;
     sender: string;
     receiver: string;
     blockHash: string;
     code?: string;
-    value?: BigNumberish;
+    value?: number;
     htlc?: {
         method: string;
         secretHash?: string;
@@ -38,9 +41,11 @@ export interface NearTxLog {
         secret?: string;
     };
 }
+
 export interface NearTxRequest extends TransactionRequest {
-    actions: Action[];
+    actions?: Action[];
 }
+
 export interface NearTxResponse extends FinalExecutionOutcome {
     transaction: NearTransaction;
     status: ExecutionStatus;

@@ -1,7 +1,7 @@
 import { BaseProvider, Log } from '@ethersproject/providers';
 
 import { Math } from '@liquality/utils';
-import { BigNumberish, SwapParams, Transaction } from '@liquality/types';
+import { SwapParams, Transaction } from '@liquality/types';
 
 import { EvmBaseSwapProvider } from './EvmBaseSwapProvider';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
@@ -14,11 +14,11 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
         super(swapOptions, walletProvider);
     }
 
-    async findInitiateSwapTransaction(swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<InitiateEvent>> {
+    async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<InitiateEvent>> {
         const currentBlock = await this.walletProvider.getChainProvider().getBlockHeight();
 
-        return await this.searchLogs(async (from: BigNumberish, to: BigNumberish) => {
-            const filter = await this.contract.queryFilter(this.contract.filters.Initiate(), Number(from), Number(to));
+        return await this.searchLogs(async (from: number, to: number) => {
+            const filter = await this.contract.queryFilter(this.contract.filters.Initiate(), from, to);
 
             const initiate = filter.find((event) => {
                 const isTrue = this.doesTransactionMatchInitiation(swapParams, { _raw: event } as Transaction<InitiateEvent>);
@@ -32,15 +32,15 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
         }, currentBlock);
     }
 
-    async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string, _blockNumber?: number): Promise<Transaction<ClaimEvent>> {
+    async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<ClaimEvent>> {
         return this.findTx<ClaimEvent>(swapParams, initTxHash, 'Claim');
     }
 
-    async findRefundSwapTransaction(swapParams: SwapParams, initTxHash: string, _blockNumber?: number): Promise<Transaction<RefundEvent>> {
+    async findRefundSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<RefundEvent>> {
         return this.findTx<RefundEvent>(swapParams, initTxHash, 'Refund');
     }
 
-    private async searchLogs(callback: (from: number, to: number) => Promise<Transaction>, currentBlock: BigNumberish) {
+    private async searchLogs(callback: (from: number, to: number) => Promise<Transaction>, currentBlock: number) {
         let from = Math.sub(currentBlock, 5000).toString();
         let to = currentBlock.toString();
 

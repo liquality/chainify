@@ -1,4 +1,4 @@
-import { ChainId, Network } from '@liquality/types';
+import { ChainId, Network, BigNumber } from '@liquality/types';
 
 import { IConfig } from '../../types';
 
@@ -22,11 +22,11 @@ export const NearConfig = (network: Network): IConfig => {
         },
 
         swapParams: {
-            value: '5000000000000000000000000',
+            value: new BigNumber(5000000000000000000000000),
         },
 
         sendParams: {
-            value: '1',
+            value: new BigNumber(1),
         },
 
         recipientAddress: '797b73fdaae5f9c4b343a7f8a7334fb56d04dad9a32b5a5e586c503701d537b6',

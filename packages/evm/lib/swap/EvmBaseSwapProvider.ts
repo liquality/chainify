@@ -1,14 +1,15 @@
-import { BaseProvider, Log } from '@ethersproject/providers';
+import { AddressZero } from '@ethersproject/constants';
 import { Signer } from '@ethersproject/abstract-signer';
+import { BaseProvider, Log } from '@ethersproject/providers';
 
 import { Swap } from '@liquality/client';
 import { TxNotFoundError } from '@liquality/errors';
-import { SwapParams, Transaction } from '@liquality/types';
+import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
 
+import { EthersTransactionResponse } from '../types';
 import { parseSwapParams, toEthereumTxRequest } from '../utils';
 import { LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
-import { EthereumFeeData, EthersTransactionResponse } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { InitiateEvent, ClaimEvent, RefundEvent } from '../typechain/LiqualityHTLC';
 
@@ -24,7 +25,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
         }
     }
 
-    public async initiateSwap(swapParams: SwapParams, fee: EthereumFeeData): Promise<Transaction<EthersTransactionResponse>> {
+    public async initiateSwap(swapParams: SwapParams, fee: FeeType): Promise<Transaction<EthersTransactionResponse>> {
         this.validateSwapParams(swapParams);
         const parsedSwapParams = parseSwapParams(swapParams);
         const tx = await this.contract.populateTransaction.initiate(parsedSwapParams, {
@@ -38,7 +39,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
         swapParams: SwapParams,
         initTxHash: string,
         secret: string,
-        fee: EthereumFeeData
+        fee: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
         validateSecret(secret);
         validateSecretAndHash(secret, swapParams.secretHash);
@@ -59,11 +60,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
         }
     }
 
-    public async refundSwap(
-        swapParams: SwapParams,
-        initTxHash: string,
-        fee: EthereumFeeData
-    ): Promise<Transaction<EthersTransactionResponse>> {
+    public async refundSwap(swapParams: SwapParams, initTxHash: string, fee: FeeType): Promise<Transaction<EthersTransactionResponse>> {
         const transaction = await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash);
 
         await this.verifyInitiateSwapTransaction(swapParams, transaction);
@@ -102,6 +99,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
                 Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
                 compare(htlcArgs.htlc.recipientAddress, swapParams.recipientAddress.toString()) &&
                 compare(htlcArgs.htlc.refundAddress, swapParams.refundAddress.toString()) &&
+                compare(htlcArgs.htlc.tokenAddress, swapParams.asset.isNative ? AddressZero : swapParams.asset.contractAddress) &&
                 compare(remove0x(htlcArgs.htlc.secretHash), remove0x(swapParams.secretHash))
             );
         }

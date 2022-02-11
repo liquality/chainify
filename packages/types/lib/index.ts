@@ -7,6 +7,9 @@ export * from './Block';
 export * from './Transaction';
 export * from './Network';
 export * from './Wallet';
+export * from './Chain';
+export * from './Swap';
+export * from './Fees';
 
 export { BigNumber };
 

@@ -28,6 +28,7 @@
         "@liquality/errors": "workspace:*",
         "@liquality/types": "workspace:*",
         "@liquality/utils": "workspace:*",
+        "@rainbow-me/fee-suggestions": "^2.0.0",
         "ethers": "^5.5.4"
     },
     "devDependencies": {

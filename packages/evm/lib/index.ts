@@ -9,6 +9,8 @@ export { EvmBaseSwapProvider } from './swap/EvmBaseSwapProvider';
 
 export { EvmNftProvider } from './nft/EvmNftProvider';
 
+export { EIP1559FeeProvider } from './fee/EIP1559FeeProvider';
+
 export * as EvmTypes from './types';
 export * as EvmUtils from './utils';
 

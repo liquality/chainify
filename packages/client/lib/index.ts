@@ -1,10 +1,11 @@
-import Client from './Client';
+import Fee from './Fee';
+import Nft from './Nft';
+import Swap from './Swap';
 import Chain from './Chain';
 import Wallet from './Wallet';
-import Swap from './Swap';
-import Nft from './Nft';
+import Client from './Client';
 import HttpClient from './Http';
 
-export { Client, Chain, Wallet, Swap, Nft, HttpClient };
+export { Client, Chain, Fee, Wallet, Swap, Nft, HttpClient };
 
 export * as ClientTypes from './types';

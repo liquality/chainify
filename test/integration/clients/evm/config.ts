@@ -1,4 +1,4 @@
-import { ChainId, Network } from '@liquality/types';
+import { ChainId, Network, BigNumber } from '@liquality/types';
 
 import { IConfig } from '../../types';
 
@@ -22,11 +22,11 @@ export const EVMConfig = (network: Network): IConfig => {
         },
 
         swapParams: {
-            value: '1',
+            value: new BigNumber(1),
         },
 
         sendParams: {
-            value: '1',
+            value: new BigNumber(1),
         },
 
         recipientAddress: '0xe862a41cef3bbcc6d85bff8b9c36801a6bc4453e',

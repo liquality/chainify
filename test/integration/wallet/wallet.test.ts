@@ -60,7 +60,7 @@ export function shouldBehaveLikeWalletProvider(chain: Chain) {
                 asset: config.assets[0],
             });
             const txReceipt = await client.chain.getTransactionByHash(tx.hash);
-            expect(txReceipt.value.toString() === config.sendParams.value).to.be.true;
+            expect(txReceipt.value === config.sendParams.value.toNumber()).to.be.true;
         });
     });
 }

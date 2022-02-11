@@ -3,10 +3,10 @@ import { Signer } from '@ethersproject/abstract-signer';
 import { remove0x } from '@liquality/utils';
 import { Chain, Wallet } from '@liquality/client';
 import { ReplaceFeeInsufficientError } from '@liquality/errors';
-import { AddressType, Asset, BigNumberish, Transaction } from '@liquality/types';
+import { AddressType, Asset, Transaction, BigNumber, FeeType } from '@liquality/types';
 
-import { parseTxRequest, parseTxResponse } from '../utils';
-import { EthereumTransactionRequest, EthersTransactionResponse, EthereumFeeData } from '../types';
+import { parseTxRequest, parseTxResponse, extractFeeData } from '../utils';
+import { EthereumTransactionRequest, EthersTransactionResponse } from '../types';
 
 export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;
@@ -30,7 +30,13 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
 
     public async sendTransaction(txRequest: EthereumTransactionRequest): Promise<Transaction<EthersTransactionResponse>> {
         const chainId = Number(this.chainProvider.getNetwork().chainId);
-        const result = await this.signer.sendTransaction(parseTxRequest({ chainId, ...txRequest }));
+
+        // default to average fee
+        if (!txRequest.fee) {
+            txRequest.fee = (await this.chainProvider.getFees()).average.fee;
+        }
+
+        const result = await this.signer.sendTransaction(parseTxRequest({ chainId, ...txRequest, ...extractFeeData(txRequest.fee) }));
         return parseTxResponse(result);
     }
 
@@ -43,41 +49,53 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
         return result;
     }
 
-    public async sendSweepTransaction(address: AddressType, asset: Asset, fee?: EthereumFeeData): Promise<Transaction<any>> {
+    public async sendSweepTransaction(address: AddressType, asset: Asset, fee?: FeeType): Promise<Transaction<any>> {
         const balance = (await this.getBalance([asset]))[0];
-        const tx: EthereumTransactionRequest = { to: address, value: balance, ...fee };
+        const tx: EthereumTransactionRequest = { to: address, value: balance, fee };
         return await this.sendTransaction(tx);
     }
 
     public async updateTransactionFee(
         tx: string | Transaction<EthersTransactionResponse>,
-        newFee: EthereumFeeData
+        newFee: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
         const transaction: Transaction<EthersTransactionResponse> =
             typeof tx === 'string' ? await this.chainProvider.getTransactionByHash(tx) : tx;
 
         const { gasPrice, maxPriorityFeePerGas, maxFeePerGas } = transaction._raw;
 
-        if (maxPriorityFeePerGas && newFee.maxPriorityFeePerGas && maxFeePerGas && newFee.maxFeePerGas) {
-            if (maxPriorityFeePerGas.gte(newFee.maxPriorityFeePerGas.toString())) {
-                throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxPriorityFeePerGas');
+        // EIP1559
+        if (typeof newFee !== 'number') {
+            if (maxPriorityFeePerGas && newFee.maxPriorityFeePerGas && maxFeePerGas && newFee.maxFeePerGas) {
+                if (maxPriorityFeePerGas.gte(newFee.maxPriorityFeePerGas.toString())) {
+                    throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxPriorityFeePerGas');
+                }
+                if (maxFeePerGas.gte(newFee.maxFeePerGas.toString())) {
+                    throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxFeePerGas');
+                }
+            } else {
+                throw new ReplaceFeeInsufficientError('No replacement fee is provided');
             }
-            if (maxFeePerGas.gte(newFee.maxFeePerGas.toString())) {
-                throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxFeePerGas');
-            }
-        } else if (gasPrice && newFee.gasPrice) {
-            if (gasPrice.gte(newFee.gasPrice.toString())) {
+        }
+        // Legacy
+        else if (gasPrice && newFee) {
+            if (gasPrice.gte(newFee)) {
                 throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more gasPrice');
             }
         } else {
             throw new ReplaceFeeInsufficientError('Replace transaction underpriced');
         }
 
-        const newTransaction = { ...transaction, nonce: transaction._raw.nonce, ...newFee };
+        const newTransaction = {
+            ...transaction,
+            value: new BigNumber(transaction.value),
+            nonce: transaction._raw.nonce,
+            fee: newFee,
+        };
         return this.sendTransaction(newTransaction);
     }
 
-    public async getBalance(assets: Asset[]): Promise<BigNumberish[]> {
+    public async getBalance(assets: Asset[]): Promise<BigNumber[]> {
         const user = await this.getAddress();
         return await this.chainProvider.getBalance([user], assets);
     }

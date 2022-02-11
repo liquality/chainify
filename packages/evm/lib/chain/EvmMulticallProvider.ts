@@ -2,7 +2,7 @@ import { StandardError } from '@liquality/errors';
 import { BaseProvider } from '@ethersproject/providers';
 import { Interface, JsonFragment, Fragment } from '@ethersproject/abi';
 
-import { AddressType, Asset, BigNumberish } from '@liquality/types';
+import { AddressType, Asset, BigNumber } from '@liquality/types';
 
 import { Multicall__factory, Multicall, ERC20__factory } from '../typechain';
 
@@ -45,12 +45,12 @@ export class EvmMulticallProvider {
         return multicallAddresses[chainId];
     }
 
-    public async getEthBalance(address: string): Promise<BigNumberish> {
-        return (await this._multicall.getEthBalance(address)).toString();
+    public async getEthBalance(address: string): Promise<BigNumber> {
+        return new BigNumber((await this._multicall.getEthBalance(address)).toString());
     }
 
-    public async getMultipleBalances(address: AddressType, assets: Asset[]): Promise<BigNumberish[]> {
-        return await this.multicall<BigNumberish[]>(
+    public async getMultipleBalances(address: AddressType, assets: Asset[]): Promise<BigNumber[]> {
+        const result = await this.multicall<BigNumber[]>(
             assets.map((asset: Asset) => {
                 if (asset.isNative) {
                     return {
@@ -69,6 +69,8 @@ export class EvmMulticallProvider {
                 }
             })
         );
+
+        return result.map((r) => new BigNumber(r.toString()));
     }
 
     public async multicall<T extends any[] = any[]>(calls: ReadonlyArray<Call>): Promise<T> {

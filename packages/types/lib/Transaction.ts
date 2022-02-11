@@ -1,4 +1,4 @@
-import { BigNumberish } from '.';
+import { BigNumber, FeeType } from '.';
 import { AddressType } from './Address';
 import { Asset } from './Asset';
 
@@ -6,43 +6,29 @@ export interface Transaction<TransactionType = any> {
     // Transaction hash
     hash: string;
     // The value of the transaction
-    value: BigNumberish;
+    value: number;
     // transaction recipient
-    to?: string;
+    to?: AddressType;
     // transaction sender
-    from?: string;
+    from?: AddressType;
     // transaction status
     status?: TxStatus;
     // Hash of the block containing the transaction
     blockHash?: string;
     // The block number containing the trnasaction
-    blockNumber?: BigNumberish;
+    blockNumber?: number;
     // The number of confirmations of the transaction
-    confirmations?: BigNumberish;
+    confirmations?: number;
     // Transaction data
     data?: string;
     // The price per unit of fee
-    feePrice?: BigNumberish;
+    feePrice?: number;
     // The total fee paid for the transaction
-    fee?: BigNumberish;
+    fee?: number;
     // The raw transaction object
     _raw: TransactionType;
     // The transaction logs/events
     logs?: any;
-}
-
-export interface SwapParams {
-    asset: Asset;
-    // The amount of native value locked in the swap
-    value: BigNumberish;
-    //Recepient address of the swap
-    recipientAddress: AddressType;
-    //Refund address of the swap
-    refundAddress: AddressType;
-    //Secret Hash
-    secretHash: string;
-    //Expiration of the swap
-    expiration: number;
 }
 
 export enum TxStatus {
@@ -56,11 +42,6 @@ export type TransactionRequest = {
     asset?: Asset;
     to?: AddressType;
     data?: string;
-    value?: BigNumberish;
+    value?: BigNumber;
+    fee?: FeeType;
 };
-
-export interface FeeData {
-    fee?: BigNumberish;
-    // Estimated time to confirmation
-    wait?: BigNumberish;
-}

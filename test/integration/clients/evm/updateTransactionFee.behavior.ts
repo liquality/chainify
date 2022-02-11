@@ -1,9 +1,7 @@
 import { assert } from 'chai';
 
-import { EvmTypes } from '@liquality/evm';
-import { Math } from '@liquality/utils';
-
 import { Chain } from '../../types';
+import { FeeType } from '@liquality/types';
 
 export function shouldUpdateTransactionFee(chain: Chain) {
     const { client, config } = chain;
@@ -19,71 +17,85 @@ export function shouldUpdateTransactionFee(chain: Chain) {
 
         describe('EIP1559', () => {
             it('should update transaction fee', async () => {
-                const fees = (await client.chain.getFees()) as EvmTypes.EthereumFeeData;
-                const tx = await client.wallet.sendTransaction({ to: config.recipientAddress, value: 1, ...fees });
+                const fees = await client.chain.getFees();
+                const slowEIP1559Fee = fees.slow.fee;
+                const averageEIP1559Fee = fees.average.fee;
 
-                await client.wallet.updateTransactionFee(tx.hash, {
-                    ...fees,
-                    maxFeePerGas: Math.mul(fees.maxFeePerGas, 1.5).toString(),
-                    maxPriorityFeePerGas: Math.mul(fees.maxPriorityFeePerGas, 1.5).toString(),
-                } as EvmTypes.EthereumFeeData);
+                // send tx with slow
+                const tx = await client.wallet.sendTransaction({
+                    to: config.recipientAddress,
+                    value: config.sendParams.value,
+                    fee: slowEIP1559Fee,
+                });
+
+                // send replace tx with average
+                await client.wallet.updateTransactionFee(tx.hash, averageEIP1559Fee);
             });
 
             it('should fail if price bump is insufficient', async () => {
-                const fees = (await client.chain.getFees()) as EvmTypes.EthereumFeeData;
-                const tx = await client.wallet.sendTransaction({ to: config.recipientAddress, value: 1, ...fees });
-                await assert.isRejected(client.wallet.updateTransactionFee(tx.hash, { ...fees } as EvmTypes.EthereumFeeData));
+                const fees = await client.chain.getFees();
+                const eip1559Fee = fees.slow.fee;
+
+                // send tx with slow
+                const tx = await client.wallet.sendTransaction({
+                    to: config.recipientAddress,
+                    value: config.sendParams.value,
+                    fee: eip1559Fee,
+                });
+
+                // send tx with the same amount of gas
+                await assert.isRejected(client.wallet.updateTransactionFee(tx.hash, eip1559Fee));
             });
 
             it('should fail if no new fee is provided', async () => {
-                const fees = (await client.chain.getFees()) as EvmTypes.EthereumFeeData;
-                const tx = await client.wallet.sendTransaction({ to: config.recipientAddress, value: 1, ...fees });
-                await assert.isRejected(
-                    client.wallet.updateTransactionFee(tx.hash, {} as EvmTypes.EthereumFeeData),
-                    'Replace transaction underpriced'
-                );
+                const fees = await client.chain.getFees();
+                const eip1559Fee = fees.fast.fee;
+                const tx = await client.wallet.sendTransaction({
+                    to: config.recipientAddress,
+                    value: config.sendParams.value,
+                    fee: eip1559Fee,
+                });
+                await assert.isRejected(client.wallet.updateTransactionFee(tx.hash, {} as FeeType), 'No replacement fee is provided');
             });
         });
 
         describe('Legacy', () => {
+            before(() => {
+                client.chain.setFeeProvider(null);
+            });
+
             it('should update transaction fee', async () => {
-                const fees = (await client.chain.getFees()) as EvmTypes.EthereumFeeData;
+                const fees = await client.chain.getFees();
+
                 const tx = await client.wallet.sendTransaction({
                     to: config.recipientAddress,
-                    value: 1,
-                    gasPrice: fees.gasPrice.toString(),
-                } as EvmTypes.EthereumTransactionRequest);
+                    value: config.sendParams.value,
+                    fee: fees.slow.fee,
+                });
 
-                await client.wallet.updateTransactionFee(tx.hash, {
-                    gasPrice: Math.mul(fees.gasPrice, 1.5).toString(),
-                } as EvmTypes.EthereumFeeData);
+                await client.wallet.updateTransactionFee(tx.hash, fees.average.fee);
             });
 
             it('should fail if price bump is insufficient', async () => {
-                const fees = (await client.chain.getFees()) as EvmTypes.EthereumFeeData;
+                const fees = await client.chain.getFees();
                 const tx = await client.wallet.sendTransaction({
                     to: config.recipientAddress,
-                    value: 1,
-                    gasPrice: fees.gasPrice.toString(),
-                } as EvmTypes.EthereumTransactionRequest);
+                    value: config.sendParams.value,
+                    fee: fees.slow.fee,
+                });
 
-                await assert.isRejected(
-                    client.wallet.updateTransactionFee(tx.hash, { gasPrice: fees.gasPrice.toString() } as EvmTypes.EthereumFeeData)
-                );
+                await assert.isRejected(client.wallet.updateTransactionFee(tx.hash, fees.slow.fee));
             });
 
             it('should fail if no new fee is provided', async () => {
-                const fees = (await client.chain.getFees()) as EvmTypes.EthereumFeeData;
+                const fees = await client.chain.getFees();
                 const tx = await client.wallet.sendTransaction({
                     to: config.recipientAddress,
-                    value: 1,
-                    gasPrice: fees.gasPrice.toString(),
-                } as EvmTypes.EthereumTransactionRequest);
+                    value: config.sendParams.value,
+                    fee: fees.slow.fee,
+                });
 
-                await assert.isRejected(
-                    client.wallet.updateTransactionFee(tx.hash, {} as EvmTypes.EthereumFeeData),
-                    'Replace transaction underpriced'
-                );
+                await assert.isRejected(client.wallet.updateTransactionFee(tx.hash, {} as FeeType), 'No replacement fee is provided');
             });
         });
     });
