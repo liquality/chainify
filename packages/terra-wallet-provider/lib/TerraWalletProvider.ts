@@ -9,7 +9,6 @@ import {
   Msg,
   MsgSend,
   Wallet,
-  CreateTxOptions,
   Fee,
   Tx,
   MsgExecuteContract,
@@ -193,7 +192,7 @@ export default class TerraWalletProvider extends WalletProvider {
   private async _broadcastTx(tx: Tx): Promise<TxInfo> {
     return this._lcdClient.tx
       .broadcastSync(tx)
-      .then(async (result) => {
+      .then(async (result: any) => {
         /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
         let retryTimes = 0
         while (true) {
@@ -202,13 +201,13 @@ export default class TerraWalletProvider extends WalletProvider {
             throw new Error(`Timeout: Transaction have not been processed for 30 seconds`)
           }
 
-          const data = await this._lcdClient.tx.txInfo(result.txhash).catch(() => null)
+          const data = await this._lcdClient.tx.txInfo(result.txhash).catch((): any => null)
           if (data) return data
           retryTimes++
           await new Promise((resolve) => setTimeout(resolve, 1500))
         }
       })
-      .then((result) => {
+      .then((result: any) => {
         return result
       })
   }
@@ -216,7 +215,7 @@ export default class TerraWalletProvider extends WalletProvider {
   private async composeTransaction(sendOptions: SendOptions) {
     const { to, value, fee } = sendOptions
 
-    const data: CreateTxOptions = sendOptions.data as any
+    const data = sendOptions.data as any
     let txData: any
 
     const isProto = typeof data?.msgs[0] === 'string' && '@type' in JSON.parse(data?.msgs[0] as any)
@@ -226,8 +225,8 @@ export default class TerraWalletProvider extends WalletProvider {
         fee: isProto ? Fee.fromData(JSON.parse(data.fee as any)) : Fee.fromAmino(JSON.parse(data.fee as any))
       }
     } else if (data?.msgs) {
-      const gasPrice = data.fee as any
-      const gasLimit = 800000
+      const gasPrice = data.fee
+      const gasLimit = data.gasLimit || 800_000
 
       let taxFee
       if (this._stableFee && value) {
@@ -270,7 +269,7 @@ export default class TerraWalletProvider extends WalletProvider {
     if (!txData.msgs) {
       txData = {
         ...txData,
-        msgs: data.msgs.map((msg) =>
+        msgs: data.msgs.map((msg: any) =>
           typeof msg !== 'string' ? msg : isProto ? Msg.fromData(JSON.parse(msg)) : Msg.fromAmino(JSON.parse(msg))
         )
       }
