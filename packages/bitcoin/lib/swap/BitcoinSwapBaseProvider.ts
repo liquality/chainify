@@ -13,7 +13,7 @@ import {
     validateAddress,
     witnessStackToScriptWitness,
 } from '../utils';
-import { BitcoinSwapProviderOptions } from './types';
+import { BitcoinSwapProviderOptions, TransactionMatchesFunction } from './types';
 
 export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvider, null, BitcoinBaseWallet> {
     protected _network: BitcoinNetwork;
@@ -62,6 +62,51 @@ export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvi
         this.validateSwapParams(swapParams);
         await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash);
         return this._redeemSwap(swapParams, initiationTxHash, false, undefined, feePerByte);
+    }
+
+    public findInitiateSwapTransaction(swapParams: SwapParams, blockNumber?: number): Promise<Transaction<any>> {
+        this.validateSwapParams(swapParams);
+        return this.findSwapTransaction(swapParams, blockNumber, (tx: Transaction<BitcoinTransaction>) =>
+            this.doesTransactionMatchInitiation(swapParams, tx)
+        );
+    }
+
+    public async getSwapSecret(_claimTxHash: string): Promise<string> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string, blockNumber?: number): Promise<Transaction<any>> {
+        this.validateSwapParams(swapParams);
+
+        const claimSwapTransaction: Transaction<BitcoinTransaction> = await this.findSwapTransaction(
+            swapParams,
+            blockNumber,
+            (tx: Transaction<BitcoinTransaction>) => this.doesTransactionMatchRedeem(initTxHash, tx, false)
+        );
+
+        if (claimSwapTransaction) {
+            const swapInput = claimSwapTransaction._raw.vin.find((vin) => vin.txid === initTxHash);
+            if (!swapInput) {
+                throw new Error('Claim input missing');
+            }
+            const inputScript = this.getInputScript(swapInput);
+            const secret = inputScript[2] as string;
+            validateSecretAndHash(secret, swapParams.secretHash);
+            return { ...claimSwapTransaction, secret, _raw: claimSwapTransaction };
+        }
+    }
+
+    public async findRefundSwapTransaction(
+        swapParams: SwapParams,
+        initiationTxHash: string,
+        blockNumber?: number
+    ): Promise<Transaction<any>> {
+        this.validateSwapParams(swapParams);
+
+        const refundSwapTransaction = await this.findSwapTransaction(swapParams, blockNumber, (tx: Transaction<BitcoinTransaction>) =>
+            this.doesTransactionMatchRedeem(initiationTxHash, tx, true)
+        );
+        return refundSwapTransaction;
     }
 
     protected getSwapOutput(swapParams: SwapParams) {
@@ -294,7 +339,8 @@ export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvi
         }
         return false;
     }
-    canUpdateFee(): boolean {
+
+    public canUpdateFee(): boolean {
         return true;
     }
 
@@ -361,4 +407,10 @@ export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvi
         );
         return Boolean(vout);
     }
+
+    protected abstract findSwapTransaction(
+        swapParams: SwapParams,
+        blockNumber: number,
+        predicate: TransactionMatchesFunction
+    ): Promise<Transaction<BitcoinTransaction>>;
 }

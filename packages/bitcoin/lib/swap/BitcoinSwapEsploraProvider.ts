@@ -1,6 +1,5 @@
 import { HttpClient } from '@liquality/client';
 import { SwapParams, Transaction } from '@liquality/types';
-import { validateSecretAndHash } from '@liquality/utils';
 import { Transaction as BitcoinTransaction } from '../types';
 import { BitcoinBaseWallet } from '../wallet/BitcoinBaseWallet';
 import { BitcoinSwapBaseProvider } from './BitcoinSwapBaseProvider';
@@ -12,43 +11,6 @@ export class BitcoinSwapEsploraProvider extends BitcoinSwapBaseProvider {
     constructor(options: BitcoinSwapProviderOptions, walletProvider: BitcoinBaseWallet) {
         super(options, walletProvider);
         this._httpClient = new HttpClient({ baseURL: options.scraperUrl });
-    }
-
-    findInitiateSwapTransaction(_swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
-    }
-
-    public async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string, blockNumber?: number): Promise<Transaction<any>> {
-        this.validateSwapParams(swapParams);
-
-        const claimSwapTransaction: Transaction<BitcoinTransaction> = await this.findSwapTransaction(
-            swapParams,
-            blockNumber,
-            (tx: Transaction<BitcoinTransaction>) => this.doesTransactionMatchRedeem(initTxHash, tx, false)
-        );
-
-        if (claimSwapTransaction) {
-            const swapInput = claimSwapTransaction._raw.vin.find((vin) => vin.txid === initTxHash);
-            if (!swapInput) {
-                throw new Error('Claim input missing');
-            }
-            const inputScript = this.getInputScript(swapInput);
-            const secret = inputScript[2] as string;
-            validateSecretAndHash(secret, swapParams.secretHash);
-            return { ...claimSwapTransaction, secret, _raw: claimSwapTransaction };
-        }
-    }
-
-    public async findRefundSwapTransaction(
-        _swapParams: SwapParams,
-        _initiationTxHash: string,
-        _blockNumber?: number
-    ): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
-    }
-
-    public async getSwapSecret(_claimTxHash: string): Promise<string> {
-        throw new Error('Method not implemented.');
     }
 
     async findAddressTransaction(address: string, currentHeight: number, predicate: TransactionMatchesFunction) {
