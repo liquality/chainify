@@ -21,6 +21,8 @@ export interface Transaction<TransactionType = any> {
     confirmations?: number;
     // Transaction data
     data?: string;
+    // Secret of a HTLC
+    secret?: string;
     // The price per unit of fee
     feePrice?: number;
     // The total fee paid for the transaction

@@ -3,18 +3,18 @@ import { FeeType, SwapParams, SwapProvider, Transaction, TxStatus } from '@liqua
 import { sha256, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils';
 import Wallet from './Wallet';
 
-export default abstract class Swap<T, S> implements SwapProvider {
-    protected walletProvider: Wallet<T, S>;
+export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = any> implements SwapProvider {
+    protected walletProvider: WalletProvider;
 
-    constructor(walletProvider?: Wallet<T, S>) {
+    constructor(walletProvider?: WalletProvider) {
         this.walletProvider = walletProvider;
     }
 
-    public setWallet(wallet: Wallet<T, S>): void {
+    public setWallet(wallet: WalletProvider): void {
         this.walletProvider = wallet;
     }
 
-    public getWallet(): Wallet<T, S> {
+    public getWallet(): WalletProvider {
         return this.walletProvider;
     }
 
@@ -66,6 +66,9 @@ export default abstract class Swap<T, S> implements SwapProvider {
     public abstract findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string, blockNumber?: number): Promise<Transaction>;
 
     public abstract getSwapSecret(claimTxHash: string): Promise<string>;
+
+    public abstract canUpdateFee(): boolean;
+    public abstract updateTransactionFee(tx: string | Transaction, newFee: FeeType): Promise<Transaction>;
 
     protected abstract doesTransactionMatchInitiation(swapParams: SwapParams, transaction: Transaction): Promise<boolean> | boolean;
 }

@@ -1,6 +1,6 @@
 import { BaseProvider, Log } from '@ethersproject/providers';
 import { SwapParams, Transaction } from '@liquality/types';
-import { Math } from '@liquality/utils';
+import { Math, remove0x } from '@liquality/utils';
 import { ClaimEvent, InitiateEvent, RefundEvent } from '../typechain/LiqualityHTLC';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmBaseSwapProvider } from './EvmBaseSwapProvider';
@@ -31,7 +31,11 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
     }
 
     async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<ClaimEvent>> {
-        return this.findTx<ClaimEvent>(swapParams, initTxHash, 'Claim');
+        const foundTx = await this.findTx<ClaimEvent>(swapParams, initTxHash, 'Claim');
+        const secret = foundTx?._raw?.args?.secret;
+        if (secret) {
+            return { ...foundTx, secret: remove0x(secret) };
+        }
     }
 
     async findRefundSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<RefundEvent>> {

@@ -2,7 +2,7 @@ import { Signer } from '@ethersproject/abstract-signer';
 import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider, Log } from '@ethersproject/providers';
 import { Swap } from '@liquality/client';
-import { TxNotFoundError } from '@liquality/errors';
+import { TxNotFoundError, UnimplementedMethodError } from '@liquality/errors';
 import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
 import { LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
@@ -119,6 +119,14 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
                 }
             }
         }
+    }
+
+    public canUpdateFee(): boolean {
+        return false;
+    }
+
+    public updateTransactionFee(_tx: string | Transaction<any>, _newFee: FeeType): Promise<Transaction> {
+        throw new UnimplementedMethodError('Method not supported.');
     }
 
     abstract findInitiateSwapTransaction(swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<InitiateEvent>>;

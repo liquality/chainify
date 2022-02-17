@@ -1,9 +1,8 @@
+import { Client } from '@liquality/client';
 import { EvmNetworks } from '@liquality/evm';
 import { NearNetworks } from '@liquality/near';
-
-import { sha256 } from '@liquality/utils';
-import { Client } from '@liquality/client';
 import { FeeType, SwapParams, Transaction } from '@liquality/types';
+import { sha256 } from '@liquality/utils';
 import { expect } from 'chai';
 import { EthereumClient, NearClient } from './clients';
 import { EVMConfig, NearConfig } from './config';
@@ -115,7 +114,7 @@ export async function claimAndVerify(
     const foundClaimTx = await findClaimSwapTransaction(chain, swapParams, initiationTxId, Number(currentBlock.toString()));
     expect(foundClaimTx.hash).to.equal(claimTx.hash);
     const foundSecret = await chain.client.swap.getSwapSecret(foundClaimTx.hash);
-    expect(secret).to.equal(foundSecret);
+    expect(secret).to.equal(foundSecret).to.equal(foundClaimTx.secret);
     expect(foundClaimTx.hash).to.equal(claimTx.hash);
     return foundClaimTx;
 }

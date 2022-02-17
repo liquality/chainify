@@ -1,6 +1,6 @@
 import { ClientTypes, HttpClient, Swap, Wallet } from '@liquality/client';
-import { TxNotFoundError } from '@liquality/errors';
-import { SwapParams, Transaction } from '@liquality/types';
+import { TxNotFoundError, UnimplementedMethodError } from '@liquality/errors';
+import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { compare, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
 import { InMemorySigner, NearScraperData, NearTxLog, NearTxRequest, providers } from '../types';
 import { getClaimActions, getHtlcActions, getRefundActions, parseScraperTransaction } from '../utils';
@@ -55,9 +55,10 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
 
         const tx = await this.findAddressTransaction(initTx._raw.receiver.toString(), (tx) => tx?._raw?.htlc?.method === 'claim');
 
-        if (tx?._raw?.htlc?.secret) {
-            validateSecretAndHash(tx?._raw?.htlc?.secret, swapParams.secretHash);
-            return tx;
+        const secret = tx?._raw?.htlc?.secret;
+        if (secret) {
+            validateSecretAndHash(secret, swapParams.secretHash);
+            return { ...tx, secret };
         }
     }
 
@@ -141,5 +142,13 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
 
             offset = offset - ONE_DAY_IN_NS;
         }
+    }
+
+    public canUpdateFee(): boolean {
+        return false;
+    }
+
+    public updateTransactionFee(_tx: string | Transaction<any>, _newFee: FeeType): Promise<Transaction> {
+        throw new UnimplementedMethodError('Method not supported.');
     }
 }
