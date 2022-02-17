@@ -3,9 +3,9 @@ import { Chain, Wallet } from '@liquality/client';
 import { ReplaceFeeInsufficientError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, FeeType, Transaction } from '@liquality/types';
 import { remove0x } from '@liquality/utils';
+import { ERC20__factory } from '../typechain';
 import { EthereumTransactionRequest, EthersTransactionResponse } from '../types';
 import { extractFeeData, parseTxRequest, parseTxResponse } from '../utils';
-
 export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;
 
@@ -34,8 +34,20 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
             txRequest.fee = (await this.chainProvider.getFees()).average.fee;
         }
 
-        const result = await this.signer.sendTransaction(parseTxRequest({ chainId, ...txRequest, ...extractFeeData(txRequest.fee) }));
-        return parseTxResponse(result);
+        // Handle ERC20 transfers
+        if (txRequest.asset && !txRequest.asset.isNative) {
+            const transferErc20Tx = await ERC20__factory.connect(txRequest.asset.contractAddress, this.signer).populateTransaction.transfer(
+                txRequest.to.toString(),
+                txRequest.value.toString()
+            );
+            const result = await this.signer.sendTransaction({ ...transferErc20Tx, ...extractFeeData(txRequest.fee) });
+            return parseTxResponse(result);
+        }
+        // Handle ETH transfers
+        else {
+            const result = await this.signer.sendTransaction(parseTxRequest({ chainId, ...txRequest, ...extractFeeData(txRequest.fee) }));
+            return parseTxResponse(result);
+        }
     }
 
     public async sendBatchTransaction(txRequests: EthereumTransactionRequest[]): Promise<Transaction<EthersTransactionResponse>[]> {
