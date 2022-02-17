@@ -16,6 +16,18 @@
     },
     "dependencies": {
         "@liquality/client": "workspace:*",
-        "@liquality/types": "workspace:*"
+        "@liquality/errors": "workspace:^",
+        "@liquality/types": "workspace:*",
+        "@types/bip32": "^2.0.0",
+        "@types/bip39": "^3.0.0",
+        "@types/bitcoinjs-lib": "^5.0.0",
+        "@types/lodash": "^4.14.178",
+        "@types/memoizee": "^0.4.7",
+        "bip174": "^2.0.1",
+        "bip32": "2.0.6",
+        "bitcoinjs-lib": "5.2.0",
+        "bitcoinjs-message": "2.2.0",
+        "lodash": "^4.17.21",
+        "memoizee": "^0.4.15"
     }
 }

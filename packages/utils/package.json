@@ -18,5 +18,8 @@
         "@ethersproject/sha2": "^5.5.0",
         "@liquality/errors": "workspace:*",
         "@liquality/types": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/setimmediate": "^1.0.2"
     }
 }

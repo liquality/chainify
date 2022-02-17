@@ -6,13 +6,16 @@
     "npm.packageManager": "yarn",
     "cSpell.words": [
         "arbitrum",
+        "bitcoinjs",
         "changesets",
         "commitlint",
         "eslintignore",
         "Liquality",
+        "memoizee",
         "Multicall",
         "prettierrc",
         "regtest",
+        "setimmediate",
         "trivago",
         "typechain"
     ]
