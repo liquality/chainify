@@ -15,7 +15,9 @@ export function shouldBehaveLikeLiqualityHTLCForERC20(): void {
         this.token = <TestERC20>await erc20Factory.deploy();
 
         await this.token.mint(this.signers.sender.address, ethers.utils.parseUnits('1000000'));
+        await this.token.mint(this.signers.deployer.address, ethers.utils.parseUnits('1000000'));
         await this.token.connect(this.signers.sender).approve(this.htlc.address, ethers.constants.MaxUint256);
+        await this.token.connect(this.signers.deployer).approve(this.htlc.address, ethers.constants.MaxUint256);
     });
 
     describe('Initiate', function () {
@@ -43,7 +45,7 @@ function shouldInitiateERC20(): void {
             .withArgs(id, Object.values(htlcData));
     });
 
-    it("should not fail if sender doesn't match msg.sender", async function () {
+    it("should not fail if refund address doesn't match msg.sender", async function () {
         const blockTimestamp = (await ethers.provider.getBlock('latest')).timestamp + 1;
         await ethers.provider.send('evm_setNextBlockTimestamp', [blockTimestamp]);
         const htlcData = await getDefaultHtlcData(this.signers, blockTimestamp + 1, this.token.address);

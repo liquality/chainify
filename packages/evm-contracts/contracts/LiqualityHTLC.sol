@@ -31,7 +31,7 @@ contract LiqualityHTLC is ILiqualityHTLC {
         }
         // handle ERC20 swaps
         else {
-            IERC20(htlc.tokenAddress).safeTransferFrom(htlc.refundAddress, address(this), htlc.amount);
+            IERC20(htlc.tokenAddress).safeTransferFrom(msg.sender, address(this), htlc.amount);
         }
 
         id = sha256(
@@ -55,7 +55,7 @@ contract LiqualityHTLC is ILiqualityHTLC {
 
         HTLCData memory h = htlcs[id];
 
-        if (h.refundAddress == address(0x0)) {
+        if (h.expiration == 0) {
             revert LiqualityHTLC__SwapDoesNotExist();
         }
 
@@ -82,7 +82,7 @@ contract LiqualityHTLC is ILiqualityHTLC {
     function refund(bytes32 id) external {
         HTLCData memory h = htlcs[id];
 
-        if (h.refundAddress == address(0x0)) {
+        if (h.expiration == 0) {
             revert LiqualityHTLC__SwapDoesNotExist();
         }
 

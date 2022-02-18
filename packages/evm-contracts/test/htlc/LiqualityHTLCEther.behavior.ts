@@ -35,7 +35,7 @@ function shouldInitiateEther(): void {
             .withArgs(id, Object.values(htlcData));
     });
 
-    it("should not fail if sender doesn't match msg.sender", async function () {
+    it("should not fail if refund address doesn't match msg.sender", async function () {
         const blockTimestamp = (await ethers.provider.getBlock('latest')).timestamp + 1;
         await ethers.provider.send('evm_setNextBlockTimestamp', [blockTimestamp]);
         const htlcData = await getDefaultHtlcData(this.signers, blockTimestamp + 1);
