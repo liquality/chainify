@@ -14,8 +14,7 @@ import {
   MsgExecuteContract,
   isTxError,
   TxInfo,
-  CreateTxOptions,
-  SyncTxBroadcastResult
+  CreateTxOptions
 } from '@terra-money/terra.js'
 import { ceil } from 'lodash'
 
@@ -198,7 +197,7 @@ export default class TerraWalletProvider extends WalletProvider {
   private async _broadcastTx(tx: Tx): Promise<TxInfo> {
     return this._lcdClient.tx
       .broadcastSync(tx)
-      .then(async (result: SyncTxBroadcastResult) => {
+      .then(async (result) => {
         /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
         let retryTimes = 0
         while (true) {
