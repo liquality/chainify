@@ -14,7 +14,8 @@ import {
   MsgExecuteContract,
   isTxError,
   TxInfo,
-  CreateTxOptions
+  CreateTxOptions,
+  SyncTxBroadcastResult
 } from '@terra-money/terra.js'
 import { ceil } from 'lodash'
 
@@ -197,7 +198,7 @@ export default class TerraWalletProvider extends WalletProvider {
   private async _broadcastTx(tx: Tx): Promise<TxInfo> {
     return this._lcdClient.tx
       .broadcastSync(tx)
-      .then(async (result: any) => {
+      .then(async (result: SyncTxBroadcastResult) => {
         /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
         let retryTimes = 0
         while (true) {
@@ -206,13 +207,13 @@ export default class TerraWalletProvider extends WalletProvider {
             throw new Error(`Timeout: Transaction have not been processed for 30 seconds`)
           }
 
-          const data = await this._lcdClient.tx.txInfo(result.txhash).catch((): any => null)
+          const data = await this._lcdClient.tx.txInfo(result.txhash).catch(() => null)
           if (data) return data
           retryTimes++
           await new Promise((resolve) => setTimeout(resolve, 1500))
         }
       })
-      .then((result: any) => {
+      .then((result) => {
         return result
       })
   }
