@@ -9,12 +9,12 @@ import {
   Msg,
   MsgSend,
   Wallet,
-  CreateTxOptions,
   Fee,
   Tx,
   MsgExecuteContract,
   isTxError,
-  TxInfo
+  TxInfo,
+  CreateTxOptions
 } from '@terra-money/terra.js'
 import { ceil } from 'lodash'
 
@@ -26,6 +26,10 @@ interface TerraWalletProviderOptions {
   feeAsset: string
   tokenAddress?: string
   stableFee?: boolean
+}
+
+interface CustomTxOptions extends CreateTxOptions {
+  gasLimit: number
 }
 
 export default class TerraWalletProvider extends WalletProvider {
@@ -216,7 +220,7 @@ export default class TerraWalletProvider extends WalletProvider {
   private async composeTransaction(sendOptions: SendOptions) {
     const { to, value, fee } = sendOptions
 
-    const data: CreateTxOptions = sendOptions.data as any
+    const data: CustomTxOptions = sendOptions.data as any
     let txData: any
 
     const isProto = typeof data?.msgs[0] === 'string' && '@type' in JSON.parse(data?.msgs[0] as any)
@@ -227,7 +231,7 @@ export default class TerraWalletProvider extends WalletProvider {
       }
     } else if (data?.msgs) {
       const gasPrice = data.fee as any
-      const gasLimit = 800000
+      const gasLimit = data.gasLimit || 800_000
 
       let taxFee
       if (this._stableFee && value) {
@@ -270,7 +274,7 @@ export default class TerraWalletProvider extends WalletProvider {
     if (!txData.msgs) {
       txData = {
         ...txData,
-        msgs: data.msgs.map((msg) =>
+        msgs: data.msgs.map((msg: any) =>
           typeof msg !== 'string' ? msg : isProto ? Msg.fromData(JSON.parse(msg)) : Msg.fromAmino(JSON.parse(msg))
         )
       }
