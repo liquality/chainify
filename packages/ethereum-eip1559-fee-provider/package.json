@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-eip1559-fee-provider",
-  "version": "1.13.5",
+  "version": "1.13.6",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -24,9 +24,9 @@
   "dependencies": {
     "@babel/runtime": "^7.12.1",
     "@ethersproject/providers": "^5.5.1",
-    "@liquality/ethereum-utils": "^1.13.5",
-    "@liquality/provider": "^1.13.5",
-    "@liquality/types": "^1.13.5",
+    "@liquality/ethereum-utils": "^1.13.6",
+    "@liquality/provider": "^1.13.6",
+    "@liquality/types": "^1.13.6",
     "@rainbow-me/fee-suggestions": "^1.7.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
