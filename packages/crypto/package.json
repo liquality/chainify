@@ -20,7 +20,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "engines": {
-    "node": "^14.18.1"
+    "node": ">=14"
   },
   "dependencies": {
     "bech32": "^1.1.3",

@@ -19,7 +19,7 @@
   "author": "Liquality <info@liquality.io>",
   "license": "MIT",
   "engines": {
-    "node": "^14.18.1"
+    "node": ">=14"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1"

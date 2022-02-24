@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "engines": {
-    "node": "^14.18.1"
+    "node": ">=14"
   },
   "devDependencies": {
     "@babel/core": "^7.12.1",
