@@ -1,6 +1,6 @@
 {
   "name": "@liquality/nft-erc1155-provider",
-  "version": "1.13.7",
+  "version": "1.13.8",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.13.7",
-    "@liquality/ethereum-utils": "^1.13.7",
-    "@liquality/nft-base-provider": "^1.13.7",
-    "@liquality/types": "^1.13.7",
-    "@liquality/utils": "^1.13.7",
+    "@liquality/errors": "^1.13.8",
+    "@liquality/ethereum-utils": "^1.13.8",
+    "@liquality/nft-base-provider": "^1.13.8",
+    "@liquality/types": "^1.13.8",
+    "@liquality/utils": "^1.13.8",
     "lodash": "^4.17.20"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",

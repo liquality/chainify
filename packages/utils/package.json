@@ -1,6 +1,6 @@
 {
   "name": "@liquality/utils",
-  "version": "1.13.7",
+  "version": "1.13.8",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,9 +23,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/crypto": "^1.13.7",
-    "@liquality/errors": "^1.13.7",
-    "@liquality/types": "^1.13.7",
+    "@liquality/crypto": "^1.13.8",
+    "@liquality/errors": "^1.13.8",
+    "@liquality/types": "^1.13.8",
     "setimmediate": "^1.0.5"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",

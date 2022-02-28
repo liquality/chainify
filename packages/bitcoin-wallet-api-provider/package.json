@@ -1,6 +1,6 @@
 {
   "name": "@liquality/bitcoin-wallet-api-provider",
-  "version": "1.13.7",
+  "version": "1.13.8",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/bitcoin-networks": "^1.13.7",
-    "@liquality/bitcoin-wallet-provider": "^1.13.7",
-    "@liquality/types": "^1.13.7",
-    "@liquality/utils": "^1.13.7",
-    "@liquality/wallet-provider": "^1.13.7"
+    "@liquality/bitcoin-networks": "^1.13.8",
+    "@liquality/bitcoin-wallet-provider": "^1.13.8",
+    "@liquality/types": "^1.13.8",
+    "@liquality/utils": "^1.13.8",
+    "@liquality/wallet-provider": "^1.13.8"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {
