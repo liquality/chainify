@@ -203,16 +203,15 @@ export default class EthereumRpcProvider extends JsonRpcProvider implements Part
     txHash = ensure0x(txHash)
 
     const tx = await this.rpc<ethereum.Transaction>('eth_getTransactionByHash', txHash)
-    const currentBlock = await this.getBlockHeight()
-
     if (!tx) {
       throw new TxNotFoundError(`Transaction not found: ${txHash}`)
     }
 
+    const currentBlock = await this.getBlockHeight()
     const txObj = normalizeTransactionObject(tx, currentBlock)
+    const receipt = await this.getTransactionReceipt(txHash)
 
-    if (txObj.confirmations > 0) {
-      const receipt = await this.getTransactionReceipt(txHash)
+    if (receipt) {
       txObj.status = Number(receipt.status) ? TxStatus.Success : TxStatus.Failed
     } else {
       txObj.status = TxStatus.Pending
