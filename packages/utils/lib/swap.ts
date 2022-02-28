@@ -1,7 +1,7 @@
-import { sha256 as ethersSha256 } from '@ethersproject/sha2';
 import { InvalidExpirationError, InvalidSecretError, InvalidValueError } from '@liquality/errors';
 import { BigNumberish } from '@liquality/types';
-import { ensure0x, remove0x } from './hex';
+import { sha256 } from './crypto';
+import { remove0x } from './hex';
 import { lte } from './math';
 
 export function validateExpiration(expiration: number) {
@@ -66,8 +66,4 @@ export function validateValue(value: BigNumberish) {
     if (lte(value, 0)) {
         throw new InvalidValueError(`Invalid value: ${value}`);
     }
-}
-
-export function sha256(data: string) {
-    return remove0x(ethersSha256(ensure0x(data)));
 }

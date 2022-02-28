@@ -12,7 +12,7 @@
     ],
     "scripts": {
         "build": "cp -R ../../node_modules/@liquality/evm-contracts/artifacts . && hardhat --config ./hardhat.config.ts typechain && tsc",
-        "clean": "rm -rf node_modules .turbo dist ./lib/typechain"
+        "clean": "rm -rf node_modules .turbo dist ./lib/typechain cache artifacts"
     },
     "dependencies": {
         "@ethersproject/abi": "^5.5.0",

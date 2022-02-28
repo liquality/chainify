@@ -1,6 +1,5 @@
 import { Math } from '@liquality/utils';
 import { expect } from 'chai';
-
 import { Chain } from '../types';
 
 export function shouldBehaveLikeChainProvider(chain: Chain) {
@@ -39,8 +38,10 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
         });
 
         it('should fetch multiple balances at once', async () => {
-            const balances = await client.chain.getBalance([config.walletExpectedResult.address], config.assets);
-            expect(balances.length).to.equal(config.assets.length);
+            if (config.walletExpectedResult.address) {
+                const balances = await client.chain.getBalance([config.walletExpectedResult.address], config.assets);
+                expect(balances.length).to.equal(config.assets.length);
+            }
         });
     });
 }

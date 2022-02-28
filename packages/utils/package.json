@@ -17,7 +17,8 @@
     "dependencies": {
         "@ethersproject/sha2": "^5.5.0",
         "@liquality/errors": "workspace:*",
-        "@liquality/types": "workspace:*"
+        "@liquality/types": "workspace:*",
+        "crypto-hashing": "^1.0.0"
     },
     "devDependencies": {
         "@types/setimmediate": "^1.0.2"

@@ -1,4 +1,5 @@
 import 'setimmediate';
+export * from './crypto';
 export * from './hex';
 export * as Math from './math';
 export * from './string';

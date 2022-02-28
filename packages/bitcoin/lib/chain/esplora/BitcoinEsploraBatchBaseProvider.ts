@@ -18,7 +18,7 @@ export class BitcoinEsploraBatchBaseProvider extends BitcoinEsploraBaseProvider 
     }
 
     async getUnspentTransactions(_addresses: AddressType[]): Promise<UTXO[]> {
-        const addresses = _addresses.map(toString);
+        const addresses = _addresses.map((a) => a.toString());
         const data: EsploraTypes.BatchUTXOs = await this._batchHttpClient.nodePost('/addresses/utxo', {
             addresses: uniq(addresses),
         });
@@ -37,7 +37,7 @@ export class BitcoinEsploraBatchBaseProvider extends BitcoinEsploraBaseProvider 
     }
 
     async getAddressTransactionCounts(_addresses: AddressType[]) {
-        const addresses = _addresses.map(toString);
+        const addresses = _addresses.map((a) => a.toString());
         const data: EsploraTypes.Address[] = await this._batchHttpClient.nodePost('/addresses', {
             addresses: uniq(addresses),
         });

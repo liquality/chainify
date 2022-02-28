@@ -1,15 +1,14 @@
-import { Chains } from '../../common';
-
-import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
-import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
-import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
+import { Client } from '@liquality/client';
 import { NearWalletProvider } from '@liquality/near';
 import { WalletOptions } from '@liquality/types';
-import { Client } from '@liquality/client';
+import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
+import { Chains } from '../../common';
+import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
+import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
 
 export function shouldBehaveLikeNearClient() {
     before('Send funds to Near sender', async () => {
-        const { client, config } = Chains.near;
+        const { client, config } = Chains.near.hd;
         const tempClient = new Client(
             client.chain,
             new NearWalletProvider(
@@ -30,9 +29,10 @@ export function shouldBehaveLikeNearClient() {
         }
     });
 
-    describe('Near Client', () => {
-        shouldBehaveLikeChainProvider(Chains.near);
-        shouldBehaveLikeWalletProvider(Chains.near);
-        shouldBehaveLikeSwapProvider(Chains.near);
+    describe('Near Client - HD Wallet', () => {
+        const chain = Chains.near.hd;
+        shouldBehaveLikeChainProvider(chain);
+        shouldBehaveLikeWalletProvider(chain);
+        shouldBehaveLikeSwapProvider(chain);
     });
 }

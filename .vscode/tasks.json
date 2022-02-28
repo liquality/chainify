@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "env:integration",
+			"problemMatcher": [],
+			"label": "npm: bootup",
+			"detail": "docker-compose -f test/integration/environment/btc/docker-compose.yaml up -d --force-recreate --renew-anon-volumes && sleep 10"
+		}
+	]
+}

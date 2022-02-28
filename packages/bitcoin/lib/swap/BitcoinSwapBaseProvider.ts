@@ -2,8 +2,7 @@ import { Swap } from '@liquality/client';
 import { Address, BigNumber, SwapParams, Transaction } from '@liquality/types';
 import { validateExpiration, validateSecret, validateSecretAndHash, validateSecretHash, validateValue } from '@liquality/utils';
 import { payments, Psbt, script as bScript } from 'bitcoinjs-lib';
-import { BitcoinBaseChainProvider } from 'lib/chain/BitcoinBaseChainProvider';
-import { BitcoinBaseWallet } from 'lib/wallet/BitcoinBaseWallet';
+import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
 import { BitcoinNetwork, Input, SwapMode, Transaction as BitcoinTransaction } from '../types';
 import {
     calculateFee,
@@ -13,13 +12,14 @@ import {
     validateAddress,
     witnessStackToScriptWitness,
 } from '../utils';
+import { BitcoinBaseWalletProvider } from '../wallet/BitcoinBaseWallet';
 import { BitcoinSwapProviderOptions, TransactionMatchesFunction } from './types';
 
-export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvider, null, BitcoinBaseWallet> {
+export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvider, null, BitcoinBaseWalletProvider> {
     protected _network: BitcoinNetwork;
     protected _mode: SwapMode;
 
-    constructor(options: BitcoinSwapProviderOptions, walletProvider: BitcoinBaseWallet) {
+    constructor(options: BitcoinSwapProviderOptions, walletProvider: BitcoinBaseWalletProvider) {
         super(walletProvider);
         const { network, mode = SwapMode.P2WSH } = options;
         const swapModes = Object.values(SwapMode);
