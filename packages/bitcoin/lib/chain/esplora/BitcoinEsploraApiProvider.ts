@@ -1,6 +1,6 @@
-import { Chain, HttpClient } from '@liquality/client';
+import { Chain, Fee, HttpClient } from '@liquality/client';
 import { BlockNotFoundError, TxNotFoundError } from '@liquality/errors';
-import { AddressType, BigNumber, Block, FeeDetail, FeeDetails, FeeProvider, Transaction } from '@liquality/types';
+import { AddressType, BigNumber, Block, FeeDetail, FeeDetails, Transaction } from '@liquality/types';
 import { flatten } from 'lodash';
 import { BitcoinEsploraBaseProvider } from './BitcoinEsploraBaseProvider';
 import * as EsploraTypes from './types';
@@ -8,12 +8,10 @@ import * as EsploraTypes from './types';
 export class BitcoinEsploraApiProvider extends Chain<BitcoinEsploraBaseProvider> {
     private _httpClient: HttpClient;
     private _feeOptions: EsploraTypes.FeeOptions;
-    private _feeProvider: FeeProvider;
 
-    constructor(options: EsploraTypes.EsploraApiProviderOptions, feeProvider: FeeProvider, feeOptions?: EsploraTypes.FeeOptions) {
-        super(options.network, new BitcoinEsploraBaseProvider(options));
+    constructor(options: EsploraTypes.EsploraApiProviderOptions, feeProvider: Fee, feeOptions?: EsploraTypes.FeeOptions) {
+        super(options.network, new BitcoinEsploraBaseProvider(options), feeProvider);
         this._httpClient = this.provider.httpClient;
-        this._feeProvider = feeProvider;
         this._feeOptions = { slowTargetBlocks: 6, averageTargetBlocks: 3, fastTargetBlocks: 1, ...feeOptions };
     }
 
@@ -60,14 +58,14 @@ export class BitcoinEsploraApiProvider extends Chain<BitcoinEsploraBaseProvider>
     }
 
     public async getBalance(_addresses: AddressType[]): Promise<BigNumber[]> {
-        const addresses = _addresses.map(toString);
+        const addresses = _addresses.map((a) => a.toString());
         const _utxos = await this.provider.getUnspentTransactions(addresses);
         const utxos = flatten(_utxos);
         return [utxos.reduce((acc, utxo) => acc.plus(utxo.value), new BigNumber(0))];
     }
 
     async getFees(): Promise<FeeDetails> {
-        if (this._feeProvider) {
+        if (this.feeProvider) {
             return this.feeProvider.getFees();
         } else {
             const [slow, average, fast] = await Promise.all([

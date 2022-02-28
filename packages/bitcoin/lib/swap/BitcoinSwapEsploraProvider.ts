@@ -1,14 +1,14 @@
 import { HttpClient } from '@liquality/client';
 import { SwapParams, Transaction } from '@liquality/types';
 import { Transaction as BitcoinTransaction } from '../types';
-import { BitcoinBaseWallet } from '../wallet/BitcoinBaseWallet';
+import { BitcoinBaseWalletProvider } from '../wallet/BitcoinBaseWallet';
 import { BitcoinSwapBaseProvider } from './BitcoinSwapBaseProvider';
 import { BitcoinSwapProviderOptions, PaymentVariants, TransactionMatchesFunction } from './types';
 
 export class BitcoinSwapEsploraProvider extends BitcoinSwapBaseProvider {
     private _httpClient: HttpClient;
 
-    constructor(options: BitcoinSwapProviderOptions, walletProvider: BitcoinBaseWallet) {
+    constructor(options: BitcoinSwapProviderOptions, walletProvider: BitcoinBaseWalletProvider) {
         super(options, walletProvider);
         this._httpClient = new HttpClient({ baseURL: options.scraperUrl });
     }

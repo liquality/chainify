@@ -1,7 +1,7 @@
 import { Fee, HttpClient } from '@liquality/client';
 import { FeeDetails, FeeProvider } from '@liquality/types';
 
-export default class BitcoinFeeApiProvider extends Fee implements FeeProvider {
+export class BitcoinFeeApiProvider extends Fee implements FeeProvider {
     private _httpClient: HttpClient;
 
     constructor(endpoint = 'https://mempool.space/api/v1/fees/recommended') {

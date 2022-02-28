@@ -4,25 +4,24 @@ import { BIP32Interface, fromSeed } from 'bip32';
 import { mnemonicToSeed } from 'bip39';
 import { ECPair, ECPairInterface, Psbt, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message';
-import { BitcoinBaseChainProvider } from 'lib/chain/BitcoinBaseChainProvider';
-import { AddressType as BitcoinAddressType, BitcoinNetwork, Input, OutputTarget, PsbtInputTarget } from '../types';
-import { BitcoinBaseWallet } from './BitcoinBaseWallet';
+import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
+import { AddressType as BitcoinAddressType, Input, OutputTarget, PsbtInputTarget } from '../types';
+import { BitcoinBaseWalletProvider } from './BitcoinBaseWallet';
 
 interface BitcoinJsWalletProviderOptions {
-    network: BitcoinNetwork;
     mnemonic: string;
     baseDerivationPath: string;
     addressType?: BitcoinAddressType;
 }
 
-export default class BitcoinHDWalletProvider extends BitcoinBaseWallet {
+export class BitcoinHDWalletProvider extends BitcoinBaseWalletProvider {
     private _mnemonic: string;
     private _seedNode: BIP32Interface;
     private _baseDerivationNode: BIP32Interface;
 
     constructor(options: BitcoinJsWalletProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
-        const { network, mnemonic, baseDerivationPath, addressType = BitcoinAddressType.BECH32 } = options;
-        super({ network, baseDerivationPath, addressType }, chainProvider);
+        const { mnemonic, baseDerivationPath, addressType = BitcoinAddressType.BECH32 } = options;
+        super({ baseDerivationPath, addressType }, chainProvider);
 
         if (!mnemonic) {
             throw new Error('Mnemonic should not be empty');
@@ -174,7 +173,7 @@ export default class BitcoinHDWalletProvider extends BitcoinBaseWallet {
         return psbt.toBase64();
     }
 
-    protected async signBatchP2SHTransaction(
+    public async signBatchP2SHTransaction(
         inputs: [{ inputTxHex: string; index: number; vout: any; outputScript: Buffer; txInputIndex?: number }],
         addresses: string,
         tx: any,
@@ -216,7 +215,9 @@ export default class BitcoinHDWalletProvider extends BitcoinBaseWallet {
     }
 
     private async seedNode() {
-        if (this._seedNode) return this._seedNode;
+        if (this._seedNode) {
+            return this._seedNode;
+        }
 
         const seed = await mnemonicToSeed(this._mnemonic);
         this._seedNode = fromSeed(seed, this._network);

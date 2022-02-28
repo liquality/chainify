@@ -4,8 +4,8 @@ import { Address, AddressType, Asset, BigNumber, Transaction, TransactionRequest
 import { asyncSetImmediate } from '@liquality/utils';
 import { BIP32Interface } from 'bip32';
 import { payments, script } from 'bitcoinjs-lib';
-import { BitcoinBaseChainProvider } from 'lib/chain/BitcoinBaseChainProvider';
 import memoize from 'memoizee';
+import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
 import {
     AddressTxCounts,
     AddressType as BtcAddressType,
@@ -30,20 +30,18 @@ export enum AddressSearchType {
 type DerivationCache = { [index: string]: Address };
 
 interface BitcoinWalletProviderOptions {
-    network: BitcoinNetwork;
     baseDerivationPath: string;
     addressType?: BtcAddressType;
 }
 
-export abstract class BitcoinBaseWallet<T extends BitcoinBaseChainProvider = any, S = any> extends Wallet<T, S> {
+export abstract class BitcoinBaseWalletProvider<T extends BitcoinBaseChainProvider = any, S = any> extends Wallet<T, S> {
     protected _baseDerivationPath: string;
     protected _network: BitcoinNetwork;
     protected _addressType: BtcAddressType;
     protected _derivationCache: DerivationCache;
 
     constructor(options: BitcoinWalletProviderOptions, chainProvider: Chain<T>) {
-        // const options = args[0] as BitcoinWalletProviderOptions;
-        const { network, baseDerivationPath, addressType = BtcAddressType.BECH32 } = options;
+        const { baseDerivationPath, addressType = BtcAddressType.BECH32 } = options;
         const addressTypes = Object.values(BtcAddressType);
         if (!addressTypes.includes(addressType)) {
             throw new Error(`addressType must be one of ${addressTypes.join(',')}`);
@@ -52,7 +50,7 @@ export abstract class BitcoinBaseWallet<T extends BitcoinBaseChainProvider = any
         super(chainProvider);
 
         this._baseDerivationPath = baseDerivationPath;
-        this._network = network;
+        this._network = chainProvider.getNetwork() as BitcoinNetwork;
         this._addressType = addressType;
         this._derivationCache = {};
     }
@@ -65,7 +63,7 @@ export abstract class BitcoinBaseWallet<T extends BitcoinBaseChainProvider = any
     ): Promise<{ hex: string; fee: number }>;
     protected abstract buildSweepTransaction(externalChangeAddress: string, feePerByte?: number): Promise<{ hex: string; fee: number }>;
     public abstract signPSBT(data: string, inputs: PsbtInputTarget[]): Promise<string>;
-    protected abstract signBatchP2SHTransaction(
+    public abstract signBatchP2SHTransaction(
         inputs: P2SHInput[],
         addresses: string,
         tx: any,
@@ -173,17 +171,24 @@ export abstract class BitcoinBaseWallet<T extends BitcoinBaseChainProvider = any
         let index = 0;
         while (index < maxAddresses) {
             const walletAddresses = await this.getAddresses(index, addressesPerCall, change);
-            const walletAddress = walletAddresses.find((walletAddr) => addresses.find((addr) => walletAddr.address === addr));
-            if (walletAddress) return walletAddress;
+            const walletAddress = walletAddresses.find((walletAddr) => addresses.find((addr) => walletAddr.toString() === addr.toString()));
+            if (walletAddress) {
+                return walletAddress;
+            }
             index += addressesPerCall;
         }
     }
 
     public async getWalletAddress(address: string) {
         const externalAddress = await this.findAddress([address], false);
-        if (externalAddress) return externalAddress;
+        if (externalAddress) {
+            return externalAddress;
+        }
+
         const changeAddress = await this.findAddress([address], true);
-        if (changeAddress) return changeAddress;
+        if (changeAddress) {
+            return changeAddress;
+        }
 
         throw new Error('Wallet does not contain address');
     }
@@ -250,8 +255,8 @@ export abstract class BitcoinBaseWallet<T extends BitcoinBaseChainProvider = any
             const transactionCounts: AddressTxCounts = await this.chainProvider.getProvider().getAddressTransactionCounts(addrList);
 
             for (const address of addrList) {
-                const isUsed = transactionCounts[address.address] > 0;
-                const isChangeAddress = changeAddresses.find((a) => address.address === a.address);
+                const isUsed = transactionCounts[address.toString()] > 0;
+                const isChangeAddress = changeAddresses.find((a) => address.toString() === a.toString());
                 const key = isChangeAddress ? 'change' : 'external';
 
                 if (isUsed) {

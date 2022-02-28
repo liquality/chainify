@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Tests Debug",
+        "preLaunchTask": "npm: bootup",
+        "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+        "env": {
+            "TS_NODE_FILES":"true",
+        },
+        "args": [
+            "-r",
+            "ts-node/register",
+            "--timeout",
+            "999999",
+            "--colors",
+            "${workspaceFolder}/test/integration/index.ts",
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "protocol": "inspector"
+    },
+    ]
+  }

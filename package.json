@@ -35,6 +35,9 @@
     },
     "scripts": {
         "dev": "turbo run dev --parallel --no-cache",
+        "env:integration": "docker-compose -f test/integration/environment/btc/docker-compose.yaml up -d --force-recreate --renew-anon-volumes",
+        "env:integration:bootup": "sleep 10",
+        "test": "yarn env:integration && yarn env:integration:bootup && yarn test:integration",
         "test:integration": "cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --exit test/integration/index.ts",
         "build": "turbo run build --concurrency=10",
         "clean": "yarn workspaces foreach run clean && rm -rf node_modules ",

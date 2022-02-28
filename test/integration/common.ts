@@ -1,25 +1,48 @@
+import { BitcoinNetworks } from '@liquality/bitcoin';
 import { Client } from '@liquality/client';
 import { EvmNetworks } from '@liquality/evm';
 import { NearNetworks } from '@liquality/near';
-import { FeeType, SwapParams, Transaction } from '@liquality/types';
+import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
 import { sha256 } from '@liquality/utils';
 import { expect } from 'chai';
-import { EthereumClient, NearClient } from './clients';
-import { EVMConfig, NearConfig } from './config';
-import { Chain, ChainType, IConfig } from './types';
+import { BitcoinHDWalletClient, BitcoinNodeWalletClient, EthereumClient, NearClient } from './clients';
+import { BtcHdWalletConfig } from './clients/bitcoin/config';
+import { BtcNodeConfig, EVMConfig, NearConfig } from './config';
+import { Chain, ChainType, IConfig, WalletType } from './types';
 
-export const Chains: { [key in ChainType]: Chain } = {
-    [ChainType.evm]: {
-        id: 'EVM',
-        name: 'evm',
-        config: EVMConfig(EvmNetworks.ganache),
-        client: EthereumClient,
+export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain }> } = {
+    [ChainType.btc]: {
+        node: {
+            id: 'BTC',
+            name: 'btc-node-wallet',
+            config: BtcNodeConfig(BitcoinNetworks.bitcoin_regtest),
+            client: BitcoinNodeWalletClient,
+        },
+
+        hd: {
+            id: 'BTC',
+            name: 'btc-hd-wallet',
+            config: BtcHdWalletConfig(BitcoinNetworks.bitcoin_regtest),
+            client: BitcoinHDWalletClient,
+        },
     },
+
+    [ChainType.evm]: {
+        hd: {
+            id: 'EVM',
+            name: 'evm',
+            config: EVMConfig(EvmNetworks.ganache),
+            client: EthereumClient,
+        },
+    },
+
     [ChainType.near]: {
-        id: 'NEAR',
-        name: 'near',
-        config: NearConfig(NearNetworks.near_testnet),
-        client: NearClient,
+        hd: {
+            id: 'NEAR',
+            name: 'near',
+            config: NearConfig(NearNetworks.near_testnet),
+            client: NearClient,
+        },
     },
 };
 
@@ -65,15 +88,39 @@ export async function increaseTime(chain: Chain, seconds: number) {
     }
 }
 
-export async function mineBlock(chain: Chain) {
+export async function fundWallet(chain: Chain) {
+    if (chain.funded) {
+        return;
+    }
+
+    const address = await chain.client.wallet.getUnusedAddress();
+    await fundAddress(chain, address.address);
+    chain.funded = true;
+}
+
+export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
+    const { client } = chain;
     switch (chain.id) {
         case 'EVM': {
-            await chain.client.chain.sendRpcRequest('evm_mine', []);
+            await client.chain.sendRpcRequest('evm_mine', []);
             break;
         }
         case 'NEAR': {
             await sleep(10);
             break;
+        }
+        case 'BTC': {
+            const miningAddressLabel = 'miningAddress';
+            let address;
+            try {
+                // Avoid creating 100s of addresses for mining
+                const labelAddresses = await client.chain.sendRpcRequest('getaddressesbylabel', [miningAddressLabel]);
+                address = Object.keys(labelAddresses)[0];
+            } catch (e) {
+                // Label does not exist
+                address = await client.chain.sendRpcRequest('getnewaddress', [miningAddressLabel]);
+            }
+            return client.chain.sendRpcRequest('generatetoaddress', [numberOfBlocks, address]);
         }
     }
 }
@@ -117,6 +164,31 @@ export async function claimAndVerify(
     expect(secret).to.equal(foundSecret).to.equal(foundClaimTx.secret);
     expect(foundClaimTx.hash).to.equal(claimTx.hash);
     return foundClaimTx;
+}
+
+export async function fundAddress(chain: Chain, address: AddressType, value?: BigNumber) {
+    let tx: Transaction;
+    switch (chain.id) {
+        case 'BTC': {
+            const { client } = Chains.btc.node;
+            tx = await client.wallet.sendTransaction({
+                to: address,
+                value: value || new BigNumber(10 * 1e8),
+            });
+        }
+    }
+
+    await mineBlock(chain);
+    await sleep(1);
+    return tx;
+}
+
+export async function getNewAddress(chain: Chain, _refund = false): Promise<Address> {
+    switch (chain.id) {
+        default: {
+            return chain.client.wallet.getUnusedAddress();
+        }
+    }
 }
 
 export const retry = async <T>(method: () => Promise<T>, startWaitTime = 0.5, waitBackoff = 2, retryNumber = 5) => {

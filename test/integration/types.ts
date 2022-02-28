@@ -2,29 +2,40 @@ import { Client } from '@liquality/client';
 import { Asset, BigNumber, Network } from '@liquality/types';
 
 export interface IConfig {
-    walletOptions: Record<string, any>;
-    walletExpectedResult: {
-        address: string;
-        privateKey: string;
-        signedMessage: string;
+    network: Network;
+    walletOptions?: Record<string, any>;
+    chainOptions?: Record<string, any>;
+    walletExpectedResult?: {
+        address?: string;
+        privateKey?: string;
+        privateKeyRegex?: RegExp;
+        signedMessage?: string;
+        unusedAddress?: string;
+        numberOfUsedAddresses?: number;
     };
-    swapOptions: {
+    swapOptions?: {
         contractAddress: string;
     };
     swapParams: {
-        value: BigNumber;
+        value?: BigNumber;
     };
     sendParams: {
-        value: BigNumber;
+        value?: BigNumber;
     };
-    assets: Asset[];
-    recipientAddress: string;
+    assets?: Asset[];
+    recipientAddress?: string;
     multicallAddress?: string;
 }
 
 export enum ChainType {
+    btc = 'btc',
     evm = 'evm',
     near = 'near',
+}
+
+export enum WalletType {
+    hd = 'hd',
+    node = 'node',
 }
 
 export interface Chain {

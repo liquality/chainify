@@ -1167,6 +1167,7 @@ __metadata:
     bip32: 2.0.6
     bitcoinjs-lib: 5.2.0
     bitcoinjs-message: 2.2.0
+    coinselect: ^3.1.12
     lodash: ^4.17.21
     memoizee: ^0.4.15
   languageName: unknown
@@ -1176,6 +1177,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/client@workspace:packages/client"
   dependencies:
+    "@ethersproject/logger": ^5.5.0
     "@ethersproject/sha2": ^5.5.0
     "@liquality/errors": "workspace:*"
     "@liquality/types": "workspace:*"
@@ -1323,6 +1325,7 @@ __metadata:
     "@liquality/errors": "workspace:*"
     "@liquality/types": "workspace:*"
     "@types/setimmediate": ^1.0.2
+    crypto-hashing: ^1.0.0
   languageName: unknown
   linkType: soft
 
@@ -4803,6 +4806,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"coinselect@npm:^3.1.12":
+  version: 3.1.12
+  resolution: "coinselect@npm:3.1.12"
+  checksum: 8628f43e22c612171196c3b1c934158d1e16df29982134d8d771e65f68df033588c2608253155c2d614380a62e8756c9db1f1c3a0b4c872406bfba5ca9377be6
+  languageName: node
+  linkType: hard
+
 "collection-visit@npm:^1.0.0":
   version: 1.0.0
   resolution: "collection-visit@npm:1.0.0"
@@ -5364,6 +5374,15 @@ __metadata:
     randombytes: ^2.0.0
     randomfill: ^1.0.3
   checksum: c1609af82605474262f3eaa07daa0b2140026bd264ab316d4bf1170272570dbe02f0c49e29407fe0d3634f96c507c27a19a6765fb856fed854a625f9d15618e2
+  languageName: node
+  linkType: hard
+
+"crypto-hashing@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "crypto-hashing@npm:1.0.0"
+  dependencies:
+    create-hash: ^1.1.2
+  checksum: f000f9acbfe2312ce0542b122619f0dce93422ded002f67c14a25a3dc5a7193361976e4bb3aa999fd8242cf4cdbc8674374ecbd6c96f6f2a84d5fcaea5e69ca3
   languageName: node
   linkType: hard
 
