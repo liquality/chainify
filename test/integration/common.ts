@@ -71,19 +71,32 @@ export async function getSwapParams(client: Client, config: IConfig, expiryInSec
     };
 }
 
-export async function increaseTime(chain: Chain, seconds: number) {
+export async function increaseTime(chain: Chain, timestamp: number) {
     switch (chain.id) {
         case 'EVM': {
-            await chain.client.chain.sendRpcRequest('evm_increaseTime', [seconds]);
+            await chain.client.chain.sendRpcRequest('evm_increaseTime', [timestamp]);
             await chain.client.chain.sendRpcRequest('evm_mine', []);
             break;
         }
 
         case 'NEAR': {
             const currentTime = Math.round(Date.now() / 1000);
-            const sleepAmount = seconds - currentTime;
+            const sleepAmount = timestamp - currentTime;
             await sleep(sleepAmount > 0 ? sleepAmount : 1);
             break;
+        }
+
+        case 'BTC': {
+            const maxNumberOfBlocks = 100;
+            for (let i = 0; i < maxNumberOfBlocks; i++) {
+                const blockHeight = await chain.client.chain.getBlockHeight();
+                const block = await chain.client.chain.getBlockByNumber(blockHeight);
+                if (block.timestamp > timestamp) {
+                    break;
+                }
+                await mineBlock(chain);
+                await sleep(1);
+            }
         }
     }
 }
@@ -160,7 +173,7 @@ export async function claimAndVerify(
     const currentBlock = await chain.client.chain.getBlockHeight();
     const foundClaimTx = await findClaimSwapTransaction(chain, swapParams, initiationTxId, Number(currentBlock.toString()));
     expect(foundClaimTx.hash).to.equal(claimTx.hash);
-    const foundSecret = await chain.client.swap.getSwapSecret(foundClaimTx.hash);
+    const foundSecret = await chain.client.swap.getSwapSecret(foundClaimTx.hash, initiationTxId);
     expect(secret).to.equal(foundSecret).to.equal(foundClaimTx.secret);
     expect(foundClaimTx.hash).to.equal(claimTx.hash);
     return foundClaimTx;

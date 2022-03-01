@@ -30,8 +30,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
         includeTx = false
     ): Promise<Block<EthersBlock | EthersBlockWithTransactions, EthersTransactionResponse>> {
         if (!blockNumber) {
-            const latestBlock = await this.getBlockHeight();
-            return this._getBlock(latestBlock, includeTx);
+            blockNumber = await this.getBlockHeight();
         }
         return this._getBlock(blockNumber, includeTx);
     }

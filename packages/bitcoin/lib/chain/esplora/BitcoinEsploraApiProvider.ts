@@ -45,6 +45,9 @@ export class BitcoinEsploraApiProvider extends Chain<BitcoinEsploraBaseProvider>
     }
 
     public async getBlockByNumber(blockNumber?: number): Promise<Block<any, any>> {
+        if (!blockNumber) {
+            blockNumber = await this.getBlockHeight();
+        }
         return this.getBlockByHash(await this._getBlockHash(blockNumber));
     }
 

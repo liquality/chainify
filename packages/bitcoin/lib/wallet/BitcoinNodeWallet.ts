@@ -8,6 +8,7 @@ import { AddressGrouping, AddressInfo, ReceivedByAddress } from '../chain/jsonRp
 import { BitcoinNetworks } from '../networks';
 import { AddressType as BitcoinAddressType, BitcoinNetwork, PsbtInputTarget, Transaction as BitcoinTransaction } from '../types';
 import { decodeRawTransaction, normalizeTransactionObject } from '../utils';
+import { IBitcoinWallet } from './IBitcoinWallet';
 
 const BIP70_CHAIN_TO_NETWORK: { [index: string]: BitcoinNetwork } = {
     main: BitcoinNetworks.bitcoin,
@@ -19,7 +20,7 @@ interface BitcoinNodeWalletOptions {
     addressType?: BitcoinAddressType;
 }
 
-export class BitcoinNodeWalletProvider extends Wallet<any, any> {
+export class BitcoinNodeWalletProvider extends Wallet<any, any> implements IBitcoinWallet<BitcoinBaseChainProvider> {
     private _addressType: BitcoinAddressType;
     private _network: BitcoinNetwork;
     private _addressInfoCache: { [key: string]: Address };

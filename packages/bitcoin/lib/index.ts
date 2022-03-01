@@ -10,6 +10,7 @@ export { BitcoinFeeApiProvider } from './fee/BitcoinFeeApiProvider';
 export { BitcoinNetworks } from './networks';
 export { BitcoinSwapBaseProvider } from './swap/BitcoinSwapBaseProvider';
 export { BitcoinSwapEsploraProvider } from './swap/BitcoinSwapEsploraProvider';
+export { BitcoinSwapRpcProvider } from './swap/BitcoinSwapRpcProvider';
 export * as BitcoinSwapTypes from './swap/types';
 export * as BitcoinTypes from './types';
 export * as BitcoinUtils from './utils';

@@ -65,7 +65,7 @@ export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = a
     public abstract refundSwap(swapParams: SwapParams, initTx: string, fee?: FeeType): Promise<Transaction>;
     public abstract findRefundSwapTransaction(swapParams: SwapParams, initiationTxHash: string, blockNumber?: number): Promise<Transaction>;
 
-    public abstract getSwapSecret(claimTxHash: string): Promise<string>;
+    public abstract getSwapSecret(claimTxHash: string, initTxHash?: string): Promise<string>;
 
     public abstract canUpdateFee(): boolean;
     public abstract updateTransactionFee(tx: string | Transaction, newFee: FeeType): Promise<Transaction>;
