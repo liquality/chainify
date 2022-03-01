@@ -66,7 +66,7 @@ export interface SwapProvider {
      * @param {!string} transaction hash - transaction hash of claim.
      * @return {Promise<string>} Resolves with secret
      */
-    getSwapSecret(claimTxHash: string): Promise<string>;
+    getSwapSecret(claimTxHash: string, initTxHash?: string): Promise<string>;
 
     /**
      * Initiate a swap

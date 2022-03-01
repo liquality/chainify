@@ -64,6 +64,10 @@ export class BitcoinJsonRpcProvider extends Chain<BitcoinJsonRpcBaseProvider> {
     }
 
     public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<any, any>> {
+        if (!blockNumber) {
+            blockNumber = await this.getBlockHeight();
+        }
+
         let blockHash;
 
         try {

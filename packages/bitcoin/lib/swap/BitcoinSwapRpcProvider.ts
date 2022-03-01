@@ -1,0 +1,19 @@
+import { SwapParams, Transaction } from '@liquality/types';
+import { BitcoinBaseChainProvider } from 'lib';
+import { Transaction as BitcoinTransaction } from '../types';
+import { IBitcoinWallet } from '../wallet/IBitcoinWallet';
+import { BitcoinSwapBaseProvider } from './BitcoinSwapBaseProvider';
+import { BitcoinSwapProviderOptions } from './types';
+
+export class BitcoinSwapRpcProvider extends BitcoinSwapBaseProvider {
+    constructor(options: BitcoinSwapProviderOptions, walletProvider: IBitcoinWallet<BitcoinBaseChainProvider>) {
+        super(options, walletProvider);
+    }
+
+    async findSwapTransaction(_swapParams: SwapParams, blockNumber: number, predicate: (tx: Transaction<BitcoinTransaction>) => boolean) {
+        // TODO: Are mempool TXs possible?
+        const block = await this.walletProvider.getChainProvider().getBlockByNumber(blockNumber, true);
+        const swapTransaction = block.transactions.find(predicate);
+        return swapTransaction;
+    }
+}

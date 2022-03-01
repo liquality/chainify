@@ -7,6 +7,7 @@ import { signAsync as signBitcoinMessage } from 'bitcoinjs-message';
 import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
 import { AddressType as BitcoinAddressType, Input, OutputTarget, PsbtInputTarget } from '../types';
 import { BitcoinBaseWalletProvider } from './BitcoinBaseWallet';
+import { IBitcoinWallet } from './IBitcoinWallet';
 
 interface BitcoinJsWalletProviderOptions {
     mnemonic: string;
@@ -14,7 +15,7 @@ interface BitcoinJsWalletProviderOptions {
     addressType?: BitcoinAddressType;
 }
 
-export class BitcoinHDWalletProvider extends BitcoinBaseWalletProvider {
+export class BitcoinHDWalletProvider extends BitcoinBaseWalletProvider implements IBitcoinWallet<BitcoinBaseChainProvider> {
     private _mnemonic: string;
     private _seedNode: BIP32Interface;
     private _baseDerivationNode: BIP32Interface;

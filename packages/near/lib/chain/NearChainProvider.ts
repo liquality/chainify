@@ -19,8 +19,7 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
 
     public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockResult, Transaction>> {
         if (!blockNumber) {
-            const latestBlock = await this.getBlockHeight();
-            return this._getBlockById(latestBlock, includeTx);
+            blockNumber = await this.getBlockHeight();
         }
         return this._getBlockById(blockNumber, includeTx);
     }

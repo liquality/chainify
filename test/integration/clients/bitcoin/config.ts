@@ -29,6 +29,8 @@ export const BtcHdWalletConfig = (network: Network): IConfig => {
             signedMessage:
                 '1f1281bcdb0d97ee722634b78bc1c95b336f5cce25e143e95e7c14db2aba565cd549be7e9a3063a30e5edac6f2a7eae17747d5ed0ffb09748dc7e567c45384f9bb',
         },
+
+        recipientAddress: 'bcrt1qa558ru7wyls34j6tnedtkmhfjgazwsk4l3sgac',
     };
 };
 

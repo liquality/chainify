@@ -1,6 +1,7 @@
 import { assign } from 'lodash';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains, fundAddress } from '../../common';
+import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
 import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
 import { shouldBehaveLikeBitcoinTransaction } from './behaviors/transactions.behavior';
 import { shouldBehaveLikeBitcoinWallet } from './behaviors/wallet.behavior';
@@ -15,6 +16,7 @@ export function shouldBehaveLikeBitcoinClient() {
         });
         shouldBehaveLikeChainProvider(Chains.btc.hd);
         shouldBehaveLikeWalletProvider(Chains.btc.hd);
+        shouldBehaveLikeSwapProvider(Chains.btc.hd);
         shouldBehaveLikeBitcoinWallet(Chains.btc.hd);
         shouldBehaveLikeBitcoinTransaction(Chains.btc.hd);
     });
@@ -33,6 +35,7 @@ export function shouldBehaveLikeBitcoinClient() {
         });
         shouldBehaveLikeChainProvider(Chains.btc.node);
         shouldBehaveLikeWalletProvider(Chains.btc.node);
+        shouldBehaveLikeSwapProvider(Chains.btc.node);
         shouldBehaveLikeBitcoinTransaction(Chains.btc.node);
     });
 }

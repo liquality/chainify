@@ -12,14 +12,14 @@ import {
     validateAddress,
     witnessStackToScriptWitness,
 } from '../utils';
-import { BitcoinBaseWalletProvider } from '../wallet/BitcoinBaseWallet';
+import { IBitcoinWallet } from '../wallet/IBitcoinWallet';
 import { BitcoinSwapProviderOptions, TransactionMatchesFunction } from './types';
 
-export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvider, null, BitcoinBaseWalletProvider> {
+export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvider, null, IBitcoinWallet<BitcoinBaseChainProvider>> {
     protected _network: BitcoinNetwork;
     protected _mode: SwapMode;
 
-    constructor(options: BitcoinSwapProviderOptions, walletProvider: BitcoinBaseWalletProvider) {
+    constructor(options: BitcoinSwapProviderOptions, walletProvider: IBitcoinWallet<BitcoinBaseChainProvider>) {
         super(walletProvider);
         const { network, mode = SwapMode.P2WSH } = options;
         const swapModes = Object.values(SwapMode);
@@ -71,8 +71,20 @@ export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvi
         );
     }
 
-    public async getSwapSecret(_claimTxHash: string): Promise<string> {
-        throw new Error('Method not implemented.');
+    public async getSwapSecret(claimTxHash: string, initTxHash: string): Promise<string> {
+        const claimSwapTransaction: Transaction<BitcoinTransaction> = await this.walletProvider
+            .getChainProvider()
+            .getTransactionByHash(claimTxHash);
+
+        if (claimSwapTransaction) {
+            const swapInput = claimSwapTransaction._raw.vin.find((vin) => vin.txid === initTxHash);
+            if (!swapInput) {
+                throw new Error('Claim input missing');
+            }
+            const inputScript = this.getInputScript(swapInput);
+            const secret = inputScript[2] as string;
+            return secret;
+        }
     }
 
     public async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string, blockNumber?: number): Promise<Transaction<any>> {

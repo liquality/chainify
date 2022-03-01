@@ -1,7 +1,6 @@
 import { expect } from 'chai';
-
+import { claimAndVerify, getSwapParams, increaseTime, initiateAndVerify, refundAndVerify } from '../common';
 import { Chain } from '../types';
-import { getSwapParams, increaseTime, initiateAndVerify, claimAndVerify, refundAndVerify } from '../common';
 
 export function shouldBehaveLikeSwapProvider(chain: Chain) {
     const { client, config } = chain;
@@ -103,6 +102,15 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
                 // Refund and verify
                 await increaseTime(chain, swapParams.expiration + 10);
                 await refundAndVerify(chain, swapParams, initTx.hash);
+                await expect(refundAndVerify(chain, swapParams, initTx.hash)).to.be.rejected;
+            });
+
+            it('should not allow refunding before expiration', async () => {
+                // Initiate
+                const { swapParams } = await getSwapParams(client, config, 1000);
+                const initTx = await initiateAndVerify(chain, swapParams);
+
+                // Refund and reject
                 await expect(refundAndVerify(chain, swapParams, initTx.hash)).to.be.rejected;
             });
         });

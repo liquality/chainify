@@ -13,7 +13,17 @@ export class BitcoinSwapEsploraProvider extends BitcoinSwapBaseProvider {
         this._httpClient = new HttpClient({ baseURL: options.scraperUrl });
     }
 
-    async findAddressTransaction(address: string, currentHeight: number, predicate: TransactionMatchesFunction) {
+    public async findSwapTransaction(swapParams: SwapParams, _blockNumber: number, predicate: TransactionMatchesFunction) {
+        const currentHeight: number = await this.walletProvider.getChainProvider().getBlockHeight();
+        const swapOutput: Buffer = this.getSwapOutput(swapParams);
+        const paymentVariants: PaymentVariants = this.getSwapPaymentVariants(swapOutput);
+        for (const paymentVariant of Object.values(paymentVariants)) {
+            const addressTransaction = this.findAddressTransaction(paymentVariant.address, currentHeight, predicate);
+            if (addressTransaction) return addressTransaction;
+        }
+    }
+
+    private async findAddressTransaction(address: string, currentHeight: number, predicate: TransactionMatchesFunction) {
         // TODO: This does not go through pages as swap addresses have at most 2 transactions
         // Investigate whether retrieving more transactions is required.
         const transactions = await this._httpClient.nodeGet(`/address/${address}/txs`);
@@ -26,16 +36,6 @@ export class BitcoinSwapEsploraProvider extends BitcoinSwapBaseProvider {
             if (predicate(formattedTransaction)) {
                 return formattedTransaction;
             }
-        }
-    }
-
-    async findSwapTransaction(swapParams: SwapParams, blockNumber: number, predicate: TransactionMatchesFunction) {
-        const currentHeight: number = await this.walletProvider.getChainProvider().getBlockHeight();
-        const swapOutput: Buffer = this.getSwapOutput(swapParams);
-        const paymentVariants: PaymentVariants = this.getSwapPaymentVariants(swapOutput);
-        for (const paymentVariant of Object.values(paymentVariants)) {
-            const addressTransaction = this.findAddressTransaction(paymentVariant.address, currentHeight, predicate);
-            if (addressTransaction) return addressTransaction;
         }
     }
 }
