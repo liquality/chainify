@@ -16,6 +16,7 @@ export type AssetType = 'native' | 'erc20';
 
 export interface Asset {
     name: string;
+    code: string;
     chain: ChainId;
     isNative: boolean;
     type: AssetType;

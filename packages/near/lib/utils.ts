@@ -35,6 +35,7 @@ export function parseTxResponse(response: NearTxResponse, blockNumber?: number, 
         to: tx.receiver_id,
         from: tx.signer_id,
         value: parsedActions.value || 0,
+        secret: parsedActions.htlc?.secret,
         _raw: parsedActions,
     };
 
