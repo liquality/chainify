@@ -37,14 +37,16 @@ export const EVMConfig = (network: Network): IConfig => {
 
         assets: [
             {
-                name: 'ETH',
+                name: 'Ethereum',
+                code: 'ETH',
                 chain: ChainId.Ethereum,
                 isNative: true,
                 type: 'native',
                 decimals: 18,
             },
             {
-                name: 'TT',
+                name: 'TestToken',
+                code: 'TT',
                 chain: ChainId.Ethereum,
                 isNative: false,
                 type: 'erc20',

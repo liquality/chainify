@@ -37,6 +37,7 @@ export const NearConfig = (network: Network): IConfig => {
         assets: [
             {
                 name: 'Near',
+                code: 'Near',
                 chain: ChainId.Near,
                 isNative: true,
                 type: 'native',

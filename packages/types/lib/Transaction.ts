@@ -7,6 +7,8 @@ export interface Transaction<TransactionType = any> {
     hash: string;
     // The value of the transaction
     value: number;
+    // The asset send in the transaction
+    valueAsset?: string;
     // transaction recipient
     to?: AddressType;
     // transaction sender
@@ -27,6 +29,8 @@ export interface Transaction<TransactionType = any> {
     feePrice?: number;
     // The total fee paid for the transaction
     fee?: number;
+    // The asset code used to pay the tx fee
+    feeAssetCode?: string;
     // The raw transaction object
     _raw: TransactionType;
     // The transaction logs/events
@@ -42,6 +46,7 @@ export enum TxStatus {
 
 export type TransactionRequest = {
     asset?: Asset;
+    feeAsset?: Asset;
     to?: AddressType;
     data?: string;
     value?: BigNumber;

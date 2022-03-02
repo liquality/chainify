@@ -11,6 +11,7 @@
         "commitlint",
         "eslintignore",
         "Liquality",
+        "luxon",
         "memoizee",
         "Multicall",
         "prettierrc",

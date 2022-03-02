@@ -45,7 +45,8 @@ const CommonBtcConfig = (network: Network): Partial<IConfig> => {
         },
         assets: [
             {
-                name: 'BTC',
+                name: 'Bitcoin',
+                code: 'BTC',
                 chain: ChainId.Bitcoin,
                 isNative: true,
                 type: 'native',

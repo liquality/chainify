@@ -2,12 +2,13 @@ import { BitcoinNetworks } from '@liquality/bitcoin';
 import { Client } from '@liquality/client';
 import { EvmNetworks } from '@liquality/evm';
 import { NearNetworks } from '@liquality/near';
+import { TerraNetworks } from '@liquality/terra';
 import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
 import { sha256 } from '@liquality/utils';
 import { expect } from 'chai';
-import { BitcoinHDWalletClient, BitcoinNodeWalletClient, EthereumClient, NearClient } from './clients';
+import { BitcoinHDWalletClient, BitcoinNodeWalletClient, EthereumClient, NearClient, TerraClient } from './clients';
 import { BtcHdWalletConfig } from './clients/bitcoin/config';
-import { BtcNodeConfig, EVMConfig, NearConfig } from './config';
+import { BtcNodeConfig, EVMConfig, NearConfig, TerraConfig } from './config';
 import { Chain, ChainType, IConfig, WalletType } from './types';
 
 export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain }> } = {
@@ -42,6 +43,15 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             name: 'near',
             config: NearConfig(NearNetworks.near_testnet),
             client: NearClient,
+        },
+    },
+
+    [ChainType.terra]: {
+        hd: {
+            id: 'TERRA',
+            name: 'terra',
+            config: TerraConfig(TerraNetworks.terra_testnet),
+            client: TerraClient,
         },
     },
 };
