@@ -43,7 +43,8 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
   async claimSwap(
     swapParams: SwapParams,
     initiationTxHash: string,
-    secret: string
+    secret: string,
+    fee: number
   ): Promise<Transaction<terra.InputTransaction>> {
     validateSecretAndHash(secret, swapParams.secretHash)
 
@@ -57,14 +58,19 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
 
     const transaction = await this.getMethod('sendTransaction')({
       data: {
-        msgs: [executeContractMsg]
+        msgs: [executeContractMsg],
+        fee
       }
     })
 
     return transaction
   }
 
-  async refundSwap(swapParams: SwapParams, initiationTxHash: string): Promise<Transaction<terra.InputTransaction>> {
+  async refundSwap(
+    swapParams: SwapParams,
+    initiationTxHash: string,
+    fee: number
+  ): Promise<Transaction<terra.InputTransaction>> {
     await this.verifyInitiateSwapTransaction(swapParams, initiationTxHash)
 
     const initTx = await this.getMethod('getTransactionByHash')(initiationTxHash)
@@ -75,7 +81,8 @@ export default class TerraSwapProvider extends Provider implements Partial<SwapP
 
     const transaction = await this.getMethod('sendTransaction')({
       data: {
-        msgs: [executeContractMsg]
+        msgs: [executeContractMsg],
+        fee
       }
     })
 
