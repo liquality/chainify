@@ -1,11 +1,36 @@
+import { Client } from '@liquality/client';
+import { TerraWalletProvider } from '@liquality/terra';
+import { shouldBehaveLikeWalletProvider } from 'integration/wallet/wallet.test';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
 
 export function shouldBehaveLikeTerraClient() {
+    before('Send funds to Terra sender', async () => {
+        const { client, config } = Chains.terra.hd;
+        const tempClient = new Client(
+            client.chain,
+            new TerraWalletProvider(client.chain, {
+                ...(config.walletOptions as any),
+                mnemonic:
+                    'avoid void grid scare guard biology gaze system wine undo tomorrow evoke noble salon income juice stumble myth debate praise kind reflect ketchup fossil',
+            })
+        );
+
+        const terraBalance = (await tempClient.wallet.getBalance(config.assets))[0];
+        if (terraBalance.gt(config.swapParams.value)) {
+            await tempClient.wallet.sendTransaction({
+                to: await client.wallet.getAddress(),
+                value: terraBalance.minus(config.swapParams.value),
+                asset: config.assets.find((a) => a.isNative),
+                feeAsset: config.sendParams.feeAsset,
+            });
+        }
+    });
+
     describe('Terra Client - HD Wallet', () => {
         const chain = Chains.terra.hd;
         shouldBehaveLikeChainProvider(chain);
-        // shouldBehaveLikeWalletProvider(chain);
+        shouldBehaveLikeWalletProvider(chain);
         // shouldBehaveLikeSwapProvider(chain);
     });
 }

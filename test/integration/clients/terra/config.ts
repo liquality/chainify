@@ -1,4 +1,4 @@
-import { BigNumber, ChainId, Network } from '@liquality/types';
+import { Asset, BigNumber, ChainId, Network } from '@liquality/types';
 import { IConfig } from '../../types';
 
 export const TerraConfig = (network: Network): IConfig => {
@@ -6,13 +6,16 @@ export const TerraConfig = (network: Network): IConfig => {
         network,
 
         walletOptions: {
-            mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
-            derivationPath: `m/44'/${network.coinType}'/`,
+            mnemonic:
+                'fury motion step civil horn snake engine wage honey already interest fall property nephew jeans true moment weasel village then upset avocado wheat write',
+            derivationPath: `m/44'/${network.coinType}'/0'/0/`,
             index: '0',
         },
 
         walletExpectedResult: {
-            address: 'terra1h5g5ma20tpl828wc2g45pj8x6464cemteqmxl7',
+            address: 'terra156c6y66lqp7xe9x3hvl3uf0szl7ek44ferg4sg',
+            numberOfUsedAddresses: 1,
+            privateKey: '9977cb9d096ad0287d36bf00a67293ac4cf0dc7b9633837ca6383575f93fd888',
         },
 
         swapOptions: {
@@ -24,28 +27,31 @@ export const TerraConfig = (network: Network): IConfig => {
         },
 
         sendParams: {
-            value: new BigNumber(1),
+            value: new BigNumber(5000000),
+            feeAsset: terraAssets[0],
         },
 
-        recipientAddress: null,
+        recipientAddress: 'terra10c9wv2symnwq72yh8v9xg7ddkcugxq08nhskx9',
 
-        assets: [
-            {
-                name: 'Luna',
-                code: 'LUNA',
-                chain: ChainId.Terra,
-                isNative: true,
-                type: 'native',
-                decimals: 6,
-            },
-            {
-                name: 'TerraUSD',
-                code: 'USTTTT',
-                chain: ChainId.Terra,
-                isNative: true,
-                type: 'native',
-                decimals: 6,
-            },
-        ],
+        assets: terraAssets,
     };
 };
+
+const terraAssets = [
+    {
+        name: 'Luna',
+        code: 'LUNA',
+        chain: ChainId.Terra,
+        isNative: true,
+        type: 'native',
+        decimals: 6,
+    },
+    {
+        name: 'TerraUSD',
+        code: 'UST',
+        chain: ChainId.Terra,
+        isNative: true,
+        type: 'native',
+        decimals: 6,
+    },
+] as Asset[];

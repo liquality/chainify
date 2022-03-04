@@ -14,35 +14,39 @@ import {
     MsgExecuteContract,
     MsgSend,
     Tx,
-    TxInfo,
     Wallet as TerraWallet,
 } from '@terra-money/terra.js';
 import { TerraChainProvider } from '..';
 import { assetCodeToDenom, DEFAULT_GAS_ADJUSTMENT } from '../constants';
-import { TerraNetwork, TerraTxRequest } from '../types';
+import { TerraNetwork, TerraTxInfo, TerraTxRequest } from '../types';
 
 interface TerraWalletProviderOptions {
     mnemonic: string;
     baseDerivationPath: string;
+    index: string;
+    gasAdjustment?: number;
 }
 
-export default class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
+export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
     protected signer: MnemonicKey;
 
     private _baseDerivationPath: string;
     private _mnemonic: string;
     private _addressCache: { [key: string]: Address };
     private _wallet: TerraWallet;
+    private _gasAdjustment: number;
 
     constructor(chainProvider: TerraChainProvider, options: TerraWalletProviderOptions) {
-        const { mnemonic, baseDerivationPath } = options;
+        const { mnemonic, baseDerivationPath, gasAdjustment } = options;
         super(chainProvider);
         this.signer = new MnemonicKey({ mnemonic });
 
-        this._baseDerivationPath = baseDerivationPath;
+        // m/44'/${network.coinType}'/0'/0/${index}`
+        this._baseDerivationPath = baseDerivationPath + options.index;
         this._mnemonic = mnemonic;
         this._addressCache = {};
         this._wallet = this.getChainProvider().getProvider().wallet(this.signer);
+        this._gasAdjustment = gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
     }
 
     public async exportPrivateKey() {
@@ -67,7 +71,7 @@ export default class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> 
 
         const result = new Address({
             address: wallet.accAddress,
-            derivationPath: this._baseDerivationPath + `/0/0`,
+            derivationPath: this._baseDerivationPath,
             publicKey: wallet.publicKey.pubkeyAddress(),
         });
 
@@ -93,14 +97,13 @@ export default class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> 
         return this.chainProvider.getNetwork() as TerraNetwork;
     }
 
-    public async sendTransaction(txRequest: TerraTxRequest): Promise<Transaction<TxInfo>> {
-        // handle contract calls
-        if (txRequest.msgs) {
-            //
-        }
+    public async sendTransaction(txRequest: TerraTxRequest): Promise<Transaction<TerraTxInfo>> {
         // handle value transfers
-        else {
+
+        if (!txRequest.msgs) {
             txRequest.msgs = this.createSendMessage(txRequest);
+        } else {
+            // handle contract calls
         }
 
         const terraTx = await this.buildTransaction(txRequest);
@@ -108,7 +111,7 @@ export default class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> 
         return await this.broadcastTx(signedTx);
     }
 
-    public async sendSweepTransaction(address: string | Address, asset: Asset): Promise<Transaction<TxInfo>> {
+    public async sendSweepTransaction(address: string | Address, asset: Asset): Promise<Transaction<TerraTxInfo>> {
         const addresses = await this.getAddresses();
         const balance = await this.chainProvider.getBalance(addresses, [asset]);
         return await this.sendTransaction({ to: address, value: balance[0] });
@@ -141,7 +144,7 @@ export default class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> 
         const recipient = txRequest.to.toString();
 
         // handle UST & Luna
-        if (!txRequest.asset.isNative) {
+        if (txRequest.asset.isNative) {
             return [
                 new MsgSend(this.signer.accAddress, recipient, {
                     [assetCodeToDenom[txRequest.asset.code]]: txRequest.value.toNumber(),
@@ -161,12 +164,12 @@ export default class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> 
         }
     }
 
-    private async broadcastTx(tx: Tx): Promise<Transaction<TxInfo>> {
+    private async broadcastTx(tx: Tx): Promise<Transaction<TerraTxInfo>> {
         const provider: LCDClient = this.chainProvider.getProvider();
         const txResult = await provider.tx.broadcastSync(tx);
 
         // exponential backoff => total of 31 seconds
-        const txReceipt = await retry<Transaction<TxInfo>>(
+        const txReceipt = await retry<Transaction<TerraTxInfo>>(
             async () => this.chainProvider.getTransactionByHash(txResult.txhash),
             1000,
             2,
@@ -191,9 +194,14 @@ export default class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> 
         };
         /* simulation: estimate gas */
         const simulatedTx = await this._wallet.createTx(terraTx);
-        const estimatedGas = Math.ceil(simulatedTx.auth_info.fee.gas_limit * DEFAULT_GAS_ADJUSTMENT);
-        const feeAmount = new BigNumber(estimatedGas).times(Number(txRequest.fee)).integerValue(BigNumber.ROUND_CEIL).toString();
-        const terraFee = new Fee(estimatedGas, new Coins([Coin.fromData({ amount: feeAmount, denom: feeDenom })]));
-        return { ...terraTx, fee: terraFee };
+        const estimatedGas = Math.ceil(simulatedTx.auth_info.fee.gas_limit * this._gasAdjustment);
+
+        if (txRequest.fee) {
+            const feeAmount = new BigNumber(estimatedGas).times(Number(txRequest.fee)).integerValue(BigNumber.ROUND_CEIL).toString();
+            const terraFee = new Fee(estimatedGas, new Coins([Coin.fromData({ amount: feeAmount, denom: feeDenom })]));
+            return { ...terraTx, fee: terraFee };
+        }
+
+        return terraTx;
     }
 }

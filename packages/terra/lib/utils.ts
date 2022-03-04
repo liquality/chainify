@@ -1,21 +1,11 @@
 import { Block, Transaction, TxStatus } from '@liquality/types';
 import { BlockInfo, isTxError, MsgExecuteContract, MsgInstantiateContract, MsgSend, TxInfo } from '@terra-money/terra.js';
+import { get } from 'lodash';
 import { DateTime } from 'luxon';
+import { TerraHTLC, TerraTxInfo } from './types';
 
 interface ExecuteMsg {
     [key: string]: any;
-}
-
-interface HTLC {
-    buyer: string;
-    seller: string;
-    expiration: number;
-    value: number;
-    secret_hash: string;
-}
-interface TerraTxInfo extends TxInfo {
-    htlc?: HTLC;
-    initMsg?: any;
 }
 
 export function parseBlockResponse(data: BlockInfo): Block {
@@ -51,14 +41,18 @@ export function parseTxResponse(data: TxInfo, currentBlock: number): Transaction
     const msg = data.tx.body?.messages?.[0];
     // Initiate swap
     if (msg instanceof MsgInstantiateContract) {
-        const init = msg.init_msg as HTLC;
-        // init htlc
+        const init = msg.init_msg as TerraHTLC;
+        // TODO: is this the best way to get the contract address?
+        result.to = get(data, 'logs[0].eventsByType.instantiate_contract.contract_address[0]', null);
+        result.value = Number(msg.init_coins?.toAmino()?.[0].amount);
+
+        // htlc init msg
         if (init.buyer && init.expiration && init.secret_hash && init.seller && init.value) {
-            result._raw.htlc = init;
+            result._raw.htlc = { ...init, code_id: msg.code_id };
         }
         // any other deploy tx
         else {
-            result._raw.initMsg = init;
+            result._raw.initMsg = { ...init, code_id: msg.code_id };
         }
     }
     // Claim & Refund & Transfer ERC20
