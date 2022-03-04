@@ -1,8 +1,8 @@
 import { Client } from '@liquality/client';
 import { TerraWalletProvider } from '@liquality/terra';
-import { shouldBehaveLikeWalletProvider } from 'integration/wallet/wallet.test';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
+import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
 
 export function shouldBehaveLikeTerraClient() {
     before('Send funds to Terra sender', async () => {

@@ -35,7 +35,7 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
         it('should fetch transaction data', async () => {
             const blockHeight = await client.chain.getBlockHeight();
 
-            const blockByNumber = await client.chain.getBlockByNumber(Number(blockHeight) - 5, true);
+            const blockByNumber = await client.chain.getBlockByNumber(Number(blockHeight) - 10, true);
             for (const tx of blockByNumber.transactions) {
                 const receipt = await client.chain.getTransactionByHash(tx.hash);
                 expect(Math.gte(receipt.confirmations, 1)).to.be.true;
