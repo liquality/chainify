@@ -21,8 +21,9 @@ export interface IConfig {
     };
     sendParams: {
         value?: BigNumber;
+        feeAsset?: Asset;
     };
-    assets?: Asset[];
+    assets: Asset[];
     recipientAddress?: string;
     multicallAddress?: string;
 }

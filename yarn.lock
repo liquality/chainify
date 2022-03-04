@@ -1309,6 +1309,7 @@ __metadata:
     "@liquality/utils": "workspace:^"
     "@terra-money/terra.js": 2.1.18
     "@types/luxon": ^2.0.9
+    lodash: ^4.17.21
     luxon: ^2.3.1
   languageName: unknown
   linkType: soft

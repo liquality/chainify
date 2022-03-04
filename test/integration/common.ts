@@ -4,7 +4,7 @@ import { EvmNetworks } from '@liquality/evm';
 import { NearNetworks } from '@liquality/near';
 import { TerraNetworks } from '@liquality/terra';
 import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
-import { sha256 } from '@liquality/utils';
+import { retry, sha256, sleep } from '@liquality/utils';
 import { expect } from 'chai';
 import { BitcoinHDWalletClient, BitcoinNodeWalletClient, EthereumClient, NearClient, TerraClient } from './clients';
 import { BtcHdWalletConfig } from './clients/bitcoin/config';
@@ -62,7 +62,7 @@ export async function getSwapParams(client: Client, config: IConfig, expiryInSec
     const block = await client.chain.getBlockByNumber();
     const secret = await client.swap.generateSecret('secret');
     const secretHash = sha256(secret);
-    await sleep(1);
+    await sleep(1000);
 
     const expiration = block.timestamp
         ? block.timestamp + expiryInSeconds
@@ -92,7 +92,7 @@ export async function increaseTime(chain: Chain, timestamp: number) {
         case 'NEAR': {
             const currentTime = Math.round(Date.now() / 1000);
             const sleepAmount = timestamp - currentTime;
-            await sleep(sleepAmount > 0 ? sleepAmount : 1);
+            await sleep(sleepAmount > 0 ? sleepAmount : 1000);
             break;
         }
 
@@ -105,7 +105,7 @@ export async function increaseTime(chain: Chain, timestamp: number) {
                     break;
                 }
                 await mineBlock(chain);
-                await sleep(1);
+                await sleep(1000);
             }
         }
     }
@@ -129,7 +129,11 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
             break;
         }
         case 'NEAR': {
-            await sleep(10);
+            await sleep(10000);
+            break;
+        }
+        case 'TERRA': {
+            await sleep(10000);
             break;
         }
         case 'BTC': {
@@ -146,10 +150,6 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
             return client.chain.sendRpcRequest('generatetoaddress', [numberOfBlocks, address]);
         }
     }
-}
-
-export async function sleep(seconds: number) {
-    await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 
 export async function refundAndVerify(chain: Chain, swapParams: SwapParams, initiationTxId: string, fee?: FeeType): Promise<Transaction> {
@@ -202,7 +202,7 @@ export async function fundAddress(chain: Chain, address: AddressType, value?: Bi
     }
 
     await mineBlock(chain);
-    await sleep(1);
+    await sleep(1000);
     return tx;
 }
 
@@ -213,23 +213,6 @@ export async function getNewAddress(chain: Chain, _refund = false): Promise<Addr
         }
     }
 }
-
-export const retry = async <T>(method: () => Promise<T>, startWaitTime = 0.5, waitBackoff = 2, retryNumber = 5) => {
-    let waitTime = startWaitTime;
-    for (let i = 0; i < retryNumber; i++) {
-        try {
-            const result = await method();
-            if (result) {
-                return result;
-            }
-            await sleep(waitTime);
-            waitTime *= waitBackoff;
-        } catch (err) {
-            await sleep(waitTime);
-        }
-    }
-    return null;
-};
 
 async function findRefundSwapTransaction(
     chain: Chain,

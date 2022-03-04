@@ -1,5 +1,5 @@
 import { Network, TransactionRequest } from '@liquality/types';
-import { Msg } from '@terra-money/terra.js';
+import { Msg, TxInfo } from '@terra-money/terra.js';
 
 export interface TerraNetwork extends Network {
     codeId: number;
@@ -9,4 +9,18 @@ export interface TerraNetwork extends Network {
 export interface TerraTxRequest extends TransactionRequest {
     msgs?: Msg[];
     memo?: string;
+}
+
+export interface TerraHTLC {
+    buyer: string;
+    seller: string;
+    expiration: number;
+    value: number;
+    secret_hash: string;
+    code_id: number;
+}
+
+export interface TerraTxInfo extends TxInfo {
+    htlc?: TerraHTLC;
+    initMsg?: any;
 }

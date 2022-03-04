@@ -1,5 +1,6 @@
 import { BigNumber } from '@liquality/types';
 import { expect } from 'chai';
+import { mineBlock } from '../common';
 import { Chain } from '../types';
 
 export function shouldBehaveLikeWalletProvider(chain: Chain) {
@@ -76,14 +77,22 @@ export function shouldBehaveLikeWalletProvider(chain: Chain) {
         });
 
         it('should send native asset transaction', async () => {
-            const tx = await client.wallet.sendTransaction({
-                to: config.recipientAddress,
-                value: config.sendParams.value || new BigNumber(1000000),
-                asset: config.assets && config.assets[0],
-            });
-            const txReceipt = await client.chain.getTransactionByHash(tx.hash);
-            if (config.sendParams.value) {
-                expect(txReceipt.value === config.sendParams.value.toNumber()).to.be.true;
+            for (const asset of config.assets) {
+                if (asset.isNative) {
+                    console.log(`Sending ${asset.code}`);
+                    const tx = await client.wallet.sendTransaction({
+                        to: config.recipientAddress,
+                        value: config.sendParams.value || new BigNumber(1000000),
+                        asset: asset,
+                        feeAsset: config.sendParams.feeAsset,
+                    });
+                    const txReceipt = await client.chain.getTransactionByHash(tx.hash);
+                    if (config.sendParams.value) {
+                        expect(txReceipt.value === config.sendParams.value.toNumber()).to.be.true;
+                    }
+
+                    await mineBlock(chain);
+                }
             }
         });
     });
