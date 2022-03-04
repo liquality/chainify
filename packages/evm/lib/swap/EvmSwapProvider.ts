@@ -19,6 +19,8 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
             const filter = await this.contract.queryFilter(this.contract.filters.Initiate(), from, to);
 
             const initiate = filter.find((event) => {
+                // no need to call verifyInitiateSwapTransaction because if the transaction is failed, then the event won't be logged
+                // the event will only be logged if the tx is successful & confirmed
                 const isTrue = this.doesTransactionMatchInitiation(swapParams, { _raw: event } as Transaction<InitiateEvent>);
                 return isTrue;
             });
