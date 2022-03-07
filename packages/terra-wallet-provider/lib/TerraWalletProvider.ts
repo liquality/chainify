@@ -223,7 +223,7 @@ export default class TerraWalletProvider extends WalletProvider {
     const data: CustomTxOptions = sendOptions.data as any
     let txData: any
 
-    const isProto = typeof data?.msgs[0] === 'string' && '@type' in JSON.parse(data?.msgs[0] as any)
+    const isProto = typeof data?.msgs?.[0] === 'string' && '@type' in JSON.parse(data?.msgs[0] as any)
 
     if (typeof data?.fee === 'string') {
       txData = {
