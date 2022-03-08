@@ -1,6 +1,6 @@
 {
   "name": "@liquality/terra-utils",
-  "version": "1.13.9",
+  "version": "1.13.10",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -22,9 +22,9 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@liquality/errors": "^1.13.9",
-    "@liquality/types": "^1.13.9",
-    "@liquality/utils": "^1.13.9",
+    "@liquality/errors": "^1.13.10",
+    "@liquality/types": "^1.13.10",
+    "@liquality/utils": "^1.13.10",
     "@types/luxon": "^1.27.1",
     "luxon": "^2.0.1"
   },
