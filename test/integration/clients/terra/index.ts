@@ -2,6 +2,7 @@ import { Client } from '@liquality/client';
 import { TerraWalletProvider } from '@liquality/terra';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
+import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
 import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
 
 export function shouldBehaveLikeTerraClient() {
@@ -31,6 +32,6 @@ export function shouldBehaveLikeTerraClient() {
         const chain = Chains.terra.hd;
         shouldBehaveLikeChainProvider(chain);
         shouldBehaveLikeWalletProvider(chain);
-        // shouldBehaveLikeSwapProvider(chain);
+        shouldBehaveLikeSwapProvider(chain);
     });
 }

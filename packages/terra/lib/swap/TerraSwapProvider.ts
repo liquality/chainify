@@ -1,122 +1,150 @@
-import { Swap } from '@liquality/client';
-import { StandardError, UnimplementedMethodError } from '@liquality/errors';
-import { FeeType, SwapParams, Transaction } from '@liquality/types';
+import { HttpClient } from '@liquality/client';
+import { TxNotFoundError } from '@liquality/errors';
+import { SwapParams, Transaction, TxStatus } from '@liquality/types';
 import { validateSecret, validateSecretAndHash } from '@liquality/utils';
-import { isTxError, MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js';
-import { TerraWalletProvider } from 'lib';
-import { assetCodeToDenom } from 'lib/constants';
-import { TerraTxInfo } from '../types';
+import { isTxError } from '@terra-money/terra.js';
+import { TerraWalletProvider } from '..';
+import { denomToAssetCode } from '../constants';
+import { FCD, TerraTxInfo } from '../types';
+import { TerraSwapBaseProvider } from './TerraSwapBaseProvider';
 
-export class TerraSwapProvider extends Swap<any, any, TerraWalletProvider> {
-    public async initiateSwap(swapParams: SwapParams, fee?: FeeType): Promise<Transaction<TerraTxInfo>> {
-        const address = await this.walletProvider.getAddress();
+interface ScraperResponse {
+    txs?: FCD.LcdTransaction[];
+    next?: number;
+    limit: number;
+}
+export class TerraSwapProvider extends TerraSwapBaseProvider {
+    private _httpClient: HttpClient;
 
-        const { codeId } = await this.walletProvider.getConnectedNetwork();
-
-        const initMsg = [
-            new MsgInstantiateContract(
-                // user
-                address.toString(),
-                // admin
-                null,
-                // bytecode
-                codeId,
-                // swap params
-                {
-                    buyer: swapParams.recipientAddress,
-                    seller: swapParams.refundAddress,
-                    expiration: swapParams.expiration,
-                    value: swapParams.value.toNumber(),
-                    secret_hash: swapParams.secretHash,
-                },
-                // msg value
-                { [assetCodeToDenom[swapParams.asset.code]]: swapParams.value.toNumber() }
-            ),
-        ];
-
-        return this.walletProvider.sendTransaction({ msgs: initMsg, fee, feeAsset: swapParams.asset });
+    constructor(walletProvider: TerraWalletProvider, helperUrl: string) {
+        super(walletProvider);
+        this._httpClient = new HttpClient({ baseURL: helperUrl });
     }
 
-    public async findInitiateSwapTransaction(_swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<TerraTxInfo>> {
-        throw new Error('Method not implemented.');
-    }
+    public async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<TerraTxInfo>> {
+        this.validateSwapParams(swapParams);
 
-    public async claimSwap(
-        swapParams: SwapParams,
-        initiationTxHash: string,
-        secret: string,
-        fee?: FeeType
-    ): Promise<Transaction<TerraTxInfo>> {
-        validateSecret(secret);
-        validateSecretAndHash(secret, swapParams.secretHash);
-
-        const txReceipt: Transaction<TerraTxInfo> = await this.walletProvider.getChainProvider().getTransactionByHash(initiationTxHash);
-        await this.verifyInitiateSwapTransaction(swapParams, txReceipt);
-
-        const address = await this.walletProvider.getAddress();
-        const claimMsg = [new MsgExecuteContract(address.toString(), txReceipt.to.toString(), { claim: { secret } })];
-        return this.walletProvider.sendTransaction({ msgs: claimMsg, fee, feeAsset: swapParams.asset });
-    }
-
-    public async findClaimSwapTransaction(
-        _swapParams: SwapParams,
-        _initTxHash: string,
-        _blockNumber?: number
-    ): Promise<Transaction<TerraTxInfo>> {
-        throw new Error('Method not implemented.');
-    }
-
-    public async refundSwap(swapParams: SwapParams, initTx: string, fee?: FeeType): Promise<Transaction<TerraTxInfo>> {
-        const txReceipt = await this.walletProvider.getChainProvider().getTransactionByHash(initTx);
-        await this.verifyInitiateSwapTransaction(swapParams, txReceipt);
-
-        const address = await this.walletProvider.getAddress();
-        const refundMsg = [new MsgExecuteContract(address.toString(), txReceipt.to.toString(), { refund: {} })];
-        return this.walletProvider.sendTransaction({ msgs: refundMsg, fee, feeAsset: swapParams.asset });
-    }
-
-    public async findRefundSwapTransaction(
-        _swapParams: SwapParams,
-        _initiationTxHash: string,
-        _blockNumber?: number
-    ): Promise<Transaction<TerraTxInfo>> {
-        throw new Error('Method not implemented.');
-    }
-
-    public async getSwapSecret(claimTxHash: string, _initTxHash?: string): Promise<string> {
-        const claimTxReceipt = await this.walletProvider.getChainProvider().getTransactionByHash(claimTxHash);
-        return claimTxReceipt.secret;
-    }
-
-    protected async doesTransactionMatchInitiation(swapParams: SwapParams, initTx: Transaction<TerraTxInfo>): Promise<boolean> {
-        const network = await this.walletProvider.getConnectedNetwork();
-
-        if (isTxError(initTx._raw)) {
-            throw new StandardError(`Encountered an error while running the transaction: ${initTx._raw.htlc} ${initTx.hash}`);
-        }
-
-        const txCodeId = initTx._raw.htlc?.code_id;
-
-        if (txCodeId !== network.codeId) {
-            throw new StandardError(`Transaction is from different template: ${txCodeId}`);
-        }
-
-        const txParams = initTx._raw.htlc;
-
-        return (
-            swapParams.recipientAddress === txParams?.buyer &&
-            swapParams.refundAddress === txParams.seller &&
-            swapParams.secretHash === txParams.secret_hash &&
-            swapParams.expiration === txParams.expiration &&
-            swapParams.value.eq(initTx.value)
+        return await this.findAddressTransaction(
+            swapParams.refundAddress.toString(),
+            async (tx: Transaction<TerraTxInfo>) => await this.doesTransactionMatchInitiation(swapParams, tx)
         );
     }
 
-    public canUpdateFee(): boolean {
-        return false;
+    public async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<TerraTxInfo>> {
+        const initTx = await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash);
+        await this.verifyInitiateSwapTransaction(swapParams, initTx);
+
+        return await this.findAddressTransaction(initTx.to.toString(), async (tx: Transaction<TerraTxInfo>) => {
+            if (tx.secret && tx._raw.method === 'claim') {
+                validateSecret(tx.secret);
+                validateSecretAndHash(tx.secret, swapParams.secretHash);
+                return true;
+            }
+        });
+    }
+    public async findRefundSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<TerraTxInfo>> {
+        const initTx = await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash);
+        await this.verifyInitiateSwapTransaction(swapParams, initTx);
+
+        return await this.findAddressTransaction(initTx.to.toString(), async (tx: Transaction<TerraTxInfo>) => {
+            if (tx._raw.method === 'refund') {
+                return true;
+            }
+        });
     }
 
-    public async updateTransactionFee(_tx: string | Transaction<TerraTxInfo>, _newFee: FeeType): Promise<Transaction<TerraTxInfo>> {
-        throw new UnimplementedMethodError('Method not supported.');
+    private async findAddressTransaction(
+        address: string,
+        predicate: (tx: Transaction<TerraTxInfo>) => Promise<boolean>,
+        limit = 100
+    ): Promise<Transaction<TerraTxInfo>> {
+        let offset: number = null;
+        const currentBlockNumber = await this.walletProvider.getChainProvider().getBlockHeight();
+        const baseUrl = `/txs?account=${address}&limit=${limit}`;
+        do {
+            const url = offset ? baseUrl + `&offset=${offset}` : baseUrl;
+            const response = await this._httpClient.nodeGet<null, ScraperResponse>(url);
+
+            if (!response?.txs) {
+                throw new TxNotFoundError(`Transactions not found: ${address}`);
+            }
+
+            for (const tx of response.txs) {
+                const parsedTx = await this.parseScraperTransaction(tx, currentBlockNumber);
+
+                const doesMatch = await predicate(parsedTx);
+                if (doesMatch) {
+                    return parsedTx;
+                }
+            }
+
+            offset = response.next || null;
+        } while (offset !== null);
+    }
+
+    private async parseScraperTransaction(data: FCD.LcdTransaction, currentBlockNumber: number) {
+        const result: Transaction<Partial<TerraTxInfo>> = {
+            hash: data.txhash,
+            _raw: { code: data.code },
+            value: 0,
+            confirmations: Number(data.height) - currentBlockNumber,
+            status: isTxError(data as any) ? TxStatus.Failed : TxStatus.Success,
+        };
+
+        const txType = data?.tx?.value?.msg?.[0]?.type;
+
+        switch (txType) {
+            // Init
+            case 'wasm/MsgInstantiateContract': {
+                const initTx = data.tx.value.msg[0].value;
+                if (initTx) {
+                    const network = await this.getWallet().getConnectedNetwork();
+                    // only valid txns
+                    if (Number(initTx.code_id) === network.codeId) {
+                        const initMsg = initTx.init_msg;
+
+                        if (initMsg) {
+                            result._raw.htlc = { ...initMsg, code_id: Number(initTx.code_id) };
+                            result._raw.method = 'init';
+                        }
+                        result.from = initTx.sender;
+
+                        if (initTx.init_coins?.[0]) {
+                            const { amount, denom } = initTx.init_coins[0];
+                            result.value = Number(amount);
+                            result.valueAsset = denomToAssetCode[denom];
+                        }
+
+                        if (data.tx.value?.fee?.amount?.[0]) {
+                            const { amount, denom } = data.tx.value.fee.amount[0];
+                            result.fee = Number(amount);
+                            result.feeAssetCode = denomToAssetCode[denom];
+                        }
+                    }
+                }
+                break;
+            }
+
+            // refund & claim
+            case 'wasm/MsgExecuteContract': {
+                const tx = data.tx.value.msg[0].value;
+
+                if (tx) {
+                    result.from = tx.sender;
+                    result.to = tx.contract;
+
+                    if (tx.execute_msg.refund) {
+                        result._raw.method = 'refund';
+                    } else if (tx.execute_msg.claim) {
+                        result._raw.method = 'claim';
+                        result.secret = tx.execute_msg.claim.secret;
+                    }
+                }
+
+                break;
+            }
+        }
+
+        return result as Transaction<TerraTxInfo>;
     }
 }

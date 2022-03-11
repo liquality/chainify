@@ -65,8 +65,8 @@ export async function getSwapParams(client: Client, config: IConfig, expiryInSec
     await sleep(1000);
 
     const expiration = block.timestamp
-        ? block.timestamp + expiryInSeconds
-        : Math.round(Date.now() / 1000) + Math.round(Math.random() * expiryInSeconds);
+        ? Math.round(block.timestamp + expiryInSeconds)
+        : Math.round(Date.now() / 1000 + Math.random() * expiryInSeconds);
 
     return {
         swapParams: {
@@ -89,7 +89,8 @@ export async function increaseTime(chain: Chain, timestamp: number) {
             break;
         }
 
-        case 'NEAR': {
+        case 'NEAR':
+        case 'TERRA': {
             const currentTime = Math.round(Date.now() / 1000);
             const sleepAmount = timestamp - currentTime;
             await sleep(sleepAmount > 0 ? sleepAmount : 1000);
@@ -128,14 +129,12 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
             await client.chain.sendRpcRequest('evm_mine', []);
             break;
         }
-        case 'NEAR': {
-            await sleep(10000);
-            break;
-        }
+        case 'NEAR':
         case 'TERRA': {
             await sleep(10000);
             break;
         }
+
         case 'BTC': {
             const miningAddressLabel = 'miningAddress';
             let address;

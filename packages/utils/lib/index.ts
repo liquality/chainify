@@ -17,7 +17,6 @@ export const retry = async <T>(method: () => Promise<T>, startWaitTime = 500, wa
             if (result) {
                 return result;
             }
-            waitTime *= waitBackoff;
         } catch (err) {
             // throw error on last try
             if (i + 1 == retryNumber) {
@@ -25,6 +24,7 @@ export const retry = async <T>(method: () => Promise<T>, startWaitTime = 500, wa
             }
         } finally {
             await sleep(waitTime);
+            waitTime *= waitBackoff;
         }
     }
     return null;

@@ -1,10 +1,9 @@
 import { Chain } from '@liquality/client';
 import { TxNotFoundError, UnimplementedMethodError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@liquality/types';
-import { BlockInfo, LCDClient, TxInfo } from '@terra-money/terra.js';
-import { APIRequester } from '@terra-money/terra.js/dist/client/lcd/APIRequester';
+import { BlockInfo, LCDClient } from '@terra-money/terra.js';
 import { assetCodeToDenom } from '../constants';
-import { TerraNetwork } from '../types';
+import { TerraNetwork, TerraTxInfo } from '../types';
 import { parseBlockResponse, parseTxResponse } from '../utils';
 
 export class TerraChainProvider extends Chain<LCDClient> {
@@ -13,7 +12,7 @@ export class TerraChainProvider extends Chain<LCDClient> {
         this.provider = new LCDClient({ URL: network.rpcUrl, chainID: network.chainId.toString() });
     }
 
-    public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockInfo, TxInfo>> {
+    public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockInfo, TerraTxInfo>> {
         const block = await this.provider.tendermint.blockInfo(blockNumber);
         const currentBlockNumber = await this.getBlockHeight();
 
@@ -31,7 +30,7 @@ export class TerraChainProvider extends Chain<LCDClient> {
         return Number(blockInfo.block.header.height);
     }
 
-    public async getTransactionByHash(txHash: string): Promise<Transaction<TxInfo>> {
+    public async getTransactionByHash(txHash: string): Promise<Transaction<TerraTxInfo>> {
         const transaction = await this.provider.tx.txInfo(txHash);
         const currentBlockNumber = await this.getBlockHeight();
 
@@ -81,11 +80,22 @@ export class TerraChainProvider extends Chain<LCDClient> {
         return this.provider.apiRequester[method](endpoint, args);
     }
 
-    public getBlockByHash(_blockHash: string, _includeTx?: boolean): Promise<Block<BlockInfo, TxInfo>> {
+    public getBlockByHash(_blockHash: string, _includeTx?: boolean): Promise<Block<BlockInfo, TerraTxInfo>> {
         throw new UnimplementedMethodError('Method not supported.');
     }
 
     public async sendRawTransaction(_rawTransaction: string): Promise<string> {
         throw new UnimplementedMethodError('Method not supported.');
     }
+}
+
+declare type APIParams = Record<string, string | number | null | undefined>;
+
+declare class APIRequester {
+    private axios;
+    constructor(baseURL: string);
+    getRaw<T>(endpoint: string, params?: URLSearchParams | APIParams): Promise<T>;
+    get<T>(endpoint: string, params?: URLSearchParams | APIParams): Promise<T>;
+    postRaw<T>(endpoint: string, data?: any): Promise<T>;
+    post<T>(endpoint: string, data?: any): Promise<T>;
 }
