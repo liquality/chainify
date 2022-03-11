@@ -6,7 +6,8 @@ function getTerraClient(network: Terra.TerraTypes.TerraNetwork) {
     const config = TerraConfig(network);
     const chainProvider = new Terra.TerraChainProvider(network);
     const walletProvider = new Terra.TerraWalletProvider(chainProvider, config.walletOptions as any);
-    return new Client(chainProvider, walletProvider);
+    const swapProvider = new Terra.TerraSwapProvider(walletProvider, network.helperUrl);
+    return new Client(chainProvider, walletProvider, swapProvider);
 }
 
 export const TerraClient = getTerraClient(Terra.TerraNetworks.terra_testnet);

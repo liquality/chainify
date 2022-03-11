@@ -1,5 +1,6 @@
 import { Network, TransactionRequest } from '@liquality/types';
 import { Msg, TxInfo } from '@terra-money/terra.js';
+export * as FCD from './fcd';
 
 export interface TerraNetwork extends Network {
     codeId: number;
@@ -23,4 +24,5 @@ export interface TerraHTLC {
 export interface TerraTxInfo extends TxInfo {
     htlc?: TerraHTLC;
     initMsg?: any;
+    method?: string;
 }

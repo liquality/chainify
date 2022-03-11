@@ -168,12 +168,12 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
         const provider: LCDClient = this.chainProvider.getProvider();
         const txResult = await provider.tx.broadcastSync(tx);
 
-        // exponential backoff => total of 31 seconds
+        // exponential backoff => total of 63,5 seconds
         const txReceipt = await retry<Transaction<TerraTxInfo>>(
             async () => this.chainProvider.getTransactionByHash(txResult.txhash),
-            1000,
+            500,
             2,
-            5
+            7
         );
 
         if (isTxError(txReceipt._raw)) {
@@ -193,7 +193,7 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
             feeDenoms: [feeDenom],
         };
         /* simulation: estimate gas */
-        const simulatedTx = await this._wallet.createTx(terraTx);
+        const simulatedTx = await retry<Tx>(async () => this._wallet.createTx(terraTx), 1000, 2, 2);
         const estimatedGas = Math.ceil(simulatedTx.auth_info.fee.gas_limit * this._gasAdjustment);
 
         if (txRequest.fee) {
