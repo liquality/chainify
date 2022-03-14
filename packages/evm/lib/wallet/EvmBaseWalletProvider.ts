@@ -1,11 +1,12 @@
 import { Signer } from '@ethersproject/abstract-signer';
 import { Chain, Wallet } from '@liquality/client';
 import { ReplaceFeeInsufficientError } from '@liquality/errors';
-import { AddressType, Asset, BigNumber, FeeType, Transaction } from '@liquality/types';
+import { AddressType, Asset, BigNumber, FeeType, Network, Transaction } from '@liquality/types';
 import { remove0x } from '@liquality/utils';
 import { ERC20__factory } from '../typechain';
 import { EthereumTransactionRequest, EthersTransactionResponse } from '../types';
 import { extractFeeData, parseTxRequest, parseTxResponse } from '../utils';
+
 export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;
 
@@ -108,5 +109,9 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
     public async getBalance(assets: Asset[]): Promise<BigNumber[]> {
         const user = await this.getAddress();
         return await this.chainProvider.getBalance([user], assets);
+    }
+
+    public async getConnectedNetwork(): Promise<Network> {
+        return this.chainProvider.getNetwork();
     }
 }
