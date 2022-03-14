@@ -16,9 +16,9 @@
     },
     "dependencies": {
         "@liquality/client": "workspace:*",
-        "@liquality/errors": "workspace:^",
+        "@liquality/errors": "workspace:*",
         "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:^",
+        "@liquality/utils": "workspace:*",
         "@terra-money/terra.js": "2.1.18",
         "@types/luxon": "^2.0.9",
         "lodash": "^4.17.21",

@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@liquality/client": "workspace:*",
-        "@liquality/errors": "workspace:^",
+        "@liquality/errors": "workspace:*",
         "@liquality/types": "workspace:*",
         "@types/bip32": "^2.0.0",
         "@types/bip39": "^3.0.0",
