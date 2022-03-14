@@ -1,0 +1,27 @@
+{
+    "name": "@liquality/hw-ledger",
+    "version": "0.0.0",
+    "description": "> TODO: description",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@ledgerhq/hw-transport": "^6.24.1",
+        "@liquality/client": "workspace:*",
+        "@liquality/errors": "workspace:*",
+        "@liquality/types": "workspace:*",
+        "@liquality/utils": "workspace:*",
+        "bn.js": "^5.2.0",
+        "near-api-js": "^0.44.2",
+        "near-seed-phrase": "^0.2.0"
+    }
+}

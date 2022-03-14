@@ -1,0 +1,26 @@
+{
+    "name": "@liquality/evm-ledger",
+    "version": "0.0.0",
+    "description": "> TODO: description",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@ethersproject/abstract-provider": "^5.6.0",
+        "@ethersproject/abstract-signer": "^5.6.0",
+        "@ethersproject/providers": "^5.6.0",
+        "@ledgerhq/hw-app-eth": "^6.26.0",
+        "@liquality/evm": "workspace:*",
+        "@liquality/hw-ledger": "workspace:*",
+        "@liquality/utils": "workspace:*"
+    }
+}
