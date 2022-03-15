@@ -1,4 +1,6 @@
 import { sha256 as ethersSha256 } from '@ethersproject/sha2';
+import bech32 from 'bech32';
+import base58 from 'bs58';
 import cryptoHash from 'crypto-hashing';
 import { ensure0x, remove0x } from './hex';
 
@@ -42,3 +44,19 @@ export function isHex(hex: string) {
 
     return buf === hex.toLowerCase();
 }
+
+/**
+ * Pad a hex string with '0'
+ * @param {string} hex - The hex string to pad.
+ * @param {number} lengthBytes - The length of the final string in bytes
+ * @return {string} Returns a padded string with length greater or equal to the given length
+ *  rounded up to the nearest even number.
+ */
+export function padHexStart(hex: string, lengthBytes?: number) {
+    let lengthString = lengthBytes * 2 || hex.length;
+    lengthString += lengthString % 2;
+
+    return hex.padStart(lengthString, '0');
+}
+
+export { base58, bech32 };

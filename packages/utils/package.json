@@ -18,6 +18,8 @@
         "@ethersproject/sha2": "^5.5.0",
         "@liquality/errors": "workspace:*",
         "@liquality/types": "workspace:*",
+        "bech32": "^2.0.0",
+        "bs58": "^5.0.0",
         "crypto-hashing": "^1.0.0"
     },
     "devDependencies": {

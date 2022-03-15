@@ -1,5 +1,5 @@
 {
-    "name": "@liquality/bitcoin",
+    "name": "@liquality/bitcoin-ledger",
     "version": "0.0.0",
     "description": "> TODO: description",
     "author": "Liquality <info@liquality.io>",
@@ -15,21 +15,12 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
+        "@ledgerhq/hw-app-btc": "^6.24.1",
+        "@liquality/bitcoin": "workspace:*",
         "@liquality/client": "workspace:*",
         "@liquality/errors": "workspace:*",
-        "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:*",
-        "@types/bip32": "^2.0.0",
-        "@types/bip39": "^3.0.0",
-        "@types/bitcoinjs-lib": "^5.0.0",
-        "@types/lodash": "^4.14.178",
-        "@types/memoizee": "^0.4.7",
-        "bip174": "^2.0.1",
+        "@liquality/hw-ledger": "workspace:*",
         "bip32": "2.0.6",
-        "bitcoinjs-lib": "5.2.0",
-        "bitcoinjs-message": "2.2.0",
-        "coinselect": "^3.1.12",
-        "lodash": "^4.17.21",
-        "memoizee": "^0.4.15"
+        "bitcoinjs-lib": "5.2.0"
     }
 }
