@@ -38,9 +38,7 @@ contract LiqualityHTLC is ILiqualityHTLC {
             IERC20(htlc.tokenAddress).safeTransferFrom(msg.sender, address(this), htlc.amount);
         }
 
-        id = sha256(
-            abi.encodePacked(htlc.refundAddress, block.timestamp, htlc.amount, htlc.expiration, htlc.secretHash, htlc.recipientAddress)
-        );
+        id = sha256(abi.encode(htlc.refundAddress, block.timestamp, htlc.amount, htlc.expiration, htlc.secretHash, htlc.recipientAddress));
 
         if (htlcs[id].expiration != 0) {
             revert LiqualityHTLC__SwapAlreadyExists();

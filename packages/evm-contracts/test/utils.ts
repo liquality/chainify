@@ -2,7 +2,9 @@ import { ethers } from 'hardhat';
 import { Signers } from './types';
 
 export function generateId(htlcData: any, blockTimestamp: number) {
-    return ethers.utils.soliditySha256(
+    const abiCoder = ethers.utils.defaultAbiCoder;
+
+    const data = abiCoder.encode(
         ['address', 'uint256', 'uint256', 'uint256', 'bytes32', 'address'],
         [
             htlcData.refundAddress,
@@ -13,6 +15,8 @@ export function generateId(htlcData: any, blockTimestamp: number) {
             htlcData.recipientAddress,
         ]
     );
+
+    return ethers.utils.sha256(data);
 }
 
 export async function getDefaultHtlcData(signers: Signers, expiration: number, tokenAddress = ethers.constants.AddressZero) {
