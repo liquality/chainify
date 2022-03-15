@@ -31,6 +31,10 @@ contract LiqualityHTLC is ILiqualityHTLC {
         }
         // handle ERC20 swaps
         else {
+            // protection against permanantly locking ETH when using ERC20 tokens
+            if (msg.value > 0) {
+                revert LiqualityHTLC__InvalidMsgValue();
+            }
             IERC20(htlc.tokenAddress).safeTransferFrom(msg.sender, address(this), htlc.amount);
         }
 
