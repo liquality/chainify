@@ -66,6 +66,8 @@ contract LiqualityHTLC is ILiqualityHTLC {
         // free some storage for gas refund
         delete htlcs[id];
 
+        emit Claim(id, secret);
+
         // handle Ether claims
         if (h.tokenAddress == address(0x0)) {
             LibTransfer.transferEth(h.recipientAddress, h.amount);
@@ -74,8 +76,6 @@ contract LiqualityHTLC is ILiqualityHTLC {
         else {
             IERC20(h.tokenAddress).safeTransfer(h.recipientAddress, h.amount);
         }
-
-        emit Claim(id, secret);
     }
 
     /// @inheritdoc ILiqualityHTLC
@@ -93,6 +93,8 @@ contract LiqualityHTLC is ILiqualityHTLC {
         // free some storage for gas refund
         delete htlcs[id];
 
+        emit Refund(id);
+
         // handle Ether refunds
         if (h.tokenAddress == address(0x0)) {
             LibTransfer.transferEth(h.refundAddress, h.amount);
@@ -101,7 +103,5 @@ contract LiqualityHTLC is ILiqualityHTLC {
         else {
             IERC20(h.tokenAddress).safeTransfer(h.refundAddress, h.amount);
         }
-
-        emit Refund(id);
     }
 }
