@@ -52,11 +52,6 @@ contract LiqualityHTLC is ILiqualityHTLC {
 
     /// @inheritdoc ILiqualityHTLC
     function claim(bytes32 id, bytes32 secret) external {
-        // sig(4) + id(32) + secret(32)
-        if (msg.data.length != 68) {
-            revert LiqualityHTLC__BadSecretLength(msg.data.length);
-        }
-
         HTLCData memory h = htlcs[id];
 
         if (h.expiration == 0) {

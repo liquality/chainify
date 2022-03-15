@@ -140,30 +140,6 @@ function shouldClaimERC20(): void {
         await this.htlc.connect(this.signers.sender).initiate(htlcData);
         await expect(this.htlc.claim(ethers.constants.HashZero, getDefaultSecret())).to.be.revertedWith('LiqualityHTLC__SwapDoesNotExist');
     });
-
-    it('should only accept 64 bytes of msg.data', async function () {
-        const blockTimestamp = (await ethers.provider.getBlock('latest')).timestamp + 1;
-        await ethers.provider.send('evm_setNextBlockTimestamp', [blockTimestamp]);
-        const htlcData = await getDefaultHtlcData(this.signers, blockTimestamp + 60);
-        const id = generateId(htlcData, blockTimestamp);
-        await this.htlc.connect(this.signers.sender).initiate(htlcData, { value: htlcData.amount });
-
-        const tx = await this.htlc.populateTransaction.claim(id, getDefaultSecret());
-
-        await expect(
-            this.signers.sender.sendTransaction({
-                to: this.htlc.address.toString(),
-                data: tx?.data?.concat('eacd71'),
-            })
-        ).to.be.revertedWith('LiqualityHTLC__BadSecretLength');
-
-        await expect(
-            this.signers.sender.sendTransaction({
-                to: this.htlc.address.toString(),
-                data: tx.data?.substring(0, tx.data.length - 6),
-            })
-        ).to.be.reverted;
-    });
 }
 
 function shouldRefundERC20(): void {

@@ -36,9 +36,6 @@ interface ILiqualityHTLC {
     /// @notice Emitted when the sha256 of the provided secret during claim does not match the secret hash
     error LiqualityHTLC__WrongSecret();
 
-    /// @notice Emitted when the provided msg.data lenght is bigger than sig(4) + id(32) + secret(32) = 68
-    error LiqualityHTLC__BadSecretLength(uint256 length);
-
     /// @notice Emitted when the provided expiration is smaller than the current block timestmap
     error LiqualityHTLC__InvalidExpiration();
 
