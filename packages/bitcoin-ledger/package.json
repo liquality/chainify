@@ -20,6 +20,8 @@
         "@liquality/client": "workspace:*",
         "@liquality/errors": "workspace:*",
         "@liquality/hw-ledger": "workspace:*",
+        "@liquality/types": "workspace:*",
+        "@liquality/utils": "workspace:*",
         "bip32": "2.0.6",
         "bitcoinjs-lib": "5.2.0"
     }

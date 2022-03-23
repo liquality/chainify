@@ -15,9 +15,9 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
-        "@ethersproject/abstract-provider": "^5.6.0",
-        "@ethersproject/abstract-signer": "^5.6.0",
-        "@ethersproject/providers": "^5.6.0",
+        "@ethersproject/abstract-provider": "5.6.0",
+        "@ethersproject/abstract-signer": "5.6.0",
+        "@ethersproject/providers": "5.6.0",
         "@ledgerhq/hw-app-eth": "^6.26.0",
         "@liquality/evm": "workspace:*",
         "@liquality/hw-ledger": "workspace:*",

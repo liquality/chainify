@@ -1,5 +1,7 @@
+import LedgerHwTransportNode from '@ledgerhq/hw-transport-node-hid';
 import { Client } from '@liquality/client';
 import * as EVM from '@liquality/evm';
+import { EvmLedgerProvider } from '@liquality/evm-ledger';
 import { Network, WalletOptions } from '@liquality/types';
 import { providers } from 'ethers';
 import { EVMConfig } from './config';
@@ -15,4 +17,15 @@ function getEvmClient(network: Network) {
     return new Client(chainProvider, walletProvider, swapProvider);
 }
 
-export const EthereumClient = getEvmClient(EVM.EvmNetworks.ganache);
+function getEvmLedgerClient(network: Network) {
+    const config = EVMConfig(network);
+    const provider = new providers.StaticJsonRpcProvider(network.rpcUrl);
+    const feeProvider = new EIP1559MockFeeProvider(provider);
+    const chainProvider = new EVM.EvmChainProvider(network, provider, feeProvider);
+    const walletProvider = new EvmLedgerProvider({ ...config.walletOptions, Transport: LedgerHwTransportNode } as any, chainProvider);
+    const swapProvider = new EVM.EvmSwapProvider(config.swapOptions, walletProvider);
+    return new Client(chainProvider, walletProvider, swapProvider);
+}
+
+export const EVMClient = getEvmClient(EVM.EvmNetworks.ganache);
+export const EVMLedgerClient = getEvmLedgerClient(EVM.EvmNetworks.ganache);

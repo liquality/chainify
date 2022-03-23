@@ -26,6 +26,7 @@
         "@types/memoizee": "^0.4.7",
         "bip174": "^2.0.1",
         "bip32": "2.0.6",
+        "bip39": "^3.0.4",
         "bitcoinjs-lib": "5.2.0",
         "bitcoinjs-message": "2.2.0",
         "coinselect": "^3.1.12",

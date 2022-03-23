@@ -1,4 +1,5 @@
 import { BigNumber, ChainId, Network } from '@liquality/types';
+import { Wallet } from 'ethers';
 import { IConfig } from '../../types';
 
 export const EVMConfig = (network: Network): IConfig => {
@@ -9,6 +10,7 @@ export const EVMConfig = (network: Network): IConfig => {
             mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
             derivationPath: `m/44'/${network.coinType}'/0'/0/`,
             index: '0',
+            network,
         },
 
         walletExpectedResult: {
@@ -54,5 +56,30 @@ export const EVMConfig = (network: Network): IConfig => {
                 contractAddress: '0x6ACbD54254da14Db970c7eDE7cFD90784dBeFb6C',
             },
         ],
+    };
+};
+
+export const EVMLedgerConfig = (network: Network): IConfig => {
+    /// NOTE
+    /// You have to manually change the mnemonic to match the one in the Ledger to run the tests successfully
+    const wallet = Wallet.fromMnemonic('');
+
+    const config = EVMConfig(network);
+
+    return {
+        ...config,
+
+        walletExpectedResult: {
+            address: wallet.address,
+            numberOfUsedAddresses: 1,
+            unusedAddress: wallet.address,
+            privateKey: null,
+            signedMessage: null,
+        },
+
+        swapParams: {
+            ...config.swapParams,
+            expiry: 120,
+        },
     };
 };

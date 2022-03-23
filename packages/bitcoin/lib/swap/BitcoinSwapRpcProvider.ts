@@ -1,5 +1,5 @@
 import { SwapParams, Transaction } from '@liquality/types';
-import { BitcoinBaseChainProvider } from 'lib';
+import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
 import { Transaction as BitcoinTransaction } from '../types';
 import { IBitcoinWallet } from '../wallet/IBitcoinWallet';
 import { BitcoinSwapBaseProvider } from './BitcoinSwapBaseProvider';

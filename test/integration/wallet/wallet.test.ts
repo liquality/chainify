@@ -1,3 +1,4 @@
+import { UnimplementedMethodError } from '@liquality/errors';
 import { BigNumber } from '@liquality/types';
 import { expect } from 'chai';
 import { mineBlock } from '../common';
@@ -72,8 +73,14 @@ export function shouldBehaveLikeWalletProvider(chain: Chain) {
         });
 
         it('should export private key', async () => {
-            const privateKey = await client.wallet.exportPrivateKey();
-            expect(privateKey).to.be.equal(config.walletExpectedResult.privateKey);
+            try {
+                const privateKey = await client.wallet.exportPrivateKey();
+                expect(privateKey).to.be.equal(config.walletExpectedResult.privateKey);
+            } catch (error) {
+                if (!(error instanceof UnimplementedMethodError)) {
+                    throw error;
+                }
+            }
         });
 
         it('should send native asset transaction', async () => {

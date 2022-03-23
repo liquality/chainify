@@ -1,27 +1,54 @@
 import { Provider } from '@ethersproject/abstract-provider';
 import { Signer } from '@ethersproject/abstract-signer';
 import Eth from '@ledgerhq/hw-app-eth';
-import { sleep } from '@liquality/utils';
+import LedgerService from '@ledgerhq/hw-app-eth/lib/services/ledger';
+import { LoadConfig, ResolutionConfig } from '@ledgerhq/hw-app-eth/lib/services/types';
 import { ethers } from 'ethers';
-import { GetAppType } from './types';
+import { GetAppType, LedgerAddressType } from './types';
 
 const defaultPath = "m/44'/60'/0'/0/0";
+
+const loadConfig: LoadConfig = {
+    nftExplorerBaseURL: null,
+    // example of payload https://cdn.live.ledger.com/plugins/ethereum/1.json
+    // fetch against an api (base url is an api that hosts /plugins/ethereum/${chainId}.json )
+    // set to null will disable it
+    pluginBaseURL: null,
+    // provide manually some extra plugins to add for the resolution (e.g. for dev purpose)
+    // object will be merged with the returned value of the Ledger cdn payload
+    extraPlugins: null,
+};
+
+const resolutionConfig: ResolutionConfig = {
+    // NFT resolution service
+    nft: false,
+    // external plugins resolution service (e.G. LIDO)
+    externalPlugins: false,
+    // ERC20 resolution service (to clear sign erc20 transfers & other actions)
+    erc20: false,
+};
 
 export class EvmLedgerSigner extends Signer {
     public provider: Provider;
 
+    private addressCache: Record<string, LedgerAddressType>;
     private readonly getApp: GetAppType;
     private readonly derivationPath: string;
 
     constructor(getApp: GetAppType, derivationPath?: string, provider?: Provider) {
         super();
         this.provider = provider;
+        this.addressCache = {};
         this.getApp = getApp;
         this.derivationPath = derivationPath || defaultPath;
     }
 
-    async getAddress(): Promise<string> {
-        const account = await this._retry((eth) => eth.getAddress(this.derivationPath));
+    public async getAddress(): Promise<string> {
+        if (this.addressCache[this.derivationPath]) {
+            return ethers.utils.getAddress(this.addressCache[this.derivationPath].address);
+        }
+        const account = await this._retry(async (eth) => await eth.getAddress(this.derivationPath));
+        this.addressCache[this.derivationPath] = account;
         return ethers.utils.getAddress(account.address);
     }
 
@@ -54,8 +81,8 @@ export class EvmLedgerSigner extends Signer {
         };
 
         const unsignedTx = ethers.utils.serializeTransaction(baseTx).substring(2);
-        const sig = await this._retry((eth) => eth.signTransaction(this.derivationPath, unsignedTx));
-
+        const resolution = await LedgerService.resolveTransaction(unsignedTx, loadConfig, resolutionConfig);
+        const sig = await this._retry(async (eth) => await eth.signTransaction(this.derivationPath, unsignedTx, resolution));
         return ethers.utils.serializeTransaction(baseTx, {
             v: ethers.BigNumber.from('0x' + sig.v).toNumber(),
             r: '0x' + sig.r,
@@ -67,31 +94,14 @@ export class EvmLedgerSigner extends Signer {
         return new EvmLedgerSigner(this.getApp, this.derivationPath, provider);
     }
 
-    private async _retry<T = any>(callback: (eth: Eth) => Promise<T>, timeout?: number): Promise<T> {
-        // eslint-disable-next-line no-async-promise-executor
-        return new Promise(async (resolve, reject) => {
-            if (timeout && timeout > 0) {
-                setTimeout(() => {
-                    reject(new Error('timeout'));
-                }, timeout);
+    private async _retry<T = any>(callback: (eth: Eth) => Promise<T>): Promise<T> {
+        const eth = await this.getApp();
+        try {
+            return await callback(eth);
+        } catch (error) {
+            if (error.id !== 'TransportLocked') {
+                throw Error(error);
             }
-
-            const eth = await this.getApp();
-
-            // Wait up to 5 seconds
-            for (let i = 0; i < 50; i++) {
-                try {
-                    const result = await callback(eth);
-                    return resolve(result);
-                } catch (error) {
-                    if (error.id !== 'TransportLocked') {
-                        return reject(error);
-                    }
-                }
-                await sleep(100);
-            }
-
-            return reject(new Error('timeout'));
-        });
+        }
     }
 }

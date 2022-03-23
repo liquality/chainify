@@ -1,4 +1,5 @@
-import { JsonRpcProvider, StaticJsonRpcProvider } from '@ethersproject/providers';
+import { UnsupportedMethodError } from '@liquality/errors';
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Chain, Fee } from '@liquality/client';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
 import { EthersBlock, EthersBlockWithTransactions, EthersTransactionResponse } from '../types';
@@ -76,9 +77,10 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     }
 
     public async sendRpcRequest(method: string, params: any[]): Promise<any> {
-        if (this.provider instanceof JsonRpcProvider) {
-            return this.provider.send(method, params);
+        if (!this.provider.send) {
+            throw new UnsupportedMethodError('Method not supported.');
         }
+        return this.provider.send(method, params);
     }
 
     private async _getBlock(blockTag: number | string, includeTx?: boolean) {

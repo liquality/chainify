@@ -1,7 +1,6 @@
-import { assert } from 'chai';
-
-import { Chain } from '../../types';
 import { FeeType } from '@liquality/types';
+import { assert } from 'chai';
+import { Chain } from '../../types';
 
 export function shouldUpdateTransactionFee(chain: Chain) {
     const { client, config } = chain;
@@ -60,8 +59,8 @@ export function shouldUpdateTransactionFee(chain: Chain) {
         });
 
         describe('Legacy', () => {
-            before(() => {
-                client.chain.setFeeProvider(null);
+            before(async () => {
+                await client.chain.setFeeProvider(null);
             });
 
             it('should update transaction fee', async () => {

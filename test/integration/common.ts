@@ -6,10 +6,11 @@ import { TerraNetworks } from '@liquality/terra';
 import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
 import { retry, sha256, sleep } from '@liquality/utils';
 import { expect } from 'chai';
-import { BitcoinHDWalletClient, BitcoinNodeWalletClient, EthereumClient, NearClient, TerraClient } from './clients';
-import { BtcHdWalletConfig } from './clients/bitcoin/config';
-import { BtcNodeConfig, EVMConfig, NearConfig, TerraConfig } from './config';
+import { BitcoinHDWalletClient, BitcoinNodeWalletClient, EVMClient, EVMLedgerClient, NearClient, TerraClient } from './clients';
+import { BtcHdWalletConfig, BtcNodeConfig, EVMConfig, EVMLedgerConfig, NearConfig, TerraConfig } from './config';
 import { Chain, ChainType, IConfig, WalletType } from './types';
+
+export const describeExternal = process.env.RUN_EXTERNAL ? describe.only : describe.skip;
 
 export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain }> } = {
     [ChainType.btc]: {
@@ -33,7 +34,14 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             id: 'EVM',
             name: 'evm',
             config: EVMConfig(EvmNetworks.ganache),
-            client: EthereumClient,
+            client: EVMClient,
+        },
+
+        ledger: {
+            id: 'EVM',
+            name: 'evm-ledger',
+            config: EVMLedgerConfig(EvmNetworks.ganache),
+            client: EVMLedgerClient,
         },
     },
 
@@ -64,9 +72,8 @@ export async function getSwapParams(client: Client, config: IConfig, expiryInSec
     const secretHash = sha256(secret);
     await sleep(1000);
 
-    const expiration = block.timestamp
-        ? Math.round(block.timestamp + expiryInSeconds)
-        : Math.round(Date.now() / 1000 + Math.random() * expiryInSeconds);
+    const expiry = config.swapParams.expiry || expiryInSeconds;
+    const expiration = block.timestamp ? Math.round(block.timestamp + expiry) : Math.round(Date.now() / 1000 + Math.random() * expiry);
 
     return {
         swapParams: {
@@ -84,7 +91,7 @@ export async function getSwapParams(client: Client, config: IConfig, expiryInSec
 export async function increaseTime(chain: Chain, timestamp: number) {
     switch (chain.id) {
         case 'EVM': {
-            await chain.client.chain.sendRpcRequest('evm_increaseTime', [timestamp]);
+            await chain.client.chain.sendRpcRequest('evm_increaseTime', [1000]);
             await chain.client.chain.sendRpcRequest('evm_mine', []);
             break;
         }
@@ -126,8 +133,7 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
     const { client } = chain;
     switch (chain.id) {
         case 'EVM': {
-            await client.chain.sendRpcRequest('evm_mine', []);
-            break;
+            return client.chain.sendRpcRequest('evm_mine', []);
         }
         case 'NEAR':
         case 'TERRA': {
@@ -197,6 +203,16 @@ export async function fundAddress(chain: Chain, address: AddressType, value?: Bi
                 to: address,
                 value: value || new BigNumber(10 * 1e8),
             });
+
+            break;
+        }
+
+        case 'EVM': {
+            await chain.client.wallet.sendTransaction({
+                to: address,
+                value: value || new BigNumber(1e18),
+            });
+            break;
         }
     }
 

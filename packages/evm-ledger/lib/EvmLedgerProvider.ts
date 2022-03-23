@@ -8,6 +8,8 @@ import { Address, Network } from '@liquality/types';
 import { EvmLedgerSigner } from './EvmLedgerSigner';
 import { EvmLedgerCreateOptions } from './types';
 
+const defaultPath = "m/44'/60'/0'/0/0";
+
 export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider, EvmLedgerSigner> {
     private _ledgerSigner: EvmLedgerSigner;
     private _ledgerProvider: LedgerProvider<HwAppEthereum>;
@@ -15,15 +17,15 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
 
     constructor(walletOptions: EvmLedgerCreateOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
         super(chainProvider);
-        this._ledgerProvider = new LedgerProvider<HwAppEthereum>(walletOptions);
-        this._ledgerSigner = new EvmLedgerSigner(this._ledgerProvider.getApp, walletOptions.baseDerivationPath);
+        this._ledgerProvider = new LedgerProvider<HwAppEthereum>({ ...walletOptions, App: HwAppEthereum });
+        this._derivationPath = walletOptions.derivationPath ? walletOptions.derivationPath + walletOptions.index : defaultPath;
+        this._ledgerSigner = new EvmLedgerSigner(this._ledgerProvider.getApp.bind(this._ledgerProvider), this._derivationPath);
 
         if (chainProvider) {
             this._ledgerSigner = this._ledgerSigner.connect(chainProvider.getProvider());
         }
 
         this.signer = this._ledgerSigner;
-        this._derivationPath = walletOptions.baseDerivationPath;
     }
 
     public async getAddress(): Promise<Address> {

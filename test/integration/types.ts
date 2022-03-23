@@ -18,6 +18,7 @@ export interface IConfig {
     };
     swapParams: {
         value?: BigNumber;
+        expiry?: number;
     };
     sendParams: {
         value?: BigNumber;
@@ -38,6 +39,7 @@ export enum ChainType {
 export enum WalletType {
     hd = 'hd',
     node = 'node',
+    ledger = 'ledger',
 }
 
 export interface Chain {
