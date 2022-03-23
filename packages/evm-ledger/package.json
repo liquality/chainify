@@ -21,6 +21,8 @@
         "@ledgerhq/hw-app-eth": "^6.26.0",
         "@liquality/evm": "workspace:*",
         "@liquality/hw-ledger": "workspace:*",
-        "@liquality/utils": "workspace:*"
+        "@liquality/utils": "workspace:*",
+        "@types/hdkey": "^2.0.1",
+        "hdkey": "^2.0.1"
     }
 }

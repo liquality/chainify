@@ -1425,6 +1425,8 @@ __metadata:
     "@liquality/evm": "workspace:*"
     "@liquality/hw-ledger": "workspace:*"
     "@liquality/utils": "workspace:*"
+    "@types/hdkey": ^2.0.1
+    hdkey: ^2.0.1
   languageName: unknown
   linkType: soft
 
@@ -2139,6 +2141,15 @@ __metadata:
     "@types/minimatch": "*"
     "@types/node": "*"
   checksum: 6ae717fedfdfdad25f3d5a568323926c64f52ef35897bcac8aca8e19bc50c0bd84630bbd063e5d52078b2137d8e7d3c26eabebd1a2f03ff350fff8a91e79fc19
+  languageName: node
+  linkType: hard
+
+"@types/hdkey@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@types/hdkey@npm:2.0.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 2593145197b17c7867987428c568f2840cbdd00eae8cfe43538dbb60b158c9e6ca2094007643f51e8dd392d00fc0e806ee22e2755180d94b19dbe3d508ecb23f
   languageName: node
   linkType: hard
 
@@ -9181,6 +9192,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hdkey@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "hdkey@npm:2.0.1"
+  dependencies:
+    bs58check: ^2.1.2
+    safe-buffer: ^5.1.1
+    secp256k1: ^4.0.0
+  checksum: 77105cecf7843f03f9b602724882cfeb227e392843bb808971ccdb2094e5a4e0c1731587e079d344816f738929def5df297f5fec687bcece46e36ac339e62fcd
+  languageName: node
+  linkType: hard
+
 "he@npm:1.2.0":
   version: 1.2.0
   resolution: "he@npm:1.2.0"
@@ -14750,7 +14772,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"secp256k1@npm:^4.0.1, secp256k1@npm:^4.0.2":
+"secp256k1@npm:^4.0.0, secp256k1@npm:^4.0.1, secp256k1@npm:^4.0.2":
   version: 4.0.3
   resolution: "secp256k1@npm:4.0.3"
   dependencies:

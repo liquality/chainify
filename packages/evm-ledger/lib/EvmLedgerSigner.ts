@@ -32,8 +32,9 @@ export class EvmLedgerSigner extends Signer {
     public provider: Provider;
 
     private addressCache: Record<string, LedgerAddressType>;
+    private derivationPath: string;
+
     private readonly getApp: GetAppType;
-    private readonly derivationPath: string;
 
     constructor(getApp: GetAppType, derivationPath?: string, provider?: Provider) {
         super();
@@ -92,6 +93,10 @@ export class EvmLedgerSigner extends Signer {
 
     public connect(provider: Provider): EvmLedgerSigner {
         return new EvmLedgerSigner(this.getApp, this.derivationPath, provider);
+    }
+
+    public setDerivationPath(derivationPath: string) {
+        this.derivationPath = derivationPath;
     }
 
     private async _retry<T = any>(callback: (eth: Eth) => Promise<T>): Promise<T> {
