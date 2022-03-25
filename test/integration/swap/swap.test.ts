@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import { claimAndVerify, getSwapParams, increaseTime, initiateAndVerify, refundAndVerify } from '../common';
 import { Chain } from '../types';
 
-export function shouldBehaveLikeSwapProvider(chain: Chain) {
+export function shouldBehaveLikeSwapProvider(chain: Chain, native = true) {
     const { client, config } = chain;
 
-    describe(`${client.chain.getNetwork().name} Swap Provider`, function () {
+    describe(`${client.chain.getNetwork().name} Swap Provider with ${native ? 'Native' : 'ERC20'} asset`, function () {
         it('should generate different secrets', async () => {
             const secret1 = await client.swap.generateSecret('secret1');
             const secret2 = await client.swap.generateSecret('secret2');
@@ -14,7 +14,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
 
         describe(`Initiate`, async () => {
             it('should initiate, verify find the initiate tx', async () => {
-                const { swapParams } = await getSwapParams(client, config);
+                const { swapParams } = await getSwapParams(client, config, 200, native);
                 await initiateAndVerify(chain, swapParams);
             });
         });
@@ -22,7 +22,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
         describe(`Claim`, async () => {
             it('should claim successfully', async () => {
                 // Initiate
-                const { swapParams, secret } = await getSwapParams(client, config);
+                const { swapParams, secret } = await getSwapParams(client, config, 200, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Claim and verify
@@ -31,7 +31,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
 
             it('should claim only using correct secret', async () => {
                 // Initiate and verify
-                const { swapParams, secret } = await getSwapParams(client, config);
+                const { swapParams, secret } = await getSwapParams(client, config, 200, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Try claiming using wrong secrets
@@ -50,7 +50,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
 
             it('should claim after expiration', async () => {
                 // Initiate
-                const { swapParams, secret } = await getSwapParams(client, config, 10);
+                const { swapParams, secret } = await getSwapParams(client, config, 10, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Claim after expiration
@@ -60,7 +60,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
 
             it('should not allow claiming multiple times', async () => {
                 // Initiate
-                const { swapParams, secret } = await getSwapParams(client, config, 10);
+                const { swapParams, secret } = await getSwapParams(client, config, 10, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Claim after expiration
@@ -73,7 +73,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
         describe(`Refund`, async () => {
             it('should refund successfully', async () => {
                 // Initiate
-                const { swapParams } = await getSwapParams(client, config, 10);
+                const { swapParams } = await getSwapParams(client, config, 10, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Refund and verify
@@ -83,7 +83,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
 
             it('should not allow refund after claim', async () => {
                 // Initiate
-                const { swapParams, secret } = await getSwapParams(client, config, 10);
+                const { swapParams, secret } = await getSwapParams(client, config, 10, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Claim
@@ -96,7 +96,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
 
             it('should not allow multiple refunds of the same htlc', async () => {
                 // Initiate
-                const { swapParams } = await getSwapParams(client, config, 10);
+                const { swapParams } = await getSwapParams(client, config, 10, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Refund and verify
@@ -107,7 +107,7 @@ export function shouldBehaveLikeSwapProvider(chain: Chain) {
 
             it('should not allow refunding before expiration', async () => {
                 // Initiate
-                const { swapParams } = await getSwapParams(client, config, 1000);
+                const { swapParams } = await getSwapParams(client, config, 1000, native);
                 const initTx = await initiateAndVerify(chain, swapParams);
 
                 // Refund and reject

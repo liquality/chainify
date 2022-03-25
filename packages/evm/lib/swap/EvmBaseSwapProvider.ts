@@ -31,13 +31,14 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
         const parsedSwapParams = parseSwapParams(swapParams);
 
         if (!swapParams.asset.isNative) {
-            // TODO: currently the approved amount is set to uint256 max. Is this okay?
-            const approveTx = await ERC20__factory.connect(
-                swapParams.asset.contractAddress,
-                this.walletProvider.getSigner()
-            ).populateTransaction.approve(this.swapOptions.contractAddress, MaxUint256);
-
-            await this.walletProvider.sendTransaction(toEthereumTxRequest(approveTx, fee));
+            const userAddress = await this.walletProvider.getAddress();
+            const erc20Contract = ERC20__factory.connect(swapParams.asset.contractAddress, this.walletProvider.getSigner());
+            const allowance = await erc20Contract.allowance(userAddress.toString(), this.swapOptions.contractAddress);
+            if (Math.lt(allowance, swapParams.value)) {
+                // TODO: currently the approved amount is set to uint256 max. Is this okay?
+                const approveTx = await erc20Contract.populateTransaction.approve(this.swapOptions.contractAddress, MaxUint256);
+                await this.walletProvider.sendTransaction(toEthereumTxRequest(approveTx, fee));
+            }
         }
 
         const tx = await this.contract.populateTransaction.initiate(parsedSwapParams, {
@@ -61,7 +62,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
 
         if (transaction?.logs) {
             for (const log of transaction.logs as Log[]) {
-                const initiate = this.contract.interface.parseLog(log);
+                const initiate = this.tryParseLog(log);
 
                 if (initiate?.args?.id) {
                     const tx = await this.contract.populateTransaction.claim(initiate.args.id, ensure0x(secret));
@@ -79,7 +80,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
 
         if (transaction?.logs) {
             for (const log of transaction.logs as Log[]) {
-                const initiate = this.contract.interface.parseLog(log);
+                const initiate = this.tryParseLog(log);
 
                 if (initiate?.args?.id) {
                     const tx = await this.contract.populateTransaction.refund(initiate.args.id);
@@ -96,8 +97,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
         if (!htlcArgs) {
             if (transaction?.logs) {
                 for (const log of transaction.logs as Log[]) {
-                    const initiate = this.contract.interface.parseLog(log);
-
+                    const initiate = this.tryParseLog(log);
                     if (initiate) {
                         htlcArgs = initiate.args as any;
                     }
@@ -126,8 +126,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
 
         if (transaction?.logs) {
             for (const log of transaction.logs as Log[]) {
-                const claim = this.contract.interface.parseLog(log);
-
+                const claim = this.tryParseLog(log);
                 if (claim?.args?.id && claim.args.secret) {
                     return remove0x(claim.args.secret);
                 }
@@ -141,6 +140,18 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
 
     public updateTransactionFee(_tx: string | Transaction<any>, _newFee: FeeType): Promise<Transaction> {
         throw new UnimplementedMethodError('Method not supported.');
+    }
+
+    protected tryParseLog(log: Log) {
+        try {
+            return this.contract.interface.parseLog(log);
+        } catch (err) {
+            if (err.code === 'INVALID_ARGUMENT' && err.argument === 'topichash') {
+                return null;
+            } else {
+                throw err;
+            }
+        }
     }
 
     abstract findInitiateSwapTransaction(swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<InitiateEvent>>;

@@ -24,6 +24,10 @@ export function lte(a: BigNumberish, b: BigNumberish) {
     return new BigNumber(a.toString()).lte(b.toString());
 }
 
+export function lt(a: BigNumberish, b: BigNumberish) {
+    return new BigNumber(a.toString()).lt(b.toString());
+}
+
 export function gte(a: BigNumberish, b: BigNumberish) {
     return new BigNumber(a.toString()).gte(b.toString());
 }

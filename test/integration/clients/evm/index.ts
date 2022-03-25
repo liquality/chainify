@@ -16,6 +16,7 @@ export function shouldBehaveLikeEvmClient() {
         shouldBehaveLikeWalletProvider(chain);
         shouldUpdateTransactionFee(chain);
         shouldBehaveLikeSwapProvider(chain);
+        shouldBehaveLikeSwapProvider(chain, false);
     });
 
     describeExternal('EVM Client - Ledger', () => {
