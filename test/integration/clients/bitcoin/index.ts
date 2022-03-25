@@ -38,4 +38,17 @@ export function shouldBehaveLikeBitcoinClient() {
         shouldBehaveLikeSwapProvider(Chains.btc.node);
         shouldBehaveLikeBitcoinTransaction(Chains.btc.node);
     });
+
+    describe('Bitcoin Client - Ledger', () => {
+        before(async () => {
+            const { config } = Chains.btc.hd;
+            await importBitcoinAddresses(Chains.btc.hd);
+            await fundAddress(Chains.btc.node, config.walletExpectedResult.address);
+        });
+
+        shouldBehaveLikeChainProvider(Chains.btc.ledger);
+        shouldBehaveLikeWalletProvider(Chains.btc.ledger);
+        shouldBehaveLikeSwapProvider(Chains.btc.node);
+        shouldBehaveLikeBitcoinTransaction(Chains.btc.node);
+    });
 }

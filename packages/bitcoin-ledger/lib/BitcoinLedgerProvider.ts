@@ -17,7 +17,8 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
 
     constructor(options: BitcoinLedgerProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
         super(options, chainProvider);
-        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>(options);
+        const scrambleKey = options.ledgerScrambleKey || 'BTC';
+        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>({ ...options, App: HwAppBitcoin, ledgerScrambleKey: scrambleKey });
         this._walletPublicKeyCache = {};
     }
 

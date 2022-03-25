@@ -34,6 +34,18 @@ export const BtcHdWalletConfig = (network: Network): IConfig => {
     };
 };
 
+export const BtcLedgerConfig = (network: Network): IConfig => {
+    return {
+        ...(CommonBtcConfig(network) as IConfig),
+
+        walletOptions: {
+            baseDerivationPath: `m/84'/${network.coinType}'/0'`,
+            addressType: BitcoinTypes.AddressType.BECH32,
+            ledgerScrambleKey: 'BTC',
+        },
+    };
+};
+
 const CommonBtcConfig = (network: Network): Partial<IConfig> => {
     return {
         network,
