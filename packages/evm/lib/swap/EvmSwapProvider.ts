@@ -63,7 +63,7 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
 
         if (txReceipt?.logs) {
             for (const log of txReceipt.logs as Log[]) {
-                const initiate = this.contract.interface.parseLog(log);
+                const initiate = this.tryParseLog(log);
 
                 if (initiate?.args?.id && initiate.args.htlc) {
                     await this.verifyInitiateSwapTransaction(swapParams, { ...txReceipt, _raw: initiate });
