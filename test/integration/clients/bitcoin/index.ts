@@ -41,14 +41,14 @@ export function shouldBehaveLikeBitcoinClient() {
 
     describe('Bitcoin Client - Ledger', () => {
         before(async () => {
-            const { config } = Chains.btc.hd;
-            await importBitcoinAddresses(Chains.btc.hd);
+            const { config } = Chains.btc.ledger;
+            await importBitcoinAddresses(Chains.btc.ledger);
             await fundAddress(Chains.btc.node, config.walletExpectedResult.address);
         });
 
         shouldBehaveLikeChainProvider(Chains.btc.ledger);
         shouldBehaveLikeWalletProvider(Chains.btc.ledger);
-        shouldBehaveLikeSwapProvider(Chains.btc.node);
-        shouldBehaveLikeBitcoinTransaction(Chains.btc.node);
+        shouldBehaveLikeSwapProvider(Chains.btc.ledger);
+        shouldBehaveLikeBitcoinTransaction(Chains.btc.ledger);
     });
 }

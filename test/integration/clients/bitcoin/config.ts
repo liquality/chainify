@@ -42,7 +42,19 @@ export const BtcLedgerConfig = (network: Network): IConfig => {
             baseDerivationPath: `m/84'/${network.coinType}'/0'`,
             addressType: BitcoinTypes.AddressType.BECH32,
             ledgerScrambleKey: 'BTC',
+            network,
         },
+
+        walletExpectedResult: {
+            numberOfUsedAddresses: 1,
+            unusedAddress: 'bcrt1quzvhrt84zyfync88vwqmwvfk2mtsl0xt6xqxvw',
+            address: 'bcrt1qdwfn8yct5rk34f5aekn5c68q6le6cu345txrsx',
+            privateKey: null,
+            privateKeyRegex: null,
+            signedMessage: null,
+        },
+
+        recipientAddress: 'bcrt1quzvhrt84zyfync88vwqmwvfk2mtsl0xt6xqxvw',
     };
 };
 

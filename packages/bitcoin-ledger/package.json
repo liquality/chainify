@@ -15,7 +15,7 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
-        "@ledgerhq/hw-app-btc": "^6.24.1",
+        "@ledgerhq/hw-app-btc": "6.7.0",
         "@liquality/bitcoin": "workspace:*",
         "@liquality/client": "workspace:*",
         "@liquality/errors": "workspace:*",
