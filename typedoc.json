@@ -1,0 +1,13 @@
+{
+    "exclude": [
+        "**/*.js",
+        "**/node_modules/**",
+        "packages/solana/**",
+        "packages/evm-contracts/**"
+      ],
+      "tsconfig": "tsconfig.json",
+    "entryPoints": ["."],
+    "entryPointStrategy": "packages",
+    "out": "docs",
+    "excludePrivate": "true"
+}
