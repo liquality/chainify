@@ -1,12 +1,13 @@
-import { Chain, Wallet } from '@liquality/client';
+import { Chain, HttpClient, Wallet } from '@liquality/client';
 import { UnimplementedMethodError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumber, Network, Transaction, WalletOptions } from '@liquality/types';
+import { Address, AddressType, Asset, BigNumber, Transaction, WalletOptions } from '@liquality/types';
 import {
     BN,
     InMemorySigner,
     KeyPair,
     keyStores,
     NearAccount,
+    NearNetwork,
     NearTxLog,
     NearTxRequest,
     NearTxResponse,
@@ -17,12 +18,12 @@ import {
 import { parseTxResponse } from '../utils';
 
 export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemorySigner> {
-    private _wallet: NearWallet;
     private _walletOptions: WalletOptions;
     private _derivationPath: string;
-
+    private _wallet: NearWallet;
     private _keyStore: keyStores.InMemoryKeyStore;
     private _addressCache: { [key: string]: Address };
+    private _helper: HttpClient;
 
     constructor(walletOptions: WalletOptions, chainProvider: Chain<providers.JsonRpcProvider>) {
         super(chainProvider);
@@ -31,6 +32,9 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         this._wallet = parseSeedPhrase(walletOptions.mnemonic, this._derivationPath);
         this._keyStore = new keyStores.InMemoryKeyStore();
         this._addressCache = {};
+
+        const network = this.chainProvider.getNetwork() as NearNetwork;
+        this._helper = new HttpClient({ baseURL: network.helperUrl });
     }
 
     public getSigner(): InMemorySigner {
@@ -45,9 +49,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         const { publicKey, secretKey } = this._wallet;
         const keyPair = KeyPair.fromString(secretKey);
 
-        // TODO: check if implicit accounts exist for that public key
-        let address = null;
-        // let address = await this.getMethod('getImplicitAccount')(publicKey, 0);
+        let address = await this.getImplicitAccount(publicKey, 0);
 
         if (!address) {
             address = Buffer.from(keyPair.getPublicKey().data).toString('hex');
@@ -161,8 +163,8 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         throw new UnimplementedMethodError('Method not supported for Near');
     }
 
-    public async getConnectedNetwork(): Promise<Network> {
-        return this.chainProvider.getNetwork();
+    public async getConnectedNetwork(): Promise<NearNetwork> {
+        return this.chainProvider.getNetwork() as NearNetwork;
     }
 
     private getAccount(accountId: string): NearAccount {
@@ -174,5 +176,10 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
             },
             accountId
         );
+    }
+
+    private async getImplicitAccount(publicKey: string, index: number) {
+        const accounts = await this._helper.nodeGet(`/publicKey/${publicKey.toString()}/accounts`);
+        return accounts[index];
     }
 }

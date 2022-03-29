@@ -7,16 +7,16 @@ import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
 import { ERC20__factory, LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
 import { ClaimEvent, InitiateEvent, RefundEvent } from '../typechain/LiqualityHTLC';
-import { EthersTransactionResponse } from '../types';
+import { EthersTransactionResponse, EvmSwapOptions } from '../types';
 import { parseSwapParams, toEthereumTxRequest } from '../utils';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 
 export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
     protected walletProvider: EvmBaseWalletProvider<BaseProvider>;
     protected contract: LiqualityHTLC;
-    protected swapOptions: any; // TODO: create type for swap options
+    protected swapOptions: EvmSwapOptions;
 
-    constructor(swapOptions: any, walletProvider?: EvmBaseWalletProvider<BaseProvider>) {
+    constructor(swapOptions: EvmSwapOptions, walletProvider?: EvmBaseWalletProvider<BaseProvider>) {
         super(walletProvider);
 
         if (walletProvider) {
@@ -35,7 +35,6 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
             const erc20Contract = ERC20__factory.connect(swapParams.asset.contractAddress, this.walletProvider.getSigner());
             const allowance = await erc20Contract.allowance(userAddress.toString(), this.swapOptions.contractAddress);
             if (Math.lt(allowance, swapParams.value)) {
-                // TODO: currently the approved amount is set to uint256 max. Is this okay?
                 const approveTx = await erc20Contract.populateTransaction.approve(this.swapOptions.contractAddress, MaxUint256);
                 await this.walletProvider.sendTransaction(toEthereumTxRequest(approveTx, fee));
             }

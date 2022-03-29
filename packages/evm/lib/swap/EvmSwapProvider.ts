@@ -2,13 +2,14 @@ import { BaseProvider, Log } from '@ethersproject/providers';
 import { SwapParams, Transaction } from '@liquality/types';
 import { Math, remove0x } from '@liquality/utils';
 import { ClaimEvent, InitiateEvent, RefundEvent } from '../typechain/LiqualityHTLC';
+import { EvmSwapOptions } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmBaseSwapProvider } from './EvmBaseSwapProvider';
 
 export class EvmSwapProvider extends EvmBaseSwapProvider {
     protected walletProvider: EvmBaseWalletProvider<BaseProvider>;
 
-    constructor(swapOptions: any, walletProvider: EvmBaseWalletProvider<BaseProvider>) {
+    constructor(swapOptions: EvmSwapOptions, walletProvider: EvmBaseWalletProvider<BaseProvider>) {
         super(swapOptions, walletProvider);
     }
 

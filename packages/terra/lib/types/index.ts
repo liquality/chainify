@@ -2,6 +2,12 @@ import { Network, TransactionRequest } from '@liquality/types';
 import { Msg, TxInfo } from '@terra-money/terra.js';
 export * as FCD from './fcd';
 
+export interface TerraWalletProviderOptions {
+    mnemonic: string;
+    baseDerivationPath: string;
+    index: string;
+    gasAdjustment?: number;
+}
 export interface TerraNetwork extends Network {
     codeId: number;
     helperUrl: string;

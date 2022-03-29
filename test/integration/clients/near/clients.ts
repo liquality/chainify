@@ -1,7 +1,6 @@
-import * as Near from '@liquality/near';
 import { Client } from '@liquality/client';
+import * as Near from '@liquality/near';
 import { WalletOptions } from '@liquality/types';
-
 import { NearConfig } from './config';
 
 function getNearClient(network: Near.NearTypes.NearNetwork) {

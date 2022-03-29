@@ -5,22 +5,16 @@ import { mnemonicToSeed } from 'bip39';
 import { ECPair, ECPairInterface, Psbt, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 import { signAsync as signBitcoinMessage } from 'bitcoinjs-message';
 import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
-import { AddressType as BitcoinAddressType, Input, OutputTarget, PsbtInputTarget } from '../types';
+import { AddressType as BitcoinAddressType, BitcoinHDWalletProviderOptions, Input, OutputTarget, PsbtInputTarget } from '../types';
 import { BitcoinBaseWalletProvider } from './BitcoinBaseWallet';
 import { IBitcoinWallet } from './IBitcoinWallet';
-
-interface BitcoinJsWalletProviderOptions {
-    mnemonic: string;
-    baseDerivationPath: string;
-    addressType?: BitcoinAddressType;
-}
 
 export class BitcoinHDWalletProvider extends BitcoinBaseWalletProvider implements IBitcoinWallet<BitcoinBaseChainProvider> {
     private _mnemonic: string;
     private _seedNode: BIP32Interface;
     private _baseDerivationNode: BIP32Interface;
 
-    constructor(options: BitcoinJsWalletProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
+    constructor(options: BitcoinHDWalletProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
         const { mnemonic, baseDerivationPath, addressType = BitcoinAddressType.BECH32 } = options;
         super({ baseDerivationPath, addressType }, chainProvider);
 

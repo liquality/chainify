@@ -1,1 +1,1 @@
-declare module 'coinselect/accumulative'
+declare module 'coinselect/accumulative';

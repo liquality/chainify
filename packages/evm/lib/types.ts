@@ -3,6 +3,10 @@ import { PopulatedTransaction as EthersPopulatedTransaction } from '@ethersproje
 import { Block as EthersBlock, TransactionResponse as EthersTransactionResponse } from '@ethersproject/providers';
 import { AddressType, FeeType, TransactionRequest } from '@liquality/types';
 
+export interface EvmSwapOptions {
+    contractAddress: string;
+}
+
 export type EthereumTransactionRequest = TransactionRequest & {
     from?: AddressType;
     nonce?: number;

@@ -1,6 +1,6 @@
-import { UnsupportedMethodError } from '@liquality/errors';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Chain, Fee } from '@liquality/client';
+import { UnsupportedMethodError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
 import { EthersBlock, EthersBlockWithTransactions, EthersTransactionResponse } from '../types';
 import { calculateFee, parseBlockResponse, parseTxResponse } from '../utils';

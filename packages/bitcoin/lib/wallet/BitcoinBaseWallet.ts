@@ -10,6 +10,7 @@ import {
     AddressTxCounts,
     AddressType as BtcAddressType,
     BitcoinNetwork,
+    BitcoinWalletProviderOptions,
     Input,
     OutputTarget,
     P2SHInput,
@@ -28,11 +29,6 @@ export enum AddressSearchType {
 }
 
 type DerivationCache = { [index: string]: Address };
-
-interface BitcoinWalletProviderOptions {
-    baseDerivationPath: string;
-    addressType?: BtcAddressType;
-}
 
 export abstract class BitcoinBaseWalletProvider<T extends BitcoinBaseChainProvider = any, S = any> extends Wallet<T, S> {
     protected _baseDerivationPath: string;

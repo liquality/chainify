@@ -1,7 +1,22 @@
 import { Network } from '@liquality/types';
 import { Network as BitcoinJsLibNetwork } from 'bitcoinjs-lib';
 
+export * as BitcoinEsploraTypes from './chain/esplora/types';
+export * as BitcoinJsonRpcTypes from './chain/jsonRpc/types';
+export * from './swap/types';
+
 export interface BitcoinNetwork extends Network, BitcoinJsLibNetwork {}
+
+export interface BitcoinNodeWalletOptions {
+    addressType?: AddressType;
+}
+export interface BitcoinWalletProviderOptions extends BitcoinNodeWalletOptions {
+    baseDerivationPath: string;
+}
+
+export interface BitcoinHDWalletProviderOptions extends BitcoinWalletProviderOptions {
+    mnemonic: string;
+}
 
 export interface OutputTarget {
     address?: string;

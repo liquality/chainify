@@ -18,14 +18,7 @@ import {
 } from '@terra-money/terra.js';
 import { TerraChainProvider } from '..';
 import { assetCodeToDenom, DEFAULT_GAS_ADJUSTMENT } from '../constants';
-import { TerraNetwork, TerraTxInfo, TerraTxRequest } from '../types';
-
-interface TerraWalletProviderOptions {
-    mnemonic: string;
-    baseDerivationPath: string;
-    index: string;
-    gasAdjustment?: number;
-}
+import { TerraNetwork, TerraTxInfo, TerraTxRequest, TerraWalletProviderOptions } from '../types';
 
 export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
     protected signer: MnemonicKey;
@@ -37,7 +30,7 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
     private _gasAdjustment: number;
 
     constructor(chainProvider: TerraChainProvider, options: TerraWalletProviderOptions) {
-        const { mnemonic, baseDerivationPath, gasAdjustment } = options;
+        const { mnemonic, baseDerivationPath, gasAdjustment = DEFAULT_GAS_ADJUSTMENT } = options;
         super(chainProvider);
         this.signer = new MnemonicKey({ mnemonic });
 
@@ -46,7 +39,7 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
         this._mnemonic = mnemonic;
         this._addressCache = {};
         this._wallet = this.getChainProvider().getProvider().wallet(this.signer);
-        this._gasAdjustment = gasAdjustment || DEFAULT_GAS_ADJUSTMENT;
+        this._gasAdjustment = gasAdjustment;
     }
 
     public async exportPrivateKey() {

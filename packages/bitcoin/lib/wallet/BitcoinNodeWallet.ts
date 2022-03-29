@@ -6,7 +6,13 @@ import { flatten, isString, uniq } from 'lodash';
 import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
 import { AddressGrouping, AddressInfo, ReceivedByAddress } from '../chain/jsonRpc/types';
 import { BitcoinNetworks } from '../networks';
-import { AddressType as BitcoinAddressType, BitcoinNetwork, PsbtInputTarget, Transaction as BitcoinTransaction } from '../types';
+import {
+    AddressType as BitcoinAddressType,
+    BitcoinNetwork,
+    BitcoinNodeWalletOptions,
+    PsbtInputTarget,
+    Transaction as BitcoinTransaction,
+} from '../types';
 import { decodeRawTransaction, normalizeTransactionObject } from '../utils';
 import { IBitcoinWallet } from './IBitcoinWallet';
 
@@ -15,10 +21,6 @@ const BIP70_CHAIN_TO_NETWORK: { [index: string]: BitcoinNetwork } = {
     test: BitcoinNetworks.bitcoin_testnet,
     regtest: BitcoinNetworks.bitcoin_regtest,
 };
-
-interface BitcoinNodeWalletOptions {
-    addressType?: BitcoinAddressType;
-}
 
 export class BitcoinNodeWalletProvider extends Wallet<any, any> implements IBitcoinWallet<BitcoinBaseChainProvider> {
     private _addressType: BitcoinAddressType;

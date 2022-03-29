@@ -1,1 +1,1 @@
-declare module 'crypto-hashing'
+declare module 'crypto-hashing';
