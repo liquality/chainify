@@ -1,5 +1,5 @@
 import { Chain } from '@liquality/client';
-import { TxNotFoundError, UnimplementedMethodError } from '@liquality/errors';
+import { TxNotFoundError, UnsupportedMethodError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@liquality/types';
 import { BlockInfo, LCDClient } from '@terra-money/terra.js';
 import { assetCodeToDenom } from '../constants';
@@ -81,11 +81,11 @@ export class TerraChainProvider extends Chain<LCDClient> {
     }
 
     public getBlockByHash(_blockHash: string, _includeTx?: boolean): Promise<Block<BlockInfo, TerraTxInfo>> {
-        throw new UnimplementedMethodError('Method not supported.');
+        throw new UnsupportedMethodError('Method not supported.');
     }
 
     public async sendRawTransaction(_rawTransaction: string): Promise<string> {
-        throw new UnimplementedMethodError('Method not supported.');
+        throw new UnsupportedMethodError('Method not supported.');
     }
 }
 

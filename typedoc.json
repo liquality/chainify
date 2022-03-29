@@ -1,0 +1,11 @@
+{
+    "exclude": [
+        "**/*.js",
+        "**/node_modules/**"
+      ],
+      "tsconfig": "tsconfig.json",
+    "entryPoints": ["."],
+    "entryPointStrategy": "packages",
+    "out": "docs",
+    "excludePrivate": "true"
+}
