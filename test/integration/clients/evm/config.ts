@@ -60,8 +60,7 @@ export const EVMConfig = (network: Network): IConfig => {
 };
 
 export const EVMLedgerConfig = (network: Network): IConfig => {
-    /// NOTE
-    /// You have to manually change the mnemonic to match the one in the Ledger to run the tests successfully
+    /// NOTE: You have to manually change the mnemonic to match the one in the Ledger to run the tests successfully
     const wallet = Wallet.fromMnemonic('indoor dish desk flag debris potato excuse depart ticket judge file exit');
 
     const config = EVMConfig(network);

@@ -6,8 +6,16 @@ import { TerraNetworks } from '@liquality/terra';
 import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
 import { retry, sha256, sleep } from '@liquality/utils';
 import { expect } from 'chai';
-import { BitcoinHDWalletClient, BitcoinNodeWalletClient, EVMClient, EVMLedgerClient, NearClient, TerraClient } from './clients';
-import { BtcHdWalletConfig, BtcNodeConfig, EVMConfig, EVMLedgerConfig, NearConfig, TerraConfig } from './config';
+import {
+    BitcoinHDWalletClient,
+    BitcoinLedgerClient,
+    BitcoinNodeWalletClient,
+    EVMClient,
+    EVMLedgerClient,
+    NearClient,
+    TerraClient,
+} from './clients';
+import { BtcHdWalletConfig, BtcLedgerConfig, BtcNodeConfig, EVMConfig, EVMLedgerConfig, NearConfig, TerraConfig } from './config';
 import { Chain, ChainType, IConfig, WalletType } from './types';
 
 export const describeExternal = process.env.RUN_EXTERNAL ? describe.only : describe.skip;
@@ -26,6 +34,13 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             name: 'btc-hd-wallet',
             config: BtcHdWalletConfig(BitcoinNetworks.bitcoin_regtest),
             client: BitcoinHDWalletClient,
+        },
+
+        ledger: {
+            id: 'BTC',
+            name: 'btc-ledger-wallet',
+            config: BtcLedgerConfig(BitcoinNetworks.bitcoin_regtest),
+            client: BitcoinLedgerClient,
         },
     },
 

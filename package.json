@@ -7,7 +7,7 @@
         "@changesets/cli": "^2.20.0",
         "@commitlint/cli": "^16.1.0",
         "@commitlint/config-conventional": "^16.0.0",
-        "@ledgerhq/hw-transport-node-hid": "^6.24.1",
+        "@ledgerhq/hw-transport-node-hid": "6.24.1",
         "@typechain/ethers-v5": "^9.0.0",
         "@typechain/hardhat": "^4.0.0",
         "@types/chai": "^4.3.0",

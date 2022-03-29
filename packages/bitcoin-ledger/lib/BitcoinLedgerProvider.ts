@@ -1,5 +1,5 @@
 import HwAppBitcoin from '@ledgerhq/hw-app-btc';
-import { BitcoinBaseChainProvider, BitcoinBaseWalletProvider, BitcoinNetworks, BitcoinTypes, BitcoinUtils } from '@liquality/bitcoin';
+import { BitcoinBaseChainProvider, BitcoinBaseWalletProvider, BitcoinTypes, BitcoinUtils } from '@liquality/bitcoin';
 import { Chain } from '@liquality/client';
 import { UnimplementedMethodError } from '@liquality/errors';
 import { LedgerProvider } from '@liquality/hw-ledger';
@@ -11,13 +11,13 @@ import { BitcoinLedgerProviderOptions } from './types';
 
 export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
     private _ledgerProvider: LedgerProvider<HwAppBitcoin>;
-
-    _walletPublicKeyCache: { [index: string]: any };
-    _baseDerivationNode: BIP32Interface;
+    private _walletPublicKeyCache: Record<string, any>;
+    private _baseDerivationNode: BIP32Interface;
 
     constructor(options: BitcoinLedgerProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
         super(options, chainProvider);
-        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>(options);
+        const scrambleKey = options.ledgerScrambleKey || 'BTC';
+        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>({ ...options, App: HwAppBitcoin, ledgerScrambleKey: scrambleKey });
         this._walletPublicKeyCache = {};
     }
 
@@ -30,13 +30,7 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
     }
 
     public async getConnectedNetwork() {
-        const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath);
-        const network = BitcoinUtils.getAddressNetwork(walletPubKey.bitcoinAddress);
-        // Bitcoin Ledger app does not distinguish between regtest & testnet
-        if (this._network.name === BitcoinNetworks.bitcoin_regtest.name && network.name === BitcoinNetworks.bitcoin_testnet.name) {
-            return BitcoinNetworks.bitcoin_regtest;
-        }
-        return network;
+        return this.chainProvider.getNetwork();
     }
 
     public async getSigner(): Promise<null> {
@@ -245,8 +239,9 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
     }
 
     protected async baseDerivationNode() {
-        if (this._baseDerivationNode) return this._baseDerivationNode;
-
+        if (this._baseDerivationNode) {
+            return this._baseDerivationNode;
+        }
         const walletPubKey = await this.getWalletPublicKey(this._baseDerivationPath);
         const compressedPubKey = BitcoinUtils.compressPubKey(walletPubKey.publicKey);
         this._baseDerivationNode = fromPublicKey(

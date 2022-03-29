@@ -1,5 +1,8 @@
 import { BitcoinTypes } from '@liquality/bitcoin';
 import { BigNumber, ChainId, Network } from '@liquality/types';
+import { fromSeed } from 'bip32';
+import { mnemonicToSeedSync } from 'bip39';
+import { payments } from 'bitcoinjs-lib';
 import { IConfig } from '../../types';
 
 export const BtcNodeConfig = (network: Network): IConfig => {
@@ -31,6 +34,44 @@ export const BtcHdWalletConfig = (network: Network): IConfig => {
         },
 
         recipientAddress: 'bcrt1qa558ru7wyls34j6tnedtkmhfjgazwsk4l3sgac',
+    };
+};
+
+export const BtcLedgerConfig = (network: BitcoinTypes.BitcoinNetwork): IConfig => {
+    /// NOTE: You have to manually change the mnemonic to match the one in the Ledger to run the tests successfully
+    const seed = mnemonicToSeedSync('indoor dish desk flag debris potato excuse depart ticket judge file exit');
+    const baseDerivationPath = `m/84'/${network.coinType}'/0'`;
+    const seedNode = fromSeed(seed, network);
+
+    const baseDerivationNode = seedNode.derivePath(baseDerivationPath);
+    const path1 = baseDerivationPath + '/' + '0/0';
+    const path2 = baseDerivationPath + '/' + '0/1';
+    const publicKey1 = baseDerivationNode.derivePath(path1.replace(baseDerivationPath + '/', '')).publicKey;
+    const publicKey2 = baseDerivationNode.derivePath(path2.replace(baseDerivationPath + '/', '')).publicKey;
+
+    const address1 = payments.p2wpkh({ pubkey: publicKey1, network }).address;
+    const address2 = payments.p2wpkh({ pubkey: publicKey2, network }).address;
+
+    return {
+        ...(CommonBtcConfig(network) as IConfig),
+
+        walletOptions: {
+            baseDerivationPath: `m/84'/${network.coinType}'/0'`,
+            addressType: BitcoinTypes.AddressType.BECH32,
+            ledgerScrambleKey: 'BTC',
+            network,
+        },
+
+        walletExpectedResult: {
+            numberOfUsedAddresses: 1,
+            unusedAddress: address2,
+            address: address1,
+            privateKey: null,
+            privateKeyRegex: null,
+            signedMessage: null,
+        },
+
+        recipientAddress: address2,
     };
 };
 

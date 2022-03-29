@@ -1,6 +1,6 @@
 import { assign } from 'lodash';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
-import { Chains, fundAddress } from '../../common';
+import { Chains, describeExternal, fundAddress } from '../../common';
 import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
 import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
 import { shouldBehaveLikeBitcoinTransaction } from './behaviors/transactions.behavior';
@@ -37,5 +37,18 @@ export function shouldBehaveLikeBitcoinClient() {
         shouldBehaveLikeWalletProvider(Chains.btc.node);
         shouldBehaveLikeSwapProvider(Chains.btc.node);
         shouldBehaveLikeBitcoinTransaction(Chains.btc.node);
+    });
+
+    describeExternal('Bitcoin Client - Ledger', () => {
+        before(async () => {
+            const { config } = Chains.btc.ledger;
+            await importBitcoinAddresses(Chains.btc.ledger);
+            await fundAddress(Chains.btc.node, config.walletExpectedResult.address);
+        });
+
+        shouldBehaveLikeChainProvider(Chains.btc.ledger);
+        shouldBehaveLikeWalletProvider(Chains.btc.ledger);
+        shouldBehaveLikeSwapProvider(Chains.btc.ledger);
+        shouldBehaveLikeBitcoinTransaction(Chains.btc.ledger);
     });
 }
