@@ -1,7 +1,6 @@
 {
     "name": "chainabstractionlayer",
     "version": "2.0.0",
-    "private": true,
     "devDependencies": {
         "@changesets/changelog-github": "^0.4.2",
         "@changesets/cli": "^2.20.0",
@@ -29,6 +28,7 @@
         "lint-staged": "^12.3.2",
         "mocha": "^9.2.0",
         "plop": "^3.0.5",
+        "pre-commit": "^1.2.2",
         "prettier": "^2.5.1",
         "prettier-plugin-organize-imports": "^2.3.4",
         "turbo": "*",
