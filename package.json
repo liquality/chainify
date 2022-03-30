@@ -53,9 +53,10 @@
         "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts}\"",
         "prettier:fix": "prettier --write ./packages",
         "changeset": "changeset",
-        "release": "changeset publish",
-        "version:canary": "changeset version --snapshot canary",
-        "release:canary": "changeset publish --tag canary",
+        "version": "yarn changeset version",
+        "release": "yarn workspaces foreach --from '@liquality/*' npm publish --access public",
+        "release:beta": "yarn release --tag beta",
+        "tag": "yarn changeset tag",
         "docs": "typedoc"
     },
     "workspaces": [
