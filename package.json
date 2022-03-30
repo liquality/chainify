@@ -36,6 +36,8 @@
         "typedoc": "^0.22.13",
         "typedoc-github-wiki-theme": "^1.0.0",
         "typedoc-plugin-markdown": "^3.11.14",
+        "typedoc-plugin-missing-exports": "^0.22.6",
+        "typedoc-plugin-rename-defaults": "^0.4.0",
         "typescript": "^4.5.5"
     },
     "scripts": {
@@ -53,7 +55,8 @@
         "changeset": "changeset",
         "release": "changeset publish",
         "version:canary": "changeset version --snapshot canary",
-        "release:canary": "changeset publish --tag canary"
+        "release:canary": "changeset publish --tag canary",
+        "docs": "typedoc"
     },
     "workspaces": [
         "packages/*"

@@ -4854,6 +4854,8 @@ __metadata:
     typedoc: ^0.22.13
     typedoc-github-wiki-theme: ^1.0.0
     typedoc-plugin-markdown: ^3.11.14
+    typedoc-plugin-missing-exports: ^0.22.6
+    typedoc-plugin-rename-defaults: ^0.4.0
     typescript: ^4.5.5
   languageName: unknown
   linkType: soft
@@ -16914,6 +16916,24 @@ __metadata:
   peerDependencies:
     typedoc: ">=0.22.0"
   checksum: 7eff9e5b8b6b2457b484ea16bbae453c23313c838b4ac8826bd166c5d37a18010242dd43a21010b759965d860106951ddd321f85bd0ff39b78dcb172daa60e6e
+  languageName: node
+  linkType: hard
+
+"typedoc-plugin-missing-exports@npm:^0.22.6":
+  version: 0.22.6
+  resolution: "typedoc-plugin-missing-exports@npm:0.22.6"
+  peerDependencies:
+    typedoc: 0.22.x
+  checksum: 012f44beaac05731b4d37c26bfba2d972ac48344eab6be793a95982712a207416e7dc3451279be4e4cebc8b6b99a16764d2d4aaa06e041fac60ce21cc22cf796
+  languageName: node
+  linkType: hard
+
+"typedoc-plugin-rename-defaults@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "typedoc-plugin-rename-defaults@npm:0.4.0"
+  peerDependencies:
+    typedoc: 0.22.x
+  checksum: 41787d3bb99952c3cf5e4850ac34400d7fc4b8ded87b69a371a777ee9c9813e6290b3466b63a0c8c37e834108c12281ef08433c72c9ce17032234db906d275ea
   languageName: node
   linkType: hard
 
