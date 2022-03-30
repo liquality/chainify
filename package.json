@@ -1,6 +1,6 @@
 {
-    "name": "root",
-    "version": "0.0.0",
+    "name": "chainabstractionlayer",
+    "version": "2.0.0",
     "private": true,
     "devDependencies": {
         "@changesets/changelog-github": "^0.4.2",
