@@ -1,14 +1,10 @@
-// import { base58, padHexStart } from '@liquality/crypto';
 import { InvalidAddressError } from '@liquality/errors';
 import { AddressType, BigNumber, Transaction, TxStatus } from '@liquality/types';
-import { base58, padHexStart } from '@liquality/utils';
 import * as varuint from 'bip174/src/lib/converter/varint';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as classify from 'bitcoinjs-lib/src/classify';
 import coinselect from 'coinselect';
 import coinselectAccumulative from 'coinselect/accumulative';
-import { findKey } from 'lodash';
-import { BitcoinNetworks } from './networks';
 import { BitcoinNetwork, Input, Output, Transaction as BitcoinTransaction, UTXO } from './types';
 
 const AddressTypes = ['legacy', 'p2sh-segwit', 'bech32'];
@@ -19,8 +15,8 @@ function calculateFee(numInputs: number, numOutputs: number, feePerByte: number)
 
 /**
  * Get compressed pubKey from pubKey.
- * @param {!string} pubKey - 65 byte string with prefix, x, y.
- * @return {string} Returns the compressed pubKey of uncompressed pubKey.
+ * @param pubKey - 65 byte string with prefix, x, y.
+ * @returns the compressed pubKey of uncompressed pubKey.
  */
 function compressPubKey(pubKey: string) {
     const x = pubKey.substring(2, 66);
@@ -29,28 +25,6 @@ function compressPubKey(pubKey: string) {
     const prefix = even ? '02' : '03';
 
     return prefix + x;
-}
-
-/**
- * Get a network object from an address
- * @param {string} address The bitcoin address
- * @return {Network}
- */
-function getAddressNetwork(address: string) {
-    // TODO: can this be simplified using just bitcoinjs-lib??
-    let networkKey;
-    // bech32
-    networkKey = findKey(BitcoinNetworks, (network) => address.startsWith(network.bech32));
-    // base58
-    if (!networkKey) {
-        const prefix = Buffer.from(base58.decode(address)).toString('hex').substring(0, 2);
-        networkKey = findKey(BitcoinNetworks, (network) => {
-            const pubKeyHashPrefix = padHexStart(network.pubKeyHash.toString(16), 1);
-            const scriptHashPrefix = padHexStart(network.scriptHash.toString(16), 1);
-            return [pubKeyHashPrefix, scriptHashPrefix].includes(prefix);
-        });
-    }
-    return (BitcoinNetworks as { [key: string]: BitcoinNetwork })[networkKey];
 }
 
 type CoinSelectTarget = {
@@ -255,7 +229,6 @@ function validateAddress(_address: AddressType, network: BitcoinNetwork) {
 export {
     calculateFee,
     compressPubKey,
-    getAddressNetwork,
     CoinSelectTarget,
     selectCoins,
     decodeRawTransaction,

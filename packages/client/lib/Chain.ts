@@ -68,17 +68,15 @@ export default abstract class Chain<T, N = Network> implements ChainProvider {
      * @param includeTx - If true, fetches transactions in the block.
      * @throws {@link UnsupportedMethodError} - Thrown if the chain doesn't support the method
      * @throws {@link BlockNotFoundError} - Thrown if the block doesn't exist
-     * @returns {Promise<Block>}
      */
     public abstract getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block>;
 
     /**
      * @virtual
      * Get a block given its number.
-     * @param {number} blockNumber - The number of the desired block.
-     * @param {boolean} [includeTx=false] - If true, fetches transaction in the block.
+     * @param blockNumber - The number of the desired block. If the `blockNumber` is missing, it returns the latest block
+     * @param includeTx - If true, fetches transaction in the block.
      *  Resolves with a Block with the same number as the given input.
-     *  If the blockNumber is missing, it returns the latest block
      */
     public abstract getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block>;
 

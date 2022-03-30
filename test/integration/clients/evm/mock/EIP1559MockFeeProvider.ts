@@ -1,8 +1,7 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-
 import { Fee } from '@liquality/client';
-import { FeeDetails } from '@liquality/types';
 import { EvmUtils } from '@liquality/evm';
+import { FeeDetails } from '@liquality/types';
 
 export class EIP1559MockFeeProvider extends Fee {
     provider: StaticJsonRpcProvider;

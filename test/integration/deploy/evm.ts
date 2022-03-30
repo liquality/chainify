@@ -1,6 +1,6 @@
-import { ethers } from 'ethers';
 import { Client } from '@liquality/client';
-import { TestERC20__factory, Multicall__factory, LiqualityHTLC__factory } from '@liquality/evm/lib/typechain';
+import { LiqualityHTLC__factory, Multicall__factory, TestERC20__factory } from '@liquality/evm/lib/typechain';
+import { ethers } from 'ethers';
 
 /**
  * The deploy step should always comes first before executing any tests.

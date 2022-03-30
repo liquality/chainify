@@ -8,9 +8,11 @@ parserOptions:
   project: "tsconfig.json"
 plugins:
   - "@typescript-eslint"
+  - "eslint-plugin-tsdoc"
 root: true
 rules:
   "@typescript-eslint/no-explicit-any": "off"
+  "tsdoc/syntax": "warn"
   "@typescript-eslint/no-floating-promises":
     - error
     - ignoreIIFE: true

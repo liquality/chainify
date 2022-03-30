@@ -6,8 +6,8 @@ import { ensure0x, remove0x } from './hex';
 
 /**
  * Ensure message is in buffer format.
- * @param {string} message - any string.
- * @return {string} Returns Buffer.
+ * @param message - any string.
+ * @returns Buffer.
  */
 export function ensureBuffer(message: string | Buffer | any) {
     if (Buffer.isBuffer(message)) return message;
@@ -26,8 +26,8 @@ export function ensureBuffer(message: string | Buffer | any) {
 
 /**
  * Get hash160 of message.
- * @param {!string|Buffer} message - message in string or Buffer.
- * @return {string} Returns the hash160 of a string.
+ * @param message - message in string or Buffer.
+ * @returns the hash160 of a string.
  */
 export function hash160(message: string): string {
     return cryptoHash('hash160', ensureBuffer(message)).toString('hex');
@@ -47,9 +47,9 @@ export function isHex(hex: string) {
 
 /**
  * Pad a hex string with '0'
- * @param {string} hex - The hex string to pad.
- * @param {number} lengthBytes - The length of the final string in bytes
- * @return {string} Returns a padded string with length greater or equal to the given length
+ * @param hex - The hex string to pad.
+ * @param  lengthBytes - The length of the final string in bytes
+ * @returns a padded string with length greater or equal to the given length
  *  rounded up to the nearest even number.
  */
 export function padHexStart(hex: string, lengthBytes?: number) {
