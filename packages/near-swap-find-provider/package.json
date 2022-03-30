@@ -1,6 +1,6 @@
 {
   "name": "@liquality/near-swap-find-provider",
-  "version": "1.13.10",
+  "version": "1.13.11",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,11 +23,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.13.10",
-    "@liquality/near-utils": "^1.13.10",
-    "@liquality/node-provider": "^1.13.10",
-    "@liquality/types": "^1.13.10",
-    "@liquality/utils": "^1.13.10"
+    "@liquality/errors": "^1.13.11",
+    "@liquality/near-utils": "^1.13.11",
+    "@liquality/node-provider": "^1.13.11",
+    "@liquality/types": "^1.13.11",
+    "@liquality/utils": "^1.13.11"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

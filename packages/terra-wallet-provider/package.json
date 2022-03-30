@@ -1,6 +1,6 @@
 {
   "name": "@liquality/terra-wallet-provider",
-  "version": "1.13.10",
+  "version": "1.13.11",
   "description": "Wallet Provider implementation for Terra",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/terra-networks": "^1.13.10",
-    "@liquality/types": "^1.13.10",
-    "@liquality/utils": "^1.13.10",
-    "@liquality/wallet-provider": "^1.13.10",
+    "@liquality/terra-networks": "^1.13.11",
+    "@liquality/types": "^1.13.11",
+    "@liquality/utils": "^1.13.11",
+    "@liquality/wallet-provider": "^1.13.11",
     "@terra-money/terra.js": "~2.1.18"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
