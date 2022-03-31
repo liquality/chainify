@@ -32,7 +32,7 @@ describe('Solana RPC provider', () => {
     client.addProvider(new SolanaSwapFindProvider(SolanaNetworks.solana_testnet))
   })
 
-  describe('getBlockNumber', () => {
+  describeExternal('getBlockNumber', () => {
     it('should return block by number', async () => {
       const currentBlock = await client.getMethod('getBlockHeight')()
 
