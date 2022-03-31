@@ -26,6 +26,7 @@ interface TerraWalletProviderOptions {
   feeAsset: string
   tokenAddress?: string
   stableFee?: boolean
+  index?: number
 }
 
 interface CustomTxOptions extends CreateTxOptions {
@@ -44,10 +45,11 @@ export default class TerraWalletProvider extends WalletProvider {
   private _feeAsset: string
   private _tokenAddress: string
   private _stableFee: boolean
+  private _index: number
   _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
-    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress, stableFee } = options
+    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress, stableFee, index } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
@@ -57,6 +59,7 @@ export default class TerraWalletProvider extends WalletProvider {
     this._feeAsset = feeAsset
     this._tokenAddress = tokenAddress
     this._stableFee = stableFee
+    this._index = index
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
       chainID: network.chainID
@@ -81,14 +84,17 @@ export default class TerraWalletProvider extends WalletProvider {
     }
 
     const wallet = new MnemonicKey({
-      mnemonic: this._mnemonic
+      mnemonic: this._mnemonic,
+      index: this._index
     })
 
     const result = new Address({
       address: wallet.accAddress,
-      derivationPath: this._baseDerivationPath + `/0/0`,
+      derivationPath: this._baseDerivationPath + `/0/${this._index}`,
       publicKey: wallet.publicKey.pubkeyAddress()
     })
+
+    console.log('CAL, results: ', result)
 
     this._addressCache[this._mnemonic] = result
     return [result]
