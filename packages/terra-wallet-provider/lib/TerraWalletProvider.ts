@@ -94,8 +94,6 @@ export default class TerraWalletProvider extends WalletProvider {
       publicKey: wallet.publicKey.pubkeyAddress()
     })
 
-    console.log('CAL, results: ', result)
-
     this._addressCache[this._mnemonic] = result
     return [result]
   }
