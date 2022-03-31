@@ -203,10 +203,11 @@ terra
     new TerraWalletProvider({
       network: config.terra.network,
       mnemonic: config.terra.senderMnemonic,
-      baseDerivationPath: `'m/44'/307'/0'`,
+      baseDerivationPath: `'m/44'/330'/0'`,
       asset: 'uluna',
       tokenAddress: '',
-      feeAsset: 'uluna'
+      feeAsset: 'uluna',
+      index: 0
     })
   )
   .addProvider(new TerraSwapProvider(config.terra.network, 'uluna'))
@@ -322,10 +323,11 @@ async function fundAddress(chain: Chain, address: string, value?: BigNumber): Pr
         new TerraWalletProvider({
           network: config.terra.network,
           mnemonic: config.terra.senderMnemonic,
-          baseDerivationPath: `'m/44'/307'/0'`,
+          baseDerivationPath: `'m/44'/330'/0'`,
           asset: 'uluna',
           tokenAddress: '',
-          feeAsset: 'uluna'
+          feeAsset: 'uluna',
+          index: 0
         })
       )
 

@@ -9,7 +9,7 @@ import { TerraNetworks } from '../../../terra-networks'
 chai.config.truncateThreshold = 0
 
 const network = TerraNetworks.terra_testnet
-const baseDerivationPath = `'m/44'/307'/0'`
+const baseDerivationPath = `'m/44'/330'/0'`
 const rpcProvider = new TerraRpcProvider(network, 'uluna', 'uluna')
 
 function mkClient(mnemonic: string) {
@@ -20,7 +20,8 @@ function mkClient(mnemonic: string) {
     baseDerivationPath,
     asset: 'uluna',
     tokenAddress: '',
-    feeAsset: 'uluna'
+    feeAsset: 'uluna',
+    index: 0
   })
   client.addProvider(provider)
   // @ts-ignore
