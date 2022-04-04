@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ledger-provider",
-  "version": "1.13.11",
+  "version": "1.13.12",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -25,11 +25,11 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/runtime": "^7.12.1",
     "@ledgerhq/hw-transport": "^5.43.0",
-    "@liquality/debug": "^1.13.11",
-    "@liquality/errors": "^1.13.11",
-    "@liquality/types": "^1.13.11",
-    "@liquality/utils": "^1.13.11",
-    "@liquality/wallet-provider": "^1.13.11"
+    "@liquality/debug": "^1.13.12",
+    "@liquality/errors": "^1.13.12",
+    "@liquality/types": "^1.13.12",
+    "@liquality/utils": "^1.13.12",
+    "@liquality/wallet-provider": "^1.13.12"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
   "repository": {

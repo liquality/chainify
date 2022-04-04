@@ -1,6 +1,6 @@
 {
   "name": "@liquality/solana-rpc-provider",
-  "version": "1.13.11",
+  "version": "1.13.12",
   "description": "RPC Provider implementation for Solana",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,12 +23,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/errors": "^1.13.11",
-    "@liquality/node-provider": "^1.13.11",
-    "@liquality/solana-networks": "^1.13.11",
-    "@liquality/solana-utils": "^1.13.11",
-    "@liquality/types": "^1.13.11",
-    "@liquality/utils": "^1.13.11",
+    "@liquality/errors": "^1.13.12",
+    "@liquality/node-provider": "^1.13.12",
+    "@liquality/solana-networks": "^1.13.12",
+    "@liquality/solana-utils": "^1.13.12",
+    "@liquality/types": "^1.13.12",
+    "@liquality/utils": "^1.13.12",
     "@solana/web3.js": "^1.18.0",
     "axios": "^0.21.1"
   },

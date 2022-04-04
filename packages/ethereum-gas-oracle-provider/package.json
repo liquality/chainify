@@ -1,6 +1,6 @@
 {
   "name": "@liquality/ethereum-gas-oracle-provider",
-  "version": "1.13.11",
+  "version": "1.13.12",
   "description": "",
   "module": "dist/index.js",
   "main": "dist/index.js",
@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.12.1",
-    "@liquality/node-provider": "^1.13.11",
-    "@liquality/types": "^1.13.11",
+    "@liquality/node-provider": "^1.13.12",
+    "@liquality/types": "^1.13.12",
     "bignumber.js": "^9.0.0"
   },
   "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
