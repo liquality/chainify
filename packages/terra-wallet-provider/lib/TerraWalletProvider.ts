@@ -21,12 +21,11 @@ import { ceil } from 'lodash'
 interface TerraWalletProviderOptions {
   network: TerraNetwork
   mnemonic: string
-  baseDerivationPath: string
+  derivationPath: string
   asset: string
   feeAsset: string
   tokenAddress?: string
   stableFee?: boolean
-  index?: number
 }
 
 interface CustomTxOptions extends CreateTxOptions {
@@ -35,7 +34,7 @@ interface CustomTxOptions extends CreateTxOptions {
 
 export default class TerraWalletProvider extends WalletProvider {
   _network: TerraNetwork
-  _baseDerivationPath: string
+  _derivationPath: string
   _addressCache: { [key: string]: Address }
   private _mnemonic: string
   private _signer: MnemonicKey
@@ -45,21 +44,18 @@ export default class TerraWalletProvider extends WalletProvider {
   private _feeAsset: string
   private _tokenAddress: string
   private _stableFee: boolean
-  private _index: number
   _accAddressKey: string
 
   constructor(options: TerraWalletProviderOptions) {
-    const { network, mnemonic, baseDerivationPath, asset, feeAsset, tokenAddress, stableFee, index } = options
+    const { network, mnemonic, derivationPath, asset, feeAsset, tokenAddress, stableFee } = options
     super({ network })
     this._network = network
     this._mnemonic = mnemonic
-    this._baseDerivationPath = baseDerivationPath
-    this._addressCache = {}
+    ;(this._derivationPath = derivationPath), (this._addressCache = {})
     this._asset = asset
     this._feeAsset = feeAsset
     this._tokenAddress = tokenAddress
     this._stableFee = stableFee
-    this._index = index
     this._lcdClient = new LCDClient({
       URL: network.nodeUrl,
       chainID: network.chainID
@@ -83,14 +79,16 @@ export default class TerraWalletProvider extends WalletProvider {
       return [this._addressCache[this._mnemonic]]
     }
 
+    const index = this._getAccountIndex()
+
     const wallet = new MnemonicKey({
       mnemonic: this._mnemonic,
-      index: this._index
+      index
     })
 
     const result = new Address({
       address: wallet.accAddress,
-      derivationPath: this._baseDerivationPath + `/0/${this._index}`,
+      derivationPath: this._derivationPath,
       publicKey: wallet.publicKey.pubkeyAddress()
     })
 
@@ -285,5 +283,12 @@ export default class TerraWalletProvider extends WalletProvider {
     }
 
     return txData
+  }
+
+  private _getAccountIndex(): number {
+    const endIndexOfThick = this._derivationPath.lastIndexOf(`'`)
+    const _cutDerivationPath = this._derivationPath.substring(0, endIndexOfThick)
+    const lastIndexOfSlash = _cutDerivationPath.lastIndexOf('/')
+    return Number(this._derivationPath.substring(lastIndexOfSlash + 1, endIndexOfThick))
   }
 }
