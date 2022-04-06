@@ -1,19 +1,19 @@
-import { HttpClient } from '@liquality/client';
+import { Fee, HttpClient } from '@liquality/client';
 import { AddressType, BigNumber } from '@liquality/types';
 import { flatten, uniq } from 'lodash';
 import { UTXO } from '../../types';
-import { BitcoinEsploraBaseProvider } from './BitcoinEsploraBaseProvider';
+import { BitcoinEsploraApiProvider } from './BitcoinEsploraApiProvider';
 import * as EsploraTypes from './types';
 
 interface EsploraBatchApiProviderOptions extends EsploraTypes.EsploraApiProviderOptions {
     batchUrl: string;
 }
 
-export class BitcoinEsploraBatchBaseProvider extends BitcoinEsploraBaseProvider {
+export class BitcoinEsploraBatchBaseProvider extends BitcoinEsploraApiProvider {
     private _batchHttpClient: HttpClient;
 
-    constructor(options: EsploraBatchApiProviderOptions) {
-        super(options);
+    constructor(options: EsploraBatchApiProviderOptions, feeProvider: Fee, feeOptions?: EsploraTypes.FeeOptions) {
+        super(options, feeProvider, feeOptions);
         this._batchHttpClient = new HttpClient({ baseURL: options.batchUrl });
     }
 
