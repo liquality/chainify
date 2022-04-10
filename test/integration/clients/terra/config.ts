@@ -8,8 +8,7 @@ export const TerraConfig = (network: Network): IConfig => {
         walletOptions: {
             mnemonic:
                 'fury motion step civil horn snake engine wage honey already interest fall property nephew jeans true moment weasel village then upset avocado wheat write',
-            derivationPath: `m/44'/${network.coinType}'/0'/0/`,
-            index: '0',
+            derivationPath: `m/44'/${network.coinType}'/0'/0/0`,
         },
 
         walletExpectedResult: {

@@ -14,7 +14,8 @@ function getEvmClient(network: Network) {
     const chainProvider = new EVM.EvmChainProvider(network, provider, feeProvider);
     const walletProvider = new EVM.EvmWalletProvider(config.walletOptions as WalletOptions, chainProvider);
     const swapProvider = new EVM.EvmSwapProvider(config.swapOptions, walletProvider);
-    return new Client(chainProvider, walletProvider, swapProvider);
+    const client = new Client<EVM.EvmChainProvider, EVM.EvmWalletProvider, EVM.EvmSwapProvider>().connect(swapProvider);
+    return client;
 }
 
 function getEvmLedgerClient(network: Network) {

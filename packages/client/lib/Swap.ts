@@ -3,7 +3,7 @@ import { FeeType, SwapParams, SwapProvider, Transaction, TxStatus } from '@liqua
 import { sha256, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils';
 import Wallet from './Wallet';
 
-export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = any> implements SwapProvider {
+export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = Wallet<T, S>> implements SwapProvider {
     protected walletProvider: WalletProvider;
 
     constructor(walletProvider?: WalletProvider) {

@@ -16,7 +16,7 @@ interface ScraperResponse {
 export class TerraSwapProvider extends TerraSwapBaseProvider {
     private _httpClient: HttpClient;
 
-    constructor(walletProvider: TerraWalletProvider, helperUrl: string) {
+    constructor(helperUrl: string, walletProvider?: TerraWalletProvider) {
         super(walletProvider);
         this._httpClient = new HttpClient({ baseURL: helperUrl });
     }

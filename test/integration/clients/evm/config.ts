@@ -8,8 +8,7 @@ export const EVMConfig = (network: Network): IConfig => {
 
         walletOptions: {
             mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
-            derivationPath: `m/44'/${network.coinType}'/0'/0/`,
-            index: '0',
+            derivationPath: `m/44'/${network.coinType}'/0'/0/0`,
             network,
         },
 

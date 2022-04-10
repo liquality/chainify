@@ -14,9 +14,9 @@ export class BitcoinHDWalletProvider extends BitcoinBaseWalletProvider implement
     private _seedNode: BIP32Interface;
     private _baseDerivationNode: BIP32Interface;
 
-    constructor(options: BitcoinHDWalletProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
-        const { mnemonic, baseDerivationPath, addressType = BitcoinAddressType.BECH32 } = options;
-        super({ baseDerivationPath, addressType }, chainProvider);
+    constructor(options: BitcoinHDWalletProviderOptions, chainProvider?: Chain<BitcoinBaseChainProvider>) {
+        const { mnemonic, baseDerivationPath, addressType = BitcoinAddressType.BECH32, network } = options;
+        super({ baseDerivationPath, addressType, network }, chainProvider);
 
         if (!mnemonic) {
             throw new Error('Mnemonic should not be empty');

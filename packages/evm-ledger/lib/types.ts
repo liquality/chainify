@@ -5,7 +5,6 @@ export type GetAppType = () => Promise<HwAppEthereum>;
 
 export interface EvmLedgerCreateOptions extends LedgerProviderTypes.CreateOptions<HwAppEthereum> {
     derivationPath?: string;
-    index?: string;
 }
 
 export interface LedgerAddressType {

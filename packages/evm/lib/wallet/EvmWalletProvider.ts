@@ -1,7 +1,7 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { Chain } from '@liquality/client';
-import { Address, AddressType, WalletOptions } from '@liquality/types';
+import { Address, WalletOptions } from '@liquality/types';
 import { remove0x } from '@liquality/utils';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 
@@ -12,7 +12,7 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     constructor(walletOptions: WalletOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
         super(chainProvider);
         this._walletOptions = walletOptions;
-        this._wallet = EthersWallet.fromMnemonic(walletOptions.mnemonic, walletOptions.derivationPath + walletOptions.index);
+        this._wallet = EthersWallet.fromMnemonic(walletOptions.mnemonic, walletOptions.derivationPath);
 
         if (chainProvider) {
             this._wallet = this._wallet.connect(chainProvider.getProvider());
@@ -24,37 +24,22 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     public async getAddress(): Promise<Address> {
         return new Address({
             address: this._wallet.address,
-            derivationPath: this._walletOptions.derivationPath + this._walletOptions.index,
+            derivationPath: this._walletOptions.derivationPath,
             publicKey: this._wallet.publicKey,
         });
-    }
-
-    public async setWalletIndex(index: number): Promise<AddressType> {
-        this._wallet = EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + index);
-        return this.getAddress();
     }
 
     public async getUnusedAddress(): Promise<Address> {
         return this.getAddress();
     }
 
-    public async getUsedAddresses(numAddresses: number = 1): Promise<Address[]> {
-        return this.getAddresses(0, numAddresses);
+    public async getUsedAddresses(): Promise<Address[]> {
+        return this.getAddresses();
     }
 
-    public async getAddresses(start: number = 0, numAddresses: number = 1): Promise<Address[]> {
-        const result: Address[] = [];
-        for (let i = start; i < start + numAddresses; i++) {
-            const tempWallet = EthersWallet.fromMnemonic(this._walletOptions.mnemonic, this._walletOptions.derivationPath + i);
-            result.push(
-                new Address({
-                    publicKey: tempWallet.publicKey,
-                    address: tempWallet.address,
-                    derivationPath: this._walletOptions.derivationPath + i,
-                })
-            );
-        }
-        return result;
+    public async getAddresses(): Promise<Address[]> {
+        const address = await this.getAddress();
+        return [address];
     }
 
     public async exportPrivateKey(): Promise<string> {

@@ -1,12 +1,13 @@
 import { Client } from '@liquality/client';
 import * as Terra from '@liquality/terra';
+import { WalletOptions } from '@liquality/types';
 import { TerraConfig } from './config';
 
 function getTerraClient(network: Terra.TerraTypes.TerraNetwork) {
     const config = TerraConfig(network);
     const chainProvider = new Terra.TerraChainProvider(network);
-    const walletProvider = new Terra.TerraWalletProvider(chainProvider, config.walletOptions as any);
-    const swapProvider = new Terra.TerraSwapProvider(walletProvider, network.helperUrl);
+    const walletProvider = new Terra.TerraWalletProvider(config.walletOptions as WalletOptions, chainProvider);
+    const swapProvider = new Terra.TerraSwapProvider(network.helperUrl, walletProvider);
     return new Client(chainProvider, walletProvider, swapProvider);
 }
 

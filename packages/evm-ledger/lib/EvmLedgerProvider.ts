@@ -18,7 +18,7 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     constructor(walletOptions: EvmLedgerCreateOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
         super(chainProvider);
         this._ledgerProvider = new LedgerProvider<HwAppEthereum>({ ...walletOptions, App: HwAppEthereum });
-        this._derivationPath = walletOptions.derivationPath ? walletOptions.derivationPath + walletOptions.index : defaultPath;
+        this._derivationPath = walletOptions.derivationPath || defaultPath;
         this._ledgerSigner = new EvmLedgerSigner(this._ledgerProvider.getApp.bind(this._ledgerProvider), this._derivationPath);
 
         if (chainProvider) {

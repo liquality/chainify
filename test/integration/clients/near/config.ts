@@ -1,14 +1,15 @@
-import { BigNumber, ChainId, Network } from '@liquality/types';
+import * as Near from '@liquality/near';
+import { BigNumber, ChainId } from '@liquality/types';
 import { IConfig } from '../../types';
 
-export const NearConfig = (network: Network): IConfig => {
+export const NearConfig = (network: Near.NearTypes.NearNetwork): IConfig => {
     return {
         network,
 
         walletOptions: {
             mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
-            derivationPath: `m/44'/${network.coinType}'/`,
-            index: '0',
+            derivationPath: `m/44'/${network.coinType}'/0'`,
+            helperUrl: network.helperUrl,
         },
 
         walletExpectedResult: {

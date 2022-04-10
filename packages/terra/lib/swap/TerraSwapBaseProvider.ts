@@ -1,5 +1,5 @@
 import { Swap } from '@liquality/client';
-import { UnimplementedMethodError } from '@liquality/errors';
+import { UnsupportedMethodError } from '@liquality/errors';
 import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { compare, Math, validateSecret, validateSecretAndHash } from '@liquality/utils';
 import { LCDClient, MnemonicKey, MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js';
@@ -25,8 +25,8 @@ export abstract class TerraSwapBaseProvider extends Swap<LCDClient, MnemonicKey,
                 codeId,
                 // swap params
                 {
-                    buyer: swapParams.recipientAddress,
-                    seller: swapParams.refundAddress,
+                    buyer: swapParams.recipientAddress.toString(),
+                    seller: swapParams.refundAddress.toString(),
                     expiration: swapParams.expiration,
                     value: swapParams.value.toNumber(),
                     secret_hash: swapParams.secretHash,
@@ -89,7 +89,7 @@ export abstract class TerraSwapBaseProvider extends Swap<LCDClient, MnemonicKey,
     }
 
     public async updateTransactionFee(_tx: string | Transaction<TerraTxInfo>, _newFee: FeeType): Promise<Transaction<TerraTxInfo>> {
-        throw new UnimplementedMethodError('Method not supported.');
+        throw new UnsupportedMethodError('Method not supported.');
     }
 
     public abstract findInitiateSwapTransaction(_swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<TerraTxInfo>>;

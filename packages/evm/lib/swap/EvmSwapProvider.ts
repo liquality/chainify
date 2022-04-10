@@ -9,7 +9,7 @@ import { EvmBaseSwapProvider } from './EvmBaseSwapProvider';
 export class EvmSwapProvider extends EvmBaseSwapProvider {
     protected walletProvider: EvmBaseWalletProvider<BaseProvider>;
 
-    constructor(swapOptions: EvmSwapOptions, walletProvider: EvmBaseWalletProvider<BaseProvider>) {
+    constructor(swapOptions: EvmSwapOptions, walletProvider?: EvmBaseWalletProvider<BaseProvider>) {
         super(swapOptions, walletProvider);
     }
 

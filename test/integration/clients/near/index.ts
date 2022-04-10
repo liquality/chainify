@@ -1,6 +1,5 @@
 import { Client } from '@liquality/client';
-import { NearWalletProvider } from '@liquality/near';
-import { WalletOptions } from '@liquality/types';
+import { NearTypes, NearWalletProvider } from '@liquality/near';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
 import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
@@ -13,7 +12,7 @@ export function shouldBehaveLikeNearClient() {
             client.chain,
             new NearWalletProvider(
                 {
-                    ...(config.walletOptions as WalletOptions),
+                    ...(config.walletOptions as NearTypes.NearWalletOptions),
                     mnemonic: 'pet replace kitchen ladder jaguar bleak health horn high fall crush maze',
                 },
                 client.chain

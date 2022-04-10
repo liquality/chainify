@@ -72,7 +72,7 @@ export function parseTxResponse(response: EthersTransactionResponse, receipt?: T
         value: parseInt(response.value?.toString()),
         blockHash: response.blockHash,
         blockNumber: response.blockNumber,
-        confirmations: response.confirmations,
+        confirmations: Math.max(response.confirmations, 0),
         feePrice: parseInt(response.gasPrice?.toString()),
         _raw: response,
     };

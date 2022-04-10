@@ -6,8 +6,6 @@ import { Transaction, TransactionRequest } from './Transaction';
 export interface WalletOptions {
     mnemonic: string;
     derivationPath: string;
-    index: string;
-    data?: Record<string, any>;
 }
 
 export interface WalletProvider {
