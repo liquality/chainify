@@ -18,6 +18,7 @@
         "@ethersproject/bytes": "5.6.0",
         "@ethersproject/providers": "5.6.0",
         "@nomiclabs/hardhat-ethers": "^2.0.4",
+        "@nomiclabs/hardhat-etherscan": "^3.0.3",
         "@nomiclabs/hardhat-waffle": "^2.0.2",
         "@typechain/ethers-v5": "^9.0.0",
         "@typechain/hardhat": "^4.0.0",
@@ -77,7 +78,7 @@
         "commit": "git-cz",
         "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
         "coverage": "yarn typechain && hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\"",
-        "deploy": "hardhat deploy",
+        "deploy": "hardhat deploy:HTLC",
         "lint": "yarn lint:sol && yarn lint:ts && yarn prettier:check",
         "lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
         "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
@@ -86,6 +87,7 @@
         "prettier": "prettier --config ./.prettierrc.yaml --write \"**/*.{js,json,md,sol,ts}\"",
         "prettier:check": "prettier --check --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts}\"",
         "test": "hardhat test",
+        "verify": "hardhat verify 0x133713376F69C1A67d7f3594583349DFB53d8166",
         "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
     }
 }
