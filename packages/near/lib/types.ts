@@ -1,4 +1,4 @@
-import { AddressType, Network, TransactionRequest } from '@liquality/types';
+import { AddressType, Network, TransactionRequest, WalletOptions } from '@liquality/types';
 import BN from 'bn.js';
 import { Account, Connection } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
@@ -11,6 +11,9 @@ export { parseSeedPhrase } from 'near-seed-phrase';
 export { Action };
 export { BN };
 
+export interface NearWalletOptions extends WalletOptions {
+    helperUrl: string;
+}
 export interface NearNetwork extends Network {
     helperUrl: string;
 }

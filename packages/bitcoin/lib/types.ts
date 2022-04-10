@@ -9,6 +9,7 @@ export interface BitcoinNetwork extends Network, BitcoinJsLibNetwork {}
 
 export interface BitcoinNodeWalletOptions {
     addressType?: AddressType;
+    network?: BitcoinNetwork;
 }
 export interface BitcoinWalletProviderOptions extends BitcoinNodeWalletOptions {
     baseDerivationPath: string;

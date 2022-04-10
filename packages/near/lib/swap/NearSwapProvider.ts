@@ -1,4 +1,4 @@
-import { ClientTypes, HttpClient, Swap, Wallet } from '@liquality/client';
+import { HttpClient, Swap, Wallet } from '@liquality/client';
 import { TxNotFoundError, UnimplementedMethodError } from '@liquality/errors';
 import { FeeType, SwapParams, Transaction } from '@liquality/types';
 import { compare, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
@@ -11,9 +11,9 @@ const CONTRACT_CODE = 'jrBWhtpuyGJ44vtP+Ib+I32tuUUtfKQBuBdQ8y3M6Ro=';
 export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySigner> {
     private _httpClient: HttpClient;
 
-    constructor(httpConfig: ClientTypes.AxiosRequestConfig, walletProvider: Wallet<providers.JsonRpcProvider, InMemorySigner>) {
+    constructor(helperUrl: string, walletProvider?: Wallet<providers.JsonRpcProvider, InMemorySigner>) {
         super(walletProvider);
-        this._httpClient = new HttpClient(httpConfig);
+        this._httpClient = new HttpClient({ baseURL: helperUrl });
     }
 
     public async initiateSwap(swapParams: SwapParams): Promise<Transaction<NearTxLog>> {

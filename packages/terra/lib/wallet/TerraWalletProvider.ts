@@ -1,6 +1,6 @@
 import { Wallet } from '@liquality/client';
 import { UnimplementedMethodError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumber, FeeType, Transaction, TransactionRequest } from '@liquality/types';
+import { Address, Asset, BigNumber, FeeType, Transaction, TransactionRequest } from '@liquality/types';
 import { retry } from '@liquality/utils';
 import {
     Coin,
@@ -23,22 +23,23 @@ import { TerraNetwork, TerraTxInfo, TerraTxRequest, TerraWalletProviderOptions }
 export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
     protected signer: MnemonicKey;
 
-    private _baseDerivationPath: string;
+    private _derivationPath: string;
     private _mnemonic: string;
     private _addressCache: { [key: string]: Address };
     private _wallet: TerraWallet;
     private _gasAdjustment: number;
 
-    constructor(chainProvider: TerraChainProvider, options: TerraWalletProviderOptions) {
-        const { mnemonic, baseDerivationPath, gasAdjustment = DEFAULT_GAS_ADJUSTMENT } = options;
+    constructor(walletOptions: TerraWalletProviderOptions, chainProvider?: TerraChainProvider) {
+        const { mnemonic, derivationPath, gasAdjustment = DEFAULT_GAS_ADJUSTMENT } = walletOptions;
         super(chainProvider);
         this.signer = new MnemonicKey({ mnemonic });
 
-        // m/44'/${network.coinType}'/0'/0/${index}`
-        this._baseDerivationPath = baseDerivationPath + options.index;
+        this._derivationPath = derivationPath;
         this._mnemonic = mnemonic;
         this._addressCache = {};
-        this._wallet = this.getChainProvider().getProvider().wallet(this.signer);
+        this._wallet = this.chainProvider
+            ? new TerraWallet(this.chainProvider.getProvider(), this.signer)
+            : new TerraWallet(null, this.signer);
         this._gasAdjustment = gasAdjustment;
     }
 
@@ -51,25 +52,26 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
         return addresses.length > 0;
     }
 
-    public async getAddress(): Promise<AddressType> {
-        return this.signer.accAddress;
-    }
-
-    public async getAddresses(): Promise<Address[]> {
+    public async getAddress(): Promise<Address> {
         if (this._addressCache[this._mnemonic]) {
-            return [this._addressCache[this._mnemonic]];
+            return this._addressCache[this._mnemonic];
         }
 
         const wallet = new MnemonicKey({ mnemonic: this._mnemonic });
 
         const result = new Address({
             address: wallet.accAddress,
-            derivationPath: this._baseDerivationPath,
+            derivationPath: this._derivationPath,
             publicKey: wallet.publicKey.pubkeyAddress(),
         });
 
         this._addressCache[this._mnemonic] = result;
-        return [result];
+        return result;
+    }
+
+    public async getAddresses(): Promise<Address[]> {
+        const address = await this.getAddress();
+        return [address];
     }
 
     public async getUsedAddresses(): Promise<Address[]> {
@@ -185,9 +187,13 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
             memo: txRequest.memo,
             feeDenoms: [feeDenom],
         };
-        /* simulation: estimate gas */
-        const simulatedTx = await retry<Tx>(async () => this._wallet.createTx(terraTx), 1000, 2, 2);
-        const estimatedGas = Math.ceil(simulatedTx.auth_info.fee.gas_limit * this._gasAdjustment);
+
+        let estimatedGas = txRequest.gasLimit;
+        if (!estimatedGas) {
+            /* simulation: estimate gas */
+            const simulatedTx = await retry<Tx>(async () => this._wallet.createTx(terraTx), 1000, 2, 2);
+            estimatedGas = Math.ceil(simulatedTx.auth_info.fee.gas_limit * this._gasAdjustment);
+        }
 
         if (txRequest.fee) {
             const feeAmount = new BigNumber(estimatedGas).times(Number(txRequest.fee)).integerValue(BigNumber.ROUND_CEIL).toString();

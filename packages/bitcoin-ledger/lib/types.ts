@@ -5,4 +5,5 @@ import { LedgerProviderTypes } from '@liquality/hw-ledger';
 export interface BitcoinLedgerProviderOptions extends LedgerProviderTypes.CreateOptions<HwAppBitcoin> {
     baseDerivationPath: string;
     addressType: BitcoinTypes.AddressType;
+    network: BitcoinTypes.BitcoinNetwork;
 }

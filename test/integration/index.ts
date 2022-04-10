@@ -15,8 +15,8 @@ describe('Integration tests', function () {
 
     describe('Clients', () => {
         shouldBehaveLikeEvmClient();
-        shouldBehaveLikeNearClient();
         shouldBehaveLikeBitcoinClient();
+        shouldBehaveLikeNearClient();
         shouldBehaveLikeTerraClient();
     });
 

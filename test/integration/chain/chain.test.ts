@@ -1,5 +1,5 @@
-import { UnimplementedMethodError } from '@liquality/errors';
-import { Math } from '@liquality/utils';
+import { UnsupportedMethodError } from '@liquality/errors';
+import { Math, sleep } from '@liquality/utils';
 import { expect } from 'chai';
 import { Chain } from '../types';
 
@@ -19,14 +19,17 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
             const blockHeight = await client.chain.getBlockHeight();
             expect(blockHeight).to.be.gte(0);
 
-            const blockByNumber = await client.chain.getBlockByNumber(Number(blockHeight) - 5, true);
+            // let the chain indexer to fetch the data
+            await sleep(1000);
+
+            const blockByNumber = await client.chain.getBlockByNumber(Number(blockHeight) - 10, true);
             expect(blockByNumber).to.be.not.undefined;
 
             try {
                 const blockByHash = await client.chain.getBlockByHash(blockByNumber.hash, true);
                 expect(blockByNumber.hash).to.be.eq(blockByHash.hash);
             } catch (error) {
-                if (!(error instanceof UnimplementedMethodError)) {
+                if (!(error instanceof UnsupportedMethodError)) {
                     throw error;
                 }
             }
@@ -34,6 +37,9 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
 
         it('should fetch transaction data', async () => {
             const blockHeight = await client.chain.getBlockHeight();
+
+            // let the chain indexer to fetch the data
+            await sleep(1000);
 
             const blockByNumber = await client.chain.getBlockByNumber(Number(blockHeight) - 10, true);
             for (const tx of blockByNumber.transactions) {

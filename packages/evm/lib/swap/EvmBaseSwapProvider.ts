@@ -11,7 +11,7 @@ import { EthersTransactionResponse, EvmSwapOptions } from '../types';
 import { parseSwapParams, toEthereumTxRequest } from '../utils';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 
-export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer> {
+export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, EvmBaseWalletProvider<BaseProvider>> {
     protected walletProvider: EvmBaseWalletProvider<BaseProvider>;
     protected contract: LiqualityHTLC;
     protected swapOptions: EvmSwapOptions;

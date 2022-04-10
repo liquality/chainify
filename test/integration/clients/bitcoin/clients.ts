@@ -7,7 +7,7 @@ import { BtcHdWalletConfig, BtcLedgerConfig, BtcNodeConfig } from './config';
 function getBtcClientWithNodeWallet(network: BTC.BitcoinTypes.BitcoinNetwork) {
     const config = BtcNodeConfig(network);
     const chainProvider = new BTC.BitcoinJsonRpcProvider(config.chainOptions as any);
-    const walletProvider = new BTC.BitcoinNodeWalletProvider(chainProvider);
+    const walletProvider = new BTC.BitcoinNodeWalletProvider(null, chainProvider);
     const swapProvider = new BTC.BitcoinSwapRpcProvider({ network }, walletProvider);
     return new Client(chainProvider, walletProvider, swapProvider);
 }

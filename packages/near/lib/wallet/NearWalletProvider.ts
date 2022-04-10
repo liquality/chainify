@@ -1,6 +1,6 @@
 import { Chain, HttpClient, Wallet } from '@liquality/client';
-import { UnimplementedMethodError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumber, Transaction, WalletOptions } from '@liquality/types';
+import { UnsupportedMethodError } from '@liquality/errors';
+import { Address, AddressType, Asset, BigNumber, Transaction } from '@liquality/types';
 import {
     BN,
     InMemorySigner,
@@ -12,29 +12,26 @@ import {
     NearTxRequest,
     NearTxResponse,
     NearWallet,
+    NearWalletOptions,
     parseSeedPhrase,
     providers,
 } from '../types';
 import { parseTxResponse } from '../utils';
 
 export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemorySigner> {
-    private _walletOptions: WalletOptions;
     private _derivationPath: string;
     private _wallet: NearWallet;
     private _keyStore: keyStores.InMemoryKeyStore;
     private _addressCache: { [key: string]: Address };
     private _helper: HttpClient;
 
-    constructor(walletOptions: WalletOptions, chainProvider: Chain<providers.JsonRpcProvider>) {
+    constructor(walletOptions: NearWalletOptions, chainProvider?: Chain<providers.JsonRpcProvider>) {
         super(chainProvider);
-        this._walletOptions = walletOptions;
-        this._derivationPath = `${walletOptions.derivationPath}${walletOptions.index}'`;
+        this._derivationPath = walletOptions.derivationPath;
         this._wallet = parseSeedPhrase(walletOptions.mnemonic, this._derivationPath);
         this._keyStore = new keyStores.InMemoryKeyStore();
         this._addressCache = {};
-
-        const network = this.chainProvider.getNetwork() as NearNetwork;
-        this._helper = new HttpClient({ baseURL: network.helperUrl });
+        this._helper = new HttpClient({ baseURL: walletOptions.helperUrl });
     }
 
     public getSigner(): InMemorySigner {
@@ -68,32 +65,13 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         return this.getAddress();
     }
 
-    public async getUsedAddresses(numAddresses: number = 1): Promise<Address[]> {
-        return this.getAddresses(0, numAddresses);
+    public async getUsedAddresses(): Promise<Address[]> {
+        return this.getAddresses();
     }
 
-    public async getAddresses(start: number = 0, numAddresses: number = 1): Promise<Address[]> {
-        const result: Address[] = [];
-        for (let i = start; i < start + numAddresses; i++) {
-            const derivationPath = `${this._walletOptions.derivationPath}${i}'`;
-            const tempWallet: NearWallet = parseSeedPhrase(this._walletOptions.mnemonic, derivationPath);
-
-            if (this._addressCache[derivationPath]) {
-                result.push(this._addressCache[derivationPath]);
-            } else {
-                const { publicKey, secretKey } = tempWallet;
-                const keyPair = KeyPair.fromString(secretKey);
-
-                let address = null;
-
-                if (!address) {
-                    address = Buffer.from(keyPair.getPublicKey().data).toString('hex');
-                }
-
-                result.push(new Address({ publicKey: publicKey, address: address, derivationPath: derivationPath }));
-            }
-        }
-        return result;
+    public async getAddresses(): Promise<Address[]> {
+        const address = await this.getAddress();
+        return [address];
     }
 
     public async signMessage(message: string): Promise<string> {
@@ -111,19 +89,16 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
     public async sendTransaction(txRequest: NearTxRequest): Promise<Transaction<NearTxLog>> {
         const address = await this.getAddress();
         const from = this.getAccount(address.toString());
+        const to = txRequest.to.toString();
 
-        // sending Near
+        let tx = null;
         if (!txRequest.actions) {
-            const tx = (await from.sendMoney(txRequest.to.toString(), new BN(txRequest.value.toFixed(0)))) as NearTxResponse;
-            return parseTxResponse(tx);
+            tx = (await from.sendMoney(to, new BN(txRequest.value.toFixed(0)))) as NearTxResponse;
         } else {
-            const tx = (await from.signAndSendTransaction({
-                receiverId: txRequest.to.toString(),
-                actions: txRequest.actions as any,
-            })) as NearTxResponse;
-
-            return parseTxResponse(tx);
+            tx = (await from.signAndSendTransaction({ receiverId: to, actions: txRequest.actions })) as NearTxResponse;
         }
+
+        return parseTxResponse(tx);
     }
 
     public async sendBatchTransaction(txRequests: NearTxRequest[]): Promise<Transaction<NearTxLog>[]> {
@@ -160,7 +135,7 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
     }
 
     public async updateTransactionFee(_tx: string | Transaction<any>): Promise<Transaction<NearTxResponse>> {
-        throw new UnimplementedMethodError('Method not supported for Near');
+        throw new UnsupportedMethodError('Method not supported for Near');
     }
 
     public async getConnectedNetwork(): Promise<NearNetwork> {

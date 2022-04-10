@@ -27,11 +27,11 @@ export class BitcoinNodeWalletProvider extends Wallet<any, any> implements IBitc
     private _network: BitcoinNetwork;
     private _addressInfoCache: { [key: string]: Address };
 
-    constructor(chainProvider: Chain<BitcoinBaseChainProvider>, options?: BitcoinNodeWalletOptions) {
+    constructor(options?: BitcoinNodeWalletOptions, chainProvider?: Chain<BitcoinBaseChainProvider>) {
         super(chainProvider);
 
         this._addressType = options?.addressType || BitcoinAddressType.BECH32;
-        this._network = chainProvider.getNetwork() as BitcoinNetwork;
+        this._network = chainProvider ? (chainProvider.getNetwork() as BitcoinNetwork) : options?.network;
         this._addressInfoCache = {};
     }
 

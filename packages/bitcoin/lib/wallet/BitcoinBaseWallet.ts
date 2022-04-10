@@ -36,7 +36,7 @@ export abstract class BitcoinBaseWalletProvider<T extends BitcoinBaseChainProvid
     protected _addressType: BtcAddressType;
     protected _derivationCache: DerivationCache;
 
-    constructor(options: BitcoinWalletProviderOptions, chainProvider: Chain<T>) {
+    constructor(options: BitcoinWalletProviderOptions, chainProvider?: Chain<T>) {
         const { baseDerivationPath, addressType = BtcAddressType.BECH32 } = options;
         const addressTypes = Object.values(BtcAddressType);
         if (!addressTypes.includes(addressType)) {
@@ -46,7 +46,7 @@ export abstract class BitcoinBaseWalletProvider<T extends BitcoinBaseChainProvid
         super(chainProvider);
 
         this._baseDerivationPath = baseDerivationPath;
-        this._network = chainProvider.getNetwork() as BitcoinNetwork;
+        this._network = chainProvider ? (chainProvider.getNetwork() as BitcoinNetwork) : options.network;
         this._addressType = addressType;
         this._derivationCache = {};
     }

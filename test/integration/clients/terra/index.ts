@@ -10,11 +10,14 @@ export function shouldBehaveLikeTerraClient() {
         const { client, config } = Chains.terra.hd;
         const tempClient = new Client(
             client.chain,
-            new TerraWalletProvider(client.chain, {
-                ...(config.walletOptions as any),
-                mnemonic:
-                    'avoid void grid scare guard biology gaze system wine undo tomorrow evoke noble salon income juice stumble myth debate praise kind reflect ketchup fossil',
-            })
+            new TerraWalletProvider(
+                {
+                    ...(config.walletOptions as any),
+                    mnemonic:
+                        'avoid void grid scare guard biology gaze system wine undo tomorrow evoke noble salon income juice stumble myth debate praise kind reflect ketchup fossil',
+                },
+                client.chain
+            )
         );
 
         const terraBalance = (await tempClient.wallet.getBalance(config.assets))[0];
