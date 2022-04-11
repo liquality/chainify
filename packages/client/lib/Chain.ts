@@ -105,7 +105,7 @@ export default abstract class Chain<T, N = Network> implements ChainProvider {
      * @virtual
      * @returns The fee details - {@link FeeDetails}
      */
-    public abstract getFees(): Promise<FeeDetails>;
+    public abstract getFees(feeAsset?: Asset): Promise<FeeDetails>;
 
     /**
      * @virtual

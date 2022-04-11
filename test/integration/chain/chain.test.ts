@@ -15,6 +15,13 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
             expect(network.isTestnet).to.be.not.undefined;
         });
 
+        it('should fetch fees', async () => {
+            const fee = await client.chain.getFees();
+            expect(fee.slow.fee).to.not.be.undefined;
+            expect(fee.average.fee).to.not.be.undefined;
+            expect(fee.fast.fee).to.not.be.undefined;
+        });
+
         it('should fetch block data', async () => {
             const blockHeight = await client.chain.getBlockHeight();
             expect(blockHeight).to.be.gte(0);
