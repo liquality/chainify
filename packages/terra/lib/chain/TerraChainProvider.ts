@@ -6,7 +6,7 @@ import { assetCodeToDenom } from '../constants';
 import { TerraNetwork, TerraTxInfo } from '../types';
 import { parseBlockResponse, parseTxResponse } from '../utils';
 
-export class TerraChainProvider extends Chain<LCDClient> {
+export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
     constructor(network: TerraNetwork) {
         super(network);
         this.provider = new LCDClient({ URL: network.rpcUrl, chainID: network.chainId.toString() });
