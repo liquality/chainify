@@ -1,4 +1,4 @@
-import { Chain } from '@liquality/client';
+import { Chain, Fee, HttpClient } from '@liquality/client';
 import { TxNotFoundError, UnsupportedMethodError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@liquality/types';
 import { BlockInfo, LCDClient } from '@terra-money/terra.js';
@@ -7,9 +7,16 @@ import { TerraNetwork, TerraTxInfo } from '../types';
 import { parseBlockResponse, parseTxResponse } from '../utils';
 
 export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
-    constructor(network: TerraNetwork) {
-        super(network);
-        this.provider = new LCDClient({ URL: network.rpcUrl, chainID: network.chainId.toString() });
+    public _httpClient: HttpClient;
+
+    constructor(network: TerraNetwork, provider?: LCDClient, feeProvider?: Fee) {
+        super(network, provider, feeProvider);
+
+        if (!provider) {
+            this.provider = new LCDClient({ URL: network.rpcUrl, chainID: network.chainId.toString() });
+        }
+
+        this._httpClient = new HttpClient({ baseURL: network.helperUrl });
     }
 
     public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockInfo, TerraTxInfo>> {
@@ -71,8 +78,19 @@ export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
         return promiseBalances;
     }
 
-    public async getFees(): Promise<FeeDetails> {
-        throw new Error('Method not implemented.');
+    public async getFees(feeAsset?: Asset): Promise<FeeDetails> {
+        if (this.feeProvider) {
+            return this.feeProvider.getFees(feeAsset);
+        } else {
+            const prices = await this._httpClient.nodeGet('/txs/gas_prices');
+            const denom = assetCodeToDenom[feeAsset?.code || 'LUNA'];
+            const fee = Number(prices[denom]);
+            return {
+                slow: { fee },
+                average: { fee },
+                fast: { fee },
+            };
+        }
     }
 
     public async sendRpcRequest(method: keyof APIRequester, params: any[]): Promise<any> {

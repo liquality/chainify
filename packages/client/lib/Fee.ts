@@ -1,4 +1,4 @@
-import { BigNumber, FeeDetails, FeeProvider } from '@liquality/types';
+import { Asset, BigNumber, FeeDetails, FeeProvider } from '@liquality/types';
 
 export default abstract class Fee implements FeeProvider {
     public gasUnits: BigNumber;
@@ -7,5 +7,5 @@ export default abstract class Fee implements FeeProvider {
         this.gasUnits = gasUnits;
     }
 
-    abstract getFees(): Promise<FeeDetails>;
+    abstract getFees(feeAsset?: Asset): Promise<FeeDetails>;
 }

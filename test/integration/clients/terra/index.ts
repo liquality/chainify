@@ -1,5 +1,5 @@
 import { Client } from '@liquality/client';
-import { TerraWalletProvider } from '@liquality/terra';
+import { TerraChainProvider, TerraWalletProvider } from '@liquality/terra';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
 import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
@@ -16,7 +16,7 @@ export function shouldBehaveLikeTerraClient() {
                     mnemonic:
                         'avoid void grid scare guard biology gaze system wine undo tomorrow evoke noble salon income juice stumble myth debate praise kind reflect ketchup fossil',
                 },
-                client.chain
+                client.chain as TerraChainProvider
             )
         );
 
