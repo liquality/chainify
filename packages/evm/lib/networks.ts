@@ -145,6 +145,22 @@ const fuse_testnet: Network = {
     isTestnet: true,
 };
 
+const avax_mainnet: Network = {
+    name: 'avalanche_mainnet',
+    coinType: '60',
+    networkId: 43114,
+    chainId: 43114,
+    isTestnet: false,
+};
+
+const avax_testnet: Network = {
+    name: 'avalanche_testnet',
+    coinType: '60',
+    networkId: 43113,
+    chainId: 43113,
+    isTestnet: true,
+};
+
 const local: Network = {
     name: 'local',
     coinType: '60',
@@ -170,6 +186,8 @@ const EvmNetworks = {
     polygon_testnet,
     arbitrum_testnet,
     arbitrum_mainnet,
+    avax_mainnet,
+    avax_testnet,
     fuse_testnet,
     fuse_mainnet,
     local,
