@@ -7,6 +7,12 @@ export interface EvmSwapOptions {
     contractAddress: string;
 }
 
+export type FeeOptions = {
+    slowMultiplier?: number;
+    averageMultiplier?: number;
+    fastMultiplier?: number;
+};
+
 export type EthereumTransactionRequest = TransactionRequest & {
     from?: AddressType;
     nonce?: number;

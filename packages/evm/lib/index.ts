@@ -1,6 +1,7 @@
 export { EvmChainProvider } from './chain/EvmChainProvider';
 export { EvmMulticallProvider } from './chain/EvmMulticallProvider';
 export { EIP1559FeeProvider } from './fee/EIP1559FeeProvider';
+export { RpcFeeProvider } from './fee/RpcFeeProvider';
 export { EvmNetworks } from './networks';
 export { EvmNftProvider } from './nft/EvmNftProvider';
 export { EvmBaseSwapProvider } from './swap/EvmBaseSwapProvider';

@@ -7,9 +7,14 @@ import { toGwei } from '../utils';
 export class EIP1559FeeProvider extends Fee {
     provider: StaticJsonRpcProvider;
 
-    constructor(provider: StaticJsonRpcProvider) {
+    constructor(provider: StaticJsonRpcProvider | string) {
         super();
-        this.provider = provider;
+
+        if (typeof provider === 'string') {
+            this.provider = new StaticJsonRpcProvider(provider);
+        } else {
+            this.provider = provider;
+        }
     }
 
     getBaseFeeMultiplier(baseFeeTrend: number) {
