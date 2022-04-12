@@ -1,5 +1,15 @@
 # @liquality/evm-ledger
 
+## 2.0.2
+
+### Patch Changes
+
+-   fix evm dependencies
+-   Updated dependencies
+    -   @liquality/evm@2.0.2
+    -   @liquality/hw-ledger@2.0.2
+    -   @liquality/utils@2.0.2
+
 ## 2.0.1
 
 ### Patch Changes
