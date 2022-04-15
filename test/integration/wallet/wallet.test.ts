@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { mineBlock } from '../common';
 import { Chain } from '../types';
 
-export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = false) {
+export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = true) {
     const { client, config } = chain;
 
     describe(`${client.chain.getNetwork().name} Wallet Provider`, function () {
@@ -87,7 +87,7 @@ export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = false) {
             const tx = await client.wallet.sendTransaction({
                 to: config.recipientAddress,
                 value: config.sendParams.value || new BigNumber(1000000),
-                asset: config.assets.find((a) => a.isNative),
+                asset: config.assets.find((a) => a.isNative === isNative),
                 feeAsset: config.sendParams.feeAsset,
             });
 

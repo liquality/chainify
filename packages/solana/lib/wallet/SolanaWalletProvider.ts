@@ -159,7 +159,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     private async setSigner(): Promise<void> {
         const seed = await this.mnemonicToSeed(this._mnemonic);
         const derivedSeed = derivePath(this._derivationPath, seed).key;
-        const account = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
-        this._signer = account;
+        this._signer = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
     }
 }
