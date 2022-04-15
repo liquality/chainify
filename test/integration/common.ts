@@ -2,6 +2,7 @@ import { BitcoinNetworks } from '@liquality/bitcoin';
 import { Client } from '@liquality/client';
 import { EvmNetworks } from '@liquality/evm';
 import { NearNetworks } from '@liquality/near';
+import { SolanaNetworks } from '@liquality/solana';
 import { TerraNetworks } from '@liquality/terra';
 import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
 import { retry, sha256, sleep } from '@liquality/utils';
@@ -15,6 +16,8 @@ import {
     NearClient,
     TerraClient,
 } from './clients';
+import { SolanaClient } from './clients/solana/clients';
+import { SolanaConfig } from './clients/solana/config';
 import { BtcHdWalletConfig, BtcLedgerConfig, BtcNodeConfig, EVMConfig, EVMLedgerConfig, NearConfig, TerraConfig } from './config';
 import { Chain, ChainType, IConfig, WalletType } from './types';
 
@@ -77,6 +80,15 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
             client: TerraClient,
         },
     },
+
+    [ChainType.solana]: {
+        hd: {
+            id: 'SOLANA',
+            name: 'solana',
+            config: SolanaConfig(SolanaNetworks.solana_testnet),
+            client: SolanaClient,
+        },
+    },
 };
 
 export async function getSwapParams(client: Client, config: IConfig, expiryInSeconds = 200, native = true) {
@@ -112,7 +124,8 @@ export async function increaseTime(chain: Chain, timestamp: number) {
         }
 
         case 'NEAR':
-        case 'TERRA': {
+        case 'TERRA':
+        case 'SOLANA': {
             const currentTime = Math.round(Date.now() / 1000);
             const sleepAmount = timestamp - currentTime;
             await sleep(sleepAmount > 0 ? sleepAmount : 1000);
@@ -151,7 +164,8 @@ export async function mineBlock(chain: Chain, numberOfBlocks = 1) {
             return client.chain.sendRpcRequest('evm_mine', []);
         }
         case 'NEAR':
-        case 'TERRA': {
+        case 'TERRA':
+        case 'SOLANA': {
             await sleep(10000);
             break;
         }

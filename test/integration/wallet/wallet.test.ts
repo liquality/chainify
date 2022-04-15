@@ -1,10 +1,10 @@
 import { UnimplementedMethodError } from '@liquality/errors';
-import { BigNumber } from '@liquality/types';
+import { BigNumber, TxStatus } from '@liquality/types';
 import { expect } from 'chai';
 import { mineBlock } from '../common';
 import { Chain } from '../types';
 
-export function shouldBehaveLikeWalletProvider(chain: Chain) {
+export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = false) {
     const { client, config } = chain;
 
     describe(`${client.chain.getNetwork().name} Wallet Provider`, function () {
@@ -83,19 +83,22 @@ export function shouldBehaveLikeWalletProvider(chain: Chain) {
             }
         });
 
-        it('should send native asset transaction', async () => {
+        it(`should send ${isNative ? 'native' : 'ERC20'} asset transaction`, async () => {
             const tx = await client.wallet.sendTransaction({
                 to: config.recipientAddress,
                 value: config.sendParams.value || new BigNumber(1000000),
                 asset: config.assets.find((a) => a.isNative),
                 feeAsset: config.sendParams.feeAsset,
             });
-            const txReceipt = await client.chain.getTransactionByHash(tx.hash);
-            if (config.sendParams.value) {
-                expect(txReceipt.value === config.sendParams.value.toNumber()).to.be.true;
-            }
 
             await mineBlock(chain);
+
+            const txReceipt = await client.chain.getTransactionByHash(tx.hash);
+
+            if (config.sendParams.value) {
+                expect(txReceipt.value === config.sendParams.value.toNumber()).to.be.true;
+                expect(txReceipt.status).to.equal(TxStatus.Success);
+            }
         });
     });
 }

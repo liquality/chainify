@@ -16,6 +16,13 @@
     },
     "dependencies": {
         "@liquality/client": "workspace:*",
-        "@liquality/types": "workspace:*"
+        "@liquality/crypto": "^1.13.12",
+        "@liquality/errors": "workspace:^",
+        "@liquality/types": "workspace:^",
+        "@solana/spl-token": "^0.2.0",
+        "@solana/web3.js": "^1.37.2",
+        "bip39": "^3.0.4",
+        "ed25519-hd-key": "^1.2.0",
+        "tweetnacl": "^1.0.3"
     }
 }
