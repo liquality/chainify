@@ -12,6 +12,8 @@ export function shouldBehaveLikeSolanaClient() {
             new SolanaWalletProvider(
                 {
                     ...(config.walletOptions as any),
+                    mnemonic:
+                        'avoid void grid scare guard biology gaze system wine undo tomorrow evoke noble salon income juice stumble myth debate praise kind reflect ketchup fossil',
                 },
                 client.chain as SolanaChainProvider
             )
