@@ -1,4 +1,5 @@
 import { Chain } from '@liquality/client';
+import { BlockNotFoundError, TxNotFoundError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@liquality/types';
 import { providers } from 'near-api-js';
 import { BlockResult, NearAccount, NearChunk, NearNetwork, NearTransaction, NearTxLog, NearTxResponse } from '../types';
@@ -30,12 +31,20 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
     }
 
     public async getTransactionByHash(txHash: string): Promise<Transaction<NearTxLog>> {
-        const currentHeight = await this.getBlockHeight();
-        const [hash, accountId] = txHash.split('_');
-        const tx = (await this.provider.txStatus(hash, accountId)) as NearTxResponse;
-        const blockHash = (tx.transaction_outcome as any).block_hash;
-        const block = await this.getBlockByHash(blockHash);
-        return parseTxResponse(tx, block.number, Number(currentHeight));
+        try {
+            const currentHeight = await this.getBlockHeight();
+            const [hash, accountId] = txHash.split('_');
+            const tx = (await this.provider.txStatus(hash, accountId)) as NearTxResponse;
+            const blockHash = (tx.transaction_outcome as any).block_hash;
+            const block = await this.getBlockByHash(blockHash);
+            return parseTxResponse(tx, block.number, Number(currentHeight));
+        } catch (err) {
+            if (err.message.includes(`doesn't exist`)) {
+                throw new TxNotFoundError('Transaction not found');
+            } else {
+                throw err;
+            }
+        }
     }
 
     public async getBalance(addresses: AddressType[], _assets: Asset[]): Promise<BigNumber[]> {
@@ -71,23 +80,31 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
     }
 
     public async _getBlockById(blockId: number | string, includeTx: boolean) {
-        const block = await this.provider.block({ blockId });
-        const currentHeight = await this.getBlockHeight();
+        try {
+            const block = await this.provider.block({ blockId });
+            const currentHeight = await this.getBlockHeight();
 
-        if (includeTx && block.chunks) {
-            const chunks = await Promise.all(block.chunks.map((c: any) => this.provider.chunk(c.chunk_hash)));
-            const transactions = chunks.reduce((p: Transaction<NearTransaction>[], chunk: NearChunk) => {
-                chunk.transactions.map((t: NearTransaction) => {
-                    p.push(parseNearBlockTx(t, Number(currentHeight), block.header.height));
-                });
+            if (includeTx && block.chunks) {
+                const chunks = await Promise.all(block.chunks.map((c: any) => this.provider.chunk(c.chunk_hash)));
+                const transactions = chunks.reduce((p: Transaction<NearTransaction>[], chunk: NearChunk) => {
+                    chunk.transactions.map((t: NearTransaction) => {
+                        p.push(parseNearBlockTx(t, Number(currentHeight), block.header.height));
+                    });
 
-                return p;
-            }, [] as Transaction<NearTransaction>[]);
+                    return p;
+                }, [] as Transaction<NearTransaction>[]);
 
-            return parseBlockResponse(block, transactions);
+                return parseBlockResponse(block, transactions);
+            }
+
+            return parseBlockResponse(block);
+        } catch (err) {
+            if (err.message.includes('DB Not Found Error')) {
+                throw new BlockNotFoundError('Block not found');
+            } else {
+                throw err;
+            }
         }
-
-        return parseBlockResponse(block);
     }
 
     private getAccount(accountId: string): NearAccount {

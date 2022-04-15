@@ -1455,8 +1455,11 @@ __metadata:
     "@ethersproject/abstract-signer": 5.6.0
     "@ethersproject/providers": 5.6.0
     "@ledgerhq/hw-app-eth": ^6.26.0
+    "@liquality/client": "workspace:*"
+    "@liquality/errors": "workspace:*"
     "@liquality/evm": "workspace:*"
     "@liquality/hw-ledger": "workspace:*"
+    "@liquality/types": "workspace:*"
     "@liquality/utils": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -5080,7 +5083,7 @@ __metadata:
     pre-commit: ^1.2.2
     prettier: ^2.5.1
     prettier-plugin-organize-imports: ^2.3.4
-    turbo: "*"
+    turbo: ^1.2.4
     typechain: ^7.0.0
     typedoc: ^0.22.13
     typedoc-github-wiki-theme: ^1.0.0
@@ -17116,106 +17119,106 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-darwin-64@npm:1.1.9"
+"turbo-darwin-64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-darwin-64@npm:1.2.4"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-darwin-arm64@npm:1.1.9"
+"turbo-darwin-arm64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-darwin-arm64@npm:1.2.4"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-freebsd-64@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-freebsd-64@npm:1.1.9"
+"turbo-freebsd-64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-freebsd-64@npm:1.2.4"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-freebsd-arm64@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-freebsd-arm64@npm:1.1.9"
+"turbo-freebsd-arm64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-freebsd-arm64@npm:1.2.4"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-32@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-linux-32@npm:1.1.9"
+"turbo-linux-32@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-linux-32@npm:1.2.4"
   conditions: os=linux & cpu=ia32
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-linux-64@npm:1.1.9"
+"turbo-linux-64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-linux-64@npm:1.2.4"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-linux-arm64@npm:1.1.9"
+"turbo-linux-arm64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-linux-arm64@npm:1.2.4"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"turbo-linux-arm@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-linux-arm@npm:1.1.9"
+"turbo-linux-arm@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-linux-arm@npm:1.2.4"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"turbo-linux-mips64le@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-linux-mips64le@npm:1.1.9"
+"turbo-linux-mips64le@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-linux-mips64le@npm:1.2.4"
   conditions: os=linux & cpu=mips64el
   languageName: node
   linkType: hard
 
-"turbo-linux-ppc64le@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-linux-ppc64le@npm:1.1.9"
+"turbo-linux-ppc64le@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-linux-ppc64le@npm:1.2.4"
   conditions: os=linux & cpu=ppc64
   languageName: node
   linkType: hard
 
-"turbo-windows-32@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-windows-32@npm:1.1.9"
+"turbo-windows-32@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-windows-32@npm:1.2.4"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:1.1.9":
-  version: 1.1.9
-  resolution: "turbo-windows-64@npm:1.1.9"
+"turbo-windows-64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "turbo-windows-64@npm:1.2.4"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"turbo@npm:*":
-  version: 1.1.9
-  resolution: "turbo@npm:1.1.9"
+"turbo@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "turbo@npm:1.2.4"
   dependencies:
-    turbo-darwin-64: 1.1.9
-    turbo-darwin-arm64: 1.1.9
-    turbo-freebsd-64: 1.1.9
-    turbo-freebsd-arm64: 1.1.9
-    turbo-linux-32: 1.1.9
-    turbo-linux-64: 1.1.9
-    turbo-linux-arm: 1.1.9
-    turbo-linux-arm64: 1.1.9
-    turbo-linux-mips64le: 1.1.9
-    turbo-linux-ppc64le: 1.1.9
-    turbo-windows-32: 1.1.9
-    turbo-windows-64: 1.1.9
+    turbo-darwin-64: 1.2.4
+    turbo-darwin-arm64: 1.2.4
+    turbo-freebsd-64: 1.2.4
+    turbo-freebsd-arm64: 1.2.4
+    turbo-linux-32: 1.2.4
+    turbo-linux-64: 1.2.4
+    turbo-linux-arm: 1.2.4
+    turbo-linux-arm64: 1.2.4
+    turbo-linux-mips64le: 1.2.4
+    turbo-linux-ppc64le: 1.2.4
+    turbo-windows-32: 1.2.4
+    turbo-windows-64: 1.2.4
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -17243,7 +17246,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: fe98853e8828fd700fabbc465c794f5eee85cb4622ee033b2c475763b47c0af88bbec1f0f8750eb04e86e0acf1bf27ffaa3c925ac864b4b9b8f52a62218f065b
+  checksum: a68362a1722136b4d26c9217b7da5272ea6d82b70a7855f4c2260d02aac402bbf0c866dcbd7e55a040b4327107e70dbfd357550042c02b601669477788385711
   languageName: node
   linkType: hard
 

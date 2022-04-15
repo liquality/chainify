@@ -21,6 +21,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
 
         this._mnemonic = mnemonic;
         this._derivationPath = derivationPath;
+        this._addressCache = {};
     }
 
     public async getConnectedNetwork(): Promise<Network> {
@@ -115,15 +116,22 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         };
     }
 
-    sendBatchTransaction(txRequests: TransactionRequest[]): Promise<Transaction<any>[]> {
-        throw new Error('Method not implemented.');
+    public async sendBatchTransaction(txRequests: TransactionRequest[]): Promise<Transaction<any>[]> {
+        const result: Transaction[] = [];
+        for (const txRequest of txRequests) {
+            const tx = await this.sendTransaction(txRequest);
+            result.push(tx);
+        }
+        return result;
     }
 
-    sendSweepTransaction(address: AddressType, asset: Asset, fee?: FeeType): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
+    public async sendSweepTransaction(address: AddressType, asset: Asset): Promise<Transaction<any>> {
+        const addresses = await this.getAddresses();
+        const balance = await this.chainProvider.getBalance(addresses, [asset]);
+        return await this.sendTransaction({ to: address, value: balance[0] });
     }
 
-    public async updateTransactionFee(tx: string | Transaction<any>, newFee: FeeType): Promise<Transaction<any>> {
+    public async updateTransactionFee(_tx: string | Transaction<any>, _newFee: FeeType): Promise<Transaction<any>> {
         throw new UnimplementedMethodError('Method not supported.');
     }
 

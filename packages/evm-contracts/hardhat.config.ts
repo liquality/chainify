@@ -19,6 +19,12 @@ const chainIds = {
     mainnet: 1,
     rinkeby: 4,
     ropsten: 3,
+    rskTestnet: 31,
+    rsk: 30,
+    polygon: 137,
+    avalanche: 43114,
+    arbitrumOne: 42161,
+    bsc: 56,
 };
 
 // Ensure that we have all the environment variables we need.
@@ -71,6 +77,13 @@ const config: HardhatUserConfig = {
         kovan: getChainConfig('kovan'),
         rinkeby: getChainConfig('rinkeby'),
         ropsten: getChainConfig('ropsten'),
+        rskTestnet: getChainConfig('rskTestnet'),
+        rsk: getChainConfig('rsk'),
+        polygon: getChainConfig('polygon'),
+        avalanche: getChainConfig('avalanche'),
+        mainnet: getChainConfig('mainnet'),
+        arbitrumOne: getChainConfig('arbitrumOne'),
+        bsc: getChainConfig('bsc'),
     },
     paths: {
         artifacts: './artifacts',

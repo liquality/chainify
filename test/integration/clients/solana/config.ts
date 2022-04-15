@@ -8,7 +8,7 @@ export const SolanaConfig = (network: Network): IConfig => {
         walletOptions: {
             mnemonic:
                 'thumb proud solar any north rely grow ceiling pattern dress under illegal relief brief flock ensure tumble green million earth lesson absent horse snap',
-            derivationPath: `m/44'/${network.coinType}'/0'`,
+            derivationPath: `m/44'/${network.coinType}'/0'/0'`,
         },
 
         walletExpectedResult: {
@@ -51,5 +51,6 @@ const solanaAssets = [
         isNative: false,
         type: 'erc20',
         decimals: 9,
+        contractAddress: 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr',
     },
 ] as Asset[];

@@ -6,7 +6,7 @@ import { BitcoinSwapBaseProvider } from './BitcoinSwapBaseProvider';
 import { BitcoinSwapProviderOptions } from './types';
 
 export class BitcoinSwapRpcProvider extends BitcoinSwapBaseProvider {
-    constructor(options: BitcoinSwapProviderOptions, walletProvider: IBitcoinWallet<BitcoinBaseChainProvider>) {
+    constructor(options: BitcoinSwapProviderOptions, walletProvider?: IBitcoinWallet<BitcoinBaseChainProvider>) {
         super(options, walletProvider);
     }
 

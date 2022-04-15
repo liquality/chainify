@@ -3,7 +3,7 @@ import { UnsupportedMethodError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
 import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { parseBlockResponse, parseTransactionResponse } from 'lib/utils';
+import { parseBlockResponse, parseTransactionResponse } from '../utils';
 
 export class SolanaChainProvider extends Chain<Connection, Network> {
     constructor(network: Network) {
@@ -34,7 +34,7 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
     }
 
     public async getBlockHeight(): Promise<number> {
-        return await this.provider.getBlockHeight();
+        return await this.provider.getSlot();
     }
 
     public async getTransactionByHash(txHash: string): Promise<Transaction<any>> {

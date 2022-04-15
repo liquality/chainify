@@ -19,7 +19,7 @@ export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvi
     protected _network: BitcoinNetwork;
     protected _mode: SwapMode;
 
-    constructor(options: BitcoinSwapProviderOptions, walletProvider: IBitcoinWallet<BitcoinBaseChainProvider>) {
+    constructor(options: BitcoinSwapProviderOptions, walletProvider?: IBitcoinWallet<BitcoinBaseChainProvider>) {
         super(walletProvider);
         const { network, mode = SwapMode.P2WSH } = options;
         const swapModes = Object.values(SwapMode);

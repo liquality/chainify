@@ -7,7 +7,7 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
     const { client, config } = chain;
 
     describe(`${client.chain.getNetwork().name} Chain Provider`, function () {
-        it('should return network', async () => {
+        xit('should return network', async () => {
             const network = client.chain.getNetwork();
 
             expect(network.name).to.be.not.undefined;
@@ -15,14 +15,14 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
             expect(network.isTestnet).to.be.not.undefined;
         });
 
-        it('should fetch fees', async () => {
+        xit('should fetch fees', async () => {
             const fee = await client.chain.getFees();
             expect(fee.slow.fee).to.not.be.undefined;
             expect(fee.average.fee).to.not.be.undefined;
             expect(fee.fast.fee).to.not.be.undefined;
         });
 
-        it('should fetch block data', async () => {
+        xit('should fetch block data', async () => {
             const blockHeight = await client.chain.getBlockHeight();
             expect(blockHeight).to.be.gte(0);
 
@@ -57,7 +57,7 @@ export function shouldBehaveLikeChainProvider(chain: Chain) {
             }
         });
 
-        it('should fetch multiple balances at once', async () => {
+        xit('should fetch multiple balances at once', async () => {
             if (config.walletExpectedResult.address) {
                 const balances = await client.chain.getBalance([config.walletExpectedResult.address], config.assets);
                 expect(balances.length).to.equal(config.assets.length);

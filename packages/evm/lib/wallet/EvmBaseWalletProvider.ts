@@ -5,7 +5,7 @@ import { AddressType, Asset, BigNumber, FeeType, Network, Transaction } from '@l
 import { remove0x } from '@liquality/utils';
 import { ERC20__factory } from '../typechain';
 import { EthereumTransactionRequest, EthersTransactionResponse } from '../types';
-import { extractFeeData, parseTxRequest, parseTxResponse } from '../utils';
+import { extractFeeData, fromGwei, parseTxRequest, parseTxResponse } from '../utils';
 
 export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;
@@ -78,10 +78,10 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
         // EIP1559
         if (typeof newFee !== 'number') {
             if (maxPriorityFeePerGas && newFee.maxPriorityFeePerGas && maxFeePerGas && newFee.maxFeePerGas) {
-                if (maxPriorityFeePerGas.gte(newFee.maxPriorityFeePerGas.toString())) {
+                if (maxPriorityFeePerGas.gte(fromGwei(newFee.maxPriorityFeePerGas).toNumber())) {
                     throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxPriorityFeePerGas');
                 }
-                if (maxFeePerGas.gte(newFee.maxFeePerGas.toString())) {
+                if (maxFeePerGas.gte(fromGwei(newFee.maxFeePerGas).toNumber())) {
                     throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more maxFeePerGas');
                 }
             } else {
@@ -90,7 +90,7 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
         }
         // Legacy
         else if (gasPrice && newFee) {
-            if (gasPrice.gte(newFee)) {
+            if (gasPrice.gte(fromGwei(newFee).toNumber())) {
                 throw new ReplaceFeeInsufficientError('Replace transaction underpriced: provide more gasPrice');
             }
         } else {
