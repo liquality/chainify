@@ -19,8 +19,11 @@
         "@ethersproject/abstract-signer": "5.6.0",
         "@ethersproject/providers": "5.6.0",
         "@ledgerhq/hw-app-eth": "^6.26.0",
+        "@liquality/client": "workspace:*",
+        "@liquality/errors": "workspace:*",
         "@liquality/evm": "workspace:*",
         "@liquality/hw-ledger": "workspace:*",
+        "@liquality/types": "workspace:*",
         "@liquality/utils": "workspace:*"
     }
 }

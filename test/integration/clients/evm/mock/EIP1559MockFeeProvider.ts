@@ -17,20 +17,20 @@ export class EIP1559MockFeeProvider extends Fee {
         const fees = {
             slow: {
                 fee: {
-                    maxFeePerGas: feeData.maxFeePerGas.toNumber(),
-                    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas.toNumber(),
+                    maxFeePerGas: EvmUtils.toGwei(feeData.maxFeePerGas.toNumber()).toNumber(),
+                    maxPriorityFeePerGas: EvmUtils.toGwei(feeData.maxPriorityFeePerGas.toNumber()).toNumber(),
                 },
             },
             average: {
                 fee: {
-                    maxFeePerGas: EvmUtils.calculateFee(feeData.maxFeePerGas.toNumber(), 1.1),
-                    maxPriorityFeePerGas: EvmUtils.calculateFee(feeData.maxPriorityFeePerGas.toNumber(), 1.1),
+                    maxFeePerGas: EvmUtils.toGwei(EvmUtils.calculateFee(feeData.maxFeePerGas.toNumber(), 1.1)).toNumber(),
+                    maxPriorityFeePerGas: EvmUtils.toGwei(EvmUtils.calculateFee(feeData.maxPriorityFeePerGas.toNumber(), 1.1)).toNumber(),
                 },
             },
             fast: {
                 fee: {
-                    maxFeePerGas: EvmUtils.calculateFee(feeData.maxFeePerGas.toNumber(), 1.4),
-                    maxPriorityFeePerGas: EvmUtils.calculateFee(feeData.maxPriorityFeePerGas.toNumber(), 1.4),
+                    maxFeePerGas: EvmUtils.toGwei(EvmUtils.calculateFee(feeData.maxFeePerGas.toNumber(), 1.4)).toNumber(),
+                    maxPriorityFeePerGas: EvmUtils.toGwei(EvmUtils.calculateFee(feeData.maxPriorityFeePerGas.toNumber(), 1.4)).toNumber(),
                 },
             },
         };

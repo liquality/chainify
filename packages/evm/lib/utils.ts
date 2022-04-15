@@ -118,13 +118,29 @@ export function generateId(htlcData: ILiqualityHTLC.HTLCDataStruct, blockTimesta
 }
 
 export function extractFeeData(fee: FeeType) {
-    return typeof fee === 'number' ? { gasPrice: fee } : { ...fee };
+    if (typeof fee === 'number') {
+        return { gasPrice: fromGwei(fee).toNumber() };
+    } else {
+        if (fee.maxFeePerGas) {
+            fee.maxFeePerGas = fromGwei(fee.maxFeePerGas).toNumber();
+        }
+
+        if (fee.maxPriorityFeePerGas) {
+            fee.maxPriorityFeePerGas = fromGwei(fee.maxPriorityFeePerGas).toNumber();
+        }
+
+        return { ...fee };
+    }
 }
 
 export function toGwei(wei: BigNumber | number | string): BigNumber {
     return new BigNumber(wei).div(1e9);
 }
 
-export function calculateFee(base: number, multiplier: number) {
+export function fromGwei(gwei: BigNumber | number | string): BigNumber {
+    return new BigNumber(gwei).multipliedBy(1e9).dp(0, BigNumber.ROUND_CEIL);
+}
+
+export function calculateFee(base: BigNumber | number | string, multiplier: number) {
     return Number(new BigNumber(base).times(multiplier).toFixed(0));
 }

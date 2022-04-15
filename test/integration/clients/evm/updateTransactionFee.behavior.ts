@@ -1,6 +1,9 @@
+import { RpcFeeProvider } from '@liquality/evm';
 import { FeeType } from '@liquality/types';
 import { assert } from 'chai';
+import { after } from 'mocha';
 import { Chain } from '../../types';
+import { EIP1559MockFeeProvider } from './mock/EIP1559MockFeeProvider';
 
 export function shouldUpdateTransactionFee(chain: Chain) {
     const { client, config } = chain;
@@ -60,7 +63,11 @@ export function shouldUpdateTransactionFee(chain: Chain) {
 
         describe('Legacy', () => {
             before(async () => {
-                await client.chain.setFeeProvider(null);
+                await client.chain.setFeeProvider(new RpcFeeProvider(client.chain.getProvider()));
+            });
+
+            after(async () => {
+                await client.chain.setFeeProvider(new EIP1559MockFeeProvider(client.chain.getProvider()));
             });
 
             it('should update transaction fee', async () => {

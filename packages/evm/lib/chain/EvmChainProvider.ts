@@ -1,9 +1,11 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Chain, Fee } from '@liquality/client';
-import { UnsupportedMethodError } from '@liquality/errors';
+import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
+import { RpcFeeProvider } from '../fee/RpcFeeProvider';
+import { ERC20__factory } from '../typechain';
 import { EthersBlock, EthersBlockWithTransactions, EthersTransactionResponse } from '../types';
-import { calculateFee, parseBlockResponse, parseTxResponse } from '../utils';
+import { parseBlockResponse, parseTxResponse } from '../utils';
 import { EvmMulticallProvider } from './EvmMulticallProvider';
 
 /**
@@ -31,14 +33,20 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
      * @param feeProvider - Instance of {@link Fee}.
      * If not passed, it uses {@link https://docs.ethers.io/v5/api/providers/provider/#Provider-getFeeData | getFeeData} from the ethers provider.
      */
-    constructor(network: Network, provider?: StaticJsonRpcProvider, feeProvider?: Fee) {
+    constructor(network: Network, provider?: StaticJsonRpcProvider, feeProvider?: Fee, multicall = true) {
         super(network, provider, feeProvider);
 
         if (!provider && this.network.rpcUrl) {
             this.provider = new StaticJsonRpcProvider(this.network.rpcUrl, this.network.chainId);
         }
 
-        this.multicall = new EvmMulticallProvider(this.provider, Number(network.chainId));
+        if (!feeProvider) {
+            this.feeProvider = new RpcFeeProvider(this.provider);
+        }
+
+        if (multicall) {
+            this.multicall = new EvmMulticallProvider(this.provider, Number(network.chainId));
+        }
     }
 
     /**
@@ -88,6 +96,9 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
      */
     public async getTransactionByHash(txHash: string): Promise<Transaction<EthersTransactionResponse>> {
         const tx = await this.provider.getTransaction(txHash);
+        if (!tx) {
+            throw new TxNotFoundError('Transaction not found');
+        }
         const result = parseTxResponse(tx);
 
         if (result.confirmations > 0) {
@@ -104,8 +115,20 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
      * @returns - the balances of `assets` in the passed order
      */
     public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]> {
-        const balances = await this.multicall.getMultipleBalances(addresses[0], assets);
-        return balances.map((b) => new BigNumber(b.toString()));
+        if (this.multicall) {
+            const balances = await this.multicall.getMultipleBalances(addresses[0], assets);
+            return balances.map((b) => new BigNumber(b.toString()));
+        } else {
+            const user = addresses[0].toString();
+            const allBalancePromise = assets.map((a) => {
+                if (a.isNative) {
+                    return this.provider.getBalance(user);
+                } else {
+                    return ERC20__factory.connect(a.contractAddress, this.provider).balanceOf(user);
+                }
+            });
+            return (await Promise.all(allBalancePromise)).map((b) => new BigNumber(b.toString()));
+        }
     }
 
     /**
@@ -121,17 +144,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
      * If the `feeProvider` is not defined, it fetches the fees from {@link https://docs.ethers.io/v5/api/providers/provider/#Provider-getFeeData | getFeeData}
      */
     public async getFees(): Promise<FeeDetails> {
-        if (this.feeProvider) {
-            return this.feeProvider.getFees();
-        } else {
-            // Return legacy fees, because not all EVM chains support EIP1559
-            const baseGasPrice = (await this.provider.getFeeData()).gasPrice?.toNumber();
-            return {
-                slow: { fee: calculateFee(baseGasPrice, 1) },
-                average: { fee: calculateFee(baseGasPrice, 1.5) },
-                fast: { fee: calculateFee(baseGasPrice, 2) },
-            };
-        }
+        return this.feeProvider.getFees();
     }
 
     /**
@@ -147,9 +160,15 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     private async _getBlock(blockTag: number | string, includeTx?: boolean) {
         if (includeTx) {
             const blockWithTx = await this.provider.getBlockWithTransactions(blockTag);
+            if (!blockWithTx) {
+                throw new BlockNotFoundError(blockTag);
+            }
             return parseBlockResponse(blockWithTx, blockWithTx.transactions);
         } else {
             const block = await this.provider.getBlock(blockTag);
+            if (!block) {
+                throw new BlockNotFoundError(blockTag);
+            }
             return parseBlockResponse(block);
         }
     }

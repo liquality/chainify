@@ -8,7 +8,7 @@ import { BitcoinSwapProviderOptions, PaymentVariants, TransactionMatchesFunction
 export class BitcoinSwapEsploraProvider extends BitcoinSwapBaseProvider {
     private _httpClient: HttpClient;
 
-    constructor(options: BitcoinSwapProviderOptions, walletProvider: BitcoinBaseWalletProvider) {
+    constructor(options: BitcoinSwapProviderOptions, walletProvider?: BitcoinBaseWalletProvider) {
         super(options, walletProvider);
         this._httpClient = new HttpClient({ baseURL: options.scraperUrl });
     }

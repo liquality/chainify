@@ -31,7 +31,7 @@
         "pre-commit": "^1.2.2",
         "prettier": "^2.5.1",
         "prettier-plugin-organize-imports": "^2.3.4",
-        "turbo": "*",
+        "turbo": "^1.2.4",
         "typechain": "^7.0.0",
         "typedoc": "^0.22.13",
         "typedoc-github-wiki-theme": "^1.0.0",
@@ -46,7 +46,7 @@
         "env:integration:bootup": "sleep 10",
         "test": "yarn env:integration && yarn env:integration:bootup && yarn test:integration",
         "test:integration": "cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --exit test/integration/index.ts",
-        "build": "turbo run build --concurrency=10",
+        "build": "yarn turbo run build --filter=@liquality/evm-contracts && turbo run build --concurrency=10 --filter=!@liquality/evm-contracts",
         "clean": "yarn workspaces foreach run clean && rm -rf node_modules ",
         "lint": "yarn lint:ts && yarn prettier:check",
         "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
@@ -62,5 +62,5 @@
     "workspaces": [
         "packages/*"
     ],
-    "packageManager": "yarn@1.22.10"
+    "packageManager": "yarn@3.1.1"
 }
