@@ -7,7 +7,7 @@ import { Chain } from '../types';
 export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = true) {
     const { client, config } = chain;
 
-    xdescribe(`${client.chain.getNetwork().name} Wallet Provider`, function () {
+    describe(`${client.chain.getNetwork().name} Wallet Provider`, function () {
         it('should use the expected address', async () => {
             const address = await client.wallet.getAddress();
             if (config.walletExpectedResult.address) {
