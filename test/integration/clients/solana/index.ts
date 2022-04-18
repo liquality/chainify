@@ -33,6 +33,5 @@ export function shouldBehaveLikeSolanaClient() {
         shouldBehaveLikeChainProvider(chain);
         shouldBehaveLikeWalletProvider(chain);
         shouldBehaveLikeWalletProvider(chain, false);
-        // shouldBehaveLikeSwapProvider(chain);
     });
 }

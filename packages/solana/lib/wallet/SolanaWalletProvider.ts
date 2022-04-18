@@ -30,7 +30,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
 
     public async getSigner(): Promise<Keypair> {
         if (!this._signer) {
-            await this.setSigner();
+            return await this.setSigner();
         }
 
         return this._signer;
@@ -41,7 +41,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
             return this._addressCache[this._mnemonic];
         }
 
-        await this.getSigner();
+        this._signer = await this.getSigner();
 
         const result = new Address({
             address: this._signer.publicKey.toString(),
@@ -68,15 +68,15 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     }
 
     public async signMessage(message: string, _from: AddressType): Promise<string> {
-        await this.getSigner();
+        this._signer = await this.getSigner();
         const buffer = Buffer.from(message);
         const signature = nacl.sign.detached(buffer, base58.decode(base58.encode(this._signer.secretKey)));
 
         return Buffer.from(signature).toString('hex');
     }
 
-    public async sendTransaction(txRequest: TransactionRequest): Promise<Transaction<any>> {
-        await this.getSigner();
+    public async sendTransaction(txRequest: TransactionRequest): Promise<Transaction> {
+        this._signer = await this.getSigner();
         const to = new PublicKey(txRequest.to.toString());
 
         let instruction: TransactionInstruction;
@@ -108,7 +108,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         }).add(instruction);
 
         const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer]);
-
+        console.log('hash', hash);
         return {
             hash,
             value: txRequest.value.toNumber(),
@@ -116,7 +116,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         };
     }
 
-    public async sendBatchTransaction(txRequests: TransactionRequest[]): Promise<Transaction<any>[]> {
+    public async sendBatchTransaction(txRequests: TransactionRequest[]): Promise<Transaction[]> {
         const result: Transaction[] = [];
         for (const txRequest of txRequests) {
             const tx = await this.sendTransaction(txRequest);
@@ -125,7 +125,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         return result;
     }
 
-    public async sendSweepTransaction(address: AddressType, asset: Asset): Promise<Transaction<any>> {
+    public async sendSweepTransaction(address: AddressType, asset: Asset): Promise<Transaction> {
         const addresses = await this.getAddresses();
         const balance = await this.chainProvider.getBalance(addresses, [asset]);
         return await this.sendTransaction({ to: address, value: balance[0] });
@@ -141,7 +141,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     }
 
     public async exportPrivateKey(): Promise<string> {
-        await this.getSigner();
+        this._signer = await this.getSigner();
 
         return base58.encode(this._signer.secretKey);
     }
@@ -164,9 +164,9 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         return Buffer.from(seed).toString('hex');
     }
 
-    private async setSigner(): Promise<void> {
+    private async setSigner(): Promise<Keypair> {
         const seed = await this.mnemonicToSeed(this._mnemonic);
         const derivedSeed = derivePath(this._derivationPath, seed).key;
-        this._signer = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
+        return Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
     }
 }

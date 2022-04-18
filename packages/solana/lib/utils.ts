@@ -27,7 +27,7 @@ export function parseTransactionResponse(
 
     return {
         hash,
-        value: _instructions?.[0]?.parsed?.info?.lamports || Number(_instructions?.[0]?.parsed?.info?.amount) || 0,
+        value: _instructions?.[0]?.parsed?.info?.lamports || Number(_instructions?.[0]?.parsed?.info?.amount) || 0, // "lamports" to extract SOL value from tx / "amount" to extract SLP value from tx
         _raw: transaction,
         ...(signatureStatus && {
             confirmations: signatureStatus.value.confirmations,

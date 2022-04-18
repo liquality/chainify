@@ -2,7 +2,7 @@ import { Chain } from '@liquality/client';
 import { UnsupportedMethodError } from '@liquality/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
 import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { BlockResponse, Connection, PublicKey } from '@solana/web3.js';
 import { parseBlockResponse, parseTransactionResponse } from '../utils';
 
 export class SolanaChainProvider extends Chain<Connection, Network> {
@@ -14,11 +14,11 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         }
     }
 
-    getBlockByHash(_blockHash: string): Promise<Block<any, any>> {
+    public async getBlockByHash(_blockHash: string): Promise<Block<Block, Transaction>> {
         throw new UnsupportedMethodError('Method not supported for Solana');
     }
 
-    public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<Block, Transaction>> {
+    public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockResponse, Transaction>> {
         const block = await this.provider.getBlock(blockNumber);
 
         if (!includeTx) {
@@ -37,7 +37,7 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         return await this.provider.getSlot();
     }
 
-    public async getTransactionByHash(txHash: string): Promise<Transaction<any>> {
+    public async getTransactionByHash(txHash: string): Promise<Transaction> {
         const [transaction, signatureStatus] = await Promise.all([
             this.provider.getParsedTransaction(txHash),
             this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),

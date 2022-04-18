@@ -14,11 +14,19 @@ import {
     EVMClient,
     EVMLedgerClient,
     NearClient,
+    SolanaClient,
     TerraClient,
 } from './clients';
-import { SolanaClient } from './clients/solana/clients';
-import { SolanaConfig } from './clients/solana/config';
-import { BtcHdWalletConfig, BtcLedgerConfig, BtcNodeConfig, EVMConfig, EVMLedgerConfig, NearConfig, TerraConfig } from './config';
+import {
+    BtcHdWalletConfig,
+    BtcLedgerConfig,
+    BtcNodeConfig,
+    EVMConfig,
+    EVMLedgerConfig,
+    NearConfig,
+    SolanaConfig,
+    TerraConfig,
+} from './config';
 import { Chain, ChainType, IConfig, WalletType } from './types';
 
 export const describeExternal = process.env.RUN_EXTERNAL ? describe.only : describe.skip;
