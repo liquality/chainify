@@ -7,7 +7,7 @@ import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransa
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
 import nacl from 'tweetnacl';
-import { SolanaChainProvider } from '../chain/SolanaChainProvider';
+import { SolanaChainProvider } from '../';
 
 export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     private _signer: Keypair;
