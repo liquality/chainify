@@ -4,7 +4,7 @@ import { UnimplementedMethodError } from '@liquality/errors';
 import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest, WalletOptions } from '@liquality/types';
 import { createAccount, createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
-import { mnemonicToSeed, validateMnemonic } from 'bip39';
+import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
 import { SolanaChainProvider } from 'lib/chain/SolanaChainProvider';
 import nacl from 'tweetnacl';
@@ -22,6 +22,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         this._mnemonic = mnemonic;
         this._derivationPath = derivationPath;
         this._addressCache = {};
+        this._signer = this.setSigner();
     }
 
     public async getConnectedNetwork(): Promise<Network> {
@@ -29,10 +30,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     }
 
     public async getSigner(): Promise<Keypair> {
-        if (!this._signer) {
-            return await this.setSigner();
-        }
-
         return this._signer;
     }
 
@@ -40,8 +37,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         if (this._addressCache[this._mnemonic]) {
             return this._addressCache[this._mnemonic];
         }
-
-        this._signer = await this.getSigner();
 
         const result = new Address({
             address: this._signer.publicKey.toString(),
@@ -68,7 +63,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     }
 
     public async signMessage(message: string, _from: AddressType): Promise<string> {
-        this._signer = await this.getSigner();
         const buffer = Buffer.from(message);
         const signature = nacl.sign.detached(buffer, base58.decode(base58.encode(this._signer.secretKey)));
 
@@ -76,7 +70,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     }
 
     public async sendTransaction(txRequest: TransactionRequest): Promise<Transaction> {
-        this._signer = await this.getSigner();
         const to = new PublicKey(txRequest.to.toString());
 
         let instruction: TransactionInstruction;
@@ -108,7 +101,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         }).add(instruction);
 
         const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer]);
-        console.log('hash', hash);
         return {
             hash,
             value: txRequest.value.toNumber(),
@@ -141,8 +133,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     }
 
     public async exportPrivateKey(): Promise<string> {
-        this._signer = await this.getSigner();
-
         return base58.encode(this._signer.secretKey);
     }
 
@@ -155,17 +145,17 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         return false;
     }
 
-    private async mnemonicToSeed(mnemonic: string) {
-        if (!validateMnemonic(mnemonic)) {
+    private mnemonicToSeed(mnemonic: string) {
+        if (!mnemonic) {
             throw new Error('Invalid seed words');
         }
 
-        const seed = await mnemonicToSeed(mnemonic);
+        const seed = mnemonicToSeedSync(mnemonic);
         return Buffer.from(seed).toString('hex');
     }
 
-    private async setSigner(): Promise<Keypair> {
-        const seed = await this.mnemonicToSeed(this._mnemonic);
+    private setSigner(): Keypair {
+        const seed = this.mnemonicToSeed(this._mnemonic);
         const derivedSeed = derivePath(this._derivationPath, seed).key;
         return Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
     }
