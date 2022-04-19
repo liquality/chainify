@@ -6,8 +6,8 @@ import { createAccount, createTransferInstruction, getAssociatedTokenAddress } f
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
-import { SolanaChainProvider } from 'lib/chain/SolanaChainProvider';
 import nacl from 'tweetnacl';
+import { SolanaChainProvider } from '../chain/SolanaChainProvider';
 
 export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     private _signer: Keypair;
