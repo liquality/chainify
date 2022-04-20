@@ -1,5 +1,18 @@
 # @liquality/utils
 
+## 2.0.4
+
+### Patch Changes
+
+-   -   throw errors when txns or blocks are not found
+    -   introduce solana packages for chain and wallet, swap is not supported yet
+    -   introduce logger package
+    -   introduce rpc fee provider for evm chains
+    -   make multicall optional
+-   Updated dependencies
+    -   @liquality/errors@2.0.4
+    -   @liquality/types@2.0.4
+
 ## 2.0.3
 
 ### Patch Changes
