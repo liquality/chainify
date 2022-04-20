@@ -1364,26 +1364,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@liquality/client@workspace:packages/client"
   dependencies:
-    "@ethersproject/logger": 5.6.0
     "@liquality/errors": "workspace:*"
+    "@liquality/logger": "workspace:*"
     "@liquality/types": "workspace:*"
     "@liquality/utils": "workspace:*"
     axios: ^0.25.0
   languageName: unknown
   linkType: soft
 
-"@liquality/crypto@npm:^1.13.12":
-  version: 1.13.12
-  resolution: "@liquality/crypto@npm:1.13.12"
-  dependencies:
-    bech32: ^1.1.3
-    bs58: ^4.0.1
-    crypto-hashing: ^1.0.0
-  checksum: 485427c165e5bd9a70ecac23fed5ffb627a80358e4837781ca9709081b04af01485f8a72ed4f9da64cb50e299acd234bbcff4eb433dd743f0c699310921a4024
-  languageName: node
-  linkType: hard
-
-"@liquality/errors@workspace:*, @liquality/errors@workspace:^, @liquality/errors@workspace:packages/errors":
+"@liquality/errors@workspace:*, @liquality/errors@workspace:packages/errors":
   version: 0.0.0-use.local
   resolution: "@liquality/errors@workspace:packages/errors"
   dependencies:
@@ -1500,6 +1489,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@liquality/logger@workspace:*, @liquality/logger@workspace:packages/logger":
+  version: 0.0.0-use.local
+  resolution: "@liquality/logger@workspace:packages/logger"
+  languageName: unknown
+  linkType: soft
+
 "@liquality/near@workspace:packages/near":
   version: 0.0.0-use.local
   resolution: "@liquality/near@workspace:packages/near"
@@ -1519,9 +1514,10 @@ __metadata:
   resolution: "@liquality/solana@workspace:packages/solana"
   dependencies:
     "@liquality/client": "workspace:*"
-    "@liquality/crypto": ^1.13.12
-    "@liquality/errors": "workspace:^"
-    "@liquality/types": "workspace:^"
+    "@liquality/errors": "workspace:*"
+    "@liquality/logger": "workspace:*"
+    "@liquality/types": "workspace:*"
+    "@liquality/utils": "workspace:*"
     "@solana/spl-token": ^0.2.0
     "@solana/web3.js": ^1.37.2
     bip39: ^3.0.4
@@ -1545,7 +1541,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@liquality/types@workspace:*, @liquality/types@workspace:^, @liquality/types@workspace:packages/types":
+"@liquality/types@workspace:*, @liquality/types@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@liquality/types@workspace:packages/types"
   dependencies:
