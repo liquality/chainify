@@ -12,6 +12,8 @@ function getEvmClient(network: Network) {
     const provider = new providers.StaticJsonRpcProvider(network.rpcUrl);
     const feeProvider = new EIP1559MockFeeProvider(provider);
     const chainProvider = new EVM.EvmChainProvider(network, provider, feeProvider);
+    // we don't have multicall on the common address on Ganache
+    chainProvider.multicall.setMulticallAddress('0x08579f8763415cfCEa1B0F0dD583b1A0DEbfBe2b');
     const walletProvider = new EVM.EvmWalletProvider(config.walletOptions as WalletOptions, chainProvider);
     const swapProvider = new EVM.EvmSwapProvider(config.swapOptions, walletProvider);
     const client = new Client<EVM.EvmChainProvider, EVM.EvmWalletProvider, EVM.EvmSwapProvider>().connect(swapProvider);
@@ -23,6 +25,8 @@ function getEvmLedgerClient(network: Network) {
     const provider = new providers.StaticJsonRpcProvider(network.rpcUrl);
     const feeProvider = new EIP1559MockFeeProvider(provider);
     const chainProvider = new EVM.EvmChainProvider(network, provider, feeProvider);
+    // we don't have multicall on the common address on Ganache
+    chainProvider.multicall.setMulticallAddress('0x08579f8763415cfCEa1B0F0dD583b1A0DEbfBe2b');
     const walletProvider = new EvmLedgerProvider({ ...config.walletOptions, Transport: LedgerHwTransportNode } as any, chainProvider);
     const swapProvider = new EVM.EvmSwapProvider(config.swapOptions, walletProvider);
     return new Client(chainProvider, walletProvider, swapProvider);

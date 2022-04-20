@@ -24,7 +24,7 @@ import { EvmMulticallProvider } from './EvmMulticallProvider';
  *
  */
 export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
-    protected multicall: EvmMulticallProvider;
+    public multicall: EvmMulticallProvider;
 
     /**
      * @param network - See {@link EvmNetworks}
@@ -45,7 +45,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
         }
 
         if (multicall) {
-            this.multicall = new EvmMulticallProvider(this.provider, Number(network.chainId));
+            this.multicall = new EvmMulticallProvider(this.provider);
         }
     }
 

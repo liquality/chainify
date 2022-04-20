@@ -1,5 +1,5 @@
 import { Client } from '@liquality/client';
-import { LiqualityHTLC__factory, Multicall__factory, TestERC20__factory } from '@liquality/evm/lib/typechain';
+import { LiqualityHTLC__factory, Multicall3__factory, TestERC20__factory } from '@liquality/evm/lib/typechain';
 import { ethers } from 'ethers';
 
 /**
@@ -10,7 +10,7 @@ import { ethers } from 'ethers';
 export async function deployEvmContracts(client: Client) {
     const signer = client.wallet.getSigner();
     const erc20 = await new TestERC20__factory().connect(signer).deploy();
-    await new Multicall__factory().connect(signer).deploy();
+    await new Multicall3__factory().connect(signer).deploy();
     await new LiqualityHTLC__factory().connect(signer).deploy();
 
     // Mint tokens to the first 10 addresses
