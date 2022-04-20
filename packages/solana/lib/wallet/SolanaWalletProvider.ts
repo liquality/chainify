@@ -1,13 +1,27 @@
 import { Wallet } from '@liquality/client';
-import { base58 } from '@liquality/crypto';
 import { UnimplementedMethodError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest, WalletOptions } from '@liquality/types';
+import { Logger } from '@liquality/logger';
+import {
+    Address,
+    AddressType,
+    Asset,
+    BigNumber,
+    FeeType,
+    Network,
+    Transaction,
+    TransactionRequest,
+    TxStatus,
+    WalletOptions,
+} from '@liquality/types';
+import { base58, retry } from '@liquality/utils';
 import { createAccount, createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
 import nacl from 'tweetnacl';
 import { SolanaChainProvider } from '../';
+
+const logger = new Logger('SolanaWalletProvider');
 
 export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     private _signer: Keypair;
@@ -80,7 +94,9 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
 
             try {
                 await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
-            } catch {}
+            } catch (err) {
+                logger.debug(`Error creating account`, err);
+            }
 
             const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
 
@@ -94,17 +110,20 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
             });
         }
 
-        const latestBlockhash = await this.chainProvider.getProvider().getLatestBlockhash();
+        const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash());
 
-        const transaction = new SolTransaction({
-            recentBlockhash: latestBlockhash.blockhash,
-        }).add(instruction);
+        const transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
 
         const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer]);
+
         return {
             hash,
             value: txRequest.value.toNumber(),
+            to: txRequest.to,
+            from: this._signer.publicKey.toBase58(),
             _raw: {},
+            confirmations: 0,
+            status: TxStatus.Pending,
         };
     }
 

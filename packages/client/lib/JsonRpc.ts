@@ -1,4 +1,4 @@
-import { Logger } from '@ethersproject/logger';
+import { Logger } from '@liquality/logger';
 import { AxiosRequestConfig } from 'axios';
 import HttpClient from './Http';
 

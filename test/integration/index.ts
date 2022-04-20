@@ -1,3 +1,4 @@
+import { Logger, LogLevel } from '@liquality/logger';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { shouldBehaveLikeBitcoinClient } from './clients/bitcoin';
@@ -8,6 +9,9 @@ import { shouldBehaveLikeTerraClient } from './clients/terra';
 import { startLocalNetworks, stopLocalNetworks } from './environment';
 
 chai.use(chaiAsPromised);
+
+// turn off the logger for the tests
+Logger.setLogLevel(LogLevel.OFF);
 
 describe('Integration tests', function () {
     before(async () => {

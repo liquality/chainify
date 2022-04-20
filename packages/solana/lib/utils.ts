@@ -1,4 +1,5 @@
 import { Block, Transaction, TxStatus } from '@liquality/types';
+import { Math } from '@liquality/utils';
 import { BlockResponse, ParsedInstruction, ParsedTransactionWithMeta, RpcResponseAndContext, SignatureStatus } from '@solana/web3.js';
 
 export function parseBlockResponse(data: BlockResponse): Block {
@@ -12,26 +13,46 @@ export function parseBlockResponse(data: BlockResponse): Block {
 }
 
 export function parseTransactionResponse(
-    transaction: ParsedTransactionWithMeta,
-    signatureStatus?: RpcResponseAndContext<SignatureStatus>
+    data: ParsedTransactionWithMeta,
+    signatures?: RpcResponseAndContext<SignatureStatus>
 ): Transaction {
-    const {
-        transaction: {
-            message: { instructions },
-            signatures,
-        },
-    } = transaction;
-
-    const [hash] = signatures;
-    const _instructions = instructions as ParsedInstruction[];
-
-    return {
-        hash,
-        value: _instructions?.[0]?.parsed?.info?.lamports || Number(_instructions?.[0]?.parsed?.info?.amount) || 0, // "lamports" to extract SOL value from tx / "amount" to extract SLP value from tx
-        _raw: transaction,
-        ...(signatureStatus && {
-            confirmations: signatureStatus.value.confirmations,
-            status: signatureStatus.value.err ? TxStatus.Failed : TxStatus.Success,
-        }),
+    const txInstructions = data.transaction.message.instructions as ParsedInstruction[];
+    const result: Transaction<ParsedTransactionWithMeta> = {
+        hash: data.transaction.signatures[0],
+        value: 0,
+        _raw: data,
+        fee: data.meta?.fee,
     };
+
+    if (signatures) {
+        // If the confirmations are null then the tx is rooted i.e. finalized by a supermajority of the cluster
+        result.confirmations = signatures.value.confirmations === null ? 10 : signatures.value.confirmations;
+        // Error if transaction failed, null if transaction succeeded.
+        result.status = signatures.value.err === null ? TxStatus.Success : TxStatus.Failed;
+    }
+
+    for (const instruction of txInstructions) {
+        switch (instruction.program) {
+            case 'system': {
+                // SOL transfers
+                if (instruction.parsed?.type === 'transfer') {
+                    const parsedInfo = instruction.parsed.info;
+                    if (parsedInfo) {
+                        result.value = Math.add(parsedInfo.lamports || 0, result.value).toNumber();
+                        result.from = parsedInfo.source;
+                        result.to = parsedInfo.destination;
+                        result.fee;
+                    }
+                }
+                break;
+            }
+
+            // SPL transfers
+            case 'spl-token': {
+                break;
+            }
+        }
+    }
+
+    return result;
 }

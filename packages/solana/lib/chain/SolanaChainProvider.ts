@@ -1,9 +1,13 @@
 import { Chain } from '@liquality/client';
-import { UnsupportedMethodError } from '@liquality/errors';
+import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@liquality/errors';
+import { Logger } from '@liquality/logger';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
+import { retry } from '@liquality/utils';
 import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BlockResponse, Connection, PublicKey } from '@solana/web3.js';
 import { parseBlockResponse, parseTransactionResponse } from '../utils';
+
+const logger = new Logger('SolanaWalletProvider');
 
 export class SolanaChainProvider extends Chain<Connection, Network> {
     constructor(network: Network) {
@@ -14,23 +18,25 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         }
     }
 
-    public async getBlockByHash(_blockHash: string): Promise<Block<Block, Transaction>> {
-        throw new UnsupportedMethodError('Method not supported for Solana');
-    }
-
     public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockResponse, Transaction>> {
-        const block = await this.provider.getBlock(blockNumber);
+        return retry(async () => {
+            try {
+                const block = await this.provider.getBlock(blockNumber);
 
-        if (!includeTx) {
-            return parseBlockResponse(block);
-        }
+                if (!includeTx) {
+                    return parseBlockResponse(block);
+                }
 
-        const transactions = block.transactions.map((tr: any) => parseTransactionResponse(tr));
+                const txSignatures = block.transactions.map((tx) => tx.transaction.signatures[0]);
+                const txDetails = await this.provider.getParsedTransactions(txSignatures);
+                const transactions = txDetails.map((tx) => parseTransactionResponse(tx));
 
-        return {
-            ...parseBlockResponse(block),
-            transactions,
-        };
+                return { ...parseBlockResponse(block), transactions };
+            } catch (err) {
+                logger.error(err);
+                throw new BlockNotFoundError(`Block ${blockNumber} not found`);
+            }
+        });
     }
 
     public async getBlockHeight(): Promise<number> {
@@ -38,12 +44,18 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
     }
 
     public async getTransactionByHash(txHash: string): Promise<Transaction> {
-        const [transaction, signatureStatus] = await Promise.all([
-            this.provider.getParsedTransaction(txHash),
-            this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),
-        ]);
-
-        return parseTransactionResponse(transaction, signatureStatus);
+        return retry(async () => {
+            try {
+                const [transaction, signatures] = await Promise.all([
+                    this.provider.getParsedTransaction(txHash),
+                    this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),
+                ]);
+                return parseTransactionResponse(transaction, signatures);
+            } catch (err) {
+                logger.error(err);
+                throw new TxNotFoundError(`Transaction not found: ${txHash}`);
+            }
+        });
     }
 
     public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]> {
@@ -54,7 +66,7 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
             this.provider.getTokenAccountsByOwner(address, { programId: TOKEN_PROGRAM_ID }),
         ]);
 
-        const tokenBalances: { contractAddress: String; amount: BigNumber }[] = [];
+        const tokenBalances: { contractAddress: string; amount: BigNumber }[] = [];
         tokenData.value.forEach((token) => {
             const { mint, amount } = AccountLayout.decode(token.account.data);
 
@@ -102,6 +114,10 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
     }
 
     public async sendRpcRequest(_method: string, _params: any[]): Promise<void> {
+        throw new UnsupportedMethodError('Method not supported for Solana');
+    }
+
+    public async getBlockByHash(_blockHash: string): Promise<Block<Block, Transaction>> {
         throw new UnsupportedMethodError('Method not supported for Solana');
     }
 }

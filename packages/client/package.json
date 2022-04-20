@@ -15,8 +15,8 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
-        "@ethersproject/logger": "5.6.0",
         "@liquality/errors": "workspace:*",
+        "@liquality/logger": "workspace:*",
         "@liquality/types": "workspace:*",
         "@liquality/utils": "workspace:*",
         "axios": "^0.25.0"

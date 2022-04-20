@@ -16,9 +16,10 @@
     },
     "dependencies": {
         "@liquality/client": "workspace:*",
-        "@liquality/crypto": "^1.13.12",
-        "@liquality/errors": "workspace:^",
-        "@liquality/types": "workspace:^",
+        "@liquality/errors": "workspace:*",
+        "@liquality/logger": "workspace:*",
+        "@liquality/types": "workspace:*",
+        "@liquality/utils": "workspace:*",
         "@solana/spl-token": "^0.2.0",
         "@solana/web3.js": "^1.37.2",
         "bip39": "^3.0.4",
