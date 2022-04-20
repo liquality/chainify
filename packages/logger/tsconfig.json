@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "baseUrl": "./",
+        "rootDir": "./",
+        "esModuleInterop": true,
+        "target": "ES6"
+    },
+    "include": ["lib"]
+}
