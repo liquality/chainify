@@ -25,7 +25,7 @@ export class EvmMulticallProvider {
         this._multicall = Multicall3__factory.connect(this._multicallAddress, chainProvider);
     }
 
-    public async setMulticallAddress(multicallAddress: string) {
+    public setMulticallAddress(multicallAddress: string) {
         this._multicall = Multicall3__factory.connect(multicallAddress, this._multicall.provider);
         this._multicallAddress = multicallAddress;
     }
