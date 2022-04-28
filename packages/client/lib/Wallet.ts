@@ -1,100 +1,48 @@
-import { InvalidProviderResponseError, UnimplementedMethodError } from '@liquality/errors'
-import { Address, WalletProvider } from '@liquality/types'
-import { isArray } from 'lodash'
+import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest, WalletProvider } from '@chainify/types';
+import Chain from './Chain';
 
-export default class Wallet implements WalletProvider {
-  client: any
+export default abstract class Wallet<T, S> implements WalletProvider {
+    protected chainProvider: Chain<T>;
 
-  constructor(client: any) {
-    this.client = client
-  }
-
-  /**
-   * Get addresses/accounts of the user.
-   * @param {number} [startingIndex] - Index to start
-   * @param {number} [numAddresses] - Number of addresses to retrieve
-   * @param {boolean} [change] - True for change addresses
-   * @return {Promise<Address[], InvalidProviderResponseError>} Resolves with a list
-   *  of addresses.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getAddresses(startingIndex?: number, numAddresses?: number, change?: boolean): Promise<Address[]> {
-    const addresses = await this.client.getMethod('getAddresses')(startingIndex, numAddresses, change)
-
-    if (!isArray(addresses)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid response')
+    constructor(chainProvider?: Chain<T>) {
+        this.chainProvider = chainProvider;
     }
 
-    return addresses
-  }
-
-  /**
-   * Get used addresses/accounts of the user.
-   * @param {number} [numAddressPerCall] - Number of addresses to retrieve per call
-   * @return {Promise<Address[], InvalidProviderResponseError>} Resolves with a list
-   *  of addresses.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getUsedAddresses(numAddressPerCall?: number): Promise<Address[]> {
-    return this.client.getMethod('getUsedAddresses')(numAddressPerCall)
-  }
-
-  /**
-   * Get unused address/account of the user.
-   * @param {boolean} [change] - True for change addresses
-   * @param {number} [numAddressPerCall] - Number of addresses to retrieve per call
-   * @return {Promise<Address, InvalidProviderResponseError>} Resolves with a address
-   *  object.
-   *  Rejects with InvalidProviderResponseError if provider's response is invalid.
-   */
-  async getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<Address> {
-    return this.client.getMethod('getUnusedAddress')(change, numAddressPerCall)
-  }
-
-  /**
-   * Sign a message.
-   * @param {!string} message - Message to be signed.
-   * @param {!string} from - The address from which the message is signed.
-   * @return {Promise<string>} Resolves with a signed message.
-   */
-  async signMessage(message: string, from: string): Promise<string> {
-    return this.client.getMethod('signMessage')(message, from)
-  }
-
-  /**
-   * Retrieve the network connected to by the wallet
-   * @return {Promise<any>} Resolves with the network object
-   */
-  async getConnectedNetwork(): Promise<any> {
-    return this.client.getMethod('getConnectedNetwork')()
-  }
-
-  /**
-   * Retrieve the availability status of the wallet
-   * @return {Promise<Boolean>} True if the wallet is available to use
-   */
-  async isWalletAvailable(): Promise<boolean> {
-    return this.client.getMethod('isWalletAvailable')()
-  }
-
-  /**
-   * Flag indicating if the wallet allows apps to update transaction fees
-   * @return {Promise<Boolean>} True if wallet accepts fee updating
-   */
-  get canUpdateFee(): boolean {
-    try {
-      return this.client.getMethod('canUpdateFee')()
-    } catch (e) {
-      if (!(e instanceof UnimplementedMethodError)) throw e
+    setChainProvider(chainProvider: Chain<T>): void {
+        this.chainProvider = chainProvider;
     }
-    return true
-  }
 
-  /**
-   * Retrieve the private key for the account
-   * @return {Promise<string>} Resolves with the key as a string
-   */
-  exportPrivateKey(): Promise<string> {
-    return this.client.getMethod('exportPrivateKey')()
-  }
+    getChainProvider(): Chain<T> {
+        return this.chainProvider;
+    }
+
+    public abstract getConnectedNetwork(): Promise<Network>;
+
+    public abstract getSigner(): S;
+
+    public abstract getAddress(): Promise<AddressType>;
+
+    public abstract getUnusedAddress(change?: boolean, numAddressPerCall?: number): Promise<Address>;
+
+    public abstract getUsedAddresses(numAddressPerCall?: number): Promise<Address[]>;
+
+    public abstract getAddresses(start?: number, numAddresses?: number, change?: boolean): Promise<Address[]>;
+
+    public abstract signMessage(message: string, from: AddressType): Promise<string>;
+
+    public abstract sendTransaction(txRequest: TransactionRequest): Promise<Transaction>;
+
+    public abstract sendBatchTransaction(txRequests: TransactionRequest[]): Promise<Transaction[]>;
+
+    public abstract sendSweepTransaction(address: AddressType, asset: Asset, fee?: FeeType): Promise<Transaction>;
+
+    public abstract updateTransactionFee(tx: string | Transaction, newFee: FeeType): Promise<Transaction>;
+
+    public abstract getBalance(assets: Asset[]): Promise<BigNumber[]>;
+
+    public abstract exportPrivateKey(): Promise<string>;
+
+    public abstract isWalletAvailable(): Promise<boolean>;
+
+    public abstract canUpdateFee(): boolean;
 }

@@ -1,7 +1,8 @@
-node_modules
+.yarn/
 dist
-coverage
-examples
-doc
-.eslintrc.js
-typedoc.js
+node_modules
+.turbo
+.yarn
+yarn-debug.log*
+yarn-error.log*
+packages/evm-contracts/*

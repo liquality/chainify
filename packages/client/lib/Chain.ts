@@ -1,144 +1,125 @@
-import { InvalidProviderResponseError } from '@liquality/errors'
-import {
-  SendOptions,
-  Block,
-  Transaction,
-  FeeDetails,
-  ChainProvider,
-  FeeProvider,
-  BigNumber,
-  Address,
-  EIP1559Fee
-} from '@liquality/types'
-import { isBoolean, isNumber, isString, isObject } from 'lodash'
+import { AddressType, Asset, BigNumber, Block, ChainProvider, FeeDetails, Network, Transaction } from '@chainify/types';
+import { Fee } from '.';
 
-export default class Chain implements ChainProvider, FeeProvider {
-  client: any
+/**
+ * Represents a connection to a specific blockchain.
+ * Used to fetch chain specific data like blocks, transactions, balances and fees.
+ * @public
+ * @typeParam T - type of the internal provider, e.g. {@link https://docs.ethers.io/v5/api/providers/jsonrpc-provider/ | JsonRpcProvider} for EVM chains
+ * @typeParam N - type of the network. The default value of the type is {@link Network}
+ */
+export default abstract class Chain<T, N = Network> implements ChainProvider {
+    protected feeProvider: Fee;
+    protected network: N;
+    protected provider: T;
 
-  constructor(client: any) {
-    this.client = client
-  }
-
-  /** @inheritdoc */
-  async generateBlock(numberOfBlocks: number): Promise<void> {
-    if (!isNumber(numberOfBlocks)) {
-      throw new TypeError('First argument should be a number')
+    constructor(network: N, provider?: T, feeProvider?: Fee) {
+        this.network = network;
+        this.provider = provider;
+        this.feeProvider = feeProvider;
     }
 
-    return this.client.getMethod('generateBlock')(numberOfBlocks)
-  }
-
-  /** @inheritdoc */
-  async getBlockByHash(blockHash: string, includeTx = false): Promise<Block> {
-    if (!isString(blockHash)) {
-      throw new TypeError('Block hash should be a string')
+    /**
+     * Sets the network
+     */
+    public setNetwork(network: N): void {
+        this.network = network;
     }
 
-    if (!isBoolean(includeTx)) {
-      throw new TypeError('Second parameter should be boolean')
+    /**
+     * Gets the connected network
+     */
+    public getNetwork(): N {
+        return this.network;
     }
 
-    const block = await this.client.getMethod('getBlockByHash')(blockHash, includeTx)
-    this.client.assertValidBlock(block)
-    return block
-  }
-
-  /** @inheritdoc */
-  async getBlockByNumber(blockNumber: number, includeTx = false): Promise<Block> {
-    if (!isNumber(blockNumber)) {
-      throw new TypeError('Invalid Block number')
+    /**
+     * Gets the chain specific provider
+     */
+    public getProvider(): T {
+        return this.provider;
     }
 
-    if (!isBoolean(includeTx)) {
-      throw new TypeError('Second parameter should be boolean')
+    /**
+     * Sets the chain specific provider
+     */
+    public async setProvider(provider: T): Promise<void> {
+        this.provider = provider;
     }
 
-    const block = await this.client.getMethod('getBlockByNumber')(blockNumber, includeTx)
-    this.client.assertValidBlock(block)
-    return block
-  }
-
-  /** @inheritdoc */
-  async getBlockHeight(): Promise<number> {
-    const blockHeight = await this.client.getMethod('getBlockHeight')()
-
-    if (!isNumber(blockHeight)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid block height')
+    /**
+     * Sets the fee provider
+     */
+    public async setFeeProvider(feeProvider: Fee) {
+        this.feeProvider = feeProvider;
     }
 
-    return blockHeight
-  }
-
-  /** @inheritdoc */
-  async getTransactionByHash(txHash: string): Promise<Transaction> {
-    if (!isString(txHash)) {
-      throw new TypeError('Transaction hash should be a string')
+    /**
+     * Gets the fee provider
+     */
+    public async getFeeProvider() {
+        return this.feeProvider;
     }
 
-    const transaction = await this.client.getMethod('getTransactionByHash')(txHash)
-    if (transaction) {
-      this.client.assertValidTransaction(transaction)
-    }
+    /**
+     * @virtual
+     * Get a block given its hash.
+     * @param blockHash - A string that represents the **hash** of the desired block.
+     * @param includeTx - If true, fetches transactions in the block.
+     * @throws {@link UnsupportedMethodError} - Thrown if the chain doesn't support the method
+     * @throws {@link BlockNotFoundError} - Thrown if the block doesn't exist
+     */
+    public abstract getBlockByHash(blockHash: string, includeTx?: boolean): Promise<Block>;
 
-    return transaction
-  }
+    /**
+     * @virtual
+     * Get a block given its number.
+     * @param blockNumber - The number of the desired block. If the `blockNumber` is missing, it returns the latest block
+     * @param includeTx - If true, fetches transaction in the block.
+     *  Resolves with a Block with the same number as the given input.
+     */
+    public abstract getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block>;
 
-  /** @inheritdoc */
-  async getBalance(addresses: (string | Address)[]): Promise<BigNumber> {
-    const balance = await this.client.getMethod('getBalance')(addresses)
+    /**
+     * @virtual
+     * Get current block height of the chain.
+     */
+    public abstract getBlockHeight(): Promise<number>;
 
-    if (!BigNumber.isBigNumber(balance)) {
-      throw new InvalidProviderResponseError('Provider returned an invalid response')
-    }
+    /**
+     * @virtual
+     * Get a transaction given its hash.
+     * @param txHash - A string that represents the **hash** of the
+     *  desired transaction.
+     *  Resolves with a {@link Transaction} with the same hash as the given input.
+     */
+    public abstract getTransactionByHash(txHash: string): Promise<Transaction>;
 
-    return balance
-  }
+    /**
+     * @virtual
+     * Get the balance for list of accounts and list of assets
+     */
+    public abstract getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]>;
 
-  /** @inheritdoc */
-  async sendTransaction(options: SendOptions): Promise<Transaction> {
-    const transaction = await this.client.getMethod('sendTransaction')(options)
-    this.client.assertValidTransaction(transaction)
-    return transaction
-  }
+    /**
+     * @virtual
+     * @returns The fee details - {@link FeeDetails}
+     */
+    public abstract getFees(feeAsset?: Asset): Promise<FeeDetails>;
 
-  /** @inheritdoc */
-  async sendSweepTransaction(address: Address | string, fee?: EIP1559Fee | number): Promise<Transaction> {
-    return this.client.getMethod('sendSweepTransaction')(address, fee)
-  }
+    /**
+     * @virtual
+     * Broadcast a signed transaction to the network.
+     * @param rawTransaction - A raw transaction usually in the form of a hexadecimal string that represents the serialized transaction.
+     * @throws {@link UnsupportedMethodError} - Thrown if the chain doesn't support sending of raw transactions
+     * @returns the transaction hash
+     */
+    public abstract sendRawTransaction(rawTransaction: string): Promise<string>;
 
-  /** @inheritdoc */
-  async updateTransactionFee(tx: string | Transaction, newFee: EIP1559Fee | number): Promise<Transaction> {
-    if (isObject(tx)) {
-      this.client.assertValidTransaction(tx)
-    } else {
-      if (!isString(tx)) {
-        throw new TypeError('Transaction should be a string or object')
-      }
-    }
-
-    const transaction = await this.client.getMethod('updateTransactionFee')(tx, newFee)
-    this.client.assertValidTransaction(transaction)
-    return transaction
-  }
-
-  /** @inheritdoc */
-  async sendBatchTransaction(transactions: SendOptions[]): Promise<Transaction> {
-    return this.client.getMethod('sendBatchTransaction')(transactions)
-  }
-
-  /** @inheritdoc */
-  async sendRawTransaction(rawTransaction: string): Promise<string> {
-    const txHash = await this.client.getMethod('sendRawTransaction')(rawTransaction)
-
-    if (!isString(txHash)) {
-      throw new InvalidProviderResponseError('sendRawTransaction method should return a transaction id string')
-    }
-
-    return txHash
-  }
-
-  /** @inheritdoc */
-  async getFees(): Promise<FeeDetails> {
-    return this.client.getMethod('getFees')()
-  }
+    /**
+     * @virtual
+     * Used to send supported RPC requests to the RPC node
+     * @throws {@link UnsupportedMethodError} - Thrown if the chain provider doesn't support RPC requests
+     */
+    public abstract sendRpcRequest(method: string, params: Array<any>): Promise<any>;
 }

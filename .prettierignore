@@ -1,6 +1,5 @@
-node_modules
 dist
-coverage
-examples
-doc
-README.md
+.turbo
+node_modules
+typechain
+*.json

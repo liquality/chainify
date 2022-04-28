@@ -1,60 +1,37 @@
-import { NftProvider, Address, Transaction } from '@liquality/types'
+import { AddressType, BigNumber, FeeType, Transaction } from '@chainify/types';
+import Wallet from './Wallet';
 
-export default class Nft implements NftProvider {
-  client: any
+export default abstract class Nft<T, S> {
+    protected walletProvider: Wallet<T, S>;
 
-  constructor(client: any) {
-    this.client = client
-  }
+    constructor(walletProvider?: Wallet<T, S>) {
+        this.walletProvider = walletProvider;
+    }
 
-  /** @inheritdoc */
-  async balance(contract: Address | string, tokenIDs?: number[]): Promise<number | number[]> {
-    const balance = await this.client.getMethod('balance')(contract, tokenIDs)
-    return balance
-  }
+    public setWallet(wallet: Wallet<T, S>): void {
+        this.walletProvider = wallet;
+    }
 
-  /** @inheritdoc */
-  async transfer(
-    contract: Address | string,
-    receiver: Address | string,
-    tokenIDs: number[],
-    values?: number[],
-    data?: string
-  ): Promise<Transaction> {
-    const transaction = await this.client.getMethod('transfer')(contract, receiver, tokenIDs, values, data)
-    this.client.assertValidTransaction(transaction)
-    return transaction
-  }
+    public getWallet(): Wallet<T, S> {
+        return this.walletProvider;
+    }
 
-  /** @inheritdoc */
-  async approve(contract: Address | string, operator: Address | string, tokenID: number): Promise<Transaction> {
-    const transaction = await this.client.getMethod('approve')(contract, operator, tokenID)
-    this.client.assertValidTransaction(transaction)
-    return transaction
-  }
+    public abstract transfer(
+        contract: AddressType,
+        receiver: AddressType,
+        tokenIDs: number[],
+        values?: number[],
+        data?: string,
+        fee?: FeeType
+    ): Promise<Transaction>;
 
-  /** @inheritdoc */
-  async isApproved(contract: Address | string, tokenID: number): Promise<Address> {
-    const operator = await this.client.getMethod('isApproved')(contract, tokenID)
-    return operator
-  }
+    public abstract balanceOf(contractAddress: AddressType, owners: AddressType[], tokenIDs: number[]): Promise<BigNumber | BigNumber[]>;
 
-  /** @inheritdoc */
-  async approveAll(contract: Address | string, operator: Address | string, state?: boolean): Promise<Transaction> {
-    const transaction = await this.client.getMethod('approveAll')(contract, operator, state)
-    this.client.assertValidTransaction(transaction)
-    return transaction
-  }
+    public abstract approve(contract: AddressType, operator: AddressType, tokenID: number): Promise<Transaction>;
 
-  /** @inheritdoc */
-  async isApprovedForAll(contract: Address | string, operator: Address | string): Promise<boolean> {
-    const state = await this.client.getMethod('isApprovedForAll')(contract, operator)
-    return state
-  }
+    public abstract approveAll(contract: AddressType, operator: AddressType, state: boolean): Promise<Transaction>;
 
-  /** @inheritdoc */
-  async fetch(): Promise<any> {
-    const nftData = await this.client.getMethod('fetch')()
-    return nftData
-  }
+    public abstract isApprovedForAll(contract: AddressType, operator: AddressType): Promise<boolean>;
+
+    public abstract fetch(): void;
 }

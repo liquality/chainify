@@ -1,0 +1,26 @@
+{
+    "name": "@chainify/near",
+    "version": "1.0.1",
+    "description": "",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
+        "bn.js": "^5.2.0",
+        "near-api-js": "^0.44.2",
+        "near-seed-phrase": "^0.2.0"
+    }
+}

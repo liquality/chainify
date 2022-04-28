@@ -1,0 +1,15 @@
+{
+    "pipeline": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["dist/**"]
+        },
+        "test:integration": {
+            "dependsOn": ["^build"],
+            "outputs": []
+        },
+        "dev": {
+            "cache": false
+        }
+    }
+}

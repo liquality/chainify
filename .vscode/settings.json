@@ -1,0 +1,24 @@
+{
+    "[typescript]": {
+        "editor.formatOnSave": true
+    },
+    "eslint.packageManager": "yarn",
+    "npm.packageManager": "yarn",
+    "cSpell.words": [
+        "arbitrum",
+        "bitcoinjs",
+        "chainify",
+        "changesets",
+        "commitlint",
+        "eslintignore",
+        "Liquality",
+        "luxon",
+        "memoizee",
+        "Multicall",
+        "prettierrc",
+        "regtest",
+        "setimmediate",
+        "trivago",
+        "typechain"
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "name": "@chainify/evm-ledger",
+    "version": "1.0.1",
+    "description": "",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/evm": "workspace:*",
+        "@chainify/hw-ledger": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
+        "@ethersproject/abstract-provider": "5.6.0",
+        "@ethersproject/abstract-signer": "5.6.0",
+        "@ethersproject/providers": "5.6.0",
+        "@ledgerhq/hw-app-eth": "^6.26.0"
+    }
+}

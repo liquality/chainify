@@ -1,0 +1,28 @@
+{
+    "name": "@chainify/bitcoin-ledger",
+    "version": "1.0.1",
+    "description": "",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@chainify/bitcoin": "workspace:*",
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/hw-ledger": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
+        "@ledgerhq/hw-app-btc": "6.7.0",
+        "bip32": "2.0.6",
+        "bitcoinjs-lib": "5.2.0"
+    }
+}

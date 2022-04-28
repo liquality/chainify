@@ -1,39 +1,21 @@
 {
-  "name": "@liquality/types",
-  "version": "1.13.12",
-  "description": "",
-  "module": "dist/index.js",
-  "main": "dist/index.js",
-  "types": "dist/lib/index.d.ts",
-  "directories": {
-    "dist": "dist",
-    "src": "lib"
-  },
-  "files": [
-    "dist",
-    "lib"
-  ],
-  "scripts": {
-    "build": "webpack --config ../../webpack/webpack.config.js"
-  },
-  "author": "Liquality <info@liquality.io>",
-  "license": "MIT",
-  "engines": {
-    "node": ">=14"
-  },
-  "dependencies": {
-    "bignumber.js": "^9.0.1"
-  },
-  "homepage": "https://github.com/liquality/chainabstractionlayer#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/liquality/chainabstractionlayer.git"
-  },
-  "bugs": {
-    "url": "https://github.com/liquality/chainabstractionlayer/issues"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "sideEffects": false
+    "name": "@chainify/types",
+    "version": "1.0.1",
+    "description": "",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@ethersproject/bignumber": "5.6.0",
+        "bignumber.js": "^9.0.2"
+    }
 }

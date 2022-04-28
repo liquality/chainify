@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "baseUrl": "./",
+        "rootDir": "./",
+        "esModuleInterop": true,
+        "noImplicitAny": false // we need that for lib/typechain
+    },
+    "include": ["lib"]
+}
