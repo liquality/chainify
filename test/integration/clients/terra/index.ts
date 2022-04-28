@@ -1,5 +1,5 @@
-import { Client } from '@liquality/client';
-import { TerraChainProvider, TerraWalletProvider } from '@liquality/terra';
+import { Client } from '@chainify/client';
+import { TerraChainProvider, TerraWalletProvider } from '@chainify/terra';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
 import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';

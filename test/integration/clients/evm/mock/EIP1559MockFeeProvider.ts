@@ -1,7 +1,7 @@
+import { Fee } from '@chainify/client';
+import { EvmUtils } from '@chainify/evm';
+import { FeeDetails } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { Fee } from '@liquality/client';
-import { EvmUtils } from '@liquality/evm';
-import { FeeDetails } from '@liquality/types';
 
 export class EIP1559MockFeeProvider extends Fee {
     provider: StaticJsonRpcProvider;

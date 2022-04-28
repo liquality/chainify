@@ -1,6 +1,6 @@
-import { Client } from '@liquality/client';
-import * as Terra from '@liquality/terra';
-import { WalletOptions } from '@liquality/types';
+import { Client } from '@chainify/client';
+import * as Terra from '@chainify/terra';
+import { WalletOptions } from '@chainify/types';
 import { TerraConfig } from './config';
 
 function getTerraClient(network: Terra.TerraTypes.TerraNetwork) {

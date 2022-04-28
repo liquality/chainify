@@ -1,4 +1,4 @@
-import { Asset, BigNumber, ChainId, Network } from '@liquality/types';
+import { Asset, BigNumber, ChainId, Network } from '@chainify/types';
 import { IConfig } from '../../types';
 
 export const SolanaConfig = (network: Network): IConfig => {

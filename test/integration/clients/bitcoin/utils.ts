@@ -1,4 +1,4 @@
-import { Address } from '@liquality/types';
+import { Address } from '@chainify/types';
 import { Chain } from '../../types';
 
 export async function importBitcoinAddresses(chain: Chain) {

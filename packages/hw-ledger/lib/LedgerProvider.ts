@@ -1,7 +1,7 @@
+import { WalletError } from '@chainify/errors';
+import { Address, Network } from '@chainify/types';
+import { compare } from '@chainify/utils';
 import Transport from '@ledgerhq/hw-transport';
-import { WalletError } from '@liquality/errors';
-import { Address, Network } from '@liquality/types';
-import { compare } from '@liquality/utils';
 import { CreateOptions, GetAddressesFuncType, IApp, TransportCreator } from './types';
 
 export class LedgerProvider<TApp extends IApp> {

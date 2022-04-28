@@ -1,9 +1,9 @@
+import { ClientTypes, HttpClient, Nft } from '@chainify/client';
+import { UnsupportedMethodError } from '@chainify/errors';
+import { AddressType, BigNumber, FeeType, Transaction } from '@chainify/types';
 import { Signer } from '@ethersproject/abstract-signer';
 import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider } from '@ethersproject/providers';
-import { ClientTypes, HttpClient, Nft } from '@liquality/client';
-import { UnsupportedMethodError } from '@liquality/errors';
-import { AddressType, BigNumber, FeeType, Transaction } from '@liquality/types';
 import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from '../typechain';
 import { EthersPopulatedTransaction, EthersTransactionResponse, NftTypes } from '../types';
 import { toEthereumTxRequest } from '../utils';

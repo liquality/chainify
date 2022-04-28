@@ -1,7 +1,7 @@
-import { Swap } from '@liquality/client';
-import { UnsupportedMethodError } from '@liquality/errors';
-import { FeeType, SwapParams, Transaction } from '@liquality/types';
-import { compare, Math, validateSecret, validateSecretAndHash } from '@liquality/utils';
+import { Swap } from '@chainify/client';
+import { UnsupportedMethodError } from '@chainify/errors';
+import { FeeType, SwapParams, Transaction } from '@chainify/types';
+import { compare, Math, validateSecret, validateSecretAndHash } from '@chainify/utils';
 import { LCDClient, MnemonicKey, MsgExecuteContract, MsgInstantiateContract } from '@terra-money/terra.js';
 import { TerraWalletProvider } from '..';
 import { assetCodeToDenom } from '../constants';

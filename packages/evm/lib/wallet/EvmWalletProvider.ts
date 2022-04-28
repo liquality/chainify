@@ -1,8 +1,8 @@
+import { Chain } from '@chainify/client';
+import { Address, WalletOptions } from '@chainify/types';
+import { remove0x } from '@chainify/utils';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
-import { Chain } from '@liquality/client';
-import { Address, WalletOptions } from '@liquality/types';
-import { remove0x } from '@liquality/utils';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
 
 export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider, EthersWallet> {

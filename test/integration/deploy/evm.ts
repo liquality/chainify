@@ -1,5 +1,5 @@
-import { Client } from '@liquality/client';
-import { LiqualityHTLC__factory, Multicall3__factory, TestERC20__factory } from '@liquality/evm/lib/typechain';
+import { Client } from '@chainify/client';
+import { LiqualityHTLC__factory, Multicall3__factory, TestERC20__factory } from '@chainify/evm/lib/typechain';
 import { ethers } from 'ethers';
 
 /**

@@ -1,5 +1,5 @@
-import { Fee, HttpClient } from '@liquality/client';
-import { AddressType, BigNumber } from '@liquality/types';
+import { Fee, HttpClient } from '@chainify/client';
+import { AddressType, BigNumber } from '@chainify/types';
 import { flatten, uniq } from 'lodash';
 import { UTXO } from '../../types';
 import { BitcoinEsploraApiProvider } from './BitcoinEsploraApiProvider';

@@ -1,4 +1,4 @@
-import { Network } from '@liquality/types';
+import { Network } from '@chainify/types';
 
 const solana_mainnet: Network = {
     name: 'Solana Mainnet',

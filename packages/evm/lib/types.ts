@@ -1,7 +1,7 @@
+import { AddressType, FeeType, TransactionRequest } from '@chainify/types';
 import { BlockWithTransactions as EthersBlockWithTransactions } from '@ethersproject/abstract-provider';
 import { PopulatedTransaction as EthersPopulatedTransaction } from '@ethersproject/contracts';
 import { Block as EthersBlock, TransactionResponse as EthersTransactionResponse } from '@ethersproject/providers';
-import { AddressType, FeeType, TransactionRequest } from '@liquality/types';
 
 export interface EvmSwapOptions {
     contractAddress: string;

@@ -1,6 +1,6 @@
+import { Fee } from '@chainify/client';
+import { BigNumber, FeeDetails } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { Fee } from '@liquality/client';
-import { BigNumber, FeeDetails } from '@liquality/types';
 import { suggestFees } from '@rainbow-me/fee-suggestions';
 import { toGwei } from '../utils';
 

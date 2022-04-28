@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-import { BitcoinBaseWalletProvider, BitcoinTypes, BitcoinUtils } from '@liquality/bitcoin';
-import { decodeRawTransaction } from '@liquality/bitcoin/dist/lib/utils';
-import { UnimplementedMethodError } from '@liquality/errors';
-import { BigNumber, Transaction } from '@liquality/types';
-import { hash160 } from '@liquality/utils';
+import { BitcoinBaseWalletProvider, BitcoinTypes, BitcoinUtils } from '@chainify/bitcoin';
+import { decodeRawTransaction } from '@chainify/bitcoin/dist/lib/utils';
+import { UnimplementedMethodError } from '@chainify/errors';
+import { BigNumber, Transaction } from '@chainify/types';
+import { hash160 } from '@chainify/utils';
 import * as bitcoinJs from 'bitcoinjs-lib';
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';

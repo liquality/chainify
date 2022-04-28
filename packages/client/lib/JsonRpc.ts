@@ -1,4 +1,4 @@
-import { Logger } from '@liquality/logger';
+import { Logger } from '@chainify/logger';
 import { AxiosRequestConfig } from 'axios';
 import HttpClient from './Http';
 

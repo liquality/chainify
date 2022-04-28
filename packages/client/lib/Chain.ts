@@ -1,4 +1,4 @@
-import { AddressType, Asset, BigNumber, Block, ChainProvider, FeeDetails, Network, Transaction } from '@liquality/types';
+import { AddressType, Asset, BigNumber, Block, ChainProvider, FeeDetails, Network, Transaction } from '@chainify/types';
 import { Fee } from '.';
 
 /**

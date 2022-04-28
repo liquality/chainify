@@ -50,6 +50,251 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@chainify/bitcoin-ledger@workspace:packages/bitcoin-ledger":
+  version: 0.0.0-use.local
+  resolution: "@chainify/bitcoin-ledger@workspace:packages/bitcoin-ledger"
+  dependencies:
+    "@chainify/bitcoin": "workspace:*"
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/hw-ledger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ledgerhq/hw-app-btc": 6.7.0
+    bip32: 2.0.6
+    bitcoinjs-lib: 5.2.0
+  languageName: unknown
+  linkType: soft
+
+"@chainify/bitcoin@workspace:*, @chainify/bitcoin@workspace:packages/bitcoin":
+  version: 0.0.0-use.local
+  resolution: "@chainify/bitcoin@workspace:packages/bitcoin"
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@types/bip32": ^2.0.0
+    "@types/bip39": ^3.0.0
+    "@types/bitcoinjs-lib": ^5.0.0
+    "@types/lodash": ^4.14.178
+    "@types/memoizee": ^0.4.7
+    bip174: ^2.0.1
+    bip32: 2.0.6
+    bip39: ^3.0.4
+    bitcoinjs-lib: 5.2.0
+    bitcoinjs-message: 2.2.0
+    coinselect: ^3.1.12
+    lodash: ^4.17.21
+    memoizee: ^0.4.15
+  languageName: unknown
+  linkType: soft
+
+"@chainify/client@workspace:*, @chainify/client@workspace:packages/client":
+  version: 0.0.0-use.local
+  resolution: "@chainify/client@workspace:packages/client"
+  dependencies:
+    "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    axios: ^0.25.0
+  languageName: unknown
+  linkType: soft
+
+"@chainify/errors@workspace:*, @chainify/errors@workspace:packages/errors":
+  version: 0.0.0-use.local
+  resolution: "@chainify/errors@workspace:packages/errors"
+  dependencies:
+    "@types/standard-error": ^1.1.0
+    standard-error: ^1.1.0
+  languageName: unknown
+  linkType: soft
+
+"@chainify/evm-contracts@workspace:packages/evm-contracts":
+  version: 0.0.0-use.local
+  resolution: "@chainify/evm-contracts@workspace:packages/evm-contracts"
+  dependencies:
+    "@codechecks/client": ^0.1.12
+    "@commitlint/cli": ^16.1.0
+    "@commitlint/config-conventional": ^16.0.0
+    "@ethersproject/abi": 5.6.0
+    "@ethersproject/abstract-signer": 5.6.0
+    "@ethersproject/bignumber": 5.6.0
+    "@ethersproject/bytes": 5.6.0
+    "@ethersproject/providers": 5.6.0
+    "@nomiclabs/hardhat-ethers": ^2.0.4
+    "@nomiclabs/hardhat-etherscan": ^3.0.3
+    "@nomiclabs/hardhat-waffle": ^2.0.2
+    "@openzeppelin/contracts": ^4.4.2
+    "@typechain/ethers-v5": ^9.0.0
+    "@typechain/hardhat": ^4.0.0
+    "@types/chai": ^4.3.0
+    "@types/fs-extra": ^9.0.13
+    "@types/mocha": ^9.1.0
+    "@types/node": ^17.0.14
+    "@typescript-eslint/eslint-plugin": ^5.10.2
+    "@typescript-eslint/parser": ^5.10.2
+    chai: ^4.3.6
+    commitizen: ^4.2.4
+    cross-env: ^7.0.3
+    cz-conventional-changelog: ^3.3.0
+    dotenv: ^15.0.0
+    eslint: ^8.8.0
+    eslint-config-prettier: ^8.3.0
+    ethereum-waffle: ^3.4.0
+    ethers: 5.6.0
+    fs-extra: ^10.0.0
+    hardhat: ^2.8.3
+    hardhat-gas-reporter: ^1.0.7
+    husky: ^7.0.4
+    lint-staged: ^12.3.3
+    lodash: ^4.17.21
+    mocha: ^9.2.0
+    pinst: ^2.1.6
+    prettier: ^2.5.1
+    prettier-plugin-solidity: ^1.0.0-beta.19
+    shelljs: ^0.8.5
+    shx: ^0.3.4
+    solhint: ^3.3.6
+    solhint-plugin-prettier: ^0.0.5
+    solidity-coverage: ^0.7.18
+    ts-generator: ^0.1.1
+    ts-node: ^10.4.0
+    typechain: ^7.0.0
+    typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
+"@chainify/evm-ledger@workspace:packages/evm-ledger":
+  version: 0.0.0-use.local
+  resolution: "@chainify/evm-ledger@workspace:packages/evm-ledger"
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/evm": "workspace:*"
+    "@chainify/hw-ledger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ethersproject/abstract-provider": 5.6.0
+    "@ethersproject/abstract-signer": 5.6.0
+    "@ethersproject/providers": 5.6.0
+    "@ledgerhq/hw-app-eth": ^6.26.0
+  languageName: unknown
+  linkType: soft
+
+"@chainify/evm@workspace:*, @chainify/evm@workspace:packages/evm":
+  version: 0.0.0-use.local
+  resolution: "@chainify/evm@workspace:packages/evm"
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ethersproject/abi": 5.6.0
+    "@ethersproject/abstract-provider": 5.6.0
+    "@ethersproject/abstract-signer": 5.6.0
+    "@ethersproject/constants": 5.6.0
+    "@ethersproject/contracts": 5.6.0
+    "@ethersproject/providers": 5.6.0
+    "@ethersproject/solidity": 5.6.0
+    "@ethersproject/transactions": 5.6.0
+    "@ethersproject/wallet": 5.6.0
+    "@nomiclabs/hardhat-ethers": ^2.0.4
+    "@nomiclabs/hardhat-waffle": ^2.0.2
+    "@rainbow-me/fee-suggestions": ^2.0.0
+    "@typechain/hardhat": ^4.0.0
+    hardhat: ^2.8.3
+  languageName: unknown
+  linkType: soft
+
+"@chainify/hw-ledger@workspace:*, @chainify/hw-ledger@workspace:packages/hw-ledger":
+  version: 0.0.0-use.local
+  resolution: "@chainify/hw-ledger@workspace:packages/hw-ledger"
+  dependencies:
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@ledgerhq/hw-transport": ^6.24.1
+  languageName: unknown
+  linkType: soft
+
+"@chainify/logger@workspace:*, @chainify/logger@workspace:packages/logger":
+  version: 0.0.0-use.local
+  resolution: "@chainify/logger@workspace:packages/logger"
+  languageName: unknown
+  linkType: soft
+
+"@chainify/near@workspace:packages/near":
+  version: 0.0.0-use.local
+  resolution: "@chainify/near@workspace:packages/near"
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    bn.js: ^5.2.0
+    near-api-js: ^0.44.2
+    near-seed-phrase: ^0.2.0
+  languageName: unknown
+  linkType: soft
+
+"@chainify/solana@workspace:packages/solana":
+  version: 0.0.0-use.local
+  resolution: "@chainify/solana@workspace:packages/solana"
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@solana/spl-token": ^0.2.0
+    "@solana/web3.js": ^1.37.2
+    bip39: ^3.0.4
+    ed25519-hd-key: ^1.2.0
+    tweetnacl: ^1.0.3
+  languageName: unknown
+  linkType: soft
+
+"@chainify/terra@workspace:packages/terra":
+  version: 0.0.0-use.local
+  resolution: "@chainify/terra@workspace:packages/terra"
+  dependencies:
+    "@chainify/client": "workspace:*"
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@chainify/utils": "workspace:*"
+    "@terra-money/terra.js": 2.1.18
+    "@types/luxon": ^2.0.9
+    lodash: ^4.17.21
+    luxon: ^2.3.1
+  languageName: unknown
+  linkType: soft
+
+"@chainify/types@workspace:*, @chainify/types@workspace:packages/types":
+  version: 0.0.0-use.local
+  resolution: "@chainify/types@workspace:packages/types"
+  dependencies:
+    "@ethersproject/bignumber": 5.6.0
+    bignumber.js: ^9.0.2
+  languageName: unknown
+  linkType: soft
+
+"@chainify/utils@workspace:*, @chainify/utils@workspace:packages/utils":
+  version: 0.0.0-use.local
+  resolution: "@chainify/utils@workspace:packages/utils"
+  dependencies:
+    "@chainify/errors": "workspace:*"
+    "@chainify/types": "workspace:*"
+    "@ethersproject/sha2": 5.6.0
+    "@types/setimmediate": ^1.0.2
+    bech32: ^2.0.0
+    bs58: ^5.0.0
+    crypto-hashing: ^1.0.0
+    setimmediate: ^1.0.5
+  languageName: unknown
+  linkType: soft
+
 "@changesets/apply-release-plan@npm:^5.0.5":
   version: 5.0.5
   resolution: "@changesets/apply-release-plan@npm:5.0.5"
@@ -1319,251 +1564,6 @@ __metadata:
   checksum: 6194311890ccc3879fb1371e37a6ca67e7e13ea67199885b15ba8dd1c6613f31fd52a5248bdc541c2d2632aadd099af34524adc34f0e0f94732ba3ff6e3069fe
   languageName: node
   linkType: hard
-
-"@liquality/bitcoin-ledger@workspace:packages/bitcoin-ledger":
-  version: 0.0.0-use.local
-  resolution: "@liquality/bitcoin-ledger@workspace:packages/bitcoin-ledger"
-  dependencies:
-    "@ledgerhq/hw-app-btc": 6.7.0
-    "@liquality/bitcoin": "workspace:*"
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/hw-ledger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    bip32: 2.0.6
-    bitcoinjs-lib: 5.2.0
-  languageName: unknown
-  linkType: soft
-
-"@liquality/bitcoin@workspace:*, @liquality/bitcoin@workspace:packages/bitcoin":
-  version: 0.0.0-use.local
-  resolution: "@liquality/bitcoin@workspace:packages/bitcoin"
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@types/bip32": ^2.0.0
-    "@types/bip39": ^3.0.0
-    "@types/bitcoinjs-lib": ^5.0.0
-    "@types/lodash": ^4.14.178
-    "@types/memoizee": ^0.4.7
-    bip174: ^2.0.1
-    bip32: 2.0.6
-    bip39: ^3.0.4
-    bitcoinjs-lib: 5.2.0
-    bitcoinjs-message: 2.2.0
-    coinselect: ^3.1.12
-    lodash: ^4.17.21
-    memoizee: ^0.4.15
-  languageName: unknown
-  linkType: soft
-
-"@liquality/client@workspace:*, @liquality/client@workspace:packages/client":
-  version: 0.0.0-use.local
-  resolution: "@liquality/client@workspace:packages/client"
-  dependencies:
-    "@liquality/errors": "workspace:*"
-    "@liquality/logger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    axios: ^0.25.0
-  languageName: unknown
-  linkType: soft
-
-"@liquality/errors@workspace:*, @liquality/errors@workspace:packages/errors":
-  version: 0.0.0-use.local
-  resolution: "@liquality/errors@workspace:packages/errors"
-  dependencies:
-    "@types/standard-error": ^1.1.0
-    standard-error: ^1.1.0
-  languageName: unknown
-  linkType: soft
-
-"@liquality/evm-contracts@workspace:packages/evm-contracts":
-  version: 0.0.0-use.local
-  resolution: "@liquality/evm-contracts@workspace:packages/evm-contracts"
-  dependencies:
-    "@codechecks/client": ^0.1.12
-    "@commitlint/cli": ^16.1.0
-    "@commitlint/config-conventional": ^16.0.0
-    "@ethersproject/abi": 5.6.0
-    "@ethersproject/abstract-signer": 5.6.0
-    "@ethersproject/bignumber": 5.6.0
-    "@ethersproject/bytes": 5.6.0
-    "@ethersproject/providers": 5.6.0
-    "@nomiclabs/hardhat-ethers": ^2.0.4
-    "@nomiclabs/hardhat-etherscan": ^3.0.3
-    "@nomiclabs/hardhat-waffle": ^2.0.2
-    "@openzeppelin/contracts": ^4.4.2
-    "@typechain/ethers-v5": ^9.0.0
-    "@typechain/hardhat": ^4.0.0
-    "@types/chai": ^4.3.0
-    "@types/fs-extra": ^9.0.13
-    "@types/mocha": ^9.1.0
-    "@types/node": ^17.0.14
-    "@typescript-eslint/eslint-plugin": ^5.10.2
-    "@typescript-eslint/parser": ^5.10.2
-    chai: ^4.3.6
-    commitizen: ^4.2.4
-    cross-env: ^7.0.3
-    cz-conventional-changelog: ^3.3.0
-    dotenv: ^15.0.0
-    eslint: ^8.8.0
-    eslint-config-prettier: ^8.3.0
-    ethereum-waffle: ^3.4.0
-    ethers: 5.6.0
-    fs-extra: ^10.0.0
-    hardhat: ^2.8.3
-    hardhat-gas-reporter: ^1.0.7
-    husky: ^7.0.4
-    lint-staged: ^12.3.3
-    lodash: ^4.17.21
-    mocha: ^9.2.0
-    pinst: ^2.1.6
-    prettier: ^2.5.1
-    prettier-plugin-solidity: ^1.0.0-beta.19
-    shelljs: ^0.8.5
-    shx: ^0.3.4
-    solhint: ^3.3.6
-    solhint-plugin-prettier: ^0.0.5
-    solidity-coverage: ^0.7.18
-    ts-generator: ^0.1.1
-    ts-node: ^10.4.0
-    typechain: ^7.0.0
-    typescript: ^4.5.5
-  languageName: unknown
-  linkType: soft
-
-"@liquality/evm-ledger@workspace:packages/evm-ledger":
-  version: 0.0.0-use.local
-  resolution: "@liquality/evm-ledger@workspace:packages/evm-ledger"
-  dependencies:
-    "@ethersproject/abstract-provider": 5.6.0
-    "@ethersproject/abstract-signer": 5.6.0
-    "@ethersproject/providers": 5.6.0
-    "@ledgerhq/hw-app-eth": ^6.26.0
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/evm": "workspace:*"
-    "@liquality/hw-ledger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"@liquality/evm@workspace:*, @liquality/evm@workspace:packages/evm":
-  version: 0.0.0-use.local
-  resolution: "@liquality/evm@workspace:packages/evm"
-  dependencies:
-    "@ethersproject/abi": 5.6.0
-    "@ethersproject/abstract-provider": 5.6.0
-    "@ethersproject/abstract-signer": 5.6.0
-    "@ethersproject/constants": 5.6.0
-    "@ethersproject/contracts": 5.6.0
-    "@ethersproject/providers": 5.6.0
-    "@ethersproject/solidity": 5.6.0
-    "@ethersproject/transactions": 5.6.0
-    "@ethersproject/wallet": 5.6.0
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@nomiclabs/hardhat-ethers": ^2.0.4
-    "@nomiclabs/hardhat-waffle": ^2.0.2
-    "@rainbow-me/fee-suggestions": ^2.0.0
-    "@typechain/hardhat": ^4.0.0
-    hardhat: ^2.8.3
-  languageName: unknown
-  linkType: soft
-
-"@liquality/hw-ledger@workspace:*, @liquality/hw-ledger@workspace:packages/hw-ledger":
-  version: 0.0.0-use.local
-  resolution: "@liquality/hw-ledger@workspace:packages/hw-ledger"
-  dependencies:
-    "@ledgerhq/hw-transport": ^6.24.1
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"@liquality/logger@workspace:*, @liquality/logger@workspace:packages/logger":
-  version: 0.0.0-use.local
-  resolution: "@liquality/logger@workspace:packages/logger"
-  languageName: unknown
-  linkType: soft
-
-"@liquality/near@workspace:packages/near":
-  version: 0.0.0-use.local
-  resolution: "@liquality/near@workspace:packages/near"
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    bn.js: ^5.2.0
-    near-api-js: ^0.44.2
-    near-seed-phrase: ^0.2.0
-  languageName: unknown
-  linkType: soft
-
-"@liquality/solana@workspace:packages/solana":
-  version: 0.0.0-use.local
-  resolution: "@liquality/solana@workspace:packages/solana"
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/logger": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@solana/spl-token": ^0.2.0
-    "@solana/web3.js": ^1.37.2
-    bip39: ^3.0.4
-    ed25519-hd-key: ^1.2.0
-    tweetnacl: ^1.0.3
-  languageName: unknown
-  linkType: soft
-
-"@liquality/terra@workspace:packages/terra":
-  version: 0.0.0-use.local
-  resolution: "@liquality/terra@workspace:packages/terra"
-  dependencies:
-    "@liquality/client": "workspace:*"
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@liquality/utils": "workspace:*"
-    "@terra-money/terra.js": 2.1.18
-    "@types/luxon": ^2.0.9
-    lodash: ^4.17.21
-    luxon: ^2.3.1
-  languageName: unknown
-  linkType: soft
-
-"@liquality/types@workspace:*, @liquality/types@workspace:packages/types":
-  version: 0.0.0-use.local
-  resolution: "@liquality/types@workspace:packages/types"
-  dependencies:
-    "@ethersproject/bignumber": 5.6.0
-    bignumber.js: ^9.0.2
-  languageName: unknown
-  linkType: soft
-
-"@liquality/utils@workspace:*, @liquality/utils@workspace:packages/utils":
-  version: 0.0.0-use.local
-  resolution: "@liquality/utils@workspace:packages/utils"
-  dependencies:
-    "@ethersproject/sha2": 5.6.0
-    "@liquality/errors": "workspace:*"
-    "@liquality/types": "workspace:*"
-    "@types/setimmediate": ^1.0.2
-    bech32: ^2.0.0
-    bs58: ^5.0.0
-    crypto-hashing: ^1.0.0
-    setimmediate: ^1.0.5
-  languageName: unknown
-  linkType: soft
 
 "@manypkg/find-root@npm:^1.1.0":
   version: 1.1.0

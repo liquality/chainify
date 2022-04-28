@@ -1,6 +1,6 @@
-import { Chain, Wallet } from '@liquality/client';
-import { UnimplementedMethodError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest } from '@liquality/types';
+import { Chain, Wallet } from '@chainify/client';
+import { UnimplementedMethodError } from '@chainify/errors';
+import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest } from '@chainify/types';
 import { ECPair, Psbt, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 import { flatten, isString, uniq } from 'lodash';
 import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';

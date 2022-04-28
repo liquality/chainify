@@ -1,7 +1,7 @@
-import { Chain, Wallet } from '@liquality/client';
-import { InsufficientBalanceError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumber, Transaction, TransactionRequest } from '@liquality/types';
-import { asyncSetImmediate } from '@liquality/utils';
+import { Chain, Wallet } from '@chainify/client';
+import { InsufficientBalanceError } from '@chainify/errors';
+import { Address, AddressType, Asset, BigNumber, Transaction, TransactionRequest } from '@chainify/types';
+import { asyncSetImmediate } from '@chainify/utils';
 import { BIP32Interface } from 'bip32';
 import { payments, script } from 'bitcoinjs-lib';
 import memoize from 'memoizee';

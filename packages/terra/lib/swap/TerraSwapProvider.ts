@@ -1,7 +1,7 @@
-import { HttpClient } from '@liquality/client';
-import { TxNotFoundError } from '@liquality/errors';
-import { SwapParams, Transaction, TxStatus } from '@liquality/types';
-import { validateSecret, validateSecretAndHash } from '@liquality/utils';
+import { HttpClient } from '@chainify/client';
+import { TxNotFoundError } from '@chainify/errors';
+import { SwapParams, Transaction, TxStatus } from '@chainify/types';
+import { validateSecret, validateSecretAndHash } from '@chainify/utils';
 import { isTxError } from '@terra-money/terra.js';
 import { TerraWalletProvider } from '..';
 import { denomToAssetCode } from '../constants';

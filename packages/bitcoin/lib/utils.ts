@@ -1,5 +1,5 @@
-import { InvalidAddressError } from '@liquality/errors';
-import { AddressType, BigNumber, Transaction, TxStatus } from '@liquality/types';
+import { InvalidAddressError } from '@chainify/errors';
+import { AddressType, BigNumber, Transaction, TxStatus } from '@chainify/types';
 import * as varuint from 'bip174/src/lib/converter/varint';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as classify from 'bitcoinjs-lib/src/classify';

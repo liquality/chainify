@@ -1,7 +1,7 @@
+import { Chain, Fee } from '@chainify/client';
+import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
+import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { Chain, Fee } from '@liquality/client';
-import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@liquality/errors';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
 import { RpcFeeProvider } from '../fee/RpcFeeProvider';
 import { ERC20__factory } from '../typechain';
 import { EthersBlock, EthersBlockWithTransactions, EthersTransactionResponse } from '../types';
@@ -15,7 +15,7 @@ import { EvmMulticallProvider } from './EvmMulticallProvider';
  * Example:
  * ```typescript
  * import { providers } from 'ethers';
- * import { EvmNetworks, EvmChainProvider } from '@liquality/evm';
+ * import { EvmNetworks, EvmChainProvider } from '@chainify/evm';
  *
  * const provider = new providers.StaticJsonRpcProvider(EvmNetworks.ganache.rpcUrl);
  * const chainProvider = new EvmChainProvider(EvmNetworks.ganache, provider, null);

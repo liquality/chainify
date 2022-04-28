@@ -1,4 +1,4 @@
-import { AddressType, Transaction } from '@liquality/types';
+import { AddressType, Transaction } from '@chainify/types';
 import { AddressTxCounts, UTXO } from '../types';
 
 export abstract class BitcoinBaseChainProvider {

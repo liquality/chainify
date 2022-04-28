@@ -1,5 +1,5 @@
-import { InvalidExpirationError, InvalidSecretError, InvalidValueError } from '@liquality/errors';
-import { BigNumberish } from '@liquality/types';
+import { InvalidExpirationError, InvalidSecretError, InvalidValueError } from '@chainify/errors';
+import { BigNumberish } from '@chainify/types';
 import { sha256 } from './crypto';
 import { remove0x } from './hex';
 import { lte } from './math';

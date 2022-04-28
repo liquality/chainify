@@ -1,6 +1,6 @@
-import { Chain } from '@liquality/client';
-import { BlockNotFoundError, TxNotFoundError } from '@liquality/errors';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@liquality/types';
+import { Chain } from '@chainify/client';
+import { BlockNotFoundError, TxNotFoundError } from '@chainify/errors';
+import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@chainify/types';
 import { providers } from 'near-api-js';
 import { BlockResult, NearAccount, NearChunk, NearNetwork, NearTransaction, NearTxLog, NearTxResponse } from '../types';
 import { parseBlockResponse, parseNearBlockTx, parseTxResponse } from '../utils';

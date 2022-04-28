@@ -1,4 +1,4 @@
-import { Network } from '@liquality/types';
+import { Network } from '@chainify/types';
 import { Network as BitcoinJsLibNetwork } from 'bitcoinjs-lib';
 
 export * as BitcoinEsploraTypes from './chain/esplora/types';

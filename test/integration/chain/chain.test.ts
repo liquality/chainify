@@ -1,5 +1,5 @@
-import { UnsupportedMethodError } from '@liquality/errors';
-import { Math, sleep } from '@liquality/utils';
+import { UnsupportedMethodError } from '@chainify/errors';
+import { Math, sleep } from '@chainify/utils';
 import { expect } from 'chai';
 import { Chain } from '../types';
 

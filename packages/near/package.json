@@ -1,7 +1,7 @@
 {
-    "name": "@liquality/near",
-    "version": "2.0.4",
-    "description": "> TODO: description",
+    "name": "@chainify/near",
+    "version": "1.0.0",
+    "description": "",
     "author": "Liquality <info@liquality.io>",
     "homepage": "",
     "license": "ISC",
@@ -15,10 +15,10 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
-        "@liquality/client": "workspace:*",
-        "@liquality/errors": "workspace:*",
-        "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:*",
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
         "bn.js": "^5.2.0",
         "near-api-js": "^0.44.2",
         "near-seed-phrase": "^0.2.0"

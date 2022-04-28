@@ -1,6 +1,6 @@
-import { Chain, Fee, JsonRpcProvider } from '@liquality/client';
-import { BlockNotFoundError, TxNotFoundError } from '@liquality/errors';
-import { AddressType, Asset, BigNumber, Block, FeeDetail, FeeDetails, Transaction } from '@liquality/types';
+import { Chain, Fee, JsonRpcProvider } from '@chainify/client';
+import { BlockNotFoundError, TxNotFoundError } from '@chainify/errors';
+import { AddressType, Asset, BigNumber, Block, FeeDetail, FeeDetails, Transaction } from '@chainify/types';
 import { flatten } from 'lodash';
 import { Transaction as BitcoinTransaction } from '../../types';
 import { normalizeTransactionObject } from '../../utils';

@@ -1,6 +1,6 @@
+import { SwapParams, Transaction } from '@chainify/types';
+import { Math, remove0x } from '@chainify/utils';
 import { BaseProvider, Log } from '@ethersproject/providers';
-import { SwapParams, Transaction } from '@liquality/types';
-import { Math, remove0x } from '@liquality/utils';
 import { ClaimEvent, InitiateEvent, RefundEvent } from '../typechain/LiqualityHTLC';
 import { EvmSwapOptions } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';

@@ -1,10 +1,10 @@
+import { BitcoinBaseChainProvider, BitcoinBaseWalletProvider, BitcoinTypes, BitcoinUtils } from '@chainify/bitcoin';
+import { Chain } from '@chainify/client';
+import { UnimplementedMethodError } from '@chainify/errors';
+import { LedgerProvider } from '@chainify/hw-ledger';
+import { AddressType, Asset, BigNumber } from '@chainify/types';
+import { padHexStart } from '@chainify/utils';
 import HwAppBitcoin from '@ledgerhq/hw-app-btc';
-import { BitcoinBaseChainProvider, BitcoinBaseWalletProvider, BitcoinTypes, BitcoinUtils } from '@liquality/bitcoin';
-import { Chain } from '@liquality/client';
-import { UnimplementedMethodError } from '@liquality/errors';
-import { LedgerProvider } from '@liquality/hw-ledger';
-import { AddressType, Asset, BigNumber } from '@liquality/types';
-import { padHexStart } from '@liquality/utils';
 import { BIP32Interface, fromPublicKey } from 'bip32';
 import { address, Psbt, PsbtTxInput, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
 import { BitcoinLedgerProviderOptions } from './types';

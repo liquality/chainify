@@ -1,5 +1,5 @@
-import { Chain, Wallet } from '@liquality/client';
-import { Address, FeeType, Transaction, TransactionRequest } from '@liquality/types';
+import { Chain, Wallet } from '@chainify/client';
+import { Address, FeeType, Transaction, TransactionRequest } from '@chainify/types';
 import { PsbtInputTarget } from '../types';
 
 export interface IBitcoinWallet<T, S = any> extends Wallet<T, S> {
