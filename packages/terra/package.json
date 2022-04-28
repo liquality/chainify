@@ -1,7 +1,7 @@
 {
-    "name": "@liquality/terra",
-    "version": "2.0.4",
-    "description": "> TODO: description",
+    "name": "@chainify/terra",
+    "version": "1.0.0",
+    "description": "",
     "author": "Liquality <info@liquality.io>",
     "homepage": "",
     "license": "ISC",
@@ -15,10 +15,10 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
-        "@liquality/client": "workspace:*",
-        "@liquality/errors": "workspace:*",
-        "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:*",
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
         "@terra-money/terra.js": "2.1.18",
         "@types/luxon": "^2.0.9",
         "lodash": "^4.17.21",

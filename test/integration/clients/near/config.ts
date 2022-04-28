@@ -1,5 +1,5 @@
-import * as Near from '@liquality/near';
-import { BigNumber, ChainId } from '@liquality/types';
+import * as Near from '@chainify/near';
+import { BigNumber, ChainId } from '@chainify/types';
 import { IConfig } from '../../types';
 
 export const NearConfig = (network: Near.NearTypes.NearNetwork): IConfig => {

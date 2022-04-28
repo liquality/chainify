@@ -1,4 +1,4 @@
-import { Client } from '@liquality/client';
+import { Client } from '@chainify/client';
 import { deployEvmContracts } from './evm';
 
 export async function deploy(client: Client) {

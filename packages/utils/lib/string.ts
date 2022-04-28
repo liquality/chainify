@@ -1,4 +1,4 @@
-import { BigNumberish } from '@liquality/types';
+import { BigNumberish } from '@chainify/types';
 
 export function compare(a: BigNumberish, b: BigNumberish) {
     return a?.toString().toLowerCase() === b?.toString().toLowerCase();

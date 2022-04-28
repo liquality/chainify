@@ -1,4 +1,4 @@
-import { Logger, LogLevel } from '@liquality/logger';
+import { Logger, LogLevel } from '@chainify/logger';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { shouldBehaveLikeBitcoinClient } from './clients/bitcoin';

@@ -1,5 +1,5 @@
-import { Chain } from '@liquality/client';
-import { AddressType, Asset, BigNumber } from '@liquality/types';
+import { Chain } from '@chainify/client';
+import { AddressType, Asset, BigNumber } from '@chainify/types';
 import { BIP32Interface, fromSeed } from 'bip32';
 import { mnemonicToSeed } from 'bip39';
 import { ECPair, ECPairInterface, Psbt, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';

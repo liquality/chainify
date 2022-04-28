@@ -1,7 +1,7 @@
 {
-    "name": "@liquality/evm",
-    "version": "2.0.4",
-    "description": "> TODO: description",
+    "name": "@chainify/evm",
+    "version": "1.0.0",
+    "description": "",
     "author": "Liquality <info@liquality.io>",
     "homepage": "",
     "license": "ISC",
@@ -11,10 +11,14 @@
         "dist/**"
     ],
     "scripts": {
-        "build": "cp -R ../../node_modules/@liquality/evm-contracts/artifacts . && hardhat --config ./hardhat.config.ts typechain && tsc",
+        "build": "cp -R ../../node_modules/@chainify/evm-contracts/artifacts . && hardhat --config ./hardhat.config.ts typechain && tsc",
         "clean": "rm -rf node_modules .turbo dist ./lib/typechain cache artifacts"
     },
     "dependencies": {
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
         "@ethersproject/abi": "5.6.0",
         "@ethersproject/abstract-provider": "5.6.0",
         "@ethersproject/abstract-signer": "5.6.0",
@@ -24,10 +28,6 @@
         "@ethersproject/solidity": "5.6.0",
         "@ethersproject/transactions": "5.6.0",
         "@ethersproject/wallet": "5.6.0",
-        "@liquality/client": "workspace:*",
-        "@liquality/errors": "workspace:*",
-        "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:*",
         "@rainbow-me/fee-suggestions": "^2.0.0"
     },
     "devDependencies": {

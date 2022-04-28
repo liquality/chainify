@@ -1,7 +1,7 @@
 {
-    "name": "@liquality/solana",
-    "version": "2.0.4",
-    "description": "> TODO: description",
+    "name": "@chainify/solana",
+    "version": "1.0.0",
+    "description": "",
     "author": "Liquality <info@liquality.io>",
     "homepage": "",
     "license": "ISC",
@@ -15,11 +15,11 @@
         "clean": "rm -rf node_modules .turbo dist"
     },
     "dependencies": {
-        "@liquality/client": "workspace:*",
-        "@liquality/errors": "workspace:*",
-        "@liquality/logger": "workspace:*",
-        "@liquality/types": "workspace:*",
-        "@liquality/utils": "workspace:*",
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/logger": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
         "@solana/spl-token": "^0.2.0",
         "@solana/web3.js": "^1.37.2",
         "bip39": "^3.0.4",

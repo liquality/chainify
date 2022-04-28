@@ -1,5 +1,5 @@
-import { BitcoinTypes } from '@liquality/bitcoin';
-import { BigNumber, ChainId, Network } from '@liquality/types';
+import { BitcoinTypes } from '@chainify/bitcoin';
+import { BigNumber, ChainId, Network } from '@chainify/types';
 import { fromSeed } from 'bip32';
 import { mnemonicToSeedSync } from 'bip39';
 import { payments } from 'bitcoinjs-lib';

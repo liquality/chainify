@@ -1,5 +1,5 @@
-import { Block, SwapParams, Transaction, TxStatus } from '@liquality/types';
-import { Math, remove0x } from '@liquality/utils';
+import { Block, SwapParams, Transaction, TxStatus } from '@chainify/types';
+import { Math, remove0x } from '@chainify/utils';
 import { BlockResult } from 'near-api-js/lib/providers/provider';
 import ProgramBytecode from './swap/bytecode';
 import { BN, NearScraperData, NearTransaction, NearTxLog, NearTxResponse, transactions } from './types';

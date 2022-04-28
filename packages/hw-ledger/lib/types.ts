@@ -1,5 +1,5 @@
+import { Address, Network } from '@chainify/types';
 import Transport from '@ledgerhq/hw-transport';
-import { Address, Network } from '@liquality/types';
 
 export interface CreateOptions<TApp> {
     App: Newable<TApp>;

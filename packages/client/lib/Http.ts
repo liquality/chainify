@@ -1,5 +1,5 @@
-import { NodeError } from '@liquality/errors';
-import { Logger } from '@liquality/logger';
+import { NodeError } from '@chainify/errors';
+import { Logger } from '@chainify/logger';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 const logger = new Logger('HttpClient');

@@ -1,7 +1,7 @@
+import * as BTC from '@chainify/bitcoin';
+import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
+import { Client } from '@chainify/client';
 import LedgerHwTransportNode from '@ledgerhq/hw-transport-node-hid';
-import * as BTC from '@liquality/bitcoin';
-import { BitcoinLedgerProvider } from '@liquality/bitcoin-ledger';
-import { Client } from '@liquality/client';
 import { BtcHdWalletConfig, BtcLedgerConfig, BtcNodeConfig } from './config';
 
 function getBtcClientWithNodeWallet(network: BTC.BitcoinTypes.BitcoinNetwork) {

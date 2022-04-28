@@ -1,7 +1,7 @@
-import { Wallet } from '@liquality/client';
-import { UnimplementedMethodError } from '@liquality/errors';
-import { Address, Asset, BigNumber, FeeType, Transaction, TransactionRequest } from '@liquality/types';
-import { retry } from '@liquality/utils';
+import { Wallet } from '@chainify/client';
+import { UnimplementedMethodError } from '@chainify/errors';
+import { Address, Asset, BigNumber, FeeType, Transaction, TransactionRequest } from '@chainify/types';
+import { retry } from '@chainify/utils';
 import {
     Coin,
     Coins,

@@ -1,4 +1,4 @@
-import { Network, TransactionRequest, WalletOptions } from '@liquality/types';
+import { Network, TransactionRequest, WalletOptions } from '@chainify/types';
 import { Msg, TxInfo } from '@terra-money/terra.js';
 export * as FCD from './fcd';
 

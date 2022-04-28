@@ -1,5 +1,5 @@
-import { Client } from '@liquality/client';
-import { SolanaChainProvider, SolanaWalletProvider } from '@liquality/solana';
+import { Client } from '@chainify/client';
+import { SolanaChainProvider, SolanaWalletProvider } from '@chainify/solana';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
 import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';

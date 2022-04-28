@@ -1,14 +1,4 @@
-import {
-    Address,
-    AddressType,
-    Asset,
-    BigNumber,
-    FeeType,
-    Network,
-    Transaction,
-    TransactionRequest,
-    WalletProvider,
-} from '@liquality/types';
+import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest, WalletProvider } from '@chainify/types';
 import Chain from './Chain';
 
 export default abstract class Wallet<T, S> implements WalletProvider {

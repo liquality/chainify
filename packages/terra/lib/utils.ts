@@ -1,4 +1,4 @@
-import { Block, Transaction, TxStatus } from '@liquality/types';
+import { Block, Transaction, TxStatus } from '@chainify/types';
 import { BlockInfo, isTxError, MsgExecuteContract, MsgInstantiateContract, MsgSend, TxInfo } from '@terra-money/terra.js';
 import { get } from 'lodash';
 import { DateTime } from 'luxon';

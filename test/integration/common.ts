@@ -1,11 +1,11 @@
-import { BitcoinNetworks } from '@liquality/bitcoin';
-import { Client } from '@liquality/client';
-import { EvmNetworks } from '@liquality/evm';
-import { NearNetworks } from '@liquality/near';
-import { SolanaNetworks } from '@liquality/solana';
-import { TerraNetworks } from '@liquality/terra';
-import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@liquality/types';
-import { retry, sha256, sleep } from '@liquality/utils';
+import { BitcoinNetworks } from '@chainify/bitcoin';
+import { Client } from '@chainify/client';
+import { EvmNetworks } from '@chainify/evm';
+import { NearNetworks } from '@chainify/near';
+import { SolanaNetworks } from '@chainify/solana';
+import { TerraNetworks } from '@chainify/terra';
+import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@chainify/types';
+import { retry, sha256, sleep } from '@chainify/utils';
 import { expect } from 'chai';
 import {
     BitcoinHDWalletClient,

@@ -1,6 +1,6 @@
-import { InvalidSwapParamsError, PendingTxError, TxFailedError, TxNotFoundError } from '@liquality/errors';
-import { FeeType, SwapParams, SwapProvider, Transaction, TxStatus } from '@liquality/types';
-import { sha256, validateExpiration, validateSecretHash, validateValue } from '@liquality/utils';
+import { InvalidSwapParamsError, PendingTxError, TxFailedError, TxNotFoundError } from '@chainify/errors';
+import { FeeType, SwapParams, SwapProvider, Transaction, TxStatus } from '@chainify/types';
+import { sha256, validateExpiration, validateSecretHash, validateValue } from '@chainify/utils';
 import Wallet from './Wallet';
 
 export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = Wallet<T, S>> implements SwapProvider {

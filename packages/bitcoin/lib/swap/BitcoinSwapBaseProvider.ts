@@ -1,6 +1,6 @@
-import { Swap } from '@liquality/client';
-import { Address, BigNumber, SwapParams, Transaction } from '@liquality/types';
-import { validateExpiration, validateSecret, validateSecretAndHash, validateSecretHash, validateValue } from '@liquality/utils';
+import { Swap } from '@chainify/client';
+import { Address, BigNumber, SwapParams, Transaction } from '@chainify/types';
+import { validateExpiration, validateSecret, validateSecretAndHash, validateSecretHash, validateValue } from '@chainify/utils';
 import { payments, Psbt, script as bScript } from 'bitcoinjs-lib';
 import { BitcoinBaseChainProvider } from '../chain/BitcoinBaseChainProvider';
 import { BitcoinNetwork, Input, SwapMode, Transaction as BitcoinTransaction } from '../types';

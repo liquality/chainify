@@ -1,5 +1,5 @@
-import { Client } from '@liquality/client';
-import * as Near from '@liquality/near';
+import { Client } from '@chainify/client';
+import * as Near from '@chainify/near';
 import { NearConfig } from './config';
 
 function getNearClient(network: Near.NearTypes.NearNetwork) {

@@ -1,5 +1,5 @@
-import { UnimplementedMethodError } from '@liquality/errors';
-import { BigNumber, TxStatus } from '@liquality/types';
+import { UnimplementedMethodError } from '@chainify/errors';
+import { BigNumber, TxStatus } from '@chainify/types';
 import { expect } from 'chai';
 import { mineBlock } from '../common';
 import { Chain } from '../types';

@@ -1,5 +1,5 @@
-import { HttpClient } from '@liquality/client';
-import { AddressType } from '@liquality/types';
+import { HttpClient } from '@chainify/client';
+import { AddressType } from '@chainify/types';
 import { flatten } from 'lodash';
 import { UTXO } from '../../types';
 import { decodeRawTransaction, normalizeTransactionObject } from '../../utils';

@@ -1,5 +1,5 @@
-import { Fee, HttpClient } from '@liquality/client';
-import { FeeDetails, FeeProvider } from '@liquality/types';
+import { Fee, HttpClient } from '@chainify/client';
+import { FeeDetails, FeeProvider } from '@chainify/types';
 
 export class BitcoinFeeApiProvider extends Fee implements FeeProvider {
     private _httpClient: HttpClient;

@@ -1,6 +1,6 @@
-import { Chain, HttpClient, Wallet } from '@liquality/client';
-import { UnsupportedMethodError } from '@liquality/errors';
-import { Address, AddressType, Asset, BigNumber, Transaction } from '@liquality/types';
+import { Chain, HttpClient, Wallet } from '@chainify/client';
+import { UnsupportedMethodError } from '@chainify/errors';
+import { Address, AddressType, Asset, BigNumber, Transaction } from '@chainify/types';
 import {
     BN,
     InMemorySigner,

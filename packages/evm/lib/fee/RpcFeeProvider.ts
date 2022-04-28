@@ -1,6 +1,6 @@
+import { Fee } from '@chainify/client';
+import { FeeDetails } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { Fee } from '@liquality/client';
-import { FeeDetails } from '@liquality/types';
 import { FeeOptions } from '../types';
 import { calculateFee } from '../utils';
 

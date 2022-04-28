@@ -1,6 +1,6 @@
-import { Chain, Fee, HttpClient } from '@liquality/client';
-import { TxNotFoundError, UnsupportedMethodError } from '@liquality/errors';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@liquality/types';
+import { Chain, Fee, HttpClient } from '@chainify/client';
+import { TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
+import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@chainify/types';
 import { BlockInfo, LCDClient } from '@terra-money/terra.js';
 import { assetCodeToDenom } from '../constants';
 import { TerraNetwork, TerraTxInfo } from '../types';

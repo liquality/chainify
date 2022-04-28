@@ -1,4 +1,4 @@
-import { Network } from '@liquality/types';
+import { Network } from '@chainify/types';
 
 const ethereum_mainnet: Network = {
     name: 'ethereum_mainnet',

@@ -1,6 +1,6 @@
-import { Client } from '@liquality/client';
-import * as Solana from '@liquality/solana';
-import { Network, WalletOptions } from '@liquality/types';
+import { Client } from '@chainify/client';
+import * as Solana from '@chainify/solana';
+import { Network, WalletOptions } from '@chainify/types';
 import { SolanaConfig } from './config';
 
 function getSolanaClient(network: Network) {

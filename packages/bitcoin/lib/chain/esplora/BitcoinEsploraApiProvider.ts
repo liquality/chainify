@@ -1,6 +1,6 @@
-import { Chain, Fee, HttpClient } from '@liquality/client';
-import { BlockNotFoundError, TxNotFoundError } from '@liquality/errors';
-import { AddressType, BigNumber, Block, FeeDetail, FeeDetails, Transaction } from '@liquality/types';
+import { Chain, Fee, HttpClient } from '@chainify/client';
+import { BlockNotFoundError, TxNotFoundError } from '@chainify/errors';
+import { AddressType, BigNumber, Block, FeeDetail, FeeDetails, Transaction } from '@chainify/types';
 import { flatten } from 'lodash';
 import { BitcoinEsploraBaseProvider } from './BitcoinEsploraBaseProvider';
 import * as EsploraTypes from './types';

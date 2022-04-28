@@ -1,4 +1,4 @@
-import { BigNumber, ChainId, Network } from '@liquality/types';
+import { BigNumber, ChainId, Network } from '@chainify/types';
 import { Wallet } from 'ethers';
 import { IConfig } from '../../types';
 

@@ -1,4 +1,4 @@
-import { Asset, BigNumber, FeeDetails, FeeProvider } from '@liquality/types';
+import { Asset, BigNumber, FeeDetails, FeeProvider } from '@chainify/types';
 
 export default abstract class Fee implements FeeProvider {
     public gasUnits: BigNumber;

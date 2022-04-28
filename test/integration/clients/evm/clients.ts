@@ -1,8 +1,8 @@
+import { Client } from '@chainify/client';
+import * as EVM from '@chainify/evm';
+import { EvmLedgerProvider } from '@chainify/evm-ledger';
+import { Network, WalletOptions } from '@chainify/types';
 import LedgerHwTransportNode from '@ledgerhq/hw-transport-node-hid';
-import { Client } from '@liquality/client';
-import * as EVM from '@liquality/evm';
-import { EvmLedgerProvider } from '@liquality/evm-ledger';
-import { Network, WalletOptions } from '@liquality/types';
 import { providers } from 'ethers';
 import { EVMConfig } from './config';
 import { EIP1559MockFeeProvider } from './mock/EIP1559MockFeeProvider';

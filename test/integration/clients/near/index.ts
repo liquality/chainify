@@ -1,5 +1,5 @@
-import { Client } from '@liquality/client';
-import { NearTypes, NearWalletProvider } from '@liquality/near';
+import { Client } from '@chainify/client';
+import { NearTypes, NearWalletProvider } from '@chainify/near';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
 import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';

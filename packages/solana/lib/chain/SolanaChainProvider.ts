@@ -1,8 +1,8 @@
-import { Chain } from '@liquality/client';
-import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@liquality/errors';
-import { Logger } from '@liquality/logger';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@liquality/types';
-import { retry } from '@liquality/utils';
+import { Chain } from '@chainify/client';
+import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
+import { Logger } from '@chainify/logger';
+import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@chainify/types';
+import { retry } from '@chainify/utils';
 import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BlockResponse, Connection, PublicKey } from '@solana/web3.js';
 import { parseBlockResponse, parseTransactionResponse } from '../utils';

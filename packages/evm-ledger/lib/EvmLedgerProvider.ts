@@ -1,10 +1,10 @@
+import { Chain } from '@chainify/client';
+import { UnimplementedMethodError } from '@chainify/errors';
+import { EvmBaseWalletProvider } from '@chainify/evm';
+import { LedgerProvider } from '@chainify/hw-ledger';
+import { Address, Network } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import HwAppEthereum from '@ledgerhq/hw-app-eth';
-import { Chain } from '@liquality/client';
-import { UnimplementedMethodError } from '@liquality/errors';
-import { EvmBaseWalletProvider } from '@liquality/evm';
-import { LedgerProvider } from '@liquality/hw-ledger';
-import { Address, Network } from '@liquality/types';
 import { EvmLedgerSigner } from './EvmLedgerSigner';
 import { EvmLedgerCreateOptions } from './types';
 

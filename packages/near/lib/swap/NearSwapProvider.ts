@@ -1,7 +1,7 @@
-import { HttpClient, Swap, Wallet } from '@liquality/client';
-import { TxNotFoundError, UnimplementedMethodError } from '@liquality/errors';
-import { FeeType, SwapParams, Transaction } from '@liquality/types';
-import { compare, Math, remove0x, validateSecret, validateSecretAndHash } from '@liquality/utils';
+import { HttpClient, Swap, Wallet } from '@chainify/client';
+import { TxNotFoundError, UnimplementedMethodError } from '@chainify/errors';
+import { FeeType, SwapParams, Transaction } from '@chainify/types';
+import { compare, Math, remove0x, validateSecret, validateSecretAndHash } from '@chainify/utils';
 import { InMemorySigner, NearScraperData, NearTxLog, NearTxRequest, providers } from '../types';
 import { getClaimActions, getHtlcActions, getRefundActions, parseScraperTransaction } from '../utils';
 

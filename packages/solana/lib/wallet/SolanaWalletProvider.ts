@@ -1,6 +1,6 @@
-import { Wallet } from '@liquality/client';
-import { UnimplementedMethodError } from '@liquality/errors';
-import { Logger } from '@liquality/logger';
+import { Wallet } from '@chainify/client';
+import { UnimplementedMethodError } from '@chainify/errors';
+import { Logger } from '@chainify/logger';
 import {
     Address,
     AddressType,
@@ -12,8 +12,8 @@ import {
     TransactionRequest,
     TxStatus,
     WalletOptions,
-} from '@liquality/types';
-import { base58, retry } from '@liquality/utils';
+} from '@chainify/types';
+import { base58, retry } from '@chainify/utils';
 import { createAccount, createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';

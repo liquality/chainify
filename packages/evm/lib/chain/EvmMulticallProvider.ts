@@ -1,6 +1,6 @@
+import { AddressType, Asset, BigNumber } from '@chainify/types';
 import { Fragment, Interface, JsonFragment } from '@ethersproject/abi';
 import { BaseProvider } from '@ethersproject/providers';
-import { AddressType, Asset, BigNumber } from '@liquality/types';
 import { ERC20__factory, Multicall3, Multicall3__factory } from '../typechain';
 
 interface Call {

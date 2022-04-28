@@ -1,6 +1,6 @@
 {
     "name": "chainabstractionlayer",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "devDependencies": {
         "@changesets/changelog-github": "^0.4.2",
         "@changesets/cli": "^2.20.0",
@@ -46,7 +46,7 @@
         "env:integration:bootup": "sleep 10",
         "test": "yarn env:integration && yarn env:integration:bootup && yarn test:integration",
         "test:integration": "yarn build && cross-env NODE_ENV=test TS_NODE_PROJECT=test/tsconfig.json TS_NODE_FILES=true mocha --exit test/integration/index.ts",
-        "build": "yarn turbo run build --filter=@liquality/evm-contracts && turbo run build --concurrency=10 --filter=!@liquality/evm-contracts",
+        "build": "yarn turbo run build --filter=@chainify/evm-contracts && turbo run build --concurrency=10 --filter=!@chainify/evm-contracts",
         "clean": "yarn workspaces foreach run clean && rm -rf node_modules ",
         "lint": "yarn lint:ts && yarn prettier:check",
         "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
@@ -54,7 +54,7 @@
         "prettier:fix": "prettier --write ./packages",
         "changeset": "changeset",
         "version": "yarn changeset version",
-        "release": "yarn workspaces foreach --from '@liquality/*' npm publish --access public",
+        "release": "yarn workspaces foreach --from '@chainify/*' npm publish --access public",
         "release:beta": "yarn release --tag beta",
         "tag": "yarn changeset tag",
         "docs": "typedoc"

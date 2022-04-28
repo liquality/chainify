@@ -1,5 +1,5 @@
-import { Client } from '@liquality/client';
-import { Asset, BigNumber, Network } from '@liquality/types';
+import { Client } from '@chainify/client';
+import { Asset, BigNumber, Network } from '@chainify/types';
 
 export interface IConfig {
     network: Network;

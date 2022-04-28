@@ -1,5 +1,5 @@
-import { HttpClient } from '@liquality/client';
-import { SwapParams, Transaction } from '@liquality/types';
+import { HttpClient } from '@chainify/client';
+import { SwapParams, Transaction } from '@chainify/types';
 import { Transaction as BitcoinTransaction } from '../types';
 import { BitcoinBaseWalletProvider } from '../wallet/BitcoinBaseWallet';
 import { BitcoinSwapBaseProvider } from './BitcoinSwapBaseProvider';
