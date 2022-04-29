@@ -5074,6 +5074,7 @@ __metadata:
     hardhat: ^2.8.3
     husky: ^7.0.4
     lint-staged: ^12.3.2
+    markdown-table: ^3.0.2
     mocha: ^9.2.0
     plop: ^3.0.5
     pre-commit: ^1.2.2
@@ -11892,6 +11893,13 @@ __metadata:
   version: 1.1.3
   resolution: "markdown-table@npm:1.1.3"
   checksum: 292e8c956ae833c2ccb0a55cd8d87980cd657ab11cd9ff63c3fcc4d3a518d3b3882ba07410b8f477ba9e30b3f70658677e4e8acf61816dd6cfdd1f6293130664
+  languageName: node
+  linkType: hard
+
+"markdown-table@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "markdown-table@npm:3.0.2"
+  checksum: 7bd9eb54e7ac15165f79730ac6357b8194294552f727bcb34e29f3f1b72823c1220cb61153ebf0962c8faac4d25e49c62e8e9471cd6352a67cdca99928ecade1
   languageName: node
   linkType: hard
 
