@@ -29,3 +29,6 @@ yarn build
 ```bash 
 yarn test
 ```
+
+### License
+[MIT](./LICENSE.md)
