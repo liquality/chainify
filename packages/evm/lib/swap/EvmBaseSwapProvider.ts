@@ -3,9 +3,9 @@ import { TxNotFoundError, UnimplementedMethodError } from '@chainify/errors';
 import { FeeType, SwapParams, Transaction } from '@chainify/types';
 import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@chainify/utils';
 import { Signer } from '@ethersproject/abstract-signer';
-import { AddressZero, MaxUint256 } from '@ethersproject/constants';
+import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider, Log } from '@ethersproject/providers';
-import { ERC20__factory, LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
+import { LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
 import { ClaimEvent, InitiateEvent, RefundEvent } from '../typechain/LiqualityHTLC';
 import { EthersTransactionResponse, EvmSwapOptions } from '../types';
 import { parseSwapParams, toEthereumTxRequest } from '../utils';
@@ -29,22 +29,9 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
     public async initiateSwap(swapParams: SwapParams, fee: FeeType): Promise<Transaction<EthersTransactionResponse>> {
         this.validateSwapParams(swapParams);
         const parsedSwapParams = parseSwapParams(swapParams);
-
-        if (!swapParams.asset.isNative) {
-            const userAddress = await this.walletProvider.getAddress();
-            const erc20Contract = ERC20__factory.connect(swapParams.asset.contractAddress, this.walletProvider.getSigner());
-            const allowance = await erc20Contract.allowance(userAddress.toString(), this.swapOptions.contractAddress);
-            if (Math.lt(allowance, swapParams.value)) {
-                const approveTx = await erc20Contract.populateTransaction.approve(this.swapOptions.contractAddress, MaxUint256);
-                await this.walletProvider.sendTransaction(toEthereumTxRequest(approveTx, fee));
-            }
-        }
-
-        const tx = await this.contract.populateTransaction.initiate(parsedSwapParams, {
-            value: swapParams.asset.isNative ? parsedSwapParams.amount : 0,
-        });
-        const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
-        return txResponse;
+        const value = swapParams.asset.isNative ? parsedSwapParams.amount : 0;
+        const tx = await this.contract.populateTransaction.initiate(parsedSwapParams, { value });
+        return await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
     }
 
     public async claimSwap(

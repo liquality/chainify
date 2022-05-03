@@ -1,6 +1,6 @@
 import { Client } from '@chainify/client';
-import { LiqualityHTLC__factory, Multicall3__factory, TestERC20__factory } from '@chainify/evm/lib/typechain';
-import { ethers } from 'ethers';
+import { Typechain } from '@chainify/evm';
+import { constants, ethers } from 'ethers';
 
 /**
  * The deploy step should always comes first before executing any tests.
@@ -9,13 +9,14 @@ import { ethers } from 'ethers';
  */
 export async function deployEvmContracts(client: Client) {
     const signer = client.wallet.getSigner();
-    const erc20 = await new TestERC20__factory().connect(signer).deploy();
-    await new Multicall3__factory().connect(signer).deploy();
-    await new LiqualityHTLC__factory().connect(signer).deploy();
+    const erc20 = await new Typechain.TestERC20__factory().connect(signer).deploy();
+    await new Typechain.Multicall3__factory().connect(signer).deploy();
+    const htlc = await new Typechain.LiqualityHTLC__factory().connect(signer).deploy();
 
     // Mint tokens to the first 10 addresses
     const userAddress = await client.wallet.getAddresses(0, 10);
     for (const user of userAddress) {
         await erc20.mint(user.toString(), ethers.utils.parseEther('1000'));
+        await erc20.approve(htlc.address, constants.MaxUint256);
     }
 }
