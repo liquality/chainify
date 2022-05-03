@@ -6,6 +6,7 @@ export { EvmNetworks } from './networks';
 export { EvmNftProvider } from './nft/EvmNftProvider';
 export { EvmBaseSwapProvider } from './swap/EvmBaseSwapProvider';
 export { EvmSwapProvider } from './swap/EvmSwapProvider';
+export * as Typechain from './typechain';
 export * as EvmTypes from './types';
 export * as EvmUtils from './utils';
 export { EvmBaseWalletProvider } from './wallet/EvmBaseWalletProvider';
