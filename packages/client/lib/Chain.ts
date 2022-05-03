@@ -1,4 +1,4 @@
-import { AddressType, Asset, BigNumber, Block, ChainProvider, FeeDetails, Network, Transaction } from '@chainify/types';
+import { AddressType, Asset, BigNumber, Block, ChainProvider, FeeDetails, Network, Nullable, Transaction } from '@chainify/types';
 import { Fee } from '.';
 
 /**
@@ -9,7 +9,7 @@ import { Fee } from '.';
  * @typeParam N - type of the network. The default value of the type is {@link Network}
  */
 export default abstract class Chain<T, N = Network> implements ChainProvider {
-    protected feeProvider: Fee;
+    protected feeProvider: Nullable<Fee>;
     protected network: N;
     protected provider: T;
 
@@ -50,7 +50,7 @@ export default abstract class Chain<T, N = Network> implements ChainProvider {
     /**
      * Sets the fee provider
      */
-    public async setFeeProvider(feeProvider: Fee) {
+    public async setFeeProvider(feeProvider: Nullable<Fee>) {
         this.feeProvider = feeProvider;
     }
 

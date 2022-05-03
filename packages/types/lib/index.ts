@@ -13,3 +13,5 @@ export * from './Wallet';
 export { BigNumber };
 
 export type BigNumberish = string | number | EthersBigNumberish | BigNumber;
+
+export type Nullable<T> = T | null;
