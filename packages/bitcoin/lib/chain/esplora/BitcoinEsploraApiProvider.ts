@@ -9,7 +9,7 @@ export class BitcoinEsploraApiProvider extends Chain<BitcoinEsploraBaseProvider>
     private _httpClient: HttpClient;
     private _feeOptions: EsploraTypes.FeeOptions;
 
-    constructor(options: EsploraTypes.EsploraApiProviderOptions, feeProvider: Fee, feeOptions?: EsploraTypes.FeeOptions) {
+    constructor(options: EsploraTypes.EsploraApiProviderOptions, feeProvider?: Fee, feeOptions?: EsploraTypes.FeeOptions) {
         super(options.network, new BitcoinEsploraBaseProvider(options), feeProvider);
         this._httpClient = this.provider.httpClient;
         this._feeOptions = { slowTargetBlocks: 6, averageTargetBlocks: 3, fastTargetBlocks: 1, ...feeOptions };

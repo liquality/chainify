@@ -12,7 +12,7 @@ interface EsploraBatchApiProviderOptions extends EsploraTypes.EsploraApiProvider
 export class BitcoinEsploraBatchBaseProvider extends BitcoinEsploraApiProvider {
     private _batchHttpClient: HttpClient;
 
-    constructor(options: EsploraBatchApiProviderOptions, feeProvider: Fee, feeOptions?: EsploraTypes.FeeOptions) {
+    constructor(options: EsploraBatchApiProviderOptions, feeProvider?: Fee, feeOptions?: EsploraTypes.FeeOptions) {
         super(options, feeProvider, feeOptions);
         this._batchHttpClient = new HttpClient({ baseURL: options.batchUrl });
     }
