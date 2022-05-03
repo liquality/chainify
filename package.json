@@ -1,6 +1,6 @@
 {
-    "name": "chainabstractionlayer",
-    "version": "1.0.0",
+    "name": "chainify",
+    "version": "1.0.1",
     "devDependencies": {
         "@changesets/changelog-github": "^0.4.2",
         "@changesets/cli": "^2.20.0",
