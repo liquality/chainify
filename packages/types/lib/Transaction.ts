@@ -51,4 +51,5 @@ export type TransactionRequest = {
     data?: string;
     value?: BigNumber;
     fee?: FeeType;
+    gasLimit?: number;
 };
