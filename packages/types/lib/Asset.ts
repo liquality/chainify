@@ -10,6 +10,7 @@ export enum ChainId {
     Solana = 'solana',
     Fuse = 'fuse',
     Terra = 'terra',
+    Optimism = 'optimism',
 }
 
 export type AssetType = 'native' | 'erc20';

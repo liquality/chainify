@@ -161,6 +161,22 @@ const avax_testnet: Network = {
     isTestnet: true,
 };
 
+const optimism_mainnet: Network = {
+    name: 'optimism_mainnet',
+    coinType: '60',
+    networkId: 10,
+    chainId: 10,
+    isTestnet: false,
+};
+
+const optimism_testnet: Network = {
+    name: 'optimism_testnet',
+    coinType: '60',
+    networkId: 69,
+    chainId: 69,
+    isTestnet: true,
+};
+
 const local: Network = {
     name: 'local',
     coinType: '60',
@@ -190,6 +206,8 @@ const EvmNetworks = {
     avax_testnet,
     fuse_testnet,
     fuse_mainnet,
+    optimism_mainnet,
+    optimism_testnet,
     local,
 };
 
