@@ -10,6 +10,7 @@ export default abstract class Wallet<T, S> implements WalletProvider {
 
     setChainProvider(chainProvider: Chain<T>): void {
         this.chainProvider = chainProvider;
+        this.onChainProviderUpdate(chainProvider);
     }
 
     getChainProvider(): Chain<T> {
@@ -45,4 +46,6 @@ export default abstract class Wallet<T, S> implements WalletProvider {
     public abstract isWalletAvailable(): Promise<boolean>;
 
     public abstract canUpdateFee(): boolean;
+
+    protected abstract onChainProviderUpdate(chainProvider: Chain<T>): void;
 }

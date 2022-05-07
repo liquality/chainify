@@ -153,6 +153,10 @@ export class NearWalletProvider extends Wallet<providers.JsonRpcProvider, InMemo
         );
     }
 
+    protected onChainProviderUpdate(_chainProvider: Chain<providers.JsonRpcProvider, NearNetwork>): void {
+        // do nothing
+    }
+
     private async getImplicitAccount(publicKey: string, index: number) {
         const accounts = await this._helper.nodeGet(`/publicKey/${publicKey.toString()}/accounts`);
         return accounts[index];

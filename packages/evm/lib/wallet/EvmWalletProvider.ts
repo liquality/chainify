@@ -1,5 +1,5 @@
 import { Chain } from '@chainify/client';
-import { Address, WalletOptions } from '@chainify/types';
+import { Address, Network, WalletOptions } from '@chainify/types';
 import { remove0x } from '@chainify/utils';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
@@ -52,5 +52,9 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
 
     public canUpdateFee(): boolean {
         return true;
+    }
+
+    protected onChainProviderUpdate(chainProvider: Chain<StaticJsonRpcProvider, Network>): void {
+        this._wallet = this._wallet.connect(chainProvider.getProvider());
     }
 }

@@ -12,6 +12,7 @@ export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = W
 
     public setWallet(wallet: WalletProvider): void {
         this.walletProvider = wallet;
+        this.onWalletProviderUpdate(wallet);
     }
 
     public getWallet(): WalletProvider {
@@ -71,4 +72,6 @@ export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = W
     public abstract updateTransactionFee(tx: string | Transaction, newFee: FeeType): Promise<Transaction>;
 
     protected abstract doesTransactionMatchInitiation(swapParams: SwapParams, transaction: Transaction): Promise<boolean> | boolean;
+
+    protected abstract onWalletProviderUpdate(wallet: WalletProvider): void;
 }

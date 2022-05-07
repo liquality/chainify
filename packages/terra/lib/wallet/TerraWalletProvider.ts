@@ -134,6 +134,10 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
         return false;
     }
 
+    protected onChainProviderUpdate(chainProvider: TerraChainProvider): void {
+        this._wallet = new TerraWallet(chainProvider.getProvider(), this.signer);
+    }
+
     private createSendMessage(txRequest: TransactionRequest): Msg[] {
         const sender = this.signer.accAddress;
         const recipient = txRequest.to.toString();

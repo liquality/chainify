@@ -51,6 +51,10 @@ export abstract class BitcoinBaseWalletProvider<T extends BitcoinBaseChainProvid
         this._derivationCache = {};
     }
 
+    protected onChainProviderUpdate(chainProvider: Chain<T>) {
+        this._network = chainProvider.getNetwork() as BitcoinNetwork;
+    }
+
     protected abstract baseDerivationNode(): Promise<BIP32Interface>;
     protected abstract buildTransaction(
         targets: OutputTarget[],

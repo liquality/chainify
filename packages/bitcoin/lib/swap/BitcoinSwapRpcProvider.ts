@@ -10,7 +10,11 @@ export class BitcoinSwapRpcProvider extends BitcoinSwapBaseProvider {
         super(options, walletProvider);
     }
 
-    async findSwapTransaction(_swapParams: SwapParams, blockNumber: number, predicate: (tx: Transaction<BitcoinTransaction>) => boolean) {
+    public async findSwapTransaction(
+        _swapParams: SwapParams,
+        blockNumber: number,
+        predicate: (tx: Transaction<BitcoinTransaction>) => boolean
+    ) {
         // TODO: Are mempool TXs possible?
         const block = await this.walletProvider.getChainProvider().getBlockByNumber(blockNumber, true);
         const swapTransaction = block.transactions.find(predicate);

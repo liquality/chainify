@@ -128,6 +128,10 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
         throw new UnimplementedMethodError('Method not supported.');
     }
 
+    protected onWalletProviderUpdate(wallet: EvmBaseWalletProvider<BaseProvider, Signer>): void {
+        this.contract = LiqualityHTLC__factory.connect(this.swapOptions.contractAddress, wallet.getSigner());
+    }
+
     protected tryParseLog(log: Log) {
         try {
             return this.contract.interface.parseLog(log);

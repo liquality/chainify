@@ -91,6 +91,10 @@ export class NearSwapProvider extends Swap<providers.JsonRpcProvider, InMemorySi
         return tx._raw.htlc.secret;
     }
 
+    protected onWalletProviderUpdate(_wallet: Wallet<providers.JsonRpcProvider, InMemorySigner>): void {
+        // do nothing
+    }
+
     protected doesTransactionMatchInitiation(swapParams: SwapParams, transaction: Transaction<NearTxLog>): boolean {
         if (transaction?._raw?.htlc) {
             return (

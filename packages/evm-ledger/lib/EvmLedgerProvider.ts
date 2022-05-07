@@ -28,6 +28,10 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
         this.signer = this._ledgerSigner;
     }
 
+    protected onChainProviderUpdate(chainProvider: Chain<StaticJsonRpcProvider, Network>): void {
+        this._ledgerSigner = this._ledgerSigner.connect(chainProvider.getProvider());
+    }
+
     public async getAddress(): Promise<Address> {
         const addresses = await this.getAddresses();
         return addresses[0];

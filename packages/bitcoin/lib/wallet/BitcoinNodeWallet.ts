@@ -178,8 +178,12 @@ export class BitcoinNodeWalletProvider extends Wallet<any, any> implements IBitc
         return sigs;
     }
 
-    async getWalletAddress(address: string) {
+    public async getWalletAddress(address: string) {
         return this.getAddressInfo(address);
+    }
+
+    protected onChainProviderUpdate(chainProvider: Chain<BitcoinBaseChainProvider>): void {
+        this._network = chainProvider.getNetwork() as BitcoinNetwork;
     }
 
     private async dumpPrivKey(address: string): Promise<string> {
