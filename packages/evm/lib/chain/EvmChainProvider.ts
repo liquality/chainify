@@ -115,11 +115,12 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
      * @returns - the balances of `assets` in the passed order
      */
     public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]> {
+        const user = addresses[0].toString();
+
         if (this.multicall) {
-            const balances = await this.multicall.getMultipleBalances(addresses[0], assets);
+            const balances = await this.multicall.getMultipleBalances(user, assets);
             return balances.map((b) => new BigNumber(b.toString()));
         } else {
-            const user = addresses[0].toString();
             const allBalancePromise = assets.map((a) => {
                 if (a.isNative) {
                     return this.provider.getBalance(user);

@@ -35,6 +35,7 @@ export class EvmMulticallProvider {
     }
 
     public async getMultipleBalances(address: AddressType, assets: Asset[]): Promise<BigNumber[]> {
+        const user = address.toString();
         const result = await this.multicall<BigNumber[]>(
             assets.map((asset: Asset) => {
                 if (asset.isNative) {
@@ -42,14 +43,14 @@ export class EvmMulticallProvider {
                         target: this._multicallAddress,
                         abi: Multicall3__factory.abi,
                         name: 'getEthBalance',
-                        params: [address.toString()],
+                        params: [user],
                     };
                 } else {
                     return {
                         target: asset.contractAddress,
                         abi: ERC20__factory.abi,
                         name: 'balanceOf',
-                        params: [address.toString()],
+                        params: [user],
                     };
                 }
             })
