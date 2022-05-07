@@ -164,6 +164,10 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         return false;
     }
 
+    protected onChainProviderUpdate(_chainProvider: SolanaChainProvider): void {
+        // do nothing
+    }
+
     private mnemonicToSeed(mnemonic: string) {
         if (!mnemonic) {
             throw new Error('Invalid seed words');

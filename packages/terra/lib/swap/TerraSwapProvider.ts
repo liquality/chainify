@@ -53,6 +53,10 @@ export class TerraSwapProvider extends TerraSwapBaseProvider {
         });
     }
 
+    protected onWalletProviderUpdate(_wallet: TerraWalletProvider): void {
+        // do nothing
+    }
+
     private async findAddressTransaction(
         address: string,
         predicate: (tx: Transaction<TerraTxInfo>) => Promise<boolean>,

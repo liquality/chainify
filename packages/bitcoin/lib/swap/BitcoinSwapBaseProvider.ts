@@ -121,6 +121,10 @@ export abstract class BitcoinSwapBaseProvider extends Swap<BitcoinBaseChainProvi
         return refundSwapTransaction;
     }
 
+    protected onWalletProviderUpdate(_wallet: IBitcoinWallet<BitcoinBaseChainProvider, any>): void {
+        // do nothing
+    }
+
     protected getSwapOutput(swapParams: SwapParams) {
         this.validateSwapParams(swapParams);
 
