@@ -1,5 +1,5 @@
 import { Fee } from '@chainify/client';
-import { FeeDetails } from '@chainify/types';
+import { BigNumber, FeeDetails } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { FeeOptions } from '../types';
 import { calculateFee } from '../utils';
@@ -26,7 +26,7 @@ export class RpcFeeProvider extends Fee {
 
     async getFees(): Promise<FeeDetails> {
         const feeData = await this.provider.getFeeData();
-        const baseGasPrice = feeData.gasPrice?.div(1e9).toNumber();
+        const baseGasPrice = new BigNumber(feeData.gasPrice?.toString()).div(1e9).toNumber();
         return {
             slow: { fee: calculateFee(baseGasPrice, this.feeOptions.slowMultiplier) },
             average: { fee: calculateFee(baseGasPrice, this.feeOptions.averageMultiplier) },

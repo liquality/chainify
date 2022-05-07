@@ -1,5 +1,6 @@
-import { BigNumber, Block, FeeType, SwapParams, Transaction, TxStatus } from '@chainify/types';
+import { BigNumber, BigNumberish, Block, FeeType, SwapParams, Transaction, TxStatus } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
+import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber';
 import { AddressZero } from '@ethersproject/constants';
 import { TransactionReceipt, TransactionRequest } from '@ethersproject/providers';
 import { sha256 } from '@ethersproject/solidity';
@@ -36,29 +37,34 @@ export function parseSwapParams(tx: SwapParams): ILiqualityHTLC.HTLCDataStruct {
     };
 }
 
-export function parseTxRequest(request: EthereumTransactionRequest | TransactionRequest): TransactionRequest {
-    if (request.maxFeePerGas && request.maxPriorityFeePerGas) {
-        request.gasPrice = null;
-        request.type = TransactionTypes.eip1559;
-    } else {
-        request.type = TransactionTypes.legacy;
+function toEthersBigNumber(a: BigNumberish): EthersBigNumber {
+    if (a?.toString()) {
+        return EthersBigNumber.from(a.toString());
     }
+}
 
-    const result = {
-        to: request.to?.toString(),
-        from: request.from?.toString(),
-        nonce: request.nonce?.toString(),
-
-        gasLimit: request.gasLimit?.toString(),
-        gasPrice: request.gasPrice?.toString(),
-
-        data: request.data?.toString(),
-        value: request.value?.toString(),
+export function parseTxRequest(request: EthereumTransactionRequest | TransactionRequest): TransactionRequest {
+    const result: TransactionRequest = {
         chainId: request.chainId,
 
-        maxFeePerGas: request.maxFeePerGas?.toString(),
-        maxPriorityFeePerGas: request.maxPriorityFeePerGas?.toString(),
+        to: request.to?.toString(),
+        from: request.from?.toString(),
+        data: request.data?.toString(),
+
+        nonce: toEthersBigNumber(request.nonce),
+        gasLimit: toEthersBigNumber(request.gasLimit),
+        value: toEthersBigNumber(request.value),
     };
+
+    if (request.maxFeePerGas && request.maxPriorityFeePerGas) {
+        result.type = TransactionTypes.eip1559;
+        result.gasPrice = null;
+        result.maxFeePerGas = toEthersBigNumber(request.maxFeePerGas);
+        result.maxPriorityFeePerGas = toEthersBigNumber(request.maxPriorityFeePerGas);
+    } else {
+        result.type = TransactionTypes.legacy;
+        result.gasPrice = toEthersBigNumber(request.gasPrice);
+    }
 
     return result;
 }
@@ -142,5 +148,5 @@ export function fromGwei(gwei: BigNumber | number | string): BigNumber {
 }
 
 export function calculateFee(base: BigNumber | number | string, multiplier: number) {
-    return Number(new BigNumber(base).times(multiplier).toFixed(0));
+    return new BigNumber(base).times(multiplier).toNumber();
 }
