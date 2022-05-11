@@ -16,14 +16,17 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
     protected contract: LiqualityHTLC;
     protected swapOptions: EvmSwapOptions;
 
-    constructor(swapOptions: EvmSwapOptions, walletProvider?: EvmBaseWalletProvider<BaseProvider>) {
+    constructor(swapOptions?: EvmSwapOptions, walletProvider?: EvmBaseWalletProvider<BaseProvider>) {
         super(walletProvider);
 
-        if (walletProvider) {
-            this.contract = LiqualityHTLC__factory.connect(swapOptions.contractAddress, this.walletProvider.getSigner());
-        }
+        this.swapOptions = {
+            ...swapOptions,
+            contractAddress: swapOptions?.contractAddress || '0x133713376F69C1A67d7f3594583349DFB53d8166',
+        };
 
-        this.swapOptions = swapOptions;
+        if (walletProvider) {
+            this.contract = LiqualityHTLC__factory.connect(this.swapOptions.contractAddress, this.walletProvider.getSigner());
+        }
     }
 
     public async initiateSwap(swapParams: SwapParams, fee: FeeType): Promise<Transaction<EthersTransactionResponse>> {
@@ -77,33 +80,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
         }
     }
 
-    protected doesTransactionMatchInitiation(swapParams: SwapParams, transaction: Transaction<InitiateEvent>): boolean {
-        let htlcArgs = transaction?._raw?.args;
-
-        if (!htlcArgs) {
-            if (transaction?.logs) {
-                for (const log of transaction.logs as Log[]) {
-                    const initiate = this.tryParseLog(log);
-                    if (initiate) {
-                        htlcArgs = initiate.args as any;
-                    }
-                }
-            }
-        }
-
-        if (htlcArgs) {
-            return (
-                Math.eq(htlcArgs.htlc.amount, swapParams.value) &&
-                Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
-                compare(htlcArgs.htlc.recipientAddress, swapParams.recipientAddress.toString()) &&
-                compare(htlcArgs.htlc.refundAddress, swapParams.refundAddress.toString()) &&
-                compare(htlcArgs.htlc.tokenAddress, swapParams.asset.isNative ? AddressZero : swapParams.asset.contractAddress) &&
-                compare(remove0x(htlcArgs.htlc.secretHash), remove0x(swapParams.secretHash))
-            );
-        }
-    }
-
-    async getSwapSecret(claimTx: string): Promise<string> {
+    public async getSwapSecret(claimTx: string): Promise<string> {
         const transaction: Transaction<ClaimEvent> = await this.walletProvider.getChainProvider().getTransactionByHash(claimTx);
 
         if (!transaction) {
@@ -130,6 +107,32 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
 
     protected onWalletProviderUpdate(wallet: EvmBaseWalletProvider<BaseProvider, Signer>): void {
         this.contract = LiqualityHTLC__factory.connect(this.swapOptions.contractAddress, wallet.getSigner());
+    }
+
+    protected doesTransactionMatchInitiation(swapParams: SwapParams, transaction: Transaction<InitiateEvent>): boolean {
+        let htlcArgs = transaction?._raw?.args;
+
+        if (!htlcArgs) {
+            if (transaction?.logs) {
+                for (const log of transaction.logs as Log[]) {
+                    const initiate = this.tryParseLog(log);
+                    if (initiate) {
+                        htlcArgs = initiate.args as any;
+                    }
+                }
+            }
+        }
+
+        if (htlcArgs) {
+            return (
+                Math.eq(htlcArgs.htlc.amount, swapParams.value) &&
+                Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
+                compare(htlcArgs.htlc.recipientAddress, swapParams.recipientAddress.toString()) &&
+                compare(htlcArgs.htlc.refundAddress, swapParams.refundAddress.toString()) &&
+                compare(htlcArgs.htlc.tokenAddress, swapParams.asset.isNative ? AddressZero : swapParams.asset.contractAddress) &&
+                compare(remove0x(htlcArgs.htlc.secretHash), remove0x(swapParams.secretHash))
+            );
+        }
     }
 
     protected tryParseLog(log: Log) {
