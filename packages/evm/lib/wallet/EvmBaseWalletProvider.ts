@@ -1,7 +1,7 @@
 import { Chain, Wallet } from '@chainify/client';
 import { ReplaceFeeInsufficientError } from '@chainify/errors';
 import { AddressType, Asset, BigNumber, FeeType, Network, Transaction } from '@chainify/types';
-import { remove0x } from '@chainify/utils';
+import { ensure0x, remove0x } from '@chainify/utils';
 import { Signer } from '@ethersproject/abstract-signer';
 import { ERC20__factory } from '../typechain';
 import { EthereumTransactionRequest, EthersTransactionResponse } from '../types';
@@ -38,10 +38,12 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
         // Handle ERC20 transfers
         if (txRequest.asset && !txRequest.asset.isNative) {
             const transferErc20Tx = await ERC20__factory.connect(txRequest.asset.contractAddress, this.signer).populateTransaction.transfer(
-                txRequest.to.toString(),
+                ensure0x(txRequest.to.toString()),
                 txRequest.value.toString()
             );
-            const result = await this.signer.sendTransaction({ ...transferErc20Tx, ...extractFeeData(txRequest.fee) });
+            const result = await this.signer.sendTransaction(
+                parseTxRequest({ chainId, ...transferErc20Tx, ...extractFeeData(txRequest.fee) })
+            );
             return parseTxResponse(result);
         }
         // Handle ETH transfers

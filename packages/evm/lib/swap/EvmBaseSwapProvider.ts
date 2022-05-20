@@ -127,10 +127,10 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
             return (
                 Math.eq(htlcArgs.htlc.amount, swapParams.value) &&
                 Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
-                compare(htlcArgs.htlc.recipientAddress, swapParams.recipientAddress.toString()) &&
-                compare(htlcArgs.htlc.refundAddress, swapParams.refundAddress.toString()) &&
+                compare(htlcArgs.htlc.recipientAddress, ensure0x(swapParams.recipientAddress.toString())) &&
+                compare(htlcArgs.htlc.refundAddress, ensure0x(swapParams.refundAddress.toString())) &&
                 compare(htlcArgs.htlc.tokenAddress, swapParams.asset.isNative ? AddressZero : swapParams.asset.contractAddress) &&
-                compare(remove0x(htlcArgs.htlc.secretHash), remove0x(swapParams.secretHash))
+                compare(ensure0x(htlcArgs.htlc.secretHash), ensure0x(swapParams.secretHash))
             );
         }
     }

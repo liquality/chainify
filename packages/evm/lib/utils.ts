@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, Block, FeeType, SwapParams, Transaction, TxStatus } from '@chainify/types';
+import { BigNumber, BigNumberish, Block, EIP1559Fee, FeeType, SwapParams, Transaction, TxStatus } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber';
 import { AddressZero } from '@ethersproject/constants';
@@ -31,25 +31,19 @@ export function parseSwapParams(tx: SwapParams): ILiqualityHTLC.HTLCDataStruct {
         amount: tx.value.toString(),
         expiration: tx.expiration,
         secretHash: ensure0x(tx.secretHash),
-        tokenAddress: tx.asset.isNative ? AddressZero : tx.asset.contractAddress,
-        refundAddress: tx.refundAddress.toString(),
-        recipientAddress: tx.recipientAddress.toString(),
+        tokenAddress: ensure0x(tx.asset.isNative ? AddressZero : tx.asset.contractAddress),
+        refundAddress: ensure0x(tx.refundAddress.toString()),
+        recipientAddress: ensure0x(tx.recipientAddress.toString()),
     };
-}
-
-function toEthersBigNumber(a: BigNumberish): EthersBigNumber {
-    if (a?.toString()) {
-        return EthersBigNumber.from(a.toString());
-    }
 }
 
 export function parseTxRequest(request: EthereumTransactionRequest | TransactionRequest): TransactionRequest {
     const result: TransactionRequest = {
         chainId: request.chainId,
 
-        to: request.to?.toString(),
-        from: request.from?.toString(),
-        data: request.data?.toString(),
+        to: ensure0x(request.to?.toString()),
+        from: ensure0x(request.from?.toString()),
+        data: ensure0x(request.data?.toString()),
 
         nonce: toEthersBigNumber(request.nonce),
         gasLimit: toEthersBigNumber(request.gasLimit),
@@ -127,15 +121,16 @@ export function extractFeeData(fee: FeeType) {
     if (typeof fee === 'number') {
         return { gasPrice: fromGwei(fee).toNumber() };
     } else {
+        const eip1559Fee = {} as EIP1559Fee;
         if (fee.maxFeePerGas) {
-            fee.maxFeePerGas = fromGwei(fee.maxFeePerGas).toNumber();
+            eip1559Fee.maxFeePerGas = fromGwei(fee.maxFeePerGas).toNumber();
         }
 
         if (fee.maxPriorityFeePerGas) {
-            fee.maxPriorityFeePerGas = fromGwei(fee.maxPriorityFeePerGas).toNumber();
+            eip1559Fee.maxPriorityFeePerGas = fromGwei(fee.maxPriorityFeePerGas).toNumber();
         }
 
-        return { ...fee };
+        return { ...fee, ...eip1559Fee };
     }
 }
 
@@ -149,4 +144,10 @@ export function fromGwei(gwei: BigNumber | number | string): BigNumber {
 
 export function calculateFee(base: BigNumber | number | string, multiplier: number) {
     return new BigNumber(base).times(multiplier).toNumber();
+}
+
+function toEthersBigNumber(a: BigNumberish): EthersBigNumber {
+    if (a?.toString()) {
+        return EthersBigNumber.from(a.toString());
+    }
 }

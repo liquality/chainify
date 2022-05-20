@@ -1,6 +1,7 @@
 import { Chain, Fee } from '@chainify/client';
 import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@chainify/types';
+import { ensure0x } from '@chainify/utils';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { RpcFeeProvider } from '../fee/RpcFeeProvider';
 import { ERC20__factory } from '../typechain';
@@ -61,7 +62,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
         blockHash: string,
         includeTx = false
     ): Promise<Block<EthersBlock | EthersBlockWithTransactions, EthersTransactionResponse>> {
-        return this._getBlock(blockHash, includeTx);
+        return this._getBlock(ensure0x(blockHash), includeTx);
     }
 
     /**
@@ -95,14 +96,16 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
      * of {@link https://docs.ethers.io/v5/api/providers/types/#providers-TransactionResponse | EthersTransactionResponse}
      */
     public async getTransactionByHash(txHash: string): Promise<Transaction<EthersTransactionResponse>> {
-        const tx = await this.provider.getTransaction(txHash);
+        const _txHash = ensure0x(txHash);
+
+        const tx = await this.provider.getTransaction(_txHash);
         if (!tx) {
             throw new TxNotFoundError('Transaction not found');
         }
         const result = parseTxResponse(tx);
 
         if (result.confirmations > 0) {
-            const receipt = await this.provider.getTransactionReceipt(txHash);
+            const receipt = await this.provider.getTransactionReceipt(_txHash);
             return parseTxResponse(tx, receipt);
         }
 
@@ -137,7 +140,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
      * @returns the hash of the transaction
      */
     public async sendRawTransaction(rawTransaction: string): Promise<string> {
-        const tx = await this.provider.sendTransaction(rawTransaction);
+        const tx = await this.provider.sendTransaction(ensure0x(rawTransaction));
         return tx.hash;
     }
 
