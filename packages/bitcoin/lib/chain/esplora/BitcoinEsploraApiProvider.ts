@@ -3,14 +3,21 @@ import { BlockNotFoundError, TxNotFoundError } from '@chainify/errors';
 import { AddressType, BigNumber, Block, FeeDetail, FeeDetails, Transaction } from '@chainify/types';
 import { flatten } from 'lodash';
 import { BitcoinEsploraBaseProvider } from './BitcoinEsploraBaseProvider';
+import { BitcoinEsploraBatchBaseProvider } from './BitcoinEsploraBatchBaseProvider';
 import * as EsploraTypes from './types';
 
 export class BitcoinEsploraApiProvider extends Chain<BitcoinEsploraBaseProvider> {
     private _httpClient: HttpClient;
     private _feeOptions: EsploraTypes.FeeOptions;
 
-    constructor(options: EsploraTypes.EsploraApiProviderOptions, feeProvider?: Fee, feeOptions?: EsploraTypes.FeeOptions) {
-        super(options.network, new BitcoinEsploraBaseProvider(options), feeProvider);
+    constructor(
+        options: EsploraTypes.EsploraBatchApiProviderOptions,
+        provider?: BitcoinEsploraBaseProvider,
+        feeProvider?: Fee,
+        feeOptions?: EsploraTypes.FeeOptions
+    ) {
+        const _provider = provider || new BitcoinEsploraBatchBaseProvider(options);
+        super(options.network, _provider, feeProvider);
         this._httpClient = this.provider.httpClient;
         this._feeOptions = { slowTargetBlocks: 6, averageTargetBlocks: 3, fastTargetBlocks: 1, ...feeOptions };
     }

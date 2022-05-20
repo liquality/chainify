@@ -52,7 +52,7 @@ export class BitcoinEsploraBaseProvider extends BitcoinBaseChainProvider {
 
     public async getUnspentTransactions(_addresses: AddressType[]): Promise<UTXO[]> {
         const addresses = _addresses.map((a) => a.toString());
-        const utxoSets = await Promise.all(addresses.map((addr) => this._getUnspentTransactions(addr)));
+        const utxoSets = await Promise.all(addresses.map((addr) => this._getUnspentTransactions(addr), this));
         const utxos = flatten(utxoSets);
         return utxos;
     }

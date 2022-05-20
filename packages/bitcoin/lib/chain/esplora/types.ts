@@ -89,6 +89,10 @@ export interface EsploraApiProviderOptions {
     defaultFeePerByte?: number;
 }
 
+export interface EsploraBatchApiProviderOptions extends EsploraApiProviderOptions {
+    batchUrl: string;
+}
+
 export type FeeOptions = {
     slowTargetBlocks?: number;
     averageTargetBlocks?: number;

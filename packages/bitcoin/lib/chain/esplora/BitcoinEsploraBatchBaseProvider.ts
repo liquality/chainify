@@ -1,19 +1,15 @@
-import { Fee, HttpClient } from '@chainify/client';
+import { HttpClient } from '@chainify/client';
 import { AddressType, BigNumber } from '@chainify/types';
 import { flatten, uniq } from 'lodash';
 import { UTXO } from '../../types';
-import { BitcoinEsploraApiProvider } from './BitcoinEsploraApiProvider';
+import { BitcoinEsploraBaseProvider } from './BitcoinEsploraBaseProvider';
 import * as EsploraTypes from './types';
 
-interface EsploraBatchApiProviderOptions extends EsploraTypes.EsploraApiProviderOptions {
-    batchUrl: string;
-}
-
-export class BitcoinEsploraBatchBaseProvider extends BitcoinEsploraApiProvider {
+export class BitcoinEsploraBatchBaseProvider extends BitcoinEsploraBaseProvider {
     private _batchHttpClient: HttpClient;
 
-    constructor(options: EsploraBatchApiProviderOptions, feeProvider?: Fee, feeOptions?: EsploraTypes.FeeOptions) {
-        super(options, feeProvider, feeOptions);
+    constructor(options: EsploraTypes.EsploraBatchApiProviderOptions) {
+        super(options);
         this._batchHttpClient = new HttpClient({ baseURL: options.batchUrl });
     }
 
