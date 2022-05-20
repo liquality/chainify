@@ -29,12 +29,12 @@ export default abstract class Swap<T, S, WalletProvider extends Wallet<T, S> = W
 
         const doesMatch = await this.doesTransactionMatchInitiation(swapParams, transaction);
 
-        if (transaction.status !== TxStatus.Success) {
-            throw new TxFailedError('Transaction not successful');
-        }
-
         if (!(transaction.confirmations > 0)) {
             throw new PendingTxError(`Transaction not confirmed ${transaction.confirmations}`);
+        }
+
+        if (transaction.status !== TxStatus.Success) {
+            throw new TxFailedError('Transaction not successful');
         }
 
         if (!doesMatch) {
