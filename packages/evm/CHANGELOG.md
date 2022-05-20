@@ -1,5 +1,19 @@
 # @chainify/evm
 
+## 1.0.3
+
+### Patch Changes
+
+-   719c01706: - Ensure that all hashes and addresses have 0x as prefix for the EVM packages
+    -   Order of checks insideverifyInitiateSwapTransaction
+    -   Fix for `withCachedUtxos`
+    -   Proper creation of BitcoinEsploraApiProvider
+-   Updated dependencies [719c01706]
+    -   @chainify/client@1.0.3
+    -   @chainify/errors@1.0.3
+    -   @chainify/types@1.0.3
+    -   @chainify/utils@1.0.3
+
 ## 1.0.2
 
 ### Patch Changes
