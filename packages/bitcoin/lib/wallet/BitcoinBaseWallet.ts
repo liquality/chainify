@@ -287,12 +287,10 @@ export abstract class BitcoinBaseWalletProvider<T extends BitcoinBaseChainProvid
         const memoizedGetUnspentTransactions = memoize(originalProvider.getUnspentTransactions, { primitive: true });
         const memoizedGetAddressTransactionCounts = memoize(originalProvider.getAddressTransactionCounts, { primitive: true });
 
-        const newProvider = {
-            ...originalProvider,
-            getFeePerByte: memoizedGetFeePerByte,
-            getUnspentTransactions: memoizedGetUnspentTransactions,
-            getAddressTransactionCounts: memoizedGetAddressTransactionCounts,
-        };
+        const newProvider = originalProvider;
+        newProvider.getFeePerByte = memoizedGetFeePerByte;
+        newProvider.getUnspentTransactions = memoizedGetUnspentTransactions;
+        newProvider.getAddressTransactionCounts = memoizedGetAddressTransactionCounts;
 
         await this.chainProvider.setProvider(newProvider);
         const result = await func.bind(this)();
