@@ -5,8 +5,8 @@ import { FeeOptions } from '../types';
 import { calculateFee } from '../utils';
 
 export class RpcFeeProvider extends Fee {
-    private provider: StaticJsonRpcProvider;
-    private feeOptions: FeeOptions;
+    protected provider: StaticJsonRpcProvider;
+    protected feeOptions: FeeOptions;
 
     constructor(provider: StaticJsonRpcProvider | string, feeOptions?: FeeOptions) {
         super();

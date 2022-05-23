@@ -1,9 +1,11 @@
 export { EvmChainProvider } from './chain/EvmChainProvider';
 export { EvmMulticallProvider } from './chain/EvmMulticallProvider';
 export { EIP1559FeeProvider } from './fee/EIP1559FeeProvider';
+export { OptimismFeeProvider } from './fee/OptimismFeeProvider';
 export { RpcFeeProvider } from './fee/RpcFeeProvider';
 export { EvmNetworks } from './networks';
 export { EvmNftProvider } from './nft/EvmNftProvider';
+export { OptimismJsonRpcProvider } from './rpc/OptimismJsonRpcProvider';
 export { EvmBaseSwapProvider } from './swap/EvmBaseSwapProvider';
 export { EvmSwapProvider } from './swap/EvmSwapProvider';
 export * as Typechain from './typechain';

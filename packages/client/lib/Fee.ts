@@ -1,6 +1,6 @@
-import { Asset, BigNumber, FeeDetails, FeeProvider } from '@chainify/types';
+import { Asset, BigNumber, FeeDetails, FeeProvider, MultiLayerFeeDetails, MultiLayerFeeProvider } from '@chainify/types';
 
-export default abstract class Fee implements FeeProvider {
+export default abstract class Fee implements FeeProvider, MultiLayerFeeProvider {
     public gasUnits: BigNumber;
 
     constructor(gasUnits?: BigNumber) {
@@ -8,4 +8,8 @@ export default abstract class Fee implements FeeProvider {
     }
 
     abstract getFees(feeAsset?: Asset): Promise<FeeDetails>;
+
+    getMultiLayerFees(): Promise<MultiLayerFeeDetails> {
+        throw new Error(`Method 'getMultiLayerFees' is not implemented`);
+    }
 }

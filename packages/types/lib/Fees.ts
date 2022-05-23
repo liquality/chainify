@@ -25,3 +25,11 @@ export interface FeeDetails {
 export interface FeeProvider {
     getFees(): Promise<FeeDetails>;
 }
+
+export interface MultiLayerFeeDetails {
+    [key: string]: FeeDetails;
+}
+
+export interface MultiLayerFeeProvider {
+    getMultiLayerFees(): Promise<MultiLayerFeeDetails>;
+}
