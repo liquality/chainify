@@ -1,5 +1,18 @@
 # @chainify/terra
 
+## 1.0.4
+
+### Patch Changes
+
+-   4a324c902: - add cryptoassets as dependency
+    -   add sign typed data interface
+    -   add optimism chain provider
+-   Updated dependencies [4a324c902]
+    -   @chainify/client@1.0.4
+    -   @chainify/errors@1.0.4
+    -   @chainify/types@1.0.4
+    -   @chainify/utils@1.0.4
+
 ## 1.0.3
 
 ### Patch Changes

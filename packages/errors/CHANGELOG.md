@@ -1,5 +1,13 @@
 # @chainify/errors
 
+## 1.0.4
+
+### Patch Changes
+
+-   4a324c902: - add cryptoassets as dependency
+    -   add sign typed data interface
+    -   add optimism chain provider
+
 ## 1.0.3
 
 ### Patch Changes
