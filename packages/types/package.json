@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@ethersproject/bignumber": "5.6.0",
+        "@liquality/cryptoassets": "^1.13.2",
         "bignumber.js": "^9.0.2"
     }
 }
