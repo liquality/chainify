@@ -1,5 +1,6 @@
 export { EvmChainProvider } from './chain/EvmChainProvider';
 export { EvmMulticallProvider } from './chain/EvmMulticallProvider';
+export { OptimismChainProvider } from './chain/OptimismChainProvider';
 export { EIP1559FeeProvider } from './fee/EIP1559FeeProvider';
 export { RpcFeeProvider } from './fee/RpcFeeProvider';
 export { EvmNetworks } from './networks';
