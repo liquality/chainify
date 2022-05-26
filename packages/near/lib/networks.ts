@@ -4,7 +4,7 @@ const near_mainnet: NearNetwork = {
     name: 'Near Mainnet',
     networkId: 'mainnet',
     rpcUrl: 'https://rpc.mainnet.near.org',
-    helperUrl: 'https://helper.mainnet.near.org',
+    helperUrl: 'https://near-mainnet-api.liq-chainhub.net',
     coinType: '397',
     isTestnet: false,
 };
@@ -13,7 +13,7 @@ const near_testnet: NearNetwork = {
     name: 'Near Testnet',
     networkId: 'testnet',
     rpcUrl: 'https://rpc.testnet.near.org',
-    helperUrl: 'https://helper.testnet.near.org',
+    helperUrl: 'https://near-testnet-api.liq-chainhub.net',
     coinType: '397',
     isTestnet: true,
 };

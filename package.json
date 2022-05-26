@@ -51,7 +51,7 @@
         "clean": "yarn workspaces foreach run clean && rm -rf node_modules ",
         "lint": "yarn lint:ts && yarn prettier:check",
         "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
-        "prettier:check": "prettier --check \"**/*.{js,json,md,sol,ts}\"",
+        "prettier:check": "prettier --check \"**/*.{js,json,sol,ts}\"",
         "prettier:fix": "prettier --write ./packages",
         "changeset": "changeset",
         "version": "yarn changeset version",

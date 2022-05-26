@@ -5,7 +5,7 @@ import { shouldBehaveLikeBitcoinClient } from './clients/bitcoin';
 import { shouldBehaveLikeEvmClient } from './clients/evm';
 import { shouldBehaveLikeNearClient } from './clients/near';
 import { shouldBehaveLikeSolanaClient } from './clients/solana';
-import { shouldBehaveLikeTerraClient } from './clients/terra';
+// import { shouldBehaveLikeTerraClient } from './clients/terra';
 import { startLocalNetworks, stopLocalNetworks } from './environment';
 
 chai.use(chaiAsPromised);
@@ -22,7 +22,7 @@ describe('Integration tests', function () {
         shouldBehaveLikeEvmClient();
         shouldBehaveLikeBitcoinClient();
         shouldBehaveLikeNearClient();
-        shouldBehaveLikeTerraClient();
+        // shouldBehaveLikeTerraClient();
         shouldBehaveLikeSolanaClient();
     });
 
