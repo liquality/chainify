@@ -1,3 +1,4 @@
+import { UnsupportedMethodError } from '@chainify/errors';
 import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest, WalletProvider } from '@chainify/types';
 import Chain from './Chain';
 
@@ -15,6 +16,10 @@ export default abstract class Wallet<T, S> implements WalletProvider {
 
     getChainProvider(): Chain<T> {
         return this.chainProvider;
+    }
+
+    public signTypedData(_data: any): Promise<string> {
+        throw new UnsupportedMethodError('Method not supported');
     }
 
     public abstract getConnectedNetwork(): Promise<Network>;

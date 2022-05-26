@@ -3,6 +3,7 @@ import { Chains, describeExternal, fundAddress } from '../../common';
 import { deploy } from '../../deploy';
 import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
 import { shouldBehaveLikeWalletProvider } from '../../wallet/wallet.test';
+import { shouldSignTypedData } from './signTypedData.behavior';
 import { shouldUpdateTransactionFee } from './updateTransactionFee.behavior';
 
 export function shouldBehaveLikeEvmClient() {
@@ -15,6 +16,7 @@ export function shouldBehaveLikeEvmClient() {
         shouldBehaveLikeChainProvider(chain);
         shouldBehaveLikeWalletProvider(chain);
         shouldUpdateTransactionFee(chain);
+        shouldSignTypedData(chain);
         shouldBehaveLikeSwapProvider(chain);
         shouldBehaveLikeSwapProvider(chain, false);
     });
