@@ -1,6 +1,7 @@
 name: Build Test
 
-on:
+on: 
+  push:
   pull_request:
     paths-ignore:
       - '**/node_modules/**'
