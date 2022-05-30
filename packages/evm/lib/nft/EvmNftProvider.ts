@@ -37,38 +37,40 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         data?: string,
         fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
-        const nftInfo = await this._cacheGet(contractAddress);
+        const { schema, contract } = await this._cacheGet(contractAddress);
         const owner = (await this.walletProvider.getAddress()).toString();
         const to = receiver.toString();
 
         let tx: EthersPopulatedTransaction;
 
-        switch (nftInfo.schema) {
+        switch (schema) {
             case NftTypes.ERC721: {
+                const _contract: ERC721 = contract as ERC721;
                 if (data) {
-                    tx = await this._erc721.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](
+                    tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](
                         owner,
                         to,
                         tokenIDs[0],
                         data
                     );
                 } else {
-                    tx = await this._erc721.populateTransaction['safeTransferFrom(address,address,uint256)'](owner, to, tokenIDs[0]);
+                    tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256)'](owner, to, tokenIDs[0]);
                 }
                 break;
             }
 
             case NftTypes.ERC1155: {
+                const _contract: ERC1155 = contract as ERC1155;
                 if (tokenIDs.length > 1) {
-                    tx = await this._erc1155.populateTransaction.safeBatchTransferFrom(owner, to, tokenIDs, amounts, data);
+                    tx = await _contract.populateTransaction.safeBatchTransferFrom(owner, to, tokenIDs, amounts, data);
                 } else {
-                    tx = await this._erc1155.populateTransaction.safeTransferFrom(owner, to, tokenIDs[0], amounts[0], data);
+                    tx = await _contract.populateTransaction.safeTransferFrom(owner, to, tokenIDs[0], amounts[0], data);
                 }
                 break;
             }
 
             default: {
-                throw new UnsupportedMethodError(`Unsupported NFT type: ${nftInfo.schema}`);
+                throw new UnsupportedMethodError(`Unsupported NFT type: ${schema}`);
             }
         }
 
@@ -76,25 +78,28 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
     }
 
     public async balanceOf(contractAddress: AddressType, owners: AddressType[], tokenIDs: number[]): Promise<BigNumber | BigNumber[]> {
-        const nftInfo = await this._cacheGet(contractAddress);
+        const { schema, contract } = await this._cacheGet(contractAddress);
         const _owners = owners.map((owner) => owner.toString());
 
-        switch (nftInfo.schema) {
+        switch (schema) {
             case NftTypes.ERC721: {
-                return new BigNumber((await this._erc721.balanceOf(_owners[0])).toString());
+                const _contract: ERC721 = contract as ERC721;
+                const balance = await _contract.balanceOf(_owners[0]);
+                return new BigNumber(balance.toString());
             }
 
             case NftTypes.ERC1155: {
+                const _contract: ERC1155 = contract as ERC1155;
                 if (tokenIDs.length > 1) {
-                    const balances = await this._erc1155.balanceOfBatch(_owners, tokenIDs);
+                    const balances = await _contract.balanceOfBatch(_owners, tokenIDs);
                     return balances.map((b) => new BigNumber(b.toString()));
                 } else {
-                    return new BigNumber((await this._erc1155.balanceOf(_owners[0], tokenIDs[0])).toString());
+                    return new BigNumber((await _contract.balanceOf(_owners[0], tokenIDs[0])).toString());
                 }
             }
 
             default: {
-                throw new UnsupportedMethodError(`Unsupported NFT type: ${nftInfo.schema}`);
+                throw new UnsupportedMethodError(`Unsupported NFT type: ${schema}`);
             }
         }
     }
@@ -105,24 +110,26 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         tokenID: number,
         fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
-        const nftInfo = await this._cacheGet(contractAddress);
+        const { schema, contract } = await this._cacheGet(contractAddress);
         const _operator = operator.toString();
 
         let tx: EthersPopulatedTransaction;
 
-        switch (nftInfo.schema) {
+        switch (schema) {
             case NftTypes.ERC721: {
-                tx = await this._erc721.populateTransaction.approve(_operator, tokenID);
+                const _contract: ERC721 = contract as ERC721;
+                tx = await _contract.populateTransaction.approve(_operator, tokenID);
                 break;
             }
 
             case NftTypes.ERC1155: {
-                tx = await this._erc1155.populateTransaction.setApprovalForAll(_operator, true);
+                const _contract: ERC1155 = contract as ERC1155;
+                tx = await _contract.populateTransaction.setApprovalForAll(_operator, true);
                 break;
             }
 
             default: {
-                throw new UnsupportedMethodError(`Unsupported NFT type: ${nftInfo.schema}`);
+                throw new UnsupportedMethodError(`Unsupported NFT type: ${schema}`);
             }
         }
 
@@ -130,9 +137,9 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
     }
 
     async isApprovedForAll(contractAddress: AddressType, operator: AddressType): Promise<boolean> {
-        const nft = (await this._cacheGet(contractAddress)).contract;
+        const { contract } = await this._cacheGet(contractAddress);
         const owner = await this.walletProvider.getAddress();
-        return await nft.isApprovedForAll(owner.toString(), operator.toString());
+        return await contract.isApprovedForAll(owner.toString(), operator.toString());
     }
 
     public async approveAll(
@@ -141,8 +148,8 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         state: boolean,
         fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
-        const nft = (await this._cacheGet(contractAddress)).contract;
-        const tx = await nft.populateTransaction.setApprovalForAll(operator.toString(), state);
+        const { contract } = await this._cacheGet(contractAddress);
+        const tx = await contract.populateTransaction.setApprovalForAll(operator.toString(), state);
         return this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
     }
 
