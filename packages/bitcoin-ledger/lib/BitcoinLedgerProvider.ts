@@ -234,6 +234,16 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
         return finalLedgerSigs;
     }
 
+    public async getWalletPublicKey(path: string) {
+        if (path in this._walletPublicKeyCache) {
+            return this._walletPublicKeyCache[path];
+        }
+
+        const walletPublicKey = await this._getWalletPublicKey(path);
+        this._walletPublicKeyCache[path] = walletPublicKey;
+        return walletPublicKey;
+    }
+
     protected buildSweepTransaction(_externalChangeAddress: string, _feePerByte?: number): Promise<{ hex: string; fee: number }> {
         throw new UnimplementedMethodError('Method not supported.');
     }
@@ -318,16 +328,6 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
                 return [tx, utxo.vout, undefined, 0];
             })
         );
-    }
-
-    private async getWalletPublicKey(path: string) {
-        if (path in this._walletPublicKeyCache) {
-            return this._walletPublicKeyCache[path];
-        }
-
-        const walletPublicKey = await this._getWalletPublicKey(path);
-        this._walletPublicKeyCache[path] = walletPublicKey;
-        return walletPublicKey;
     }
 
     private async _getWalletPublicKey(path: string) {
