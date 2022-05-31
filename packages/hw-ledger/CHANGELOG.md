@@ -1,5 +1,16 @@
 # @chainify/hw-ledger
 
+## 1.0.5
+
+### Patch Changes
+
+-   390c4f829: - nft logic is now part of client
+    -   getWalletPublicKey is public (BitcoinLedgerProvider)
+-   Updated dependencies [390c4f829]
+    -   @chainify/errors@1.0.5
+    -   @chainify/types@1.0.5
+    -   @chainify/utils@1.0.5
+
 ## 1.0.4
 
 ### Patch Changes
