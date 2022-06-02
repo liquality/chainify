@@ -17,7 +17,7 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
     constructor(options: BitcoinLedgerProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
         super(options, chainProvider);
         const scrambleKey = options.ledgerScrambleKey || 'BTC';
-        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>({ ...options, App: HwAppBitcoin, ledgerScrambleKey: scrambleKey });
+        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>({ ...options, appType: HwAppBitcoin, ledgerScrambleKey: scrambleKey });
         this._walletPublicKeyCache = {};
     }
 
@@ -284,15 +284,14 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
                 amount: this.getAmountBuffer(change.value),
                 script: address.toOutputScript(unusedAddress.address, this._network),
             });
-        }
+        };
 
-        const outputScriptHex = app
-            .serializeTransactionOutputs({
-                outputs,
-                version: null,
-                inputs: null,
-            })
-            .toString('hex');
+        const transactionOutput = await app.serializeTransactionOutputs({
+            outputs,
+            version: null,
+            inputs: null,
+        })
+        const outputScriptHex = transactionOutput.toString('hex');
 
         const isSegwit = [BitcoinTypes.AddressType.BECH32, BitcoinTypes.AddressType.P2SH_SEGWIT].includes(this._addressType);
 

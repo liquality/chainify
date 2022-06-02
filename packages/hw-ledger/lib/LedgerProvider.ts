@@ -2,11 +2,10 @@ import { WalletError } from '@chainify/errors';
 import { Address, Network } from '@chainify/types';
 import { compare } from '@chainify/utils';
 import Transport from '@ledgerhq/hw-transport';
-import { CreateOptions, GetAddressesFuncType, IApp, TransportCreator } from './types';
-
-export class LedgerProvider<TApp extends IApp> {
-    private _App: any;
-    private _Transport: TransportCreator;
+import { CreateOptions, GetAddressesFuncType, HWApp, Newable, TransportCreator } from './types';
+export class LedgerProvider<TApp extends HWApp> {
+    private _appType: Newable<TApp>;
+    private _transportCreator: TransportCreator;
 
     private _network: Network;
     private _ledgerScrambleKey: string;
@@ -15,8 +14,8 @@ export class LedgerProvider<TApp extends IApp> {
     protected _appInstance: TApp;
 
     constructor(options: CreateOptions<TApp>) {
-        this._App = options.App;
-        this._Transport = options.Transport;
+        this._appType = options.appType;
+        this._transportCreator = options.transportCreator;
 
         this._network = options.network;
         // The ledger scramble key is required to be set on the ledger transport
@@ -26,7 +25,7 @@ export class LedgerProvider<TApp extends IApp> {
 
     public async isWalletAvailable() {
         const app = await this.getApp();
-        if (!app.transport.scrambleKey) {
+        if (!(app.transport as any).scrambleKey) {
             // scramble key required before calls
             app.transport.setScrambleKey(this._ledgerScrambleKey);
         }
@@ -74,7 +73,7 @@ export class LedgerProvider<TApp extends IApp> {
         throw new Error('Ledger: Wallet does not contain address');
     }
 
-    public async getApp() {
+    public async getApp(): Promise<TApp> {
         try {
             await this.createTransport();
         } catch (e) {
@@ -83,7 +82,10 @@ export class LedgerProvider<TApp extends IApp> {
             throw new WalletError(e.toString(), errorNoName);
         }
         if (!this._appInstance) {
-            this._appInstance = new Proxy(new this._App(this._transport), { get: this.errorProxy.bind(this) });
+            this._appInstance = new Proxy(
+                new this._appType(this._transport),
+                { get: this.errorProxy.bind(this) }
+            );
         }
         return this._appInstance;
     }
@@ -110,9 +112,7 @@ export class LedgerProvider<TApp extends IApp> {
 
     private async createTransport() {
         if (!this._transport) {
-            this._transport = await this._Transport.create();
-
-            this._transport.on('disconnect', () => {
+            this._transport = await this._transportCreator.create(() => {
                 this._appInstance = null;
                 this._transport = null;
             });
