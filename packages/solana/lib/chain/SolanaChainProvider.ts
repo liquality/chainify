@@ -85,6 +85,8 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
 
                 if (token) {
                     balances.push(token.amount);
+                } else {
+                    balances.push(new BigNumber(0));
                 }
             }
         });
