@@ -17,8 +17,17 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
     constructor(options: BitcoinLedgerProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
         super(options, chainProvider);
         const scrambleKey = options.ledgerScrambleKey || 'BTC';
-        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>({ ...options, appType: HwAppBitcoin, ledgerScrambleKey: scrambleKey });
+        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>(HwAppBitcoin, { ...options, ledgerScrambleKey: scrambleKey });
+
         this._walletPublicKeyCache = {};
+        if (options.basePublicKey && options.baseChainCode) {
+            this._walletPublicKeyCache = {
+                [options.baseDerivationPath]: {
+                    publicKey: options.basePublicKey,
+                    chainCode: options.baseChainCode
+                }
+            };
+        }
     }
 
     public async signMessage(message: string, from: string) {

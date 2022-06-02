@@ -13,8 +13,8 @@ export class LedgerProvider<TApp extends HWApp> {
     protected _transport: Transport;
     protected _appInstance: TApp;
 
-    constructor(options: CreateOptions<TApp>) {
-        this._appType = options.appType;
+    constructor(appType: Newable<TApp>, options: CreateOptions) {
+        this._appType = appType;
         this._transportCreator = options.transportCreator;
 
         this._network = options.network;

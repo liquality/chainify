@@ -3,8 +3,7 @@ import Transport from '@ledgerhq/hw-transport';
 import HwAppBitcoin from '@ledgerhq/hw-app-btc';
 import HwAppEthereum from "@ledgerhq/hw-app-eth";
 
-export interface CreateOptions<TApp extends HWApp> {
-    appType: Newable<TApp>;
+export interface CreateOptions {
     transportCreator: TransportCreator;
     network: Network;
     ledgerScrambleKey: string;
