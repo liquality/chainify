@@ -1,44 +1,48 @@
 import { WalletError } from '@chainify/errors';
+import { Logger } from '@chainify/logger';
 import { Address, Network } from '@chainify/types';
 import { compare } from '@chainify/utils';
 import Transport from '@ledgerhq/hw-transport';
-import { CreateOptions, GetAddressesFuncType, IApp, TransportCreator } from './types';
+import { CreateOptions, GetAddressesFuncType, HWApp, Newable, TransportCreator } from './types';
 
-export class LedgerProvider<TApp extends IApp> {
-    private _App: any;
-    private _Transport: TransportCreator;
+const logger = new Logger('LedgerProvider');
+
+export class LedgerProvider<TApp extends HWApp> {
+    private _appType: Newable<TApp>;
+    private _transportCreator: TransportCreator;
 
     private _network: Network;
-    private _ledgerScrambleKey: string;
+    private _scrambleKey: string;
 
     protected _transport: Transport;
     protected _appInstance: TApp;
 
-    constructor(options: CreateOptions<TApp>) {
-        this._App = options.App;
-        this._Transport = options.Transport;
+    constructor(appType: Newable<TApp>, options: CreateOptions) {
+        this._appType = appType;
+        this._transportCreator = options.transportCreator;
 
         this._network = options.network;
         // The ledger scramble key is required to be set on the ledger transport
         // if communicating with the device using `transport.send` for the first time
-        this._ledgerScrambleKey = options.ledgerScrambleKey;
+        this._scrambleKey = options.scrambleKey;
     }
 
     public async isWalletAvailable() {
         const app = await this.getApp();
-        if (!app.transport.scrambleKey) {
-            // scramble key required before calls
-            app.transport.setScrambleKey(this._ledgerScrambleKey);
-        }
-        const exchangeTimeout = app.transport.exchangeTimeout;
+        // keep current exchange timeout
+        const prevExchangeTimeout = app.transport.exchangeTimeout;
+        // set exchange timeout to 2 seconds
         app.transport.setExchangeTimeout(2000);
         try {
             // https://ledgerhq.github.io/btchip-doc/bitcoin-technical-beta.html#_get_random
             await this._transport.send(0xe0, 0xc0, 0x00, 0x00);
         } catch (e) {
+            logger.debug('isWalletAvailable.error', e);
+            logger.debug('isWalletAvailable.error.message', e.message);
             return false;
         } finally {
-            app.transport.setExchangeTimeout(exchangeTimeout);
+            // set exchange timeout to previous value
+            app.transport.setExchangeTimeout(prevExchangeTimeout);
         }
         return true;
     }
@@ -74,7 +78,7 @@ export class LedgerProvider<TApp extends IApp> {
         throw new Error('Ledger: Wallet does not contain address');
     }
 
-    public async getApp() {
+    public async getApp(): Promise<TApp> {
         try {
             await this.createTransport();
         } catch (e) {
@@ -83,7 +87,7 @@ export class LedgerProvider<TApp extends IApp> {
             throw new WalletError(e.toString(), errorNoName);
         }
         if (!this._appInstance) {
-            this._appInstance = new Proxy(new this._App(this._transport), { get: this.errorProxy.bind(this) });
+            this._appInstance = new Proxy(new this._appType(this._transport, this._scrambleKey), { get: this.errorProxy.bind(this) });
         }
         return this._appInstance;
     }
@@ -110,9 +114,7 @@ export class LedgerProvider<TApp extends IApp> {
 
     private async createTransport() {
         if (!this._transport) {
-            this._transport = await this._Transport.create();
-
-            this._transport.on('disconnect', () => {
+            this._transport = await this._transportCreator.create(() => {
                 this._appInstance = null;
                 this._transport = null;
             });

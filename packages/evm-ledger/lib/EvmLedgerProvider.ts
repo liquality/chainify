@@ -15,10 +15,14 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     private _ledgerProvider: LedgerProvider<HwAppEthereum>;
     private _derivationPath: string;
 
-    constructor(walletOptions: EvmLedgerCreateOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
+    constructor(options: EvmLedgerCreateOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
         super(chainProvider);
-        this._ledgerProvider = new LedgerProvider<HwAppEthereum>({ ...walletOptions, App: HwAppEthereum });
-        this._derivationPath = walletOptions.derivationPath || defaultPath;
+
+        this._ledgerProvider = new LedgerProvider<HwAppEthereum>(HwAppEthereum, {
+            ...options,
+            scrambleKey: options.scrambleKey || 'w0w',
+        });
+        this._derivationPath = options.derivationPath || defaultPath;
         this._ledgerSigner = new EvmLedgerSigner(this._ledgerProvider.getApp.bind(this._ledgerProvider), this._derivationPath);
 
         if (chainProvider) {

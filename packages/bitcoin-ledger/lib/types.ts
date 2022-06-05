@@ -1,9 +1,10 @@
 import { BitcoinTypes } from '@chainify/bitcoin';
 import { LedgerProviderTypes } from '@chainify/hw-ledger';
-import HwAppBitcoin from '@ledgerhq/hw-app-btc';
 
-export interface BitcoinLedgerProviderOptions extends LedgerProviderTypes.CreateOptions<HwAppBitcoin> {
+export interface BitcoinLedgerProviderOptions extends LedgerProviderTypes.CreateOptions {
     baseDerivationPath: string;
+    basePublicKey?: string;
+    baseChainCode?: string;
     addressType: BitcoinTypes.AddressType;
     network: BitcoinTypes.BitcoinNetwork;
 }

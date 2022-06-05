@@ -1,7 +1,7 @@
 import * as BTC from '@chainify/bitcoin';
 import { BitcoinLedgerProvider } from '@chainify/bitcoin-ledger';
 import { Client } from '@chainify/client';
-import LedgerHwTransportNode from '@ledgerhq/hw-transport-node-hid';
+import { NodeTransportCreator } from '../../environment/NodeTransportCreator';
 import { BtcHdWalletConfig, BtcLedgerConfig, BtcNodeConfig } from './config';
 
 function getBtcClientWithNodeWallet(network: BTC.BitcoinTypes.BitcoinNetwork) {
@@ -23,7 +23,11 @@ function getBtcClientWithHDWallet(network: BTC.BitcoinTypes.BitcoinNetwork) {
 function getBtcLedgerClient(network: BTC.BitcoinTypes.BitcoinNetwork) {
     const config = BtcLedgerConfig(network);
     const chainProvider = new BTC.BitcoinJsonRpcProvider(config.chainOptions as any);
-    const walletProvider = new BitcoinLedgerProvider({ ...config.walletOptions, Transport: LedgerHwTransportNode } as any, chainProvider);
+
+    const walletProvider = new BitcoinLedgerProvider(
+        { ...config.walletOptions, transportCreator: new NodeTransportCreator() } as any,
+        chainProvider
+    );
     const swapProvider = new BTC.BitcoinSwapRpcProvider({ network }, walletProvider);
     return new Client(chainProvider, walletProvider, swapProvider);
 }

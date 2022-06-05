@@ -16,8 +16,10 @@
     },
     "dependencies": {
         "@chainify/errors": "workspace:*",
+        "@chainify/logger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
-        "@ledgerhq/hw-transport": "^6.24.1"
+        "@ledgerhq/hw-transport": "6.27.1",
+        "@ledgerhq/hw-transport-webhid": "6.27.1"
     }
 }

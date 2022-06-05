@@ -3,7 +3,7 @@ import HwAppEthereum from '@ledgerhq/hw-app-eth';
 
 export type GetAppType = () => Promise<HwAppEthereum>;
 
-export interface EvmLedgerCreateOptions extends LedgerProviderTypes.CreateOptions<HwAppEthereum> {
+export interface EvmLedgerCreateOptions extends LedgerProviderTypes.CreateOptions {
     derivationPath?: string;
 }
 
