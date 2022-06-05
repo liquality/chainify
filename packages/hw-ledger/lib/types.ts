@@ -6,7 +6,7 @@ import Transport from '@ledgerhq/hw-transport';
 export interface CreateOptions {
     transportCreator: TransportCreator;
     network: Network;
-    scrambleKey: string;
+    scrambleKey?: string;
 }
 
 export type HWApp = HwAppBitcoin | HwAppEthereum;
