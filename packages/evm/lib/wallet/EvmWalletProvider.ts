@@ -1,6 +1,6 @@
 import { Chain } from '@chainify/client';
 import { Address, Network, WalletOptions } from '@chainify/types';
-import { remove0x } from '@chainify/utils';
+import { compare, remove0x } from '@chainify/utils';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { signTypedData, SignTypedDataVersion } from '@metamask/eth-sig-util';
@@ -40,7 +40,7 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
             throw new Error(`Undefined address - from address required to sign typed data.`);
         }
 
-        if (from !== this.signer.address) {
+        if (!compare(from, this.signer.address)) {
             throw new Error(`Non-matching address - from address does not match the signer`);
         }
 
