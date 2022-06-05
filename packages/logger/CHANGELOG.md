@@ -1,5 +1,12 @@
 # @chainify/logger
 
+## 1.0.6
+
+### Patch Changes
+
+-   -   solana balances fetching
+    -   ledger fixes and improvements
+
 ## 1.0.5
 
 ### Patch Changes

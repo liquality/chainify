@@ -1,5 +1,15 @@
 # @chainify/utils
 
+## 1.0.6
+
+### Patch Changes
+
+-   -   solana balances fetching
+    -   ledger fixes and improvements
+-   Updated dependencies
+    -   @chainify/errors@1.0.6
+    -   @chainify/types@1.0.6
+
 ## 1.0.5
 
 ### Patch Changes
