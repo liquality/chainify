@@ -1,5 +1,6 @@
 import { Provider } from '@ethersproject/abstract-provider';
 import { Signer } from '@ethersproject/abstract-signer';
+import { TransactionTypes } from '@ethersproject/transactions';
 import Eth from '@ledgerhq/hw-app-eth';
 import LedgerService from '@ledgerhq/hw-app-eth/lib/services/ledger';
 import { LoadConfig, ResolutionConfig } from '@ledgerhq/hw-app-eth/lib/services/types';
@@ -73,12 +74,15 @@ export class EvmLedgerSigner extends Signer {
             gasLimit: tx.gasLimit || undefined,
             gasPrice: tx.gasPrice || undefined,
             nonce: tx.nonce ? ethers.BigNumber.from(tx.nonce).toNumber() : undefined,
-            maxFeePerGas: tx.maxFeePerGas || undefined,
-            maxPriorityFeePerGas: tx.maxPriorityFeePerGas || undefined,
             type: tx.type,
             to: tx.to || undefined,
             value: tx.value || undefined,
         };
+
+        if (transaction.type === TransactionTypes.eip1559) {
+            baseTx.maxFeePerGas = tx.maxFeePerGas;
+            baseTx.maxPriorityFeePerGas = tx.maxPriorityFeePerGas;
+        }
 
         const unsignedTx = ethers.utils.serializeTransaction(baseTx).substring(2);
         const resolution = await LedgerService.resolveTransaction(unsignedTx, loadConfig, resolutionConfig);

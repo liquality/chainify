@@ -7,5 +7,4 @@ export interface BitcoinLedgerProviderOptions extends LedgerProviderTypes.Create
     baseChainCode?: string;
     addressType: BitcoinTypes.AddressType;
     network: BitcoinTypes.BitcoinNetwork;
-
 }

@@ -7,7 +7,6 @@ export interface EvmLedgerCreateOptions extends LedgerProviderTypes.CreateOption
     derivationPath?: string;
 }
 
-
 export interface LedgerAddressType {
     publicKey: string;
     address: string;
