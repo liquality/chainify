@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.0.8
+
+### Patch Changes
+
+-   -   target is now es6
+-   Updated dependencies
+    -   @chainify/bitcoin@1.0.8
+    -   @chainify/client@1.0.8
+    -   @chainify/errors@1.0.8
+    -   @chainify/hw-ledger@1.0.8
+    -   @chainify/types@1.0.8
+    -   @chainify/utils@1.0.8
+
 ## 1.0.7
 
 ### Patch Changes

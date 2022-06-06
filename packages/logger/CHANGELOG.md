@@ -1,5 +1,11 @@
 # @chainify/logger
 
+## 1.0.8
+
+### Patch Changes
+
+-   -   target is now es6
+
 ## 1.0.7
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @chainify/solana
 
+## 1.0.8
+
+### Patch Changes
+
+-   -   target is now es6
+-   Updated dependencies
+    -   @chainify/client@1.0.8
+    -   @chainify/errors@1.0.8
+    -   @chainify/logger@1.0.8
+    -   @chainify/types@1.0.8
+    -   @chainify/utils@1.0.8
+
 ## 1.0.7
 
 ### Patch Changes
