@@ -5,6 +5,7 @@ import { LedgerProvider } from '@chainify/hw-ledger';
 import { Address, Network } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import HwAppEthereum from '@ledgerhq/hw-app-eth';
+import { ethers } from 'ethers';
 import { EvmLedgerSigner } from './EvmLedgerSigner';
 import { EvmLedgerCreateOptions } from './types';
 
@@ -54,7 +55,7 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
         const address = await app.getAddress(this._derivationPath);
         return [
             new Address({
-                address: address.address,
+                address: ethers.utils.getAddress(address.address?.toLowerCase()),
                 derivationPath: this._derivationPath,
                 publicKey: address.publicKey,
             }),
