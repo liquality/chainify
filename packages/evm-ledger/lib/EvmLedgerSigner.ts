@@ -46,11 +46,11 @@ export class EvmLedgerSigner extends Signer {
 
     public async getAddress(): Promise<string> {
         if (this.addressCache[this.derivationPath]) {
-            return ethers.utils.getAddress(this.addressCache[this.derivationPath].address);
+            return ethers.utils.getAddress(this.addressCache[this.derivationPath].address.toLowerCase());
         }
         const account = await this._retry(async (eth) => await eth.getAddress(this.derivationPath));
         this.addressCache[this.derivationPath] = account;
-        return ethers.utils.getAddress(account.address);
+        return ethers.utils.getAddress(account.address?.toLowerCase());
     }
 
     public async signMessage(message: ethers.utils.Bytes | string): Promise<string> {
