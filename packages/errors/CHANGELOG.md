@@ -1,5 +1,12 @@
 # @chainify/errors
 
+## 1.0.7
+
+### Patch Changes
+
+-   -   ignore case when comparing addresses
+    -   scrambleKey is now optional
+
 ## 1.0.6
 
 ### Patch Changes
