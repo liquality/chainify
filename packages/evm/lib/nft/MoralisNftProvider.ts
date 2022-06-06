@@ -27,8 +27,8 @@ export class MoralisNftProvider extends EvmNftProvider {
         const nftAssets = nfts.result.map((nft) => {
             const { contract_type, token_address, name, symbol, metadata, token_id } = nft;
 
-            this._cache[token_address] = {
-                contract: this._schemas[contract_type].attach(token_address),
+            this.cache[token_address] = {
+                contract: this.schemas[contract_type].attach(token_address),
                 schema: contract_type as NftTypes,
             };
 
