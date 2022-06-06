@@ -26,6 +26,7 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
         });
 
         this._derivationPath = options.derivationPath || defaultPath;
+        this._addressCache = {};
         if (options.addressCache) {
             const { publicKey, address } = options.addressCache;
             this._addressCache = {
