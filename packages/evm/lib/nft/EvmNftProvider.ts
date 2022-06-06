@@ -15,9 +15,10 @@ type NftInfo = { contract: NftContract; schema: NftTypes };
 export class EvmNftProvider extends Nft<BaseProvider, Signer> {
     private _erc721: ERC721;
     private _erc1155: ERC1155;
-    private _cache: Record<string, NftInfo>;
-    private _schemas: Record<string, NftContract>;
-    private _httpClient: HttpClient;
+
+    public _schemas: Record<string, NftContract>;
+    public _cache: Record<string, NftInfo>;
+    public _httpClient: HttpClient;
 
     constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, httpConfig: ClientTypes.AxiosRequestConfig) {
         super(walletProvider);
