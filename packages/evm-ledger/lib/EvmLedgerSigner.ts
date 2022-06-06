@@ -36,21 +36,33 @@ export class EvmLedgerSigner extends Signer {
     private readonly getApp: GetAppType;
     private readonly derivationPath: string;
 
-    constructor(getApp: GetAppType, derivationPath?: string, provider?: Provider) {
+    constructor(getApp: GetAppType, derivationPath?: string, provider?: Provider, addressCache?: {
+        publicKey?: string,
+        address: string
+    }) {
         super();
         this.provider = provider;
         this.addressCache = {};
         this.getApp = getApp;
         this.derivationPath = derivationPath || defaultPath;
+        if (addressCache) {
+            const { publicKey, address } = addressCache;
+            this.addressCache = {
+                [this.derivationPath]: {
+                    publicKey,
+                    address
+                },
+            };
+        }
     }
 
     public async getAddress(): Promise<string> {
         if (this.addressCache[this.derivationPath]) {
             return ethers.utils.getAddress(this.addressCache[this.derivationPath].address.toLowerCase());
         }
-        const account = await this._retry(async (eth) => await eth.getAddress(this.derivationPath));
-        this.addressCache[this.derivationPath] = account;
-        return ethers.utils.getAddress(account.address?.toLowerCase());
+        const { address, publicKey } = await this._retry(async (eth) => await eth.getAddress(this.derivationPath));
+        this.addressCache[this.derivationPath] = { address, publicKey };
+        return ethers.utils.getAddress(address?.toLowerCase());
     }
 
     public async signMessage(message: ethers.utils.Bytes | string): Promise<string> {
