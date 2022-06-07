@@ -10,7 +10,7 @@ export class BitcoinFeeApiProvider extends Fee implements FeeProvider {
     }
 
     async getFees(): Promise<FeeDetails> {
-        const data = await this._httpClient.nodeGet('');
+        const data = await this._httpClient.nodeGet('/');
 
         return {
             slow: {
