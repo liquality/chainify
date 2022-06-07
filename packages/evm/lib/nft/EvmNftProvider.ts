@@ -160,40 +160,33 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
     }
 
     private async _cacheGet(contractAddress: AddressType): Promise<NftInfo> {
-        const ERC721_INTERFACE_ID = '0x80ac58cd';
-        const ERC1155_INTERFACE_ID = '0xd9b67a26';
+        const ERC721_INTERFACE = {
+            id: '0x80ac58cd',
+            type: NftTypes.ERC721,
+        };
+        const ERC1155_INTERFACE = {
+            id: '0xd9b67a26',
+            type: NftTypes.ERC1155,
+        };
+
         const _contractAddress = contractAddress.toString();
 
-        if (!this.cache[_contractAddress]) {
-            const isERC721 = await this.walletProvider
+        for (const _interface of [ERC721_INTERFACE, ERC1155_INTERFACE]) {
+            const isSupported = await this.walletProvider
                 .getChainProvider()
                 .getProvider()
-                .call({ to: contractAddress.toString(), data: new AbiCoder().encode(['bytes4'], [ERC721_INTERFACE_ID]) });
+                .call({ to: contractAddress.toString(), data: new AbiCoder().encode(['bytes4'], [_interface.id]) });
 
-            if (isERC721) {
+            if (isSupported) {
                 this.cache[_contractAddress] = {
-                    contract: this.schemas[NftTypes.ERC721]?.attach(_contractAddress),
-                    schema: NftTypes.ERC721,
+                    contract: this.schemas[_interface.type]?.attach(_contractAddress),
+                    schema: _interface.type,
                 };
 
-                return this.cache[_contractAddress];
+                return;
             }
-
-            const isERC1155 = await this.walletProvider
-                .getChainProvider()
-                .getProvider()
-                .call({ to: contractAddress.toString(), data: new AbiCoder().encode(['bytes4'], [ERC1155_INTERFACE_ID]) });
-
-            if (isERC1155) {
-                this.cache[_contractAddress] = {
-                    contract: this.schemas[NftTypes.ERC1155]?.attach(_contractAddress),
-                    schema: NftTypes.ERC1155,
-                };
-
-                return this.cache[_contractAddress];
-            }
-
-            throw new UnsupportedMethodError(`Cannot find the data for ${_contractAddress}`);
         }
+
+        throw new UnsupportedMethodError(`Cannot find the data for ${_contractAddress}`);
     }
 }
