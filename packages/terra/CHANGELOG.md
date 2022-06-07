@@ -1,5 +1,16 @@
 # @chainify/terra
 
+## 1.0.10
+
+### Patch Changes
+
+-   -   fetch btc fees correctly
+-   Updated dependencies
+    -   @chainify/client@1.0.10
+    -   @chainify/errors@1.0.10
+    -   @chainify/types@1.0.10
+    -   @chainify/utils@1.0.10
+
 ## 1.0.9
 
 ### Patch Changes

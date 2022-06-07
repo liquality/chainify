@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.0.10
+
+### Patch Changes
+
+-   -   fetch btc fees correctly
+
 ## 1.0.9
 
 ### Patch Changes
