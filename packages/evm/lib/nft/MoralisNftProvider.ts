@@ -13,7 +13,7 @@ export class MoralisNftProvider extends EvmNftProvider {
     ) {
         super(walletProvider, httpConfig);
 
-        Moralis.start(moralisConfig);
+        Moralis.start(moralisConfig).then();
     }
 
     async fetch(): Promise<NFTAsset[]> {
