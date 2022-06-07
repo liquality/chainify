@@ -1,0 +1,25 @@
+{
+    "name": "@chainify/hw-ledger",
+    "version": "1.0.11",
+    "description": "",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@chainify/errors": "workspace:*",
+        "@chainify/logger": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
+        "@ledgerhq/hw-transport": "6.27.1",
+        "@ledgerhq/hw-transport-webhid": "6.27.1"
+    }
+}

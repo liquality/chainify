@@ -1,0 +1,36 @@
+{
+    "name": "@chainify/bitcoin",
+    "version": "1.0.11",
+    "description": "",
+    "author": "Liquality <info@liquality.io>",
+    "homepage": "",
+    "license": "ISC",
+    "main": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts",
+    "files": [
+        "dist/**"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rm -rf node_modules .turbo dist"
+    },
+    "dependencies": {
+        "@chainify/client": "workspace:*",
+        "@chainify/errors": "workspace:*",
+        "@chainify/types": "workspace:*",
+        "@chainify/utils": "workspace:*",
+        "@types/bip32": "^2.0.0",
+        "@types/bip39": "^3.0.0",
+        "@types/bitcoinjs-lib": "^5.0.0",
+        "@types/lodash": "^4.14.178",
+        "@types/memoizee": "^0.4.7",
+        "bip174": "^2.0.1",
+        "bip32": "2.0.6",
+        "bip39": "^3.0.4",
+        "bitcoinjs-lib": "5.2.0",
+        "bitcoinjs-message": "2.2.0",
+        "coinselect": "^3.1.12",
+        "lodash": "^4.17.21",
+        "memoizee": "^0.4.15"
+    }
+}

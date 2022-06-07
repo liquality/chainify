@@ -1,100 +1,52 @@
-# Chain Abstraction Layer <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
+# Chainify <img align="right" src="https://raw.githubusercontent.com/liquality/chainabstractionlayer/master/liquality-logo.png" height="80px" />
 
+<pre>
+   ________          _       _ ____     
+  / ____/ /_  ____ _(_)___  (_) __/_  __
+ / /   / __ \/ __ `/ / __ \/ / /_/ / / /
+/ /___/ / / / /_/ / / / / / / __/ /_/ / 
+\____/_/ /_/\__,_/_/_/ /_/_/_/  \__, /  
+                               /____/   
+</pre>
+                               
+Chainify is a flexible, modular library for developing disintermediated solutions across different blockchains.
 
-[![Build Status](https://travis-ci.com/liquality/chainabstractionlayer.svg?branch=master)](https://travis-ci.com/liquality/chainabstractionlayer)
-[![Coverage Status](https://coveralls.io/repos/github/liquality/chainabstractionlayer/badge.svg?branch=master)](https://coveralls.io/github/liquality/chainabstractionlayer?branch=master)
-[![Standard Code Style](https://img.shields.io/badge/codestyle-standard-brightgreen.svg)](https://github.com/standard/standard)
-[![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](./LICENSE.md)
-[![ChainAbstractionLayer](https://img.shields.io/npm/dt/@liquality/chainabstractionlayer.svg)](https://npmjs.com/package/@liquality/chainabstractionlayer)
-[![Gitter](https://img.shields.io/gitter/room/liquality/Lobby.svg)](https://gitter.im/liquality/Lobby?source=orgpage)
-[![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/Liquality) [![Greenkeeper badge](https://badges.greenkeeper.io/liquality/chainabstractionlayer.svg)](https://greenkeeper.io/)
+The repository uses [yarn workspaces](https://yarnpkg.com/features/workspaces) for fast, reliable, and secure dependency management.
 
-> :warning: This project is under heavy development. Expect bugs & breaking changes.
+The build system is using [Turborepo](https://turborepo.org/)
 
-### :pencil: [Introductory Blog Post: The Missing Tool to Cross-Chain Development](https://medium.com/liquality/the-missing-tool-to-cross-chain-development-2ebfe898efa1)
+### Packages
+| Package                                               |                                                                    Version                                                                   |
+| :---------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------: |
+| [@chainify/bitcoin](./packages/bitcoin)               |        [![Chainify](https://img.shields.io/npm/v/@chainify/bitcoin?style=for-the-badge)](https://npmjs.com/package/@chainify/bitcoin)        |
+| [@chainify/bitcoin-ledger](./packages/bitcoin-ledger) | [![Chainify](https://img.shields.io/npm/v/@chainify/bitcoin-ledger?style=for-the-badge)](https://npmjs.com/package/@chainify/bitcoin-ledger) |
+| [@chainify/client](./packages/client)                 |         [![Chainify](https://img.shields.io/npm/v/@chainify/client?style=for-the-badge)](https://npmjs.com/package/@chainify/client)         |
+| [@chainify/errors](./packages/errors)                 |         [![Chainify](https://img.shields.io/npm/v/@chainify/errors?style=for-the-badge)](https://npmjs.com/package/@chainify/errors)         |
+| [@chainify/evm](./packages/evm)                       |            [![Chainify](https://img.shields.io/npm/v/@chainify/evm?style=for-the-badge)](https://npmjs.com/package/@chainify/evm)            |
+| [@chainify/evm-contracts](./packages/evm-contracts)   |  [![Chainify](https://img.shields.io/npm/v/@chainify/evm-contracts?style=for-the-badge)](https://npmjs.com/package/@chainify/evm-contracts)  |
+| [@chainify/evm-ledger](./packages/evm-ledger)         |     [![Chainify](https://img.shields.io/npm/v/@chainify/evm-ledger?style=for-the-badge)](https://npmjs.com/package/@chainify/evm-ledger)     |
+| [@chainify/hw-ledger](./packages/hw-ledger)           |      [![Chainify](https://img.shields.io/npm/v/@chainify/hw-ledger?style=for-the-badge)](https://npmjs.com/package/@chainify/hw-ledger)      |
+| [@chainify/logger](./packages/logger)                 |         [![Chainify](https://img.shields.io/npm/v/@chainify/logger?style=for-the-badge)](https://npmjs.com/package/@chainify/logger)         |
+| [@chainify/near](./packages/near)                     |           [![Chainify](https://img.shields.io/npm/v/@chainify/near?style=for-the-badge)](https://npmjs.com/package/@chainify/near)           |
+| [@chainify/solana](./packages/solana)                 |         [![Chainify](https://img.shields.io/npm/v/@chainify/solana?style=for-the-badge)](https://npmjs.com/package/@chainify/solana)         |
+| [@chainify/terra](./packages/terra)                   |          [![Chainify](https://img.shields.io/npm/v/@chainify/terra?style=for-the-badge)](https://npmjs.com/package/@chainify/terra)          |
+| [@chainify/types](./packages/types)                   |          [![Chainify](https://img.shields.io/npm/v/@chainify/types?style=for-the-badge)](https://npmjs.com/package/@chainify/types)          |
+| [@chainify/utils](./packages/utils)                   |          [![Chainify](https://img.shields.io/npm/v/@chainify/utils?style=for-the-badge)](https://npmjs.com/package/@chainify/utils)          |
 
-Query different blockchains with account management using a single and simple interface.
-
-## Installation
-
+### Install dependencies
 ```bash
-npm install @liquality/chainabstractionlayer
+yarn install
 ```
 
-> **Error: Cannot find module 'babel-runtime/core-js/get-iterator'**
->
-> Issues to track: [LedgerHQ/ledgerjs/issues/211](https://github.com/LedgerHQ/ledgerjs/issues/211), [LedgerHQ/ledgerjs/issues/218](https://github.com/LedgerHQ/ledgerjs/issues/218)
->
-> `npm install babel-runtime`
-
-
-## Usage
-
-```javascript
-import { Client, providers } from '@liquality/chainabstractionlayer'
-
-const { BitcoinRPCProvider } = providers.bitcoin
-
-const bitcoin = new Client()
-bitcoin.addProvider(new BitcoinRPCProvider('http://localhost:8080', 'bitcoin', 'local321'))
-
-bitcoin
-  .generateBlock(1) // returns Promise
-  .then(console.log) // Array<BlockHash>
-```
-
-### Try ChainAbstractionLayer in Browser
-
-<table>
-  <thead>
-    <tr>
-      <th>Chain</th>
-      <th>Wallet Provider</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td rowspan=2>Ethereum</td>
-      <td>Ledger</td>
-      <td>
-        <a href="./examples/browser/ethereum/ledger.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/ethereum/ledger.html">Demo</a>
-      </td>
-    </tr>
-    <tr>
-      <td>MetaMask</td>
-      <td>
-        <a href="./examples/browser/ethereum/metamask.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/ethereum/metamask.html">Demo</a>
-      </td>
-    </tr>
-    <tr>
-      <td>Bitcoin</td>
-      <td>Ledger</td>
-      <td>
-        <a href="./examples/browser/bitcoin/ledger.html">Source</a>
-        &amp;
-        <a href="https://liquality.github.io/chainabstractionlayer/examples/browser/bitcoin/ledger.html">Demo</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-## Documentation
-
-The documentation is being generated by [esdoc](https://www.npmjs.com/package/esdoc). Github Page hosted documentation is available at [liquality.github.io/chainabstractionlayer](https://liquality.github.io/chainabstractionlayer/)
-
-If you want to build documentation locally;
-
+### Build all packages
 ```bash
-npm run build:docs
+yarn build
 ```
 
+### Run all tests
+```bash 
+yarn test
+```
 
-## License
-
+### License
 [MIT](./LICENSE.md)

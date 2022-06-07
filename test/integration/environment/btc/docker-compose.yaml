@@ -1,0 +1,24 @@
+version: '3'
+services:
+    bitcoin:
+        image: ruimarinho/bitcoin-core:0.18.1
+        ports:
+            - '18443:18443'
+        command: -regtest=1
+            -txindex
+            -deprecatedrpc=generate
+            -rpcuser=bitcoin
+            -rpcpassword=local321
+            -rpcallowip=0.0.0.0/0
+            -rpcbind=0.0.0.0
+            -server
+            -rpcworkqueue=400
+    bitcoin-miner:
+        build:
+            context: .
+            dockerfile: miner.Dockerfile
+        environment:
+            - TARGET_HOST=bitcoin
+            - TARGET_PORT=18443
+        depends_on:
+            - bitcoin

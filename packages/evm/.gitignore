@@ -1,0 +1,14 @@
+# directories
+artifacts
+build
+cache
+coverage
+.coverage_artifacts
+.coverage_cache
+.coverage_contracts
+dist
+node_modules
+
+# typechain
+lib/typechain
+
