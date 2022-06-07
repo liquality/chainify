@@ -1,5 +1,18 @@
 # @chainify/evm-ledger
 
+## 1.0.11
+
+### Patch Changes
+
+-   -   add block hash to tx response for Near
+-   Updated dependencies
+    -   @chainify/client@1.0.11
+    -   @chainify/errors@1.0.11
+    -   @chainify/evm@1.0.11
+    -   @chainify/hw-ledger@1.0.11
+    -   @chainify/types@1.0.11
+    -   @chainify/utils@1.0.11
+
 ## 1.0.10
 
 ### Patch Changes

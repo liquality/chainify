@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.0.11
+
+### Patch Changes
+
+-   -   add block hash to tx response for Near
+
 ## 1.0.10
 
 ### Patch Changes
