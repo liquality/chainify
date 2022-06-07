@@ -8,7 +8,7 @@ import { BaseProvider, Log } from '@ethersproject/providers';
 import { LiqualityHTLC, LiqualityHTLC__factory } from '../typechain';
 import { ClaimEvent, InitiateEvent, RefundEvent } from '../typechain/LiqualityHTLC';
 import { EthersTransactionResponse, EvmSwapOptions } from '../types';
-import { parseSwapParams, toEthereumTxRequest } from '../utils';
+import { calculateGasMargin, parseSwapParams, toEthereumTxRequest } from '../utils';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 
 export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, EvmBaseWalletProvider<BaseProvider>> {
@@ -22,6 +22,9 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
         this.swapOptions = {
             ...swapOptions,
             contractAddress: swapOptions?.contractAddress || '0x133713376F69C1A67d7f3594583349DFB53d8166',
+            numberOfBlocksPerRequest: swapOptions?.numberOfBlocksPerRequest || 2000,
+            totalNumberOfBlocks: swapOptions?.totalNumberOfBlocks || 100_000,
+            gasLimitMargin: swapOptions?.gasLimitMargin || 1000, // 10%
         };
 
         if (walletProvider) {
@@ -34,7 +37,10 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
         const parsedSwapParams = parseSwapParams(swapParams);
         const value = swapParams.asset.isNative ? parsedSwapParams.amount : 0;
         const tx = await this.contract.populateTransaction.initiate(parsedSwapParams, { value });
-        return await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
+        const estimatedGasLimit = await this.contract.estimateGas.initiate(parsedSwapParams, { value });
+        return await this.walletProvider.sendTransaction(
+            toEthereumTxRequest({ ...tx, gasLimit: calculateGasMargin(estimatedGasLimit, this.swapOptions.gasLimitMargin) }, fee)
+        );
     }
 
     public async claimSwap(
@@ -54,8 +60,15 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
                 const initiate = this.tryParseLog(log);
 
                 if (initiate?.args?.id) {
-                    const tx = await this.contract.populateTransaction.claim(initiate.args.id, ensure0x(secret));
-                    const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
+                    const secret0x = ensure0x(secret);
+                    const tx = await this.contract.populateTransaction.claim(initiate.args.id, secret0x);
+                    const estimatedGasLimit = await this.contract.estimateGas.claim(initiate.args.id, secret0x);
+                    const txResponse = await this.walletProvider.sendTransaction(
+                        toEthereumTxRequest(
+                            { ...tx, gasLimit: calculateGasMargin(estimatedGasLimit, this.swapOptions.gasLimitMargin) },
+                            fee
+                        )
+                    );
                     return txResponse;
                 }
             }
@@ -73,7 +86,13 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
 
                 if (initiate?.args?.id) {
                     const tx = await this.contract.populateTransaction.refund(initiate.args.id);
-                    const txResponse = await this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
+                    const estimatedGasLimit = await this.contract.estimateGas.refund(initiate.args.id);
+                    const txResponse = await this.walletProvider.sendTransaction(
+                        toEthereumTxRequest(
+                            { ...tx, gasLimit: calculateGasMargin(estimatedGasLimit, this.swapOptions.gasLimitMargin) },
+                            fee
+                        )
+                    );
                     return txResponse;
                 }
             }

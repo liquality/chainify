@@ -46,16 +46,16 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
     }
 
     private async searchLogs(callback: (from: number, to: number) => Promise<Transaction>, currentBlock: number) {
-        let from = Math.sub(currentBlock, 5000).toString();
+        let from = Math.sub(currentBlock, this.swapOptions.numberOfBlocksPerRequest).toString();
         let to = currentBlock.toString();
 
-        while (Math.gte(from, Math.sub(currentBlock, 100000))) {
+        while (Math.gte(from, Math.sub(currentBlock, this.swapOptions.totalNumberOfBlocks))) {
             const result = await callback(Number(from), Number(to));
             if (result) {
                 return result;
             }
-            from = Math.sub(from, 5000).toString();
-            to = Math.sub(to, 5000).toString();
+            from = Math.sub(from, this.swapOptions.numberOfBlocksPerRequest).toString();
+            to = Math.sub(to, this.swapOptions.numberOfBlocksPerRequest).toString();
         }
     }
 
