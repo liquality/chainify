@@ -1,6 +1,6 @@
 import { ClientTypes } from '@chainify/client';
 import { BaseProvider } from '@ethersproject/providers';
-import { NFTAsset, NftTypes } from 'lib/types';
+import { NFTAsset, NftTypes } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmNftProvider } from './EvmNftProvider';
 

@@ -1,9 +1,9 @@
 import { ClientTypes } from '@chainify/client';
 import { BaseProvider } from '@ethersproject/providers';
-import { EvmNftProvider } from 'lib/nft/EvmNftProvider';
 import { MoralisConfig, NFTAsset, NftTypes } from 'lib/types';
 import Moralis from 'moralis/node';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
+import { EvmNftProvider } from './EvmNftProvider';
 
 export class MoralisNftProvider extends EvmNftProvider {
     constructor(
