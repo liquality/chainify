@@ -1,6 +1,7 @@
 import { ClientTypes, HttpClient, Nft } from '@chainify/client';
 import { UnsupportedMethodError } from '@chainify/errors';
 import { AddressType, BigNumber, FeeType, Transaction } from '@chainify/types';
+import { AbiCoder } from '@ethersproject/abi';
 import { Signer } from '@ethersproject/abstract-signer';
 import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider } from '@ethersproject/providers';
@@ -159,20 +160,40 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
     }
 
     private async _cacheGet(contractAddress: AddressType): Promise<NftInfo> {
+        const ERC721_INTERFACE_ID = '0x80ac58cd';
+        const ERC1155_INTERFACE_ID = '0xd9b67a26';
         const _contractAddress = contractAddress.toString();
-        if (!this.cache[_contractAddress]) {
-            const result = await this.httpClient.nodeGet<null, { schema_name: string }>(`asset_contract/${_contractAddress}`);
 
-            if (!result.schema_name) {
-                throw new UnsupportedMethodError(`Cannot find the data for ${_contractAddress}`);
+        if (!this.cache[_contractAddress]) {
+            const isERC721 = await this.walletProvider
+                .getChainProvider()
+                .getProvider()
+                .call({ to: contractAddress.toString(), data: new AbiCoder().encode(['bytes4'], [ERC721_INTERFACE_ID]) });
+
+            if (isERC721) {
+                this.cache[_contractAddress] = {
+                    contract: this.schemas[NftTypes.ERC721]?.attach(_contractAddress),
+                    schema: NftTypes.ERC721,
+                };
+
+                return this.cache[_contractAddress];
             }
 
-            this.cache[_contractAddress] = {
-                contract: this.schemas[result.schema_name]?.attach(_contractAddress),
-                schema: result.schema_name as NftTypes,
-            };
-        }
+            const isERC1155 = await this.walletProvider
+                .getChainProvider()
+                .getProvider()
+                .call({ to: contractAddress.toString(), data: new AbiCoder().encode(['bytes4'], [ERC1155_INTERFACE_ID]) });
 
-        return this.cache[_contractAddress];
+            if (isERC1155) {
+                this.cache[_contractAddress] = {
+                    contract: this.schemas[NftTypes.ERC1155]?.attach(_contractAddress),
+                    schema: NftTypes.ERC1155,
+                };
+
+                return this.cache[_contractAddress];
+            }
+
+            throw new UnsupportedMethodError(`Cannot find the data for ${_contractAddress}`);
+        }
     }
 }
