@@ -18,6 +18,7 @@ import { createAccount, createTransferInstruction, getAssociatedTokenAddress } f
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
+import { SolanaTxRequest } from 'lib/types';
 import nacl from 'tweetnacl';
 import { SolanaChainProvider } from '../';
 
@@ -83,36 +84,43 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         return Buffer.from(signature).toString('hex');
     }
 
-    public async sendTransaction(txRequest: TransactionRequest): Promise<Transaction> {
-        const to = new PublicKey(txRequest.to.toString());
+    public async sendTransaction(txRequest: SolanaTxRequest): Promise<Transaction> {
+        let transaction: SolTransaction;
 
-        let instruction: TransactionInstruction;
-        // Handle ERC20 Transactions
-        if (txRequest.asset && !txRequest.asset.isNative) {
-            const contractAddress = new PublicKey(txRequest.asset.contractAddress);
-            const fromTokenAccount = await getAssociatedTokenAddress(contractAddress, this._signer.publicKey);
-
-            try {
-                await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
-            } catch (err) {
-                logger.debug(`Error creating account`, err);
-            }
-
-            const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
-
-            instruction = createTransferInstruction(fromTokenAccount, toTokenAccount, this._signer.publicKey, Number(txRequest.value));
+        // Handle already builded transactions that are passed from outside - Jupiter for example
+        if (txRequest.transaction) {
+            transaction = txRequest.transaction;
         } else {
-            // Handle SOL Transactions
-            instruction = SystemProgram.transfer({
-                fromPubkey: this._signer.publicKey,
-                toPubkey: to,
-                lamports: txRequest.value.toNumber(),
-            });
+            let instruction: TransactionInstruction;
+            const to = new PublicKey(txRequest.to.toString());
+
+            // Handle ERC20 Transactions
+            if (txRequest.asset && !txRequest.asset.isNative) {
+                const contractAddress = new PublicKey(txRequest.asset.contractAddress);
+                const fromTokenAccount = await getAssociatedTokenAddress(contractAddress, this._signer.publicKey);
+
+                try {
+                    await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
+                } catch (err) {
+                    logger.debug(`Error creating account`, err);
+                }
+
+                const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
+
+                instruction = createTransferInstruction(fromTokenAccount, toTokenAccount, this._signer.publicKey, Number(txRequest.value));
+            } else {
+                // Handle SOL Transactions
+                instruction = SystemProgram.transfer({
+                    fromPubkey: this._signer.publicKey,
+                    toPubkey: to,
+                    lamports: txRequest.value.toNumber(),
+                });
+
+                const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash());
+
+                transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
+            }
         }
-
-        const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash());
-
-        const transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
 
         const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer]);
 
