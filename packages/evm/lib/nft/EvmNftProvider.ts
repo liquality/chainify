@@ -183,7 +183,7 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
                     schema: _interface.type,
                 };
 
-                return;
+                return this.cache[_contractAddress];
             }
         }
 
