@@ -1,3 +1,4 @@
+import { Address } from '@chainify/types';
 import { Provider, TransactionRequest } from '@ethersproject/abstract-provider';
 import { Signer } from '@ethersproject/abstract-signer';
 import { getAddress } from '@ethersproject/address';
@@ -40,15 +41,7 @@ export class EvmLedgerSigner extends Signer {
     private readonly getApp: GetAppType;
     private readonly derivationPath: string;
 
-    constructor(
-        getApp: GetAppType,
-        derivationPath?: string,
-        provider?: Provider,
-        addressCache?: {
-            publicKey?: string;
-            address: string;
-        }
-    ) {
+    constructor(getApp: GetAppType, derivationPath?: string, provider?: Provider, addressCache?: Address) {
         super();
         this.provider = provider;
         this.addressCache = {};
@@ -57,10 +50,7 @@ export class EvmLedgerSigner extends Signer {
         if (addressCache) {
             const { publicKey, address } = addressCache;
             this.addressCache = {
-                [this.derivationPath]: {
-                    publicKey,
-                    address,
-                },
+                [this.derivationPath]: { publicKey, address },
             };
         }
     }
