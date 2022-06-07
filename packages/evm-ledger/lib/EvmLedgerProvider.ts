@@ -3,9 +3,9 @@ import { UnimplementedMethodError } from '@chainify/errors';
 import { EvmBaseWalletProvider } from '@chainify/evm';
 import { LedgerProvider } from '@chainify/hw-ledger';
 import { Address, Network } from '@chainify/types';
+import { getAddress } from '@ethersproject/address';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import HwAppEthereum from '@ledgerhq/hw-app-eth';
-import { ethers } from 'ethers';
 import { EvmLedgerSigner } from './EvmLedgerSigner';
 import { EvmLedgerCreateOptions } from './types';
 
@@ -32,11 +32,16 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
             this._addressCache = {
                 [options.derivationPath]: {
                     publicKey,
-                    address
+                    address,
                 },
             };
         }
-        this._ledgerSigner = new EvmLedgerSigner(this._ledgerProvider.getApp.bind(this._ledgerProvider), this._derivationPath, null, options.addressCache);
+        this._ledgerSigner = new EvmLedgerSigner(
+            this._ledgerProvider.getApp.bind(this._ledgerProvider),
+            this._derivationPath,
+            null,
+            options.addressCache
+        );
 
         if (chainProvider) {
             this._ledgerSigner = this._ledgerSigner.connect(chainProvider.getProvider());
@@ -65,24 +70,14 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     public async getAddresses(): Promise<Address[]> {
         if (this._addressCache[this._derivationPath]) {
             const { address, publicKey } = this._addressCache[this._derivationPath];
-            return [new Address({
-                address,
-                derivationPath: this._derivationPath,
-                publicKey
-            })];
+            return [new Address({ address, derivationPath: this._derivationPath, publicKey })];
         }
 
         const ledgerAddress = await this.getLedgerAddress();
-        const { address, publicKey } = ledgerAddress
-        const _address = ethers.utils.getAddress(address.toLowerCase());
+        const { address, publicKey } = ledgerAddress;
+        const _address = getAddress(address.toLowerCase());
         this._addressCache[this._derivationPath] = { publicKey, address: _address };
-        return [
-            new Address({
-                address: _address,
-                derivationPath: this._derivationPath,
-                publicKey
-            }),
-        ];
+        return [new Address({ address: _address, derivationPath: this._derivationPath, publicKey })];
     }
 
     public async getLedgerAddress(): Promise<{

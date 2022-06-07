@@ -1,10 +1,14 @@
-import { Provider } from '@ethersproject/abstract-provider';
+import { Provider, TransactionRequest } from '@ethersproject/abstract-provider';
 import { Signer } from '@ethersproject/abstract-signer';
-import { TransactionTypes } from '@ethersproject/transactions';
+import { getAddress } from '@ethersproject/address';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Bytes, hexlify, joinSignature } from '@ethersproject/bytes';
+import { resolveProperties } from '@ethersproject/properties';
+import { toUtf8Bytes } from '@ethersproject/strings';
+import { serialize, TransactionTypes, UnsignedTransaction } from '@ethersproject/transactions';
 import Eth from '@ledgerhq/hw-app-eth';
 import LedgerService from '@ledgerhq/hw-app-eth/lib/services/ledger';
 import { LoadConfig, ResolutionConfig } from '@ledgerhq/hw-app-eth/lib/services/types';
-import { ethers } from 'ethers';
 import { GetAppType, LedgerAddressType } from './types';
 
 const defaultPath = "m/44'/60'/0'/0/0";
@@ -36,10 +40,15 @@ export class EvmLedgerSigner extends Signer {
     private readonly getApp: GetAppType;
     private readonly derivationPath: string;
 
-    constructor(getApp: GetAppType, derivationPath?: string, provider?: Provider, addressCache?: {
-        publicKey?: string,
-        address: string
-    }) {
+    constructor(
+        getApp: GetAppType,
+        derivationPath?: string,
+        provider?: Provider,
+        addressCache?: {
+            publicKey?: string;
+            address: string;
+        }
+    ) {
         super();
         this.provider = provider;
         this.addressCache = {};
@@ -50,7 +59,7 @@ export class EvmLedgerSigner extends Signer {
             this.addressCache = {
                 [this.derivationPath]: {
                     publicKey,
-                    address
+                    address,
                 },
             };
         }
@@ -58,34 +67,34 @@ export class EvmLedgerSigner extends Signer {
 
     public async getAddress(): Promise<string> {
         if (this.addressCache[this.derivationPath]) {
-            return ethers.utils.getAddress(this.addressCache[this.derivationPath].address.toLowerCase());
+            return getAddress(this.addressCache[this.derivationPath].address.toLowerCase());
         }
         const { address, publicKey } = await this._retry(async (eth) => await eth.getAddress(this.derivationPath));
         this.addressCache[this.derivationPath] = { address, publicKey };
-        return ethers.utils.getAddress(address?.toLowerCase());
+        return getAddress(address?.toLowerCase());
     }
 
-    public async signMessage(message: ethers.utils.Bytes | string): Promise<string> {
+    public async signMessage(message: Bytes | string): Promise<string> {
         if (typeof message === 'string') {
-            message = ethers.utils.toUtf8Bytes(message);
+            message = toUtf8Bytes(message);
         }
 
-        const messageHex = ethers.utils.hexlify(message).substring(2);
+        const messageHex = hexlify(message).substring(2);
 
         const sig = await this._retry((eth) => eth.signPersonalMessage(this.derivationPath, messageHex));
         sig.r = '0x' + sig.r;
         sig.s = '0x' + sig.s;
-        return ethers.utils.joinSignature(sig);
+        return joinSignature(sig);
     }
 
-    public async signTransaction(transaction: ethers.providers.TransactionRequest): Promise<string> {
-        const tx = await ethers.utils.resolveProperties(transaction);
-        const baseTx: ethers.utils.UnsignedTransaction = {
+    public async signTransaction(transaction: TransactionRequest): Promise<string> {
+        const tx = await resolveProperties(transaction);
+        const baseTx: UnsignedTransaction = {
             chainId: tx.chainId || undefined,
             data: tx.data || undefined,
             gasLimit: tx.gasLimit || undefined,
             gasPrice: tx.gasPrice || undefined,
-            nonce: tx.nonce ? ethers.BigNumber.from(tx.nonce).toNumber() : undefined,
+            nonce: tx.nonce ? BigNumber.from(tx.nonce).toNumber() : undefined,
             type: tx.type,
             to: tx.to || undefined,
             value: tx.value || undefined,
@@ -96,11 +105,11 @@ export class EvmLedgerSigner extends Signer {
             baseTx.maxPriorityFeePerGas = tx.maxPriorityFeePerGas;
         }
 
-        const unsignedTx = ethers.utils.serializeTransaction(baseTx).substring(2);
+        const unsignedTx = serialize(baseTx).substring(2);
         const resolution = await LedgerService.resolveTransaction(unsignedTx, loadConfig, resolutionConfig);
         const sig = await this._retry(async (eth) => await eth.signTransaction(this.derivationPath, unsignedTx, resolution));
-        return ethers.utils.serializeTransaction(baseTx, {
-            v: ethers.BigNumber.from('0x' + sig.v).toNumber(),
+        return serialize(baseTx, {
+            v: BigNumber.from('0x' + sig.v).toNumber(),
             r: '0x' + sig.r,
             s: '0x' + sig.s,
         });
