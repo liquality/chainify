@@ -1,5 +1,22 @@
 # @chainify/bitcoin-ledger
 
+## 1.1.0
+
+### Minor Changes
+
+-   Add moralis nft provider
+    Standardise nft fetch response
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @chainify/bitcoin@1.1.0
+    -   @chainify/client@1.1.0
+    -   @chainify/errors@1.1.0
+    -   @chainify/hw-ledger@1.1.0
+    -   @chainify/types@1.1.0
+    -   @chainify/utils@1.1.0
+
 ## 1.0.12
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @chainify/logger
 
+## 1.1.0
+
+### Minor Changes
+
+-   Add moralis nft provider
+    Standardise nft fetch response
+
 ## 1.0.12
 
 ### Patch Changes
