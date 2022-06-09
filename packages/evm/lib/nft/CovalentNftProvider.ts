@@ -1,6 +1,6 @@
 import { ClientTypes } from '@chainify/client';
 import { BaseProvider } from '@ethersproject/providers';
-import { NFTAsset, NftTypes } from 'lib/types';
+import { NFTAsset } from 'lib/types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmNftProvider } from './EvmNftProvider';
 
@@ -36,11 +36,11 @@ export class CovalentNftProvider extends EvmNftProvider {
 
                     this.cache[contract_address] = {
                         contract: this.schemas[supports_erc.pop().toUpperCase()].attach(contract_address),
-                        schema: supports_erc.pop().toUpperCase() as NftTypes,
+                        schema: supports_erc.pop().toUpperCase(),
                     };
 
                     if (!nft_data.length) {
-                        return resp as NFTAsset;
+                        return resp;
                     }
 
                     const data = nft_data[0];
@@ -55,7 +55,7 @@ export class CovalentNftProvider extends EvmNftProvider {
                         image_original_url: external_data.image,
                         image_preview_url: external_data.image,
                         image_thumbnail_url: external_data.image,
-                    } as NFTAsset;
+                    };
                 }
             })
             .filter(Boolean);

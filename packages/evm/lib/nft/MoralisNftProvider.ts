@@ -1,22 +1,25 @@
 import { ClientTypes } from '@chainify/client';
 import { BaseProvider } from '@ethersproject/providers';
-import { MoralisConfig, NFTAsset, NftTypes } from 'lib/types';
+import { MoralisConfig, NFTAsset } from 'lib/types';
 import Moralis from 'moralis/node';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmNftProvider } from './EvmNftProvider';
 
 export class MoralisNftProvider extends EvmNftProvider {
+    private _moralisConfig: MoralisConfig;
+
     constructor(
         walletProvider: EvmBaseWalletProvider<BaseProvider>,
         httpConfig: ClientTypes.AxiosRequestConfig,
         moralisConfig: MoralisConfig
     ) {
         super(walletProvider, httpConfig);
-
-        Moralis.start(moralisConfig).then();
+        this._moralisConfig = moralisConfig;
     }
 
     async fetch(): Promise<NFTAsset[]> {
+        await Moralis.start(this._moralisConfig);
+
         const [userAddress, network] = await Promise.all([this.walletProvider.getAddress(), this.walletProvider.getConnectedNetwork()]);
 
         const nfts = await Moralis.Web3API.account.getNFTs({
@@ -29,7 +32,7 @@ export class MoralisNftProvider extends EvmNftProvider {
 
             this.cache[token_address] = {
                 contract: this.schemas[contract_type].attach(token_address),
-                schema: contract_type as NftTypes,
+                schema: contract_type,
             };
 
             const nftAsset = {
@@ -42,7 +45,7 @@ export class MoralisNftProvider extends EvmNftProvider {
                     name,
                 },
                 token_id,
-            } as NFTAsset;
+            };
 
             if (!metadata) {
                 return nftAsset;
@@ -58,7 +61,7 @@ export class MoralisNftProvider extends EvmNftProvider {
                 image_preview_url: parsed.image,
                 image_thumbnail_url: parsed.image,
                 external_link: parsed.external_url,
-            } as NFTAsset;
+            };
         });
 
         return nftAssets;

@@ -13,7 +13,7 @@ export class OpenSeaNftProvider extends EvmNftProvider {
         const userAddress = await this.walletProvider.getAddress();
         const nfts = await this.httpClient.nodeGet(`assets?owner=${userAddress}`);
 
-        const data = nfts.assets.map((nft: any) => {
+        const data = nfts.assets.map((nft) => {
             if (nft.asset_contract) {
                 const { schema_name, address } = nft.asset_contract;
 
@@ -57,7 +57,7 @@ export class OpenSeaNftProvider extends EvmNftProvider {
                     image_thumbnail_url,
                     name,
                     token_id,
-                } as NFTAsset;
+                };
             }
         });
         return data;
