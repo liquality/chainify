@@ -1,5 +1,20 @@
 # @chainify/bitcoin-ledger
 
+## 1.0.12
+
+### Patch Changes
+
+-   -   terra fix for memo
+    -   bump cryptoassets version
+    -   bump terra-money.js version
+-   Updated dependencies
+    -   @chainify/bitcoin@1.0.12
+    -   @chainify/client@1.0.12
+    -   @chainify/errors@1.0.12
+    -   @chainify/hw-ledger@1.0.12
+    -   @chainify/types@1.0.12
+    -   @chainify/utils@1.0.12
+
 ## 1.0.11
 
 ### Patch Changes

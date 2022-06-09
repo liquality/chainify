@@ -1,5 +1,13 @@
 # @chainify/evm-contracts
 
+## 1.0.12
+
+### Patch Changes
+
+-   -   terra fix for memo
+    -   bump cryptoassets version
+    -   bump terra-money.js version
+
 ## 1.0.11
 
 ### Patch Changes
