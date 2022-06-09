@@ -188,7 +188,7 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
         const feeDenom = assetCodeToDenom[txRequest.feeAsset.code];
         const terraTx: CreateTxOptions = {
             msgs: txRequest.msgs,
-            memo: txRequest.memo,
+            memo: txRequest.memo || txRequest.data, // if memo is undefined, try with data
             feeDenoms: [feeDenom],
         };
 

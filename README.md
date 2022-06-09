@@ -48,5 +48,19 @@ yarn build
 yarn test
 ```
 
+### Release a new version
+```bash
+yarn changeset
+   # choose the version bump - major, minor or patch
+   # add change summary
+
+yarn version
+   # review changes
+   # yarn build —force
+
+yarn release
+yarn tag
+```
+
 ### License
 [MIT](./LICENSE.md)

@@ -1,5 +1,42 @@
 # @chainify/types
 
+## 1.0.12
+
+### Patch Changes
+
+-   -   terra fix for memo
+    -   bump cryptoassets version
+    -   bump terra-money.js version
+
+## 1.0.11
+
+### Patch Changes
+
+-   -   add block hash to tx response for Near
+
+## 1.0.10
+
+### Patch Changes
+
+-   -   fetch btc fees correctly
+
+## 1.0.9
+
+### Patch Changes
+
+-   -   add flexible swap options for EVM chains
+        -   numberOfBlocksPerRequest - the amount of blocks to search for events in a single call (default = 2000)
+        -   totalNumberOfBlocks - the total number of blocks to search for events (default = 100_000)
+        -   gasLimitMargin - percentage gas margin for chains that does not estimate gas correctly (e.g. RSK) (default=10%)
+    -   add address cache for EVM ledger
+    -   use toLowerCase in EVM ledger to support RSK checksum
+
+## 1.0.8
+
+### Patch Changes
+
+-   -   target is now es6
+
 ## 1.0.7
 
 ### Patch Changes

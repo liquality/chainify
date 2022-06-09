@@ -12,6 +12,9 @@ export interface SignTypedMessageType<V extends SignTypedDataVersion = SignTyped
 
 export interface EvmSwapOptions {
     contractAddress: string;
+    numberOfBlocksPerRequest?: number;
+    totalNumberOfBlocks?: number;
+    gasLimitMargin?: number;
 }
 
 export type FeeOptions = {

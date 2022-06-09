@@ -31,6 +31,7 @@ export function parseTxResponse(response: NearTxResponse, blockNumber?: number, 
     const parsedActions = parseTxActions(tx);
 
     const result: Transaction<NearTxLog> = {
+        blockHash: (response.transaction_outcome as any).block_hash,
         hash: `${tx.hash}_${tx.signer_id}`,
         to: tx.receiver_id,
         from: tx.signer_id,

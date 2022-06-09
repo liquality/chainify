@@ -151,3 +151,8 @@ function toEthersBigNumber(a: BigNumberish): EthersBigNumber {
         return EthersBigNumber.from(a.toString());
     }
 }
+
+export function calculateGasMargin(value: BigNumberish, margin = 1000) {
+    const offset = new BigNumber(value.toString()).multipliedBy(margin).div('10000');
+    return toEthersBigNumber(offset.plus(value.toString()).toFixed(0));
+}
