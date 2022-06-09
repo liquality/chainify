@@ -1,32 +1,31 @@
-import { ClientTypes, HttpClient, Nft } from '@chainify/client';
+import { Nft } from '@chainify/client';
 import { UnsupportedMethodError } from '@chainify/errors';
 import { AddressType, BigNumber, FeeType, Transaction } from '@chainify/types';
 import { Signer } from '@ethersproject/abstract-signer';
 import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider } from '@ethersproject/providers';
 import { ERC1155, ERC1155__factory, ERC721, ERC721__factory } from '../typechain';
-import { EthersPopulatedTransaction, EthersTransactionResponse, NftTypes } from '../types';
+import { EthersPopulatedTransaction, EthersTransactionResponse, NFTAsset, NftTypes } from '../types';
 import { toEthereumTxRequest } from '../utils';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 
 type NftContract = ERC721 | ERC1155;
 type NftInfo = { contract: NftContract; schema: NftTypes };
 
-export class EvmNftProvider extends Nft<BaseProvider, Signer> {
+export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
     private _erc721: ERC721;
     private _erc1155: ERC1155;
-    private _cache: Record<string, NftInfo>;
-    private _schemas: Record<string, NftContract>;
-    private _httpClient: HttpClient;
 
-    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, httpConfig: ClientTypes.AxiosRequestConfig) {
+    protected schemas: Record<string, NftContract>;
+    protected cache: Record<string, NftInfo>;
+
+    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>) {
         super(walletProvider);
 
         this._erc721 = ERC721__factory.connect(AddressZero, this.walletProvider.getSigner());
         this._erc1155 = ERC1155__factory.connect(AddressZero, this.walletProvider.getSigner());
-        this._cache = {};
-        this._schemas = { ERC721: this._erc721, ERC1155: this._erc1155 };
-        this._httpClient = new HttpClient(httpConfig);
+        this.cache = {};
+        this.schemas = { ERC721: this._erc721, ERC1155: this._erc1155 };
     }
 
     public async transfer(
@@ -34,7 +33,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         receiver: AddressType,
         tokenIDs: number[],
         amounts?: number[],
-        data?: string,
+        data = '0x',
         fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
         const { schema, contract } = await this._cacheGet(contractAddress);
@@ -46,16 +45,7 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         switch (schema) {
             case NftTypes.ERC721: {
                 const _contract: ERC721 = contract as ERC721;
-                if (data) {
-                    tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](
-                        owner,
-                        to,
-                        tokenIDs[0],
-                        data
-                    );
-                } else {
-                    tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256)'](owner, to, tokenIDs[0]);
-                }
+                tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](owner, to, tokenIDs[0], data);
                 break;
             }
 
@@ -153,39 +143,39 @@ export class EvmNftProvider extends Nft<BaseProvider, Signer> {
         return this.walletProvider.sendTransaction(toEthereumTxRequest(tx, fee));
     }
 
-    async fetch() {
-        const userAddress = await this.walletProvider.getAddress();
-        const nfts = await this._httpClient.nodeGet(`assets?owner=${userAddress}`);
-
-        nfts.assets.map((nft: any) => {
-            if (nft.asset_contract) {
-                const { schema_name, address } = nft.asset_contract;
-                if (schema_name && address) {
-                    this._cache[address] = {
-                        contract: this._schemas[schema_name].attach(address),
-                        schema: schema_name as NftTypes,
-                    };
-                }
-            }
-        });
-        return nfts;
+    async fetch(): Promise<NFTAsset[]> {
+        throw new Error('Method not implemented');
     }
 
     private async _cacheGet(contractAddress: AddressType): Promise<NftInfo> {
         const _contractAddress = contractAddress.toString();
-        if (!this._cache[_contractAddress]) {
-            const result = await this._httpClient.nodeGet<null, { schema_name: string }>(`asset_contract/${_contractAddress}`);
 
-            if (!result.schema_name) {
-                throw new UnsupportedMethodError(`Cannot find the data for ${_contractAddress}`);
+        if (this.cache[_contractAddress]) {
+            return this.cache[_contractAddress];
+        }
+        const ERC721_INTERFACE = {
+            id: '0x80ac58cd',
+            type: NftTypes.ERC721,
+        };
+        const ERC1155_INTERFACE = {
+            id: '0xd9b67a26',
+            type: NftTypes.ERC1155,
+        };
+
+        for (const _interface of [ERC721_INTERFACE, ERC1155_INTERFACE]) {
+            // we can use erc721 because both erc721 and erc1155 support that interface
+            const isSupported = await this._erc721.attach(_contractAddress).supportsInterface(_interface.id);
+
+            if (isSupported) {
+                this.cache[_contractAddress] = {
+                    contract: this.schemas[_interface.type].attach(_contractAddress),
+                    schema: _interface.type,
+                };
+
+                return this.cache[_contractAddress];
             }
-
-            this._cache[_contractAddress] = {
-                contract: this._schemas[result.schema_name]?.attach(_contractAddress),
-                schema: result.schema_name as NftTypes,
-            };
         }
 
-        return this._cache[_contractAddress];
+        throw new UnsupportedMethodError(`Cannot find the data for ${_contractAddress}`);
     }
 }
