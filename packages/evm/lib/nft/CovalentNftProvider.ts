@@ -22,45 +22,43 @@ export class CovalentNftProvider extends EvmNftProvider {
         );
 
         return response.data.items
+            .filter((asset) => asset.type === 'nft')
             .map((asset) => {
-                if (asset.type === 'nft') {
-                    const { contract_name, contract_ticker_symbol, contract_address, supports_erc, nft_data } = asset;
+                const { contract_name, contract_ticker_symbol, contract_address, supports_erc, nft_data } = asset;
 
-                    const resp = {
-                        asset_contract: {
-                            address: contract_address,
-                            name: contract_name,
-                            symbol: contract_ticker_symbol,
-                        },
-                        collection: {
-                            name: contract_name,
-                        },
-                    };
+                const resp = {
+                    asset_contract: {
+                        address: contract_address,
+                        name: contract_name,
+                        symbol: contract_ticker_symbol,
+                    },
+                    collection: {
+                        name: contract_name,
+                    },
+                };
 
-                    this.cache[contract_address] = {
-                        contract: this.schemas[supports_erc.pop().toUpperCase()].attach(contract_address),
-                        schema: supports_erc.pop().toUpperCase(),
-                    };
+                this.cache[contract_address] = {
+                    contract: this.schemas[supports_erc.pop().toUpperCase()].attach(contract_address),
+                    schema: supports_erc.pop().toUpperCase(),
+                };
 
-                    if (!nft_data.length) {
-                        return resp;
-                    }
-
-                    const data = nft_data[0];
-                    const { external_data } = data;
-
-                    return {
-                        ...resp,
-                        token_id: data.token_id,
-                        name: external_data.name,
-                        description: external_data.description,
-                        external_link: external_data.external_url,
-                        image_original_url: external_data.image,
-                        image_preview_url: external_data.image,
-                        image_thumbnail_url: external_data.image,
-                    };
+                if (!nft_data.length) {
+                    return resp;
                 }
-            })
-            .filter(Boolean);
+
+                const data = nft_data[0];
+                const { external_data } = data;
+
+                return {
+                    ...resp,
+                    token_id: data.token_id,
+                    name: external_data.name,
+                    description: external_data.description,
+                    external_link: external_data.external_url,
+                    image_original_url: external_data.image,
+                    image_preview_url: external_data.image,
+                    image_thumbnail_url: external_data.image,
+                };
+            });
     }
 }
