@@ -1,20 +1,23 @@
-import { ClientTypes } from '@chainify/client';
+import { ClientTypes, HttpClient } from '@chainify/client';
 import { BaseProvider } from '@ethersproject/providers';
 import { NFTAsset } from 'lib/types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmNftProvider } from './EvmNftProvider';
 
 export class CovalentNftProvider extends EvmNftProvider {
+    private readonly _httpClient: HttpClient;
     private readonly _apiKey: string;
 
     constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, httpConfig: ClientTypes.AxiosRequestConfig, apiKey: string) {
-        super(walletProvider, httpConfig);
+        super(walletProvider);
+
         this._apiKey = apiKey;
+        this._httpClient = new HttpClient(httpConfig);
     }
 
     async fetch(): Promise<NFTAsset[]> {
         const [userAddress, network] = await Promise.all([this.walletProvider.getAddress(), this.walletProvider.getConnectedNetwork()]);
-        const response = await this.httpClient.nodeGet(
+        const response = await this._httpClient.nodeGet(
             `/v1/${network.chainId}/address/${userAddress}/balances_v2/?format=JSON&nft=true&no-nft-fetch=false&key=${this._apiKey}`
         );
 

@@ -1,17 +1,20 @@
-import { ClientTypes } from '@chainify/client';
+import { ClientTypes, HttpClient } from '@chainify/client';
 import { BaseProvider } from '@ethersproject/providers';
 import { NFTAsset, NftTypes } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmNftProvider } from './EvmNftProvider';
 
 export class OpenSeaNftProvider extends EvmNftProvider {
+    private readonly _httpClient: HttpClient;
+
     constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, httpConfig: ClientTypes.AxiosRequestConfig) {
-        super(walletProvider, httpConfig);
+        super(walletProvider);
+        this._httpClient = new HttpClient(httpConfig);
     }
 
     async fetch(): Promise<NFTAsset[]> {
         const userAddress = await this.walletProvider.getAddress();
-        const nfts = await this.httpClient.nodeGet(`assets?owner=${userAddress}`);
+        const nfts = await this._httpClient.nodeGet(`assets?owner=${userAddress}`);
 
         const data = nfts.assets.map((nft) => {
             if (nft.asset_contract) {

@@ -1,4 +1,4 @@
-import { ClientTypes, HttpClient, Nft } from '@chainify/client';
+import { Nft } from '@chainify/client';
 import { UnsupportedMethodError } from '@chainify/errors';
 import { AddressType, BigNumber, FeeType, Transaction } from '@chainify/types';
 import { AbiCoder } from '@ethersproject/abi';
@@ -19,16 +19,14 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
 
     protected schemas: Record<string, NftContract>;
     protected cache: Record<string, NftInfo>;
-    protected httpClient: HttpClient;
 
-    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, httpConfig: ClientTypes.AxiosRequestConfig) {
+    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>) {
         super(walletProvider);
 
         this._erc721 = ERC721__factory.connect(AddressZero, this.walletProvider.getSigner());
         this._erc1155 = ERC1155__factory.connect(AddressZero, this.walletProvider.getSigner());
         this.cache = {};
         this.schemas = { ERC721: this._erc721, ERC1155: this._erc1155 };
-        this.httpClient = new HttpClient(httpConfig);
     }
 
     public async transfer(

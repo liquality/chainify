@@ -1,4 +1,3 @@
-import { ClientTypes } from '@chainify/client';
 import { BaseProvider } from '@ethersproject/providers';
 import { MoralisConfig, NFTAsset } from 'lib/types';
 import Moralis from 'moralis/node';
@@ -8,12 +7,8 @@ import { EvmNftProvider } from './EvmNftProvider';
 export class MoralisNftProvider extends EvmNftProvider {
     private _moralisConfig: MoralisConfig;
 
-    constructor(
-        walletProvider: EvmBaseWalletProvider<BaseProvider>,
-        httpConfig: ClientTypes.AxiosRequestConfig,
-        moralisConfig: MoralisConfig
-    ) {
-        super(walletProvider, httpConfig);
+    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, moralisConfig: MoralisConfig) {
+        super(walletProvider);
         this._moralisConfig = moralisConfig;
     }
 
