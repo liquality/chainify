@@ -1,7 +1,6 @@
 import { Nft } from '@chainify/client';
 import { UnsupportedMethodError } from '@chainify/errors';
 import { AddressType, BigNumber, FeeType, Transaction } from '@chainify/types';
-import { AbiCoder } from '@ethersproject/abi';
 import { Signer } from '@ethersproject/abstract-signer';
 import { AddressZero } from '@ethersproject/constants';
 import { BaseProvider } from '@ethersproject/providers';
@@ -34,7 +33,7 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
         receiver: AddressType,
         tokenIDs: number[],
         amounts?: number[],
-        data?: string,
+        data = '0x',
         fee?: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
         const { schema, contract } = await this._cacheGet(contractAddress);
@@ -46,16 +45,7 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
         switch (schema) {
             case NftTypes.ERC721: {
                 const _contract: ERC721 = contract as ERC721;
-                if (data) {
-                    tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](
-                        owner,
-                        to,
-                        tokenIDs[0],
-                        data
-                    );
-                } else {
-                    tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256)'](owner, to, tokenIDs[0]);
-                }
+                tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](owner, to, tokenIDs[0], data);
                 break;
             }
 
@@ -158,6 +148,11 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
     }
 
     private async _cacheGet(contractAddress: AddressType): Promise<NftInfo> {
+        const _contractAddress = contractAddress.toString();
+
+        if (this.cache[_contractAddress]) {
+            return this.cache[_contractAddress];
+        }
         const ERC721_INTERFACE = {
             id: '0x80ac58cd',
             type: NftTypes.ERC721,
@@ -167,17 +162,13 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
             type: NftTypes.ERC1155,
         };
 
-        const _contractAddress = contractAddress.toString();
-
         for (const _interface of [ERC721_INTERFACE, ERC1155_INTERFACE]) {
-            const isSupported = await this.walletProvider
-                .getChainProvider()
-                .getProvider()
-                .call({ to: contractAddress.toString(), data: new AbiCoder().encode(['bytes4'], [_interface.id]) });
+            // we can use erc721 because both erc721 and erc1155 support that interface
+            const isSupported = await this._erc721.attach(_contractAddress).supportsInterface(_interface.id);
 
             if (isSupported) {
                 this.cache[_contractAddress] = {
-                    contract: this.schemas[_interface.type]?.attach(_contractAddress),
+                    contract: this.schemas[_interface.type].attach(_contractAddress),
                     schema: _interface.type,
                 };
 

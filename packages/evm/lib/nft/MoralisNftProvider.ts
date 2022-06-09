@@ -1,64 +1,69 @@
 import { BaseProvider } from '@ethersproject/providers';
-import { MoralisConfig, NFTAsset } from 'lib/types';
 import Moralis from 'moralis/node';
+import { MoralisConfig, NFTAsset, NftTypes } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmNftProvider } from './EvmNftProvider';
 
 export class MoralisNftProvider extends EvmNftProvider {
-    private _moralisConfig: MoralisConfig;
+    private _config: MoralisConfig;
 
-    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, moralisConfig: MoralisConfig) {
+    constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>, config: MoralisConfig) {
         super(walletProvider);
-        this._moralisConfig = moralisConfig;
+        this._config = config;
     }
 
     async fetch(): Promise<NFTAsset[]> {
-        await Moralis.start(this._moralisConfig);
+        // check if Moralis is already initialized
+        if (!Moralis.applicationId) {
+            await Moralis.start({ masterKey: this._config.apiKey, serverUrl: this._config.url, appId: this._config.appId });
+        }
 
         const [userAddress, network] = await Promise.all([this.walletProvider.getAddress(), this.walletProvider.getConnectedNetwork()]);
 
+        const chainId = `0x${Number(network.chainId).toString(16)}`;
         const nfts = await Moralis.Web3API.account.getNFTs({
             address: userAddress.toString(),
-            chain: `0x${network.chainId}` as any,
+            chain: chainId as any,
         });
 
-        const nftAssets = nfts.result.map((nft) => {
+        return nfts.result.reduce((result, nft) => {
             const { contract_type, token_address, name, symbol, metadata, token_id } = nft;
 
-            this.cache[token_address] = {
-                contract: this.schemas[contract_type].attach(token_address),
-                schema: contract_type,
-            };
+            // we only support ERC721 & ERC1155
+            if (contract_type in NftTypes && token_address) {
+                this.cache[token_address] = {
+                    contract: this.schemas[contract_type].attach(token_address),
+                    schema: contract_type as NftTypes,
+                };
 
-            const nftAsset = {
-                asset_contract: {
-                    address: token_address,
-                    name,
-                    symbol,
-                },
-                collection: {
-                    name,
-                },
-                token_id,
-            };
+                let nftAsset: NFTAsset = {
+                    asset_contract: {
+                        address: token_address,
+                        name,
+                        symbol,
+                    },
+                    collection: {
+                        name,
+                    },
+                    token_id,
+                };
 
-            if (!metadata) {
-                return nftAsset;
+                if (metadata) {
+                    const parsed = JSON.parse(metadata);
+                    nftAsset = {
+                        ...nftAsset,
+                        name: parsed.name,
+                        description: parsed.description,
+                        image_original_url: parsed.image,
+                        image_preview_url: parsed.image,
+                        image_thumbnail_url: parsed.image,
+                        external_link: parsed.external_url,
+                    };
+                }
+
+                result.push(nftAsset);
             }
-
-            const parsed = JSON.parse(metadata);
-
-            return {
-                ...nftAsset,
-                name: parsed.name,
-                description: parsed.description,
-                image_original_url: parsed.image,
-                image_preview_url: parsed.image,
-                image_thumbnail_url: parsed.image,
-                external_link: parsed.external_url,
-            };
-        });
-
-        return nftAssets;
+            return result;
+        }, []);
     }
 }

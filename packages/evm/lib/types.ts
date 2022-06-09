@@ -40,24 +40,24 @@ export type EthereumFeeData = FeeType & {
 export { EthersTransactionResponse, EthersBlock, EthersBlockWithTransactions, EthersPopulatedTransaction };
 
 export interface NFTAsset {
+    token_id: string;
     asset_contract: {
         address: string;
-        external_link: string;
-        image_url: string;
         name: string;
         symbol: string;
+        image_url?: string;
+        external_link?: string;
     };
     collection: {
         name: string;
     };
-    description: string;
-    external_link: string;
-    id: number;
-    image_original_url: string;
-    image_preview_url: string;
-    image_thumbnail_url: string;
-    name: string;
-    token_id: string;
+    id?: number;
+    description?: string;
+    external_link?: string;
+    image_original_url?: string;
+    image_preview_url?: string;
+    image_thumbnail_url?: string;
+    name?: string;
 }
 
 export enum NftTypes {
@@ -65,8 +65,11 @@ export enum NftTypes {
     ERC1155 = 'ERC1155',
 }
 
-export type MoralisConfig = {
-    serverUrl: string;
+export type NftProviderConfig = {
+    url: string;
+    apiKey: string;
+};
+
+export type MoralisConfig = NftProviderConfig & {
     appId: string;
-    masterKey: string;
 };

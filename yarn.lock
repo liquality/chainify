@@ -227,7 +227,7 @@ __metadata:
     "@rainbow-me/fee-suggestions": ^2.0.0
     "@typechain/hardhat": ^4.0.0
     hardhat: ^2.8.3
-    moralis: ^1.8.0
+    moralis: 1.8.0
   languageName: unknown
   linkType: soft
 
@@ -13144,7 +13144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moralis@npm:^1.8.0":
+"moralis@npm:1.8.0":
   version: 1.8.0
   resolution: "moralis@npm:1.8.0"
   dependencies:
