@@ -62,7 +62,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     public async getTokenDetails(asset: string): Promise<TokenDetails> {
         try {
             if (this.multicall) {
-                const result = await this.multicall.multicall(
+                const [decimals, name, symbol] = await this.multicall.multicall(
                     ['decimals', 'name', 'symbol'].map((method) => {
                         return {
                             target: asset,
@@ -72,7 +72,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
                         };
                     })
                 );
-                return { decimals: result[0], name: result[1], symbol: result[2] };
+                return { decimals, name, symbol };
             } else {
                 const token = ERC20__factory.connect(asset, this.provider);
                 const [decimals, name, symbol] = await Promise.all([token.decimals(), token.name(), token.symbol()]);
