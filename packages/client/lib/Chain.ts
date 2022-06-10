@@ -77,7 +77,6 @@ export default abstract class Chain<T, N extends Network = Network> implements C
      * Use to fetch the decimals, name & symbol of a token
      */
     public async getTokenDetails(_asset: string): Promise<TokenDetails> {
-        this.network.name;
         throw new UnsupportedMethodError(`${this.network.name} does not support getTokenDetails.`);
     }
 
