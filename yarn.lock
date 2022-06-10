@@ -214,6 +214,7 @@ __metadata:
   dependencies:
     "@chainify/client": "workspace:*"
     "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:^"
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
     "@eth-optimism/sdk": ^1.1.5
@@ -249,7 +250,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@chainify/logger@workspace:*, @chainify/logger@workspace:packages/logger":
+"@chainify/logger@workspace:*, @chainify/logger@workspace:^, @chainify/logger@workspace:packages/logger":
   version: 0.0.0-use.local
   resolution: "@chainify/logger@workspace:packages/logger"
   languageName: unknown
@@ -292,6 +293,7 @@ __metadata:
   dependencies:
     "@chainify/client": "workspace:*"
     "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:^"
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
     "@terra-money/terra.js": 3.1.3

@@ -1,4 +1,16 @@
-import { AddressType, Asset, BigNumber, Block, ChainProvider, FeeDetails, Network, Nullable, Transaction } from '@chainify/types';
+import { UnsupportedMethodError } from '@chainify/errors';
+import {
+    AddressType,
+    Asset,
+    BigNumber,
+    Block,
+    ChainProvider,
+    FeeDetails,
+    Network,
+    Nullable,
+    TokenDetails,
+    Transaction,
+} from '@chainify/types';
 import { Fee } from '.';
 
 /**
@@ -8,7 +20,7 @@ import { Fee } from '.';
  * @typeParam T - type of the internal provider, e.g. {@link https://docs.ethers.io/v5/api/providers/jsonrpc-provider/ | JsonRpcProvider} for EVM chains
  * @typeParam N - type of the network. The default value of the type is {@link Network}
  */
-export default abstract class Chain<T, N = Network> implements ChainProvider {
+export default abstract class Chain<T, N extends Network = Network> implements ChainProvider {
     protected feeProvider: Nullable<Fee>;
     protected network: N;
     protected provider: T;
@@ -59,6 +71,14 @@ export default abstract class Chain<T, N = Network> implements ChainProvider {
      */
     public async getFeeProvider() {
         return this.feeProvider;
+    }
+
+    /**
+     * Use to fetch the decimals, name & symbol of a token
+     */
+    public async getTokenDetails(_asset: string): Promise<TokenDetails> {
+        this.network.name;
+        throw new UnsupportedMethodError(`${this.network.name} does not support getTokenDetails.`);
     }
 
     /**
