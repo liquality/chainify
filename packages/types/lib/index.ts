@@ -7,7 +7,7 @@ export * from './Block';
 export * from './Chain';
 export * from './Fees';
 export * from './Network';
-export * from './NFT';
+export * from './Nft';
 export * from './Swap';
 export * from './Transaction';
 export * from './Wallet';
