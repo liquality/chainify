@@ -1,17 +1,17 @@
 import { Fee } from '@chainify/client';
 import { BigNumber, FeeDetails } from '@chainify/types';
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
+import { Network, StaticJsonRpcProvider } from '@ethersproject/providers';
 import { suggestFees } from '@rainbow-me/fee-suggestions';
 import { toGwei } from '../utils';
 
 export class EIP1559FeeProvider extends Fee {
     provider: StaticJsonRpcProvider;
 
-    constructor(provider: StaticJsonRpcProvider | string) {
+    constructor(provider: StaticJsonRpcProvider | string, network?: Network) {
         super();
 
         if (typeof provider === 'string') {
-            this.provider = new StaticJsonRpcProvider(provider);
+            this.provider = new StaticJsonRpcProvider(provider, network?.chainId);
         } else {
             this.provider = provider;
         }
