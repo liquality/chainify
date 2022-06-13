@@ -170,7 +170,7 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
                     return null;
                 }
             });
-            const balances = (await Promise.all(allBalancePromise)).map((b) => (b ? new BigNumber(b.toString()) : new BigNumber(0)));
+            const balances = (await Promise.all(allBalancePromise)).map((b) => (b ? new BigNumber(b.toString()) : null));
             return balances;
         }
     }

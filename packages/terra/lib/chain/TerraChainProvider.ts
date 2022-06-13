@@ -88,8 +88,10 @@ export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
                 } catch (err) {
                     if (err.message && err.message.includes('does not exist while viewing')) {
                         return new BigNumber(0);
+                    } else {
+                        logger.debug('getBalance', err);
+                        return null;
                     }
-                    throw err;
                 }
             })
         );

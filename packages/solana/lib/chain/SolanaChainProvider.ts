@@ -7,6 +7,7 @@ import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BlockResponse, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { parseBlockResponse, parseTransactionResponse } from '../utils';
 
+const LAMPORTS_PER_SIGNATURE = 5000 / LAMPORTS_PER_SOL;
 const logger = new Logger('SolanaWalletProvider');
 
 export class SolanaChainProvider extends Chain<Connection, Network> {
@@ -66,27 +67,21 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
             this.provider.getTokenAccountsByOwner(address, { programId: TOKEN_PROGRAM_ID }),
         ]);
 
-        const tokenBalances: { contractAddress: string; amount: BigNumber }[] = [];
-        tokenData.value.forEach((token) => {
+        const tokenBalances = tokenData.value.map((token) => {
             const { mint, amount } = AccountLayout.decode(token.account.data);
-
-            tokenBalances.push({
-                contractAddress: mint.toString(),
-                amount: new BigNumber(amount.toString()),
-            });
+            return { contractAddress: mint.toString(), amount: new BigNumber(amount.toString()) };
         });
 
-        const balances: BigNumber[] = [];
-        assets.forEach((asset) => {
+        const balances = assets.map((asset) => {
             if (asset.isNative) {
-                balances.push(new BigNumber(nativeBalance));
+                return new BigNumber(nativeBalance);
             } else {
                 const token = tokenBalances.find((token) => compare(token.contractAddress, asset.contractAddress));
 
                 if (token) {
-                    balances.push(token.amount);
+                    return token.amount;
                 } else {
-                    balances.push(new BigNumber(0));
+                    return null;
                 }
             }
         });
@@ -94,18 +89,19 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         return balances;
     }
 
+    /**
+     * Fee price is fixed in Solana and it's equal to 5000 / LAMPORTS_PER_SOL
+     */
     public async getFees(): Promise<FeeDetails> {
-        const lamportsPerSignature = 5000 / LAMPORTS_PER_SOL;
-
         return {
             slow: {
-                fee: lamportsPerSignature,
+                fee: LAMPORTS_PER_SIGNATURE,
             },
             average: {
-                fee: lamportsPerSignature * 1.5,
+                fee: LAMPORTS_PER_SIGNATURE,
             },
             fast: {
-                fee: lamportsPerSignature * 2,
+                fee: LAMPORTS_PER_SIGNATURE,
             },
         };
     }

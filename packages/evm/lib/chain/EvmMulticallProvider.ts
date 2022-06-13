@@ -56,9 +56,7 @@ export class EvmMulticallProvider {
             })
         );
 
-        return result.map((r) => {
-            return r ? new BigNumber(r.toString()) : new BigNumber(0);
-        });
+        return result.map((r) => (r ? new BigNumber(r.toString()) : null));
     }
 
     public async multicall<T extends any[] = any[]>(calls: ReadonlyArray<Call>): Promise<T> {

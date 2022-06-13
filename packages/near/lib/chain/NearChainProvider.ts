@@ -1,9 +1,12 @@
 import { Chain } from '@chainify/client';
 import { BlockNotFoundError, TxNotFoundError } from '@chainify/errors';
+import { Logger } from '@chainify/logger';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@chainify/types';
 import { providers } from 'near-api-js';
 import { BlockResult, NearAccount, NearChunk, NearNetwork, NearTransaction, NearTxLog, NearTxResponse } from '../types';
 import { parseBlockResponse, parseNearBlockTx, parseTxResponse } from '../utils';
+
+const logger = new Logger('NearChainProvider');
 
 export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
     constructor(network: NearNetwork, provider?: providers.JsonRpcProvider) {
@@ -47,22 +50,23 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
         }
     }
 
+    /**
+     * @param _assets - it's ignored as Chanify does not support Near tokens yet
+     */
     public async getBalance(addresses: AddressType[], _assets: Asset[]): Promise<BigNumber[]> {
-        const promiseBalances = await Promise.all(
-            addresses.map(async (address) => {
-                try {
-                    const balance = await this.getAccount(address.toString()).getAccountBalance();
-                    return new BigNumber(balance.available);
-                } catch (err) {
-                    if (err.message && err.message.includes('does not exist while viewing')) {
-                        return new BigNumber(0);
-                    }
-                    throw err;
-                }
-            })
-        );
+        const user = addresses[0].toString();
 
-        return [promiseBalances.map((balance) => new BigNumber(balance)).reduce((acc, balance) => acc.plus(balance), new BigNumber(0))];
+        try {
+            const balance = await this.getAccount(user).getAccountBalance();
+            return [new BigNumber(balance.available)];
+        } catch (err) {
+            if (err.message && err.message.includes('does not exist while viewing')) {
+                return [new BigNumber(0)];
+            } else {
+                logger.debug('getBalance', err);
+                return [null];
+            }
+        }
     }
 
     public async getFees(): Promise<FeeDetails> {
