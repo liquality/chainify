@@ -10,22 +10,26 @@ export default class HttpClient {
         this._node = axios.create(config);
     }
 
-    public async nodeGet<I = any, O = any>(url: string, params: I = {} as I): Promise<O> {
+    public async nodeGet<I = any, O = any>(url: string, params: I = {} as I, config?: AxiosRequestConfig): Promise<O> {
         const response = await this._node
-            .get(url, { params })
+            .get(url, { ...config, params })
             .then((response) => response.data as O)
             .catch(this.handleError);
 
         return response as unknown as O;
     }
 
-    public async nodePost<I = any, O = any>(url: string, data: I): Promise<O> {
+    public async nodePost<I = any, O = any>(url: string, data: I, config?: AxiosRequestConfig): Promise<O> {
         const response = this._node
-            .post(url, data)
+            .post(url, data, config)
             .then((response) => response.data as O)
             .catch(this.handleError);
 
         return response as unknown as O;
+    }
+
+    public setConfig(config: AxiosRequestConfig) {
+        this._node = axios.create(config);
     }
 
     private handleError(error: any): void {
