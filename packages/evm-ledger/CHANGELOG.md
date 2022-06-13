@@ -1,5 +1,18 @@
 # @chainify/evm-ledger
 
+## 1.1.1
+
+### Patch Changes
+
+-   export base nft provider
+-   Updated dependencies
+    -   @chainify/client@1.1.1
+    -   @chainify/errors@1.1.1
+    -   @chainify/evm@1.1.1
+    -   @chainify/hw-ledger@1.1.1
+    -   @chainify/types@1.1.1
+    -   @chainify/utils@1.1.1
+
 ## 1.1.0
 
 ### Minor Changes

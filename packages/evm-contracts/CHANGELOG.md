@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 1.1.1
+
+### Patch Changes
+
+-   export base nft provider
+
 ## 1.1.0
 
 ### Minor Changes
