@@ -10,11 +10,29 @@ export default class HttpClient {
         this._node = axios.create(config);
     }
 
+    public static async post<I = any, O = any>(url: string, data: I, config?: AxiosRequestConfig): Promise<O> {
+        const response = axios
+            .post(url, data, config)
+            .then((response) => response.data as O)
+            .catch(HttpClient.handleError);
+
+        return response as unknown as O;
+    }
+
+    public static async get<I = any, O = any>(url: string, params: I = {} as I, config?: AxiosRequestConfig): Promise<O> {
+        const response = await axios
+            .get(url, { ...config, params })
+            .then((response) => response.data as O)
+            .catch(HttpClient.handleError);
+
+        return response as unknown as O;
+    }
+
     public async nodeGet<I = any, O = any>(url: string, params: I = {} as I, config?: AxiosRequestConfig): Promise<O> {
         const response = await this._node
             .get(url, { ...config, params })
             .then((response) => response.data as O)
-            .catch(this.handleError);
+            .catch(HttpClient.handleError);
 
         return response as unknown as O;
     }
@@ -23,7 +41,7 @@ export default class HttpClient {
         const response = this._node
             .post(url, data, config)
             .then((response) => response.data as O)
-            .catch(this.handleError);
+            .catch(HttpClient.handleError);
 
         return response as unknown as O;
     }
@@ -32,7 +50,7 @@ export default class HttpClient {
         this._node = axios.create(config);
     }
 
-    private handleError(error: any): void {
+    private static handleError(error: any): void {
         const { message, ...attrs } = error;
         const errorMessage = error?.response?.data || message;
 
