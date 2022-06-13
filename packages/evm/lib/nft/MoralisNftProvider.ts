@@ -1,6 +1,7 @@
+import { NFTAsset } from '@chainify/types';
 import { BaseProvider } from '@ethersproject/providers';
 import Moralis from 'moralis/node';
-import { MoralisConfig, NFTAsset, NftTypes } from '../types';
+import { MoralisConfig, NftTypes } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
 import { EvmNftProvider } from './EvmNftProvider';
 
