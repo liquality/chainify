@@ -17,6 +17,7 @@
     "dependencies": {
         "@chainify/client": "workspace:*",
         "@chainify/errors": "workspace:*",
+        "@chainify/logger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
         "@eth-optimism/sdk": "^1.1.5",

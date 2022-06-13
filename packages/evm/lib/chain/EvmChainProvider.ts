@@ -1,6 +1,7 @@
 import { Chain, Fee } from '@chainify/client';
-import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@chainify/types';
+import { BlockNotFoundError, NodeError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
+import { Logger } from '@chainify/logger';
+import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, TokenDetails, Transaction } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { RpcFeeProvider } from '../fee/RpcFeeProvider';
@@ -26,6 +27,7 @@ import { EvmMulticallProvider } from './EvmMulticallProvider';
  */
 export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     public multicall: EvmMulticallProvider;
+    private _logger: Logger;
 
     /**
      * @param network - See {@link EvmNetworks}
@@ -37,6 +39,8 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
     constructor(network: Network, provider?: StaticJsonRpcProvider, feeProvider?: Fee, multicall = true) {
         super(network, provider, feeProvider);
 
+        this._logger = new Logger(`EvmChainProvider ${network.chainId}`);
+
         if (!provider && this.network.rpcUrl) {
             this.provider = new StaticJsonRpcProvider(this.network.rpcUrl, this.network.chainId);
         }
@@ -47,6 +51,36 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
 
         if (multicall) {
             this.multicall = new EvmMulticallProvider(this.provider);
+        }
+    }
+
+    /**
+     * Used to fetch the name, decimals and symbols of an ERC20 token
+     * @param asset - the address of the token contract
+     * @returns
+     */
+    public async getTokenDetails(asset: string): Promise<TokenDetails> {
+        try {
+            if (this.multicall) {
+                const [decimals, name, symbol] = await this.multicall.multicall(
+                    ['decimals', 'name', 'symbol'].map((method) => {
+                        return {
+                            target: asset,
+                            abi: ERC20__factory.abi,
+                            name: method,
+                            params: [],
+                        };
+                    })
+                );
+                return { decimals, name, symbol };
+            } else {
+                const token = ERC20__factory.connect(asset, this.provider);
+                const [decimals, name, symbol] = await Promise.all([token.decimals(), token.name(), token.symbol()]);
+                return { decimals, name, symbol };
+            }
+        } catch (err) {
+            this._logger.error(err);
+            throw new NodeError(`Cannot fetch details for ${asset}`);
         }
     }
 

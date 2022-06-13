@@ -12,3 +12,9 @@ export interface Asset {
     decimals: number;
     contractAddress?: string;
 }
+
+export interface TokenDetails {
+    decimals: number;
+    name: string;
+    symbol: string;
+}

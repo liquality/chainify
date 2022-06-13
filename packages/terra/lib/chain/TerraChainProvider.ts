@@ -1,10 +1,15 @@
 import { Chain, Fee, HttpClient } from '@chainify/client';
-import { TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Transaction } from '@chainify/types';
+import { NodeError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
+import { Logger } from '@chainify/logger';
+import { AddressType, Asset, BigNumber, Block, FeeDetails, TokenDetails, Transaction } from '@chainify/types';
 import { BlockInfo, LCDClient } from '@terra-money/terra.js';
 import { assetCodeToDenom } from '../constants';
 import { TerraNetwork, TerraTxInfo } from '../types';
 import { parseBlockResponse, parseTxResponse } from '../utils';
+
+const logger = new Logger('TerraChainProvider');
+
+const DEFAULT_ASSETS_FETCH_URL = 'https://assets.terra.money/cw20/tokens.json';
 
 export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
     public _httpClient: HttpClient;
@@ -17,6 +22,20 @@ export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
         }
 
         this._httpClient = new HttpClient({ baseURL: network.helperUrl });
+    }
+
+    public async getTokenDetails(asset: string): Promise<TokenDetails> {
+        try {
+            const {
+                data: { mainnet: tokens },
+            } = await new HttpClient({ baseURL: this.network.assetsUrl || DEFAULT_ASSETS_FETCH_URL }).nodeGet('/');
+            const token = tokens[asset];
+            const { symbol } = token;
+            return { name: symbol, symbol, decimals: 6 };
+        } catch (err) {
+            logger.error(err);
+            throw new NodeError(`Cannot fetch details for ${asset}`);
+        }
     }
 
     public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockInfo, TerraTxInfo>> {

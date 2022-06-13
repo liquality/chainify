@@ -8,6 +8,7 @@ export interface TerraWalletProviderOptions extends WalletOptions {
 export interface TerraNetwork extends Network {
     codeId: number;
     helperUrl: string;
+    assetsUrl?: string;
 }
 
 export interface TerraTxRequest extends TransactionRequest {

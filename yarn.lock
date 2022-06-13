@@ -214,6 +214,7 @@ __metadata:
   dependencies:
     "@chainify/client": "workspace:*"
     "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:*"
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
     "@eth-optimism/sdk": ^1.1.5
@@ -292,6 +293,7 @@ __metadata:
   dependencies:
     "@chainify/client": "workspace:*"
     "@chainify/errors": "workspace:*"
+    "@chainify/logger": "workspace:*"
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
     "@terra-money/terra.js": 3.1.3
