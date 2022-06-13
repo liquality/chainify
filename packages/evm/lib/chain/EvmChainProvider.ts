@@ -156,16 +156,22 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
 
         if (this.multicall) {
             const balances = await this.multicall.getMultipleBalances(user, assets);
-            return balances.map((b) => new BigNumber(b.toString()));
+            return balances;
         } else {
             const allBalancePromise = assets.map((a) => {
-                if (a.isNative) {
-                    return this.provider.getBalance(user);
-                } else {
-                    return ERC20__factory.connect(a.contractAddress, this.provider).balanceOf(user);
+                try {
+                    if (a.isNative) {
+                        return this.provider.getBalance(user);
+                    } else {
+                        return ERC20__factory.connect(a.contractAddress, this.provider).balanceOf(user);
+                    }
+                } catch (err) {
+                    this._logger.debug(`no multicall getBalance error ${a}`, err);
+                    return null;
                 }
             });
-            return (await Promise.all(allBalancePromise)).map((b) => new BigNumber(b.toString()));
+            const balances = (await Promise.all(allBalancePromise)).map((b) => (b ? new BigNumber(b.toString()) : new BigNumber(0)));
+            return balances;
         }
     }
 
