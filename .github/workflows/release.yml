@@ -33,6 +33,9 @@ jobs:
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v3.0.0
         id: semantic
+        with:
+          branches: |
+            dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
