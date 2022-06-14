@@ -1,5 +1,18 @@
 # @chainify/hw-ledger
 
+## 1.1.2
+
+### Patch Changes
+
+-   -   Chain providers now have a new interface - `getTokenDetails`
+    -   Network object can now be passed during EVM Fee providers creation
+    -   NFTAsset type moved to global level
+-   Updated dependencies
+    -   @chainify/errors@1.1.2
+    -   @chainify/logger@1.1.2
+    -   @chainify/types@1.1.2
+    -   @chainify/utils@1.1.2
+
 ## 1.1.1
 
 ### Patch Changes
