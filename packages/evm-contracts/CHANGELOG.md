@@ -1,5 +1,13 @@
 # @chainify/evm-contracts
 
+## 1.1.2
+
+### Patch Changes
+
+-   -   Chain providers now have a new interface - `getTokenDetails`
+    -   Network object can now be passed during EVM Fee providers creation
+    -   NFTAsset type moved to global level
+
 ## 1.1.1
 
 ### Patch Changes
