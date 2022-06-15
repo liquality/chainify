@@ -89,7 +89,12 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
 
         // Handle already builded transactions that are passed from outside - Jupiter for example
         if (txRequest.transaction) {
+            const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash('confirmed'));
+            console.log('latest', latestBlockhash);
             transaction = txRequest.transaction;
+            console.log('current block', transaction.recentBlockhash);
+            transaction.recentBlockhash = latestBlockhash.blockhash;
+            console.log('new one', transaction);
         } else {
             let instruction: TransactionInstruction;
             const to = new PublicKey(txRequest.to.toString());
@@ -98,7 +103,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
             if (txRequest.asset && !txRequest.asset.isNative) {
                 const contractAddress = new PublicKey(txRequest.asset.contractAddress);
                 const fromTokenAccount = await getAssociatedTokenAddress(contractAddress, this._signer.publicKey);
-
                 try {
                     await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
                 } catch (err) {
@@ -106,7 +110,6 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
                 }
 
                 const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
-
                 instruction = createTransferInstruction(fromTokenAccount, toTokenAccount, this._signer.publicKey, Number(txRequest.value));
             } else {
                 // Handle SOL Transactions
@@ -115,11 +118,11 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
                     toPubkey: to,
                     lamports: txRequest.value.toNumber(),
                 });
-
-                const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash());
-
-                transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
             }
+
+            const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash('confirmed'));
+
+            transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
         }
 
         const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer]);

@@ -14,7 +14,10 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         super(network);
 
         if (!this.provider && this.network.rpcUrl) {
-            this.provider = new Connection(network.rpcUrl, 'confirmed');
+            this.provider = new Connection(network.rpcUrl, {
+                confirmTransactionInitialTimeout: 120000,
+                commitment: 'confirmed',
+            });
         }
     }
 
@@ -47,7 +50,7 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         return retry(async () => {
             try {
                 const [transaction, signatures] = await Promise.all([
-                    this.provider.getParsedTransaction(txHash),
+                    this.provider.getParsedTransaction(txHash, 'confirmed'),
                     this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),
                 ]);
                 return parseTransactionResponse(transaction, signatures);
@@ -102,10 +105,10 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
                 fee: lamportsPerSignature,
             },
             average: {
-                fee: lamportsPerSignature * 1.5,
+                fee: lamportsPerSignature,
             },
             fast: {
-                fee: lamportsPerSignature * 2,
+                fee: lamportsPerSignature,
             },
         };
     }
