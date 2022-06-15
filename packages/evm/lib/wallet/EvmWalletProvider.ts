@@ -6,6 +6,7 @@ import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { signTypedData, SignTypedDataVersion } from '@metamask/eth-sig-util';
 import { SignTypedMessageType } from '../types';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
+import { FastEthersWallet } from './FastEthersWallet';
 
 export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider, EthersWallet> {
     private _wallet: EthersWallet;
@@ -14,16 +15,16 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     constructor(walletOptions: WalletOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
         super(chainProvider);
         this._walletOptions = walletOptions;
-        this._wallet = EthersWallet.fromMnemonic(walletOptions.mnemonic, walletOptions.derivationPath);
+        this._wallet = null;
+    }
 
-        if (chainProvider) {
-            this._wallet = this._wallet.connect(chainProvider.getProvider());
-        }
-
-        this.signer = this._wallet;
+    public async getSigner() {
+        await this.initWallet();
+        return this.signer;
     }
 
     public async getAddress(): Promise<Address> {
+        await this.initWallet();
         return new Address({
             address: this._wallet.address,
             derivationPath: this._walletOptions.derivationPath,
@@ -32,6 +33,8 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     }
 
     public async signTypedData({ data, from, version }: SignTypedMessageType): Promise<string> {
+        await this.initWallet();
+
         if (!data) {
             throw new Error(`Undefined data - message required to sign typed data.`);
         }
@@ -52,19 +55,23 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     }
 
     public async getUnusedAddress(): Promise<Address> {
+        await this.initWallet();
         return this.getAddress();
     }
 
     public async getUsedAddresses(): Promise<Address[]> {
+        await this.initWallet();
         return this.getAddresses();
     }
 
     public async getAddresses(): Promise<Address[]> {
+        await this.initWallet();
         const address = await this.getAddress();
         return [address];
     }
 
     public async exportPrivateKey(): Promise<string> {
+        await this.initWallet();
         return remove0x(this._wallet.privateKey);
     }
 
@@ -76,7 +83,21 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
         return true;
     }
 
-    protected onChainProviderUpdate(chainProvider: Chain<StaticJsonRpcProvider, Network>): void {
-        this._wallet = this._wallet.connect(chainProvider.getProvider());
+    protected async onChainProviderUpdate(chainProvider: Chain<StaticJsonRpcProvider, Network>): Promise<void> {
+        if (this._wallet) {
+            this._wallet = this._wallet.connect(chainProvider.getProvider());
+        }
+    }
+
+    private async initWallet(): Promise<void> {
+        if (!this._wallet) {
+            this._wallet = await FastEthersWallet.fromMnemonicAsync(this._walletOptions.mnemonic, this._walletOptions.derivationPath);
+
+            if (this.chainProvider) {
+                this._wallet = this._wallet.connect(this.chainProvider.getProvider());
+            }
+
+            this.signer = this._wallet;
+        }
     }
 }

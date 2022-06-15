@@ -27,12 +27,11 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
             gasLimitMargin: swapOptions?.gasLimitMargin || 1000, // 10%
         };
 
-        if (walletProvider) {
-            this.contract = LiqualityHTLC__factory.connect(this.swapOptions.contractAddress, this.walletProvider.getSigner());
-        }
+        this.contract = LiqualityHTLC__factory.connect(this.swapOptions.contractAddress, null);
     }
 
     public async initiateSwap(swapParams: SwapParams, fee: FeeType): Promise<Transaction<EthersTransactionResponse>> {
+        await this.initContract();
         this.validateSwapParams(swapParams);
         const parsedSwapParams = parseSwapParams(swapParams);
         const value = swapParams.asset.isNative ? parsedSwapParams.amount : 0;
@@ -49,6 +48,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
         secret: string,
         fee: FeeType
     ): Promise<Transaction<EthersTransactionResponse>> {
+        await this.initContract();
         validateSecret(secret);
         validateSecretAndHash(secret, swapParams.secretHash);
 
@@ -76,6 +76,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
     }
 
     public async refundSwap(swapParams: SwapParams, initTxHash: string, fee: FeeType): Promise<Transaction<EthersTransactionResponse>> {
+        await this.initContract();
         const transaction = await this.walletProvider.getChainProvider().getTransactionByHash(initTxHash);
 
         await this.verifyInitiateSwapTransaction(swapParams, transaction);
@@ -124,8 +125,8 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
         throw new UnimplementedMethodError('Method not supported.');
     }
 
-    protected onWalletProviderUpdate(wallet: EvmBaseWalletProvider<BaseProvider, Signer>): void {
-        this.contract = LiqualityHTLC__factory.connect(this.swapOptions.contractAddress, wallet.getSigner());
+    protected onWalletProviderUpdate(_wallet: EvmBaseWalletProvider<BaseProvider, Signer>): void {
+        // do nothing
     }
 
     protected doesTransactionMatchInitiation(swapParams: SwapParams, transaction: Transaction<InitiateEvent>): boolean {
@@ -164,6 +165,11 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
                 throw err;
             }
         }
+    }
+
+    protected async initContract() {
+        const signer = await this.walletProvider.getSigner();
+        this.contract = LiqualityHTLC__factory.connect(this.swapOptions.contractAddress, signer);
     }
 
     abstract findInitiateSwapTransaction(swapParams: SwapParams, _blockNumber?: number): Promise<Transaction<InitiateEvent>>;

@@ -22,8 +22,8 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
     constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>) {
         super(walletProvider);
 
-        this._erc721 = ERC721__factory.connect(AddressZero, this.walletProvider.getSigner());
-        this._erc1155 = ERC1155__factory.connect(AddressZero, this.walletProvider.getSigner());
+        this._erc721 = ERC721__factory.connect(AddressZero, null);
+        this._erc1155 = ERC1155__factory.connect(AddressZero, null);
         this.cache = {};
         this.schemas = { ERC721: this._erc721, ERC1155: this._erc1155 };
     }
@@ -148,6 +148,7 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
     }
 
     private async _cacheGet(contractAddress: AddressType): Promise<NftInfo> {
+        const signer = await this.walletProvider.getSigner();
         const _contractAddress = contractAddress.toString();
 
         if (this.cache[_contractAddress]) {
@@ -164,11 +165,11 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
 
         for (const _interface of [ERC721_INTERFACE, ERC1155_INTERFACE]) {
             // we can use erc721 because both erc721 and erc1155 support that interface
-            const isSupported = await this._erc721.attach(_contractAddress).supportsInterface(_interface.id);
+            const isSupported = await this._erc721.connect(signer).attach(_contractAddress).supportsInterface(_interface.id);
 
             if (isSupported) {
                 this.cache[_contractAddress] = {
-                    contract: this.schemas[_interface.type].attach(_contractAddress),
+                    contract: this.schemas[_interface.type].connect(signer).attach(_contractAddress),
                     schema: _interface.type,
                 };
 

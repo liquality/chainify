@@ -14,7 +14,7 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
         super(chainProvider);
     }
 
-    public getSigner() {
+    public async getSigner() {
         return this.signer;
     }
 
@@ -23,11 +23,13 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
     }
 
     public async signMessage(message: string, _from: AddressType): Promise<string> {
+        await this.getSigner();
         const signedMessage = await this.signer.signMessage(message);
         return remove0x(signedMessage);
     }
 
     public async sendTransaction(txRequest: EthereumTransactionRequest): Promise<Transaction<EthersTransactionResponse>> {
+        await this.getSigner();
         const chainId = Number(this.chainProvider.getNetwork().chainId);
 
         // default to average fee

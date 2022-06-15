@@ -13,7 +13,8 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
         super(swapOptions, walletProvider);
     }
 
-    async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<InitiateEvent>> {
+    public async findInitiateSwapTransaction(swapParams: SwapParams): Promise<Transaction<InitiateEvent>> {
+        await this.initContract();
         const currentBlock = await this.walletProvider.getChainProvider().getBlockHeight();
 
         return await this.searchLogs(async (from: number, to: number) => {
@@ -33,7 +34,8 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
         }, currentBlock);
     }
 
-    async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<ClaimEvent>> {
+    public async findClaimSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<ClaimEvent>> {
+        await this.initContract();
         const foundTx = await this.findTx<ClaimEvent>(swapParams, initTxHash, 'Claim');
         const secret = foundTx?._raw?.args?.secret;
         if (secret) {
@@ -41,7 +43,8 @@ export class EvmSwapProvider extends EvmBaseSwapProvider {
         }
     }
 
-    async findRefundSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<RefundEvent>> {
+    public async findRefundSwapTransaction(swapParams: SwapParams, initTxHash: string): Promise<Transaction<RefundEvent>> {
+        await this.initContract();
         return this.findTx<RefundEvent>(swapParams, initTxHash, 'Refund');
     }
 

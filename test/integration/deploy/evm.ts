@@ -8,7 +8,7 @@ import { constants, ethers } from 'ethers';
  * Please make sure that no transactions are executed before the deploy step.
  */
 export async function deployEvmContracts(client: Client) {
-    const signer = client.wallet.getSigner();
+    const signer = await client.wallet.getSigner();
     const erc20 = await new Typechain.TestERC20__factory().connect(signer).deploy();
     await new Typechain.Multicall3__factory().connect(signer).deploy();
     const htlc = await new Typechain.LiqualityHTLC__factory().connect(signer).deploy();

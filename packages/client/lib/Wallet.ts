@@ -24,7 +24,7 @@ export default abstract class Wallet<T, S> implements WalletProvider {
 
     public abstract getConnectedNetwork(): Promise<Network>;
 
-    public abstract getSigner(): S;
+    public abstract getSigner(): Promise<S> | S;
 
     public abstract getAddress(): Promise<AddressType>;
 
