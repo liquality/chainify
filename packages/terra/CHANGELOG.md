@@ -1,5 +1,17 @@
 # @chainify/terra
 
+## 1.2.1
+
+### Patch Changes
+
+-   rebuild
+-   Updated dependencies
+    -   @chainify/client@1.2.1
+    -   @chainify/errors@1.2.1
+    -   @chainify/logger@1.2.1
+    -   @chainify/types@1.2.1
+    -   @chainify/utils@1.2.1
+
 ## 1.2.0
 
 ### Minor Changes

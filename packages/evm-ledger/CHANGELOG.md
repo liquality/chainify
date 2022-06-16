@@ -1,5 +1,18 @@
 # @chainify/evm-ledger
 
+## 1.2.1
+
+### Patch Changes
+
+-   rebuild
+-   Updated dependencies
+    -   @chainify/client@1.2.1
+    -   @chainify/errors@1.2.1
+    -   @chainify/evm@1.2.1
+    -   @chainify/hw-ledger@1.2.1
+    -   @chainify/types@1.2.1
+    -   @chainify/utils@1.2.1
+
 ## 1.2.0
 
 ### Minor Changes

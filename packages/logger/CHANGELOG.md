@@ -1,5 +1,11 @@
 # @chainify/logger
 
+## 1.2.1
+
+### Patch Changes
+
+-   rebuild
+
 ## 1.2.0
 
 ### Minor Changes
