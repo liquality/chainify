@@ -1,5 +1,21 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.0
+
+### Minor Changes
+
+-   nft transfer takes decimal string for token id
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.0
+    -   @chainify/client@1.2.0
+    -   @chainify/errors@1.2.0
+    -   @chainify/hw-ledger@1.2.0
+    -   @chainify/types@1.2.0
+    -   @chainify/utils@1.2.0
+
 ## 1.1.2
 
 ### Patch Changes

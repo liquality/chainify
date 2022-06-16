@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 1.2.0
+
+### Minor Changes
+
+-   nft transfer takes decimal string for token id
+
 ## 1.1.2
 
 ### Patch Changes
