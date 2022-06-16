@@ -19,7 +19,7 @@ export default abstract class Nft<T, S> {
     public abstract transfer(
         contract: AddressType,
         receiver: AddressType,
-        tokenIDs: number[],
+        tokenIDs: string[],
         values?: number[],
         data?: string,
         fee?: FeeType

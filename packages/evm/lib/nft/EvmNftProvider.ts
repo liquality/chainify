@@ -31,7 +31,7 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
     public async transfer(
         contractAddress: AddressType,
         receiver: AddressType,
-        tokenIDs: number[],
+        tokenIDs: string[],
         amounts?: number[],
         data = '0x',
         fee?: FeeType
@@ -44,6 +44,9 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
 
         switch (schema) {
             case NftTypes.ERC721: {
+                if (tokenIDs.length !== 1) {
+                    throw new Error(`nft.transfer supports exactly 1 tokenID transfer for ERC721. received ${tokenIDs.join(', ')}`);
+                }
                 const _contract: ERC721 = contract as ERC721;
                 tx = await _contract.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](owner, to, tokenIDs[0], data);
                 break;
