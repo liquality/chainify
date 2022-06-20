@@ -14,7 +14,13 @@ import {
     WalletOptions,
 } from '@chainify/types';
 import { base58, retry } from '@chainify/utils';
-import { createAccount, createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
+import {
+    createAccount,
+    createTransferInstruction,
+    getAccount,
+    getAssociatedTokenAddress,
+    TokenAccountNotFoundError,
+} from '@solana/spl-token';
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
@@ -87,14 +93,12 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     public async sendTransaction(txRequest: SolanaTxRequest): Promise<Transaction> {
         let transaction: SolTransaction;
 
+        const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash('confirmed'));
+
         // Handle already builded transactions that are passed from outside - Jupiter for example
         if (txRequest.transaction) {
-            const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash('confirmed'));
-            console.log('latest', latestBlockhash);
             transaction = txRequest.transaction;
-            console.log('current block', transaction.recentBlockhash);
             transaction.recentBlockhash = latestBlockhash.blockhash;
-            console.log('new one', transaction);
         } else {
             let instruction: TransactionInstruction;
             const to = new PublicKey(txRequest.to.toString());
@@ -102,14 +106,22 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
             // Handle ERC20 Transactions
             if (txRequest.asset && !txRequest.asset.isNative) {
                 const contractAddress = new PublicKey(txRequest.asset.contractAddress);
-                const fromTokenAccount = await getAssociatedTokenAddress(contractAddress, this._signer.publicKey);
+
+                const [fromTokenAccount, toTokenAccount] = await Promise.all([
+                    getAssociatedTokenAddress(contractAddress, this._signer.publicKey),
+                    getAssociatedTokenAddress(contractAddress, to),
+                ]);
+
                 try {
-                    await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
+                    await getAccount(this.chainProvider.getProvider(), toTokenAccount);
                 } catch (err) {
-                    logger.debug(`Error creating account`, err);
+                    if (err instanceof TokenAccountNotFoundError) {
+                        await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
+                    } else {
+                        logger.debug(`Error creating account`, err);
+                    }
                 }
 
-                const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
                 instruction = createTransferInstruction(fromTokenAccount, toTokenAccount, this._signer.publicKey, Number(txRequest.value));
             } else {
                 // Handle SOL Transactions
@@ -120,12 +132,12 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
                 });
             }
 
-            const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash('confirmed'));
-
             transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
         }
 
-        const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer]);
+        const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer], {
+            skipPreflight: true,
+        });
 
         return {
             hash,
