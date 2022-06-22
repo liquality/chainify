@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.2.2
+
+### Patch Changes
+
+-   Publish again - types not correctly published
+
 ## 1.2.1
 
 ### Patch Changes

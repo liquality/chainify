@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.2
+
+### Patch Changes
+
+-   Publish again - types not correctly published
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.2
+    -   @chainify/client@1.2.2
+    -   @chainify/errors@1.2.2
+    -   @chainify/hw-ledger@1.2.2
+    -   @chainify/types@1.2.2
+    -   @chainify/utils@1.2.2
+
 ## 1.2.1
 
 ### Patch Changes
