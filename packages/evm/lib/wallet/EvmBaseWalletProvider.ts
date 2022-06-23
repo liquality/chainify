@@ -1,13 +1,14 @@
 import { Chain, Wallet } from '@chainify/client';
-import { ReplaceFeeInsufficientError } from '@chainify/errors';
+import { NodeError, ReplaceFeeInsufficientError } from '@chainify/errors';
 import { AddressType, Asset, BigNumber, FeeType, Network, Transaction } from '@chainify/types';
 import { ensure0x, remove0x } from '@chainify/utils';
 import { Signer } from '@ethersproject/abstract-signer';
+import { BaseProvider, TransactionRequest as EthersTxRequest } from '@ethersproject/providers';
 import { ERC20__factory } from '../typechain';
 import { EthereumTransactionRequest, EthersTransactionResponse } from '../types';
-import { extractFeeData, fromGwei, parseTxRequest, parseTxResponse } from '../utils';
+import { calculateGasMargin, extractFeeData, fromGwei, parseTxRequest, parseTxResponse } from '../utils';
 
-export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer> extends Wallet<Provider, S> {
+export abstract class EvmBaseWalletProvider<Provider extends BaseProvider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;
 
     constructor(chainProvider?: Chain<Provider>) {
@@ -35,22 +36,26 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
             txRequest.fee = (await this.chainProvider.getFees()).average.fee;
         }
 
+        let ethersTxRequest: EthersTxRequest = null;
         // Handle ERC20 transfers
         if (txRequest.asset && !txRequest.asset.isNative) {
             const transferErc20Tx = await ERC20__factory.connect(txRequest.asset.contractAddress, this.signer).populateTransaction.transfer(
                 ensure0x(txRequest.to.toString()),
                 txRequest.value.toString()
             );
-            const result = await this.signer.sendTransaction(
-                parseTxRequest({ chainId, ...transferErc20Tx, ...extractFeeData(txRequest.fee) })
-            );
-            return parseTxResponse(result);
+            ethersTxRequest = parseTxRequest({ chainId, ...transferErc20Tx, ...extractFeeData(txRequest.fee) });
         }
-        // Handle ETH transfers
+        // Handle ETH transfers & contract calls
         else {
-            const result = await this.signer.sendTransaction(parseTxRequest({ chainId, ...txRequest, ...extractFeeData(txRequest.fee) }));
-            return parseTxResponse(result);
+            ethersTxRequest = parseTxRequest({ chainId, ...txRequest, ...extractFeeData(txRequest.fee) });
         }
+
+        if (!ethersTxRequest.gasLimit) {
+            ethersTxRequest.gasLimit = await this.estimateGas(ethersTxRequest);
+        }
+
+        const result = await this.signer.sendTransaction(ethersTxRequest);
+        return parseTxResponse(result);
     }
 
     public async sendBatchTransaction(txRequests: EthereumTransactionRequest[]): Promise<Transaction<EthersTransactionResponse>[]> {
@@ -115,5 +120,16 @@ export abstract class EvmBaseWalletProvider<Provider, S extends Signer = Signer>
 
     public async getConnectedNetwork(): Promise<Network> {
         return this.chainProvider.getNetwork();
+    }
+
+    public async estimateGas(txRequest: EthersTxRequest) {
+        try {
+            const estimation = await this.chainProvider.getProvider().estimateGas(txRequest);
+            // gas estimation is increased with 50%
+            return calculateGasMargin(estimation, 5000);
+        } catch (error) {
+            const { message, ...attrs } = error;
+            throw new NodeError(message, { ...attrs });
+        }
     }
 }
