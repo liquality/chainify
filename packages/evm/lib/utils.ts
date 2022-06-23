@@ -28,7 +28,7 @@ export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee: FeeType
 
 export function parseSwapParams(tx: SwapParams): ILiqualityHTLC.HTLCDataStruct {
     return {
-        amount: tx.value.toFixed(),
+        amount: tx.value.toString(10),
         expiration: tx.expiration,
         secretHash: ensure0x(tx.secretHash),
         tokenAddress: ensure0x(tx.asset.isNative ? AddressZero : tx.asset.contractAddress),
