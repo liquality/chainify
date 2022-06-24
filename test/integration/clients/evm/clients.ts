@@ -10,7 +10,8 @@ import { EIP1559MockFeeProvider } from './mock/EIP1559MockFeeProvider';
 function getEvmClient(network: Network) {
     const config = EVMConfig(network);
     const provider = new providers.StaticJsonRpcProvider(network.rpcUrl);
-    const feeProvider = new EIP1559MockFeeProvider(provider);
+    // using mainnet gas fees
+    const feeProvider = new EVM.EIP1559FeeApiProvider(EVM.EvmNetworks.ethereum_mainnet.chainId);
     const chainProvider = new EVM.EvmChainProvider(network, provider, feeProvider);
     // we don't have multicall on the common address on Ganache
     void chainProvider.multicall.setMulticallAddress('0x08579f8763415cfCEa1B0F0dD583b1A0DEbfBe2b');
