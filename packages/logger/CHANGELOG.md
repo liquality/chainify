@@ -1,5 +1,11 @@
 # @chainify/logger
 
+## 1.2.4
+
+### Patch Changes
+
+-   -   do not add gas margin for sending native assets
+
 ## 1.2.3
 
 ### Patch Changes

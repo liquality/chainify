@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.4
+
+### Patch Changes
+
+-   -   do not add gas margin for sending native assets
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.4
+    -   @chainify/client@1.2.4
+    -   @chainify/errors@1.2.4
+    -   @chainify/hw-ledger@1.2.4
+    -   @chainify/types@1.2.4
+    -   @chainify/utils@1.2.4
+
 ## 1.2.3
 
 ### Patch Changes
