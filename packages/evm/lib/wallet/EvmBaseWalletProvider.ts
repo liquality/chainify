@@ -125,8 +125,14 @@ export abstract class EvmBaseWalletProvider<Provider extends BaseProvider, S ext
     public async estimateGas(txRequest: EthersTxRequest) {
         try {
             const estimation = await this.chainProvider.getProvider().estimateGas(txRequest);
+            // do not add gas limit margin for sending native asset
+            if (estimation.eq(21000)) {
+                return estimation;
+            }
             // gas estimation is increased with 50%
-            return calculateGasMargin(estimation, 5000);
+            else {
+                return calculateGasMargin(estimation, 5000);
+            }
         } catch (error) {
             const { message, ...attrs } = error;
             throw new NodeError(message, { ...attrs });
