@@ -1,5 +1,14 @@
 # @chainify/errors
 
+## 1.2.3
+
+### Patch Changes
+
+-   -   fix exponent error for EVM swaps
+    -   proper error handling when fetching balances
+    -   add 50% gas limit margin for all EVM transactions
+    -   new EIP1559 Fee API provider
+
 ## 1.2.2
 
 ### Patch Changes
