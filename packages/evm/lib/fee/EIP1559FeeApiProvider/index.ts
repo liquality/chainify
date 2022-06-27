@@ -2,7 +2,6 @@ import { Fee, HttpClient } from '@chainify/client';
 import { UnsupportedMethodError } from '@chainify/errors';
 import { FeeDetails } from '@chainify/types';
 import { EvmNetworks } from '../../networks';
-import { AvalancheFeeParser, AvalancheResponse } from './avalanche';
 import { EthereumFeeParser, EthereumResponse } from './ethereum';
 import { PolygonFeeParser, PolygonResponse } from './polygon';
 
@@ -28,10 +27,6 @@ export class EIP1559FeeApiProvider extends Fee {
                 return new EthereumFeeParser().parse(response as EthereumResponse);
             }
 
-            case EvmNetworks.avax_mainnet.chainId: {
-                return new AvalancheFeeParser().parse(response as AvalancheResponse);
-            }
-
             case EvmNetworks.polygon_mainnet.chainId: {
                 return new PolygonFeeParser().parse(response as PolygonResponse);
             }
@@ -43,4 +38,4 @@ export class EIP1559FeeApiProvider extends Fee {
     }
 }
 
-type Response = EthereumResponse | AvalancheResponse | PolygonResponse;
+type Response = EthereumResponse | PolygonResponse;
