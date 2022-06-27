@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 1.2.5
+
+### Patch Changes
+
+-   -   new eip1559 provider
+
 ## 1.2.4
 
 ### Patch Changes

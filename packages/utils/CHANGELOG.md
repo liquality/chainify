@@ -1,5 +1,14 @@
 # @chainify/utils
 
+## 1.2.5
+
+### Patch Changes
+
+-   -   new eip1559 provider
+-   Updated dependencies
+    -   @chainify/errors@1.2.5
+    -   @chainify/types@1.2.5
+
 ## 1.2.4
 
 ### Patch Changes
