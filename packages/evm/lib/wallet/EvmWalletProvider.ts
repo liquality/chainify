@@ -24,10 +24,16 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     }
 
     public async getAddress(): Promise<Address> {
+        let name = null;
+        if (this.nameServiceAvailable()) {
+            name = await this.getNameService().resolve(this._wallet.address);
+        }
+
         return new Address({
             address: this._wallet.address,
             derivationPath: this._walletOptions.derivationPath,
             publicKey: this._wallet.publicKey,
+            name,
         });
     }
 

@@ -3,8 +3,9 @@ export class Address {
     derivationPath?: string;
     publicKey?: string;
     privateKey?: string;
+    name?: string;
 
-    constructor(fields?: { address: string; derivationPath?: string; publicKey?: string; privateKey?: string }) {
+    constructor(fields?: { address: string; derivationPath?: string; publicKey?: string; privateKey?: string; name?: string }) {
         if (fields) {
             Object.assign(this, fields);
         }
