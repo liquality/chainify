@@ -2,8 +2,14 @@ import { AddressType } from './Address';
 
 export interface NameService {
     /**
-     * @param address - address to look up
+     * @param address - resolve name to address
+     * @returns - address
+     */
+    resolveName(name: string): Promise<AddressType>;
+
+    /**
+     * @param address - look up address
      * @returns - ens
      */
-    resolve(address: AddressType): Promise<string>;
+    lookupAddress(address: AddressType): Promise<string>;
 }

@@ -9,10 +9,18 @@ export class EnsProvider implements NameService {
     }
 
     /**
-     * @param address - address to look up
+     * @param address - resolve name to address
+     * @returns - address
+     */
+    public async resolveName(name: string): Promise<AddressType> {
+        return this._provider.resolveName(name);
+    }
+
+    /**
+     * @param address - look up address
      * @returns - ens
      */
-    public async resolve(address: AddressType): Promise<string> {
+    public async lookupAddress(address: AddressType): Promise<string> {
         return this._provider.lookupAddress(address.toString());
     }
 }
