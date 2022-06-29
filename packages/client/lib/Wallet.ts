@@ -1,21 +1,42 @@
 import { UnsupportedMethodError } from '@chainify/errors';
-import { Address, AddressType, Asset, BigNumber, FeeType, Network, Transaction, TransactionRequest, WalletProvider } from '@chainify/types';
+import {
+    Address,
+    AddressType,
+    Asset,
+    BigNumber,
+    FeeType,
+    NamingProvider,
+    Network,
+    Transaction,
+    TransactionRequest,
+    WalletProvider,
+} from '@chainify/types';
 import Chain from './Chain';
 
 export default abstract class Wallet<T, S> implements WalletProvider {
     protected chainProvider: Chain<T>;
+    protected namingProvider: NamingProvider;
 
-    constructor(chainProvider?: Chain<T>) {
+    constructor(chainProvider?: Chain<T>, namingProvider?: NamingProvider) {
         this.chainProvider = chainProvider;
+        this.namingProvider = namingProvider;
     }
 
-    setChainProvider(chainProvider: Chain<T>): void {
+    public setChainProvider(chainProvider: Chain<T>): void {
         this.chainProvider = chainProvider;
         this.onChainProviderUpdate(chainProvider);
     }
 
-    getChainProvider(): Chain<T> {
+    public getChainProvider(): Chain<T> {
         return this.chainProvider;
+    }
+
+    public setNamingProvider(namingProvider: NamingProvider) {
+        this.namingProvider = namingProvider;
+    }
+
+    public getNamingProvider(): NamingProvider {
+        return this.namingProvider;
     }
 
     public signTypedData(_data: any): Promise<string> {

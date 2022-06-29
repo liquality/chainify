@@ -1,6 +1,6 @@
 import { Chain, Wallet } from '@chainify/client';
 import { NodeError, ReplaceFeeInsufficientError } from '@chainify/errors';
-import { AddressType, Asset, BigNumber, FeeType, Network, Transaction } from '@chainify/types';
+import { AddressType, Asset, BigNumber, FeeType, NamingProvider, Network, Transaction } from '@chainify/types';
 import { ensure0x, remove0x } from '@chainify/utils';
 import { Signer } from '@ethersproject/abstract-signer';
 import { BaseProvider, TransactionRequest as EthersTxRequest } from '@ethersproject/providers';
@@ -11,8 +11,8 @@ import { calculateGasMargin, extractFeeData, fromGwei, parseTxRequest, parseTxRe
 export abstract class EvmBaseWalletProvider<Provider extends BaseProvider, S extends Signer = Signer> extends Wallet<Provider, S> {
     protected signer: S;
 
-    constructor(chainProvider?: Chain<Provider>) {
-        super(chainProvider);
+    constructor(chainProvider?: Chain<Provider>, namingProvider?: NamingProvider) {
+        super(chainProvider, namingProvider);
     }
 
     public getSigner() {

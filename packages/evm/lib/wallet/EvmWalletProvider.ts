@@ -1,5 +1,5 @@
 import { Chain } from '@chainify/client';
-import { Address, Network, WalletOptions } from '@chainify/types';
+import { Address, NamingProvider, Network, WalletOptions } from '@chainify/types';
 import { compare, remove0x } from '@chainify/utils';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
@@ -11,8 +11,8 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     private _wallet: EthersWallet;
     private _walletOptions: WalletOptions;
 
-    constructor(walletOptions: WalletOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
-        super(chainProvider);
+    constructor(walletOptions: WalletOptions, chainProvider?: Chain<StaticJsonRpcProvider>, namingProvider?: NamingProvider) {
+        super(chainProvider, namingProvider);
         this._walletOptions = walletOptions;
         this._wallet = EthersWallet.fromMnemonic(walletOptions.mnemonic, walletOptions.derivationPath);
 
@@ -24,10 +24,13 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     }
 
     public async getAddress(): Promise<Address> {
+        const name = this.getNamingProvider() ? await this.getNamingProvider().lookupAddress(this._wallet.address) : null;
+
         return new Address({
             address: this._wallet.address,
             derivationPath: this._walletOptions.derivationPath,
             publicKey: this._wallet.publicKey,
+            name,
         });
     }
 
