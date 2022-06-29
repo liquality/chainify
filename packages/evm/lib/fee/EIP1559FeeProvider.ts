@@ -1,7 +1,7 @@
 import { Fee } from '@chainify/client';
 import { BigNumber, FeeDetails } from '@chainify/types';
 import { Network, StaticJsonRpcProvider } from '@ethersproject/providers';
-import { suggestFees } from '@rainbow-me/fee-suggestions';
+import { suggestFees } from '@liquality/fee-suggestions';
 import { toGwei } from '../utils';
 
 export class EIP1559FeeProvider extends Fee {
