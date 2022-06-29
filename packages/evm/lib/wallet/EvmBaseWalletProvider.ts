@@ -50,6 +50,10 @@ export abstract class EvmBaseWalletProvider<Provider extends BaseProvider, S ext
             ethersTxRequest = parseTxRequest({ chainId, ...txRequest, ...extractFeeData(txRequest.fee) });
         }
 
+        if (!ethersTxRequest.from) {
+            ethersTxRequest.from = await this.signer.getAddress();
+        }
+
         if (!ethersTxRequest.gasLimit) {
             ethersTxRequest.gasLimit = await this.estimateGas(ethersTxRequest);
         }
