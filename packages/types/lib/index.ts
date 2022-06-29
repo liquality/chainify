@@ -6,7 +6,7 @@ export * from './Asset';
 export * from './Block';
 export * from './Chain';
 export * from './Fees';
-export * from './NameService';
+export * from './Naming';
 export * from './Network';
 export * from './Nft';
 export * from './Swap';

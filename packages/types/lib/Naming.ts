@@ -1,6 +1,6 @@
 import { AddressType } from './Address';
 
-export interface NameService {
+export interface NamingProvider {
     /**
      * @param address - resolve name to address
      * @returns - address

@@ -1,7 +1,7 @@
-import { AddressType, NameService } from '@chainify/types';
+import { AddressType, NamingProvider } from '@chainify/types';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
-export class EnsProvider implements NameService {
+export class EnsProvider implements NamingProvider {
     private _provider: StaticJsonRpcProvider;
 
     constructor(provider: StaticJsonRpcProvider) {

@@ -5,7 +5,7 @@ import {
     Asset,
     BigNumber,
     FeeType,
-    NameService,
+    NamingProvider,
     Network,
     Transaction,
     TransactionRequest,
@@ -15,31 +15,28 @@ import Chain from './Chain';
 
 export default abstract class Wallet<T, S> implements WalletProvider {
     protected chainProvider: Chain<T>;
-    private _nameService: NameService;
+    protected namingProvider: NamingProvider;
 
-    constructor(chainProvider?: Chain<T>) {
+    constructor(chainProvider?: Chain<T>, namingProvider?: NamingProvider) {
         this.chainProvider = chainProvider;
+        this.namingProvider = namingProvider;
     }
 
-    setChainProvider(chainProvider: Chain<T>): void {
+    public setChainProvider(chainProvider: Chain<T>): void {
         this.chainProvider = chainProvider;
         this.onChainProviderUpdate(chainProvider);
     }
 
-    getChainProvider(): Chain<T> {
+    public getChainProvider(): Chain<T> {
         return this.chainProvider;
     }
 
-    setNameService(nameService: NameService) {
-        this._nameService = nameService;
+    public setNamingProvider(namingProvider: NamingProvider) {
+        this.namingProvider = namingProvider;
     }
 
-    nameServiceAvailable(): boolean {
-        return !!this._nameService;
-    }
-
-    getNameService(): NameService {
-        return this._nameService;
+    public getNamingProvider(): NamingProvider {
+        return this.namingProvider;
     }
 
     public signTypedData(_data: any): Promise<string> {
