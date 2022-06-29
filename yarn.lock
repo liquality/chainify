@@ -227,7 +227,7 @@ __metadata:
     "@ethersproject/solidity": 5.6.0
     "@ethersproject/transactions": 5.6.0
     "@ethersproject/wallet": 5.6.0
-    "@liquality/fee-suggestions": 2.0.1
+    "@liquality/fee-suggestions": 2.0.2
     "@metamask/eth-sig-util": ^4.0.1
     "@nomiclabs/hardhat-ethers": ^2.0.4
     "@nomiclabs/hardhat-waffle": ^2.0.2
@@ -2009,15 +2009,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@liquality/fee-suggestions@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@liquality/fee-suggestions@npm:2.0.1"
+"@liquality/fee-suggestions@npm:2.0.2":
+  version: 2.0.2
+  resolution: "@liquality/fee-suggestions@npm:2.0.2"
   dependencies:
     "@ethersproject/providers": 5.6.0
     bignumber.js: ^9.0.1
     ethers: 5.6.0
     moving-averages: ^4.0.6
-  checksum: 59c2d9a37afc274000d55313fbaabf4f0cc8bd02fb4e68d37af82946ecdd6c1de85b7eaf9ab6174cd43f850ae70fc4decf9af319d6675dd472052669103d3fe2
+  checksum: 0c3842b0b8bcb4c8da786fd8bb89fd0081e706b5709b93f8017df89897cdc3cb01e9079b99143ed53ec689e50361976d30002f3aa50ca89527c6abb1f6b449db
   languageName: node
   linkType: hard
 
