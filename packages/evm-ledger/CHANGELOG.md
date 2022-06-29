@@ -1,5 +1,20 @@
 # @chainify/evm-ledger
 
+## 1.2.6
+
+### Patch Changes
+
+-   -   use forked version of @rainbow-me/fee-suggestions
+    -   support naming service for EVM chains
+    -   ENS Provider
+-   Updated dependencies
+    -   @chainify/client@1.2.6
+    -   @chainify/errors@1.2.6
+    -   @chainify/evm@1.2.6
+    -   @chainify/hw-ledger@1.2.6
+    -   @chainify/types@1.2.6
+    -   @chainify/utils@1.2.6
+
 ## 1.2.5
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @chainify/logger
 
+## 1.2.6
+
+### Patch Changes
+
+-   -   use forked version of @rainbow-me/fee-suggestions
+    -   support naming service for EVM chains
+    -   ENS Provider
+
 ## 1.2.5
 
 ### Patch Changes
