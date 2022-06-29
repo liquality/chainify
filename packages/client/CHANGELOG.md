@@ -1,5 +1,16 @@
 # @chainify/client
 
+## 1.2.7
+
+### Patch Changes
+
+-   -   specify `from` property to EVM transactions when missing
+-   Updated dependencies
+    -   @chainify/errors@1.2.7
+    -   @chainify/logger@1.2.7
+    -   @chainify/types@1.2.7
+    -   @chainify/utils@1.2.7
+
 ## 1.2.6
 
 ### Patch Changes

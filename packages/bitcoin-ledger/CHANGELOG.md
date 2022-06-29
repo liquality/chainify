@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.7
+
+### Patch Changes
+
+-   -   specify `from` property to EVM transactions when missing
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.7
+    -   @chainify/client@1.2.7
+    -   @chainify/errors@1.2.7
+    -   @chainify/hw-ledger@1.2.7
+    -   @chainify/types@1.2.7
+    -   @chainify/utils@1.2.7
+
 ## 1.2.6
 
 ### Patch Changes
