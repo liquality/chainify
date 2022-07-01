@@ -41,7 +41,7 @@ export abstract class EvmBaseWalletProvider<Provider extends BaseProvider, S ext
         if (txRequest.asset && !txRequest.asset.isNative) {
             const transferErc20Tx = await ERC20__factory.connect(txRequest.asset.contractAddress, this.signer).populateTransaction.transfer(
                 ensure0x(txRequest.to.toString()),
-                txRequest.value.toString()
+                txRequest.value.toString(10)
             );
             ethersTxRequest = parseTxRequest({ chainId, ...transferErc20Tx, ...extractFeeData(txRequest.fee) });
         }

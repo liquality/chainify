@@ -15,6 +15,7 @@ export function shouldBehaveLikeEvmClient() {
         const chain = Chains.evm.hd;
         shouldBehaveLikeChainProvider(chain);
         shouldBehaveLikeWalletProvider(chain);
+        shouldBehaveLikeWalletProvider(chain, false);
         shouldUpdateTransactionFee(chain);
         shouldSignTypedData(chain);
         shouldBehaveLikeSwapProvider(chain);

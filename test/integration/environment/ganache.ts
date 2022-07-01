@@ -13,6 +13,7 @@ export async function startGanache(_options: any = {}) {
         blockTime: 0,
         instamine: 'eager',
         defaultGasPrice: 0,
+        default_balance_ether: 1000000000,
         ..._options,
     };
     server = Ganache.server(defaultOptions);

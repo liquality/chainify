@@ -148,7 +148,7 @@ export function calculateFee(base: BigNumber | number | string, multiplier: numb
 
 function toEthersBigNumber(a: BigNumberish): EthersBigNumber {
     if (a?.toString()) {
-        return EthersBigNumber.from(a.toString());
+        return EthersBigNumber.from(a.toString(10));
     }
 }
 
