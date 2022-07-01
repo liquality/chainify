@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.8
+
+### Patch Changes
+
+-   -   fix for all evm chains when sending amounts >=1000
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.8
+    -   @chainify/client@1.2.8
+    -   @chainify/errors@1.2.8
+    -   @chainify/hw-ledger@1.2.8
+    -   @chainify/types@1.2.8
+    -   @chainify/utils@1.2.8
+
 ## 1.2.7
 
 ### Patch Changes

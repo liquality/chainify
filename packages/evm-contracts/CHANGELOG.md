@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 1.2.8
+
+### Patch Changes
+
+-   -   fix for all evm chains when sending amounts >=1000
+
 ## 1.2.7
 
 ### Patch Changes
