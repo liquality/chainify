@@ -1,10 +1,9 @@
-import { HttpClient, Nft } from '@chainify/client';
+import { HttpClient, Nft, Wallet } from '@chainify/client';
 import { AddressType, BigNumber, ChainId, NFTAsset, Transaction } from '@chainify/types';
 import { BaseProvider } from '@ethersproject/providers';
 import { SolanaWalletProvider } from 'lib/wallet/SolanaWalletProvider';
 import Moralis from 'moralis/node';
 import { parseToNFTAsset } from '../utils';
-
 type MoralisConfig = {
     url: string;
     apiKey: string;
@@ -15,7 +14,7 @@ export class SolanaNftProvider extends Nft<BaseProvider, SolanaWalletProvider> {
     private _config: MoralisConfig;
     private readonly _httpClient: HttpClient;
 
-    constructor(walletProvider: any, config: MoralisConfig) {
+    constructor(walletProvider: Wallet<BaseProvider, SolanaWalletProvider>, config: MoralisConfig) {
         super(walletProvider);
         this._config = config;
         this._httpClient = new HttpClient({});
