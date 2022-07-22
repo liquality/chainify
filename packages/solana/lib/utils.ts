@@ -1,4 +1,4 @@
-import { Block, Transaction, TxStatus } from '@chainify/types';
+import { Block, NFTAsset, Transaction, TxStatus } from '@chainify/types';
 import { Math } from '@chainify/utils';
 import { BlockResponse, ParsedInstruction, ParsedTransactionWithMeta, RpcResponseAndContext, SignatureStatus } from '@solana/web3.js';
 
@@ -55,4 +55,26 @@ export function parseTransactionResponse(
     }
 
     return result;
+}
+
+export function parseToNFTAsset(data: any, nft: any): NFTAsset {
+    return {
+        token_id: data.edition,
+        asset_contract: {
+            address: nft.mint,
+            name: data.name,
+            symbol: data.symbol,
+            image_url: data.image,
+            external_link: data.external_url,
+        },
+        collection: {
+            name: data.collection?.name || data.name,
+        },
+        description: data.description,
+        external_link: data.external_url,
+        image_original_url: data.image,
+        image_preview_url: data.image,
+        image_thumbnail_url: data.image,
+        name: data.name,
+    };
 }

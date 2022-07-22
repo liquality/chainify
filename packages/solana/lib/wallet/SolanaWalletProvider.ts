@@ -1,6 +1,5 @@
 import { Wallet } from '@chainify/client';
 import { UnimplementedMethodError } from '@chainify/errors';
-import { Logger } from '@chainify/logger';
 import {
     Address,
     AddressType,
@@ -14,14 +13,18 @@ import {
     WalletOptions,
 } from '@chainify/types';
 import { base58, retry } from '@chainify/utils';
-import { createAccount, createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
+import {
+    createAccount,
+    createTransferInstruction,
+    getAccount,
+    getAssociatedTokenAddress,
+    TokenAccountNotFoundError,
+} from '@solana/spl-token';
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
 import nacl from 'tweetnacl';
 import { SolanaChainProvider } from '../';
-
-const logger = new Logger('SolanaWalletProvider');
 
 export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     private _signer: Keypair;
@@ -87,18 +90,19 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         const to = new PublicKey(txRequest.to.toString());
 
         let instruction: TransactionInstruction;
-        // Handle ERC20 Transactions
+        // Handle ERC20 and NFT Transactions
         if (txRequest.asset && !txRequest.asset.isNative) {
             const contractAddress = new PublicKey(txRequest.asset.contractAddress);
             const fromTokenAccount = await getAssociatedTokenAddress(contractAddress, this._signer.publicKey);
+            const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
 
             try {
-                await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
-            } catch (err) {
-                logger.debug(`Error creating account`, err);
+                await getAccount(this.chainProvider.getProvider(), toTokenAccount);
+            } catch (e) {
+                if (e instanceof TokenAccountNotFoundError) {
+                    await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
+                }
             }
-
-            const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
 
             instruction = createTransferInstruction(fromTokenAccount, toTokenAccount, this._signer.publicKey, Number(txRequest.value));
         } else {

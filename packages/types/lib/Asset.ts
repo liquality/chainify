@@ -1,7 +1,7 @@
 import { ChainId } from '@liquality/cryptoassets';
 export { ChainId } from '@liquality/cryptoassets';
 
-export type AssetType = 'native' | 'erc20';
+export type AssetType = 'native' | 'erc20' | 'nft';
 
 export interface Asset {
     name: string;
