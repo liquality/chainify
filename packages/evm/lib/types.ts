@@ -1,4 +1,5 @@
 import { AddressType, FeeType, TransactionRequest } from '@chainify/types';
+import { Fragment, JsonFragment } from '@ethersproject/abi';
 import { BlockWithTransactions as EthersBlockWithTransactions } from '@ethersproject/abstract-provider';
 import { PopulatedTransaction as EthersPopulatedTransaction } from '@ethersproject/contracts';
 import { Block as EthersBlock, TransactionResponse as EthersTransactionResponse } from '@ethersproject/providers';
@@ -55,3 +56,10 @@ export type NftProviderConfig = {
 export type MoralisConfig = NftProviderConfig & {
     appId: string;
 };
+
+export interface MulticallData {
+    target: string;
+    abi: ReadonlyArray<Fragment | JsonFragment | string>;
+    name: string;
+    params: ReadonlyArray<Fragment | JsonFragment | string>;
+}
