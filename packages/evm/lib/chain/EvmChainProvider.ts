@@ -155,8 +155,16 @@ export class EvmChainProvider extends Chain<StaticJsonRpcProvider> {
         const user = addresses[0].toString();
 
         if (this.multicall) {
-            const balances = await this.multicall.getMultipleBalances(user, assets);
-            return balances;
+            try {
+                const balances = await this.multicall.getMultipleBalances(user, assets);
+                return balances;
+            } catch (_err) {
+                // fallback to fetching without multicall
+                this.multicall = null;
+                const balances = await this.getBalance(addresses, assets);
+                this.multicall = new EvmMulticallProvider(this.provider);
+                return balances;
+            }
         } else {
             const allBalancePromise = assets.map((a) => {
                 try {
