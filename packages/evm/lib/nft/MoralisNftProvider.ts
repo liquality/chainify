@@ -28,7 +28,7 @@ export class MoralisNftProvider extends EvmNftProvider {
         });
 
         return nfts.result.reduce((result, nft) => {
-            const { contract_type, token_address, name, symbol, metadata, token_id } = nft;
+            const { contract_type, token_address, name, symbol, metadata, token_id, amount } = nft;
 
             // we only support ERC721 & ERC1155
             if (contract_type in NftTypes && token_address) {
@@ -47,6 +47,8 @@ export class MoralisNftProvider extends EvmNftProvider {
                         name,
                     },
                     token_id,
+                    amount,
+                    standard: contract_type,
                 };
 
                 if (metadata) {
