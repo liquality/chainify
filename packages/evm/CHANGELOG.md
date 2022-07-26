@@ -1,5 +1,17 @@
 # @chainify/evm
 
+## 1.2.11
+
+### Patch Changes
+
+-   fix: moralis nfts return amount and type
+-   Updated dependencies
+    -   @chainify/client@1.2.11
+    -   @chainify/errors@1.2.11
+    -   @chainify/logger@1.2.11
+    -   @chainify/types@1.2.11
+    -   @chainify/utils@1.2.11
+
 ## 1.2.10
 
 ### Patch Changes

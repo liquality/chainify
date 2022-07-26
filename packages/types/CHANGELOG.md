@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.2.11
+
+### Patch Changes
+
+-   fix: moralis nfts return amount and type
+
 ## 1.2.10
 
 ### Patch Changes
