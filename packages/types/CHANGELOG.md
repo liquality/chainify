@@ -1,5 +1,13 @@
 # @chainify/types
 
+## 1.2.10
+
+### Patch Changes
+
+-   -   multicall improvements
+        -   export multicall data type
+        -   export method to build multicall data for fetching balances
+
 ## 1.2.9
 
 ### Patch Changes

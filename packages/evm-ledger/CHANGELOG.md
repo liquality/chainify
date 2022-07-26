@@ -1,5 +1,20 @@
 # @chainify/evm-ledger
 
+## 1.2.10
+
+### Patch Changes
+
+-   -   multicall improvements
+        -   export multicall data type
+        -   export method to build multicall data for fetching balances
+-   Updated dependencies
+    -   @chainify/client@1.2.10
+    -   @chainify/errors@1.2.10
+    -   @chainify/evm@1.2.10
+    -   @chainify/hw-ledger@1.2.10
+    -   @chainify/types@1.2.10
+    -   @chainify/utils@1.2.10
+
 ## 1.2.9
 
 ### Patch Changes
