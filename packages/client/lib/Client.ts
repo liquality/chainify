@@ -48,6 +48,9 @@ export default class Client<
             case provider instanceof Swap: {
                 this.swap = provider as SwapType;
                 this.connectWallet(this.swap);
+                if (this.nft) {
+                    this.nft.setWallet(this.wallet);
+                }
                 this.connectChain();
                 break;
             }
@@ -55,6 +58,9 @@ export default class Client<
             case provider instanceof Nft: {
                 this._nft = provider as NftType;
                 this.connectWallet(this.nft);
+                if (this.swap) {
+                    this.swap.setWallet(this.wallet);
+                }
                 this.connectChain();
                 break;
             }

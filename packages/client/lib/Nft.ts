@@ -1,4 +1,4 @@
-import { AddressType, BigNumber, FeeType, Transaction } from '@chainify/types';
+import { AddressType, BigNumber, FeeType, NFTAsset, Transaction } from '@chainify/types';
 import Wallet from './Wallet';
 
 export default abstract class Nft<T, S> {
@@ -19,7 +19,7 @@ export default abstract class Nft<T, S> {
     public abstract transfer(
         contract: AddressType,
         receiver: AddressType,
-        tokenIDs: number[],
+        tokenIDs: string[],
         values?: number[],
         data?: string,
         fee?: FeeType
@@ -33,5 +33,5 @@ export default abstract class Nft<T, S> {
 
     public abstract isApprovedForAll(contract: AddressType, operator: AddressType): Promise<boolean>;
 
-    public abstract fetch(): void;
+    public abstract fetch(): Promise<NFTAsset[]>;
 }

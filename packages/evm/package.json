@@ -1,6 +1,6 @@
 {
     "name": "@chainify/evm",
-    "version": "1.0.11",
+    "version": "1.2.11",
     "description": "",
     "author": "Liquality <info@liquality.io>",
     "homepage": "",
@@ -17,6 +17,7 @@
     "dependencies": {
         "@chainify/client": "workspace:*",
         "@chainify/errors": "workspace:*",
+        "@chainify/logger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
         "@eth-optimism/sdk": "^1.1.5",
@@ -29,8 +30,9 @@
         "@ethersproject/solidity": "5.6.0",
         "@ethersproject/transactions": "5.6.0",
         "@ethersproject/wallet": "5.6.0",
+        "@liquality/fee-suggestions": "2.0.2",
         "@metamask/eth-sig-util": "^4.0.1",
-        "@rainbow-me/fee-suggestions": "^2.0.0"
+        "moralis": "1.8.0"
     },
     "devDependencies": {
         "@nomiclabs/hardhat-ethers": "^2.0.4",

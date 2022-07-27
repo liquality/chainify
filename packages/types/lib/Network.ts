@@ -7,4 +7,5 @@ export interface Network {
     rpcUrl?: string;
     scraperUrl?: string;
     explorerUrl?: string;
+    helperUrl?: string;
 }

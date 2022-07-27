@@ -28,7 +28,7 @@ export function toEthereumTxRequest(tx: EthersPopulatedTransaction, fee: FeeType
 
 export function parseSwapParams(tx: SwapParams): ILiqualityHTLC.HTLCDataStruct {
     return {
-        amount: tx.value.toString(),
+        amount: tx.value.toString(10),
         expiration: tx.expiration,
         secretHash: ensure0x(tx.secretHash),
         tokenAddress: ensure0x(tx.asset.isNative ? AddressZero : tx.asset.contractAddress),
@@ -148,7 +148,7 @@ export function calculateFee(base: BigNumber | number | string, multiplier: numb
 
 function toEthersBigNumber(a: BigNumberish): EthersBigNumber {
     if (a?.toString()) {
-        return EthersBigNumber.from(a.toString());
+        return EthersBigNumber.from(a.toString(10));
     }
 }
 

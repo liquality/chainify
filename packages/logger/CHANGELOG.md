@@ -1,5 +1,113 @@
 # @chainify/logger
 
+## 1.2.11
+
+### Patch Changes
+
+-   fix: moralis nfts return amount and type
+
+## 1.2.10
+
+### Patch Changes
+
+-   -   multicall improvements
+        -   export multicall data type
+        -   export method to build multicall data for fetching balances
+
+## 1.2.9
+
+### Patch Changes
+
+-   -   extend Network type with `helperUrl`
+
+## 1.2.8
+
+### Patch Changes
+
+-   -   fix for all evm chains when sending amounts >=1000
+
+## 1.2.7
+
+### Patch Changes
+
+-   -   specify `from` property to EVM transactions when missing
+
+## 1.2.6
+
+### Patch Changes
+
+-   -   use forked version of @rainbow-me/fee-suggestions
+    -   support naming service for EVM chains
+    -   ENS Provider
+
+## 1.2.5
+
+### Patch Changes
+
+-   -   new eip1559 provider
+
+## 1.2.4
+
+### Patch Changes
+
+-   -   do not add gas margin for sending native assets
+
+## 1.2.3
+
+### Patch Changes
+
+-   -   fix exponent error for EVM swaps
+    -   proper error handling when fetching balances
+    -   add 50% gas limit margin for all EVM transactions
+    -   new EIP1559 Fee API provider
+
+## 1.2.2
+
+### Patch Changes
+
+-   Publish again - types not correctly published
+
+## 1.2.1
+
+### Patch Changes
+
+-   rebuild
+
+## 1.2.0
+
+### Minor Changes
+
+-   nft transfer takes decimal string for token id
+
+## 1.1.2
+
+### Patch Changes
+
+-   -   Chain providers now have a new interface - `getTokenDetails`
+    -   Network object can now be passed during EVM Fee providers creation
+    -   NFTAsset type moved to global level
+
+## 1.1.1
+
+### Patch Changes
+
+-   export base nft provider
+
+## 1.1.0
+
+### Minor Changes
+
+-   Add moralis nft provider
+    Standardise nft fetch response
+
+## 1.0.12
+
+### Patch Changes
+
+-   -   terra fix for memo
+    -   bump cryptoassets version
+    -   bump terra-money.js version
+
 ## 1.0.11
 
 ### Patch Changes

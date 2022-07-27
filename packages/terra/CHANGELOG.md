@@ -1,5 +1,212 @@
 # @chainify/terra
 
+## 1.2.11
+
+### Patch Changes
+
+-   fix: moralis nfts return amount and type
+-   Updated dependencies
+    -   @chainify/client@1.2.11
+    -   @chainify/errors@1.2.11
+    -   @chainify/logger@1.2.11
+    -   @chainify/types@1.2.11
+    -   @chainify/utils@1.2.11
+
+## 1.2.10
+
+### Patch Changes
+
+-   -   multicall improvements
+        -   export multicall data type
+        -   export method to build multicall data for fetching balances
+-   Updated dependencies
+    -   @chainify/client@1.2.10
+    -   @chainify/errors@1.2.10
+    -   @chainify/logger@1.2.10
+    -   @chainify/types@1.2.10
+    -   @chainify/utils@1.2.10
+
+## 1.2.9
+
+### Patch Changes
+
+-   -   extend Network type with `helperUrl`
+-   Updated dependencies
+    -   @chainify/client@1.2.9
+    -   @chainify/errors@1.2.9
+    -   @chainify/logger@1.2.9
+    -   @chainify/types@1.2.9
+    -   @chainify/utils@1.2.9
+
+## 1.2.8
+
+### Patch Changes
+
+-   -   fix for all evm chains when sending amounts >=1000
+-   Updated dependencies
+    -   @chainify/client@1.2.8
+    -   @chainify/errors@1.2.8
+    -   @chainify/logger@1.2.8
+    -   @chainify/types@1.2.8
+    -   @chainify/utils@1.2.8
+
+## 1.2.7
+
+### Patch Changes
+
+-   -   specify `from` property to EVM transactions when missing
+-   Updated dependencies
+    -   @chainify/client@1.2.7
+    -   @chainify/errors@1.2.7
+    -   @chainify/logger@1.2.7
+    -   @chainify/types@1.2.7
+    -   @chainify/utils@1.2.7
+
+## 1.2.6
+
+### Patch Changes
+
+-   -   use forked version of @rainbow-me/fee-suggestions
+    -   support naming service for EVM chains
+    -   ENS Provider
+-   Updated dependencies
+    -   @chainify/client@1.2.6
+    -   @chainify/errors@1.2.6
+    -   @chainify/logger@1.2.6
+    -   @chainify/types@1.2.6
+    -   @chainify/utils@1.2.6
+
+## 1.2.5
+
+### Patch Changes
+
+-   -   new eip1559 provider
+-   Updated dependencies
+    -   @chainify/client@1.2.5
+    -   @chainify/errors@1.2.5
+    -   @chainify/logger@1.2.5
+    -   @chainify/types@1.2.5
+    -   @chainify/utils@1.2.5
+
+## 1.2.4
+
+### Patch Changes
+
+-   -   do not add gas margin for sending native assets
+-   Updated dependencies
+    -   @chainify/client@1.2.4
+    -   @chainify/errors@1.2.4
+    -   @chainify/logger@1.2.4
+    -   @chainify/types@1.2.4
+    -   @chainify/utils@1.2.4
+
+## 1.2.3
+
+### Patch Changes
+
+-   -   fix exponent error for EVM swaps
+    -   proper error handling when fetching balances
+    -   add 50% gas limit margin for all EVM transactions
+    -   new EIP1559 Fee API provider
+-   Updated dependencies
+    -   @chainify/client@1.2.3
+    -   @chainify/errors@1.2.3
+    -   @chainify/logger@1.2.3
+    -   @chainify/types@1.2.3
+    -   @chainify/utils@1.2.3
+
+## 1.2.2
+
+### Patch Changes
+
+-   Publish again - types not correctly published
+-   Updated dependencies
+    -   @chainify/client@1.2.2
+    -   @chainify/errors@1.2.2
+    -   @chainify/logger@1.2.2
+    -   @chainify/types@1.2.2
+    -   @chainify/utils@1.2.2
+
+## 1.2.1
+
+### Patch Changes
+
+-   rebuild
+-   Updated dependencies
+    -   @chainify/client@1.2.1
+    -   @chainify/errors@1.2.1
+    -   @chainify/logger@1.2.1
+    -   @chainify/types@1.2.1
+    -   @chainify/utils@1.2.1
+
+## 1.2.0
+
+### Minor Changes
+
+-   nft transfer takes decimal string for token id
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @chainify/client@1.2.0
+    -   @chainify/errors@1.2.0
+    -   @chainify/logger@1.2.0
+    -   @chainify/types@1.2.0
+    -   @chainify/utils@1.2.0
+
+## 1.1.2
+
+### Patch Changes
+
+-   -   Chain providers now have a new interface - `getTokenDetails`
+    -   Network object can now be passed during EVM Fee providers creation
+    -   NFTAsset type moved to global level
+-   Updated dependencies
+    -   @chainify/client@1.1.2
+    -   @chainify/errors@1.1.2
+    -   @chainify/logger@1.1.2
+    -   @chainify/types@1.1.2
+    -   @chainify/utils@1.1.2
+
+## 1.1.1
+
+### Patch Changes
+
+-   export base nft provider
+-   Updated dependencies
+    -   @chainify/client@1.1.1
+    -   @chainify/errors@1.1.1
+    -   @chainify/types@1.1.1
+    -   @chainify/utils@1.1.1
+
+## 1.1.0
+
+### Minor Changes
+
+-   Add moralis nft provider
+    Standardise nft fetch response
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @chainify/client@1.1.0
+    -   @chainify/errors@1.1.0
+    -   @chainify/types@1.1.0
+    -   @chainify/utils@1.1.0
+
+## 1.0.12
+
+### Patch Changes
+
+-   -   terra fix for memo
+    -   bump cryptoassets version
+    -   bump terra-money.js version
+-   Updated dependencies
+    -   @chainify/client@1.0.12
+    -   @chainify/errors@1.0.12
+    -   @chainify/types@1.0.12
+    -   @chainify/utils@1.0.12
+
 ## 1.0.11
 
 ### Patch Changes

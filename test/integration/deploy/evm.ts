@@ -16,7 +16,7 @@ export async function deployEvmContracts(client: Client) {
     // Mint tokens to the first 10 addresses
     const userAddress = await client.wallet.getAddresses(0, 10);
     for (const user of userAddress) {
-        await erc20.mint(user.toString(), ethers.utils.parseEther('1000'));
+        await erc20.mint(user.toString(), ethers.utils.parseEther('1000000000'));
         await erc20.approve(htlc.address, constants.MaxUint256);
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "@chainify/terra",
-    "version": "1.0.11",
+    "version": "1.2.11",
     "description": "",
     "author": "Liquality <info@liquality.io>",
     "homepage": "",
@@ -17,9 +17,10 @@
     "dependencies": {
         "@chainify/client": "workspace:*",
         "@chainify/errors": "workspace:*",
+        "@chainify/logger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
-        "@terra-money/terra.js": "2.1.18",
+        "@terra-money/terra.js": "3.1.3",
         "@types/luxon": "^2.0.9",
         "lodash": "^4.17.21",
         "luxon": "^2.3.1"

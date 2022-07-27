@@ -1,0 +1,41 @@
+# # Release new version to NPM when Pull requests are merged
+# name: Release
+
+# on:
+#   push:
+#     branches:
+#       - dev
+
+# jobs:
+#   release:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3.0.2
+#         with:
+#           fetch-depth: 0
+
+#       - uses: actions/setup-node@v3.3.0
+#         with:
+#           node-version: 16
+
+#       - uses: actions/cache@v3.0.4
+#         id: cache
+#         with:
+#           path: ~/.npm
+#           key: ${{ runner.os }}-build-${{ env.cache-name }}-node${{ env.node-version }}
+
+#       - name: build
+#         run: |
+#           yarn
+#           yarn build
+
+#       - name: Semantic Release
+#         uses: cycjimmy/semantic-release-action@v3.0.0
+#         id: semantic
+#         with:
+#           branches: |
+#             dev
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

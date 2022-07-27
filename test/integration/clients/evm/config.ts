@@ -26,11 +26,11 @@ export const EVMConfig = (network: Network): IConfig => {
         },
 
         swapParams: {
-            value: new BigNumber(1),
+            value: new BigNumber(1e21),
         },
 
         sendParams: {
-            value: new BigNumber(1),
+            value: new BigNumber(1e21),
         },
 
         recipientAddress: '0xe862a41cef3bbcc6d85bff8b9c36801a6bc4453e',
