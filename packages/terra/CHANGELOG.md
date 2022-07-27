@@ -1,5 +1,31 @@
 # @chainify/terra
 
+## 1.2.11
+
+### Patch Changes
+
+-   fix: moralis nfts return amount and type
+-   Updated dependencies
+    -   @chainify/client@1.2.11
+    -   @chainify/errors@1.2.11
+    -   @chainify/logger@1.2.11
+    -   @chainify/types@1.2.11
+    -   @chainify/utils@1.2.11
+
+## 1.2.10
+
+### Patch Changes
+
+-   -   multicall improvements
+        -   export multicall data type
+        -   export method to build multicall data for fetching balances
+-   Updated dependencies
+    -   @chainify/client@1.2.10
+    -   @chainify/errors@1.2.10
+    -   @chainify/logger@1.2.10
+    -   @chainify/types@1.2.10
+    -   @chainify/utils@1.2.10
+
 ## 1.2.9
 
 ### Patch Changes

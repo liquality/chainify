@@ -1,14 +1,8 @@
 import { AddressType, Asset, BigNumber } from '@chainify/types';
-import { Fragment, Interface, JsonFragment } from '@ethersproject/abi';
+import { Interface } from '@ethersproject/abi';
 import { BaseProvider } from '@ethersproject/providers';
 import { ERC20__factory, Multicall3, Multicall3__factory } from '../typechain';
-
-interface Call {
-    target: string;
-    abi: ReadonlyArray<Fragment | JsonFragment | string>;
-    name: string;
-    params: ReadonlyArray<Fragment | JsonFragment | string>;
-}
+import { MulticallData } from '../types';
 
 interface ContractCall {
     target: string;
@@ -25,6 +19,28 @@ export class EvmMulticallProvider {
         this._multicall = Multicall3__factory.connect(this._multicallAddress, chainProvider);
     }
 
+    public getMulticallAddress(): string {
+        return this._multicallAddress;
+    }
+
+    public buildBalanceCallData(asset: Asset, user: AddressType) {
+        if (asset.isNative) {
+            return {
+                target: this._multicallAddress,
+                abi: Multicall3__factory.abi,
+                name: 'getEthBalance',
+                params: [user],
+            };
+        } else {
+            return {
+                target: asset.contractAddress,
+                abi: ERC20__factory.abi,
+                name: 'balanceOf',
+                params: [user],
+            };
+        }
+    }
+
     public setMulticallAddress(multicallAddress: string) {
         this._multicall = Multicall3__factory.connect(multicallAddress, this._multicall.provider);
         this._multicallAddress = multicallAddress;
@@ -36,38 +52,19 @@ export class EvmMulticallProvider {
 
     public async getMultipleBalances(address: AddressType, assets: Asset[]): Promise<BigNumber[]> {
         const user = address.toString();
-        const result = await this.multicall<BigNumber[]>(
-            assets.map((asset: Asset) => {
-                if (asset.isNative) {
-                    return {
-                        target: this._multicallAddress,
-                        abi: Multicall3__factory.abi,
-                        name: 'getEthBalance',
-                        params: [user],
-                    };
-                } else {
-                    return {
-                        target: asset.contractAddress,
-                        abi: ERC20__factory.abi,
-                        name: 'balanceOf',
-                        params: [user],
-                    };
-                }
-            })
-        );
-
+        const result = await this.multicall<BigNumber[]>(assets.map((asset: Asset) => this.buildBalanceCallData(asset, user)));
         return result.map((r) => (r ? new BigNumber(r.toString()) : null));
     }
 
-    public async multicall<T extends any[] = any[]>(calls: ReadonlyArray<Call>): Promise<T> {
-        const aggregatedCallData: ContractCall[] = calls.map((call: Call) => {
+    public async multicall<T extends any[] = any[]>(calls: ReadonlyArray<MulticallData>): Promise<T> {
+        const aggregatedCallData: ContractCall[] = calls.map((call: MulticallData) => {
             const callData = new Interface(call.abi).encodeFunctionData(call.name, call.params);
             return { target: call.target, callData };
         });
 
         const result = await this._multicall.callStatic.tryAggregate(false, aggregatedCallData);
 
-        return calls.map((call: Call, index: number) => {
+        return calls.map((call: MulticallData, index: number) => {
             const [success, returnData] = result[index];
 
             if (success) {
