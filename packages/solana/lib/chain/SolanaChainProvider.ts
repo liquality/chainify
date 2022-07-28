@@ -8,7 +8,7 @@ import { BlockResponse, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/
 import { parseBlockResponse, parseTransactionResponse } from '../utils';
 
 const LAMPORTS_PER_SIGNATURE = 5000 / LAMPORTS_PER_SOL;
-const logger = new Logger('SolanaWalletProvider');
+const logger = new Logger('SolanaChainProvider');
 
 export class SolanaChainProvider extends Chain<Connection, Network> {
     constructor(network: Network) {
