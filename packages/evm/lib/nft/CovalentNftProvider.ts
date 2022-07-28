@@ -49,22 +49,23 @@ export class CovalentNftProvider extends EvmNftProvider {
                     };
 
                     if (nft_data.length) {
-                        const data = nft_data[0];
-                        const { external_data } = data;
+                        nft_data.forEach((data) => {
+                            const { external_data } = data;
 
-                        nftAsset = {
-                            ...nftAsset,
-                            token_id: data?.token_id,
-                            name: external_data?.name,
-                            description: external_data?.description,
-                            external_link: external_data?.external_url,
-                            image_original_url: external_data?.image,
-                            image_preview_url: external_data?.image,
-                            image_thumbnail_url: external_data?.image,
-                        };
+                            nftAsset = {
+                                ...nftAsset,
+                                token_id: data?.token_id,
+                                name: external_data?.name,
+                                description: external_data?.description,
+                                external_link: external_data?.external_url,
+                                image_original_url: external_data?.image,
+                                image_preview_url: external_data?.image,
+                                image_thumbnail_url: external_data?.image,
+                            };
+
+                            result.push(nftAsset);
+                        });
                     }
-
-                    result.push(nftAsset);
                 }
             }
             return result;
