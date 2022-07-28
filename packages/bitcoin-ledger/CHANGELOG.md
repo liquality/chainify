@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.12
+
+### Patch Changes
+
+-   fix: nfts-on-arbitrum
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.12
+    -   @chainify/client@1.2.12
+    -   @chainify/errors@1.2.12
+    -   @chainify/hw-ledger@1.2.12
+    -   @chainify/types@1.2.12
+    -   @chainify/utils@1.2.12
+
 ## 1.2.11
 
 ### Patch Changes

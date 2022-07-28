@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 1.2.12
+
+### Patch Changes
+
+-   fix: nfts-on-arbitrum
+
 ## 1.2.11
 
 ### Patch Changes
