@@ -24,9 +24,9 @@ import {
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
-import { SolanaTxRequest } from 'lib/types';
 import nacl from 'tweetnacl';
 import { SolanaChainProvider } from '../';
+import { SolanaTxRequest } from '../types';
 
 const logger = new Logger('SolanaWalletProvider');
 
