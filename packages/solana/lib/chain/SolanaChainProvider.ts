@@ -48,18 +48,24 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
     }
 
     public async getTransactionByHash(txHash: string): Promise<Transaction> {
-        return retry(async () => {
-            try {
-                const [transaction, signatures] = await Promise.all([
-                    this.provider.getParsedTransaction(txHash, 'confirmed'),
-                    this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),
-                ]);
-                return parseTransactionResponse(transaction, signatures);
-            } catch (err) {
-                logger.error(err);
-                throw new TxNotFoundError(`Transaction not found: ${txHash}`);
-            }
-        });
+        return retry(
+            async () => {
+                try {
+                    const [transaction, signatures] = await Promise.all([
+                        this.provider.getParsedTransaction(txHash, 'confirmed'),
+                        this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),
+                    ]);
+
+                    return parseTransactionResponse(transaction, signatures);
+                } catch (err) {
+                    logger.error(err);
+                    throw new TxNotFoundError(`Transaction not found: ${txHash}`);
+                }
+            },
+            500,
+            2,
+            7
+        );
     }
 
     public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]> {
