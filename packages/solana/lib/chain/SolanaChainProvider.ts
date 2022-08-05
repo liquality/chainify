@@ -1,7 +1,7 @@
-import { Chain } from '@chainify/client';
+import { Chain, HttpClient } from '@chainify/client';
 import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
 import { Logger } from '@chainify/logger';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, Transaction } from '@chainify/types';
+import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, TokenDetails, Transaction } from '@chainify/types';
 import { compare, retry } from '@chainify/utils';
 import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BlockResponse, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -17,6 +17,16 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         if (!this.provider && this.network.rpcUrl) {
             this.provider = new Connection(network.rpcUrl, 'confirmed');
         }
+    }
+
+    public async getTokenDetails(tokenAddress: string): Promise<TokenDetails> {
+        const { tokens } = await HttpClient.get('https://token-list.solana.com/solana.tokenlist.json');
+
+        const token = tokens.filter((t: { address: string; decimals: number; name: string; symbol: string }) =>
+            compare(t.address, tokenAddress)
+        )[0];
+
+        return { name: token.name, symbol: token.symbol, decimals: token.decimals };
     }
 
     public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockResponse, Transaction>> {
