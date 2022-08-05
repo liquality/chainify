@@ -1,5 +1,12 @@
 # @chainify/logger
 
+## 1.2.13
+
+### Patch Changes
+
+-   -   fix fetching token details for Terra
+    -   implement fetching token details for Solana
+
 ## 1.2.12
 
 ### Patch Changes

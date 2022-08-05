@@ -64,7 +64,7 @@ export function parseTxRequest(request: EthereumTransactionRequest | Transaction
 }
 
 export function parseTxResponse(response: EthersTransactionResponse, receipt?: TransactionReceipt): Transaction<EthersTransactionResponse> {
-    const result: Transaction<EthersTransactionResponse> = {
+    const result: Transaction<EthersTransactionResponse | > = {
         to: response.to,
         from: response.from,
         hash: response.hash,

@@ -1,5 +1,19 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.13
+
+### Patch Changes
+
+-   -   fix fetching token details for Terra
+    -   implement fetching token details for Solana
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.13
+    -   @chainify/client@1.2.13
+    -   @chainify/errors@1.2.13
+    -   @chainify/hw-ledger@1.2.13
+    -   @chainify/types@1.2.13
+    -   @chainify/utils@1.2.13
+
 ## 1.2.12
 
 ### Patch Changes

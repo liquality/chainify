@@ -1,5 +1,15 @@
 # @chainify/utils
 
+## 1.2.13
+
+### Patch Changes
+
+-   -   fix fetching token details for Terra
+    -   implement fetching token details for Solana
+-   Updated dependencies
+    -   @chainify/errors@1.2.13
+    -   @chainify/types@1.2.13
+
 ## 1.2.12
 
 ### Patch Changes
