@@ -26,10 +26,8 @@ export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
 
     public async getTokenDetails(asset: string): Promise<TokenDetails> {
         try {
-            const {
-                data: { mainnet: tokens },
-            } = await new HttpClient({ baseURL: this.network.assetsUrl || DEFAULT_ASSETS_FETCH_URL }).nodeGet('/');
-            const token = tokens[asset];
+            const result = await HttpClient.get(this.network.assetsUrl || DEFAULT_ASSETS_FETCH_URL);
+            const token = result.mainnet[asset];
             const { symbol } = token;
             return { name: symbol, symbol, decimals: 6 };
         } catch (err) {
