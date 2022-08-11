@@ -1,13 +1,13 @@
 export interface NFTAsset {
-    token_id: string;
-    asset_contract: {
-        address: string;
-        name: string;
-        symbol: string;
+    token_id?: string;
+    asset_contract?: {
+        address?: string;
+        name?: string;
+        symbol?: string;
         image_url?: string;
         external_link?: string;
     };
-    collection: {
+    collection?: {
         name: string;
     };
     id?: number;

@@ -136,7 +136,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         }
 
         const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer], {
-            skipPreflight: true,
+            preflightCommitment: 'confirmed',
         });
 
         return {

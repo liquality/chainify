@@ -1,9 +1,10 @@
-import { Chain, HttpClient } from '@chainify/client';
+import { Chain } from '@chainify/client';
 import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
 import { Logger } from '@chainify/logger';
 import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, TokenDetails, Transaction } from '@chainify/types';
 import { compare, retry } from '@chainify/utils';
 import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry';
 import { BlockResponse, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { parseBlockResponse, parseTransactionResponse } from '../utils';
 
@@ -11,6 +12,8 @@ const LAMPORTS_PER_SIGNATURE = 5000 / LAMPORTS_PER_SOL;
 const logger = new Logger('SolanaChainProvider');
 
 export class SolanaChainProvider extends Chain<Connection, Network> {
+    private tokenList: TokenInfo[];
+
     constructor(network: Network) {
         super(network);
 
@@ -23,13 +26,13 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
     }
 
     public async getTokenDetails(tokenAddress: string): Promise<TokenDetails> {
-        const { tokens } = await HttpClient.get('https://token-list.solana.com/solana.tokenlist.json');
+        if (!this.tokenList) {
+            this.tokenList = (await new TokenListProvider().resolve()).filterByChainId(ENV.MainnetBeta).getList();
+        }
 
-        const token = tokens.filter((t: { address: string; decimals: number; name: string; symbol: string }) =>
-            compare(t.address, tokenAddress)
-        )[0];
+        const { name, symbol, decimals } = this.tokenList.find((t) => t.address === tokenAddress);
 
-        return { name: token.name, symbol: token.symbol, decimals: token.decimals };
+        return { name, symbol, decimals };
     }
 
     public async getBlockByNumber(blockNumber?: number, includeTx?: boolean): Promise<Block<BlockResponse, Transaction>> {
