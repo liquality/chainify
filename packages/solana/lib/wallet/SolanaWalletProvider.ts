@@ -14,12 +14,19 @@ import {
     WalletOptions,
 } from '@chainify/types';
 import { base58, retry } from '@chainify/utils';
-import { createAccount, createTransferInstruction, getAssociatedTokenAddress } from '@solana/spl-token';
+import {
+    createAccount,
+    createTransferInstruction,
+    getAccount,
+    getAssociatedTokenAddress,
+    TokenAccountNotFoundError,
+} from '@solana/spl-token';
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction as SolTransaction, TransactionInstruction } from '@solana/web3.js';
 import { mnemonicToSeedSync } from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
 import nacl from 'tweetnacl';
 import { SolanaChainProvider } from '../';
+import { SolanaTxRequest } from '../types';
 
 const logger = new Logger('SolanaWalletProvider');
 
@@ -83,38 +90,54 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
         return Buffer.from(signature).toString('hex');
     }
 
-    public async sendTransaction(txRequest: TransactionRequest): Promise<Transaction> {
-        const to = new PublicKey(txRequest.to.toString());
+    public async sendTransaction(txRequest: SolanaTxRequest): Promise<Transaction> {
+        let transaction: SolTransaction;
 
-        let instruction: TransactionInstruction;
-        // Handle ERC20 Transactions
-        if (txRequest.asset && !txRequest.asset.isNative) {
-            const contractAddress = new PublicKey(txRequest.asset.contractAddress);
-            const fromTokenAccount = await getAssociatedTokenAddress(contractAddress, this._signer.publicKey);
+        const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash('confirmed'));
 
-            try {
-                await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
-            } catch (err) {
-                logger.debug(`Error creating account`, err);
+        // Handle already builded transactions that are passed from outside - Jupiter for example
+        if (txRequest.transaction) {
+            transaction = txRequest.transaction;
+            transaction.recentBlockhash = latestBlockhash.blockhash;
+        } else {
+            let instruction: TransactionInstruction;
+            const to = new PublicKey(txRequest.to.toString());
+
+            // Handle ERC20 Transactions
+            if (txRequest.asset && !txRequest.asset.isNative) {
+                const contractAddress = new PublicKey(txRequest.asset.contractAddress);
+
+                const [fromTokenAccount, toTokenAccount] = await Promise.all([
+                    getAssociatedTokenAddress(contractAddress, this._signer.publicKey),
+                    getAssociatedTokenAddress(contractAddress, to),
+                ]);
+
+                try {
+                    await getAccount(this.chainProvider.getProvider(), toTokenAccount);
+                } catch (err) {
+                    if (err instanceof TokenAccountNotFoundError) {
+                        await createAccount(this.chainProvider.getProvider(), this._signer, contractAddress, to);
+                    } else {
+                        logger.debug(`Error creating account`, err);
+                    }
+                }
+
+                instruction = createTransferInstruction(fromTokenAccount, toTokenAccount, this._signer.publicKey, Number(txRequest.value));
+            } else {
+                // Handle SOL Transactions
+                instruction = SystemProgram.transfer({
+                    fromPubkey: this._signer.publicKey,
+                    toPubkey: to,
+                    lamports: txRequest.value.toNumber(),
+                });
             }
 
-            const toTokenAccount = await getAssociatedTokenAddress(contractAddress, to);
-
-            instruction = createTransferInstruction(fromTokenAccount, toTokenAccount, this._signer.publicKey, Number(txRequest.value));
-        } else {
-            // Handle SOL Transactions
-            instruction = SystemProgram.transfer({
-                fromPubkey: this._signer.publicKey,
-                toPubkey: to,
-                lamports: txRequest.value.toNumber(),
-            });
+            transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
         }
 
-        const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash());
-
-        const transaction = new SolTransaction({ recentBlockhash: latestBlockhash.blockhash }).add(instruction);
-
-        const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer]);
+        const hash = await this.chainProvider.getProvider().sendTransaction(transaction, [this._signer], {
+            skipPreflight: true,
+        });
 
         return {
             hash,

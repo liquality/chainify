@@ -8,14 +8,17 @@ import { BlockResponse, Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/
 import { parseBlockResponse, parseTransactionResponse } from '../utils';
 
 const LAMPORTS_PER_SIGNATURE = 5000 / LAMPORTS_PER_SOL;
-const logger = new Logger('SolanaWalletProvider');
+const logger = new Logger('SolanaChainProvider');
 
 export class SolanaChainProvider extends Chain<Connection, Network> {
     constructor(network: Network) {
         super(network);
 
         if (!this.provider && this.network.rpcUrl) {
-            this.provider = new Connection(network.rpcUrl, 'confirmed');
+            this.provider = new Connection(network.rpcUrl, {
+                confirmTransactionInitialTimeout: 120000,
+                commitment: 'confirmed',
+            });
         }
     }
 
@@ -55,18 +58,24 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
     }
 
     public async getTransactionByHash(txHash: string): Promise<Transaction> {
-        return retry(async () => {
-            try {
-                const [transaction, signatures] = await Promise.all([
-                    this.provider.getParsedTransaction(txHash),
-                    this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),
-                ]);
-                return parseTransactionResponse(transaction, signatures);
-            } catch (err) {
-                logger.error(err);
-                throw new TxNotFoundError(`Transaction not found: ${txHash}`);
-            }
-        });
+        return retry(
+            async () => {
+                try {
+                    const [transaction, signatures] = await Promise.all([
+                        this.provider.getParsedTransaction(txHash, 'confirmed'),
+                        this.provider.getSignatureStatus(txHash, { searchTransactionHistory: true }),
+                    ]);
+
+                    return parseTransactionResponse(transaction, signatures);
+                } catch (err) {
+                    logger.error(err);
+                    throw new TxNotFoundError(`Transaction not found: ${txHash}`);
+                }
+            },
+            500,
+            2,
+            7
+        );
     }
 
     public async getBalance(addresses: AddressType[], assets: Asset[]): Promise<BigNumber[]> {
