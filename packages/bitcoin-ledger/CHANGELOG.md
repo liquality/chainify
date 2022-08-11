@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.14
+
+### Patch Changes
+
+-   -   solana nfts
+-   Updated dependencies
+    -   @chainify/bitcoin@1.2.14
+    -   @chainify/client@1.2.14
+    -   @chainify/errors@1.2.14
+    -   @chainify/hw-ledger@1.2.14
+    -   @chainify/types@1.2.14
+    -   @chainify/utils@1.2.14
+
 ## 1.2.13
 
 ### Patch Changes

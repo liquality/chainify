@@ -1,5 +1,14 @@
 # @chainify/utils
 
+## 1.2.14
+
+### Patch Changes
+
+-   -   solana nfts
+-   Updated dependencies
+    -   @chainify/errors@1.2.14
+    -   @chainify/types@1.2.14
+
 ## 1.2.13
 
 ### Patch Changes
