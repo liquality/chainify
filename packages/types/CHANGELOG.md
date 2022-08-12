@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.2.18
+
+### Patch Changes
+
+-   651760802: - fix github actions
+
 ## 1.2.17
 
 ### Patch Changes
