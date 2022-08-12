@@ -1,5 +1,17 @@
 # @chainify/terra
 
+## 1.2.18
+
+### Patch Changes
+
+-   651760802: - fix github actions
+-   Updated dependencies [651760802]
+    -   @chainify/client@1.2.18
+    -   @chainify/errors@1.2.18
+    -   @chainify/logger@1.2.18
+    -   @chainify/types@1.2.18
+    -   @chainify/utils@1.2.18
+
 ## 1.2.17
 
 ### Patch Changes
