@@ -289,6 +289,7 @@ __metadata:
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
     "@solana/spl-token": 0.2.0
+    "@solana/spl-token-registry": 0.2.4574
     "@solana/web3.js": 1.50.1
     bip39: ^3.0.4
     ed25519-hd-key: ^1.2.0
@@ -2452,6 +2453,15 @@ __metadata:
   dependencies:
     buffer: ~6.0.3
   checksum: f244e9c42425477ded1fb5295252d7cb093cd591a14552e89271000ad5c01a5b5c0f2f83c7253d640414b600d4b31d95e9f3fcaec6d8280d3d6cb7f3d0a88565
+  languageName: node
+  linkType: hard
+
+"@solana/spl-token-registry@npm:0.2.4574":
+  version: 0.2.4574
+  resolution: "@solana/spl-token-registry@npm:0.2.4574"
+  dependencies:
+    cross-fetch: 3.0.6
+  checksum: a56d855dcfe719a222436f74a144617ebf5dd8711bf366ff935148bb760ae2712a8249e1d14d3193dcad336186dbab5d100382c0a30eb69f5feb46aa1c11fc38
   languageName: node
   linkType: hard
 
@@ -6548,6 +6558,15 @@ __metadata:
     cross-env: src/bin/cross-env.js
     cross-env-shell: src/bin/cross-env-shell.js
   checksum: 26f2f3ea2ab32617f57effb70d329c2070d2f5630adc800985d8b30b56e8bf7f5f439dd3a0358b79cee6f930afc23cf8e23515f17ccfb30092c6b62c6b630a79
+  languageName: node
+  linkType: hard
+
+"cross-fetch@npm:3.0.6":
+  version: 3.0.6
+  resolution: "cross-fetch@npm:3.0.6"
+  dependencies:
+    node-fetch: 2.6.1
+  checksum: fc855278c3bae191a00003eed618a40b48dfadf25ccf707ffdb173add97921f89ef459815bc5cbd20554de713da4f0a2c1258f83e60895efdeab5a7834c6e3b6
   languageName: node
   linkType: hard
 

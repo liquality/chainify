@@ -1,5 +1,4 @@
 import { HttpClient, Nft, Wallet } from '@chainify/client';
-import { Logger } from '@chainify/logger';
 import { AddressType, BigNumber, ChainId, NFTAsset, Transaction } from '@chainify/types';
 import { BaseProvider } from '@ethersproject/providers';
 import Moralis from 'moralis/node';
@@ -10,8 +9,6 @@ type MoralisConfig = {
     apiKey: string;
     appId: string;
 };
-
-const logger = new Logger('SolanaNFTProvider');
 
 export class SolanaNftProvider extends Nft<BaseProvider, SolanaWalletProvider> {
     private _config: MoralisConfig;
@@ -45,14 +42,15 @@ export class SolanaNftProvider extends Nft<BaseProvider, SolanaWalletProvider> {
 
             const nftMetadata = await Moralis.SolanaAPI.nft.getNFTMetadata(metadataOptions);
 
+            const { mint, symbol } = nftMetadata;
             try {
                 const data = await this._httpClient.nodeGet(nftMetadata.metaplex.metadataUri);
                 const nftAsset = {
                     token_id: data.edition,
                     asset_contract: {
-                        address: nft.mint,
+                        address: mint,
                         name: data.name,
-                        symbol: data.symbol,
+                        symbol: symbol,
                         image_url: data.image,
                         external_link: data.external_url,
                     },
@@ -69,7 +67,7 @@ export class SolanaNftProvider extends Nft<BaseProvider, SolanaWalletProvider> {
 
                 nftAssets.push(nftAsset);
             } catch (err) {
-                logger.error(err);
+                nftAssets.push({ asset_contract: { address: mint, symbol }, collection: { name: symbol } });
             }
         }
 
