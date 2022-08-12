@@ -1,5 +1,16 @@
 # @chainify/client
 
+## 1.2.16
+
+### Patch Changes
+
+-   83ea62866: - github actions
+-   Updated dependencies [83ea62866]
+    -   @chainify/errors@1.2.16
+    -   @chainify/logger@1.2.16
+    -   @chainify/types@1.2.16
+    -   @chainify/utils@1.2.16
+
 ## 1.2.15
 
 ### Patch Changes
