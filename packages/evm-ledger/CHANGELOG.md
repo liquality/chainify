@@ -1,5 +1,18 @@
 # @chainify/evm-ledger
 
+## 1.2.17
+
+### Patch Changes
+
+-   3adef6d91: - fix github actions
+-   Updated dependencies [3adef6d91]
+    -   @chainify/client@1.2.17
+    -   @chainify/errors@1.2.17
+    -   @chainify/evm@1.2.17
+    -   @chainify/hw-ledger@1.2.17
+    -   @chainify/types@1.2.17
+    -   @chainify/utils@1.2.17
+
 ## 1.2.16
 
 ### Patch Changes
