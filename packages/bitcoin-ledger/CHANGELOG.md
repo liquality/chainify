@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.2.16
+
+### Patch Changes
+
+-   83ea62866: - github actions
+-   Updated dependencies [83ea62866]
+    -   @chainify/bitcoin@1.2.16
+    -   @chainify/client@1.2.16
+    -   @chainify/errors@1.2.16
+    -   @chainify/hw-ledger@1.2.16
+    -   @chainify/types@1.2.16
+    -   @chainify/utils@1.2.16
+
 ## 1.2.15
 
 ### Patch Changes
