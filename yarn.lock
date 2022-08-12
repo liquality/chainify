@@ -289,7 +289,7 @@ __metadata:
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
     "@solana/spl-token": 0.2.0
-    "@solana/spl-token-registry": ^0.2.4574
+    "@solana/spl-token-registry": 0.2.4574
     "@solana/web3.js": 1.50.1
     bip39: ^3.0.4
     ed25519-hd-key: ^1.2.0
@@ -2456,7 +2456,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@solana/spl-token-registry@npm:^0.2.4574":
+"@solana/spl-token-registry@npm:0.2.4574":
   version: 0.2.4574
   resolution: "@solana/spl-token-registry@npm:0.2.4574"
   dependencies:
