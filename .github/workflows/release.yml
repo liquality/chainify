@@ -20,6 +20,20 @@ jobs:
         with:
           node-version: 16.x
 
+      # yarn cache
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Restore yarn cache
+        uses: actions/cache@v3.0.4
+        id: yarn-cache 
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-cache-folder-${{ hashFiles('**/yarn.lock', '.yarnrc.yml') }}
+          restore-keys: |
+            yarn-cache-folder-
+
       - name: Install Dependencies
         run: yarn
 
@@ -28,7 +42,6 @@ jobs:
         uses: changesets/action@v1
         with:
           # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          version: yarn version
           publish: yarn build-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
