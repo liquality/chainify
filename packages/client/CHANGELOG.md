@@ -1,5 +1,16 @@
 # @chainify/client
 
+## 1.2.20
+
+### Patch Changes
+
+-   4ba964b5b: - add npm auth token inside .yarnrc.yml
+-   Updated dependencies [4ba964b5b]
+    -   @chainify/errors@1.2.20
+    -   @chainify/logger@1.2.20
+    -   @chainify/types@1.2.20
+    -   @chainify/utils@1.2.20
+
 ## 1.2.19
 
 ### Patch Changes
