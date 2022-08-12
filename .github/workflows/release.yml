@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - dev
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -33,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Send a Slack notification if a publish happens
+      - name: Send a Dicsord notification if a publish happens
         uses: sarisia/actions-status-discord@v1
         if: steps.changesets.outputs.published == 'true'
         with:
