@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.2.19
+
+### Patch Changes
+
+-   7e81ee996: - add npm auth token inside .yarnrc.yml
+
 ## 1.2.18
 
 ### Patch Changes
