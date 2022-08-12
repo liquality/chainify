@@ -56,7 +56,7 @@
         "changeset": "changeset",
         "version": "yarn changeset version",
         "release": "yarn workspaces foreach --from '@chainify/*' npm publish --access public",
-        "build-release": "yarn build --force && yarn changeset publish",
+        "changeset-release": "yarn build --force && yarn changeset publish",
         "release:beta": "yarn release --tag beta",
         "tag": "yarn changeset tag",
         "docs": "typedoc"
