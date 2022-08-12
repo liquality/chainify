@@ -1,5 +1,17 @@
 # @chainify/terra
 
+## 1.2.15
+
+### Patch Changes
+
+-   -   use `@solana/spl-token-registry`
+-   Updated dependencies
+    -   @chainify/client@1.2.15
+    -   @chainify/errors@1.2.15
+    -   @chainify/logger@1.2.15
+    -   @chainify/types@1.2.15
+    -   @chainify/utils@1.2.15
+
 ## 1.2.14
 
 ### Patch Changes

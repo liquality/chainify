@@ -1,5 +1,11 @@
 # @chainify/logger
 
+## 1.2.15
+
+### Patch Changes
+
+-   -   use `@solana/spl-token-registry`
+
 ## 1.2.14
 
 ### Patch Changes
