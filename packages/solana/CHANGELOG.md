@@ -1,5 +1,17 @@
 # @chainify/solana
 
+## 1.2.21
+
+### Patch Changes
+
+-   2a17648d2: - fix script
+-   Updated dependencies [2a17648d2]
+    -   @chainify/client@1.2.21
+    -   @chainify/errors@1.2.21
+    -   @chainify/logger@1.2.21
+    -   @chainify/types@1.2.21
+    -   @chainify/utils@1.2.21
+
 ## 1.2.20
 
 ### Patch Changes

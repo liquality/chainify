@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 1.2.21
+
+### Patch Changes
+
+-   2a17648d2: - fix script
+
 ## 1.2.20
 
 ### Patch Changes
