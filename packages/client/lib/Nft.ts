@@ -33,5 +33,11 @@ export default abstract class Nft<T, S> {
 
     public abstract isApprovedForAll(contract: AddressType, operator: AddressType): Promise<boolean>;
 
+    public abstract estimateTransfer(contractAddress: AddressType, receiver: AddressType, tokenIDs: string[], amounts?: number[], data?: string): Promise<BigNumber>;
+
+    public abstract estimateApprove(contract: AddressType, operator: AddressType, tokenID: number): Promise<BigNumber>;
+
+    public abstract estimateApproveAll(contract: AddressType, operator: AddressType, state: boolean): Promise<BigNumber>;
+
     public abstract fetch(): Promise<NFTAsset[]>;
 }

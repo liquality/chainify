@@ -102,4 +102,13 @@ export class SolanaNftProvider extends Nft<BaseProvider, SolanaWalletProvider> {
     isApprovedForAll(_: AddressType, __: AddressType): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
+    estimateTransfer(_: AddressType, __: AddressType, ___: string[], ____: number[], _____: string): Promise<BigNumber> {
+        throw new Error('Method not implemented.');
+    }
+    estimateApprove(_: AddressType, __: AddressType, ___: number): Promise<BigNumber> {
+        throw new Error('Method not implemented.');
+    }
+    estimateApproveAll(_: AddressType, __: AddressType, ___: boolean): Promise<BigNumber> {
+        throw new Error('Method not implemented.');
+    }
 }
