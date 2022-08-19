@@ -36,8 +36,6 @@ jobs:
 
       - name: Install Dependencies
         run: yarn
-      - name: Build packages
-        run: yarn build --force
 
       - name: Creating .npmrc
         run: |
@@ -51,15 +49,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: yarn changeset-release
+          publish: yarn build-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Send a Dicsord notification if a publish happens
-        uses: sarisia/actions-status-discord@v1
-        if: steps.changesets.outputs.published == 'true'
-        with:
-          webhook: ${{ secrets.DISCORD_PULL_REQUESTS_WEBHOOK }}
-          title: "${{ github.workflow}}"
