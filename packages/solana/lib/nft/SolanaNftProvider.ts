@@ -1,4 +1,5 @@
 import { HttpClient, Nft, Wallet } from '@chainify/client';
+import { UnsupportedMethodError } from '@chainify/errors';
 import { AddressType, BigNumber, ChainId, NFTAsset, Transaction } from '@chainify/types';
 import { BaseProvider } from '@ethersproject/providers';
 import Moralis from 'moralis/node';
@@ -90,16 +91,16 @@ export class SolanaNftProvider extends Nft<BaseProvider, SolanaWalletProvider> {
         });
     }
 
-    balanceOf(_: AddressType, __: AddressType[], ___: number[]): Promise<BigNumber | BigNumber[]> {
-        throw new Error('Method not implemented.');
+    balanceOf(_contractAddress: AddressType, _owners: AddressType[], _tokenIDs: number[]): Promise<BigNumber | BigNumber[]> {
+        throw new UnsupportedMethodError('Method not supported');
     }
-    approve(_: AddressType, __: AddressType, ___: number): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
+    approve(_contract: AddressType, _operator: AddressType, _tokenID: number): Promise<Transaction<any>> {
+        throw new UnsupportedMethodError('Method not supported');
     }
-    approveAll(_: AddressType, __: AddressType, ___: boolean): Promise<Transaction<any>> {
-        throw new Error('Method not implemented.');
+    approveAll(_contract: AddressType, _operator: AddressType, _state: boolean): Promise<Transaction<any>> {
+        throw new UnsupportedMethodError('Method not supported');
     }
-    isApprovedForAll(_: AddressType, __: AddressType): Promise<boolean> {
-        throw new Error('Method not implemented.');
+    isApprovedForAll(_contract: AddressType, _operator: AddressType): Promise<boolean> {
+        throw new UnsupportedMethodError('Method not supported');
     }
 }
