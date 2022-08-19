@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 1.2.23
+
+### Patch Changes
+
+-   21cf21727: - fix github actions
+
 ## 1.2.22
 
 ### Patch Changes
