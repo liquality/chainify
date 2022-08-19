@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 1.2.22
+
+### Patch Changes
+
+-   23c964d0b: fee estimation for NFTs
+
 ## 1.2.21
 
 ### Patch Changes

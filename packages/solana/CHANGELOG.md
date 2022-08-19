@@ -1,5 +1,17 @@
 # @chainify/solana
 
+## 1.2.22
+
+### Patch Changes
+
+-   23c964d0b: fee estimation for NFTs
+-   Updated dependencies [23c964d0b]
+    -   @chainify/client@1.2.22
+    -   @chainify/errors@1.2.22
+    -   @chainify/logger@1.2.22
+    -   @chainify/types@1.2.22
+    -   @chainify/utils@1.2.22
+
 ## 1.2.21
 
 ### Patch Changes
