@@ -18,6 +18,7 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
 
     protected schemas: Record<string, NftContract>;
     protected cache: Record<string, NftInfo>;
+    protected walletProvider: EvmBaseWalletProvider<BaseProvider>;
 
     constructor(walletProvider: EvmBaseWalletProvider<BaseProvider>) {
         super(walletProvider);
@@ -101,17 +102,20 @@ export abstract class EvmNftProvider extends Nft<BaseProvider, Signer> {
         data = '0x'
     ): Promise<BigNumber> {
         const tx = await this.populateTrasnfer(contractAddress, receiver, tokenIDs, amounts, data);
-        return new BigNumber((await (this.walletProvider as EvmBaseWalletProvider<BaseProvider>).estimateGas(tx)).toString());
+        const estimation = await this.walletProvider.estimateGas(tx);
+        return new BigNumber(estimation.toString());
     }
 
     public async estimateApprove(contractAddress: AddressType, operator: AddressType, tokenID: number): Promise<BigNumber> {
         const tx = await this.populateApprove(contractAddress, operator, tokenID);
-        return new BigNumber((this.walletProvider as EvmBaseWalletProvider<BaseProvider>).estimateGas(tx).toString());
+        const estimation = await this.walletProvider.estimateGas(tx);
+        return new BigNumber(estimation.toString());
     }
 
     public async estimateApproveAll(contractAddress: AddressType, operator: AddressType, state: boolean): Promise<BigNumber> {
         const tx = await this.populateApproveAll(contractAddress, operator, state);
-        return new BigNumber((this.walletProvider as EvmBaseWalletProvider<BaseProvider>).estimateGas(tx).toString());
+        const estimation = await this.walletProvider.estimateGas(tx);
+        return new BigNumber(estimation.toString());
     }
 
     async fetch(): Promise<NFTAsset[]> {

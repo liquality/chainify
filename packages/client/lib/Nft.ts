@@ -1,3 +1,4 @@
+import { UnsupportedMethodError } from '@chainify/errors';
 import { AddressType, BigNumber, FeeType, NFTAsset, Transaction } from '@chainify/types';
 import Wallet from './Wallet';
 
@@ -33,11 +34,23 @@ export default abstract class Nft<T, S> {
 
     public abstract isApprovedForAll(contract: AddressType, operator: AddressType): Promise<boolean>;
 
-    public abstract estimateTransfer(contractAddress: AddressType, receiver: AddressType, tokenIDs: string[], amounts?: number[], data?: string): Promise<BigNumber>;
+    public estimateTransfer(
+        _contractAddress: AddressType,
+        _receiver: AddressType,
+        _tokenIDs: string[],
+        _amounts?: number[],
+        _data?: string
+    ): Promise<BigNumber> {
+        throw new UnsupportedMethodError('Method not supported');
+    }
 
-    public abstract estimateApprove(contract: AddressType, operator: AddressType, tokenID: number): Promise<BigNumber>;
+    public estimateApprove(_contract: AddressType, _operator: AddressType, _tokenID: number): Promise<BigNumber> {
+        throw new UnsupportedMethodError('Method not supported');
+    }
 
-    public abstract estimateApproveAll(contract: AddressType, operator: AddressType, state: boolean): Promise<BigNumber>;
+    public estimateApproveAll(_contract: AddressType, _operator: AddressType, _state: boolean): Promise<BigNumber> {
+        throw new UnsupportedMethodError('Method not supported');
+    }
 
     public abstract fetch(): Promise<NFTAsset[]>;
 }
