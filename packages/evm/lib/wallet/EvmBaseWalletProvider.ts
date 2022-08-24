@@ -1,6 +1,6 @@
 import { Chain, Wallet } from '@chainify/client';
 import { NodeError, ReplaceFeeInsufficientError } from '@chainify/errors';
-import { AddressType, Asset, BigNumber, FeeType, NamingProvider, Network, Transaction } from '@chainify/types';
+import { AddressType, Asset, AssetTypes, BigNumber, FeeType, NamingProvider, Network, Transaction } from '@chainify/types';
 import { ensure0x, remove0x } from '@chainify/utils';
 import { Signer } from '@ethersproject/abstract-signer';
 import { BaseProvider, TransactionRequest as EthersTxRequest } from '@ethersproject/providers';
@@ -38,7 +38,7 @@ export abstract class EvmBaseWalletProvider<Provider extends BaseProvider, S ext
 
         let ethersTxRequest: EthersTxRequest = null;
         // Handle ERC20 transfers
-        if (txRequest.asset && !txRequest.asset.isNative) {
+        if (txRequest.asset && txRequest.asset.type === AssetTypes.erc20) {
             const transferErc20Tx = await ERC20__factory.connect(txRequest.asset.contractAddress, this.signer).populateTransaction.transfer(
                 ensure0x(txRequest.to.toString()),
                 txRequest.value.toString(10)

@@ -1,5 +1,6 @@
 import { Client } from '@chainify/client';
 import { TerraChainProvider, TerraWalletProvider } from '@chainify/terra';
+import { AssetTypes } from '@chainify/types';
 import { shouldBehaveLikeChainProvider } from '../../chain/chain.test';
 import { Chains } from '../../common';
 import { shouldBehaveLikeSwapProvider } from '../../swap/swap.test';
@@ -25,7 +26,7 @@ export function shouldBehaveLikeTerraClient() {
             await tempClient.wallet.sendTransaction({
                 to: await client.wallet.getAddress(),
                 value: terraBalance.minus(config.swapParams.value),
-                asset: config.assets.find((a) => a.isNative),
+                asset: config.assets.find((a) => a.type === AssetTypes.native),
                 feeAsset: config.sendParams.feeAsset,
             });
         }

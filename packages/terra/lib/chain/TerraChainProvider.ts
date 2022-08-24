@@ -1,7 +1,7 @@
 import { Chain, Fee, HttpClient } from '@chainify/client';
 import { NodeError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
 import { Logger } from '@chainify/logger';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, TokenDetails, Transaction } from '@chainify/types';
+import { AddressType, Asset, AssetTypes, BigNumber, Block, FeeDetails, TokenDetails, Transaction } from '@chainify/types';
 import { BlockInfo, LCDClient } from '@terra-money/terra.js';
 import { assetCodeToDenom } from '../constants';
 import { TerraNetwork, TerraTxInfo } from '../types';
@@ -72,7 +72,7 @@ export class TerraChainProvider extends Chain<LCDClient, TerraNetwork> {
                 try {
                     let balance = 0;
 
-                    if (asset.isNative) {
+                    if (asset.type === AssetTypes.native) {
                         const coins = await this.provider.bank.balance(address);
                         balance = Number(coins[0].get(assetCodeToDenom[asset.code])?.amount) || 0;
                     } else {

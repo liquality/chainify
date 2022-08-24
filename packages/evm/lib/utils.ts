@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, Block, EIP1559Fee, FeeType, SwapParams, Transaction, TxStatus } from '@chainify/types';
+import { AssetTypes, BigNumber, BigNumberish, Block, EIP1559Fee, FeeType, SwapParams, Transaction, TxStatus } from '@chainify/types';
 import { ensure0x } from '@chainify/utils';
 import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber';
 import { AddressZero } from '@ethersproject/constants';
@@ -31,7 +31,7 @@ export function parseSwapParams(tx: SwapParams): ILiqualityHTLC.HTLCDataStruct {
         amount: tx.value.toString(10),
         expiration: tx.expiration,
         secretHash: ensure0x(tx.secretHash),
-        tokenAddress: ensure0x(tx.asset.isNative ? AddressZero : tx.asset.contractAddress),
+        tokenAddress: ensure0x(tx.asset.type === AssetTypes.native ? AddressZero : tx.asset.contractAddress),
         refundAddress: ensure0x(tx.refundAddress.toString()),
         recipientAddress: ensure0x(tx.recipientAddress.toString()),
     };

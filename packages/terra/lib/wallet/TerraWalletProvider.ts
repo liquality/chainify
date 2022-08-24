@@ -1,6 +1,6 @@
 import { Wallet } from '@chainify/client';
 import { UnimplementedMethodError } from '@chainify/errors';
-import { Address, Asset, BigNumber, FeeType, Transaction, TransactionRequest } from '@chainify/types';
+import { Address, Asset, AssetTypes, BigNumber, FeeType, Transaction, TransactionRequest } from '@chainify/types';
 import { retry } from '@chainify/utils';
 import {
     Coin,
@@ -143,7 +143,7 @@ export class TerraWalletProvider extends Wallet<LCDClient, MnemonicKey> {
         const recipient = txRequest.to.toString();
 
         // handle UST & Luna
-        if (txRequest.asset.isNative) {
+        if (txRequest.asset.type === AssetTypes.native) {
             return [
                 new MsgSend(this.signer.accAddress, recipient, {
                     [assetCodeToDenom[txRequest.asset.code]]: txRequest.value.toNumber(),

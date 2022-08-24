@@ -4,7 +4,7 @@ import { EvmNetworks } from '@chainify/evm';
 import { NearNetworks } from '@chainify/near';
 import { SolanaNetworks } from '@chainify/solana';
 import { TerraNetworks } from '@chainify/terra';
-import { Address, AddressType, BigNumber, FeeType, SwapParams, Transaction } from '@chainify/types';
+import { Address, AddressType, AssetTypes, BigNumber, FeeType, SwapParams, Transaction } from '@chainify/types';
 import { retry, sha256, sleep } from '@chainify/utils';
 import { expect } from 'chai';
 import {
@@ -100,7 +100,7 @@ export const Chains: { [key in ChainType]: Partial<{ [key in WalletType]: Chain 
 };
 
 export async function getSwapParams(client: Client, config: IConfig, expiryInSeconds = 200, native = true) {
-    const asset = config.assets.find((a) => a.isNative === native);
+    const asset = config.assets.find((a) => a.type === (native ? AssetTypes.native : AssetTypes.erc20));
     const refundAddress = await client.wallet.getAddress();
     const block = await client.chain.getBlockByNumber();
     const secret = await client.swap.generateSecret('secret');

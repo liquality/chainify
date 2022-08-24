@@ -1,7 +1,7 @@
 import { Chain } from '@chainify/client';
 import { BlockNotFoundError, TxNotFoundError, UnsupportedMethodError } from '@chainify/errors';
 import { Logger } from '@chainify/logger';
-import { AddressType, Asset, BigNumber, Block, FeeDetails, Network, TokenDetails, Transaction } from '@chainify/types';
+import { AddressType, Asset, AssetTypes, BigNumber, Block, FeeDetails, Network, TokenDetails, Transaction } from '@chainify/types';
 import { compare, retry } from '@chainify/utils';
 import { AccountLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { ENV, TokenInfo, TokenListProvider } from '@solana/spl-token-registry';
@@ -95,7 +95,7 @@ export class SolanaChainProvider extends Chain<Connection, Network> {
         });
 
         const balances = assets.map((asset) => {
-            if (asset.isNative) {
+            if (asset.type === AssetTypes.native) {
                 return new BigNumber(nativeBalance);
             } else {
                 const token = tokenBalances.find((token) => compare(token.contractAddress, asset.contractAddress));
