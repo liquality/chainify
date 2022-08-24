@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 1.2.24
+
+### Patch Changes
+
+-   74ba33141: Remove async from setters and getters in Chains class.
+
 ## 1.2.23
 
 ### Patch Changes

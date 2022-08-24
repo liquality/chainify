@@ -1,5 +1,18 @@
 # @chainify/evm-ledger
 
+## 1.2.24
+
+### Patch Changes
+
+-   74ba33141: Remove async from setters and getters in Chains class.
+-   Updated dependencies [74ba33141]
+    -   @chainify/client@1.2.24
+    -   @chainify/errors@1.2.24
+    -   @chainify/evm@1.2.24
+    -   @chainify/hw-ledger@1.2.24
+    -   @chainify/types@1.2.24
+    -   @chainify/utils@1.2.24
+
 ## 1.2.23
 
 ### Patch Changes
