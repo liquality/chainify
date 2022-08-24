@@ -55,21 +55,21 @@ export default abstract class Chain<T, N extends Network = Network> implements C
     /**
      * Sets the chain specific provider
      */
-    public async setProvider(provider: T): Promise<void> {
+    public setProvider(provider: T) {
         this.provider = provider;
     }
 
     /**
      * Sets the fee provider
      */
-    public async setFeeProvider(feeProvider: Nullable<Fee>) {
+    public setFeeProvider(feeProvider: Nullable<Fee>) {
         this.feeProvider = feeProvider;
     }
 
     /**
      * Gets the fee provider
      */
-    public async getFeeProvider() {
+    public getFeeProvider() {
         return this.feeProvider;
     }
 

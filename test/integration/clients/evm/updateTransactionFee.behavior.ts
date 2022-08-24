@@ -63,11 +63,11 @@ export function shouldUpdateTransactionFee(chain: Chain) {
 
         describe('Legacy', () => {
             before(async () => {
-                await client.chain.setFeeProvider(new RpcFeeProvider(client.chain.getProvider()));
+                client.chain.setFeeProvider(new RpcFeeProvider(client.chain.getProvider()));
             });
 
             after(async () => {
-                await client.chain.setFeeProvider(new EIP1559MockFeeProvider(client.chain.getProvider()));
+                client.chain.setFeeProvider(new EIP1559MockFeeProvider(client.chain.getProvider()));
             });
 
             it('should update transaction fee', async () => {

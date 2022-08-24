@@ -292,9 +292,9 @@ export abstract class BitcoinBaseWalletProvider<T extends BitcoinBaseChainProvid
         newProvider.getUnspentTransactions = memoizedGetUnspentTransactions;
         newProvider.getAddressTransactionCounts = memoizedGetAddressTransactionCounts;
 
-        await this.chainProvider.setProvider(newProvider);
+        this.chainProvider.setProvider(newProvider);
         const result = await func.bind(this)();
-        await this.chainProvider.setProvider(originalProvider);
+        this.chainProvider.setProvider(originalProvider);
 
         return result;
     }
