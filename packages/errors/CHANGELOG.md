@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 1.2.25
+
+### Patch Changes
+
+-   44d79eb55: use asset.type instead of asset.isNative
+
 ## 1.2.24
 
 ### Patch Changes

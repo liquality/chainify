@@ -1,5 +1,17 @@
 # @chainify/terra
 
+## 1.2.25
+
+### Patch Changes
+
+-   44d79eb55: use asset.type instead of asset.isNative
+-   Updated dependencies [44d79eb55]
+    -   @chainify/types@1.2.25
+    -   @chainify/client@1.2.25
+    -   @chainify/errors@1.2.25
+    -   @chainify/logger@1.2.25
+    -   @chainify/utils@1.2.25
+
 ## 1.2.24
 
 ### Patch Changes
