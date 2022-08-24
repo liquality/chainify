@@ -1,4 +1,4 @@
-import { AddressType, Asset, BigNumber } from '@chainify/types';
+import { AddressType, Asset, AssetTypes, BigNumber } from '@chainify/types';
 import { Interface } from '@ethersproject/abi';
 import { BaseProvider } from '@ethersproject/providers';
 import { ERC20__factory, Multicall3, Multicall3__factory } from '../typechain';
@@ -24,7 +24,7 @@ export class EvmMulticallProvider {
     }
 
     public buildBalanceCallData(asset: Asset, user: AddressType) {
-        if (asset.isNative) {
+        if (asset.type === AssetTypes.native) {
             return {
                 target: this._multicallAddress,
                 abi: Multicall3__factory.abi,

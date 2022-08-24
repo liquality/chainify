@@ -1,5 +1,5 @@
 import { UnimplementedMethodError } from '@chainify/errors';
-import { BigNumber, TxStatus } from '@chainify/types';
+import { AssetTypes, BigNumber, TxStatus } from '@chainify/types';
 import { expect } from 'chai';
 import { mineBlock } from '../common';
 import { Chain } from '../types';
@@ -87,7 +87,7 @@ export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = true) {
             const txRequest = {
                 to: config.recipientAddress,
                 value: config.sendParams.value || new BigNumber(1000000),
-                asset: config.assets.find((a) => a.isNative === isNative),
+                asset: config.assets.find((a) => a.type === (isNative ? AssetTypes.native : AssetTypes.erc20)),
                 feeAsset: config.sendParams.feeAsset,
             };
             const tx = await client.wallet.sendTransaction(txRequest);
@@ -97,7 +97,7 @@ export function shouldBehaveLikeWalletProvider(chain: Chain, isNative = true) {
             const txReceipt = await client.chain.getTransactionByHash(tx.hash);
 
             if (config.sendParams.value) {
-                if (txRequest.asset.isNative) {
+                if (txRequest.asset.type === AssetTypes.native) {
                     expect(txReceipt.value === config.sendParams.value.toNumber()).to.be.true;
                 }
                 expect(txReceipt.status).to.equal(TxStatus.Success);

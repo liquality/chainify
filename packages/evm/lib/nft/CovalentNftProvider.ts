@@ -1,5 +1,5 @@
 import { HttpClient } from '@chainify/client';
-import { NFTAsset } from '@chainify/types';
+import { AssetTypes, NFTAsset } from '@chainify/types';
 import { BaseProvider } from '@ethersproject/providers';
 import { NftProviderConfig, NftTypes } from '../types';
 import { EvmBaseWalletProvider } from '../wallet/EvmBaseWalletProvider';
@@ -26,7 +26,7 @@ export class CovalentNftProvider extends EvmNftProvider {
         );
 
         return response.data.items.reduce((result, asset) => {
-            if (asset.type === 'nft') {
+            if (asset.type === AssetTypes.nft) {
                 const { contract_name, contract_ticker_symbol, contract_address, supports_erc, nft_data } = asset;
                 const schema_type = supports_erc?.pop()?.toUpperCase();
 

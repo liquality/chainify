@@ -1,4 +1,4 @@
-import { Asset, BigNumber, ChainId, Network } from '@chainify/types';
+import { Asset, AssetTypes, BigNumber, ChainId, Network } from '@chainify/types';
 import { IConfig } from '../../types';
 
 export const SolanaConfig = (network: Network): IConfig => {
@@ -40,16 +40,14 @@ const solanaAssets = [
         name: 'SOLANA',
         code: 'SOL',
         chain: ChainId.Solana,
-        isNative: true,
-        type: 'native',
+        type: AssetTypes.native,
         decimals: 9,
     },
     {
         name: 'SOLANA ERC 20',
         code: 'ERC20',
         chain: ChainId.Solana,
-        isNative: false,
-        type: 'erc20',
+        type: AssetTypes.erc20,
         decimals: 9,
         contractAddress: 'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr',
     },

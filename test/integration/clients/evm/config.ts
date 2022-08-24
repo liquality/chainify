@@ -1,4 +1,4 @@
-import { BigNumber, ChainId, Network } from '@chainify/types';
+import { AssetTypes, BigNumber, ChainId, Network } from '@chainify/types';
 import { Wallet } from 'ethers';
 import { IConfig } from '../../types';
 
@@ -41,16 +41,14 @@ export const EVMConfig = (network: Network): IConfig => {
                 name: 'Ethereum',
                 code: 'ETH',
                 chain: ChainId.Ethereum,
-                isNative: true,
-                type: 'native',
+                type: AssetTypes.native,
                 decimals: 18,
             },
             {
                 name: 'TestToken',
                 code: 'TT',
                 chain: ChainId.Ethereum,
-                isNative: false,
-                type: 'erc20',
+                type: AssetTypes.erc20,
                 decimals: 18,
                 contractAddress: '0x6ACbD54254da14Db970c7eDE7cFD90784dBeFb6C',
             },

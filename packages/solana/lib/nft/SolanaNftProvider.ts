@@ -1,6 +1,6 @@
 import { HttpClient, Nft, Wallet } from '@chainify/client';
 import { UnsupportedMethodError } from '@chainify/errors';
-import { AddressType, BigNumber, ChainId, NFTAsset, Transaction } from '@chainify/types';
+import { AddressType, AssetTypes, BigNumber, ChainId, NFTAsset, Transaction } from '@chainify/types';
 import { BaseProvider } from '@ethersproject/providers';
 import Moralis from 'moralis/node';
 import { SolanaWalletProvider } from '../wallet/SolanaWalletProvider';
@@ -81,12 +81,11 @@ export class SolanaNftProvider extends Nft<BaseProvider, SolanaWalletProvider> {
             value: new BigNumber(1), // transfer 1 nft
             asset: {
                 contractAddress: contract.toString(),
-                isNative: false,
                 chain: ChainId.Solana,
                 decimals: 0,
                 code: '',
                 name: '',
-                type: 'nft',
+                type: AssetTypes.nft,
             },
         });
     }

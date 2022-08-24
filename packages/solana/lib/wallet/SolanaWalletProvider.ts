@@ -5,6 +5,7 @@ import {
     Address,
     AddressType,
     Asset,
+    AssetTypes,
     BigNumber,
     FeeType,
     Network,
@@ -104,7 +105,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
             const to = new PublicKey(txRequest.to.toString());
 
             // Handle ERC20 Transactions
-            if (txRequest.asset && !txRequest.asset.isNative) {
+            if (txRequest.asset && !(txRequest.asset.type === AssetTypes.native)) {
                 const contractAddress = new PublicKey(txRequest.asset.contractAddress);
 
                 const [fromTokenAccount, toTokenAccount] = await Promise.all([

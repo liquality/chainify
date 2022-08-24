@@ -1,4 +1,4 @@
-import { Asset, BigNumber, ChainId, Network } from '@chainify/types';
+import { Asset, AssetTypes, BigNumber, ChainId, Network } from '@chainify/types';
 import { IConfig } from '../../types';
 
 export const TerraConfig = (network: Network): IConfig => {
@@ -41,16 +41,14 @@ const terraAssets = [
         name: 'Luna',
         code: 'LUNA',
         chain: ChainId.Terra,
-        isNative: true,
-        type: 'native',
+        type: AssetTypes.native,
         decimals: 6,
     },
     {
         name: 'TerraUSD',
         code: 'UST',
         chain: ChainId.Terra,
-        isNative: true,
-        type: 'native',
+        type: AssetTypes.native,
         decimals: 6,
     },
 ] as Asset[];

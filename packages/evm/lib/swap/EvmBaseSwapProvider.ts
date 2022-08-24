@@ -1,6 +1,6 @@
 import { Swap } from '@chainify/client';
 import { TxNotFoundError, UnimplementedMethodError } from '@chainify/errors';
-import { FeeType, SwapParams, Transaction } from '@chainify/types';
+import { AssetTypes, FeeType, SwapParams, Transaction } from '@chainify/types';
 import { compare, ensure0x, Math, remove0x, validateSecret, validateSecretAndHash } from '@chainify/utils';
 import { Signer } from '@ethersproject/abstract-signer';
 import { AddressZero } from '@ethersproject/constants';
@@ -35,7 +35,7 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
     public async initiateSwap(swapParams: SwapParams, fee: FeeType): Promise<Transaction<EthersTransactionResponse>> {
         this.validateSwapParams(swapParams);
         const parsedSwapParams = parseSwapParams(swapParams);
-        const value = swapParams.asset.isNative ? parsedSwapParams.amount : 0;
+        const value = swapParams.asset.type === AssetTypes.native ? parsedSwapParams.amount : 0;
         const tx = await this.contract.populateTransaction.initiate(parsedSwapParams, { value });
         const estimatedGasLimit = await this.contract.estimateGas.initiate(parsedSwapParams, { value });
         return await this.walletProvider.sendTransaction(
@@ -148,7 +148,10 @@ export abstract class EvmBaseSwapProvider extends Swap<BaseProvider, Signer, Evm
                 Math.eq(htlcArgs.htlc.expiration, swapParams.expiration) &&
                 compare(htlcArgs.htlc.recipientAddress, ensure0x(swapParams.recipientAddress.toString())) &&
                 compare(htlcArgs.htlc.refundAddress, ensure0x(swapParams.refundAddress.toString())) &&
-                compare(htlcArgs.htlc.tokenAddress, swapParams.asset.isNative ? AddressZero : swapParams.asset.contractAddress) &&
+                compare(
+                    htlcArgs.htlc.tokenAddress,
+                    swapParams.asset.type === AssetTypes.native ? AddressZero : swapParams.asset.contractAddress
+                ) &&
                 compare(ensure0x(htlcArgs.htlc.secretHash), ensure0x(swapParams.secretHash))
             );
         }

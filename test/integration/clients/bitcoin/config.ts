@@ -1,5 +1,5 @@
 import { BitcoinTypes } from '@chainify/bitcoin';
-import { BigNumber, ChainId, Network } from '@chainify/types';
+import { AssetTypes, BigNumber, ChainId, Network } from '@chainify/types';
 import { fromSeed } from 'bip32';
 import { mnemonicToSeedSync } from 'bip39';
 import { payments } from 'bitcoinjs-lib';
@@ -89,8 +89,7 @@ const CommonBtcConfig = (network: Network): Partial<IConfig> => {
                 name: 'Bitcoin',
                 code: 'BTC',
                 chain: ChainId.Bitcoin,
-                isNative: true,
-                type: 'native',
+                type: AssetTypes.native,
                 decimals: 8,
             },
         ],

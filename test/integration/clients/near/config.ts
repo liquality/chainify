@@ -1,5 +1,5 @@
 import * as Near from '@chainify/near';
-import { BigNumber, ChainId } from '@chainify/types';
+import { AssetTypes, BigNumber, ChainId } from '@chainify/types';
 import { IConfig } from '../../types';
 
 export const NearConfig = (network: Near.NearTypes.NearNetwork): IConfig => {
@@ -40,8 +40,7 @@ export const NearConfig = (network: Near.NearTypes.NearNetwork): IConfig => {
                 name: 'Near',
                 code: 'Near',
                 chain: ChainId.Near,
-                isNative: true,
-                type: 'native',
+                type: AssetTypes.native,
                 decimals: 24,
             },
         ],
