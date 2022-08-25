@@ -63,8 +63,5 @@
     "workspaces": [
         "packages/*"
     ],
-    "packageManager": "yarn@3.1.1",
-    "resolutions": {
-        "@eth-optimism/sdk@1.1.5": "patch:@eth-optimism/sdk@npm:1.1.5#.yarn/patches/@eth-optimism-sdk-npm-1.1.5-3af49870d3"
-    }
+    "packageManager": "yarn@3.1.1"
 }

@@ -1,4 +1,3 @@
-export { asL2Provider, L2Provider } from '@eth-optimism/sdk';
 export { EvmChainProvider } from './chain/EvmChainProvider';
 export { EvmMulticallProvider } from './chain/EvmMulticallProvider';
 export { OptimismChainProvider } from './chain/OptimismChainProvider';

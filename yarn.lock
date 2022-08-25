@@ -901,21 +901,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eth-optimism/sdk@patch:@eth-optimism/sdk@npm:1.1.5#.yarn/patches/@eth-optimism-sdk-npm-1.1.5-3af49870d3::locator=chainify%40workspace%3A.":
-  version: 1.1.5
-  resolution: "@eth-optimism/sdk@patch:@eth-optimism/sdk@npm%3A1.1.5#.yarn/patches/@eth-optimism-sdk-npm-1.1.5-3af49870d3::version=1.1.5&hash=70b9b8&locator=chainify%40workspace%3A."
-  dependencies:
-    "@eth-optimism/contracts": 0.5.24
-    "@eth-optimism/core-utils": 0.8.4
-    lodash: ^4.17.21
-    merkletreejs: ^0.2.27
-    rlp: ^2.2.7
-  peerDependencies:
-    ethers: ^5
-  checksum: c2c963104a10f2f0bda9e4b77bb995eef07de52ee78d50380e2180345a5e9254bc4d15cf798121ed5e55b515fc1b123aa5e010aa3ee9179aa359d845edcbc932
-  languageName: node
-  linkType: hard
-
 "@ethereum-waffle/chai@npm:^3.4.4":
   version: 3.4.4
   resolution: "@ethereum-waffle/chai@npm:3.4.4"
