@@ -1,0 +1,15 @@
+diff --git a/package.json b/package.json
+index aff88335d84705de5c45b2891359cdec6ed9cbf8..632191276fb3dad74133cc6a0941e46e2a677cb2 100644
+--- a/package.json
++++ b/package.json
+@@ -32,8 +32,8 @@
+     "url": "https://github.com/ethereum-optimism/optimism.git"
+   },
+   "devDependencies": {
+-    "@ethersproject/abstract-provider": "^5.5.1",
+-    "@ethersproject/abstract-signer": "^5.5.0",
++    "@ethersproject/abstract-provider": "5.6.0",
++    "@ethersproject/abstract-signer": "5.6.0",
+     "@ethersproject/transactions": "^5.5.0",
+     "@nomiclabs/hardhat-ethers": "^2.0.2",
+     "@nomiclabs/hardhat-waffle": "^2.0.1",
