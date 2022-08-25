@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 1.2.29
+
+### Patch Changes
+
+-   c52ea66e4: add ethers as dependency
+
 ## 1.2.28
 
 ### Patch Changes

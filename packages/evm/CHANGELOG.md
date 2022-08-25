@@ -1,5 +1,17 @@
 # @chainify/evm
 
+## 1.2.29
+
+### Patch Changes
+
+-   c52ea66e4: add ethers as dependency
+-   Updated dependencies [c52ea66e4]
+    -   @chainify/client@1.2.29
+    -   @chainify/errors@1.2.29
+    -   @chainify/logger@1.2.29
+    -   @chainify/types@1.2.29
+    -   @chainify/utils@1.2.29
+
 ## 1.2.28
 
 ### Patch Changes
