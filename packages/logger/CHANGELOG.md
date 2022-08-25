@@ -1,5 +1,11 @@
 # @chainify/logger
 
+## 1.2.26
+
+### Patch Changes
+
+-   57ccdb47a: export asL2Provider for optimism
+
 ## 1.2.25
 
 ### Patch Changes
