@@ -1,5 +1,16 @@
 # @chainify/near
 
+## 1.2.27
+
+### Patch Changes
+
+-   b332b8c61: patch @eth-optimism/sdk dependencies
+-   Updated dependencies [b332b8c61]
+    -   @chainify/client@1.2.27
+    -   @chainify/errors@1.2.27
+    -   @chainify/types@1.2.27
+    -   @chainify/utils@1.2.27
+
 ## 1.2.26
 
 ### Patch Changes
