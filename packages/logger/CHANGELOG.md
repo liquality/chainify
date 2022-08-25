@@ -1,5 +1,11 @@
 # @chainify/logger
 
+## 1.2.27
+
+### Patch Changes
+
+-   b332b8c61: patch @eth-optimism/sdk dependencies
+
 ## 1.2.26
 
 ### Patch Changes
