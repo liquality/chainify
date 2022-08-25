@@ -1,5 +1,11 @@
 # @chainify/logger
 
+## 1.2.28
+
+### Patch Changes
+
+-   49b7538c5: remove optimism exports as they are using different ehters version
+
 ## 1.2.27
 
 ### Patch Changes
