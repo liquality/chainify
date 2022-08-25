@@ -1,5 +1,18 @@
 # @chainify/evm-ledger
 
+## 1.2.28
+
+### Patch Changes
+
+-   49b7538c5: remove optimism exports as they are using different ehters version
+-   Updated dependencies [49b7538c5]
+    -   @chainify/evm@1.2.28
+    -   @chainify/client@1.2.28
+    -   @chainify/errors@1.2.28
+    -   @chainify/hw-ledger@1.2.28
+    -   @chainify/types@1.2.28
+    -   @chainify/utils@1.2.28
+
 ## 1.2.27
 
 ### Patch Changes
