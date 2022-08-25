@@ -1,5 +1,16 @@
 # @chainify/hw-ledger
 
+## 1.2.26
+
+### Patch Changes
+
+-   57ccdb47a: export asL2Provider for optimism
+-   Updated dependencies [57ccdb47a]
+    -   @chainify/errors@1.2.26
+    -   @chainify/logger@1.2.26
+    -   @chainify/types@1.2.26
+    -   @chainify/utils@1.2.26
+
 ## 1.2.25
 
 ### Patch Changes
