@@ -19,6 +19,14 @@ export class OptimismChainProvider extends EvmChainProvider {
         };
     }
 
+    getProvider(): L2Provider<StaticJsonRpcProvider> {
+        return this.provider;
+    }
+
+    setProvider(provider: L2Provider<StaticJsonRpcProvider>): void {
+        this.provider = provider;
+    }
+
     public async getFees(): Promise<FeeDetails> {
         const l2FeeData = await this.provider.getFeeData();
         const l2BaseGasPrice = new BigNumber(l2FeeData.gasPrice?.toString()).div(1e9).toNumber();
