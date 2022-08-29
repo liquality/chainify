@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 1.2.30
+
+### Patch Changes
+
+-   01efb2cf4: Add setter and getter for provider in OptimismChainProvider.
+
 ## 1.2.29
 
 ### Patch Changes

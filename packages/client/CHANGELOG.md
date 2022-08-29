@@ -1,5 +1,16 @@
 # @chainify/client
 
+## 1.2.30
+
+### Patch Changes
+
+-   01efb2cf4: Add setter and getter for provider in OptimismChainProvider.
+-   Updated dependencies [01efb2cf4]
+    -   @chainify/errors@1.2.30
+    -   @chainify/logger@1.2.30
+    -   @chainify/types@1.2.30
+    -   @chainify/utils@1.2.30
+
 ## 1.2.29
 
 ### Patch Changes
