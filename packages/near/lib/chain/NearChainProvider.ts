@@ -71,7 +71,7 @@ export class NearChainProvider extends Chain<providers.JsonRpcProvider> {
 
     public async getFees(): Promise<FeeDetails> {
         const gasPrice = await this.sendRpcRequest('gas_price', [null]);
-        const fee = { fee: gasPrice.gas_price };
+        const fee = { fee: parseInt(gasPrice.gas_price, 10) };
         return { slow: fee, average: fee, fast: fee };
     }
 
