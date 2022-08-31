@@ -1,5 +1,16 @@
 # @chainify/near
 
+## 1.2.31
+
+### Patch Changes
+
+-   7996bf256: Near fee in number format.
+-   Updated dependencies [7996bf256]
+    -   @chainify/client@1.2.31
+    -   @chainify/errors@1.2.31
+    -   @chainify/types@1.2.31
+    -   @chainify/utils@1.2.31
+
 ## 1.2.30
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.2.31
+
+### Patch Changes
+
+-   7996bf256: Near fee in number format.
+
 ## 1.2.30
 
 ### Patch Changes
