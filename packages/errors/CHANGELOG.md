@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 1.2.32
+
+### Patch Changes
+
+-   51db61f10: Minor bump on EVM
+
 ## 1.2.31
 
 ### Patch Changes
