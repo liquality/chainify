@@ -1,5 +1,18 @@
 # @chainify/evm-ledger
 
+## 1.2.33
+
+### Patch Changes
+
+-   02c26c603: Fix nft image parsing
+-   Updated dependencies [02c26c603]
+    -   @chainify/client@1.2.33
+    -   @chainify/errors@1.2.33
+    -   @chainify/evm@1.2.33
+    -   @chainify/hw-ledger@1.2.33
+    -   @chainify/types@1.2.33
+    -   @chainify/utils@1.2.33
+
 ## 1.2.32
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 1.2.33
+
+### Patch Changes
+
+-   02c26c603: Fix nft image parsing
+
 ## 1.2.32
 
 ### Patch Changes
