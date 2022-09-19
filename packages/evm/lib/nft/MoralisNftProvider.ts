@@ -53,7 +53,7 @@ export class MoralisNftProvider extends EvmNftProvider {
 
                 if (metadata) {
                     const parsed = JSON.parse(metadata);
-                    parsed.image = parsed.image ? parsed.image.replace('ipfs://', 'https://ipfs.io/ipfs/') : '';
+                    parsed.image = parsed.image?.replace('ipfs://', 'https://ipfs.io/ipfs/') || '';
                     nftAsset = {
                         ...nftAsset,
                         name: parsed.name,
