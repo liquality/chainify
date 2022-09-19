@@ -15,4 +15,4 @@
 '@chainify/utils': patch
 ---
 
-Minor bump on EVM
+Fix nft image parsing
