@@ -1,5 +1,16 @@
 # @chainify/client
 
+## 1.2.32
+
+### Patch Changes
+
+-   51db61f10: Minor bump on EVM
+-   Updated dependencies [51db61f10]
+    -   @chainify/errors@1.2.32
+    -   @chainify/logger@1.2.32
+    -   @chainify/types@1.2.32
+    -   @chainify/utils@1.2.32
+
 ## 1.2.31
 
 ### Patch Changes
