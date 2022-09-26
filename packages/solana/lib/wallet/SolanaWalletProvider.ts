@@ -96,6 +96,11 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
 
         const latestBlockhash = await retry(async () => this.chainProvider.getProvider().getLatestBlockhash('confirmed'));
 
+        // Indicate injection txs which are signed on the client side
+        if (Array.isArray(txRequest.data)) {
+            return true as any;
+        }
+
         // Handle already builded transactions that are passed from outside - Jupiter for example
         if (txRequest.transaction) {
             transaction = txRequest.transaction;
@@ -204,6 +209,7 @@ export class SolanaWalletProvider extends Wallet<Connection, Promise<Keypair>> {
     private setSigner(): Keypair {
         const seed = this.mnemonicToSeed(this._mnemonic);
         const derivedSeed = derivePath(this._derivationPath, seed).key;
+        console.log('secret ', nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
         return Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey);
     }
 }
