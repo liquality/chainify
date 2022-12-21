@@ -7019,12 +7019,12 @@ __metadata:
   linkType: hard
 
 "cross-fetch@npm:^2.1.0, cross-fetch@npm:^2.1.1":
-  version: 2.2.5
-  resolution: "cross-fetch@npm:2.2.5"
+  version: 2.2.6
+  resolution: "cross-fetch@npm:2.2.6"
   dependencies:
-    node-fetch: 2.6.1
-    whatwg-fetch: 2.0.4
-  checksum: dc48ded8c8836db74107aee77c6e8eb751151beb8545ce0e044eb5befc4cb687d996cecb62fc12b19be80924fd72bcc851d90e785cfd3d6056cd45f43507a66d
+    node-fetch: ^2.6.7
+    whatwg-fetch: ^2.0.4
+  checksum: df9c6728b314ff96022dca468a3d2a05b4546cd318d82a7e1f1445e7160472d39029bccbe5f20d319b8ba3793930592b0b956244aef6a87a133fbcfed85fc8ca
   languageName: node
   linkType: hard
 
@@ -14056,7 +14056,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2, node-fetch@npm:2.6.7, node-fetch@npm:^2.5.0, node-fetch@npm:^2.6.1":
+"node-fetch@npm:2, node-fetch@npm:2.6.7, node-fetch@npm:^2.5.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
   dependencies:
@@ -19922,7 +19922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"whatwg-fetch@npm:2.0.4":
+"whatwg-fetch@npm:^2.0.4":
   version: 2.0.4
   resolution: "whatwg-fetch@npm:2.0.4"
   checksum: de7c65a68d7d62e2f144a6b30293370b3ad82b65ebcd68f2ac8e8bbe7ede90febd98ba9486b78c1cbc950e0e8838fa5c2727f939899ab3fc7b71a04be52d33a5
