@@ -1,5 +1,12 @@
 # @chainify/utils
 
+## 1.2.34
+
+### Patch Changes
+
+-   Updated dependencies [b3d5e047e]
+    -   @chainify/types@1.3.0
+
 ## 1.2.33
 
 ### Patch Changes

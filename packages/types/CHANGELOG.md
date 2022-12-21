@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 1.3.0
+
+### Minor Changes
+
+-   b3d5e047e: Updated network interface
+
 ## 1.2.33
 
 ### Patch Changes
