@@ -1,5 +1,16 @@
 # @chainify/bitcoin-ledger
 
+## 1.3.1
+
+### Patch Changes
+
+-   Updated dependencies [b3d5e047e]
+    -   @chainify/types@1.3.0
+    -   @chainify/bitcoin@1.2.34
+    -   @chainify/client@1.2.34
+    -   @chainify/hw-ledger@1.3.1
+    -   @chainify/utils@1.2.34
+
 ## 1.3.0
 
 ### Minor Changes

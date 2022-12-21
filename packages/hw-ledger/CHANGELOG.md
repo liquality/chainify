@@ -1,5 +1,13 @@
 # @chainify/hw-ledger
 
+## 1.3.1
+
+### Patch Changes
+
+-   Updated dependencies [b3d5e047e]
+    -   @chainify/types@1.3.0
+    -   @chainify/utils@1.2.34
+
 ## 1.3.0
 
 ### Minor Changes
