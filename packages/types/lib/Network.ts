@@ -8,4 +8,6 @@ export interface Network {
     scraperUrl?: string;
     explorerUrl?: string;
     helperUrl?: string;
+    batchScraperUrl?: string;
+    feeProviderUrl?: string;
 }
