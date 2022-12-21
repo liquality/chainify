@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 1.3.0
+
+### Minor Changes
+
+-   a8be4f76a: Updated ledger app methods calls
+-   dd59aaa6a: Updated ledger packages for evm and bitcoin
+
+### Patch Changes
+
+-   Updated dependencies [a8be4f76a]
+-   Updated dependencies [dd59aaa6a]
+    -   @chainify/hw-ledger@1.3.0
+
 ## 1.2.33
 
 ### Patch Changes
