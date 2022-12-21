@@ -37,7 +37,7 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
         const app = await this._ledgerProvider.getApp();
         const address = await this.getWalletAddress(from);
         const hex = Buffer.from(message).toString('hex');
-        const sig = await app.signMessageNew(address.derivationPath, hex);
+        const sig = await app.signMessage(address.derivationPath, hex);
         return sig.r + sig.s;
     }
 
@@ -114,7 +114,7 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
                 true
             );
 
-            const txHex = await app.createPaymentTransactionNew({
+            const txHex = await app.createPaymentTransaction({
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 inputs: ledgerInputs,
@@ -307,7 +307,7 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
 
         const isSegwit = [BitcoinTypes.AddressType.BECH32, BitcoinTypes.AddressType.P2SH_SEGWIT].includes(this._addressType);
 
-        const txHex = await app.createPaymentTransactionNew({
+        const txHex = await app.createPaymentTransaction({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             inputs: ledgerInputs,

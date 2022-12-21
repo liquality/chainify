@@ -28,11 +28,11 @@ export class LedgerProvider<TApp extends HWApp> {
     }
 
     public async isWalletAvailable() {
-        const app = await this.getApp();
+        await this.getApp();
         // keep current exchange timeout
-        const prevExchangeTimeout = app.transport.exchangeTimeout;
+        const prevExchangeTimeout = this._transport.exchangeTimeout;
         // set exchange timeout to 2 seconds
-        app.transport.setExchangeTimeout(2000);
+        this._transport.setExchangeTimeout(2000);
         try {
             // https://ledgerhq.github.io/btchip-doc/bitcoin-technical-beta.html#_get_random
             await this._transport.send(0xe0, 0xc0, 0x00, 0x00);
@@ -42,7 +42,7 @@ export class LedgerProvider<TApp extends HWApp> {
             return false;
         } finally {
             // set exchange timeout to previous value
-            app.transport.setExchangeTimeout(prevExchangeTimeout);
+            this._transport.setExchangeTimeout(prevExchangeTimeout);
         }
         return true;
     }
