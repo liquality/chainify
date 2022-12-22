@@ -1,5 +1,21 @@
 # @chainify/evm
 
+## 2.0.0
+
+### Major Changes
+
+-   dbd8981ee: Updated version of ledger related packages
+
+### Patch Changes
+
+-   Updated dependencies [dbd8981ee]
+-   Updated dependencies [14d4c7557]
+    -   @chainify/client@2.0.0
+    -   @chainify/errors@2.0.0
+    -   @chainify/logger@2.0.0
+    -   @chainify/types@2.0.0
+    -   @chainify/utils@2.0.0
+
 ## 1.2.34
 
 ### Patch Changes
