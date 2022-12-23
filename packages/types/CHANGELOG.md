@@ -1,5 +1,11 @@
 # @chainify/types
 
+## 2.2.0
+
+### Minor Changes
+
+-   abdc69ead: Updated version
+
 ## 2.1.0
 
 ### Minor Changes

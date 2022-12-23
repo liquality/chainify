@@ -1,5 +1,21 @@
 # @chainify/bitcoin-ledger
 
+## 2.2.0
+
+### Minor Changes
+
+-   abdc69ead: Updated version
+
+### Patch Changes
+
+-   Updated dependencies [abdc69ead]
+    -   @chainify/bitcoin@2.2.0
+    -   @chainify/client@2.2.0
+    -   @chainify/errors@2.2.0
+    -   @chainify/hw-ledger@2.2.0
+    -   @chainify/types@2.2.0
+    -   @chainify/utils@2.2.0
+
 ## 2.1.0
 
 ### Minor Changes
