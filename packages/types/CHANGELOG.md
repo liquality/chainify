@@ -1,5 +1,15 @@
 # @chainify/types
 
+## 2.0.0
+
+### Major Changes
+
+-   dbd8981ee: Updated version of ledger related packages
+
+### Minor Changes
+
+-   14d4c7557: Updated types version
+
 ## 1.3.0
 
 ### Minor Changes

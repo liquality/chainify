@@ -1,5 +1,11 @@
 # @chainify/evm-contracts
 
+## 2.0.0
+
+### Major Changes
+
+-   dbd8981ee: Updated version of ledger related packages
+
 ## 1.2.33
 
 ### Patch Changes
