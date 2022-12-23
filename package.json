@@ -63,5 +63,12 @@
     "workspaces": [
         "packages/*"
     ],
-    "packageManager": "yarn@3.1.1"
+    "packageManager": "yarn@3.1.1",
+    "resolutions": {
+        "@ledgerhq/devices": "6.27.1",
+        "@ledgerhq/hw-transport": "6.27.1",
+        "@ledgerhq/hw-transport-webhid": "6.27.1",
+        "@ledgerhq/cryptoassets": "7.1.0",
+        "@ledgerhq/hw-app-eth": "6.30.2"
+    }
 }
