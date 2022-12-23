@@ -15,4 +15,4 @@
 '@chainify/utils': minor
 ---
 
-Set Fixed version of packages for ledger
+Updated version

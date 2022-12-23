@@ -1,5 +1,11 @@
 # @chainify/errors
 
+## 2.1.0
+
+### Minor Changes
+
+-   910879393: Set Fixed version of packages for ledger
+
 ## 2.0.0
 
 ### Major Changes

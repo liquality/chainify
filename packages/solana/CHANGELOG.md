@@ -1,5 +1,20 @@
 # @chainify/solana
 
+## 2.1.0
+
+### Minor Changes
+
+-   910879393: Set Fixed version of packages for ledger
+
+### Patch Changes
+
+-   Updated dependencies [910879393]
+    -   @chainify/client@2.1.0
+    -   @chainify/errors@2.1.0
+    -   @chainify/logger@2.1.0
+    -   @chainify/types@2.1.0
+    -   @chainify/utils@2.1.0
+
 ## 2.0.0
 
 ### Major Changes
