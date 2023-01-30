@@ -21,7 +21,7 @@
         "@chainify/hw-ledger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
-        "@ledgerhq/hw-app-btc": "9.1.0",
+        "@ledgerhq/hw-app-btc": "9.1.2",
         "bip32": "2.0.6",
         "bitcoinjs-lib": "5.2.0"
     }

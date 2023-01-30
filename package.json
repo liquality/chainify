@@ -65,10 +65,11 @@
     ],
     "packageManager": "yarn@3.1.1",
     "resolutions": {
-        "@ledgerhq/devices": "6.27.1",
-        "@ledgerhq/hw-transport": "6.27.1",
-        "@ledgerhq/hw-transport-webhid": "6.27.1",
-        "@ledgerhq/cryptoassets": "7.1.0",
-        "@ledgerhq/hw-app-eth": "6.30.2"
+        "@ledgerhq/devices": "7.0.7",
+        "@ledgerhq/hw-transport": "6.27.10",
+        "@ledgerhq/hw-transport-webhid": "6.27.10",
+        "@ledgerhq/cryptoassets": "7.3.0",
+        "@ledgerhq/hw-app-eth": "6.30.5",
+        "@ledgerhq/hw-app-btc": "9.1.2"
     }
 }

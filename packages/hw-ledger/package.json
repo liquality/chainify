@@ -19,7 +19,7 @@
         "@chainify/logger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
-        "@ledgerhq/hw-transport": "6.27.8",
-        "@ledgerhq/hw-transport-webhid": "6.27.8"
+        "@ledgerhq/hw-transport": "6.27.10",
+        "@ledgerhq/hw-transport-webhid": "6.27.10"
     }
 }
