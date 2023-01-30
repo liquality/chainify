@@ -30,6 +30,6 @@
         "@ethersproject/providers": "5.7.0",
         "@ethersproject/strings": "5.7.0",
         "@ethersproject/transactions": "5.7.0",
-        "@ledgerhq/hw-app-eth": "6.30.2"
+        "@ledgerhq/hw-app-eth": "6.30.5"
     }
 }

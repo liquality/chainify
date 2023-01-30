@@ -88,7 +88,7 @@ __metadata:
     "@chainify/hw-ledger": "workspace:*"
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
-    "@ledgerhq/hw-app-btc": 9.1.0
+    "@ledgerhq/hw-app-btc": 9.1.2
     bip32: 2.0.6
     bitcoinjs-lib: 5.2.0
   languageName: unknown
@@ -213,7 +213,7 @@ __metadata:
     "@ethersproject/providers": 5.7.0
     "@ethersproject/strings": 5.7.0
     "@ethersproject/transactions": 5.7.0
-    "@ledgerhq/hw-app-eth": 6.30.2
+    "@ledgerhq/hw-app-eth": 6.30.5
   languageName: unknown
   linkType: soft
 
@@ -255,8 +255,8 @@ __metadata:
     "@chainify/logger": "workspace:*"
     "@chainify/types": "workspace:*"
     "@chainify/utils": "workspace:*"
-    "@ledgerhq/hw-transport": 6.27.8
-    "@ledgerhq/hw-transport-webhid": 6.27.8
+    "@ledgerhq/hw-transport": 6.27.10
+    "@ledgerhq/hw-transport-webhid": 6.27.10
   languageName: unknown
   linkType: soft
 
@@ -2156,24 +2156,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/cryptoassets@npm:7.1.0":
-  version: 7.1.0
-  resolution: "@ledgerhq/cryptoassets@npm:7.1.0"
+"@ledgerhq/cryptoassets@npm:7.3.0":
+  version: 7.3.0
+  resolution: "@ledgerhq/cryptoassets@npm:7.3.0"
   dependencies:
     invariant: 2
-  checksum: 217e5d3244cab4ffb4223aa71c362c027b0808259c4b20d2e6d0c0d275f872197036de634239f965f8347d842e058fa1d4053e924b77d19c6400cd8f54e2c97d
+  checksum: 466493c3e7112430683b9f64f43dc25675c7de9f000f1b4e9294c6f1d37977c53fe86d95419d6625e6889dc0d53a34c66cc1b52af9b1de585a228bcccdb0fa1c
   languageName: node
   linkType: hard
 
-"@ledgerhq/devices@npm:6.27.1":
-  version: 6.27.1
-  resolution: "@ledgerhq/devices@npm:6.27.1"
+"@ledgerhq/devices@npm:7.0.7":
+  version: 7.0.7
+  resolution: "@ledgerhq/devices@npm:7.0.7"
   dependencies:
-    "@ledgerhq/errors": ^6.10.0
-    "@ledgerhq/logs": ^6.10.0
+    "@ledgerhq/errors": ^6.12.3
+    "@ledgerhq/logs": ^6.10.1
     rxjs: 6
     semver: ^7.3.5
-  checksum: e4615841b094fe4990c74421c23f57da6a83b56bfa73880af3ce0a67db86f5b3a642f6022be24bf4b24d7b236623a578dbdba74805b28e2486006d1f0cbff543
+  checksum: 75550ebdc26dbe2d9fbcc476687fbf5534f05c8b69085e4be13bf9f92b9edd7bc72d43a4e546e47ba91818159ca0f213d5d1f823817a0d8c2a7c79f0503339e5
   languageName: node
   linkType: hard
 
@@ -2191,18 +2191,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/errors@npm:^6.12.1":
-  version: 6.12.1
-  resolution: "@ledgerhq/errors@npm:6.12.1"
-  checksum: a729d0933221cd54f3293e6d64f22b8b191bc65577a5aefc14fd42c32ef427634ea3835a86154c7d0072a46363ef15afc638eba8761ced422eb8bd0fbf26d9e7
+"@ledgerhq/errors@npm:^6.12.3":
+  version: 6.12.3
+  resolution: "@ledgerhq/errors@npm:6.12.3"
+  checksum: 3284cbc85dc2df24f17a6e3899eb5afdff96e63d073b5914906c45ed8f1a93c7daa1e2b847d621610a1088b63c0abb9379e6b6ca395144c2d50855a4606c1d3f
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-app-btc@npm:9.1.0":
-  version: 9.1.0
-  resolution: "@ledgerhq/hw-app-btc@npm:9.1.0"
+"@ledgerhq/hw-app-btc@npm:9.1.2":
+  version: 9.1.2
+  resolution: "@ledgerhq/hw-app-btc@npm:9.1.2"
   dependencies:
-    "@ledgerhq/hw-transport": ^6.27.8
+    "@ledgerhq/hw-transport": ^6.27.10
     "@ledgerhq/logs": ^6.10.1
     bip32-path: ^0.4.2
     bitcoinjs-lib: ^5.2.0
@@ -2214,35 +2214,35 @@ __metadata:
     sha.js: 2
     tiny-secp256k1: 1.1.6
     varuint-bitcoin: 1.1.2
-  checksum: 0d07a6725aedce02f17d32bd6d47c601b0d3f688e4d5be1bcfbb378099c457b6a062ec49c9ff019944dbdfa4c99b4f6282f01885491abcd2b7af7e9899ffde19
+  checksum: b8a7bfa5bbe2b318ffc7514bc6fabfeb8aeea38f87e6f0c89f35fb7c972e4d601ea20d72ce9a35e0dc6e497f8925f86a6b8d0f434a31b72148b1c775e96788ab
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-app-eth@npm:6.30.2":
-  version: 6.30.2
-  resolution: "@ledgerhq/hw-app-eth@npm:6.30.2"
+"@ledgerhq/hw-app-eth@npm:6.30.5":
+  version: 6.30.5
+  resolution: "@ledgerhq/hw-app-eth@npm:6.30.5"
   dependencies:
     "@ethersproject/abi": ^5.5.0
     "@ethersproject/rlp": ^5.5.0
-    "@ledgerhq/cryptoassets": ^7.0.0
-    "@ledgerhq/errors": ^6.12.1
-    "@ledgerhq/hw-transport": ^6.27.8
-    "@ledgerhq/hw-transport-mocker": ^6.27.8
+    "@ledgerhq/cryptoassets": ^7.3.0
+    "@ledgerhq/errors": ^6.12.3
+    "@ledgerhq/hw-transport": ^6.27.10
+    "@ledgerhq/hw-transport-mocker": ^6.27.10
     "@ledgerhq/logs": ^6.10.1
     axios: ^0.26.1
     bignumber.js: ^9.1.0
     crypto-js: ^4.1.1
-  checksum: 9c87ee5a91397ebcb9bf5462b1265773d4d85321f147e3ad44f0f9b7bdb765d86fa5c5808318b22c3ae16fb0f85f9a01db7c3cba365303894f3b82256e22cd3f
+  checksum: a3bc079f53f491adac6fc6344870376900adf79cc6fc16dd8af4872fab78cef3c2d4747eaba267382cd21a5273e28f2dd9cebbd24e59fa3bedb07e951d641502
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport-mocker@npm:^6.27.8":
-  version: 6.27.8
-  resolution: "@ledgerhq/hw-transport-mocker@npm:6.27.8"
+"@ledgerhq/hw-transport-mocker@npm:^6.27.10":
+  version: 6.27.10
+  resolution: "@ledgerhq/hw-transport-mocker@npm:6.27.10"
   dependencies:
-    "@ledgerhq/hw-transport": ^6.27.8
+    "@ledgerhq/hw-transport": ^6.27.10
     "@ledgerhq/logs": ^6.10.1
-  checksum: a6676ae4f3b79e79dd5b3c6b20f0daecce62a2e65c557de4b7395c1da320a9fca720108d5aa64ba9428d15f7567d9500165a3a8fb3b936c07f5fa2722b84f123
+  checksum: 7c542fdb2039569785e26481dd4215e4cb918fcfb3062187ccb9615dbcc14740343bf5daf027c43ae49ab3b70f08bd739919cda2841df556f2d067f459b61a1a
   languageName: node
   linkType: hard
 
@@ -2316,26 +2316,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport-webhid@npm:6.27.1":
-  version: 6.27.1
-  resolution: "@ledgerhq/hw-transport-webhid@npm:6.27.1"
+"@ledgerhq/hw-transport-webhid@npm:6.27.10":
+  version: 6.27.10
+  resolution: "@ledgerhq/hw-transport-webhid@npm:6.27.10"
   dependencies:
-    "@ledgerhq/devices": ^6.27.1
-    "@ledgerhq/errors": ^6.10.0
-    "@ledgerhq/hw-transport": ^6.27.1
-    "@ledgerhq/logs": ^6.10.0
-  checksum: 3b1acc8ab5e11058b17acaebfe3297be4cb5678030843b56cb558bc48c7b7816db8c95cc5eebfad1dd47fd2cff8f2384b168da1180d4682afbdd2adfc00937dc
+    "@ledgerhq/devices": ^7.0.7
+    "@ledgerhq/errors": ^6.12.3
+    "@ledgerhq/hw-transport": ^6.27.10
+    "@ledgerhq/logs": ^6.10.1
+  checksum: 19bb81abf9435943791b15e0ebbc0c9c9673b7829aee7386859849e6c1a4874c5541fbc4b2a79bad30b0cb4d84ef762c8e13c75a64992590415c4723f466ac7e
   languageName: node
   linkType: hard
 
-"@ledgerhq/hw-transport@npm:6.27.1":
-  version: 6.27.1
-  resolution: "@ledgerhq/hw-transport@npm:6.27.1"
+"@ledgerhq/hw-transport@npm:6.27.10":
+  version: 6.27.10
+  resolution: "@ledgerhq/hw-transport@npm:6.27.10"
   dependencies:
-    "@ledgerhq/devices": ^6.27.1
-    "@ledgerhq/errors": ^6.10.0
+    "@ledgerhq/devices": ^7.0.7
+    "@ledgerhq/errors": ^6.12.3
     events: ^3.3.0
-  checksum: 415acc9e7bab27b3738d4304f8517cdc3e3c0efe0b3f1afd960d61e55b8a5610c48edce891cef012049597df1e13a08d052c23fd9c87f5c1a36899d1157fd254
+  checksum: 8e583a7f09502b25652f43b30bb2443a8a146d7ce72be5de09091057f9fdc3c9e653346242722e25bbac2e19ed1b19eb7a5f965fd3633dd0e786d7661ec79462
   languageName: node
   linkType: hard
 
