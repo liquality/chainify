@@ -1,5 +1,11 @@
 # @chainify/hw-ledger
 
+## 2.3.0
+
+### Minor Changes
+
+-   98204a127: Update all ledger dependencies
+
 ## 2.2.0
 
 ### Minor Changes
