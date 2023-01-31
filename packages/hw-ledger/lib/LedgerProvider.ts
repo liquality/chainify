@@ -2,16 +2,15 @@ import { WalletError } from '@chainify/errors';
 import { Logger } from '@chainify/logger';
 import { Address, Network } from '@chainify/types';
 import { compare } from '@chainify/utils';
-import Transport from '@ledgerhq/hw-transport';
 import HwAppBitcoin from '@ledgerhq/hw-app-btc';
 import HwAppEthereum from '@ledgerhq/hw-app-eth';
+import Transport from '@ledgerhq/hw-transport';
 import { CreateLedgerApp, CreateOptions, GetAddressesFuncType, TransportCreator } from './types';
 
 const logger = new Logger('LedgerProvider');
 export class LedgerProvider<T extends HwAppBitcoin | HwAppEthereum> {
     private _transportCreator: TransportCreator;
     private _createLedgerApp: CreateLedgerApp;
-
 
     private _network: Network;
     private _scrambleKey: string;

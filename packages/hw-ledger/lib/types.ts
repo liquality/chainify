@@ -10,7 +10,7 @@ export interface CreateOptions {
     scrambleKey?: string;
 }
 
-export type Newable<T> = { new(...args: any[]): T };
+export type Newable<T> = { new (...args: any[]): T };
 
 export type GetAddressesFuncType = (start?: number, numAddresses?: number, change?: boolean) => Promise<Address[]>;
 
