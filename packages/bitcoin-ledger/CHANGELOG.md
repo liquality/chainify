@@ -1,5 +1,18 @@
 # @chainify/bitcoin-ledger
 
+## 2.4.0
+
+### Minor Changes
+
+-   52a668d71: Updated imports for ledger types
+-   e2e61c30e: Implemented ledger app creator
+
+### Patch Changes
+
+-   Updated dependencies [52a668d71]
+-   Updated dependencies [e2e61c30e]
+    -   @chainify/hw-ledger@2.4.0
+
 ## 2.3.0
 
 ### Minor Changes
