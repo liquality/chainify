@@ -6,9 +6,9 @@ import { Address, Network } from '@chainify/types';
 import { getAddress } from '@ethersproject/address';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import HwAppEthereum from '@ledgerhq/hw-app-eth';
+import { CreateEvmLedgerApp } from './CreateEvmLedgerApp';
 import { EvmLedgerSigner } from './EvmLedgerSigner';
 import { EvmLedgerCreateOptions } from './types';
-import { CreateEvmLedgerApp } from './CreateEvmLedgerApp';
 
 const defaultPath = "m/44'/60'/0'/0/0";
 
@@ -24,7 +24,7 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
         this._ledgerProvider = new LedgerProvider<HwAppEthereum>({
             ...options,
             scrambleKey: options.scrambleKey || 'w0w',
-            createLedgerApp: CreateEvmLedgerApp
+            createLedgerApp: CreateEvmLedgerApp,
         });
 
         this._derivationPath = options.derivationPath || defaultPath;
