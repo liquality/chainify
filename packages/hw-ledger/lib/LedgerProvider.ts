@@ -3,24 +3,25 @@ import { Logger } from '@chainify/logger';
 import { Address, Network } from '@chainify/types';
 import { compare } from '@chainify/utils';
 import Transport from '@ledgerhq/hw-transport';
-import { CreateOptions, GetAddressesFuncType, HWApp, Newable, TransportCreator } from './types';
+import HwAppBitcoin from '@ledgerhq/hw-app-btc';
+import HwAppEthereum from '@ledgerhq/hw-app-eth';
+import { CreateLedgerApp, CreateOptions, GetAddressesFuncType, TransportCreator } from './types';
 
 const logger = new Logger('LedgerProvider');
-
-export class LedgerProvider<TApp extends HWApp> {
-    private _appType: Newable<TApp>;
+export class LedgerProvider<T extends HwAppBitcoin | HwAppEthereum> {
     private _transportCreator: TransportCreator;
+    private _createLedgerApp: CreateLedgerApp;
+
 
     private _network: Network;
     private _scrambleKey: string;
 
     protected _transport: Transport;
-    protected _appInstance: TApp;
+    protected _appInstance: T;
 
-    constructor(appType: Newable<TApp>, options: CreateOptions) {
-        this._appType = appType;
+    constructor(options: CreateOptions) {
         this._transportCreator = options.transportCreator;
-
+        this._createLedgerApp = options.createLedgerApp;
         this._network = options.network;
         // The ledger scramble key is required to be set on the ledger transport
         // if communicating with the device using `transport.send` for the first time
@@ -78,7 +79,7 @@ export class LedgerProvider<TApp extends HWApp> {
         throw new Error('Ledger: Wallet does not contain address');
     }
 
-    public async getApp(): Promise<TApp> {
+    public async getApp(): Promise<T> {
         try {
             await this.createTransport();
         } catch (e) {
@@ -87,7 +88,8 @@ export class LedgerProvider<TApp extends HWApp> {
             throw new WalletError(e.toString(), errorNoName);
         }
         if (!this._appInstance) {
-            this._appInstance = new Proxy(new this._appType(this._transport, this._scrambleKey), { get: this.errorProxy.bind(this) });
+            const app = this._createLedgerApp(this._transport, this._scrambleKey, this._network) as T;
+            this._appInstance = new Proxy(app, { get: this.errorProxy.bind(this) });
         }
         return this._appInstance;
     }

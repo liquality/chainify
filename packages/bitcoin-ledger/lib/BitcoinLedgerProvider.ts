@@ -2,11 +2,12 @@ import { BitcoinBaseChainProvider, BitcoinBaseWalletProvider, BitcoinTypes, Bitc
 import { Chain } from '@chainify/client';
 import { UnimplementedMethodError } from '@chainify/errors';
 import { LedgerProvider } from '@chainify/hw-ledger';
-import { AddressType, Asset, BigNumber } from '@chainify/types';
+import { AddressType, Asset, BigNumber, } from '@chainify/types';
 import { padHexStart } from '@chainify/utils';
 import HwAppBitcoin from '@ledgerhq/hw-app-btc';
 import { BIP32Interface, fromPublicKey } from 'bip32';
 import { address, Psbt, PsbtTxInput, script, Transaction as BitcoinJsTransaction } from 'bitcoinjs-lib';
+import { CreateBitcoinLedgerApp } from './CreateBitcoinLedgerApp';
 import { BitcoinLedgerProviderOptions } from './types';
 
 export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
@@ -17,9 +18,10 @@ export class BitcoinLedgerProvider extends BitcoinBaseWalletProvider {
     constructor(options: BitcoinLedgerProviderOptions, chainProvider: Chain<BitcoinBaseChainProvider>) {
         super(options, chainProvider);
 
-        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>(HwAppBitcoin, {
+        this._ledgerProvider = new LedgerProvider<HwAppBitcoin>({
             ...options,
             scrambleKey: options.scrambleKey || 'BTC',
+            createLedgerApp: CreateBitcoinLedgerApp
         });
 
         this._walletPublicKeyCache = {};

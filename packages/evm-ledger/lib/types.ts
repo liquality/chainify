@@ -1,10 +1,10 @@
-import { LedgerProviderTypes } from '@chainify/hw-ledger';
+import { CreateOptions } from '@chainify/hw-ledger';
 import { Address } from '@chainify/types';
 import HwAppEthereum from '@ledgerhq/hw-app-eth';
 
 export type GetAppType = () => Promise<HwAppEthereum>;
 
-export interface EvmLedgerCreateOptions extends LedgerProviderTypes.CreateOptions {
+export interface EvmLedgerCreateOptions extends CreateOptions {
     derivationPath?: string;
     addressCache?: Address;
 }
