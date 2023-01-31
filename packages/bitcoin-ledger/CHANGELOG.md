@@ -1,5 +1,16 @@
 # @chainify/bitcoin-ledger
 
+## 2.3.0
+
+### Minor Changes
+
+-   98204a127: Update all ledger dependencies
+
+### Patch Changes
+
+-   Updated dependencies [98204a127]
+    -   @chainify/hw-ledger@2.3.0
+
 ## 2.2.0
 
 ### Minor Changes
