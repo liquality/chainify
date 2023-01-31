@@ -1,8 +1,8 @@
-import { LedgerProviderTypes } from '@chainify/hw-ledger';
+import { TransportCreator } from '@chainify/hw-ledger';
 import Transport from '@ledgerhq/hw-transport';
 import LedgerHwTransportNode from '@ledgerhq/hw-transport-node-hid';
 
-export class NodeTransportCreator implements LedgerProviderTypes.TransportCreator {
+export class NodeTransportCreator implements TransportCreator {
     private _transport: Transport = null;
     private _onDisconnectCallbacks: Array<() => void> = [];
 
