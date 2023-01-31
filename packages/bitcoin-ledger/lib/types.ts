@@ -1,7 +1,7 @@
 import { BitcoinTypes } from '@chainify/bitcoin';
-import { LedgerProviderTypes } from '@chainify/hw-ledger';
+import { CreateOptions } from '@chainify/hw-ledger';
 
-export interface BitcoinLedgerProviderOptions extends LedgerProviderTypes.CreateOptions {
+export interface BitcoinLedgerProviderOptions extends CreateOptions {
     baseDerivationPath: string;
     basePublicKey?: string;
     baseChainCode?: string;

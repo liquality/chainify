@@ -8,6 +8,7 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import HwAppEthereum from '@ledgerhq/hw-app-eth';
 import { EvmLedgerSigner } from './EvmLedgerSigner';
 import { EvmLedgerCreateOptions } from './types';
+import { CreateEvmLedgerApp } from './CreateEvmLedgerApp';
 
 const defaultPath = "m/44'/60'/0'/0/0";
 
@@ -20,9 +21,10 @@ export class EvmLedgerProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
     constructor(options: EvmLedgerCreateOptions, chainProvider?: Chain<StaticJsonRpcProvider>) {
         super(chainProvider);
 
-        this._ledgerProvider = new LedgerProvider<HwAppEthereum>(HwAppEthereum, {
+        this._ledgerProvider = new LedgerProvider<HwAppEthereum>({
             ...options,
             scrambleKey: options.scrambleKey || 'w0w',
+            createLedgerApp: CreateEvmLedgerApp
         });
 
         this._derivationPath = options.derivationPath || defaultPath;
