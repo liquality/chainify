@@ -32,8 +32,7 @@
         "@ethersproject/wallet": "5.7.0",
         "@liquality/fee-suggestions": "2.0.2",
         "@metamask/eth-sig-util": "4.0.1",
-        "ethers": "5.7.0",
-        "moralis": "1.8.0"
+        "ethers": "5.7.0"
     },
     "devDependencies": {
         "@nomiclabs/hardhat-ethers": "^2.0.4",
