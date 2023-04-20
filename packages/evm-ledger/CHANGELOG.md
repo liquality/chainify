@@ -1,5 +1,12 @@
 # @chainify/evm-ledger
 
+## 2.4.1
+
+### Patch Changes
+
+-   Updated dependencies [398730016]
+    -   @chainify/evm@2.3.0
+
 ## 2.4.0
 
 ### Minor Changes

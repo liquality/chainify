@@ -1,5 +1,11 @@
 # @chainify/evm
 
+## 2.3.0
+
+### Minor Changes
+
+-   398730016: Removed Moralis as provider for nft fetch
+
 ## 2.2.0
 
 ### Minor Changes
