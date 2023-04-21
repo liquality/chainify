@@ -3,7 +3,7 @@ import { Network } from '@chainify/types';
 const solana_mainnet: Network = {
     name: 'Solana Mainnet',
     networkId: 'mainnet',
-    rpcUrl: 'https://solana--mainnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
+    rpcUrl: 'https://api.mainnet-beta.solana.com',
     coinType: '501',
     isTestnet: false,
 };
@@ -11,7 +11,7 @@ const solana_mainnet: Network = {
 const solana_testnet: Network = {
     name: 'Solana Testnet',
     networkId: 'testnet',
-    rpcUrl: 'https://solana--devnet.datahub.figment.io/apikey/d7d9844ccf72ad4fef9bc5caaa957a50',
+    rpcUrl: 'https://api.devnet.solana.com',
     coinType: '501',
     isTestnet: true,
 };
