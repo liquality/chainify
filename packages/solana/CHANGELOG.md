@@ -1,5 +1,11 @@
 # @chainify/solana
 
+## 2.4.0
+
+### Minor Changes
+
+-   1cc06d178: Update solana endpoints
+
 ## 2.3.0
 
 ### Minor Changes
