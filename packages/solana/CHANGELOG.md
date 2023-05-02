@@ -1,5 +1,14 @@
 # @chainify/solana
 
+## 2.4.1
+
+### Patch Changes
+
+-   Updated dependencies [fad10357a]
+    -   @chainify/types@2.3.0
+    -   @chainify/utils@2.3.0
+    -   @chainify/client@2.2.1
+
 ## 2.4.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @chainify/bitcoin
 
+## 2.3.0
+
+### Minor Changes
+
+-   fad10357a: Updated Infura nft provider with fixes
+
+### Patch Changes
+
+-   Updated dependencies [fad10357a]
+    -   @chainify/types@2.3.0
+    -   @chainify/utils@2.3.0
+    -   @chainify/client@2.2.1
+
 ## 2.2.0
 
 ### Minor Changes
