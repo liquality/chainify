@@ -1,5 +1,16 @@
 # @chainify/evm-ledger
 
+## 2.4.2
+
+### Patch Changes
+
+-   Updated dependencies [fad10357a]
+    -   @chainify/evm@2.4.0
+    -   @chainify/types@2.3.0
+    -   @chainify/utils@2.3.0
+    -   @chainify/client@2.2.1
+    -   @chainify/hw-ledger@2.4.1
+
 ## 2.4.1
 
 ### Patch Changes
