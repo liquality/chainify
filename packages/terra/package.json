@@ -20,9 +20,9 @@
         "@chainify/logger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
-        "@terra-money/terra.js": "3.1.3",
+        "@terra-money/terra.js": "3.1.6",
         "@types/luxon": "^2.0.9",
-        "lodash": "^4.17.21",
+        "lodash": "4.17.21",
         "luxon": "^2.3.1"
     }
 }

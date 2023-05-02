@@ -22,41 +22,45 @@ export class InfuraNftProvider extends EvmNftProvider {
 
     async fetch(): Promise<NFTAsset[]> {
         const [userAddress, network] = await Promise.all([this.walletProvider.getAddress(), this.walletProvider.getConnectedNetwork()]);
-
         const chainId = Number(network.chainId);
-        const { data } = await this._httpClient.nodeGet(`/networks/${chainId}/accounts/${userAddress.toString()}/assets/nfts`);
-        return data.reduce((result: NFTAsset[], nft: { contract: any; tokenId: any; supply: any; type: any; metadata: any }) => {
-            const { contract, tokenId, supply, type, metadata } = nft;
-            if (type in NftTypes && contract) {
-                this.cache[contract] = {
-                    contract: this.schemas[type].attach(contract),
-                    schema: type as NftTypes,
-                };
-                const _image = metadata?.image?.replace('ipfs://', 'https://ipfs.io/ipfs/') || '';
-                const nftAsset: NFTAsset = {
-                    asset_contract: {
-                        address: contract,
-                        name: metadata?.name,
-                        symbol: '',
-                    },
-                    collection: {
-                        name: metadata?.name,
-                    },
-                    token_id: tokenId,
-                    amount: supply,
-                    standard: type,
-                    name: metadata?.name,
-                    description: metadata?.attributes.find((i: any) => i.trait_type === 'Description')?.value,
-                    image_original_url: _image,
-                    image_preview_url: _image,
-                    image_thumbnail_url: _image,
-                    external_link: '',
-                };
+        const response = await this._httpClient.nodeGet(`/networks/${chainId}/accounts/${userAddress.toString()}/assets/nfts`);
 
-                result.push(nftAsset);
-            }
+        return (
+            response?.assets?.reduce((result: NFTAsset[], nft: { contract: any; tokenId: any; supply: any; type: any; metadata: any }) => {
+                const { contract, tokenId, supply, type, metadata } = nft;
+                if (type in NftTypes && contract) {
+                    this.cache[contract] = {
+                        contract: this.schemas[type].attach(contract),
+                        schema: type as NftTypes,
+                    };
+                    const _image = metadata?.image?.replace('ipfs://', 'https://ipfs.io/ipfs/') || '';
+                    const description =
+                        metadata?.attributes?.find((i: any) => i.trait_type === 'Description')?.value || metadata?.description;
+                    const nftAsset: NFTAsset = {
+                        asset_contract: {
+                            address: contract,
+                            name: metadata?.name,
+                            symbol: '',
+                        },
+                        collection: {
+                            name: metadata?.name,
+                        },
+                        token_id: tokenId,
+                        amount: supply,
+                        standard: type,
+                        name: metadata?.name,
+                        description,
+                        image_original_url: _image,
+                        image_preview_url: _image,
+                        image_thumbnail_url: _image,
+                        external_link: '',
+                    };
 
-            return result;
-        }, []);
+                    result.push(nftAsset);
+                }
+
+                return result;
+            }, []) || []
+        );
     }
 }

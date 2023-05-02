@@ -19,7 +19,7 @@
         "@chainify/types": "workspace:*",
         "@ethersproject/sha2": "5.7.0",
         "bech32": "^2.0.0",
-        "bs58": "^5.0.0",
+        "bs58": "5.0.0",
         "crypto-hashing": "^1.0.0",
         "setimmediate": "^1.0.5"
     },
