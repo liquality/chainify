@@ -3,7 +3,7 @@ import { NearNetwork } from './types';
 const near_mainnet: NearNetwork = {
     name: 'Near Mainnet',
     networkId: 'mainnet',
-    rpcUrl: 'https://rpc.mainnet.near.org',
+    rpcUrl: 'https://near-mainnet.infura.io/v3/37efa691ffec4c41a60aa4a69865d8f6',
     helperUrl: 'https://near-mainnet-api.liq-chainhub.net',
     coinType: '397',
     isTestnet: false,
