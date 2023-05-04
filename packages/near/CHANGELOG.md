@@ -1,5 +1,11 @@
 # @chainify/near
 
+## 2.3.0
+
+### Minor Changes
+
+-   38c898047: Updated rp endpoint for near
+
 ## 2.2.1
 
 ### Patch Changes
