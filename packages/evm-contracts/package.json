@@ -6,7 +6,7 @@
     "homepage": "",
     "license": "ISC",
     "dependencies": {
-        "@openzeppelin/contracts": "^4.4.2"
+        "@openzeppelin/contracts": "^4.9.1"
     },
     "devDependencies": {
         "@codechecks/client": "^0.1.12",
