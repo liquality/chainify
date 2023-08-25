@@ -1,12 +1,12 @@
 import { Chain } from '@chainify/client';
-import { Address, NamingProvider, Network, WalletOptions } from '@chainify/types';
+import { Address, AddressType, NamingProvider, Network, WalletOptions } from '@chainify/types';
 import { compare, remove0x } from '@chainify/utils';
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { Wallet as EthersWallet } from '@ethersproject/wallet';
 import { signTypedData, SignTypedDataVersion } from '@metamask/eth-sig-util';
 import { SignTypedMessageType } from '../types';
 import { EvmBaseWalletProvider } from './EvmBaseWalletProvider';
-
+import { personalSign } from '@metamask/eth-sig-util';
 export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvider, EthersWallet> {
     private _wallet: EthersWallet;
     private _walletOptions: WalletOptions;
@@ -33,6 +33,13 @@ export class EvmWalletProvider extends EvmBaseWalletProvider<StaticJsonRpcProvid
             name,
         });
     }
+
+    public async signMessage(message: string, _from: AddressType): Promise<string> {
+        const { privateKey } = this._wallet._signingKey();
+        const _pk = privateKey.startsWith('0x') ? privateKey.substring(2) : privateKey;
+        return personalSign({ privateKey: Buffer.from(_pk, 'hex',), data: message });
+    }
+
 
     public async signTypedData({ data, from, version }: SignTypedMessageType): Promise<string> {
         if (!data) {
