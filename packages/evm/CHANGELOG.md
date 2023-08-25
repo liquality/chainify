@@ -1,5 +1,11 @@
 # @chainify/evm
 
+## 3.0.0
+
+### Major Changes
+
+-   7cc8d07a8: Fix for personal sign
+
 ## 2.4.0
 
 ### Minor Changes
