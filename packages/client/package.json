@@ -19,6 +19,6 @@
         "@chainify/logger": "workspace:*",
         "@chainify/types": "workspace:*",
         "@chainify/utils": "workspace:*",
-        "axios": "^0.25.0"
+        "axios": "^1.6.0"
     }
 }
